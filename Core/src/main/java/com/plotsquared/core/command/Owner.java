@@ -87,7 +87,8 @@ public class Owner extends SetCommand {
                 );
                 return;
             }
-            PlotChangeOwnerEvent event = this.eventDispatcher.callOwnerChange(player,
+            PlotChangeOwnerEvent event = this.eventDispatcher.callOwnerChange(
+                    player,
                     plot,
                     plot.hasOwner() ? plot.getOwnerAbs() : null,
                     uuid,

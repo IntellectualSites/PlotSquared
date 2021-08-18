@@ -257,7 +257,8 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param object Platform player object
      * @return Player object
      */
-    public @NonNull abstract P getPlayer(final @NonNull T object);
+    public @NonNull
+    abstract P getPlayer(final @NonNull T object);
 
     /**
      * Get a plot player from a UUID. This method requires
@@ -280,7 +281,8 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
         }
     }
 
-    public @NonNull abstract P createPlayer(final @NonNull UUID uuid);
+    public @NonNull
+    abstract P createPlayer(final @NonNull UUID uuid);
 
     /**
      * Get an an offline player object from the player's UUID
@@ -288,7 +290,8 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param uuid Player UUID
      * @return Offline player object
      */
-    public @Nullable abstract OfflinePlotPlayer getOfflinePlayer(final @Nullable UUID uuid);
+    public @Nullable
+    abstract OfflinePlotPlayer getOfflinePlayer(final @Nullable UUID uuid);
 
     /**
      * Get an offline player object from the player's username
@@ -296,7 +299,8 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param username Player name
      * @return Offline player object
      */
-    public @Nullable abstract OfflinePlotPlayer getOfflinePlayer(final @NonNull String username);
+    public @Nullable
+    abstract OfflinePlotPlayer getOfflinePlayer(final @NonNull String username);
 
     /**
      * Get all online players
@@ -311,7 +315,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
     public static final class NoSuchPlayerException extends IllegalArgumentException {
 
         public NoSuchPlayerException(final @NonNull UUID uuid) {
-            super(String.format("There is no online player with UUID '%s'", uuid.toString()));
+            super(String.format("There is no online player with UUID '%s'", uuid));
         }
 
     }

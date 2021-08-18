@@ -37,10 +37,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 public final class PlotMergeEvent extends PlotPlayerEvent implements CancellablePlotEvent {
 
     private final String world;
+    private final PlotPlayer<?> player;
     private Direction dir;
     private int max;
     private Result eventResult;
-    private final PlotPlayer<?> player;
 
     /**
      * PlotMergeEvent: Called when plots are merged

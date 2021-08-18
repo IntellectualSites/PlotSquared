@@ -34,6 +34,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 final class ClickStripTransform implements ComponentTransform {
+
     private final Set<ClickEvent.@NotNull Action> actionsToStrip;
 
     public ClickStripTransform(final Set<ClickEvent.@NotNull Action> actionsToStrip) {
@@ -43,7 +44,9 @@ final class ClickStripTransform implements ComponentTransform {
     @Override
     public @NonNull Component transform(@NonNull final Component original) {
         var clickEvent = original.clickEvent();
-        if (clickEvent == null || !actionsToStrip.contains(clickEvent.action())) return original;
+        if (clickEvent == null || !actionsToStrip.contains(clickEvent.action())) {
+            return original;
+        }
         return original.clickEvent(null); // remove it
     }
 

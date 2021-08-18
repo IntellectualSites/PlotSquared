@@ -26,6 +26,8 @@
 package com.plotsquared.bukkit.entity;
 
 import com.plotsquared.core.configuration.Settings;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.Art;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -55,8 +57,6 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 

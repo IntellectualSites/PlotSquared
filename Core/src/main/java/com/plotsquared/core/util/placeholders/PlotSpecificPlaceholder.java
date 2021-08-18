@@ -39,7 +39,8 @@ public abstract class PlotSpecificPlaceholder extends Placeholder {
     }
 
     @Override
-    public @NonNull final String getValue(final @NonNull PlotPlayer<?> player) {
+    public @NonNull
+    final String getValue(final @NonNull PlotPlayer<?> player) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
             return "";
@@ -54,7 +55,8 @@ public abstract class PlotSpecificPlaceholder extends Placeholder {
      * @param plot   Plot that the player is in
      * @return Placeholder value, or {@code ""} if the placeholder does not apply
      */
-    public @NonNull abstract String getValue(
+    public @NonNull
+    abstract String getValue(
             final @NonNull PlotPlayer<?> player,
             final @NonNull Plot plot
     );

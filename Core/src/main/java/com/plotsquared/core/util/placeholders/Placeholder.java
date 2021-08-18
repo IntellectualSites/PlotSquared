@@ -46,14 +46,16 @@ public abstract class Placeholder {
      * @param player Player
      * @return Placeholder value. Return {@code ""} if no placeholder value can be returned
      */
-    public @NonNull abstract String getValue(final @NonNull PlotPlayer<?> player);
+    public @NonNull
+    abstract String getValue(final @NonNull PlotPlayer<?> player);
 
     /**
      * Get the placeholder key
      *
      * @return Placeholder key
      */
-    public @NonNull final String getKey() {
+    public @NonNull
+    final String getKey() {
         return this.key;
     }
 

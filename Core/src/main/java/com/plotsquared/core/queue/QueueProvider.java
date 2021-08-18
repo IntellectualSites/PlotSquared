@@ -27,9 +27,9 @@ package com.plotsquared.core.queue;
 
 import com.plotsquared.core.PlotSquared;
 import com.sk89q.worldedit.world.World;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class QueueProvider {
 

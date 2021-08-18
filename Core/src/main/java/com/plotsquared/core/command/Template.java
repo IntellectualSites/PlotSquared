@@ -293,8 +293,8 @@ public class Template extends SubCommand {
                 completions.add("import");
             }
             final List<Command> commands = completions.stream().filter(completion -> completion
-                    .toLowerCase()
-                    .startsWith(args[0].toLowerCase()))
+                            .toLowerCase()
+                            .startsWith(args[0].toLowerCase()))
                     .map(completion -> new Command(
                             null,
                             true,

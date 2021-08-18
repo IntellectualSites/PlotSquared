@@ -95,7 +95,8 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
      *
      * @return Non-nullable flag value
      */
-    public @NonNull final T getValue() {
+    public @NonNull
+    final T getValue() {
         return this.value;
     }
 

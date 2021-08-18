@@ -42,9 +42,9 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -59,12 +59,11 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
     private final String world;
     private final int max;
     private final WorldUtil worldUtil;
-
+    private final Map<Long, Integer[]> tileEntityCount = new HashMap<>();
     int Ecount = 0;
     boolean Eblocked = false;
     private int count;
     private Extent parent;
-    private final Map<Long, Integer[]> tileEntityCount = new HashMap<>();
 
     public ProcessedWEExtent(
             String world,

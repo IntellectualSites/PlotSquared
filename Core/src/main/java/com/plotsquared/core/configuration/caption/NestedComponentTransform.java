@@ -25,8 +25,6 @@
  */
 package com.plotsquared.core.configuration.caption;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -37,6 +35,7 @@ import java.util.stream.Collectors;
  * A transform that applies a nested transform on all child components and the component itself.
  */
 final class NestedComponentTransform implements ComponentTransform {
+
     private final ComponentTransform transform;
 
     public NestedComponentTransform(final ComponentTransform transform) {
@@ -51,4 +50,5 @@ final class NestedComponentTransform implements ComponentTransform {
     private List<Component> transformChildren(List<Component> children) {
         return children.stream().map(this::transform).collect(Collectors.toList());
     }
+
 }

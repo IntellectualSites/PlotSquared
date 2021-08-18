@@ -61,9 +61,9 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
 import java.util.ArrayDeque;
@@ -482,7 +482,8 @@ public class HybridUtils {
                             Iterator<BlockVector2> iterator = HybridUtils.regions.iterator();
                             BlockVector2 loc = iterator.next();
                             iterator.remove();
-                            LOGGER.error("Error! Could not update '{}/region/r.{}.{}.mca' (Corrupt chunk?)",
+                            LOGGER.error(
+                                    "Error! Could not update '{}/region/r.{}.{}.mca' (Corrupt chunk?)",
                                     area.getWorldHash(),
                                     loc.getX(),
                                     loc.getZ()
@@ -626,7 +627,8 @@ public class HybridUtils {
                             int maxY = Math.max(extend, blocks.length);
                             for (int y = 0; y < maxY; y++) {
                                 if (y > blocks.length - 1) {
-                                    queue.setBlock(finalX + X + plotWorld.ROAD_OFFSET_X,
+                                    queue.setBlock(
+                                            finalX + X + plotWorld.ROAD_OFFSET_X,
                                             minY + y,
                                             finalZ + Z + plotWorld.ROAD_OFFSET_Z,
                                             WEExtent.AIRBASE
@@ -641,7 +643,8 @@ public class HybridUtils {
                                                 block
                                         );
                                     } else {
-                                        queue.setBlock(finalX + X + plotWorld.ROAD_OFFSET_X,
+                                        queue.setBlock(
+                                                finalX + X + plotWorld.ROAD_OFFSET_X,
                                                 minY + y,
                                                 finalZ + Z + plotWorld.ROAD_OFFSET_Z,
                                                 WEExtent.AIRBASE

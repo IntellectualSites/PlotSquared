@@ -363,7 +363,8 @@ public final class FlagCommand extends Command {
         }
         plot.setFlag(parsed);
         player.sendMessage(TranslatableCaption.of("flag.flag_added"), Template.of("flag", String.valueOf(args[0])),
-                Template.of("value", String.valueOf(parsed)));
+                Template.of("value", String.valueOf(parsed))
+        );
     }
 
     @CommandDeclaration(command = "add",
@@ -430,7 +431,8 @@ public final class FlagCommand extends Command {
             return;
         }
         player.sendMessage(TranslatableCaption.of("flag.flag_added"), Template.of("flag", String.valueOf(args[0])),
-                Template.of("value", String.valueOf(parsed)));
+                Template.of("value", String.valueOf(parsed))
+        );
     }
 
     @CommandDeclaration(command = "remove",
@@ -539,7 +541,8 @@ public final class FlagCommand extends Command {
                 return;
             }
         }
-        player.sendMessage(TranslatableCaption.of("flag.flag_removed"), Template.of("flag", args[0]), Template.of("value",
+        player.sendMessage(TranslatableCaption.of("flag.flag_removed"), Template.of("flag", args[0]), Template.of(
+                "value",
                 String.valueOf(flag)
         ));
     }
@@ -582,7 +585,8 @@ public final class FlagCommand extends Command {
             while (flagIterator.hasNext()) {
                 final String flag = flagIterator.next();
                 builder.append(MINI_MESSAGE
-                        .parse(TranslatableCaption.of("flag.flag_list_flag").getComponent(player),
+                        .parse(
+                                TranslatableCaption.of("flag.flag_list_flag").getComponent(player),
                                 Template.of("command", "/plot flag info " + flag),
                                 Template.of("flag", flag),
                                 Template.of("suffix", flagIterator.hasNext() ? ", " : "")

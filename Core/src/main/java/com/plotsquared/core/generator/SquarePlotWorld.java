@@ -31,10 +31,10 @@ import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.GlobalBlockQueue;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class SquarePlotWorld extends GridPlotWorld {
 

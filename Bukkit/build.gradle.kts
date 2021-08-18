@@ -53,7 +53,7 @@ dependencies {
     implementation(libs.paster)
 
     // Adventure
-    implementation(libs.platform)
+    implementation(libs.adventurePlatformBukkit)
 }
 
 tasks.processResources {

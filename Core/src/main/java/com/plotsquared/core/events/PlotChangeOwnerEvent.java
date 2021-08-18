@@ -37,9 +37,9 @@ public class PlotChangeOwnerEvent extends PlotEvent implements CancellablePlotEv
     private final PlotPlayer<?> initiator;
     @Nullable
     private final UUID oldOwner;
+    private final boolean hasOldOwner;
     @Nullable
     private UUID newOwner;
-    private final boolean hasOldOwner;
     private Result eventResult;
 
     /**
