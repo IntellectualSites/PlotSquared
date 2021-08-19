@@ -25,24 +25,7 @@
  */
 package com.plotsquared.core.queue;
 
-import com.plotsquared.core.util.task.PlotSquaredTask;
-
-public abstract class ChunkCoordinator implements PlotSquaredTask {
-
-    private boolean cancelled = false;
-
-    @Override
-    public abstract void runTask();
-
-    @Override
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    @Override
-    public void cancel() {
-        this.cancelled = true;
-    }
+public abstract class ChunkCoordinator implements Runnable {
 
     /**
      * Starts the chunk coordinator. This will usually (implementation-specific-permitting) mark chunks to be loaded in batches,
@@ -50,6 +33,11 @@ public abstract class ChunkCoordinator implements PlotSquaredTask {
      * chunks, access them with a Consumer(BlockVector2) and remove the ticket once work has been completed on it.
      */
     public abstract void start();
+
+    /**
+     * Cancel the chunk coordinator.
+     */
+    public abstract void cancel();
 
     /**
      * Get the amount of remaining chunks (at the time of the method call)
