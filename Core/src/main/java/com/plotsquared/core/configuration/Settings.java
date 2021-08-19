@@ -674,7 +674,9 @@ public class Settings extends Config {
                 "  - 2 - Only execute lighting where blocks with light values are placed or removed/replaced",
                 "  - 3 - Always execute lighting (slowest)"})
         public static int LIGHTING_MODE = 1;
-
+        @Comment({"If blocks at the edges of queued operations should be set causing updates",
+                " - Slightly slower, but prevents issues such as fences left connected to nothing"})
+        public static boolean UPDATE_EDGES = true;
     }
 
     @Comment("Settings related to tab completion")
