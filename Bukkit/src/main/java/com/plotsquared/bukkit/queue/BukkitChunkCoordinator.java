@@ -30,11 +30,13 @@ import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.core.queue.ChunkCoordinator;
 import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
+import com.plotsquared.core.util.task.PlotSquaredTask;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.world.World;
 import io.papermc.lib.PaperLib;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.plugin.Plugin;
@@ -75,6 +77,9 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
 
     private final AtomicInteger expectedSize;
     private int batchSize;
+    private PlotSquaredTask task;
+    private boolean shouldCancel;
+    private boolean finished;
 
     @Inject
     private BukkitChunkCoordinator(
@@ -108,11 +113,41 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
         // Request initial batch
         this.requestBatch();
         // Wait until next tick to give the chunks a chance to be loaded
-        TaskManager.runTaskLater(() -> TaskManager.runTaskRepeat(this, TaskTime.ticks(1)), TaskTime.ticks(1));
+        TaskManager.runTaskLater(() -> task = TaskManager.runTaskRepeat(this, TaskTime.ticks(1)), TaskTime.ticks(1));
     }
 
     @Override
-    public void runTask() {
+    public void cancel() {
+        shouldCancel = true;
+    }
+
+    private void finish() {
+        try {
+            this.whenDone.run();
+        } catch (final Throwable throwable) {
+            this.throwableConsumer.accept(throwable);
+        } finally {
+            for (final ProgressSubscriber subscriber : this.progressSubscribers) {
+                subscriber.notifyEnd();
+            }
+            task.cancel();
+            finished = true;
+        }
+    }
+
+    @Override
+    public void run() {
+        if (shouldCancel) {
+            if (unloadAfter) {
+                Chunk chunk;
+                while ((chunk = availableChunks.poll()) != null) {
+                    freeChunk(chunk);
+                }
+            }
+            finish();
+            return;
+        }
+
         Chunk chunk = this.availableChunks.poll();
         if (chunk == null) {
             return;
@@ -143,16 +178,7 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
         final int expected = this.expectedSize.addAndGet(-processedChunks);
 
         if (expected <= 0) {
-            try {
-                this.whenDone.run();
-            } catch (final Throwable throwable) {
-                this.throwableConsumer.accept(throwable);
-            } finally {
-                for (final ProgressSubscriber subscriber : this.progressSubscribers) {
-                    subscriber.notifyEnd();
-                }
-                this.cancel();
-            }
+            finish();
         } else {
             if (this.availableChunks.size() < processedChunks) {
                 final double progress = ((double) totalSize - (double) expected) / (double) totalSize;
@@ -186,11 +212,16 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
     }
 
     /**
-     * Once a chunk has been loaded, process it (add a plugin ticket and add to available chunks list)
+     * Once a chunk has been loaded, process it (add a plugin ticket and add to
+     * available chunks list). It is important that this gets executed on the
+     * server's main thread.
      */
     private void processChunk(final @NonNull Chunk chunk) {
         if (!chunk.isLoaded()) {
             throw new IllegalArgumentException(String.format("Chunk %d;%d is is not loaded", chunk.getX(), chunk.getZ()));
+        }
+        if (finished) {
+            return;
         }
         chunk.addPluginChunkTicket(this.plugin);
         this.availableChunks.add(chunk);
