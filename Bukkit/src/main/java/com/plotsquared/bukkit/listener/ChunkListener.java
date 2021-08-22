@@ -30,6 +30,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.ReflectionUtils.RefClass;
 import com.plotsquared.core.util.ReflectionUtils.RefField;
@@ -38,8 +39,6 @@ import com.plotsquared.core.util.task.PlotSquaredTask;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import io.papermc.lib.PaperLib;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -68,13 +67,22 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 @SuppressWarnings("unused")
 public class ChunkListener implements Listener {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + ChunkListener.class.getSimpleName());
-
     private final PlotAreaManager plotAreaManager;
+    private final int version;
 
     private RefMethod methodGetHandleChunk;
     private RefMethod methodGetHandleWorld;
     private RefField mustSave;
+    /*
+    private RefMethod methodGetFullChunk;
+    private RefMethod methodGetBukkitChunk;
+    private RefMethod methodGetChunkProvider;
+    private RefMethod methodGetVisibleMap;
+    private RefField worldServer;
+    private RefField playerChunkMap;
+    private RefField updatingChunks;
+    private RefField visibleChunks;
+    */
     private Chunk lastChunk;
     private boolean ignoreUnload = false;
     private boolean isTrueForNotSave = true;
@@ -82,26 +90,58 @@ public class ChunkListener implements Listener {
     @Inject
     public ChunkListener(final @NonNull PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
+        version = PlotSquared.platform().serverVersion()[1];
         if (!Settings.Chunk_Processor.AUTO_TRIM) {
             return;
         }
         try {
-            this.methodGetHandleWorld = getRefClass("{cb}.CraftWorld").getMethod("getHandle");
+            RefClass classCraftWorld = getRefClass("{cb}.CraftWorld");
+            this.methodGetHandleWorld = classCraftWorld.getMethod("getHandle");
             RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
             this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
             try {
-                if (PlotSquared.platform().serverVersion()[1] < 17) {
+                if (version < 17) {
                     RefClass classChunk = getRefClass("{nms}.Chunk");
-                    RefClass worldServer = getRefClass("{nms}.WorldServer");
-                    if (PlotSquared.platform().serverVersion()[1] == 13) {
+                    if (version == 13) {
                         this.mustSave = classChunk.getField("mustSave");
                         this.isTrueForNotSave = false;
                     } else {
                         this.mustSave = classChunk.getField("mustNotSave");
+                        /*
+                        this.worldServer = classCraftWorld.getField("world");
+                        this.methodGetChunkProvider = getRefClass("{nms}.WorldServer").getMethod("getChunkProvider");
+                        this.playerChunkMap = getRefClass("{nms}.ChunkProviderServer").getField("playerChunkMap");
+                        RefClass classPlayerChunkMap = getRefClass("{nms}.PlayerChunkMap");
+                        if (PaperLib.isPaper() && version == 16) {
+                            this.updatingChunks = classPlayerChunkMap.getField("updatingChunks");
+                            this.methodGetVisibleMap = getRefClass("com.destroystokyo.paper.util.map.QueuedChangesMapLong2Object").getMethod(
+                                    "getVisibleMap");
+                        } else {
+                            this.visibleChunks = classPlayerChunkMap.getField("visibleChunks");
+                        }
+                        this.methodGetFullChunk = getRefClass("{nms}.PlayerChunk").getMethod("getFullChunk");
+                        this.methodGetBukkitChunk = getRefClass("{nms}.Chunk").getMethod("getBukkitChunk");
+                        */
                     }
-                } else {
+                } else if (version == 17) {
                     RefClass classChunk = getRefClass("net.minecraft.world.level.chunk.Chunk");
                     this.mustSave = classChunk.getField("mustNotSave");
+                    /*
+                    this.worldServer = classCraftWorld.getField("world");
+                    this.methodGetChunkProvider = getRefClass("net.minecraft.server.level.WorldServer").getMethod(
+                            "getChunkProvider");
+                    this.playerChunkMap = getRefClass("net.minecraft.server.level.ChunkProviderServer").getField("a");
+                    RefClass classPlayerChunkMap = getRefClass("net.minecraft.server.level.PlayerChunkMap");
+                    if (PaperLib.isPaper()) {
+                        this.updatingChunks = classPlayerChunkMap.getField("updatingChunks");
+                        this.methodGetVisibleMap = getRefClass("com.destroystokyo.paper.util.map.QueuedChangesMapLong2Object").getMethod(
+                                "getVisibleMap");
+                    } else {
+                        this.visibleChunks = classPlayerChunkMap.getField("l");
+                    }
+                    this.methodGetFullChunk = getRefClass("net.minecraft.server.level.PlayerChunk").getMethod("getFullChunk");
+                    this.methodGetBukkitChunk = getRefClass("net.minecraft.world.level.chunk.Chunk").getMethod("getBukkitChunk");
+                     */
                 }
             } catch (NoSuchFieldException e) {
                 e.printStackTrace();
@@ -112,6 +152,9 @@ public class ChunkListener implements Listener {
         for (World world : Bukkit.getWorlds()) {
             world.setAutoSave(false);
         }
+        if (version > 13) {
+            return;
+        }
         TaskManager.runTaskRepeat(() -> {
             try {
                 HashSet<Chunk> toUnload = new HashSet<>();
@@ -120,28 +163,50 @@ public class ChunkListener implements Listener {
                     if (!this.plotAreaManager.hasPlotArea(worldName)) {
                         continue;
                     }
-                    Method methodIsChunkInUse = null;
-                    Object chunkMap = null;
-                    if (PlotSquared.platform().serverVersion()[1] == 13) {
-                        Object w = methodGetHandleWorld.of(world).call();
-                        chunkMap = w.getClass().getDeclaredMethod("getPlayerChunkMap").invoke(w);
-                        methodIsChunkInUse =
+                    Object craftWorld = methodGetHandleWorld.of(world).call();
+                    if (version == 13) {
+                        Object chunkMap = craftWorld.getClass().getDeclaredMethod("getPlayerChunkMap").invoke(craftWorld);
+                        Method methodIsChunkInUse =
                                 chunkMap.getClass().getDeclaredMethod("isChunkInUse", int.class, int.class);
-                    }
-                    Chunk[] chunks = world.getLoadedChunks();
-                    for (Chunk chunk : chunks) {
-                        if (methodIsChunkInUse != null && (boolean) methodIsChunkInUse
-                                .invoke(chunkMap, chunk.getX(), chunk.getZ())) {
-                            continue;
+                        Chunk[] chunks = world.getLoadedChunks();
+                        for (Chunk chunk : chunks) {
+                            if ((boolean) methodIsChunkInUse.invoke(chunkMap, chunk.getX(), chunk.getZ())) {
+                                continue;
+                            }
+                            int x = chunk.getX();
+                            int z = chunk.getZ();
+                            if (!shouldSave(worldName, x, z)) {
+                                unloadChunk(worldName, chunk, false);
+                                continue;
+                            }
+                            toUnload.add(chunk);
                         }
-                        int x = chunk.getX();
-                        int z = chunk.getZ();
-                        if (!shouldSave(worldName, x, z)) {
-                            unloadChunk(worldName, chunk, false);
-                            continue;
+                    }/* else {
+                        Object worldServer = this.worldServer.of(craftWorld).get();
+                        Object chunkProviderServer = methodGetChunkProvider.of(worldServer).call();
+                        Object playerChunkMap = this.playerChunkMap.of(chunkProviderServer).get();
+                        Long2ObjectLinkedOpenHashMap<?> chunks;
+                        if (PaperLib.isPaper() && version > 15) {
+                            Object updatingChunks = this.updatingChunks.of(playerChunkMap).get();
+                            chunks = (Long2ObjectLinkedOpenHashMap<?>) this.methodGetVisibleMap.of(updatingChunks).call();
+                        } else {
+                            chunks = (Long2ObjectLinkedOpenHashMap<?>) this.visibleChunks.of(playerChunkMap).get();
                         }
-                        toUnload.add(chunk);
-                    }
+                        for (Object playerChunk : chunks.values()) {
+                            Object nmsChunk = this.methodGetFullChunk.of(playerChunk).call();
+                            if (nmsChunk == null) {
+                                continue;
+                            }
+                            Chunk chunk = (Chunk) this.methodGetBukkitChunk.of(nmsChunk).call();
+                            int x = chunk.getX();
+                            int z = chunk.getZ();
+                            if (!shouldSave(worldName, x, z)) {
+                                unloadChunk(worldName, chunk, false);
+                                continue;
+                            }
+                            toUnload.add(chunk);
+                        }
+                    }*/
                 }
                 if (toUnload.isEmpty()) {
                     return;
@@ -181,23 +246,44 @@ public class ChunkListener implements Listener {
         int z = chunkZ << 4;
         int x2 = x + 15;
         int z2 = z + 15;
-        Plot plot = Location.at(world, x, 1, z).getOwnedPlotAbs();
-        if (plot != null && plot.hasOwner()) {
-            return true;
+        Location loc = Location.at(world, x, 1, z);
+        PlotArea plotArea = plotAreaManager.getPlotArea(loc);
+        if (plotArea != null) {
+            Plot plot = plotArea.getPlot(loc);
+            if (plot != null && plot.hasOwner()) {
+                return true;
+            }
         }
-        plot = Location.at(world, x2, 1, z2).getOwnedPlotAbs();
-        if (plot != null && plot.hasOwner()) {
-            return true;
+        loc = Location.at(world, x2, 1, z2);
+        plotArea = plotAreaManager.getPlotArea(loc);
+        if (plotArea != null) {
+            Plot plot = plotArea.getPlot(loc);
+            if (plot != null && plot.hasOwner()) {
+                return true;
+            }
         }
-        plot = Location.at(world, x2, 1, z).getOwnedPlotAbs();
-        if (plot != null && plot.hasOwner()) {
-            return true;
+        loc = Location.at(world, x2, 1, z);
+        plotArea = plotAreaManager.getPlotArea(loc);
+        if (plotArea != null) {
+            Plot plot = plotArea.getPlot(loc);
+            if (plot != null && plot.hasOwner()) {
+                return true;
+            }
         }
-        plot = Location.at(world, x, 1, z2).getOwnedPlotAbs();
-        if (plot != null && plot.hasOwner()) {
-            return true;
+        loc = Location.at(world, x, 1, z2);
+        plotArea = plotAreaManager.getPlotArea(loc);
+        if (plotArea != null) {
+            Plot plot = plotArea.getPlot(loc);
+            if (plot != null && plot.hasOwner()) {
+                return true;
+            }
         }
-        plot = Location.at(world, x + 7, 1, z + 7).getOwnedPlotAbs();
+        loc = Location.at(world, x + 7, 1, z + 7);
+        plotArea = plotAreaManager.getPlotArea(loc);
+        if (plotArea == null) {
+            return false;
+        }
+        Plot plot = plotArea.getPlot(loc);
         return plot != null && plot.hasOwner();
     }
 
