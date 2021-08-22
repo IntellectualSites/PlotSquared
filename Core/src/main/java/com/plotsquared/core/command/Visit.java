@@ -239,9 +239,15 @@ public class Visit extends Command {
                             );
                         } else {
                             final UUID uuid = uuids.toArray(new UUID[0])[0];
+                            PlotQuery query = PlotQuery.newQuery();
+                            if (Settings.Teleport.VISIT_MERGED_OWNERS) {
+                                query.ownersInclude(uuid);
+                            } else {
+                                query.whereBasePlot().ownedBy(uuid);
+                            }
                             this.visit(
                                     player,
-                                    PlotQuery.newQuery().ownedBy(uuid).whereBasePlot(),
+                                    query,
                                     finalSortByArea,
                                     confirm,
                                     whenDone,

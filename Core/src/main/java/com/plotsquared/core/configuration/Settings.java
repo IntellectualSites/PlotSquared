@@ -567,6 +567,8 @@ public class Settings extends Config {
         public static boolean ON_DELETE = false;
         @Comment("The visit command is ordered by world instead of globally")
         public static boolean PER_WORLD_VISIT = false;
+        @Comment("Search merged plots for having multiple owners when using the visit command")
+        public static boolean VISIT_MERGED_OWNERS = true;
 
     }
 

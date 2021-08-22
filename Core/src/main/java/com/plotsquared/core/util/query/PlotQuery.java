@@ -203,6 +203,28 @@ public final class PlotQuery implements Iterable<Plot> {
     }
 
     /**
+     * Query for base plots where one of the merged plots is owned by a specific player
+     *
+     * @param owner Owner UUID
+     * @return The query instance
+     */
+    public @NonNull PlotQuery ownersInclude(final @NonNull UUID owner) {
+        Preconditions.checkNotNull(owner, "Owner may not be null");
+        return this.addFilter(new OwnersIncludeFilter(owner));
+    }
+
+    /**
+     * Query for base plots where one of the merged plots is owned by a specific player
+     *
+     * @param owner Owner
+     * @return The query instance
+     */
+    public @NonNull PlotQuery ownersInclude(final @NonNull PlotPlayer<?> owner) {
+        Preconditions.checkNotNull(owner, "Owner may not be null");
+        return this.addFilter(new OwnersIncludeFilter(owner.getUUID()));
+    }
+
+    /**
      * Query for plots with a specific alias
      *
      * @param alias Plot alias
