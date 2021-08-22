@@ -33,7 +33,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class PlotTitleFlag extends PlotFlag<PlotTitle, PlotTitleFlag> {
 
-    public static final PlotTitleFlag TITLE_FLAG_EMPTY = new PlotTitleFlag(new PlotTitle("", ""));
+    public static final PlotTitleFlag TITLE_FLAG_EMPTY = new PlotTitleFlag(PlotTitle.CONFIGURED);
 
     /**
      * Construct a new flag instance.

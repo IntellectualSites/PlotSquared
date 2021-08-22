@@ -25,12 +25,20 @@
  */
 package com.plotsquared.core.plot;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class PlotTitle {
 
+    public static final PlotTitle CONFIGURED = new PlotTitle();
+
     private final String title;
     private final String subtitle;
+
+    private PlotTitle() {
+        title = null;
+        subtitle = null;
+    }
 
     public PlotTitle(String title, String subtitle) {
         Objects.requireNonNull(title);
@@ -39,10 +47,12 @@ public class PlotTitle {
         this.subtitle = subtitle;
     }
 
+    @Nullable
     public String title() {
         return title;
     }
 
+    @Nullable
     public String subtitle() {
         return subtitle;
     }

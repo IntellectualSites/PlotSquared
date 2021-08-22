@@ -35,7 +35,6 @@ import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
-import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
@@ -297,60 +296,59 @@ public class PlotListener {
                 String subtitle;
                 PlotTitle titleFlag = plot.getFlag(PlotTitleFlag.class);
                 boolean fromFlag;
-                if (!titleFlag.title().isEmpty() && !titleFlag.subtitle().isEmpty()) {
+                if (titleFlag.title() != null && titleFlag.subtitle() != null) {
                     title = titleFlag.title();
                     subtitle = titleFlag.subtitle();
                     fromFlag = true;
                 } else {
-                    title = TranslatableCaption.of("titles.title_entered_plot").getComponent(ConsolePlayer.getConsole());
-                    subtitle = TranslatableCaption.of("titles.title_entered_plot_sub").getComponent(ConsolePlayer.getConsole());
+                    title = "";
+                    subtitle = "";
                     fromFlag = false;
                 }
-                if (!title.isEmpty() && !subtitle.isEmpty()) {
-                    TaskManager.runTaskLaterAsync(() -> {
-                        Plot lastPlot;
-                        try (final MetaDataAccess<Plot> lastPlotAccess =
-                                     player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
-                            lastPlot = lastPlotAccess.get().orElse(null);
-                        }
-                        if ((lastPlot != null) && plot.getId().equals(lastPlot.getId()) && plot.hasOwner()) {
-                            final UUID plotOwner = plot.getOwnerAbs();
-                            String owner = PlayerManager.getName(plotOwner, false);
-                            Caption header = fromFlag ? StaticCaption.of(title) : TranslatableCaption.of("titles" +
-                                    ".title_entered_plot");
-                            Caption subHeader = fromFlag ? StaticCaption.of(subtitle) : TranslatableCaption.of("titles" +
-                                    ".title_entered_plot_sub");
-                            Template plotTemplate = Template.of("plot", lastPlot.getId().toString());
-                            Template worldTemplate = Template.of("world", player.getLocation().getWorldName());
-                            Template ownerTemplate = Template.of("owner", owner);
+                // It's not actually possible for these to be null, but IntelliJ is dumb
+                TaskManager.runTaskLaterAsync(() -> {
+                    Plot lastPlot;
+                    try (final MetaDataAccess<Plot> lastPlotAccess =
+                                 player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+                        lastPlot = lastPlotAccess.get().orElse(null);
+                    }
+                    if ((lastPlot != null) && plot.getId().equals(lastPlot.getId()) && plot.hasOwner()) {
+                        final UUID plotOwner = plot.getOwnerAbs();
+                        String owner = PlayerManager.getName(plotOwner, false);
+                        Caption header = fromFlag ? StaticCaption.of(title) : TranslatableCaption.of("titles" +
+                                ".title_entered_plot");
+                        Caption subHeader = fromFlag ? StaticCaption.of(subtitle) : TranslatableCaption.of("titles" +
+                                ".title_entered_plot_sub");
+                        Template plotTemplate = Template.of("plot", lastPlot.getId().toString());
+                        Template worldTemplate = Template.of("world", player.getLocation().getWorldName());
+                        Template ownerTemplate = Template.of("owner", owner);
 
-                            final Consumer<String> userConsumer = user -> {
-                                if (Settings.Titles.TITLES_AS_ACTIONBAR) {
-                                    player.sendActionBar(header, plotTemplate, worldTemplate, ownerTemplate);
-                                } else {
-                                    player.sendTitle(header, subHeader, plotTemplate, worldTemplate, ownerTemplate);
-                                }
-                            };
-
-                            UUID uuid = plot.getOwner();
-                            if (uuid == null) {
-                                userConsumer.accept("Unknown");
-                            } else if (uuid.equals(DBFunc.SERVER)) {
-                                userConsumer.accept(MINI_MESSAGE.stripTokens(TranslatableCaption
-                                        .of("info.server")
-                                        .getComponent(player)));
+                        final Consumer<String> userConsumer = user -> {
+                            if (Settings.Titles.TITLES_AS_ACTIONBAR) {
+                                player.sendActionBar(header, plotTemplate, worldTemplate, ownerTemplate);
                             } else {
-                                PlotSquared.get().getImpromptuUUIDPipeline().getSingle(plot.getOwner(), (user, throwable) -> {
-                                    if (throwable != null) {
-                                        userConsumer.accept("Unknown");
-                                    } else {
-                                        userConsumer.accept(user);
-                                    }
-                                });
+                                player.sendTitle(header, subHeader, plotTemplate, worldTemplate, ownerTemplate);
                             }
+                        };
+
+                        UUID uuid = plot.getOwner();
+                        if (uuid == null) {
+                            userConsumer.accept("Unknown");
+                        } else if (uuid.equals(DBFunc.SERVER)) {
+                            userConsumer.accept(MINI_MESSAGE.stripTokens(TranslatableCaption
+                                    .of("info.server")
+                                    .getComponent(player)));
+                        } else {
+                            PlotSquared.get().getImpromptuUUIDPipeline().getSingle(plot.getOwner(), (user, throwable) -> {
+                                if (throwable != null) {
+                                    userConsumer.accept("Unknown");
+                                } else {
+                                    userConsumer.accept(user);
+                                }
+                            });
                         }
-                    }, TaskTime.seconds(1L));
-                }
+                    }
+                }, TaskTime.seconds(1L));
             }
 
             TimedFlag.Timed<Integer> feed = plot.getFlag(FeedFlag.class);
