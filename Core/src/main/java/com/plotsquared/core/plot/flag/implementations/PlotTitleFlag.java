@@ -33,7 +33,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class PlotTitleFlag extends PlotFlag<PlotTitle, PlotTitleFlag> {
 
-    public static final PlotTitleFlag TITLE_FLAG_EMPTY = new PlotTitleFlag(PlotTitle.CONFIGURED);
+    public static final PlotTitleFlag TITLE_FLAG_DEFAULT = new PlotTitleFlag(PlotTitle.CONFIGURED);
 
     /**
      * Construct a new flag instance.
@@ -50,6 +50,9 @@ public class PlotTitleFlag extends PlotFlag<PlotTitle, PlotTitleFlag> {
 
     @Override
     public PlotTitleFlag parse(@NonNull String input) throws FlagParseException {
+        if (input.equals("CONFIGURED")) {
+            return TITLE_FLAG_DEFAULT;
+        }
         if (!input.contains("\"")) {
             return new PlotTitleFlag(new PlotTitle(input, ""));
         }
@@ -82,6 +85,9 @@ public class PlotTitleFlag extends PlotFlag<PlotTitle, PlotTitleFlag> {
 
     @Override
     public String toString() {
+        if (getValue() == PlotTitle.CONFIGURED) {
+            return "CONFIGURED";
+        }
         return "\"" + getValue().title() + "\" \"" + getValue().subtitle() + "\"";
     }
 

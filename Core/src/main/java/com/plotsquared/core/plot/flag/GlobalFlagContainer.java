@@ -233,7 +233,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(DescriptionFlag.DESCRIPTION_FLAG_EMPTY);
         this.addFlag(GreetingFlag.GREETING_FLAG_EMPTY);
         this.addFlag(FarewellFlag.FAREWELL_FLAG_EMPTY);
-        this.addFlag(PlotTitleFlag.TITLE_FLAG_EMPTY);
+        this.addFlag(PlotTitleFlag.TITLE_FLAG_DEFAULT);
 
         // Internal flags
         this.addFlag(new AnalysisFlag(Collections.emptyList()));
