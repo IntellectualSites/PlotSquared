@@ -71,11 +71,9 @@ public final class LockRepository {
      * @param runnable Action to run when the lock is available
      */
     public void useLock(final @NonNull LockKey key, final @NonNull Runnable runnable) {
-        this.useLock(key, lock -> {
-            lock.lock();
-            runnable.run();
-            lock.unlock();
-        });
+       try (LockAccess ignored = lock(key)) {
+           runnable.run();
+       }
     }
 
     /**
