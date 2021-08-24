@@ -291,9 +291,9 @@ public abstract class PlotArea {
     }
 
     /**
-     * Check if a PlotArea is compatible (move/copy etc).
+     * Check if a PlotArea is compatible (move/copy etc.).
      *
-     * @param plotArea the {@code PlotArea} to compare
+     * @param plotArea the {@link PlotArea} to compare
      * @return true if both areas are compatible
      */
     public boolean isCompatible(final @NonNull PlotArea plotArea) {
@@ -578,10 +578,10 @@ public abstract class PlotArea {
     public abstract ConfigurationNode[] getSettingNodes();
 
     /**
-     * Gets the {@code Plot} at a location.
+     * Gets the {@link Plot} at a location.
      *
      * @param location the location
-     * @return the {@code Plot} or null if none exists
+     * @return the {@link Plot} or null if none exists
      */
     public @Nullable Plot getPlotAbs(final @NonNull Location location) {
         final PlotId pid =
@@ -641,7 +641,7 @@ public abstract class PlotArea {
     /**
      * Get the owned Plot at a PlotId.
      *
-     * @param id the {@code PlotId}
+     * @param id the {@link PlotId}
      * @return the plot or null
      */
     public @Nullable Plot getOwnedPlotAbs(final @NonNull PlotId id) {
@@ -686,7 +686,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * A collection of the claimed plots in this {@code PlotArea}.
+     * A collection of the claimed plots in this {@link PlotArea}.
      *
      * @return a collection of claimed plots
      */
@@ -748,7 +748,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * Retrieves the number of claimed plot in the {@code PlotArea}.
+     * Retrieves the number of claimed plot in the {@link PlotArea}.
      *
      * @return the number of claimed plots
      */

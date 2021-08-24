@@ -187,7 +187,7 @@ public class PlotAPI {
      * different UUIDs than Bukkit</i>
      *
      * @param uuid the uuid of the player to wrap
-     * @return a {@code PlotPlayer}
+     * @return a {@link PlotPlayer}
      */
     public @Nullable PlotPlayer<?> wrapPlayer(final @NonNull UUID uuid) {
         return PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
@@ -197,7 +197,7 @@ public class PlotAPI {
      * Gets the PlotPlayer for a username.
      *
      * @param player the player to wrap
-     * @return a {@code PlotPlayer}
+     * @return a {@link PlotPlayer}
      */
     public @Nullable PlotPlayer<?> wrapPlayer(final @NonNull String player) {
         return PlotSquared.platform().playerManager().getPlayerIfExists(player);

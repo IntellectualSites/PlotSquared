@@ -286,7 +286,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
     }
 
     /**
-     * Check whether or not the location belongs to a plot area
+     * Check whether the location belongs to a plot area
      *
      * @return {@code true} if the location belongs to a plot area, else {@code false}
      */
@@ -295,7 +295,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
     }
 
     /**
-     * Check whether or not the location belongs to a plot road
+     * Check whether the location belongs to a plot road
      *
      * @return {@code true} if the location belongs to a plot road, else {@code false}
      */

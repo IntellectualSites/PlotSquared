@@ -359,7 +359,7 @@ public abstract class WorldUtil {
      *
      * @param block1 First block
      * @param block2 Second block
-     * @return {@code true} if the blocks have the same type, {@code false} if not
+     * @return {@code true} if the blocks have the same type, {@code false} if not
      */
     public abstract boolean isBlockSame(@NonNull BlockState block1, @NonNull BlockState block2);
 

@@ -339,7 +339,7 @@ public class PlotSquared {
     /**
      * Add a global reference to a plot world.
      *
-     * @param plotArea the {@code PlotArea} to add.
+     * @param plotArea the {@link PlotArea} to add.
      * @see #removePlotArea(PlotArea) To remove the reference
      */
     public void addPlotArea(final @NonNull PlotArea plotArea) {
@@ -429,7 +429,7 @@ public class PlotSquared {
     /**
      * Remove a plot world reference.
      *
-     * @param area the {@code PlotArea} to remove
+     * @param area the {@link PlotArea} to remove
      */
     public void removePlotArea(final @NonNull PlotArea area) {
         getPlotAreaManager().removePlotArea(area);

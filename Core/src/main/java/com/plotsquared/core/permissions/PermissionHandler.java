@@ -70,7 +70,7 @@ public interface PermissionHandler {
     @NonNull Set<PermissionHandlerCapability> getCapabilities();
 
     /**
-     * Check whether or not the permission handler has a given capability
+     * Check whether the permission handler has a given capability
      *
      * @param capability Capability
      * @return {@code true} if the handler has the capability, else {@code false}

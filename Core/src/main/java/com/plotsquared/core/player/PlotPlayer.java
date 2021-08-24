@@ -374,9 +374,9 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     }
 
     /**
-     * Get a {@code Set} of plots owned by this player.
+     * Get a {@link Set} of plots owned by this player.
      *
-     * @return a {@code Set} of plots owned by the player
+     * @return a {@link Set} of plots owned by the player
      * @see PlotSquared for more searching functions
      * @see #getPlotCount() for the number of plots
      */

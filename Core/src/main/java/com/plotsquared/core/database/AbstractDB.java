@@ -127,7 +127,7 @@ public interface AbstractDB {
      * Gets the table entry ID.
      *
      * @param plot the plot
-     * @return {@code Integer} = Plot Entry Id
+     * @return {@link Integer} = Plot Entry Id
      */
     int getId(Plot plot);
 
@@ -215,7 +215,7 @@ public interface AbstractDB {
      * Purges a whole world.
      *
      * @param area    World in which the plots should be purged
-     * @param plotIds the {@code PlotId}s of {@code Plot}s to purge
+     * @param plotIds the {@link PlotId}s of {@link Plot}s to purge
      */
     void purge(PlotArea area, Set<PlotId> plotIds);
 

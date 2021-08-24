@@ -31,7 +31,7 @@ import com.plotsquared.core.plot.PlotArea;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * PlayerAutoPlotEvent returns null for {@code PlotEvent.getPlot()} as the event is fired before the plot is chosen.
+ * PlayerAutoPlotEvent returns null for {@link PlotEvent#getPlot()} as the event is fired before the plot is chosen.
  */
 public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEvent {
 
