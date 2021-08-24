@@ -234,7 +234,7 @@ public class Auto extends SubCommand {
                     }
                 }
                 if (size_x < 1 || size_z < 1) {
-                    player.sendMessage(TranslatableCaption.of("error.plot_size"));
+                    player.sendMessage(TranslatableCaption.of("error.plot_size_negative"));
                 }
                 if (args.length > 1) {
                     schematic = args[1];
@@ -244,9 +244,6 @@ public class Auto extends SubCommand {
                 size_x = 1;
                 size_z = 1;
                 schematic = args[0];
-                // PlayerFunctions.sendMessage(plr,
-                // "&cError: Invalid size (X,Y)");
-                // return false;
             }
         }
         PlayerAutoPlotEvent event = this.eventDispatcher

@@ -306,7 +306,7 @@
   "errors.player_no_plots": "<prefix><gray>That player does not own any plots.</gray>",
   "errors.wait_for_timer": "<prefix><gray>A set block timer is bound to either the current plot or you. Please wait for it to finish.</gray>",
   "errors.tile_entity_cap_reached": "<prefix><red>The total number of tile entities in this chunk may not exceed <gold><amount></gold>.</red>",
-  "error.plot_size": "<prefix><red>Error: size <= 0.</red>",
+  "error.plot_size_negative": "<prefix><red>Error: An input lower or equal to 0 is invalid.</red>",
   "error.command_went_wrong": "<prefix><red>Something went wrong when executing that command.</red>",
   "errors.not_implemented": "<prefix><red>Not implemented.</red>",
   "errors.stacktrace_begin": "<red>=== Begin of stacktrace ===</red>",
