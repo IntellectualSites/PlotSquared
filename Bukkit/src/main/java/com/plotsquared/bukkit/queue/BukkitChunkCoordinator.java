@@ -28,6 +28,7 @@ package com.plotsquared.bukkit.queue;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.bukkit.BukkitPlatform;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.queue.ChunkCoordinator;
 import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
 import com.plotsquared.core.util.task.PlotSquaredTask;
@@ -36,7 +37,6 @@ import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.world.World;
 import io.papermc.lib.PaperLib;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.plugin.Plugin;
@@ -204,8 +204,10 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
                             throwable.printStackTrace();
                             // We want one less because this couldn't be processed
                             this.expectedSize.decrementAndGet();
-                        } else {
+                        } else if (PlotSquared.get().isMainThread(Thread.currentThread())) {
                             this.processChunk(chunkObject);
+                        } else {
+                            TaskManager.runTask(() -> this.processChunk(chunkObject));
                         }
                     });
         }
