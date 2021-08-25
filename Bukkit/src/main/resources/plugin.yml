@@ -20,295 +20,245 @@ permissions:
   plots.use:
     default: true
   plots.projectile.unowned:
-    default: false
+    default: op
   plots.projectile.other:
-    default: false
+    default: op
   plots.toggle.titles:
-    default: false
+    default: op
   plots.toggle.chat:
-    default: false
+    default: op
   plots.toggle.time:
-    default: false
+    default: op
   plots.merge.other:
-    default: false
+    default: op
   plots.merge.keeproad.denied:
-    default: false
+    default: op
   plots.trust.everyone:
-    default: false
+    default: op
   plots.area.create:
-    default: false
+    default: op
   plots.area.info:
-    default: false
+    default: op
   plots.area.list:
-    default: false
+    default: op
   plots.area.regen:
-    default: false
+    default: op
   plots.area.tp:
-    default: false
+    default: op
   plots.auto.mega:
-    default: false
+    default: op
   plots.continue:
-    default: false
+    default: op
   plots.cluster.list:
-    default: false
+    default: op
   plots.cluster.create:
-    default: false
+    default: op
   plots.cluster.create.other:
-    default: false
+    default: op
   plots.cluster.size:
-    default: false
+    default: op
   plots.cluster.delete.other:
-    default: false
+    default: op
   plots.cluster.resize:
-    default: false
+    default: op
   plots.cluster.resize.other:
-    default: false
+    default: op
   plots.cluster.resize.shrink:
-    default: false
+    default: op
   plots.cluster.resize.expand:
-    default: false
+    default: op
   plots.cluster:
-    default: false
+    default: op
   plots.cluster.invite:
-    default: false
+    default: op
   plots.cluster.invite.other:
-    default: false
+    default: op
   plots.cluster.kick:
-    default: false
+    default: op
   plots.cluster.kick.other:
-    default: false
+    default: op
   plots.cluster.leave:
-    default: false
+    default: op
   plots.cluster.tp:
-    default: false
+    default: op
   plots.cluster.tp.other:
-    default: false
+    default: op
   plots.cluster.sethome:
-    default: false
+    default: op
   plots.cluster.sethome.other:
-    default: false
+    default: op
   plots.cluster.command.continue:
-    default: false
+    default: op
   plots.deny.everyone:
-    default: false
+    default: op
   plots.download.world:
-    default: false
+    default: op
   plots.set.flag.other:
-    default: false
+    default: op
   plots.set:
-    default: false
+    default: op
   plots.set.biome:
-    default: false
+    default: op
   plots.set.alias:
-    default: false
+    default: op
   plots.set.home:
-    default: false
+    default: op
   plots.set.main:
-    default: false
+    default: op
   plots.set.floor:
-    default: false
+    default: op
   plots.set.air:
-    default: false
+    default: op
   plots.set.all:
-    default: false
+    default: op
   plots.set.border:
-    default: false
+    default: op
   plots.set.wall:
-    default: false
+    default: op
   plots.set.outline:
-    default: false
+    default: op
   plots.set.middle:
-    default: false
+    default: op
   plots.set.flag:
-    default: false
+    default: op
   plots.flag.remove:
-    default: false
+    default: op
   plots.flag.list:
-    default: false
+    default: op
   plots.list.forsale:
-    default: false
+    default: op
   plots.list.mine:
-    default: false
+    default: op
   plots.list.shared:
-    default: false
+    default: op
   plots.target:
-    default: false
+    default: op
   plots.list.world:
-    default: false
+    default: op
   plots.list.top:
-    default: false
+    default: op
   plots.list.all:
-    default: false
+    default: op
   plots.list.unowned:
-    default: false
+    default: op
   plots.list.player:
-    default: false
+    default: op
   plots.list.done:
-    default: false
+    default: op
   plots.list.expired:
-    default: false
+    default: op
   plots.list.fuzzy:
-    default: false
+    default: op
   plots.list.area:
-    default: false
+    default: op
   plots.comment:
-    default: false
+    default: op
   plots.schematic.paste:
-    default: false
+    default: op
   plots.schematic.list:
-    default: false
+    default: op
   plots.schematic.save:
-    default: false
+    default: op
   plots.visit.shared:
-    default: false
+    default: op
   plots.visit.unowned:
-    default: false
+    default: op
   plots.visit.owned:
-    default: false
+    default: op
   plots.visit.other:
-    default: false
+    default: op
   plots.visit.denied:
-    default: false
+    default: op
   plots.home:
-    default: false
+    default: op
   plots.alias.remove:
-    default: false
+    default: op
   plots.backup:
-    default: false
+    default: op
   plots.backup.save:
-    default: false
+    default: op
   plots.backup.list:
-    default: false
+    default: op
   plots.backup.load:
-    default: false
+    default: op
   plots.rate:
-    default: false
+    default: op
   plots.template.export:
-    default: false
+    default: op
   plots.template.import:
-    default: false
+    default: op
   plots.template:
-    default: false
+    default: op
   plots.components:
-    default: false
+    default: op
 
   plots.admin:
     default: false
-  plots.admin.command.continue:
-    default: false
-  plots.admin.command.delete:
-    default: false
-  plots.admin.command.deny:
-    default: false
-  plots.admin.command.done:
-    default: false
-  plots.admin.command.download:
-    default: false
-  plots.admin.command.kick:
-    default: false
-  plots.admin.command.load:
-    default: false
-  plots.admin.command.merge:
-    default: false
-  plots.admin.command.setowner:
-    default: false
-  plots.admin.command.remove:
-    default: false
-  plots.admin.command.save:
-    default: false
-  plots.admin.command.schematic.paste:
-    default: false
-  plots.admin.command.schematic.save:
-    default: false
-  plots.admin.command.unlink:
-    default: false
-  plots.admin.alias.set:
-    default: false
-  plots.admin.alias.remove:
-    default: false
-  plots.admin.chat.bypass:
-    default: false
-  plots.admin.backup.other:
-    default: false
-  plots.admin.unsafe:
-    default: false
-  plots.admin.debug.other:
-    default: false
-  plots.admin.area.sudo:
-    default: false
-  plots.admin.interact.blockedcommands:
-    default: false
-  plots.admin.update.notify:
-    default: false
-  plots.admin.exit.denied:
-    default: false
-  plots.admin.entry.denied:
-    default: false
-  plots.admin.visit.untrusted:
-    default: false
-  plots.admin.entry.forcefield:
-    default: false
-  plots.admin.command.chatspy:
-    default: false
-  plots.admin.caps.other:
-    default: false
-  plots.admin.music.other:
-    default: false
-  plots.admin.destroy.unowned:
-    default: false
-  plots.admin.destroy.groundlevel:
-    default: false
-  plots.admin.destroy.other:
-    default: false
-  plots.admin.destroy.road:
-    default: false
-  plots.admin.build.road:
-    default: false
-  plots.admin.build.unowned:
-    default: false
-  plots.admin.build.other:
-    default: false
-  plots.admin.interact.road:
-    default: false
-  plots.admin.interact.unowned:
-    default: false
-  plots.admin.interact.other:
-    default: false
-  plots.admin.build.heightlimit:
-    default: false
-  plots.admin.command.purge.ratings:
-    default: false
-  plots.admin.command.trust:
-    default: false
-  plots.admin.command.add:
-    default: false
-  plots.admin.info.force:
-    default: false
-  plots.admin.command.schematic:
-    default: false
-  plots.admin.command.clear:
-    default: false
-  plots.admin.flight:
-    default: false
-  plots.admin.command.blocked-cmds.shared:
-    default: false
-  plots.admin.command.blocked-cmds.road:
-    default: false
-  plots.admin.components.other:
-    default: false
+    children:
+      plots.admin.command.continue: true
+      plots.admin.command.delete: true
+      plots.admin.command.deny: true
+      plots.admin.command.done: true
+      plots.admin.command.download: true
+      plots.admin.command.kick: true
+      plots.admin.command.load: true
+      plots.admin.command.merge: true
+      plots.admin.command.setowner: true
+      plots.admin.command.remove: true
+      plots.admin.command.save: true
+      plots.admin.command.schematic.paste: true
+      plots.admin.command.schematic.save: true
+      plots.admin.command.unlink: true
+      plots.admin.alias.set: true
+      plots.admin.alias.remove: true
+      plots.admin.chat.bypass: true
+      plots.admin.backup.other: true
+      plots.admin.unsafe: true
+      plots.admin.debug.other: true
+      plots.admin.area.sudo: true
+      plots.admin.interact.blockedcommands: true
+      plots.admin.update.notify: true
+      plots.admin.exit.denied: true
+      plots.admin.entry.denied: true
+      plots.admin.visit.untrusted: true
+      plots.admin.entry.forcefield: true
+      plots.admin.command.chatspy: true
+      plots.admin.caps.other: true
+      plots.admin.music.other: true
+      plots.admin.destroy.unowned: true
+      plots.admin.destroy.groundlevel: true
+      plots.admin.destroy.other: true
+      plots.admin.destroy.road: true
+      plots.admin.build.road: true
+      plots.admin.build.unowned: true
+      plots.admin.build.other: true
+      plots.admin.interact.road: true
+      plots.admin.interact.unowned: true
+      plots.admin.interact.other: true
+      plots.admin.build.heightlimit: true
+      plots.admin.command.purge.ratings: true
+      plots.admin.command.trust: true
+      plots.admin.command.add: true
+      plots.admin.info.force: true
+      plots.admin.command.schematic: true
+      plots.admin.command.clear: true
+      plots.admin.flight: true
+      plots.admin.command.blocked-cmds.shared: true
+      plots.admin.command.blocked-cmds.road: true
+      plots.admin.components.other: true
 
   plots.teleport.delay.bypass:
-    default: false
+    default: op
   plots.worldedit.bypass:
-    default: false
+    default: op
   plots.gamemode.bypass:
-    default: false
+    default: op
   plots.confirm.bypass:
-    default: false
+    default: op
   plots.flag.notify-enter.bypass:
-    default: false
+    default: op
   plots.flag.notify-leave.bypass:
-    default: false
+    default: op
 
   plots.permpack.basicflags:
     default: false
