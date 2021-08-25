@@ -235,6 +235,7 @@ public class Auto extends SubCommand {
                 }
                 if (size_x < 1 || size_z < 1) {
                     player.sendMessage(TranslatableCaption.of("error.plot_size_negative"));
+                    return true;
                 }
                 if (args.length > 1) {
                     schematic = args[1];
