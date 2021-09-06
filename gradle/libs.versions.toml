@@ -9,7 +9,7 @@ paper = "1.17.1-R0.1-SNAPSHOT"
 checker-qual = "3.18.0"
 guice = "5.0.1"
 findbugs = "3.0.1"
-snakeyaml = "1.28" # Version set by Bukkit
+snakeyaml = "1.29" # Version set by Bukkit
 
 # Adventure & MiniMessage
 adventure-api = "4.9.0"
