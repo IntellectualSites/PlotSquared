@@ -1,6 +1,6 @@
 [versions]
 # Minecraft expectations
-guava = "21.0" # Version set by Minecraft
+guava = "30.1.1-jre" # Version set by Minecraft
 gson = "2.8.0" # Version set by Minecraft
 log4j-api = "2.14.1" # Version set by Minecraft
 
