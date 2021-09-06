@@ -29,12 +29,12 @@ import com.google.common.util.concurrent.RateLimiter;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
-import com.sk89q.squirrelid.Profile;
-import com.sk89q.squirrelid.resolver.HttpRepositoryService;
-import com.sk89q.squirrelid.resolver.ProfileService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.enginehub.squirrelid.Profile;
+import org.enginehub.squirrelid.resolver.HttpRepositoryService;
+import org.enginehub.squirrelid.resolver.ProfileService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -73,7 +73,7 @@ public class SquirrelIdUUIDService implements UUIDService {
         this.rateLimiter.acquire(uuids.size());
         try {
             try {
-                for (final Profile profile : this.profileService.findAllById(uuids)) {
+                for (final Profile profile : this.profileService.findAllByUuid(uuids)) {
                     results.add(new UUIDMapping(profile.getUniqueId(), profile.getName()));
                 }
             } catch (final IllegalArgumentException illegalArgumentException) {
