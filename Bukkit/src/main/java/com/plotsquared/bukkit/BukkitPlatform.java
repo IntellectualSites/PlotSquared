@@ -419,6 +419,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             }, TaskTime.ticks(1L));
         }
 
+        // Once the server has loaded force updating all generators known to P2
+        TaskManager.runTaskLater(() -> PlotSquared.platform().setupUtils().updateGenerators(true), TaskTime.ticks(1L));
+
         // Services are accessed in order
         final CacheUUIDService cacheUUIDService = new CacheUUIDService(Settings.UUID.UUID_CACHE_SIZE);
         this.impromptuPipeline.registerService(cacheUUIDService);

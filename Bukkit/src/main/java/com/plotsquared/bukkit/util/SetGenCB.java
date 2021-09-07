@@ -38,7 +38,7 @@ import java.util.ArrayList;
 public class SetGenCB {
 
     public static void setGenerator(World world) throws Exception {
-        PlotSquared.platform().setupUtils().updateGenerators();
+        PlotSquared.platform().setupUtils().updateGenerators(false);
         PlotSquared.get().removePlotAreas(world.getName());
         ChunkGenerator gen = world.getGenerator();
         if (gen == null) {

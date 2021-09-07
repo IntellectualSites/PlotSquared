@@ -91,7 +91,7 @@ public class Setup extends SubCommand {
                 }
                 process = new SetupProcess();
                 metaDataAccess.set(process);
-                this.setupUtils.updateGenerators();
+                this.setupUtils.updateGenerators(false);
                 SetupStep step = process.getCurrentStep();
                 step.announce(player);
                 displayGenerators(player);

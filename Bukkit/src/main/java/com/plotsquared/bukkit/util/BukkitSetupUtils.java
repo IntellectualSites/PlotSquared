@@ -75,8 +75,8 @@ public class BukkitSetupUtils extends SetupUtils {
     }
 
     @Override
-    public void updateGenerators() {
-        if (!SetupUtils.generators.isEmpty()) {
+    public void updateGenerators(final boolean force) {
+        if (!SetupUtils.generators.isEmpty() && !force) {
             return;
         }
         String testWorld = "CheckingPlotSquaredGenerator";
@@ -128,7 +128,7 @@ public class BukkitSetupUtils extends SetupUtils {
 
     @Override
     public String setupWorld(PlotAreaBuilder builder) {
-        this.updateGenerators();
+        this.updateGenerators(false);
         ConfigurationNode[] steps = builder.settingsNodesWrapper() == null ?
                 new ConfigurationNode[0] : builder.settingsNodesWrapper().getSettingsNodes();
         String world = builder.worldName();
@@ -240,7 +240,7 @@ public class BukkitSetupUtils extends SetupUtils {
     @Override
     public String getGenerator(PlotArea plotArea) {
         if (SetupUtils.generators.isEmpty()) {
-            updateGenerators();
+            updateGenerators(false);
         }
         World world = Bukkit.getWorld(plotArea.getWorldName());
         if (world == null) {
