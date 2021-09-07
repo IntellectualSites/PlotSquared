@@ -1666,14 +1666,10 @@ public class Plot {
         return base.settings != null && base.settings.getRatings() != null;
     }
 
-    public boolean claim(final @NonNull PlotPlayer<?> player, boolean teleport, String schematic) {
-        if (!canClaim(player)) {
-            return false;
-        }
-        return claim(player, teleport, schematic, true);
-    }
-
-    public boolean claim(final @NonNull PlotPlayer<?> player, boolean teleport, String schematic, boolean updateDB) {
+    public boolean claim(
+            final @NonNull PlotPlayer<?> player, boolean teleport, String schematic, boolean updateDB,
+            boolean auto
+    ) {
 
         if (updateDB) {
             if (!this.getPlotModificationManager().create(player.getUUID(), true)) {
@@ -1689,7 +1685,7 @@ public class Plot {
         this.getPlotModificationManager().setSign(player.getName());
         player.sendMessage(TranslatableCaption.of("working.claimed"), Template.of("plot", this.getId().toString()));
         if (teleport && Settings.Teleport.ON_CLAIM) {
-            teleportPlayer(player, TeleportCause.COMMAND, result -> {
+            teleportPlayer(player, auto ? TeleportCause.COMMAND_AUTO : TeleportCause.COMMAND_CLAIM, result -> {
             });
         }
         PlotArea plotworld = getArea();
@@ -2570,7 +2566,7 @@ public class Plot {
      */
     public void teleportPlayer(final PlotPlayer<?> player, TeleportCause cause, Consumer<Boolean> resultConsumer) {
         Plot plot = this.getBasePlot(false);
-        Result result = this.eventDispatcher.callTeleport(player, player.getLocation(), plot).getEventResult();
+        Result result = this.eventDispatcher.callTeleport(player, player.getLocation(), plot, cause).getEventResult();
         if (result == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),

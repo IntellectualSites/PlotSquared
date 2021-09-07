@@ -85,7 +85,7 @@ public class HomeCommand extends Command {
             return;
         }
         Plot plot = plots.get(page - 1);
-        confirm.run(this, () -> plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {
+        confirm.run(this, () -> plot.teleportPlayer(player, TeleportCause.COMMAND_HOME, result -> {
             if (result) {
                 whenDone.run(this, CommandResult.SUCCESS);
             } else {

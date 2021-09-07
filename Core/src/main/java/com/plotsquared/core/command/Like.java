@@ -113,7 +113,7 @@ public class Like extends SubCommand {
                     for (final Plot plot : plots) {
                         if ((!Settings.Done.REQUIRED_FOR_RATINGS || DoneFlag.isDone(plot)) && plot
                                 .isBasePlot() && (!plot.getLikes().containsKey(uuid))) {
-                            plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {
+                            plot.teleportPlayer(player, TeleportCause.COMMAND_LIKE, result -> {
                             });
                             player.sendMessage(TranslatableCaption.of("tutorial.rate_this"));
                             return true;

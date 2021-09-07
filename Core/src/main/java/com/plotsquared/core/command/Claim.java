@@ -193,7 +193,7 @@ public class Claim extends SubCommand {
         DBFunc.createPlotSafe(plot, () -> {
             try {
                 TaskManager.getPlatformImplementation().sync(() -> {
-                    if (!plot.claim(player, true, finalSchematic, false)) {
+                    if (!plot.claim(player, true, finalSchematic, false, false)) {
                         LOGGER.info("Failed to claim plot {}", plot.getId().toCommaSeparatedString());
                         player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
                         plot.setOwnerAbs(null);

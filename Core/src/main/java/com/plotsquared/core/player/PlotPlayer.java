@@ -473,7 +473,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      */
     public void plotkick(Location location) {
         setMeta("kick", true);
-        teleport(location);
+        teleport(location, TeleportCause.KICK);
         deleteMeta("kick");
     }
 
@@ -712,7 +712,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                         if (plot.isLoaded()) {
                             TaskManager.runTask(() -> {
                                 if (getMeta("teleportOnLogin", true)) {
-                                    teleport(location);
+                                    teleport(location, TeleportCause.LOGIN);
                                     sendMessage(
                                             TranslatableCaption.of("teleport.teleported_to_plot"));
                                 }
@@ -724,7 +724,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                                         result -> TaskManager.runTask(() -> {
                                             if (getMeta("teleportOnLogin", true)) {
                                                 if (plot.isLoaded()) {
-                                                    teleport(location);
+                                                    teleport(location, TeleportCause.LOGIN);
                                                     sendMessage(TranslatableCaption
                                                             .of("teleport.teleported_to_plot"));
                                                 }

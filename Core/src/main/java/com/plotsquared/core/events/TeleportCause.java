@@ -25,8 +25,28 @@
  */
 package com.plotsquared.core.events;
 
+/**
+ * The reason for an internal player teleport.
+ */
 public enum TeleportCause {
-    COMMAND,
+    COMMAND_AREA_CREATE,
+    COMMAND_AREA_TELEPORT,
+    COMMAND_AUTO,
+    COMMAND_CLAIM,
+    COMMAND_CLEAR,
+    COMMAND_CLUSTER_TELEPORT,
+    COMMAND_DELETE,
+    COMMAND_HOME,
+    COMMAND_LIKE,
+    COMMAND_MIDDLE,
+    COMMAND_RATE,
+    COMMAND_SETUP,
+    COMMAND_TEMPLATE,
+    COMMAND_VISIT,
+    DEATH,
+    DENIED,
+    KICK,
+    LOGIN,
     PLUGIN,
     UNKNOWN
 }

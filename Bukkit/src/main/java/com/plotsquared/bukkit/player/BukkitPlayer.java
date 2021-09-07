@@ -363,11 +363,12 @@ public class BukkitPlayer extends PlotPlayer<Player> {
     }
 
     public PlayerTeleportEvent.TeleportCause getTeleportCause(final @NonNull TeleportCause cause) {
-        return switch (cause) {
-            case COMMAND -> PlayerTeleportEvent.TeleportCause.COMMAND;
-            case PLUGIN -> PlayerTeleportEvent.TeleportCause.PLUGIN;
-            default -> PlayerTeleportEvent.TeleportCause.UNKNOWN;
-        };
+        if (cause.toString().startsWith("COMMAND")) {
+            return PlayerTeleportEvent.TeleportCause.COMMAND;
+        } else if (cause == TeleportCause.UNKNOWN) {
+            return PlayerTeleportEvent.TeleportCause.UNKNOWN;
+        }
+        return PlayerTeleportEvent.TeleportCause.PLUGIN;
     }
 
 }

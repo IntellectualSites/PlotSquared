@@ -104,7 +104,7 @@ public class Clear extends Command {
                 .hasPermission(player, "plots.continue"), TranslatableCaption.of("done.done_already_done"));
         confirm.run(this, () -> {
             if (Settings.Teleport.ON_CLEAR) {
-                plot.getPlayersInPlot().forEach(playerInPlot -> plot.teleportPlayer(playerInPlot, TeleportCause.COMMAND,
+                plot.getPlayersInPlot().forEach(playerInPlot -> plot.teleportPlayer(playerInPlot, TeleportCause.COMMAND_CLEAR,
                         result -> {
                         }
                 ));

@@ -344,7 +344,11 @@ public class Auto extends SubCommand {
         } else {
             final Iterator<Plot> plotIterator = plots.iterator();
             while (plotIterator.hasNext()) {
-                plotIterator.next().claim(player, !plotIterator.hasNext(), null);
+                Plot plot = plotIterator.next();
+                if (!plot.canClaim(player)) {
+                    continue;
+                }
+                plot.claim(player, !plotIterator.hasNext(), null, true, true);
             }
             final PlotAutoMergeEvent mergeEvent = this.eventDispatcher.callAutoMerge(
                     plots.get(0),

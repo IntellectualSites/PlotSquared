@@ -48,6 +48,7 @@ import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.PlotRateEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
+import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.listener.PlayerBlockEventType;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
@@ -130,8 +131,8 @@ public class EventDispatcher {
         return event;
     }
 
-    public PlayerTeleportToPlotEvent callTeleport(PlotPlayer<?> player, Location from, Plot plot) {
-        PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, plot);
+    public PlayerTeleportToPlotEvent callTeleport(PlotPlayer<?> player, Location from, Plot plot, TeleportCause cause) {
+        PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, plot, cause);
         callEvent(event);
         return event;
     }
@@ -263,7 +264,7 @@ public class EventDispatcher {
         final Plot plot = player.getCurrentPlot();
         if (Settings.Teleport.ON_LOGIN && plot != null && !(plot
                 .getArea() instanceof SinglePlotArea)) {
-            TaskManager.runTask(() -> plot.teleportPlayer(player, result -> {
+            TaskManager.runTask(() -> plot.teleportPlayer(player, TeleportCause.LOGIN, result -> {
             }));
             player.sendMessage(TranslatableCaption.of("teleport.teleported_to_road"));
         }
@@ -272,7 +273,7 @@ public class EventDispatcher {
     public void doRespawnTask(final PlotPlayer<?> player) {
         final Plot plot = player.getCurrentPlot();
         if (Settings.Teleport.ON_DEATH && plot != null) {
-            TaskManager.runTask(() -> plot.teleportPlayer(player, result -> {
+            TaskManager.runTask(() -> plot.teleportPlayer(player, TeleportCause.DEATH, result -> {
             }));
             player.sendMessage(TranslatableCaption.of("teleport.teleported_to_road"));
         }

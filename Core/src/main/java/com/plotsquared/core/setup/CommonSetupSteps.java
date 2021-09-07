@@ -230,7 +230,7 @@ public enum CommonSetupSteps implements SetupStep {
                 world = builder.setupManager().setupWorld(builder);
             }
             try {
-                plotPlayer.teleport(PlotSquared.platform().worldUtil().getSpawn(world), TeleportCause.COMMAND);
+                plotPlayer.teleport(PlotSquared.platform().worldUtil().getSpawn(world), TeleportCause.COMMAND_SETUP);
             } catch (Exception e) {
                 plotPlayer.sendMessage(TranslatableCaption.of("errors.error_console"));
                 e.printStackTrace();

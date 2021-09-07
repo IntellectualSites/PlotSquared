@@ -166,7 +166,7 @@ public class Visit extends Command {
             }
         }
 
-        confirm.run(this, () -> plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {
+        confirm.run(this, () -> plot.teleportPlayer(player, TeleportCause.COMMAND_VISIT, result -> {
             if (result) {
                 whenDone.run(Visit.this, CommandResult.SUCCESS);
             } else {
