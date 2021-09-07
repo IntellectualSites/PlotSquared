@@ -93,7 +93,7 @@ tasks {
         opt.links("https://papermc.io/javadocs/paper/1.17/")
         opt.links("https://docs.enginehub.org/javadoc/com.sk89q.worldedit/worldedit-core/7.2.6/")
         opt.links("https://docs.enginehub.org/javadoc/com.sk89q.worldedit/worldedit-bukkit/7.2.6/")
-        opt.links("https://jd.adventure.kyori.net/api/4.9.0/")
+        opt.links("https://jd.adventure.kyori.net/api/4.9.1/")
         opt.links("https://google.github.io/guice/api-docs/5.0.1/javadoc/")
         opt.links("https://checkerframework.org/api/")
     }

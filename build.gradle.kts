@@ -96,6 +96,11 @@ allprojects {
         withJavadocJar()
     }
 
+    val javaComponent = components["java"] as AdhocComponentWithVariants
+    javaComponent.withVariantsFromConfiguration(configurations["shadowRuntimeElements"]) {
+        skip()
+    }
+
     signing {
         if (!version.toString().endsWith("-SNAPSHOT")) {
             signing.isRequired
