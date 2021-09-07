@@ -55,6 +55,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -245,7 +246,7 @@ public abstract class WorldUtil {
             final @Nullable String file,
             final @NonNull RunnableVal<URL> whenDone
     ) {
-        plot.getHome(home -> SchematicHandler.upload(uuid, file, "zip", new RunnableVal<OutputStream>() {
+        plot.getHome(home -> SchematicHandler.upload(uuid, file, "zip", new RunnableVal<>() {
             @Override
             public void run(OutputStream output) {
                 try (final ZipOutputStream zos = new ZipOutputStream(output)) {
@@ -255,16 +256,23 @@ public abstract class WorldUtil {
                         ZipEntry ze = new ZipEntry("world" + File.separator + dat.getName());
                         zos.putNextEntry(ze);
                         try (NBTInputStream nis = new NBTInputStream(new GZIPInputStream(new FileInputStream(dat)))) {
-                            CompoundTag tag = (CompoundTag) nis.readNamedTag().getTag();
-                            CompoundTag data = (CompoundTag) tag.getValue().get("Data");
-                            Map<String, Tag> map = ReflectionUtils.getMap(data.getValue());
-                            map.put("SpawnX", new IntTag(home.getX()));
-                            map.put("SpawnY", new IntTag(home.getY()));
-                            map.put("SpawnZ", new IntTag(home.getZ()));
+                            Map<String, Tag> tag = ((CompoundTag) nis.readNamedTag().getTag()).getValue();
+                            Map<String, Tag> newMap = new HashMap<>();
+                            for (Map.Entry<String, Tag> entry : tag.entrySet()) {
+                                if (!entry.getKey().equals("Data")) {
+                                    newMap.put(entry.getKey(), entry.getValue());
+                                    continue;
+                                }
+                                Map<String, Tag> data = new HashMap<>(((CompoundTag) entry.getValue()).getValue());
+                                data.put("SpawnX", new IntTag(home.getX()));
+                                data.put("SpawnY", new IntTag(home.getY()));
+                                data.put("SpawnZ", new IntTag(home.getZ()));
+                                newMap.put("Data", new CompoundTag(data));
+                            }
                             try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
                                 try (NBTOutputStream out = new NBTOutputStream(new GZIPOutputStream(baos, true))) {
                                     //TODO Find what this should be called
-                                    out.writeNamedTag("Schematic????", tag);
+                                    out.writeNamedTag("Schematic????", new CompoundTag(newMap));
                                 }
                                 zos.write(baos.toByteArray());
                             }
@@ -272,6 +280,7 @@ public abstract class WorldUtil {
                     }
                     setSpawn(spawn);
                     byte[] buffer = new byte[1024];
+                    Set<BlockVector2> added = new HashSet<>();
                     for (Plot current : plot.getConnectedPlots()) {
                         Location bot = current.getBottomAbs();
                         Location top = current.getTopAbs();
@@ -281,13 +290,14 @@ public abstract class WorldUtil {
                         int trz = top.getZ() >> 9;
                         Set<BlockVector2> files = getChunkChunks(bot.getWorldName());
                         for (BlockVector2 mca : files) {
-                            if (mca.getX() >= brx && mca.getX() <= trx && mca.getZ() >= brz && mca.getZ() <= trz) {
+                            if (mca.getX() >= brx && mca.getX() <= trx && mca.getZ() >= brz && mca.getZ() <= trz && !added.contains(mca)) {
                                 final File file = getMcr(plot.getWorldName(), mca.getX(), mca.getZ());
                                 if (file != null) {
                                     //final String name = "r." + (x - cx) + "." + (z - cz) + ".mca";
                                     String name = file.getName();
                                     final ZipEntry ze = new ZipEntry("world" + File.separator + "region" + File.separator + name);
                                     zos.putNextEntry(ze);
+                                    added.add(mca);
                                     try (FileInputStream in = new FileInputStream(file)) {
                                         int len;
                                         while ((len = in.read(buffer)) > 0) {

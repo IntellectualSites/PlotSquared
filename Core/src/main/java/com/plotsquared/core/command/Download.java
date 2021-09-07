@@ -139,7 +139,7 @@ public class Download extends SubCommand {
                         );
                         return;
                     }
-                    player.sendMessage(TranslatableCaption.of("web.generation_link_success"), Template.of("url", url.toString()));
+                    player.sendMessage(TranslatableCaption.of("web.generation_link_success_legacy_world"), Template.of("url", url.toString()));
                 }
             });
         } else {

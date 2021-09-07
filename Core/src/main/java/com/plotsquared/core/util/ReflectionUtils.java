@@ -28,7 +28,6 @@ package com.plotsquared.core.util;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Map;
 
 /**
  * @author DPOH-VAR
@@ -49,18 +48,6 @@ public class ReflectionUtils {
         if (version != null) {
             preClassB += '.' + version;
             preClassM += '.' + version;
-        }
-    }
-
-    public static <T, V> Map<T, V> getMap(Map<T, V> map) {
-        try {
-            Class<? extends Map> clazz = map.getClass();
-            Field m = clazz.getDeclaredField("m");
-            m.setAccessible(true);
-            return (Map<T, V>) m.get(map);
-        } catch (Throwable e) {
-            e.printStackTrace();
-            return map;
         }
     }
 
