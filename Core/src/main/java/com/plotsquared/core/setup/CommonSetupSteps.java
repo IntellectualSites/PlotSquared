@@ -39,6 +39,7 @@ import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
+import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -212,7 +213,7 @@ public enum CommonSetupSteps implements SetupStep {
             }
             if (PlotSquared.platform().worldUtil().isWorld(argument)) {
                 if (PlotSquared.get().getPlotAreaManager().hasPlotArea(argument)) {
-                    plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_taken"));
+                    plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_taken"), Template.of("value", argument));
                     return this;
                 }
                 plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_apply_plotsquared"));
