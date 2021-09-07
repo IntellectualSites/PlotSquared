@@ -34,10 +34,6 @@ import java.util.HashMap;
 public abstract class SetupUtils {
 
     public static HashMap<String, GeneratorWrapper<?>> generators = new HashMap<>();
-//    static {
-//        generators.put(PlotSquared.platform().pluginName(),
-//                (HybridGen) PlotSquared.platform().injector().getInstance(IndependentPlotGenerator.class));
-//    }
 
     public abstract void updateGenerators(final boolean force);
 
