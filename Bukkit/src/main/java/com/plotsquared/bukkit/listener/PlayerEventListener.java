@@ -701,8 +701,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
         String message = event.getMessage();
         String sender = event.getPlayer().getDisplayName();
         PlotId id = plot.getId();
+        String worldName = plot.getWorldName();
         Caption msg = TranslatableCaption.of("chat.plot_chat_format");
         Template msgTemplate;
+        Template worldNameTemplate = Template.of("world", worldName);
         Template plotTemplate = Template.of("plot_id", id.toString());
         Template senderTemplate = Template.of("sender", sender);
         // If we do/don't want colour, we need to be careful about how to go about it, as players could attempt either <gold></gold> or &6 etc.
@@ -723,7 +725,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     ChatColor.stripColor(BukkitUtil.LEGACY_COMPONENT_SERIALIZER.serialize(Component.text(message)))));
         }
         for (PlotPlayer<?> receiver : plotRecipients) {
-            receiver.sendMessage(msg, msgTemplate, plotTemplate, senderTemplate);
+            receiver.sendMessage(msg, worldNameTemplate, msgTemplate, plotTemplate, senderTemplate);
         }
         if (!spies.isEmpty()) {
             Caption spymsg = TranslatableCaption.of("chat.plot_chat_spy_format");
@@ -731,7 +733,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             Template spysenderTemplate = Template.of("sender", sender);
             Template spymessageTemplate = Template.of("msg", Component.text(message));
             for (PlotPlayer<?> player : spies) {
-                player.sendMessage(spymsg, plotidTemplate, spysenderTemplate, spymessageTemplate);
+                player.sendMessage(spymsg, worldNameTemplate, plotidTemplate, spysenderTemplate, spymessageTemplate);
             }
         }
         if (Settings.Chat.LOG_PLOTCHAT_TO_CONSOLE) {
@@ -739,7 +741,9 @@ public class PlayerEventListener extends PlotListener implements Listener {
             Template plotidTemplate = Template.of("plot_id", id.getX() + ";" + id.getY());
             Template spysenderTemplate = Template.of("sender", sender);
             Template spymessageTemplate = Template.of("msg", Component.text(message));
-            ConsolePlayer.getConsole().sendMessage(spymsg, plotidTemplate, spysenderTemplate, spymessageTemplate);
+            ConsolePlayer.getConsole().sendMessage(spymsg, worldNameTemplate, plotidTemplate, spysenderTemplate,
+                    spymessageTemplate
+            );
         }
     }
 
