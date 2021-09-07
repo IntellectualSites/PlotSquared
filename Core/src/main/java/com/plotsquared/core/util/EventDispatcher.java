@@ -38,6 +38,7 @@ import com.plotsquared.core.events.PlayerPlotTrustedEvent;
 import com.plotsquared.core.events.PlayerTeleportToPlotEvent;
 import com.plotsquared.core.events.PlotAutoMergeEvent;
 import com.plotsquared.core.events.PlotChangeOwnerEvent;
+import com.plotsquared.core.events.PlotClaimedNotifyEvent;
 import com.plotsquared.core.events.PlotClearEvent;
 import com.plotsquared.core.events.PlotComponentSetEvent;
 import com.plotsquared.core.events.PlotDeleteEvent;
@@ -127,6 +128,12 @@ public class EventDispatcher {
     ) {
         PlayerAutoPlotEvent event =
                 new PlayerAutoPlotEvent(player, area, schematic, size_x, size_z);
+        callEvent(event);
+        return event;
+    }
+
+    public PlotClaimedNotifyEvent callPlotClaimedNotify(Plot plot, boolean auto) {
+        PlotClaimedNotifyEvent event = new PlotClaimedNotifyEvent(plot, auto);
         callEvent(event);
         return event;
     }

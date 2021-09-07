@@ -1670,7 +1670,7 @@ public class Plot {
             final @NonNull PlotPlayer<?> player, boolean teleport, String schematic, boolean updateDB,
             boolean auto
     ) {
-
+        this.eventDispatcher.callPlotClaimedNotify(this, auto);
         if (updateDB) {
             if (!this.getPlotModificationManager().create(player.getUUID(), true)) {
                 LOGGER.error("Player {} attempted to claim plot {}, but the database failed to update", player.getName(),
