@@ -25,10 +25,14 @@
  */
 package com.plotsquared.core.events;
 
+import java.util.EnumSet;
+
 /**
  * The reason for an internal player teleport.
  */
 public enum TeleportCause {
+
+    COMMAND,
     COMMAND_AREA_CREATE,
     COMMAND_AREA_TELEPORT,
     COMMAND_AUTO,
@@ -48,5 +52,12 @@ public enum TeleportCause {
     KICK,
     LOGIN,
     PLUGIN,
-    UNKNOWN
+    UNKNOWN;
+
+    public static final class SETS {
+
+        public static final EnumSet<TeleportCause> COMMAND = EnumSet.range(TeleportCause.COMMAND, TeleportCause.COMMAND_VISIT);
+        public static final EnumSet<TeleportCause> PLUGIN = EnumSet.range(TeleportCause.DEATH, TeleportCause.PLUGIN);
+
+    }
 }

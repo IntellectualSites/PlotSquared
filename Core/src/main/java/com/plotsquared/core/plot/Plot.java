@@ -1666,6 +1666,19 @@ public class Plot {
         return base.settings != null && base.settings.getRatings() != null;
     }
 
+    @Deprecated(forRemoval = true)
+    public boolean claim(final @NonNull PlotPlayer<?> player, boolean teleport, String schematic) {
+        if (!canClaim(player)) {
+            return false;
+        }
+        return claim(player, teleport, schematic, true);
+    }
+
+    @Deprecated(forRemoval = true)
+    public boolean claim(final @NonNull PlotPlayer<?> player, boolean teleport, String schematic, boolean updateDB) {
+        return claim(player, teleport, schematic, updateDB, false);
+    }
+
     /**
      * Claim the plot
      *

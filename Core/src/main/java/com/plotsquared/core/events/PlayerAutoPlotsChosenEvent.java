@@ -80,7 +80,7 @@ public class PlayerAutoPlotsChosenEvent extends PlotPlayerEvent {
      * @param plots list of plots.
      */
     public void setPlots(final @NonNull List<Plot> plots) {
-        this.plots = Collections.unmodifiableList(plots);
+        this.plots = List.copyOf(plots);
     }
 
 }
