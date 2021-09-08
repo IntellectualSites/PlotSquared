@@ -331,10 +331,12 @@ public class Auto extends SubCommand {
             }
         }
 
-        final List<Plot> plots = this.servicePipeline
+        List<Plot> plots = this.servicePipeline
                 .pump(new AutoService.AutoQuery(player, null, size_x, size_z, plotarea))
                 .through(AutoService.class)
                 .getResult();
+
+        plots = this.eventDispatcher.callAutoPlotsChosen(player, plots).getPlots();
 
         if (plots.isEmpty()) {
             player.sendMessage(TranslatableCaption.of("errors.no_free_plots"));

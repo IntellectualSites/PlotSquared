@@ -29,6 +29,7 @@ import com.google.common.eventbus.EventBus;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlayerAutoPlotEvent;
+import com.plotsquared.core.events.PlayerAutoPlotsChosenEvent;
 import com.plotsquared.core.events.PlayerClaimPlotEvent;
 import com.plotsquared.core.events.PlayerEnterPlotEvent;
 import com.plotsquared.core.events.PlayerLeavePlotEvent;
@@ -128,6 +129,15 @@ public class EventDispatcher {
     ) {
         PlayerAutoPlotEvent event =
                 new PlayerAutoPlotEvent(player, area, schematic, size_x, size_z);
+        callEvent(event);
+        return event;
+    }
+
+    public PlayerAutoPlotsChosenEvent callAutoPlotsChosen(
+            PlotPlayer<?> player, List<Plot> plots
+    ) {
+        PlayerAutoPlotsChosenEvent event =
+                new PlayerAutoPlotsChosenEvent(player, plots);
         callEvent(event);
         return event;
     }
