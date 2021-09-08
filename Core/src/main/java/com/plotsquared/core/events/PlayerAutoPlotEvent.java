@@ -27,6 +27,7 @@ package com.plotsquared.core.events;
 
 import com.plotsquared.core.command.Claim;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -39,8 +40,8 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
     private final PlotArea plotArea;
     private Result eventResult;
     private String schematic;
-    private int size_x;
-    private int size_z;
+    private int sizeX;
+    private int sizeZ;
 
     /**
      * PlayerAutoPlotEvent: called when a player attempts to auto claim a plot.
@@ -48,19 +49,31 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
      * @param player    The player attempting to auto claim
      * @param plotArea  The applicable plot area
      * @param schematic The schematic defined or null
-     * @param size_x    The size of the auto area
-     * @param size_z    The size of the auto area
+     * @param sizeX     The size of the auto area
+     * @param sizeZ     The size of the auto area
      */
     public PlayerAutoPlotEvent(
             PlotPlayer<?> player, PlotArea plotArea, @Nullable String schematic,
-            int size_x, int size_z
+            int sizeX, int sizeZ
     ) {
         super(null);
         this.player = player;
         this.plotArea = plotArea;
         this.schematic = schematic;
-        this.size_x = size_x;
-        this.size_z = size_z;
+        this.sizeX = sizeX;
+        this.sizeZ = sizeZ;
+    }
+
+    /**
+     * Returns null as the plots to be claimed haven't been chosen yet. This will depend on the size of the auto
+     * ({@link PlayerAutoPlotEvent#setSizeX(int)} and {@link PlayerAutoPlotEvent#setSizeZ(int)}). To see which plots have been
+     * chosen, see {@link PlayerAutoPlotsChosenEvent}.
+     *
+     * @return null
+     */
+    @Override
+    public @Nullable Plot getPlot() {
+        return null;
     }
 
     /**
@@ -99,20 +112,20 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
         return this.plotArea;
     }
 
-    public int getSize_x() {
-        return this.size_x;
+    public int getSizeX() {
+        return this.sizeX;
     }
 
-    public void setSize_x(int size_x) {
-        this.size_x = size_x;
+    public void setSizeX(int sizeX) {
+        this.sizeX = sizeX;
     }
 
-    public int getSize_z() {
-        return this.size_z;
+    public int getSizeZ() {
+        return this.sizeZ;
     }
 
-    public void setSize_z(int size_z) {
-        this.size_z = size_z;
+    public void setSizeZ(int sizeZ) {
+        this.sizeZ = sizeZ;
     }
 
 }
