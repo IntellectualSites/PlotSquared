@@ -362,6 +362,12 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
     }
 
+    /**
+     * Convert from PlotSquared's {@link TeleportCause} to Bukkit's {@link PlayerTeleportEvent.TeleportCause}
+     *
+     * @param cause PlotSquared teleport cause to convert
+     * @return Bukkit's equivalent teleport cause
+     */
     public PlayerTeleportEvent.TeleportCause getTeleportCause(final @NonNull TeleportCause cause) {
         if (cause.toString().startsWith("COMMAND")) {
             return PlayerTeleportEvent.TeleportCause.COMMAND;

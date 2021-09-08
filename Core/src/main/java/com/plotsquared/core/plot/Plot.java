@@ -1666,6 +1666,16 @@ public class Plot {
         return base.settings != null && base.settings.getRatings() != null;
     }
 
+    /**
+     * Claim the plot
+     *
+     * @param player    The player to set the owner to
+     * @param teleport  If the player should be teleported
+     * @param schematic The schematic name to paste on the plot
+     * @param updateDB  If the database should be updated
+     * @param auto      If the plot is being claimed by a /plot auto
+     * @return success
+     */
     public boolean claim(
             final @NonNull PlotPlayer<?> player, boolean teleport, String schematic, boolean updateDB,
             boolean auto

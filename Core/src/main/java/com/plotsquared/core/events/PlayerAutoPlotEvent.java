@@ -112,18 +112,38 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
         return this.plotArea;
     }
 
+    /**
+     * Get the x size of the auto-area
+     *
+     * @return x size
+     */
     public int getSizeX() {
         return this.sizeX;
     }
 
+    /**
+     * Set the x size of the auto-area
+     *
+     * @param sizeX x size
+     */
     public void setSizeX(int sizeX) {
         this.sizeX = sizeX;
     }
 
+    /**
+     * Get the z size of the auto-area
+     *
+     * @return z size
+     */
     public int getSizeZ() {
         return this.sizeZ;
     }
 
+    /**
+     * Set the z size of the auto-area
+     *
+     * @param sizeZ z size
+     */
     public void setSizeZ(int sizeZ) {
         this.sizeZ = sizeZ;
     }
