@@ -52,7 +52,7 @@ import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "deny",
         aliases = {"d", "ban"},
-        usage = "/plot deny <player | *>",
+        usage = "/plot deny <player",
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.PLAYER)
 public class Deny extends SubCommand {
@@ -77,9 +77,7 @@ public class Deny extends SubCommand {
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
 
         Location location = player.getLocation();
-        Plot plot = location.getPlotAbs();
-        final Plot currentPlot = player.getCurrentPlot();
-        int size = currentPlot.getDenied().size();
+        final Plot plot = location.getPlotAbs();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
@@ -95,6 +93,7 @@ public class Deny extends SubCommand {
         }
 
         int maxDenySize = Permissions.hasPermissionRange(player, Permission.PERMISSION_DENY, Settings.Limit.MAX_PLOTS);
+        int size = plot.getDenied().size();
         if (size > (maxDenySize - 1)) {
             player.sendMessage(
                     TranslatableCaption.of("members.plot_max_members_denied"),

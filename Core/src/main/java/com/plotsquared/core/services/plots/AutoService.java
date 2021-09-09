@@ -139,12 +139,17 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
         @Override
         public List<Plot> handle(@NonNull AutoQuery autoQuery) {
             Plot plot;
+            PlotId nextId = autoQuery.getStartId();
             do {
                 synchronized (plotLock) {
-                    plot = autoQuery.getPlotArea().getNextFreePlot(autoQuery.getPlayer(), autoQuery.getStartId());
+                    plot = autoQuery.getPlotArea().getNextFreePlot(autoQuery.getPlayer(), nextId);
                     if (plot != null && plotCandidateCache.getIfPresent(plot.getId()) == null) {
                         plotCandidateCache.put(plot.getId(), plot);
                         return Collections.singletonList(plot);
+                    }
+                    // if the plot is already in the cache, we want to make sure we skip it the next time
+                    if (plot != null) {
+                        nextId = plot.getId();
                     }
                 }
             } while (plot != null);
