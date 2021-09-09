@@ -395,7 +395,7 @@ public class Area extends SubCommand {
                                     final String world = this.setupUtils.setupWorld(builder);
                                     if (this.worldUtil.isWorld(world)) {
                                         PlotSquared.get().loadWorld(world, null);
-                                        player.teleport(this.worldUtil.getSpawn(world), TeleportCause.COMMAND);
+                                        player.teleport(this.worldUtil.getSpawn(world), TeleportCause.COMMAND_AREA_CREATE);
                                         player.sendMessage(TranslatableCaption.of("setup.setup_finished"));
                                         if (area.getTerrain() != PlotAreaTerrainType.ALL) {
                                             QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(world));
@@ -525,7 +525,7 @@ public class Area extends SubCommand {
                                 builder.generatorName(PlotSquared.platform().pluginName());
                                 String world = this.setupUtils.setupWorld(builder);
                                 if (this.worldUtil.isWorld(world)) {
-                                    player.teleport(this.worldUtil.getSpawn(world), TeleportCause.COMMAND);
+                                    player.teleport(this.worldUtil.getSpawn(world), TeleportCause.COMMAND_AREA_CREATE);
                                     player.sendMessage(TranslatableCaption.of("setup.setup_finished"));
                                 } else {
                                     player.sendMessage(
@@ -560,13 +560,13 @@ public class Area extends SubCommand {
                         }
                         if (this.worldUtil.isWorld(pa.getWorldName())) {
                             if (!player.getLocation().getWorldName().equals(pa.getWorldName())) {
-                                player.teleport(this.worldUtil.getSpawn(pa.getWorldName()), TeleportCause.COMMAND);
+                                player.teleport(this.worldUtil.getSpawn(pa.getWorldName()), TeleportCause.COMMAND_AREA_CREATE);
                             }
                         } else {
                             builder.terrainType(PlotAreaTerrainType.NONE);
                             builder.plotAreaType(PlotAreaType.NORMAL);
                             this.setupUtils.setupWorld(builder);
-                            player.teleport(this.worldUtil.getSpawn(pa.getWorldName()), TeleportCause.COMMAND);
+                            player.teleport(this.worldUtil.getSpawn(pa.getWorldName()), TeleportCause.COMMAND_AREA_CREATE);
                         }
                         metaData.computeIfAbsent(player.getUUID(), missingUUID -> new HashMap<>()).put("area_create_area", pa);
                         player.sendMessage(
@@ -795,10 +795,10 @@ public class Area extends SubCommand {
                 if (area instanceof SinglePlotArea) {
                     ((SinglePlotArea) area).loadWorld(PlotId.of(0, 0));
                     center = this.worldUtil.getSpawn(PlotId.of(0, 0).toUnderscoreSeparatedString());
-                    player.teleport(center, TeleportCause.COMMAND);
+                    player.teleport(center, TeleportCause.COMMAND_AREA_TELEPORT);
                 } else if (area.getType() != PlotAreaType.PARTIAL) {
                     center = this.worldUtil.getSpawn(area.getWorldName());
-                    player.teleport(center, TeleportCause.COMMAND);
+                    player.teleport(center, TeleportCause.COMMAND_AREA_TELEPORT);
                 } else {
                     CuboidRegion region = area.getRegion();
                     center = Location.at(area.getWorldName(),
@@ -810,7 +810,7 @@ public class Area extends SubCommand {
                                     .getZ()) / 2
                     );
                     this.worldUtil.getHighestBlock(area.getWorldName(), center.getX(), center.getZ(),
-                            y -> player.teleport(center.withY(1 + y), TeleportCause.COMMAND)
+                            y -> player.teleport(center.withY(1 + y), TeleportCause.COMMAND_AREA_TELEPORT)
                     );
                 }
                 return true;

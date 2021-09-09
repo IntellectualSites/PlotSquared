@@ -25,48 +25,33 @@
  */
 package com.plotsquared.core.events;
 
-import com.google.common.collect.Sets;
-
-import java.util.EnumSet;
-import java.util.Set;
+import com.plotsquared.core.plot.Plot;
 
 /**
- * The reason for an internal player teleport.
+ * To be used as a notification that a plot has been claimed. For cancelling events, see {@link PlayerClaimPlotEvent}
  */
-public enum TeleportCause {
+public class PlotClaimedNotifyEvent extends PlotEvent {
 
-    COMMAND,
-    COMMAND_AREA_CREATE,
-    COMMAND_AREA_TELEPORT,
-    COMMAND_AUTO,
-    COMMAND_CLAIM,
-    COMMAND_CLEAR,
-    COMMAND_CLUSTER_TELEPORT,
-    COMMAND_DELETE,
-    COMMAND_HOME,
-    COMMAND_LIKE,
-    COMMAND_MIDDLE,
-    COMMAND_RATE,
-    COMMAND_SETUP,
-    COMMAND_TEMPLATE,
-    COMMAND_VISIT,
-    DEATH,
-    DENIED,
-    KICK,
-    LOGIN,
-    PLUGIN,
-    UNKNOWN;
+    private final boolean auto;
 
-    public static final class CauseSets {
-
-        public static final Set<TeleportCause> COMMAND = Sets.immutableEnumSet(EnumSet.range(
-                TeleportCause.COMMAND,
-                TeleportCause.COMMAND_VISIT
-        ));
-        public static final Set<TeleportCause> PLUGIN = Sets.immutableEnumSet(EnumSet.range(
-                TeleportCause.DEATH,
-                TeleportCause.PLUGIN
-        ));
-
+    /**
+     * New event instance.
+     *
+     * @param plot Plot that was claimed
+     * @param auto If the plot was claimed using /plot auto
+     */
+    public PlotClaimedNotifyEvent(Plot plot, boolean auto) {
+        super(plot);
+        this.auto = auto;
     }
+
+    /**
+     * If the plot was claimed using /plot auto
+     *
+     * @return if claimed with auto
+     */
+    public boolean wasAuto() {
+        return auto;
+    }
+
 }

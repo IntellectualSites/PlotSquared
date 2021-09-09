@@ -29,6 +29,7 @@ import com.google.common.eventbus.EventBus;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlayerAutoPlotEvent;
+import com.plotsquared.core.events.PlayerAutoPlotsChosenEvent;
 import com.plotsquared.core.events.PlayerClaimPlotEvent;
 import com.plotsquared.core.events.PlayerEnterPlotEvent;
 import com.plotsquared.core.events.PlayerLeavePlotEvent;
@@ -38,6 +39,7 @@ import com.plotsquared.core.events.PlayerPlotTrustedEvent;
 import com.plotsquared.core.events.PlayerTeleportToPlotEvent;
 import com.plotsquared.core.events.PlotAutoMergeEvent;
 import com.plotsquared.core.events.PlotChangeOwnerEvent;
+import com.plotsquared.core.events.PlotClaimedNotifyEvent;
 import com.plotsquared.core.events.PlotClearEvent;
 import com.plotsquared.core.events.PlotComponentSetEvent;
 import com.plotsquared.core.events.PlotDeleteEvent;
@@ -48,6 +50,7 @@ import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.PlotRateEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
+import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.listener.PlayerBlockEventType;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
@@ -75,11 +78,13 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@ApiStatus.Internal
 public class EventDispatcher {
 
     private final EventBus eventBus = new EventBus("PlotSquaredEvents");
@@ -130,8 +135,23 @@ public class EventDispatcher {
         return event;
     }
 
-    public PlayerTeleportToPlotEvent callTeleport(PlotPlayer<?> player, Location from, Plot plot) {
-        PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, plot);
+    public PlayerAutoPlotsChosenEvent callAutoPlotsChosen(
+            PlotPlayer<?> player, List<Plot> plots
+    ) {
+        PlayerAutoPlotsChosenEvent event =
+                new PlayerAutoPlotsChosenEvent(player, plots);
+        callEvent(event);
+        return event;
+    }
+
+    public PlotClaimedNotifyEvent callPlotClaimedNotify(Plot plot, boolean auto) {
+        PlotClaimedNotifyEvent event = new PlotClaimedNotifyEvent(plot, auto);
+        callEvent(event);
+        return event;
+    }
+
+    public PlayerTeleportToPlotEvent callTeleport(PlotPlayer<?> player, Location from, Plot plot, TeleportCause cause) {
+        PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, plot, cause);
         callEvent(event);
         return event;
     }
@@ -263,7 +283,7 @@ public class EventDispatcher {
         final Plot plot = player.getCurrentPlot();
         if (Settings.Teleport.ON_LOGIN && plot != null && !(plot
                 .getArea() instanceof SinglePlotArea)) {
-            TaskManager.runTask(() -> plot.teleportPlayer(player, result -> {
+            TaskManager.runTask(() -> plot.teleportPlayer(player, TeleportCause.LOGIN, result -> {
             }));
             player.sendMessage(TranslatableCaption.of("teleport.teleported_to_road"));
         }
@@ -272,7 +292,7 @@ public class EventDispatcher {
     public void doRespawnTask(final PlotPlayer<?> player) {
         final Plot plot = player.getCurrentPlot();
         if (Settings.Teleport.ON_DEATH && plot != null) {
-            TaskManager.runTask(() -> plot.teleportPlayer(player, result -> {
+            TaskManager.runTask(() -> plot.teleportPlayer(player, TeleportCause.DEATH, result -> {
             }));
             player.sendMessage(TranslatableCaption.of("teleport.teleported_to_road"));
         }

@@ -1666,6 +1666,7 @@ public class Plot {
         return base.settings != null && base.settings.getRatings() != null;
     }
 
+    @Deprecated(forRemoval = true)
     public boolean claim(final @NonNull PlotPlayer<?> player, boolean teleport, String schematic) {
         if (!canClaim(player)) {
             return false;
@@ -1673,8 +1674,26 @@ public class Plot {
         return claim(player, teleport, schematic, true);
     }
 
+    @Deprecated(forRemoval = true)
     public boolean claim(final @NonNull PlotPlayer<?> player, boolean teleport, String schematic, boolean updateDB) {
+        return claim(player, teleport, schematic, updateDB, false);
+    }
 
+    /**
+     * Claim the plot
+     *
+     * @param player    The player to set the owner to
+     * @param teleport  If the player should be teleported
+     * @param schematic The schematic name to paste on the plot
+     * @param updateDB  If the database should be updated
+     * @param auto      If the plot is being claimed by a /plot auto
+     * @return success
+     */
+    public boolean claim(
+            final @NonNull PlotPlayer<?> player, boolean teleport, String schematic, boolean updateDB,
+            boolean auto
+    ) {
+        this.eventDispatcher.callPlotClaimedNotify(this, auto);
         if (updateDB) {
             if (!this.getPlotModificationManager().create(player.getUUID(), true)) {
                 LOGGER.error("Player {} attempted to claim plot {}, but the database failed to update", player.getName(),
@@ -1689,7 +1708,7 @@ public class Plot {
         this.getPlotModificationManager().setSign(player.getName());
         player.sendMessage(TranslatableCaption.of("working.claimed"), Template.of("plot", this.getId().toString()));
         if (teleport && Settings.Teleport.ON_CLAIM) {
-            teleportPlayer(player, TeleportCause.COMMAND, result -> {
+            teleportPlayer(player, auto ? TeleportCause.COMMAND_AUTO : TeleportCause.COMMAND_CLAIM, result -> {
             });
         }
         PlotArea plotworld = getArea();
@@ -2570,7 +2589,7 @@ public class Plot {
      */
     public void teleportPlayer(final PlotPlayer<?> player, TeleportCause cause, Consumer<Boolean> resultConsumer) {
         Plot plot = this.getBasePlot(false);
-        Result result = this.eventDispatcher.callTeleport(player, player.getLocation(), plot).getEventResult();
+        Result result = this.eventDispatcher.callTeleport(player, player.getLocation(), plot, cause).getEventResult();
         if (result == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),

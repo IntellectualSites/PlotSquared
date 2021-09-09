@@ -42,7 +42,7 @@ public abstract class PlotEvent {
      *
      * @return Plot
      */
-    public final Plot getPlot() {
+    public Plot getPlot() {
         return this.plot;
     }
 

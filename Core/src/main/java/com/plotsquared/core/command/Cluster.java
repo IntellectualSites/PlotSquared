@@ -730,7 +730,7 @@ public class Cluster extends SubCommand {
                         return false;
                     }
                 }
-                cluster.getHome(home -> player.teleport(home, TeleportCause.COMMAND));
+                cluster.getHome(home -> player.teleport(home, TeleportCause.COMMAND_CLUSTER_TELEPORT));
                 player.sendMessage(TranslatableCaption.of("cluster.cluster_teleporting"));
                 return true;
             }

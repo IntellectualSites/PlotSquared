@@ -240,7 +240,7 @@ public class Template extends SubCommand {
 
                 this.setupUtils.setupWorld(builder);
                 TaskManager.runTask(() -> {
-                    player.teleport(this.worldUtil.getSpawn(world), TeleportCause.COMMAND);
+                    player.teleport(this.worldUtil.getSpawn(world), TeleportCause.COMMAND_TEMPLATE);
                     player.sendMessage(TranslatableCaption.of("setup.setup_finished"));
                 });
                 return true;

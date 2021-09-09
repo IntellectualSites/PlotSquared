@@ -362,12 +362,19 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
     }
 
+    /**
+     * Convert from PlotSquared's {@link TeleportCause} to Bukkit's {@link PlayerTeleportEvent.TeleportCause}
+     *
+     * @param cause PlotSquared teleport cause to convert
+     * @return Bukkit's equivalent teleport cause
+     */
     public PlayerTeleportEvent.TeleportCause getTeleportCause(final @NonNull TeleportCause cause) {
-        return switch (cause) {
-            case COMMAND -> PlayerTeleportEvent.TeleportCause.COMMAND;
-            case PLUGIN -> PlayerTeleportEvent.TeleportCause.PLUGIN;
-            default -> PlayerTeleportEvent.TeleportCause.UNKNOWN;
-        };
+        if (TeleportCause.CauseSets.COMMAND.contains(cause)) {
+            return PlayerTeleportEvent.TeleportCause.COMMAND;
+        } else if (cause == TeleportCause.UNKNOWN) {
+            return PlayerTeleportEvent.TeleportCause.UNKNOWN;
+        }
+        return PlayerTeleportEvent.TeleportCause.PLUGIN;
     }
 
 }

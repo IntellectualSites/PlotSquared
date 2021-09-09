@@ -25,68 +25,62 @@
  */
 package com.plotsquared.core.events;
 
-import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
- * Called when a player teleports to a plot
+ * Event fired when the plots that are to be claimed by a player executing a /plot auto have been chosen. It contains an
+ * unmodifiable list of the plots selected. This may be of length 0. This event is effectively cancellable by setting the list
+ * of plots to an empty list.
  */
-public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements CancellablePlotEvent {
+public class PlayerAutoPlotsChosenEvent extends PlotPlayerEvent {
 
-    private final Location from;
-    private final TeleportCause cause;
     private Result eventResult;
 
-    /**
-     * @deprecated use {@link PlayerTeleportToPlotEvent#PlayerTeleportToPlotEvent(PlotPlayer, Location, Plot, TeleportCause)}.
-     * You should not be creating events in the first place.
-     */
-    @Deprecated(forRemoval = true)
-    public PlayerTeleportToPlotEvent(PlotPlayer<?> player, Location from, Plot plot) {
-        this(player, from, plot, TeleportCause.UNKNOWN);
-    }
+    private List<Plot> plots;
 
     /**
-     * PlayerTeleportToPlotEvent: Called when a player teleports to a plot
+     * PlayerAutoPlotsChosenEvent: Called when one or more plots are chosen for a /plot auto
      *
-     * @param player That was teleported
-     * @param from   Start location
-     * @param plot   Plot to which the player was teleported
-     * @param cause  Why the teleport is being completed
+     * @param player Player that executed the auto
+     * @param plots  Plots that have been chosen to be set to the player
      */
-    public PlayerTeleportToPlotEvent(PlotPlayer<?> player, Location from, Plot plot, TeleportCause cause) {
-        super(player, plot);
-        this.from = from;
-        this.cause = cause;
+    public PlayerAutoPlotsChosenEvent(PlotPlayer<?> player, List<Plot> plots) {
+        super(player, plots.size() > 0 ? plots.get(0) : null);
+        this.plots = Collections.unmodifiableList(plots);
     }
 
     /**
-     * Get the teleport cause
+     * Returns the plot at index 0 in the list of plots selected. May be null if the list was of length 0.
      *
-     * @return TeleportCause
+     * @return plot at index 0 or null.
      */
-    public TeleportCause getCause() {
-        return cause;
-    }
-
-    /**
-     * Get the from location
-     *
-     * @return Location
-     */
-    public Location getFrom() {
-        return this.from;
-    }
-
     @Override
-    public Result getEventResult() {
-        return eventResult;
+    public @Nullable Plot getPlot() {
+        return super.getPlot();
     }
 
-    @Override
-    public void setEventResult(Result e) {
-        this.eventResult = e;
+    /**
+     * Get the immutable list of plots selected to be claimed by the player. May be of length 0.
+     *
+     * @return immutable list.
+     */
+    public @NonNull List<Plot> getPlots() {
+        return plots;
+    }
+
+    /**
+     * Set the plots to be claimed by the player.
+     *
+     * @param plots list of plots.
+     */
+    public void setPlots(final @NonNull List<Plot> plots) {
+        this.plots = List.copyOf(plots);
     }
 
 }

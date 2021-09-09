@@ -30,6 +30,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
@@ -183,10 +184,10 @@ public class Deny extends SubCommand {
                 player.kick("You got kicked from the plot! This server did not set up a loaded spawn, so you got " +
                         "kicked from the server.");
             } else {
-                player.teleport(newSpawn);
+                player.teleport(newSpawn, TeleportCause.DENIED);
             }
         } else {
-            player.teleport(spawn);
+            player.teleport(spawn, TeleportCause.DENIED);
         }
     }
 

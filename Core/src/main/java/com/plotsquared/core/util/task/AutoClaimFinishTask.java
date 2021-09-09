@@ -68,7 +68,7 @@ public final class AutoClaimFinishTask implements Callable<Boolean> {
             player.sendMessage(TranslatableCaption.of("errors.no_free_plots"));
             return false;
         }
-        plot.claim(player, true, schematic, false);
+        plot.claim(player, true, schematic, false, true);
         if (area.isAutoMerge()) {
             PlotMergeEvent event = this.eventDispatcher.callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
             if (event.getEventResult() == Result.DENY) {
