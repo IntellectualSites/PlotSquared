@@ -25,7 +25,10 @@
  */
 package com.plotsquared.core.events;
 
+import com.google.common.collect.Sets;
+
 import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * The reason for an internal player teleport.
@@ -54,10 +57,16 @@ public enum TeleportCause {
     PLUGIN,
     UNKNOWN;
 
-    public static final class SETS {
+    public static final class CauseSets {
 
-        public static final EnumSet<TeleportCause> COMMAND = EnumSet.range(TeleportCause.COMMAND, TeleportCause.COMMAND_VISIT);
-        public static final EnumSet<TeleportCause> PLUGIN = EnumSet.range(TeleportCause.DEATH, TeleportCause.PLUGIN);
+        public static final Set<TeleportCause> COMMAND = Sets.immutableEnumSet(EnumSet.range(
+                TeleportCause.COMMAND,
+                TeleportCause.COMMAND_VISIT
+        ));
+        public static final Set<TeleportCause> PLUGIN = Sets.immutableEnumSet(EnumSet.range(
+                TeleportCause.DEATH,
+                TeleportCause.PLUGIN
+        ));
 
     }
 }

@@ -369,7 +369,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
      * @return Bukkit's equivalent teleport cause
      */
     public PlayerTeleportEvent.TeleportCause getTeleportCause(final @NonNull TeleportCause cause) {
-        if (TeleportCause.SETS.COMMAND.contains(cause)) {
+        if (TeleportCause.CauseSets.COMMAND.contains(cause)) {
             return PlayerTeleportEvent.TeleportCause.COMMAND;
         } else if (cause == TeleportCause.UNKNOWN) {
             return PlayerTeleportEvent.TeleportCause.UNKNOWN;
