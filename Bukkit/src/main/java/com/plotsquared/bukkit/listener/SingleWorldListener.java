@@ -46,7 +46,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 public class SingleWorldListener implements Listener {
 
     private final Method methodGetHandleChunk;
-    private Field mustSave;
+    private Field shouldSave;
 
     public SingleWorldListener() throws Exception {
         ReflectionUtils.RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
@@ -55,13 +55,13 @@ public class SingleWorldListener implements Listener {
             if (PlotSquared.platform().serverVersion()[1] < 17) {
                 ReflectionUtils.RefClass classChunk = getRefClass("{nms}.Chunk");
                 if (PlotSquared.platform().serverVersion()[1] == 13) {
-                    this.mustSave = classChunk.getField("mustSave").getRealField();
+                    this.shouldSave = classChunk.getField("mustSave").getRealField();
                 } else {
-                    this.mustSave = classChunk.getField("unsaved").getRealField();
+                    this.shouldSave = classChunk.getField("s").getRealField();
                 }
             } else {
                 ReflectionUtils.RefClass classChunk = getRefClass("net.minecraft.world.level.chunk.Chunk");
-                this.mustSave = classChunk.getField("mustNotSave").getRealField();
+                this.shouldSave = classChunk.getField("r").getRealField();
             }
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
@@ -71,8 +71,8 @@ public class SingleWorldListener implements Listener {
     public void markChunkAsClean(Chunk chunk) {
         try {
             Object nmsChunk = methodGetHandleChunk.invoke(chunk);
-            if (mustSave != null) {
-                this.mustSave.set(nmsChunk, false);
+            if (shouldSave != null) {
+                this.shouldSave.set(nmsChunk, false);
             }
         } catch (Throwable e) {
             e.printStackTrace();
