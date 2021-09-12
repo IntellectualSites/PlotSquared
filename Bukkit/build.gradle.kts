@@ -80,6 +80,10 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("com.intellectualsites.http", "com.plotsquared.core.http")
     relocate("com.intellectualsites.paster", "com.plotsquared.core.paster")
     relocate("org.incendo.serverlib", "com.plotsquared.bukkit.serverlib")
+    relocate("org.jetbrains", "com.plotsquared.core.annotations")
+    relocate("org.intellij.lang", "com.plotsquared.core.intellij.annotations")
+    relocate("javax.annotation", "com.plotsquared.core.annotation")
+    relocate("javax.inject", "com.plotsquared.core.annotation.inject")
 
     // Get rid of all the libs which are 100% unused.
     minimize()
