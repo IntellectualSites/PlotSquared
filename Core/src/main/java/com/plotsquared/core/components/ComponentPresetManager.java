@@ -71,7 +71,6 @@ public class ComponentPresetManager {
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + ComponentPresetManager.class.getSimpleName());
 
     private final List<ComponentPreset> presets;
-    private final String guiName;
     private final EconHandler econHandler;
     private final InventoryUtil inventoryUtil;
     private File componentsFile;
@@ -104,15 +103,14 @@ public class ComponentPresetManager {
 
         final YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(this.componentsFile);
 
-        if (!yamlConfiguration.contains("title")) {
-            yamlConfiguration.set("title", "&6Plot Components");
+        if (yamlConfiguration.contains("title")) {
+            yamlConfiguration.set("title", "#Now in /lang/messages_%.json, preset.title");
             try {
                 yamlConfiguration.save(this.componentsFile);
             } catch (IOException e) {
                 LOGGER.error("Failed to save default values to components.yml", e);
             }
         }
-        this.guiName = yamlConfiguration.getString("title", "&6Plot Components");
 
         if (yamlConfiguration.contains("presets")) {
             this.presets = yamlConfiguration
@@ -183,7 +181,8 @@ public class ComponentPresetManager {
             allowedPresets.add(componentPreset);
         }
         final int size = (int) Math.ceil((double) allowedPresets.size() / 9.0D);
-        final PlotInventory plotInventory = new PlotInventory(this.inventoryUtil, player, size, this.guiName) {
+        final PlotInventory plotInventory = new PlotInventory(this.inventoryUtil, player, size,
+                TranslatableCaption.of("preset.title").getComponent(player)) {
             @Override
             public boolean onClick(final int index) {
                 if (!getPlayer().getCurrentPlot().equals(plot)) {
