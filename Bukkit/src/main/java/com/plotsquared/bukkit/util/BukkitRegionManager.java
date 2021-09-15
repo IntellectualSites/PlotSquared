@@ -176,7 +176,7 @@ public class BukkitRegionManager extends RegionManager {
             final boolean ignoreAugment,
             final @Nullable Runnable whenDone
     ) {
-        final BukkitWorld world = new BukkitWorld((World) pos1.getWorld());
+        final BukkitWorld world = (BukkitWorld) worldUtil.getWeWorld(pos1.getWorldName());
 
         final int p1x = pos1.getX();
         final int p1z = pos1.getZ();

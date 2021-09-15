@@ -61,7 +61,7 @@ public abstract class RegionManager {
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + RegionManager.class.getSimpleName());
 
     public static RegionManager manager = null;
-    private final WorldUtil worldUtil;
+    protected final WorldUtil worldUtil;
     private final GlobalBlockQueue blockQueue;
     private final ProgressSubscriberFactory subscriberFactory;
 
