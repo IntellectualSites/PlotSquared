@@ -73,6 +73,7 @@ public class Unlink extends SubCommand {
         }
         if (!plot.isMerged()) {
             player.sendMessage(TranslatableCaption.of("merge.unlink_impossible"));
+            return false;
         }
         final boolean createRoad;
         if (args.length != 0) {
@@ -100,6 +101,7 @@ public class Unlink extends SubCommand {
         if (!force && !plot.isOwner(player.getUUID()) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_UNLINK)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
+            return true;
         }
         Runnable runnable = () -> {
             if (!plot.getPlotModificationManager().unlinkPlot(createRoad, createRoad)) {
