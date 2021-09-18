@@ -16,7 +16,7 @@ plugins {
     idea
 }
 
-var ver by extra("6.1.2")
+var ver by extra("6.1.3")
 var versuffix by extra("-SNAPSHOT")
 val versionsuffix: String? by project
 if (versionsuffix != null) {
