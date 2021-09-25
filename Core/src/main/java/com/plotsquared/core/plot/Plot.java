@@ -368,7 +368,7 @@ public class Plot {
             for (Plot p : plots) {
                 String name = p.getAlias();
                 if (!name.isEmpty() && name.equalsIgnoreCase(arg)) {
-                    return p;
+                    return p.getBasePlot(false);
                 }
             }
             if (message && player != null) {
