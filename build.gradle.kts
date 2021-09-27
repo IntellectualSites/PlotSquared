@@ -76,7 +76,7 @@ allprojects {
     dependencies {
         // Tests
         testImplementation("junit:junit:4.13.2")
-        testImplementation("org.junit.jupiter:junit-jupiter:5.8.0")
+        testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     }
 
     plugins.withId("java") {
