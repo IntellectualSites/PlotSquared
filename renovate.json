@@ -5,6 +5,7 @@
   ],
   "ignoreDeps": [
     "guava",
+    "com.google.guava:guava",  
     "gson",
     "snakeyaml"
   ],
