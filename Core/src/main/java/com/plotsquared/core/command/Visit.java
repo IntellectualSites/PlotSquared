@@ -334,7 +334,7 @@ public class Visit extends Command {
     public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         final List<Command> completions = new ArrayList<>();
         switch (args.length - 1) {
-            case 0 -> completions.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
+            case 0 -> completions.addAll(TabCompletions.completePlayers(player, args[0], Collections.emptyList()));
             case 1 -> {
                 completions.addAll(
                         TabCompletions.completeAreas(args[1]));

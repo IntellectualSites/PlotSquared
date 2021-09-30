@@ -288,7 +288,7 @@ public class Set extends SubCommand {
                     }).collect(Collectors.toCollection(LinkedList::new));
 
             if (Permissions.hasPermission(player, Permission.PERMISSION_SET) && args[0].length() > 0) {
-                commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
+                commands.addAll(TabCompletions.completePlayers(player, args[0], Collections.emptyList()));
             }
             return commands;
         } else if (args.length > 1) {

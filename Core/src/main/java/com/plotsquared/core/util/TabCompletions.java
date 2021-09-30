@@ -78,29 +78,33 @@ public final class TabCompletions {
      * cache, so it will complete will all names known to PlotSquared
      *
      * @param input    Command input
+     * @param issuer   The player who issued the tab completion
      * @param existing Players that should not be included in completions
      * @return List of completions
      */
     public static @NonNull List<Command> completePlayers(
+            final @NonNull PlotPlayer<?> issuer,
             final @NonNull String input,
             final @NonNull List<String> existing
     ) {
-        return completePlayers("players", input, existing, uuid -> true);
+        return completePlayers("players", issuer, input, existing, uuid -> true);
     }
 
     /**
      * Get a list of tab completions corresponding to player names added to the given plot.
      *
+     * @param issuer          The player who issued the tab completion
      * @param plot     Plot to complete added players for
      * @param input    Command input
      * @param existing Players that should not be included in completions
      * @return List of completions
      */
     public static @NonNull List<Command> completeAddedPlayers(
+            final @NonNull PlotPlayer<?> issuer,
             final @NonNull Plot plot,
             final @NonNull String input, final @NonNull List<String> existing
     ) {
-        return completePlayers("added" + plot, input, existing,
+        return completePlayers("added" + plot, issuer, input, existing,
                 uuid -> plot.getMembers().contains(uuid)
                         || plot.getTrusted().contains(uuid)
                         || plot.getDenied().contains(uuid)
@@ -218,6 +222,7 @@ public final class TabCompletions {
 
     /**
      * @param cacheIdentifier Cache key
+     * @param issuer          The player who issued the tab completion
      * @param input           Command input
      * @param existing        Players that should not be included in completions
      * @param uuidFilter      Filter applied before caching values
@@ -225,6 +230,7 @@ public final class TabCompletions {
      */
     private static List<Command> completePlayers(
             final @NonNull String cacheIdentifier,
+            final @NonNull PlotPlayer<?> issuer,
             final @NonNull String input, final @NonNull List<String> existing,
             final @NonNull Predicate<UUID> uuidFilter
     ) {
@@ -246,9 +252,13 @@ public final class TabCompletions {
             final Collection<? extends PlotPlayer<?>> onlinePlayers = PlotSquared.platform().playerManager().getPlayers();
             players = new ArrayList<>(onlinePlayers.size());
             for (final PlotPlayer<?> player : onlinePlayers) {
-                if (uuidFilter.test(player.getUUID())) {
-                    players.add(player.getName());
+                if (!uuidFilter.test(player.getUUID())) {
+                    continue;
                 }
+                if (!issuer.canSee(player)) {
+                    continue;
+                }
+                players.add(player.getName());
             }
         }
         return filterCached(players, input, existing);

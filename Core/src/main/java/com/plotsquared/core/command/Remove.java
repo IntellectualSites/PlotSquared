@@ -142,7 +142,7 @@ public class Remove extends SubCommand {
         if (plot == null) {
             return Collections.emptyList();
         }
-        return TabCompletions.completeAddedPlayers(plot, String.join(",", args).trim(),
+        return TabCompletions.completeAddedPlayers(player, plot, String.join(",", args).trim(),
                 Collections.singletonList(player.getName())
         );
     }
