@@ -43,8 +43,18 @@ public abstract class ListFlag<V, F extends PlotFlag<List<V>, F>> extends PlotFl
     @Override
     public F merge(@NonNull List<V> newValue) {
         final List<V> mergedList = new ArrayList<>();
-        mergedList.addAll(getValue());
-        mergedList.addAll(newValue);
+        // If a server already used PS before this fix, we remove all present duplicates on an eventual merge
+        for (final V v : getValue()) {
+            if (!mergedList.contains(v)) {
+                mergedList.add(v);
+            }
+        }
+        // Only add new values if not already present from #getValue()
+        for (final V v : newValue) {
+            if (!mergedList.contains(v)) {
+                mergedList.add(v);
+            }
+        }
         return this.flagOf(mergedList);
     }
 
