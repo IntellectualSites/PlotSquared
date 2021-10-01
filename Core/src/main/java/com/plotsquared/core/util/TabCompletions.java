@@ -74,8 +74,6 @@ public final class TabCompletions {
                 "This is a utility class and cannot be instantiated");
     }
 
-
-
     /**
      * Get a list of tab completions corresponding to player names. This uses the UUID pipeline
      * cache, so it will complete will all names known to PlotSquared
@@ -85,6 +83,7 @@ public final class TabCompletions {
      * @return List of completions
      * @deprecated In favor {@link #completePlayers(PlotPlayer, String, List)}
      */
+    @Deprecated(forRemoval = true)
     public static @NonNull List<Command> completePlayers(
             final @NonNull String input,
             final @NonNull List<String> existing
@@ -119,6 +118,7 @@ public final class TabCompletions {
      *
      * @deprecated In favor {@link #completeAddedPlayers(PlotPlayer, Plot, String, List)}
      */
+    @Deprecated(forRemoval = true)
     public static @NonNull List<Command> completeAddedPlayers(
             final @NonNull Plot plot,
             final @NonNull String input, final @NonNull List<String> existing
@@ -256,7 +256,6 @@ public final class TabCompletions {
         return Collections.unmodifiableList(completions);
     }
 
-
     /**
      * @param cacheIdentifier Cache key
      * @param input           Command input
@@ -265,6 +264,7 @@ public final class TabCompletions {
      * @return List of completions
      * @deprecated In favor {@link #completePlayers(String, PlotPlayer, String, List, Predicate)}
      */
+    @Deprecated(forRemoval = true)
     private static List<Command> completePlayers(
             final @NonNull String cacheIdentifier,
             final @NonNull String input, final @NonNull List<String> existing,
