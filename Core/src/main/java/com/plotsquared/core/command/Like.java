@@ -220,11 +220,11 @@ public class Like extends SubCommand {
                     .map(completion -> new Command(null, true, completion, "", RequiredType.PLAYER, CommandCategory.INFO) {
                     }).collect(Collectors.toCollection(LinkedList::new));
             if (Permissions.hasPermission(player, Permission.PERMISSION_RATE) && args[0].length() > 0) {
-                commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
+                commands.addAll(TabCompletions.completePlayers(player, args[0], Collections.emptyList()));
             }
             return commands;
         }
-        return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
+        return TabCompletions.completePlayers(player, String.join(",", args).trim(), Collections.emptyList());
     }
 
 }

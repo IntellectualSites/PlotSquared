@@ -161,7 +161,7 @@ public class Info extends SubCommand {
                 }).collect(Collectors.toCollection(LinkedList::new));
 
         if (Permissions.hasPermission(player, Permission.PERMISSION_AREA_INFO_FORCE) && args[0].length() > 0) {
-            commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
+            commands.addAll(TabCompletions.completePlayers(player, args[0], Collections.emptyList()));
         }
 
         return commands;
