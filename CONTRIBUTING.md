@@ -6,3 +6,8 @@ If you are planning to commit any changes to the project, it would be highly app
 code style conventions. To make this easier we have provided settings that can be picked up by your IDE.
 
 IntelliJ: Install the `EditorConfig` plugin. Now IntelliJ is able to pick up the provided `.editorconfig` file automatically.
+
+### Committing
+
+We are using [conventional commits](https://www.conventionalcommits.org/en/) to make commit messages more descriptive and 
+generate changelogs based on them.
