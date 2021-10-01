@@ -32,6 +32,7 @@ import com.plotsquared.core.command.Command;
 import com.plotsquared.core.command.CommandCategory;
 import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -88,7 +89,7 @@ public final class TabCompletions {
             final @NonNull String input,
             final @NonNull List<String> existing
     ) {
-        return completePlayers(null, input, existing);
+        return completePlayers(ConsolePlayer.getConsole(), input, existing);
     }
 
     /**
@@ -101,7 +102,7 @@ public final class TabCompletions {
      * @return List of completions
      */
     public static @NonNull List<Command> completePlayers(
-            final @Nullable PlotPlayer<?> issuer,
+            final @NonNull PlotPlayer<?> issuer,
             final @NonNull String input,
             final @NonNull List<String> existing
     ) {
@@ -123,7 +124,7 @@ public final class TabCompletions {
             final @NonNull Plot plot,
             final @NonNull String input, final @NonNull List<String> existing
     ) {
-        return completeAddedPlayers(null, plot, input, existing);
+        return completeAddedPlayers(ConsolePlayer.getConsole(), plot, input, existing);
     }
 
     /**
@@ -136,7 +137,7 @@ public final class TabCompletions {
      * @return List of completions
      */
     public static @NonNull List<Command> completeAddedPlayers(
-            final @Nullable PlotPlayer<?> issuer,
+            final @NonNull PlotPlayer<?> issuer,
             final @NonNull Plot plot,
             final @NonNull String input, final @NonNull List<String> existing
     ) {
@@ -270,7 +271,7 @@ public final class TabCompletions {
             final @NonNull String input, final @NonNull List<String> existing,
             final @NonNull Predicate<UUID> uuidFilter
     ) {
-        return completePlayers(cacheIdentifier, null, input, existing, uuidFilter);
+        return completePlayers(cacheIdentifier, ConsolePlayer.getConsole(), input, existing, uuidFilter);
     }
 
     /**
@@ -283,7 +284,7 @@ public final class TabCompletions {
      */
     private static List<Command> completePlayers(
             final @NonNull String cacheIdentifier,
-            final @Nullable PlotPlayer<?> issuer,
+            final @NonNull PlotPlayer<?> issuer,
             final @NonNull String input, final @NonNull List<String> existing,
             final @NonNull Predicate<UUID> uuidFilter
     ) {
