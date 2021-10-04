@@ -177,6 +177,7 @@ public class PlotListener {
                             TranslatableCaption.of("flags.greeting_flag_format"),
                             Template.of("world", plot.getWorldName()),
                             Template.of("plot_id", plot.getId().toString()),
+                            Template.of("alias", plot.getAlias()),
                             Template.of("greeting", greeting)
                     );
                 } else {
@@ -184,6 +185,7 @@ public class PlotListener {
                             TranslatableCaption.of("flags.greeting_flag_format"),
                             Template.of("world", plot.getWorldName()),
                             Template.of("plot_id", plot.getId().toString()),
+                            Template.of("alias", plot.getAlias()),
                             Template.of("greeting", greeting)
                     );
                 }
@@ -418,6 +420,7 @@ public class PlotListener {
                                 TranslatableCaption.of("flags.farewell_flag_format"),
                                 Template.of("world", plot.getWorldName()),
                                 Template.of("plot_id", plot.getId().toString()),
+                                Template.of("alias", plot.getAlias()),
                                 Template.of("farewell", farewell)
                         );
                     } else {
@@ -425,6 +428,7 @@ public class PlotListener {
                                 TranslatableCaption.of("flags.farewell_flag_format"),
                                 Template.of("world", plot.getWorldName()),
                                 Template.of("plot_id", plot.getId().toString()),
+                                Template.of("alias", plot.getAlias()),
                                 Template.of("farewell", farewell)
                         );
                     }
