@@ -42,6 +42,7 @@ http4j = "1.3"
 shadow = "7.0.0"
 grgit = "4.1.0"
 licenser = "0.6.1"
+nexus = "1.1.0"
 
 [libraries]
 # Platform expectations
@@ -92,3 +93,4 @@ paster = { group = "com.intellectualsites.paster", name = "Paster", version.ref 
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
 grgit = { id = "org.ajoberstar.grgit", version.ref = "grgit" }
 licenser = { id = "org.cadixdev.licenser", version.ref = "licenser" }
+nexus = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus" }
