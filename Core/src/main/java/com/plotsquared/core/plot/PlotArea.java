@@ -408,13 +408,9 @@ public abstract class PlotArea {
             }
         }
         this.getFlagContainer().addAll(parseFlags(flags));
-
-        Component flagsComponent = null;
-        Collection<PlotFlag<?, ?>> flagCollection = this.getFlagContainer().getFlagMap().values();
-        flagsComponent = getFlagsComponent(flagsComponent, flagCollection);
         ConsolePlayer.getConsole().sendMessage(
                 TranslatableCaption.of("flags.area_flags"),
-                Template.of("flags", flagsComponent)
+                Template.of("flags", flags.toString())
         );
 
         this.spawnEggs = config.getBoolean("event.spawn.egg");
@@ -433,13 +429,9 @@ public abstract class PlotArea {
             }
         }
         this.getRoadFlagContainer().addAll(parseFlags(roadflags));
-
-        Component roadFlagsComponent = null;
-        Collection<PlotFlag<?, ?>> roadFlagCollection = this.getRoadFlagContainer().getFlagMap().values();
-        roadFlagsComponent = getFlagsComponent(roadFlagsComponent, roadFlagCollection);
         ConsolePlayer.getConsole().sendMessage(
                 TranslatableCaption.of("flags.road_flags"),
-                Template.of("flags", roadFlagsComponent)
+                Template.of("flags", roadflags.toString())
         );
 
         loadConfiguration(config);
