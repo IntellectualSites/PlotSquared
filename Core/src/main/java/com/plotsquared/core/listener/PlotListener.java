@@ -334,12 +334,13 @@ public class PlotListener {
                         Template plotTemplate = Template.of("plot", lastPlot.getId().toString());
                         Template worldTemplate = Template.of("world", player.getLocation().getWorldName());
                         Template ownerTemplate = Template.of("owner", owner);
+                        Template aliasTemplate = Template.of("alias", plot.getAlias());
 
                         final Consumer<String> userConsumer = user -> {
                             if (Settings.Titles.TITLES_AS_ACTIONBAR) {
-                                player.sendActionBar(header, plotTemplate, worldTemplate, ownerTemplate);
+                                player.sendActionBar(header, aliasTemplate, plotTemplate, worldTemplate, ownerTemplate);
                             } else {
-                                player.sendTitle(header, subHeader, plotTemplate, worldTemplate, ownerTemplate);
+                                player.sendTitle(header, subHeader, aliasTemplate, plotTemplate, worldTemplate, ownerTemplate);
                             }
                         };
 
