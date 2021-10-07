@@ -615,6 +615,8 @@
   "flags.flag_error_title": "Flag value must be in the format </red><grey>\"A title\" \"The subtitle\"</grey><red>.",
   "flags.area_flags": "<prefix><gray>Area flags: </gray><dark_aqua><flags></dark_aqua>",
   "flags.road_flags": "<prefix><gray>Road flags: </gray><dark_aqua><flags></dark_aqua>",
+  "flags.greeting_flag_format": "<prefix><gold>[<world>;<plot_id>]:</gold> <greeting>",
+  "flags.farewell_flag_format": "<prefix><gold>[<world>;<plot_id>]:</gold> <farewell>",
   "commands.description.add": "<gray>Allow a user to build in a plot while the plot owner is online.</gray>",
   "commands.description.alias": "<gray>Set the plot alias.</gray>",
   "commands.description.area": "<gray>Create a new plot area.</gray>",
