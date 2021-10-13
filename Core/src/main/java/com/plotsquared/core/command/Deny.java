@@ -94,7 +94,7 @@ public class Deny extends SubCommand {
 
         int maxDenySize = Permissions.hasPermissionRange(player, Permission.PERMISSION_DENY, Settings.Limit.MAX_PLOTS);
         int size = plot.getDenied().size();
-        if (size > (maxDenySize - 1)) {
+        if (size >= maxDenySize) {
             player.sendMessage(
                     TranslatableCaption.of("members.plot_max_members_denied"),
                     Template.of("amount", String.valueOf(size))
