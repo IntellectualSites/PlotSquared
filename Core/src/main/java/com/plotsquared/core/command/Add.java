@@ -132,7 +132,7 @@ public class Add extends Command {
                     checkTrue(!uuids.isEmpty(), null);
                     int localAddSize = plot.getMembers().size();
                     int maxAddSize = Permissions.hasPermissionRange(player, Permission.PERMISSION_ADD, Settings.Limit.MAX_PLOTS);
-                    if (localAddSize > maxAddSize) {
+                    if (localAddSize >= maxAddSize) {
                         player.sendMessage(
                                 TranslatableCaption.of("members.plot_max_members_added"),
                                 Template.of("amount", String.valueOf(localAddSize))
