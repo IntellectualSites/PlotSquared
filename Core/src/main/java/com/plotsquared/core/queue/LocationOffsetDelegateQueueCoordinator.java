@@ -89,7 +89,7 @@ public class LocationOffsetDelegateQueueCoordinator extends DelegateQueueCoordin
     public boolean setBiome(int x, int z, @NonNull BiomeType biome) {
         boolean result = true;
         for (int y = 0; y < 256; y++) {
-            result &= this.setBiome(x, z, biome);
+            result &= this.setBiome(x, y, z, biome);
         }
         return result;
     }
