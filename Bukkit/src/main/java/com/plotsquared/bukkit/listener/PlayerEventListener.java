@@ -563,20 +563,22 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 this.tmpTeleport = true;
                 return;
             }
-            int border = area.getBorder();
-            if (x2 > border && this.tmpTeleport) {
-                to.setX(border - 1);
-                this.tmpTeleport = false;
-                player.teleport(event.getTo());
-                this.tmpTeleport = true;
-                pp.sendMessage(TranslatableCaption.of("border.border"));
-            }
-            if (x2 < -border && this.tmpTeleport) {
-                to.setX(-border + 1);
-                this.tmpTeleport = false;
-                player.teleport(event.getTo());
-                this.tmpTeleport = true;
-                pp.sendMessage(TranslatableCaption.of("border.border"));
+            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
+                int border = area.getBorder();
+                if (x2 > border && this.tmpTeleport) {
+                    to.setX(border - 1);
+                    this.tmpTeleport = false;
+                    player.teleport(event.getTo());
+                    this.tmpTeleport = true;
+                    pp.sendMessage(TranslatableCaption.of("border.border"));
+                }
+                if (x2 < -border && this.tmpTeleport) {
+                    to.setX(-border + 1);
+                    this.tmpTeleport = false;
+                    player.teleport(event.getTo());
+                    this.tmpTeleport = true;
+                    pp.sendMessage(TranslatableCaption.of("border.border"));
+                }
             }
         }
         int z2;
@@ -642,19 +644,21 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 this.tmpTeleport = true;
                 return;
             }
-            int border = area.getBorder();
-            if (z2 > border && this.tmpTeleport) {
-                to.setZ(border - 1);
-                this.tmpTeleport = false;
-                player.teleport(event.getTo());
-                this.tmpTeleport = true;
-                pp.sendMessage(TranslatableCaption.of("border.border"));
-            } else if (z2 < -border && this.tmpTeleport) {
-                to.setZ(-border + 1);
-                this.tmpTeleport = false;
-                player.teleport(event.getTo());
-                this.tmpTeleport = true;
-                pp.sendMessage(TranslatableCaption.of("border.border"));
+            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
+                int border = area.getBorder();
+                if (z2 > border && this.tmpTeleport) {
+                    to.setZ(border - 1);
+                    this.tmpTeleport = false;
+                    player.teleport(event.getTo());
+                    this.tmpTeleport = true;
+                    pp.sendMessage(TranslatableCaption.of("border.border"));
+                } else if (z2 < -border && this.tmpTeleport) {
+                    to.setZ(-border + 1);
+                    this.tmpTeleport = false;
+                    player.teleport(event.getTo());
+                    this.tmpTeleport = true;
+                    pp.sendMessage(TranslatableCaption.of("border.border"));
+                }
             }
         }
     }
