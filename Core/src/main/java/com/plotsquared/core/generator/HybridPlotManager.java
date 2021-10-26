@@ -152,7 +152,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         if ((isRoad && Settings.Schematics.PASTE_ROAD_ON_TOP) || (!isRoad && Settings.Schematics.PASTE_ON_TOP)) {
             minY = hybridPlotWorld.SCHEM_Y;
         } else {
-            minY = 1;
+            minY = hybridPlotWorld.getMinBuildHeight();
         }
         BaseBlock airBlock = BlockTypes.AIR.getDefaultState().toBaseBlock();
         for (int x = pos1.getX(); x <= pos2.getX(); x++) {

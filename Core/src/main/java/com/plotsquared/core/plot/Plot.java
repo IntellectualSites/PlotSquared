@@ -1733,16 +1733,25 @@ public class Plot {
                 e.printStackTrace();
                 return true;
             }
-            schematicHandler.paste(sch, this, 0, 1, 0, Settings.Schematics.PASTE_ON_TOP, player, new RunnableVal<>() {
-                @Override
-                public void run(Boolean value) {
-                    if (value) {
-                        player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_success"));
-                    } else {
-                        player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_failed"));
+            schematicHandler.paste(
+                    sch,
+                    this,
+                    0,
+                    getArea().getMinBuildHeight(),
+                    0,
+                    Settings.Schematics.PASTE_ON_TOP,
+                    player,
+                    new RunnableVal<>() {
+                        @Override
+                        public void run(Boolean value) {
+                            if (value) {
+                                player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_success"));
+                            } else {
+                                player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_failed"));
+                            }
+                        }
                     }
-                }
-            });
+            );
         }
         plotworld.getPlotManager().claimPlot(this, null);
         return true;
