@@ -563,21 +563,31 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 this.tmpTeleport = true;
                 return;
             }
-            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
-                int border = area.getBorder();
-                if (x2 > border && this.tmpTeleport) {
+            int border = area.getBorder();
+            int x1;
+            if (x2 > border && this.tmpTeleport) {
+                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
                     to.setX(border - 1);
                     this.tmpTeleport = false;
                     player.teleport(event.getTo());
                     this.tmpTeleport = true;
                     pp.sendMessage(TranslatableCaption.of("border.border"));
+                } else {
+                    pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
                 }
-                if (x2 < -border && this.tmpTeleport) {
+            } else if (x2 < -border && this.tmpTeleport) {
+                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
                     to.setX(-border + 1);
                     this.tmpTeleport = false;
                     player.teleport(event.getTo());
                     this.tmpTeleport = true;
                     pp.sendMessage(TranslatableCaption.of("border.border"));
+                } else {
+                    pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
+                }
+            } else if (((x1 = MathMan.roundInt(from.getX())) > border && x2 < border) || (x1 < -border && x2 > -border)) {
+                if (Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
+                    pp.sendMessage(TranslatableCaption.of("border.bypass.entered"));
                 }
             }
         }
@@ -644,20 +654,31 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 this.tmpTeleport = true;
                 return;
             }
-            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
-                int border = area.getBorder();
-                if (z2 > border && this.tmpTeleport) {
+            int border = area.getBorder();
+            int z1;
+            if (z2 > border && this.tmpTeleport) {
+                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
                     to.setZ(border - 1);
                     this.tmpTeleport = false;
                     player.teleport(event.getTo());
                     this.tmpTeleport = true;
                     pp.sendMessage(TranslatableCaption.of("border.border"));
-                } else if (z2 < -border && this.tmpTeleport) {
+                } else {
+                    pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
+                }
+            } else if (z2 < -border && this.tmpTeleport) {
+                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
                     to.setZ(-border + 1);
                     this.tmpTeleport = false;
                     player.teleport(event.getTo());
                     this.tmpTeleport = true;
                     pp.sendMessage(TranslatableCaption.of("border.border"));
+                } else {
+                    pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
+                }
+            } else if (((z1 = MathMan.roundInt(from.getZ())) > border && z2 < border) || (z1 < -border && z2 > -border)) {
+                if (Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
+                    pp.sendMessage(TranslatableCaption.of("border.bypass.entered"));
                 }
             }
         }
