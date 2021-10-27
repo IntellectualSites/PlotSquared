@@ -35,6 +35,7 @@ import com.plotsquared.core.generator.GridPlotWorld;
 import com.plotsquared.core.generator.SingleWorldGenerator;
 import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.listener.PlotListener;
+import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.location.PlotLoc;
 import com.plotsquared.core.plot.Plot;
@@ -74,7 +75,7 @@ public class SinglePlotArea extends GridPlotWorld {
         this.eventDispatcher = eventDispatcher;
         this.plotListener = plotListener;
         this.setAllowSigns(false);
-        this.setDefaultHome(new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE));
+        this.setDefaultHome(new BlockLoc(Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE));
     }
 
     @NonNull

@@ -41,6 +41,7 @@ import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.generator.GridPlotWorld;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.inject.annotations.WorldConfig;
+import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.location.PlotLoc;
@@ -140,8 +141,8 @@ public abstract class PlotArea {
     private PlotAreaType type = PlotAreaType.NORMAL;
     private PlotAreaTerrainType terrain = PlotAreaTerrainType.NONE;
     private boolean homeAllowNonmember = false;
-    private PlotLoc nonmemberHome;
-    private PlotLoc defaultHome;
+    private BlockLoc nonmemberHome;
+    private BlockLoc defaultHome;
     private int maxBuildHeight = 256;
     private int minBuildHeight = 1;
     private GameMode gameMode = GameModes.CREATIVE;
@@ -370,24 +371,24 @@ public abstract class PlotArea {
 
         String homeNonMembers = config.getString("home.nonmembers");
         String homeDefault = config.getString("home.default");
-        this.defaultHome = PlotLoc.fromString(homeDefault);
+        this.defaultHome = BlockLoc.fromString(homeDefault);
         this.homeAllowNonmember = homeNonMembers.equalsIgnoreCase(homeDefault);
         if (this.homeAllowNonmember) {
             this.nonmemberHome = defaultHome;
         } else {
-            this.nonmemberHome = PlotLoc.fromString(homeNonMembers);
+            this.nonmemberHome = BlockLoc.fromString(homeNonMembers);
         }
 
         if ("side".equalsIgnoreCase(homeDefault)) {
             this.defaultHome = null;
         } else if (StringMan.isEqualIgnoreCaseToAny(homeDefault, "center", "middle")) {
-            this.defaultHome = new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE);
+            this.defaultHome = new BlockLoc(Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE);
         } else {
             try {
                 /*String[] split = homeDefault.split(",");
                 this.DEFAULT_HOME =
                     new PlotLoc(Integer.parseInt(split[0]), Integer.parseInt(split[1]));*/
-                this.defaultHome = PlotLoc.fromString(homeDefault);
+                this.defaultHome = BlockLoc.fromString(homeDefault);
             } catch (NumberFormatException ignored) {
                 this.defaultHome = null;
             }
@@ -1351,15 +1352,15 @@ public abstract class PlotArea {
         return this.homeAllowNonmember;
     }
 
-    public PlotLoc getNonmemberHome() {
+    public BlockLoc getNonmemberHome() {
         return this.nonmemberHome;
     }
 
-    public PlotLoc getDefaultHome() {
+    public BlockLoc getDefaultHome() {
         return this.defaultHome;
     }
 
-    protected void setDefaultHome(PlotLoc defaultHome) {
+    protected void setDefaultHome(BlockLoc defaultHome) {
         this.defaultHome = defaultHome;
     }
 
