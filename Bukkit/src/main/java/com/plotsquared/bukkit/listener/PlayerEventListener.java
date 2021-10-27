@@ -571,7 +571,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     this.tmpTeleport = false;
                     player.teleport(event.getTo());
                     this.tmpTeleport = true;
-                    pp.sendMessage(TranslatableCaption.of("border.border"));
+                    pp.sendMessage(TranslatableCaption.of("border.denied"));
                 } else {
                     pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
                 }
@@ -581,7 +581,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     this.tmpTeleport = false;
                     player.teleport(event.getTo());
                     this.tmpTeleport = true;
-                    pp.sendMessage(TranslatableCaption.of("border.border"));
+                    pp.sendMessage(TranslatableCaption.of("border.denied"));
                 } else {
                     pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
                 }
@@ -662,7 +662,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     this.tmpTeleport = false;
                     player.teleport(event.getTo());
                     this.tmpTeleport = true;
-                    pp.sendMessage(TranslatableCaption.of("border.border"));
+                    pp.sendMessage(TranslatableCaption.of("border.denied"));
                 } else {
                     pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
                 }
@@ -672,7 +672,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     this.tmpTeleport = false;
                     player.teleport(event.getTo());
                     this.tmpTeleport = true;
-                    pp.sendMessage(TranslatableCaption.of("border.border"));
+                    pp.sendMessage(TranslatableCaption.of("border.denied"));
                 } else {
                     pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
                 }
