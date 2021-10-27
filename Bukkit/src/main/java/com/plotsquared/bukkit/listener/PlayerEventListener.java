@@ -585,7 +585,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 } else {
                     pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
                 }
-            } else if (((x1 = MathMan.roundInt(from.getX())) > border && x2 < border) || (x1 < -border && x2 > -border)) {
+            } else if (((x1 = MathMan.roundInt(from.getX())) >= border && x2 <= border) || (x1 <= -border && x2 >= -border)) {
                 if (Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
                     pp.sendMessage(TranslatableCaption.of("border.bypass.entered"));
                 }
@@ -676,7 +676,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 } else {
                     pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
                 }
-            } else if (((z1 = MathMan.roundInt(from.getZ())) > border && z2 < border) || (z1 < -border && z2 > -border)) {
+            } else if (((z1 = MathMan.roundInt(from.getZ())) >= border && z2 <= border) || (z1 <= -border && z2 >= -border)) {
                 if (Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
                     pp.sendMessage(TranslatableCaption.of("border.bypass.entered"));
                 }
