@@ -248,8 +248,11 @@ permissions:
       plots.admin.components.other: true
       plots.admin.vehicle.break.unowned: true
       plots.admin.pve.unowned: true
+      plots.admin.border.bypass: true
 
   plots.teleport.delay.bypass:
+    default: op
+  plots.admin.border.bypass:
     default: op
   plots.worldedit.bypass:
     default: op
