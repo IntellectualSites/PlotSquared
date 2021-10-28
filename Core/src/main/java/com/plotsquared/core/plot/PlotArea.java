@@ -124,6 +124,7 @@ public abstract class PlotArea {
             new FlagContainer(GlobalFlagContainer.getInstance());
     private final YamlConfiguration worldConfiguration;
     private final GlobalBlockQueue globalBlockQueue;
+    private final boolean roadFlags = false;
     private boolean autoMerge = false;
     private boolean allowSigns = true;
     private boolean miscSpawnUnowned = false;
@@ -148,7 +149,6 @@ public abstract class PlotArea {
     private GameMode gameMode = GameModes.CREATIVE;
     private Map<String, PlotExpression> prices = new HashMap<>();
     private List<String> schematics = new ArrayList<>();
-    private final boolean roadFlags = false;
     private boolean worldBorder = false;
     private boolean useEconomy = false;
     private int hash;
@@ -1352,12 +1352,35 @@ public abstract class PlotArea {
         return this.homeAllowNonmember;
     }
 
-    public BlockLoc getNonmemberHome() {
+    /**
+     * Get the location for non-members to be teleported to.
+     */
+    public BlockLoc nonmemberHome() {
         return this.nonmemberHome;
     }
 
-    public BlockLoc getDefaultHome() {
+    /**
+     * Get the default location for players to be teleported to. May be overriden by {@link #nonmemberHome} if the player is
+     * not a member of the plot.
+     */
+    public BlockLoc defaultHome() {
         return this.defaultHome;
+    }
+
+    /**
+     * @deprecated Use {@link #nonmemberHome}
+     */
+    @Deprecated(forRemoval = true)
+    public PlotLoc getNonmemberHome() {
+        return new PlotLoc(this.defaultHome.getX(), this.defaultHome.getY(), this.defaultHome.getZ());
+    }
+
+    /**
+     * @deprecated Use {@link #defaultHome}
+     */
+    @Deprecated(forRemoval = true)
+    public PlotLoc getDefaultHome() {
+        return new PlotLoc(this.defaultHome.getX(), this.defaultHome.getY(), this.defaultHome.getZ());
     }
 
     protected void setDefaultHome(BlockLoc defaultHome) {
