@@ -249,12 +249,11 @@ public class HybridPlotManager extends ClassicPlotManager {
         final Pattern plotfloor = hybridPlotWorld.TOP_BLOCK.toPattern();
         final Pattern filling = hybridPlotWorld.MAIN_BLOCK.toPattern();
 
-        final BlockState bedrock;
-        final BlockState air = BlockTypes.AIR.getDefaultState();
+        final Pattern bedrock;
         if (hybridPlotWorld.PLOT_BEDROCK) {
             bedrock = BlockTypes.BEDROCK.getDefaultState();
         } else {
-            bedrock = air;
+            bedrock = hybridPlotWorld.MAIN_BLOCK.toPattern();
         }
 
         final BiomeType biome = hybridPlotWorld.getPlotBiome();
@@ -274,7 +273,7 @@ public class HybridPlotManager extends ClassicPlotManager {
             // Each component has a different layer
             queue.setCuboid(pos1.withY(1), pos2.withY(hybridPlotWorld.PLOT_HEIGHT - 1), filling);
             queue.setCuboid(pos1.withY(hybridPlotWorld.PLOT_HEIGHT), pos2.withY(hybridPlotWorld.PLOT_HEIGHT), plotfloor);
-            queue.setCuboid(pos1.withY(hybridPlotWorld.PLOT_HEIGHT + 1), pos2.withY(getWorldHeight()), air);
+            queue.setCuboid(pos1.withY(hybridPlotWorld.PLOT_HEIGHT + 1), pos2.withY(getWorldHeight()), BlockTypes.AIR.getDefaultState());
             queue.setBiomeCuboid(pos1, pos2, biome);
         } else {
             queue.setRegenRegion(new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()));
