@@ -38,6 +38,7 @@ import com.plotsquared.core.inject.annotations.DefaultGenerator;
 import com.plotsquared.core.location.World;
 import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EconHandler;
@@ -267,6 +268,13 @@ public interface PlotPlatform<P> extends LocaleHolder {
     default @NonNull ChunkManager chunkManager() {
         return injector().getInstance(ChunkManager.class);
     }
+
+    /**
+     * Get the {@link PlotAreaManager} implementation.
+     *
+     * @return the PlotAreaManager
+     */
+    @NonNull PlotAreaManager plotAreaManager();
 
     /**
      * Get the platform specific console {@link Audience}

@@ -283,7 +283,7 @@ public class PlotSquared {
      * @return Plot area manager
      */
     public @NonNull PlotAreaManager getPlotAreaManager() {
-        return this.platform.injector().getInstance(PlotAreaManager.class);
+        return this.platform.plotAreaManager();
     }
 
     public void startExpiryTasks() {
