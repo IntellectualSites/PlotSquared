@@ -44,7 +44,6 @@ import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.location.PlotLoc;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
@@ -1506,7 +1505,7 @@ public class Plot {
     @Deprecated
     public Location getDefaultHomeSynchronous(final boolean member) {
         Plot plot = this.getBasePlot(false);
-        PlotLoc loc = member ? area.getDefaultHome() : area.getNonmemberHome();
+        BlockLoc loc = member ? area.defaultHome() : area.nonmemberHome();
         if (loc != null) {
             int x;
             int z;
@@ -1525,10 +1524,10 @@ public class Plot {
                 x = bot.getX() + loc.getX();
                 z = bot.getZ() + loc.getZ();
             }
-            int y = loc.getY() < 1
+            int y = loc.getY() == Integer.MIN_VALUE
                     ? (isLoaded() ? this.worldUtil.getHighestBlockSynchronous(plot.getWorldName(), x, z) + 1 : 63)
                     : loc.getY();
-            return Location.at(plot.getWorldName(), x, y, z);
+            return Location.at(plot.getWorldName(), x, y, z, loc.getYaw(), loc.getPitch());
         }
         // Side
         return plot.getSideSynchronous();
@@ -1545,7 +1544,7 @@ public class Plot {
             ));
             return;
         }
-        PlotLoc loc = member ? area.getDefaultHome() : area.getNonmemberHome();
+        BlockLoc loc = member ? area.defaultHome() : area.nonmemberHome();
         if (loc != null) {
             int x;
             int z;
@@ -1564,7 +1563,7 @@ public class Plot {
                 x = bot.getX() + loc.getX();
                 z = bot.getZ() + loc.getZ();
             }
-            if (loc.getY() < 1) {
+            if (loc.getY()  == Integer.MIN_VALUE) {
                 if (isLoaded()) {
                     this.worldUtil.getHighestBlock(
                             plot.getWorldName(),
@@ -1573,10 +1572,10 @@ public class Plot {
                             y -> result.accept(Location.at(plot.getWorldName(), x, y + 1, z))
                     );
                 } else {
-                    result.accept(Location.at(plot.getWorldName(), x, 63, z));
+                    result.accept(Location.at(plot.getWorldName(), x, 63, z, loc.getYaw(), loc.getPitch()));
                 }
             } else {
-                result.accept(Location.at(plot.getWorldName(), x, loc.getY(), z));
+                result.accept(Location.at(plot.getWorldName(), x, loc.getY(), z, loc.getYaw(), loc.getPitch()));
             }
             return;
         }
