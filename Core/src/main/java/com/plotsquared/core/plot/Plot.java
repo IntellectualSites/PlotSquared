@@ -39,6 +39,7 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.generator.ClassicPlotWorld;
 import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.BlockLoc;
@@ -1328,7 +1329,7 @@ public class Plot {
             return Location.at(
                     "",
                     0,
-                    this.getArea() instanceof HybridPlotWorld ? ((HybridPlotWorld) this.getArea()).PLOT_HEIGHT + 1 : 4,
+                    this.getArea() instanceof ClassicPlotWorld ? ((ClassicPlotWorld) this.getArea()).PLOT_HEIGHT + 1 : 4,
                     0
             );
         }
@@ -1403,7 +1404,7 @@ public class Plot {
                 return Location.at(
                         "",
                         0,
-                        this.getArea() instanceof HybridPlotWorld ? ((HybridPlotWorld) this.getArea()).PLOT_HEIGHT + 1 : 4,
+                        this.getArea() instanceof ClassicPlotWorld ? ((ClassicPlotWorld) this.getArea()).PLOT_HEIGHT + 1 : 4,
                         0
                 );
             }
@@ -1442,7 +1443,7 @@ public class Plot {
                 result.accept(Location.at(
                         "",
                         0,
-                        this.getArea() instanceof HybridPlotWorld ? ((HybridPlotWorld) this.getArea()).PLOT_HEIGHT + 1 : 4,
+                        this.getArea() instanceof ClassicPlotWorld ? ((ClassicPlotWorld) this.getArea()).PLOT_HEIGHT + 1 : 4,
                         0
                 ));
                 return;
@@ -1539,7 +1540,7 @@ public class Plot {
             result.accept(Location.at(
                     "",
                     0,
-                    this.getArea() instanceof HybridPlotWorld ? ((HybridPlotWorld) this.getArea()).PLOT_HEIGHT + 1 : 4,
+                    this.getArea() instanceof ClassicPlotWorld ? ((ClassicPlotWorld) this.getArea()).PLOT_HEIGHT + 1 : 4,
                     0
             ));
             return;
@@ -1572,7 +1573,8 @@ public class Plot {
                             y -> result.accept(Location.at(plot.getWorldName(), x, y + 1, z))
                     );
                 } else {
-                    result.accept(Location.at(plot.getWorldName(), x, 63, z, loc.getYaw(), loc.getPitch()));
+                    int y = this.getArea() instanceof ClassicPlotWorld ? ((ClassicPlotWorld) this.getArea()).PLOT_HEIGHT + 1 : 63;
+                    result.accept(Location.at(plot.getWorldName(), x, y, z, loc.getYaw(), loc.getPitch()));
                 }
             } else {
                 result.accept(Location.at(plot.getWorldName(), x, loc.getY(), z, loc.getYaw(), loc.getPitch()));

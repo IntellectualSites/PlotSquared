@@ -381,7 +381,7 @@ public abstract class PlotArea {
 
         if ("side".equalsIgnoreCase(homeDefault)) {
             this.defaultHome = null;
-        } else if (StringMan.isEqualIgnoreCaseToAny(homeDefault, "center", "middle")) {
+        } else if (StringMan.isEqualIgnoreCaseToAny(homeDefault, "center", "middle", "centre")) {
             this.defaultHome = new BlockLoc(Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE);
         } else {
             try {

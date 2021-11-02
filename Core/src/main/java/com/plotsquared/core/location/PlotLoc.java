@@ -56,7 +56,7 @@ public final class PlotLoc {
     public static @Nullable PlotLoc fromString(final String input) {
         if (input == null || "side".equalsIgnoreCase(input)) {
             return null;
-        } else if (StringMan.isEqualIgnoreCaseToAny(input, "center", "middle")) {
+        } else if (StringMan.isEqualIgnoreCaseToAny(input, "center", "middle", "centre")) {
             return new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE);
         } else {
             try {
