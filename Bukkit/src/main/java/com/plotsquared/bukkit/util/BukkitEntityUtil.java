@@ -178,8 +178,7 @@ public class BukkitEntityUtil {
                         if (!Permissions
                                 .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                             plotPlayer.sendMessage(
-                                    TranslatableCaption.of("permission.no_permission_event"),
-                                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
+                                    TranslatableCaption.of("done.building_restricted")
                             );
                             return false;
                         }

@@ -94,6 +94,7 @@
   "done.done_insufficient_complexity": "<prefix><red>This plot is too simple. Please add more detail before using this command.</red>",
   "done.done_success": "<prefix><gold>Successfully marked this plot as done.</gold>",
   "done.done_removed": "<prefix><gray>You may now continue building in this plot.</gray>",
+  "done.building_restricted": "<prefix><gray>You can't build on plots marked as done.</gray>",
   "ratings.ratings_purged": "<prefix><gray>Purged ratings for this plot.</gray>",
   "ratings.rating_not_valid": "<prefix><red>You need to specify a number between 1 and 10.</red>",
   "ratings.rating_already_exists": "<prefix><gray>You have already rated plot <plot>.</gray>",
