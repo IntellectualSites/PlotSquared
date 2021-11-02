@@ -708,6 +708,9 @@ public class Settings extends Config {
                 "If you would like to still show the owner of the plot, append the contents of \"titles.title_entered_plot_sub\" onto the " +
                         "former lang key."})
         public static boolean TITLES_AS_ACTIONBAR = false;
+        @Comment({"If the default title should be displayed on plots with server-plot flag set.",
+                "Titles will still be sent if the plot-title flag is set."})
+        public static boolean DISPLAY_DEFAULT_ON_SERVER_PLOT = false;
 
     }
 

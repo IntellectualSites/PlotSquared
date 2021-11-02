@@ -140,18 +140,13 @@ public class Visit extends Command {
                 return;
             }
         } else {
-            if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_OTHER)) {
+            // allow visit, if UntrustedVisit flag is set, or if the player has either the plot.visit.other or
+            // plot.admin.visit.untrusted permission
+            if (!plot.getFlag(UntrustedVisitFlag.class) && !Permissions.hasPermission(player, Permission.PERMISSION_VISIT_OTHER)
+                && !Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
                         Templates.of("node", "plots.visit.other")
-                );
-                return;
-            }
-            if (!plot.getFlag(UntrustedVisitFlag.class) && !Permissions
-                    .hasPermission(player, Permission.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
-                player.sendMessage(
-                        TranslatableCaption.of("permission.no_permission"),
-                        Templates.of("node", "plots.admin.visit.untrusted")
                 );
                 return;
             }
