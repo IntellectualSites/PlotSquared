@@ -1477,7 +1477,7 @@ public class Plot {
      */
     public void setHome(BlockLoc location) {
         Plot plot = this.getBasePlot(false);
-        if (location != null && new BlockLoc(0, 0, 0).equals(location)) {
+        if (BlockLoc.ZERO.equals(location) || BlockLoc.MINY.equals(location)) {
             return;
         }
         plot.getSettings().setPosition(location);
@@ -2149,8 +2149,9 @@ public class Plot {
     }
 
     /**
-     * Gets the set home location or 0,0,0 if no location is set<br>
+     * Gets the set home location or 0,Integer#MIN_VALUE,0 if no location is set<br>
      * - Does not take the default home location into account
+     * - PlotSquared will internally find the correct place to teleport to if y = Integer#MIN_VALUE when teleporting to the plot.
      *
      * @return home location
      */
