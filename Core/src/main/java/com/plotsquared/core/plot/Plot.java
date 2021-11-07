@@ -1708,9 +1708,14 @@ public class Plot {
         }
         this.getPlotModificationManager().setSign(player.getName());
         player.sendMessage(TranslatableCaption.of("working.claimed"), Template.of("plot", this.getId().toString()));
-        if (teleport && Settings.Teleport.ON_CLAIM) {
-            teleportPlayer(player, auto ? TeleportCause.COMMAND_AUTO : TeleportCause.COMMAND_CLAIM, result -> {
-            });
+        if (teleport) {
+            if (!auto && Settings.Teleport.ON_CLAIM) {
+                teleportPlayer(player, TeleportCause.COMMAND_CLAIM, result -> {
+                });
+            } else if (auto && Settings.Teleport.ON_AUTO) {
+                teleportPlayer(player, TeleportCause.COMMAND_AUTO, result -> {
+                });
+            }
         }
         PlotArea plotworld = getArea();
         if (plotworld.isSchematicOnClaim()) {

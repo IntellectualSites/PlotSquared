@@ -556,8 +556,10 @@ public class Settings extends Config {
         public static boolean ON_DEATH = false;
         @Comment("Teleport to your plot on login")
         public static boolean ON_LOGIN = false;
-        @Comment("Teleport to your plot on claim")
+        @Comment("Teleport to your plot on claim (/plot claim)")
         public static boolean ON_CLAIM = true;
+        @Comment("Teleport to your plot on auto (/plot auto)")
+        public static boolean ON_AUTO = true;
         @Comment({"Add a delay to all teleport commands (in seconds)",
                 "Assign `plots.teleport.delay.bypass` to bypass the cooldown"})
         public static int DELAY = 0;
