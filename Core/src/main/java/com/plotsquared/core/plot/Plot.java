@@ -39,12 +39,12 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.generator.ClassicPlotWorld;
 import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.location.PlotLoc;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
@@ -1329,7 +1329,7 @@ public class Plot {
             return Location.at(
                     "",
                     0,
-                    this.getArea() instanceof HybridPlotWorld ? ((HybridPlotWorld) this.getArea()).PLOT_HEIGHT + 1 : 4,
+                    this.getArea() instanceof ClassicPlotWorld ? ((ClassicPlotWorld) this.getArea()).PLOT_HEIGHT + 1 : 4,
                     0
             );
         }
@@ -1404,7 +1404,7 @@ public class Plot {
                 return Location.at(
                         "",
                         0,
-                        this.getArea() instanceof HybridPlotWorld ? ((HybridPlotWorld) this.getArea()).PLOT_HEIGHT + 1 : 4,
+                        this.getArea() instanceof ClassicPlotWorld ? ((ClassicPlotWorld) this.getArea()).PLOT_HEIGHT + 1 : 4,
                         0
                 );
             }
@@ -1443,7 +1443,7 @@ public class Plot {
                 result.accept(Location.at(
                         "",
                         0,
-                        this.getArea() instanceof HybridPlotWorld ? ((HybridPlotWorld) this.getArea()).PLOT_HEIGHT + 1 : 4,
+                        this.getArea() instanceof ClassicPlotWorld ? ((ClassicPlotWorld) this.getArea()).PLOT_HEIGHT + 1 : 4,
                         0
                 ));
                 return;
@@ -1477,7 +1477,7 @@ public class Plot {
      */
     public void setHome(BlockLoc location) {
         Plot plot = this.getBasePlot(false);
-        if (location != null && new BlockLoc(0, 0, 0).equals(location)) {
+        if (BlockLoc.ZERO.equals(location) || BlockLoc.MINY.equals(location)) {
             return;
         }
         plot.getSettings().setPosition(location);
@@ -1506,7 +1506,7 @@ public class Plot {
     @Deprecated
     public Location getDefaultHomeSynchronous(final boolean member) {
         Plot plot = this.getBasePlot(false);
-        PlotLoc loc = member ? area.getDefaultHome() : area.getNonmemberHome();
+        BlockLoc loc = member ? area.defaultHome() : area.nonmemberHome();
         if (loc != null) {
             int x;
             int z;
@@ -1525,10 +1525,10 @@ public class Plot {
                 x = bot.getX() + loc.getX();
                 z = bot.getZ() + loc.getZ();
             }
-            int y = loc.getY() < 1
+            int y = loc.getY() == Integer.MIN_VALUE
                     ? (isLoaded() ? this.worldUtil.getHighestBlockSynchronous(plot.getWorldName(), x, z) + 1 : 63)
                     : loc.getY();
-            return Location.at(plot.getWorldName(), x, y, z);
+            return Location.at(plot.getWorldName(), x, y, z, loc.getYaw(), loc.getPitch());
         }
         // Side
         return plot.getSideSynchronous();
@@ -1540,12 +1540,12 @@ public class Plot {
             result.accept(Location.at(
                     "",
                     0,
-                    this.getArea() instanceof HybridPlotWorld ? ((HybridPlotWorld) this.getArea()).PLOT_HEIGHT + 1 : 4,
+                    this.getArea() instanceof ClassicPlotWorld ? ((ClassicPlotWorld) this.getArea()).PLOT_HEIGHT + 1 : 4,
                     0
             ));
             return;
         }
-        PlotLoc loc = member ? area.getDefaultHome() : area.getNonmemberHome();
+        BlockLoc loc = member ? area.defaultHome() : area.nonmemberHome();
         if (loc != null) {
             int x;
             int z;
@@ -1564,7 +1564,7 @@ public class Plot {
                 x = bot.getX() + loc.getX();
                 z = bot.getZ() + loc.getZ();
             }
-            if (loc.getY() < 1) {
+            if (loc.getY()  == Integer.MIN_VALUE) {
                 if (isLoaded()) {
                     this.worldUtil.getHighestBlock(
                             plot.getWorldName(),
@@ -1573,10 +1573,11 @@ public class Plot {
                             y -> result.accept(Location.at(plot.getWorldName(), x, y + 1, z))
                     );
                 } else {
-                    result.accept(Location.at(plot.getWorldName(), x, 63, z));
+                    int y = this.getArea() instanceof ClassicPlotWorld ? ((ClassicPlotWorld) this.getArea()).PLOT_HEIGHT + 1 : 63;
+                    result.accept(Location.at(plot.getWorldName(), x, y, z, loc.getYaw(), loc.getPitch()));
                 }
             } else {
-                result.accept(Location.at(plot.getWorldName(), x, loc.getY(), z));
+                result.accept(Location.at(plot.getWorldName(), x, loc.getY(), z, loc.getYaw(), loc.getPitch()));
             }
             return;
         }
@@ -1707,9 +1708,14 @@ public class Plot {
         }
         this.getPlotModificationManager().setSign(player.getName());
         player.sendMessage(TranslatableCaption.of("working.claimed"), Template.of("plot", this.getId().toString()));
-        if (teleport && Settings.Teleport.ON_CLAIM) {
-            teleportPlayer(player, auto ? TeleportCause.COMMAND_AUTO : TeleportCause.COMMAND_CLAIM, result -> {
-            });
+        if (teleport) {
+            if (!auto && Settings.Teleport.ON_CLAIM) {
+                teleportPlayer(player, TeleportCause.COMMAND_CLAIM, result -> {
+                });
+            } else if (auto && Settings.Teleport.ON_AUTO) {
+                teleportPlayer(player, TeleportCause.COMMAND_AUTO, result -> {
+                });
+            }
         }
         PlotArea plotworld = getArea();
         if (plotworld.isSchematicOnClaim()) {
@@ -2148,8 +2154,9 @@ public class Plot {
     }
 
     /**
-     * Gets the set home location or 0,0,0 if no location is set<br>
+     * Gets the set home location or 0,Integer#MIN_VALUE,0 if no location is set<br>
      * - Does not take the default home location into account
+     * - PlotSquared will internally find the correct place to teleport to if y = Integer#MIN_VALUE when teleporting to the plot.
      *
      * @return home location
      */

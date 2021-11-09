@@ -24,7 +24,7 @@ dependencies {
     implementation(libs.bstats)
 
     // Paper
-    compileOnlyApi(libs.paper)
+    compileOnly(libs.paper)
     implementation(libs.paperlib)
 
     // Plugins
@@ -32,7 +32,7 @@ dependencies {
         exclude(group = "org.bukkit")
         exclude(group = "org.spigotmc")
     }
-    compileOnlyApi(libs.fastasyncworldeditBukkit) { isTransitive = false }
+    compileOnly(libs.fastasyncworldeditBukkit) { isTransitive = false }
     testImplementation(libs.fastasyncworldeditBukkit) { isTransitive = false }
     compileOnly(libs.vault) {
         exclude(group = "org.bukkit")

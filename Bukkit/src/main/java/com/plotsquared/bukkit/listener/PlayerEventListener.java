@@ -564,19 +564,31 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 return;
             }
             int border = area.getBorder();
+            int x1;
             if (x2 > border && this.tmpTeleport) {
-                to.setX(border - 1);
-                this.tmpTeleport = false;
-                player.teleport(event.getTo());
-                this.tmpTeleport = true;
-                pp.sendMessage(TranslatableCaption.of("border.border"));
-            }
-            if (x2 < -border && this.tmpTeleport) {
-                to.setX(-border + 1);
-                this.tmpTeleport = false;
-                player.teleport(event.getTo());
-                this.tmpTeleport = true;
-                pp.sendMessage(TranslatableCaption.of("border.border"));
+                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
+                    to.setX(border - 1);
+                    this.tmpTeleport = false;
+                    player.teleport(event.getTo());
+                    this.tmpTeleport = true;
+                    pp.sendMessage(TranslatableCaption.of("border.denied"));
+                } else {
+                    pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
+                }
+            } else if (x2 < -border && this.tmpTeleport) {
+                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
+                    to.setX(-border + 1);
+                    this.tmpTeleport = false;
+                    player.teleport(event.getTo());
+                    this.tmpTeleport = true;
+                    pp.sendMessage(TranslatableCaption.of("border.denied"));
+                } else {
+                    pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
+                }
+            } else if (((x1 = MathMan.roundInt(from.getX())) >= border && x2 <= border) || (x1 <= -border && x2 >= -border)) {
+                if (Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
+                    pp.sendMessage(TranslatableCaption.of("border.bypass.entered"));
+                }
             }
         }
         int z2;
@@ -643,18 +655,31 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 return;
             }
             int border = area.getBorder();
+            int z1;
             if (z2 > border && this.tmpTeleport) {
-                to.setZ(border - 1);
-                this.tmpTeleport = false;
-                player.teleport(event.getTo());
-                this.tmpTeleport = true;
-                pp.sendMessage(TranslatableCaption.of("border.border"));
+                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
+                    to.setZ(border - 1);
+                    this.tmpTeleport = false;
+                    player.teleport(event.getTo());
+                    this.tmpTeleport = true;
+                    pp.sendMessage(TranslatableCaption.of("border.denied"));
+                } else {
+                    pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
+                }
             } else if (z2 < -border && this.tmpTeleport) {
-                to.setZ(-border + 1);
-                this.tmpTeleport = false;
-                player.teleport(event.getTo());
-                this.tmpTeleport = true;
-                pp.sendMessage(TranslatableCaption.of("border.border"));
+                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
+                    to.setZ(-border + 1);
+                    this.tmpTeleport = false;
+                    player.teleport(event.getTo());
+                    this.tmpTeleport = true;
+                    pp.sendMessage(TranslatableCaption.of("border.denied"));
+                } else {
+                    pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
+                }
+            } else if (((z1 = MathMan.roundInt(from.getZ())) >= border && z2 <= border) || (z1 <= -border && z2 >= -border)) {
+                if (Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
+                    pp.sendMessage(TranslatableCaption.of("border.bypass.entered"));
+                }
             }
         }
     }
@@ -960,8 +985,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                     pp.sendMessage(
-                            TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
+                            TranslatableCaption.of("done.building_restricted")
                     );
                     e.setCancelled(true);
                     return;
@@ -1233,8 +1257,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
             if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                 pp.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
+                        TranslatableCaption.of("done.building_restricted")
                 );
                 event.setCancelled(true);
             }
@@ -1307,8 +1330,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
             if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                 plotPlayer.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
+                        TranslatableCaption.of("done.building_restricted")
                 );
                 event.setCancelled(true);
             }

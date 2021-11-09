@@ -274,7 +274,7 @@ public class MainCommand extends Command {
                     }
                     tp = true;
                 } else {
-                    player.sendMessage(TranslatableCaption.of("border.border"));
+                    player.sendMessage(TranslatableCaption.of("border.denied"));
                 }
                 // Trim command
                 args = Arrays.copyOfRange(args, 1, args.length);

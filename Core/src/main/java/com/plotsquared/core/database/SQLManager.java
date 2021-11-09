@@ -2099,6 +2099,7 @@ public class SQLManager implements AbstractDB {
                                 case "default":
                                 case "0,0,0":
                                 case "center":
+                                case "centre":
                                     break;
                                 default:
                                     try {
@@ -2946,6 +2947,7 @@ public class SQLManager implements AbstractDB {
                             case "default":
                             case "0,0,0":
                             case "center":
+                            case "centre":
                                 break;
                             default:
                                 try {

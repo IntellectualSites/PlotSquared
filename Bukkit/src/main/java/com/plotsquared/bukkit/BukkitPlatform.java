@@ -1180,6 +1180,11 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         return this.injector;
     }
 
+    @Override
+    public @NonNull PlotAreaManager plotAreaManager() {
+        return this.plotAreaManager;
+    }
+
     @NonNull
     @Override
     public Locale getLocale() {

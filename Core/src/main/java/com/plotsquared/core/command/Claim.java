@@ -183,10 +183,12 @@ public class Claim extends SubCommand {
                 );
             }
         }
-        int border = area.getBorder();
-        if (border != Integer.MAX_VALUE && plot.getDistanceFromOrigin() > border && !force) {
-            player.sendMessage(TranslatableCaption.of("border.border"));
-            return false;
+        if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
+            int border = area.getBorder();
+            if (border != Integer.MAX_VALUE && plot.getDistanceFromOrigin() > border && !force) {
+                player.sendMessage(TranslatableCaption.of("border.denied"));
+                return false;
+            }
         }
         plot.setOwnerAbs(player.getUUID());
         final String finalSchematic = schematic;
