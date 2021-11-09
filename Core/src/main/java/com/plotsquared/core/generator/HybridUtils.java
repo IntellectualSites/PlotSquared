@@ -517,7 +517,7 @@ public class HybridUtils {
         final Set<CuboidRegion> sideRoad = Collections.singleton(RegionUtil.createRegion(sx, ex, sy, ey, sz, ez));
         final Set<CuboidRegion> intersection = Collections.singleton(RegionUtil.createRegion(sx, ex, sy, ty, bz, tz));
 
-        final String dir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot
+        final String dir = Settings.Paths.SCHEMATICS + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot
                 .getArea()
                 .toString() + File.separator;
 

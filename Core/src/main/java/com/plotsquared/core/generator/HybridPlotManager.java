@@ -82,10 +82,12 @@ public class HybridPlotManager extends ClassicPlotManager {
                 Settings.Paths.TEMPLATES + "/tmp-data.yml",
                 Template.getBytes(hybridPlotWorld)
         ));
-        String dir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + hybridPlotWorld.getWorldName() + File.separator;
+        String dir =
+                Settings.Paths.SCHEMATICS + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + hybridPlotWorld.getWorldName() + File.separator;
         try {
             File sideRoad = FileUtils.getFile(PlotSquared.platform().getDirectory(), dir + "sideroad.schem");
-            String newDir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + "__TEMP_DIR__" + File.separator;
+            String newDir =
+                    Settings.Paths.SCHEMATICS + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + "__TEMP_DIR__" + File.separator;
             if (sideRoad.exists()) {
                 files.add(new FileBytes(newDir + "sideroad.schem", Files.readAllBytes(sideRoad.toPath())));
             }
