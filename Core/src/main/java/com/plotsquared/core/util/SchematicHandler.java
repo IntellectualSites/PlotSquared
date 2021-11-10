@@ -581,6 +581,10 @@ public abstract class SchematicHandler {
         schematic.put("BlockData", new ByteArrayTag(buffer.toByteArray()));
         schematic.put("BlockEntities", new ListTag(CompoundTag.class, tileEntities));
 
+        if (biomeBuffer.size() == 0 || biomePalette.size() == 0) {
+            return;
+        }
+
         schematic.put("BiomePaletteMax", new IntTag(biomePalette.size()));
 
         Map<String, Tag> biomePaletteTag = new HashMap<>();
