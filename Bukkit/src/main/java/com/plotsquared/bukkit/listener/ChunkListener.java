@@ -32,6 +32,7 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.util.ReflectionUtils.RefClass;
 import com.plotsquared.core.util.ReflectionUtils.RefField;
 import com.plotsquared.core.util.ReflectionUtils.RefMethod;
@@ -295,7 +296,7 @@ public class ChunkListener implements Listener {
         Chunk chunk = event.getChunk();
         if (Settings.Chunk_Processor.AUTO_TRIM) {
             String world = chunk.getWorld().getName();
-            if (this.plotAreaManager.hasPlotArea(world)) {
+            if ((!Settings.Enabled_Components.WORLDS || !SinglePlotArea.isSinglePlotWorld(world)) && this.plotAreaManager.hasPlotArea(world)) {
                 if (unloadChunk(world, chunk, true)) {
                     return;
                 }
@@ -365,8 +366,7 @@ public class ChunkListener implements Listener {
     }
 
     private void cleanChunk(final Chunk chunk) {
-        TaskManager.index.incrementAndGet();
-        final int currentIndex = TaskManager.index.get();
+        final int currentIndex = TaskManager.index.incrementAndGet();
         PlotSquaredTask task = TaskManager.runTaskRepeat(() -> {
             if (!chunk.isLoaded()) {
                 Objects.requireNonNull(TaskManager.removeTask(currentIndex)).cancel();
