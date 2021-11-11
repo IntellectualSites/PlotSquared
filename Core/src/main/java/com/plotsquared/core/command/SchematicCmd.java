@@ -166,7 +166,7 @@ public class SchematicCmd extends SubCommand {
                             0,
                             false,
                             player,
-                            new RunnableVal<Boolean>() {
+                            new RunnableVal<>() {
                                 @Override
                                 public void run(Boolean value) {
                                     SchematicCmd.this.running = false;

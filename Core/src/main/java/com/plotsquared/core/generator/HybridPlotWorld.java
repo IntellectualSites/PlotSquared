@@ -253,22 +253,32 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         int shift = this.ROAD_WIDTH / 2;
         int oddshift = (this.ROAD_WIDTH & 1) == 0 ? 0 : 1;
 
-        SCHEM_Y = Math.min(PLOT_HEIGHT, ROAD_HEIGHT);
+        SCHEM_Y = Math.min(PLOT_HEIGHT, Math.min(WALL_HEIGHT, ROAD_HEIGHT));
         int plotY = PLOT_HEIGHT - SCHEM_Y;
-        int roadY = ROAD_HEIGHT - SCHEM_Y;
+        int roadY = Math.min(ROAD_HEIGHT, WALL_HEIGHT) - SCHEM_Y;
 
-        if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() == 256) {
-            SCHEM_Y = 0;
-            plotY = 0;
-            roadY = ROAD_HEIGHT;
+        if (schematic3 != null) {
+            if (schematic3.getClipboard().getDimensions().getY() == 256) {
+                SCHEM_Y = plotY = 0;
+            } else if (!Settings.Schematics.PASTE_ON_TOP) {
+                SCHEM_Y = plotY = getMinBuildHeight();
+            }
         }
 
-        if (schematic1 != null && schematic1.getClipboard().getDimensions().getY() == 256) {
-            SCHEM_Y = 0;
-            if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() != 256) {
-                plotY = PLOT_HEIGHT;
+        if (schematic1 != null) {
+            if (schematic1.getClipboard().getDimensions().getY() == 256) {
+                SCHEM_Y = roadY = 0;
+                if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() != 256
+                        && !Settings.Schematics.PASTE_ON_TOP) {
+                    plotY = PLOT_HEIGHT;
+                }
+            } else if (!Settings.Schematics.PASTE_ROAD_ON_TOP) {
+                SCHEM_Y = roadY = getMinBuildHeight();
+                if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() != 256
+                        && !Settings.Schematics.PASTE_ON_TOP) {
+                    plotY = PLOT_HEIGHT;
+                }
             }
-            roadY = 0;
         }
 
         if (schematic3 != null) {
@@ -324,7 +334,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 LOGGER.info("- plot schematic: {}", schematic3File.getPath());
             }
         }
-        if (schematic1 == null || schematic2 == null || this.ROAD_WIDTH == 0) {
+        if ((schematic1 == null&& schematic2 == null) || this.ROAD_WIDTH == 0) {
             if (Settings.DEBUG) {
                 LOGGER.info("- schematic: false");
             }

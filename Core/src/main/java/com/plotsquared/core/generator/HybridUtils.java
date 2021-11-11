@@ -504,9 +504,10 @@ public class HybridUtils {
         Location top = plot.getTopAbs();
         final HybridPlotWorld plotworld = (HybridPlotWorld) plot.getArea();
         PlotManager plotManager = plotworld.getPlotManager();
+        int schemY = Math.min(plotworld.PLOT_HEIGHT, Math.min(plotworld.WALL_HEIGHT, plotworld.ROAD_HEIGHT));
         int sx = bot.getX() - plotworld.ROAD_WIDTH + 1;
         int sz = bot.getZ() + 1;
-        int sy = Settings.Schematics.PASTE_ROAD_ON_TOP ? plotworld.ROAD_HEIGHT : 1;
+        int sy = Settings.Schematics.PASTE_ROAD_ON_TOP ? schemY : plot.getArea().getMinBuildHeight();
         int ex = bot.getX();
         int ez = top.getZ();
         int ey = get_ey(plotManager, queue, sx, ex, sz, ez, sy);

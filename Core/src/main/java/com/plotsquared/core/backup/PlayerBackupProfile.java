@@ -193,19 +193,28 @@ public class PlayerBackupProfile implements BackupProfile {
                     future.completeExceptionally(new IllegalArgumentException(
                             "The backup is non-existent or not in the correct format"));
                 } else {
-                    this.schematicHandler.paste(schematic, plot, 0, 1, 0, false, player, new RunnableVal<Boolean>() {
-                        @Override
-                        public void run(Boolean value) {
-                            if (value) {
-                                future.complete(null);
-                            } else {
-                                future.completeExceptionally(new RuntimeException(MINI_MESSAGE.stripTokens(
-                                        TranslatableCaption
-                                                .of("schematics.schematic_paste_failed")
-                                                .getComponent(ConsolePlayer.getConsole()))));
+                    this.schematicHandler.paste(
+                            schematic,
+                            plot,
+                            0,
+                            plot.getArea().getMinBuildHeight(),
+                            0,
+                            false,
+                            player,
+                            new RunnableVal<>() {
+                                @Override
+                                public void run(Boolean value) {
+                                    if (value) {
+                                        future.complete(null);
+                                    } else {
+                                        future.completeExceptionally(new RuntimeException(MINI_MESSAGE.stripTokens(
+                                                TranslatableCaption
+                                                        .of("schematics.schematic_paste_failed")
+                                                        .getComponent(ConsolePlayer.getConsole()))));
+                                    }
+                                }
                             }
-                        }
-                    });
+                    );
                 }
             });
         }
