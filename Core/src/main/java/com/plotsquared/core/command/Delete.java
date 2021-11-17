@@ -130,7 +130,7 @@ public class Delete extends SubCommand {
                         Template.of("amount", String.valueOf(System.currentTimeMillis() - start)),
                         Template.of("plot", plot.getId().toString())
                 );
-                eventDispatcher.callDeleted(plot);
+                eventDispatcher.callPostDelete(plot);
             });
             if (result) {
                 plot.addRunning();

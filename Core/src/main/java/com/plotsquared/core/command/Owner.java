@@ -127,14 +127,14 @@ public class Owner extends SetCommand {
                     return;
                 }
                 if (plot.getPlotModificationManager().unlinkPlot(unlinkEvent.isCreateRoad(), unlinkEvent.isCreateRoad())) {
-                    eventDispatcher.callUnlinked(plot, PlotUnlinkEvent.REASON.NEW_OWNER);
+                    eventDispatcher.callPostUnlink(plot, PlotUnlinkEvent.REASON.NEW_OWNER);
                 }
                 Set<Plot> connected = plot.getConnectedPlots();
                 for (Plot current : connected) {
                     current.unclaim();
                     current.getPlotModificationManager().removeSign();
                 }
-                eventDispatcher.callOwnerChangePost(player, plot, oldOwner);
+                eventDispatcher.callPostOwnerChange(player, plot, oldOwner);
                 player.sendMessage(TranslatableCaption.of("owner.set_owner"));
                 return;
             }
@@ -183,7 +183,7 @@ public class Owner extends SetCommand {
                         }
                         plot.getPlotModificationManager().setSign(finalName);
                         player.sendMessage(TranslatableCaption.of("owner.set_owner"));
-                        eventDispatcher.callOwnerChangePost(player, plot, oldOwner);
+                        eventDispatcher.callPostOwnerChange(player, plot, oldOwner);
                         if (other != null) {
                             other.sendMessage(
                                     TranslatableCaption.of("owner.now_owner"),

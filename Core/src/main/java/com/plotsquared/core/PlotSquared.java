@@ -759,7 +759,7 @@ public class PlotSquared {
                 plot.getArea().setMeta("lastPlot", plot.getId());
             }
             if (callEvent) {
-                eventDispatcher.callDeleted(plot);
+                eventDispatcher.callPostDelete(plot);
             }
             return true;
         }

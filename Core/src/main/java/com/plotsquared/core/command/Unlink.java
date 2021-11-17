@@ -109,7 +109,7 @@ public class Unlink extends SubCommand {
                 return;
             }
             player.sendMessage(TranslatableCaption.of("merge.unlink_success"));
-            eventDispatcher.callUnlinked(plot, PlotUnlinkEvent.REASON.PLAYER_COMMAND);
+            eventDispatcher.callPostUnlink(plot, PlotUnlinkEvent.REASON.PLAYER_COMMAND);
         };
         if (hasConfirmation(player)) {
             CmdConfirm.addPending(player, "/plot unlink " + plot.getId(), runnable);

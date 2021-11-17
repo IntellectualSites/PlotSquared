@@ -140,7 +140,7 @@ public class EventDispatcher {
         return event;
     }
 
-    public PostPlayerAutoPlotEvent callAutoPost(PlotPlayer<?> player, Plot plot) {
+    public PostPlayerAutoPlotEvent callPostAuto(PlotPlayer<?> player, Plot plot) {
         PostPlayerAutoPlotEvent event = new PostPlayerAutoPlotEvent(player, plot);
         callEvent(event);
         return event;
@@ -185,7 +185,7 @@ public class EventDispatcher {
         return event;
     }
 
-    public PostPlotDeleteEvent callDeleted(Plot plot) {
+    public PostPlotDeleteEvent callPostDelete(Plot plot) {
         PostPlotDeleteEvent event = new PostPlotDeleteEvent(plot);
         callEvent(event);
         return event;
@@ -209,7 +209,7 @@ public class EventDispatcher {
         return event;
     }
 
-    public PostPlotMergeEvent callMerged(PlotPlayer<?> player, Plot plot) {
+    public PostPlotMergeEvent callPostMerge(PlotPlayer<?> player, Plot plot) {
         PostPlotMergeEvent event = new PostPlotMergeEvent(player, plot);
         callEvent(event);
         return event;
@@ -230,7 +230,7 @@ public class EventDispatcher {
         return event;
     }
 
-    public PostPlotUnlinkEvent callUnlinked(Plot plot, PlotUnlinkEvent.REASON reason) {
+    public PostPlotUnlinkEvent callPostUnlink(Plot plot, PlotUnlinkEvent.REASON reason) {
         PostPlotUnlinkEvent event = new PostPlotUnlinkEvent(plot, reason);
         callEvent(event);
         return event;
@@ -285,7 +285,7 @@ public class EventDispatcher {
         return event;
     }
 
-    public PostPlotChangeOwnerEvent callOwnerChangePost(PlotPlayer<?> player, Plot plot, @Nullable UUID oldOwner) {
+    public PostPlotChangeOwnerEvent callPostOwnerChange(PlotPlayer<?> player, Plot plot, @Nullable UUID oldOwner) {
         PostPlotChangeOwnerEvent event = new PostPlotChangeOwnerEvent(player, plot, oldOwner);
         callEvent(event);
         return event;

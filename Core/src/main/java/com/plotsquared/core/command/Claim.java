@@ -215,7 +215,7 @@ public class Claim extends SubCommand {
                                     player,
                                     true
                             )) {
-                                eventDispatcher.callMerged(player, plot);
+                                eventDispatcher.callPostMerge(player, plot);
                             }
                         }
                     }

@@ -430,7 +430,7 @@ public class ExpireManager {
                     event.isCreateRoad(),
                     event.isCreateSign()
             )) {
-                this.eventDispatcher.callUnlinked(plot, PlotUnlinkEvent.REASON.EXPIRE_DELETE);
+                this.eventDispatcher.callPostUnlink(plot, PlotUnlinkEvent.REASON.EXPIRE_DELETE);
             }
         }
         for (UUID helper : plot.getTrusted()) {
