@@ -51,11 +51,11 @@ import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.PlotRateEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.TeleportCause;
-import com.plotsquared.core.events.post.PlayerAutoPlotPostEvent;
-import com.plotsquared.core.events.post.PlotChangedOwnerEvent;
-import com.plotsquared.core.events.post.PlotDeletedEvent;
-import com.plotsquared.core.events.post.PlotMergedEvent;
-import com.plotsquared.core.events.post.PlotUnlinkedEvent;
+import com.plotsquared.core.events.post.PostPlayerAutoPlotEvent;
+import com.plotsquared.core.events.post.PostPlotChangeOwnerEvent;
+import com.plotsquared.core.events.post.PostPlotDeleteEvent;
+import com.plotsquared.core.events.post.PostPlotMergeEvent;
+import com.plotsquared.core.events.post.PostPlotUnlinkEvent;
 import com.plotsquared.core.listener.PlayerBlockEventType;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
@@ -140,8 +140,8 @@ public class EventDispatcher {
         return event;
     }
 
-    public PlayerAutoPlotPostEvent callAutoPost(PlotPlayer<?> player, Plot plot) {
-        PlayerAutoPlotPostEvent event = new PlayerAutoPlotPostEvent(player, plot);
+    public PostPlayerAutoPlotEvent callAutoPost(PlotPlayer<?> player, Plot plot) {
+        PostPlayerAutoPlotEvent event = new PostPlayerAutoPlotEvent(player, plot);
         callEvent(event);
         return event;
     }
@@ -185,8 +185,8 @@ public class EventDispatcher {
         return event;
     }
 
-    public PlotDeletedEvent callDeleted(Plot plot) {
-        PlotDeletedEvent event = new PlotDeletedEvent(plot);
+    public PostPlotDeleteEvent callDeleted(Plot plot) {
+        PostPlotDeleteEvent event = new PostPlotDeleteEvent(plot);
         callEvent(event);
         return event;
     }
@@ -209,8 +209,8 @@ public class EventDispatcher {
         return event;
     }
 
-    public PlotMergedEvent callMerged(PlotPlayer<?> player, Plot plot) {
-        PlotMergedEvent event = new PlotMergedEvent(player, plot);
+    public PostPlotMergeEvent callMerged(PlotPlayer<?> player, Plot plot) {
+        PostPlotMergeEvent event = new PostPlotMergeEvent(player, plot);
         callEvent(event);
         return event;
     }
@@ -230,8 +230,8 @@ public class EventDispatcher {
         return event;
     }
 
-    public PlotUnlinkedEvent callUnlinked(Plot plot, PlotUnlinkEvent.REASON reason) {
-        PlotUnlinkedEvent event = new PlotUnlinkedEvent(plot, reason);
+    public PostPlotUnlinkEvent callUnlinked(Plot plot, PlotUnlinkEvent.REASON reason) {
+        PostPlotUnlinkEvent event = new PostPlotUnlinkEvent(plot, reason);
         callEvent(event);
         return event;
     }
@@ -285,8 +285,8 @@ public class EventDispatcher {
         return event;
     }
 
-    public PlotChangedOwnerEvent callOwnerChangePost(PlotPlayer<?> player, Plot plot, @Nullable UUID oldOwner) {
-        PlotChangedOwnerEvent event = new PlotChangedOwnerEvent(player, plot, oldOwner);
+    public PostPlotChangeOwnerEvent callOwnerChangePost(PlotPlayer<?> player, Plot plot, @Nullable UUID oldOwner) {
+        PostPlotChangeOwnerEvent event = new PostPlotChangeOwnerEvent(player, plot, oldOwner);
         callEvent(event);
         return event;
     }

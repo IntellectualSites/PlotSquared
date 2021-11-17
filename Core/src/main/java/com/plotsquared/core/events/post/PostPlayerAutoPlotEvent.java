@@ -30,17 +30,19 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 
 /**
- * Called after multiple plots were merged with another.
+ * Called after a plot was chosen for a player by {@code /plot auto}
+ * <br>
+ * Called after {@link com.plotsquared.core.events.PlayerAutoPlotEvent} and only, if no listener cancelled the action.
  */
-public class PlotMergedEvent extends PlotPlayerEvent {
+public class PostPlayerAutoPlotEvent extends PlotPlayerEvent {
 
     /**
-     * Instantiate a new PlotMergedEvent.
+     * Instantiate a new PlayerAutoPlotPostEvent.
      *
-     * @param plotPlayer The {@link PlotPlayer} that initiated the merge.
-     * @param plot       The final merged plot.
+     * @param plotPlayer The player who claims a new plot by {@code /plot auto}.
+     * @param plot       The plot that is assigned to the player.
      */
-    public PlotMergedEvent(final PlotPlayer<?> plotPlayer, final Plot plot) {
+    public PostPlayerAutoPlotEvent(final PlotPlayer<?> plotPlayer, final Plot plot) {
         super(plotPlayer, plot);
     }
 

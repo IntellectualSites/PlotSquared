@@ -32,7 +32,7 @@ import com.plotsquared.core.plot.Plot;
 /**
  * Called when several plots were unlinked.
  */
-public class PlotUnlinkedEvent extends PlotEvent {
+public class PostPlotUnlinkEvent extends PlotEvent {
 
     private final PlotUnlinkEvent.REASON reason;
 
@@ -42,7 +42,7 @@ public class PlotUnlinkedEvent extends PlotEvent {
      * @param plot   The unlinked plot.
      * @param reason The reason for the unlink.
      */
-    public PlotUnlinkedEvent(final Plot plot, PlotUnlinkEvent.REASON reason) {
+    public PostPlotUnlinkEvent(final Plot plot, PlotUnlinkEvent.REASON reason) {
         super(plot);
         this.reason = reason;
     }
