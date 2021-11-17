@@ -189,6 +189,7 @@ public class Merge extends SubCommand {
                     );
                 }
                 player.sendMessage(TranslatableCaption.of("merge.success_merge"));
+                eventDispatcher.callMerged(player, plot);
                 return true;
             }
             player.sendMessage(TranslatableCaption.of("merge.no_available_automerge"));
@@ -225,6 +226,7 @@ public class Merge extends SubCommand {
                 );
             }
             player.sendMessage(TranslatableCaption.of("merge.success_merge"));
+            eventDispatcher.callMerged(player, plot);
             return true;
         }
         Plot adjacent = plot.getRelative(direction);
@@ -272,6 +274,7 @@ public class Merge extends SubCommand {
                     );
                 }
                 player.sendMessage(TranslatableCaption.of("merge.success_merge"));
+                eventDispatcher.callMerged(player, plot);
             };
             if (!force && hasConfirmation(player)) {
                 CmdConfirm.addPending(accepter, MINI_MESSAGE.serialize(MINI_MESSAGE

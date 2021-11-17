@@ -344,6 +344,7 @@ public class Auto extends SubCommand {
                     continue;
                 }
                 plot.claim(player, !plotIterator.hasNext(), null, true, true);
+                eventDispatcher.callAutoPost(player, plot);
             }
             final PlotAutoMergeEvent mergeEvent = this.eventDispatcher.callAutoMerge(
                     plots.get(0),

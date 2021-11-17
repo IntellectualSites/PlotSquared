@@ -229,8 +229,8 @@ public final class PlotModificationManager {
                         !isDelete,
                         isDelete ? PlotUnlinkEvent.REASON.DELETE : PlotUnlinkEvent.REASON.CLEAR
                 );
-        if (event.getEventResult() != Result.DENY) {
-            this.unlinkPlot(event.isCreateRoad(), event.isCreateSign());
+        if (event.getEventResult() != Result.DENY && this.unlinkPlot(event.isCreateRoad(), event.isCreateSign())) {
+            PlotSquared.get().getEventDispatcher().callUnlinked(plot, event.getReason());
         }
         final PlotManager manager = this.plot.getArea().getPlotManager();
         Runnable run = new Runnable() {
@@ -502,7 +502,9 @@ public final class PlotModificationManager {
                         }
                         return;
                     }
-                    plot.getPlotModificationManager().autoMerge(event.getDir(), event.getMax(), uuid, player, true);
+                    if (plot.getPlotModificationManager().autoMerge(event.getDir(), event.getMax(), uuid, player, true)) {
+                        PlotSquared.get().getEventDispatcher().callMerged(player, plot);
+                    }
                 }
             });
             return true;

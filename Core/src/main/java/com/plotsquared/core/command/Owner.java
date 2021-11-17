@@ -44,6 +44,7 @@ import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -76,6 +77,7 @@ public class Owner extends SetCommand {
             );
             return false;
         }
+        @Nullable final UUID oldOwner = plot.getOwnerAbs();
         Set<Plot> plots = plot.getConnectedPlots();
 
         final Consumer<UUID> uuidConsumer = uuid -> {
@@ -124,12 +126,15 @@ public class Owner extends SetCommand {
                     );
                     return;
                 }
-                plot.getPlotModificationManager().unlinkPlot(unlinkEvent.isCreateRoad(), unlinkEvent.isCreateRoad());
+                if (plot.getPlotModificationManager().unlinkPlot(unlinkEvent.isCreateRoad(), unlinkEvent.isCreateRoad())) {
+                    eventDispatcher.callUnlinked(plot, PlotUnlinkEvent.REASON.NEW_OWNER);
+                }
                 Set<Plot> connected = plot.getConnectedPlots();
                 for (Plot current : connected) {
                     current.unclaim();
                     current.getPlotModificationManager().removeSign();
                 }
+                eventDispatcher.callOwnerChangePost(player, plot, oldOwner);
                 player.sendMessage(TranslatableCaption.of("owner.set_owner"));
                 return;
             }
@@ -178,6 +183,7 @@ public class Owner extends SetCommand {
                         }
                         plot.getPlotModificationManager().setSign(finalName);
                         player.sendMessage(TranslatableCaption.of("owner.set_owner"));
+                        eventDispatcher.callOwnerChangePost(player, plot, oldOwner);
                         if (other != null) {
                             other.sendMessage(
                                     TranslatableCaption.of("owner.now_owner"),

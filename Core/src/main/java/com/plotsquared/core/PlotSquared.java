@@ -758,6 +758,9 @@ public class PlotSquared {
             if (this_max < last_max) {
                 plot.getArea().setMeta("lastPlot", plot.getId());
             }
+            if (callEvent) {
+                eventDispatcher.callDeleted(plot);
+            }
             return true;
         }
         return false;

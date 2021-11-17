@@ -208,13 +208,15 @@ public class Claim extends SubCommand {
                                     Template.of("value", "Auto merge on claim")
                             );
                         } else {
-                            plot.getPlotModificationManager().autoMerge(
+                            if (plot.getPlotModificationManager().autoMerge(
                                     mergeEvent.getDir(),
                                     mergeEvent.getMax(),
                                     player.getUUID(),
                                     player,
                                     true
-                            );
+                            )) {
+                                eventDispatcher.callMerged(player, plot);
+                            }
                         }
                     }
                     return null;

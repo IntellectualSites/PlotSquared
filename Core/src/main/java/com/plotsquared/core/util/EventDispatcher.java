@@ -51,6 +51,11 @@ import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.PlotRateEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.events.post.PlayerAutoPlotPostEvent;
+import com.plotsquared.core.events.post.PlotChangedOwnerEvent;
+import com.plotsquared.core.events.post.PlotDeletedEvent;
+import com.plotsquared.core.events.post.PlotMergedEvent;
+import com.plotsquared.core.events.post.PlotUnlinkedEvent;
 import com.plotsquared.core.listener.PlayerBlockEventType;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
@@ -135,6 +140,12 @@ public class EventDispatcher {
         return event;
     }
 
+    public PlayerAutoPlotPostEvent callAutoPost(PlotPlayer<?> player, Plot plot) {
+        PlayerAutoPlotPostEvent event = new PlayerAutoPlotPostEvent(player, plot);
+        callEvent(event);
+        return event;
+    }
+
     public PlayerAutoPlotsChosenEvent callAutoPlotsChosen(
             PlotPlayer<?> player, List<Plot> plots
     ) {
@@ -174,6 +185,12 @@ public class EventDispatcher {
         return event;
     }
 
+    public PlotDeletedEvent callDeleted(Plot plot) {
+        PlotDeletedEvent event = new PlotDeletedEvent(plot);
+        callEvent(event);
+        return event;
+    }
+
     public PlotFlagAddEvent callFlagAdd(PlotFlag<?, ?> flag, Plot plot) {
         PlotFlagAddEvent event = new PlotFlagAddEvent(flag, plot);
         callEvent(event);
@@ -192,6 +209,12 @@ public class EventDispatcher {
         return event;
     }
 
+    public PlotMergedEvent callMerged(PlotPlayer<?> player, Plot plot) {
+        PlotMergedEvent event = new PlotMergedEvent(player, plot);
+        callEvent(event);
+        return event;
+    }
+
     public PlotAutoMergeEvent callAutoMerge(Plot plot, List<PlotId> plots) {
         PlotAutoMergeEvent event = new PlotAutoMergeEvent(plot.getWorldName(), plot, plots);
         callEvent(event);
@@ -203,6 +226,12 @@ public class EventDispatcher {
             boolean createSign, PlotUnlinkEvent.REASON reason
     ) {
         PlotUnlinkEvent event = new PlotUnlinkEvent(area, plot, createRoad, createSign, reason);
+        callEvent(event);
+        return event;
+    }
+
+    public PlotUnlinkedEvent callUnlinked(Plot plot, PlotUnlinkEvent.REASON reason) {
+        PlotUnlinkedEvent event = new PlotUnlinkedEvent(plot, reason);
         callEvent(event);
         return event;
     }
@@ -252,6 +281,12 @@ public class EventDispatcher {
     ) {
         PlotChangeOwnerEvent event =
                 new PlotChangeOwnerEvent(initiator, plot, oldOwner, newOwner, hasOldOwner);
+        callEvent(event);
+        return event;
+    }
+
+    public PlotChangedOwnerEvent callOwnerChangePost(PlotPlayer<?> player, Plot plot, @Nullable UUID oldOwner) {
+        PlotChangedOwnerEvent event = new PlotChangedOwnerEvent(player, plot, oldOwner);
         callEvent(event);
         return event;
     }
