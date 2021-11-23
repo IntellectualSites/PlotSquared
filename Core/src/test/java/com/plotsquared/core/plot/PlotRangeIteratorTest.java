@@ -25,7 +25,8 @@
  */
 package com.plotsquared.core.plot;
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
@@ -106,4 +108,16 @@ public class PlotRangeIteratorTest {
         assertThrows(NoSuchElementException.class, range::next);
     }
 
+    @Test
+    public void resetYOfIteratorToStart() {
+        PlotId id00 = PlotId.of(0, 1);
+        PlotId id01 = PlotId.of(1, 2);
+        PlotId.PlotRangeIterator range = PlotId.PlotRangeIterator.range(id00, id01);
+
+        for (int i = 0; i < 4; i++) {
+            assertNotEquals(0, range.next().getY());
+        }
+        assertFalse(range.hasNext());
+        assertThrows(NoSuchElementException.class, range::next);
+    }
 }

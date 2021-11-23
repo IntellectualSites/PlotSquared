@@ -302,7 +302,7 @@ public final class PlotId {
             // first increase y, then x
             if (this.y == this.end.getY()) {
                 this.x++;
-                this.y = 0;
+                this.y = this.start.getY();
             } else {
                 this.y++;
             }
