@@ -34,6 +34,8 @@ import java.util.UUID;
 
 /**
  * Called after the owner of a plot was updated.
+ *
+ * @since 6.2.0
  */
 public class PostPlotChangeOwnerEvent extends PlotPlayerEvent {
 

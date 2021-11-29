@@ -31,6 +31,8 @@ import com.plotsquared.core.plot.Plot;
 
 /**
  * Called after multiple plots were merged with another.
+ *
+ * @since 6.2.0
  */
 public class PostPlotMergeEvent extends PlotPlayerEvent {
 

@@ -33,6 +33,8 @@ import com.plotsquared.core.plot.Plot;
  * Called after a plot was chosen for a player by {@code /plot auto}
  * <br>
  * Called after {@link com.plotsquared.core.events.PlayerAutoPlotEvent} and only, if no listener cancelled the action.
+ *
+ * @since 6.2.0
  */
 public class PostPlayerAutoPlotEvent extends PlotPlayerEvent {
 

@@ -31,6 +31,8 @@ import com.plotsquared.core.plot.Plot;
 
 /**
  * Called when several plots were unlinked.
+ *
+ * @since 6.2.0
  */
 public class PostPlotUnlinkEvent extends PlotEvent {
 
