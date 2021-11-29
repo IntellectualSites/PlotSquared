@@ -52,7 +52,7 @@ import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "deny",
         aliases = {"d", "ban"},
-        usage = "/plot deny <player",
+        usage = "/plot deny <player>",
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.PLAYER)
 public class Deny extends SubCommand {
