@@ -73,7 +73,7 @@ allprojects {
 
     plugins.withId("java") {
         the<JavaPluginExtension>().toolchain {
-            languageVersion.set(JavaLanguageVersion.of(16))
+            languageVersion.set(JavaLanguageVersion.of(17))
         }
     }
 
@@ -236,7 +236,7 @@ tasks {
 
                 val rootOptions = aggregatedJavadocs.options as StandardJavadocDocletOptions
                 val subOptions = task.options as StandardJavadocDocletOptions
-                rootOptions.links(*subOptions.links.orEmpty().minus(rootOptions.links.orEmpty()).toTypedArray())
+                rootOptions.links(*subOptions.links.orEmpty().minus(rootOptions.links.orEmpty().toSet()).toTypedArray())
             }
         }
     }

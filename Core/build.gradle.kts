@@ -5,7 +5,6 @@ dependencies {
     compileOnlyApi(libs.checkerqual)
 
     // Minecraft expectations
-    compileOnlyApi(libs.guava)
     compileOnlyApi(libs.gson)
 
     // Platform expectations
