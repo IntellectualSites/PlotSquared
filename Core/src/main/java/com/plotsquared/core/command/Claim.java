@@ -89,7 +89,7 @@ public class Claim extends SubCommand {
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Claim")
+                    Template.template("value", "Claim")
             );
             return true;
         }
@@ -108,14 +108,14 @@ public class Claim extends SubCommand {
                     if (grants <= 0) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.cant_claim_more_plots"),
-                                Template.of("amount", String.valueOf(grants))
+                                Template.template("amount", String.valueOf(grants))
                         );
                         metaDataAccess.remove();
                     }
                 } else {
                     player.sendMessage(
                             TranslatableCaption.of("permission.cant_claim_more_plots"),
-                            Template.of("amount", String.valueOf(player.getAllowedPlots()))
+                            Template.template("amount", String.valueOf(player.getAllowedPlots()))
                     );
                     return false;
                 }
@@ -130,8 +130,8 @@ public class Claim extends SubCommand {
                     if (!area.hasSchematic(schematic)) {
                         player.sendMessage(
                                 TranslatableCaption.of("schematics.schematic_invalid_named"),
-                                Template.of("schemname", schematic),
-                                Template.of("reason", "non-existent")
+                                Template.template("schemname", schematic),
+                                Template.template("reason", "non-existent")
                         );
                     }
                     if (!Permissions.hasPermission(player, Permission.PERMISSION_CLAIM_SCHEMATIC
@@ -141,7 +141,7 @@ public class Claim extends SubCommand {
                     ) && !force) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_schematic_permission"),
-                                Template.of("value", schematic)
+                                Template.template("value", schematic)
                         );
                     }
                 }
@@ -157,16 +157,16 @@ public class Claim extends SubCommand {
                     if (this.econHandler.getMoney(player) < cost) {
                         player.sendMessage(
                                 TranslatableCaption.of("economy.cannot_afford_plot"),
-                                Template.of("money", this.econHandler.format(cost)),
-                                Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))
+                                Template.template("money", this.econHandler.format(cost)),
+                                Template.template("balance", this.econHandler.format(this.econHandler.getMoney(player)))
                         );
                         return false;
                     }
                     this.econHandler.withdrawMoney(player, cost);
                     player.sendMessage(
                             TranslatableCaption.of("economy.removed_balance"),
-                            Template.of("money", this.econHandler.format(cost)),
-                            Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))
+                            Template.template("money", this.econHandler.format(cost)),
+                            Template.template("balance", this.econHandler.format(this.econHandler.getMoney(player)))
                     );
                 }
             }
@@ -178,8 +178,8 @@ public class Claim extends SubCommand {
                 }
                 player.sendMessage(
                         TranslatableCaption.of("economy.removed_granted_plot"),
-                        Template.of("usedGrants", String.valueOf((grants - 1))),
-                        Template.of("remainingGrants", String.valueOf(grants))
+                        Template.template("usedGrants", String.valueOf((grants - 1))),
+                        Template.template("remainingGrants", String.valueOf(grants))
                 );
             }
         }
@@ -205,7 +205,7 @@ public class Claim extends SubCommand {
                         if (mergeEvent.getEventResult() == Result.DENY) {
                             player.sendMessage(
                                     TranslatableCaption.of("events.event_denied"),
-                                    Template.of("value", "Auto merge on claim")
+                                    Template.template("value", "Auto merge on claim")
                             );
                         } else {
                             plot.getPlotModificationManager().autoMerge(

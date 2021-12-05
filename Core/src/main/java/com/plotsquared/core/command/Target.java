@@ -59,7 +59,7 @@ public class Target extends SubCommand {
         if (args.length == 0) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot target <<X;Z> | nearest>")
+                    Template.template("value", "/plot target <<X;Z> | nearest>")
             );
             return false;
         }
@@ -83,7 +83,7 @@ public class Target extends SubCommand {
         target.getCenter(player::setCompassTarget);
         player.sendMessage(
                 TranslatableCaption.of("compass.compass_target"),
-                Template.of("target", target.toString())
+                Template.template("target", target.toString())
         );
         return true;
     }

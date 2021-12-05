@@ -123,7 +123,7 @@ public class Save extends SubCommand {
                                 player.sendMessage(TranslatableCaption.of("web.save_success"));
                                 player.sendMessage(
                                         TranslatableCaption.of("errors.deprecated_commands"),
-                                        Template.of("replacement", "/plot download")
+                                        Template.template("replacement", "/plot download")
                                 );
                                 try (final MetaDataAccess<List<String>> schematicAccess =
                                              player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SCHEMATICS)) {

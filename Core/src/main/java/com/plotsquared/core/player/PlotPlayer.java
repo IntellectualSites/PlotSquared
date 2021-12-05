@@ -67,6 +67,7 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 import net.kyori.adventure.title.Title;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -866,9 +867,9 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
             final int fadeIn, final int stay, final int fadeOut,
             final @NonNull Template... replacements
     ) {
-        final Component titleComponent = MiniMessage.get().parse(title.getComponent(this), replacements);
+        final Component titleComponent = MiniMessage.miniMessage().deserialize(title.getComponent(this), TemplateResolver.templates(replacements));
         final Component subtitleComponent =
-                MiniMessage.get().parse(subtitle.getComponent(this), replacements);
+                MiniMessage.miniMessage().deserialize(subtitle.getComponent(this), TemplateResolver.templates(replacements));
         final Title.Times times = Title.Times.of(
                 Duration.of(Settings.Titles.TITLES_FADE_IN * 50L, ChronoUnit.MILLIS),
                 Duration.of(Settings.Titles.TITLES_STAY * 50L, ChronoUnit.MILLIS),
@@ -906,7 +907,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                 .replace("<prefix>", TranslatableCaption.of("core.prefix").getComponent(this));
 
 
-        final Component component = MiniMessage.get().parse(message, replacements);
+        final Component component = MiniMessage.miniMessage().deserialize(message, TemplateResolver.templates(replacements));
         getAudience().sendActionBar(component);
     }
 
@@ -932,7 +933,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                 .replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&')
                 .replace("<prefix>", TranslatableCaption.of("core.prefix").getComponent(this));
         // Parse the message
-        final Component component = MiniMessage.get().parse(message, replacements);
+        final Component component = MiniMessage.miniMessage().deserialize(message, TemplateResolver.templates(replacements));
         if (!Objects.equal(component, this.getMeta("lastMessage"))
                 || System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000) {
             setMeta("lastMessage", component);

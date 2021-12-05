@@ -59,7 +59,7 @@ public final class Templates {
             final @NonNull String key, final @NonNull Caption caption,
             final @NonNull Template... replacements
     ) {
-        return Template.of(key, MINI_MESSAGE.parse(caption.getComponent(localeHolder), replacements));
+        return Template.template(key, MINI_MESSAGE.parse(caption.getComponent(localeHolder), replacements));
     }
 
     /**
@@ -71,7 +71,7 @@ public final class Templates {
      */
     public static @NonNull Template of(final @NonNull String key, final @NonNull UUID uuid) {
         final String username = PlayerManager.getName(uuid);
-        return Template.of(key, username);
+        return Template.template(key, username);
     }
 
     /**
@@ -82,7 +82,7 @@ public final class Templates {
      * @return Generated template
      */
     public static @NonNull Template of(final @NonNull String key, final @NonNull String value) {
-        return Template.of(key, value);
+        return Template.template(key, value);
     }
 
     /**
@@ -93,7 +93,7 @@ public final class Templates {
      * @return Generated template
      */
     public static @NonNull Template of(final @NonNull String key, final @NonNull PlotArea area) {
-        return Template.of(key, area.toString());
+        return Template.template(key, area.toString());
     }
 
     /**
@@ -104,7 +104,7 @@ public final class Templates {
      * @return Generated template
      */
     public static @NonNull Template of(final @NonNull String key, final @NonNull Number number) {
-        return Template.of(key, number.toString());
+        return Template.template(key, number.toString());
     }
 
 }

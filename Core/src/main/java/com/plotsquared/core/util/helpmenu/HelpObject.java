@@ -43,11 +43,11 @@ public class HelpObject {
     public HelpObject(final Command command, final String label, final PlotPlayer<?> audience) {
         rendered = MINI_MESSAGE.serialize(MINI_MESSAGE.parse(
                 TranslatableCaption.of("help.help_item").getComponent(audience),
-                Template.of("usage", command.getUsage().replace("{label}", label)),
-                Template.of("alias", command.getAliases().isEmpty() ? "" : StringMan.join(command.getAliases(), " | ")),
+                Template.template("usage", command.getUsage().replace("{label}", label)),
+                Template.template("alias", command.getAliases().isEmpty() ? "" : StringMan.join(command.getAliases(), " | ")),
                 Templates.of(audience, "desc", command.getDescription()),
-                Template.of("arguments", buildArgumentList(command.getRequiredArguments())),
-                Template.of("label", label)
+                Template.template("arguments", buildArgumentList(command.getRequiredArguments())),
+                Template.template("label", label)
         ));
     }
 

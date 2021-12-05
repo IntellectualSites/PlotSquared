@@ -48,7 +48,7 @@ public class Chat extends SubCommand {
         check(area, TranslatableCaption.of("errors.not_in_plot_world"));
         player.sendMessage(
                 TranslatableCaption.of("errors.deprecated_commands"),
-                Template.of("replacement", "/plot toggle chat")
+                Template.template("replacement", "/plot toggle chat")
         );
         if (player.getPlotAreaAbs().isForcingPlotChat()) {
             player.sendMessage(TranslatableCaption.of("chat.plot_chat_forced"));

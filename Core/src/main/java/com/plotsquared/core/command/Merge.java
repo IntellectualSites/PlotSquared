@@ -122,11 +122,11 @@ public class Merge extends SubCommand {
         if (direction == null) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot merge <" + StringMan.join(values, " | ") + "> [removeroads]")
+                    Template.template("value", "/plot merge <" + StringMan.join(values, " | ") + "> [removeroads]")
             );
             player.sendMessage(
                     TranslatableCaption.of("help.direction"),
-                    Template.of("dir", direction(location.getYaw()))
+                    Template.template("dir", direction(location.getYaw()))
             );
             return false;
         }
@@ -137,7 +137,7 @@ public class Merge extends SubCommand {
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Merge")
+                    Template.template("value", "Merge")
             );
             return false;
         }
@@ -148,7 +148,7 @@ public class Merge extends SubCommand {
         if (!force && size - 1 > maxSize) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Permission.PERMISSION_MERGE + "." + (size + 1))
+                    Template.template("node", Permission.PERMISSION_MERGE + "." + (size + 1))
             );
             return false;
         }
@@ -175,7 +175,7 @@ public class Merge extends SubCommand {
                     .hasPermission(player, Permission.PERMISSION_MERGE_KEEP_ROAD)) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_MERGE_KEEP_ROAD))
+                        Template.template("node", String.valueOf(Permission.PERMISSION_MERGE_KEEP_ROAD))
                 );
                 return true;
             }
@@ -184,8 +184,8 @@ public class Merge extends SubCommand {
                     this.econHandler.withdrawMoney(player, price);
                     player.sendMessage(
                             TranslatableCaption.of("economy.removed_balance"),
-                            Template.of("money", this.econHandler.format(price)),
-                            Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))
+                            Template.template("money", this.econHandler.format(price)),
+                            Template.template("balance", this.econHandler.format(this.econHandler.getMoney(player)))
                     );
                 }
                 player.sendMessage(TranslatableCaption.of("merge.success_merge"));
@@ -198,7 +198,7 @@ public class Merge extends SubCommand {
                 && this.econHandler.getMoney(player) < price) {
             player.sendMessage(
                     TranslatableCaption.of("economy.cannot_afford_merge"),
-                    Template.of("money", this.econHandler.format(price))
+                    Template.template("money", this.econHandler.format(price))
             );
             return false;
         }
@@ -212,7 +212,7 @@ public class Merge extends SubCommand {
                 .hasPermission(player, Permission.PERMISSION_MERGE_KEEP_ROAD)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_MERGE_KEEP_ROAD))
+                    Template.template("node", String.valueOf(Permission.PERMISSION_MERGE_KEEP_ROAD))
             );
             return true;
         }
@@ -221,7 +221,7 @@ public class Merge extends SubCommand {
                 this.econHandler.withdrawMoney(player, price);
                 player.sendMessage(
                         TranslatableCaption.of("economy.removed_balance"),
-                        Template.of("money", this.econHandler.format(price))
+                        Template.template("money", this.econHandler.format(price))
                 );
             }
             player.sendMessage(TranslatableCaption.of("merge.success_merge"));
@@ -236,7 +236,7 @@ public class Merge extends SubCommand {
         if (!force && !Permissions.hasPermission(player, Permission.PERMISSION_MERGE_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_MERGE_OTHER))
+                    Template.template("node", String.valueOf(Permission.PERMISSION_MERGE_OTHER))
             );
             return false;
         }
@@ -261,14 +261,14 @@ public class Merge extends SubCommand {
                     if (!force && this.econHandler.getMoney(player) < price) {
                         player.sendMessage(
                                 TranslatableCaption.of("economy.cannot_afford_merge"),
-                                Template.of("money", this.econHandler.format(price))
+                                Template.template("money", this.econHandler.format(price))
                         );
                         return;
                     }
                     this.econHandler.withdrawMoney(player, price);
                     player.sendMessage(
                             TranslatableCaption.of("economy.removed_balance"),
-                            Template.of("money", this.econHandler.format(price))
+                            Template.template("money", this.econHandler.format(price))
                     );
                 }
                 player.sendMessage(TranslatableCaption.of("merge.success_merge"));
@@ -277,8 +277,8 @@ public class Merge extends SubCommand {
                 CmdConfirm.addPending(accepter, MINI_MESSAGE.serialize(MINI_MESSAGE
                                 .parse(
                                         TranslatableCaption.of("merge.merge_request_confirm").getComponent(player),
-                                        Template.of("player", player.getName()),
-                                        Template.of("location", plot.getWorldName() + ";" + plot.getId())
+                                        Template.template("player", player.getName()),
+                                        Template.template("location", plot.getWorldName() + ";" + plot.getId())
                                 )),
                         run
                 );

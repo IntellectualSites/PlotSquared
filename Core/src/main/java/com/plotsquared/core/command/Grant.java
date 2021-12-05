@@ -71,7 +71,7 @@ public class Grant extends Command {
         checkTrue(
                 args.length >= 1 && args.length <= 2,
                 TranslatableCaption.of("commandconfig.command_syntax"),
-                Template.of("value", "/plot grant <check | add> [player]")
+                Template.template("value", "/plot grant <check | add> [player]")
         );
         final String arg0 = args[0].toLowerCase();
         switch (arg0) {
@@ -79,7 +79,7 @@ public class Grant extends Command {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_GRANT.format(arg0))) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", Permission.PERMISSION_GRANT.format(arg0))
+                            Template.template("node", Permission.PERMISSION_GRANT.format(arg0))
                     );
                     return CompletableFuture.completedFuture(false);
                 }
@@ -92,7 +92,7 @@ public class Grant extends Command {
                     } else if (throwable != null || uuids.size() != 1) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
-                                Template.of("value", String.valueOf(uuids))
+                                Template.template("value", String.valueOf(uuids))
                         );
                     } else {
                         final UUIDMapping uuid = uuids.toArray(new UUIDMapping[0])[0];
@@ -103,7 +103,7 @@ public class Grant extends Command {
                                 if (args[0].equalsIgnoreCase("check")) {
                                     player.sendMessage(
                                             TranslatableCaption.of("grants.granted_plots"),
-                                            Template.of("amount", String.valueOf(access.get().orElse(0)))
+                                            Template.template("amount", String.valueOf(access.get().orElse(0)))
                                     );
                                 } else {
                                     access.set(access.get().orElse(0) + 1);
@@ -123,7 +123,7 @@ public class Grant extends Command {
                                         }
                                         player.sendMessage(
                                                 TranslatableCaption.of("grants.granted_plots"),
-                                                Template.of("amount", String.valueOf(granted))
+                                                Template.template("amount", String.valueOf(granted))
                                         );
                                     } else { // add
                                         int amount;
@@ -138,7 +138,7 @@ public class Grant extends Command {
                                         DBFunc.addPersistentMeta(uuid.getUuid(), key, rawData, replace);
                                         player.sendMessage(
                                                 TranslatableCaption.of("grants.added"),
-                                                Template.of("grants", String.valueOf(amount))
+                                                Template.template("grants", String.valueOf(amount))
                                         );
                                     }
                                 }

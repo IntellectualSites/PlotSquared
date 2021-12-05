@@ -345,7 +345,7 @@ public class EventDispatcher {
                 if (notifyPerms) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.flag_tutorial_usage"),
-                            Template.of("flag", PlaceFlag.getFlagName(UseFlag.class))
+                            Template.template("flag", PlaceFlag.getFlagName(UseFlag.class))
                     );
                 }
                 return false;
@@ -412,7 +412,7 @@ public class EventDispatcher {
                 if (notifyPerms) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.flag_tutorial_usage"),
-                            Template.of("flag", PlotFlag.getFlagName(MobPlaceFlag.class)
+                            Template.template("flag", PlotFlag.getFlagName(MobPlaceFlag.class)
                                     + '/' + PlotFlag.getFlagName(PlaceFlag.class))
                     );
                 }
@@ -448,7 +448,7 @@ public class EventDispatcher {
                 if (notifyPerms) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.flag_tutorial_usage"),
-                            Template.of("flag", PlotFlag.getFlagName(MiscPlaceFlag.class)
+                            Template.template("flag", PlotFlag.getFlagName(MiscPlaceFlag.class)
                                     + '/' + PlotFlag.getFlagName(PlaceFlag.class))
                     );
                 }

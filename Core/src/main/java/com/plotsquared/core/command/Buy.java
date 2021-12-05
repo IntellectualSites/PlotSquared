@@ -91,7 +91,7 @@ public class Buy extends Command {
         checkTrue(
                 player.getPlotCount() + plots.size() <= player.getAllowedPlots(),
                 TranslatableCaption.of("permission.cant_claim_more_plots"),
-                Template.of("amount", String.valueOf(player.getAllowedPlots()))
+                Template.template("amount", String.valueOf(player.getAllowedPlots()))
         );
         double price = plot.getFlag(PriceFlag.class);
         if (price <= 0) {
@@ -104,8 +104,8 @@ public class Buy extends Command {
         checkTrue(
                 this.econHandler.getMoney(player) >= price,
                 TranslatableCaption.of("economy.cannot_afford_plot"),
-                Template.of("money", this.econHandler.format(price)),
-                Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))
+                Template.template("money", this.econHandler.format(price)),
+                Template.template("balance", this.econHandler.format(this.econHandler.getMoney(player)))
         );
         this.econHandler.withdrawMoney(player, price);
         // Failure
@@ -113,7 +113,7 @@ public class Buy extends Command {
         confirm.run(this, () -> {
             player.sendMessage(
                     TranslatableCaption.of("economy.removed_balance"),
-                    Template.of("money", this.econHandler.format(price))
+                    Template.template("money", this.econHandler.format(price))
             );
 
             this.econHandler.depositMoney(PlotSquared.platform().playerManager().getOfflinePlayer(plot.getOwnerAbs()), price);
@@ -122,9 +122,9 @@ public class Buy extends Command {
             if (owner != null) {
                 owner.sendMessage(
                         TranslatableCaption.of("economy.plot_sold"),
-                        Template.of("plot", plot.getId().toString()),
-                        Template.of("player", player.getName()),
-                        Template.of("price", this.econHandler.format(price))
+                        Template.template("plot", plot.getId().toString()),
+                        Template.template("player", player.getName()),
+                        Template.template("price", this.econHandler.format(price))
                 );
             }
             PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(PriceFlag.class);
@@ -135,7 +135,7 @@ public class Buy extends Command {
             plot.setOwner(player.getUUID());
             player.sendMessage(
                     TranslatableCaption.of("working.claimed"),
-                    Template.of("plot", plot.getId().toString())
+                    Template.template("plot", plot.getId().toString())
             );
             whenDone.run(Buy.this, CommandResult.SUCCESS);
         }, () -> {

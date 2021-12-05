@@ -107,8 +107,8 @@ public class Visit extends Command {
         } else if (plots.size() < page || page < 1) {
             player.sendMessage(
                     TranslatableCaption.of("invalid.number_not_in_range"),
-                    Template.of("min", "1"),
-                    Template.of("max", String.valueOf(plots.size()))
+                    Template.template("min", "1"),
+                    Template.template("max", String.valueOf(plots.size()))
             );
             return;
         }
@@ -154,7 +154,7 @@ public class Visit extends Command {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_DENIED)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_VISIT_DENIED))
+                            Template.template("node", String.valueOf(Permission.PERMISSION_VISIT_DENIED))
                     );
                     return;
                 }
@@ -257,7 +257,7 @@ public class Visit extends Command {
                 } catch (NumberFormatException ignored) {
                     player.sendMessage(
                             TranslatableCaption.of("invalid.not_a_number"),
-                            Template.of("value", args[1])
+                            Template.template("value", args[1])
                     );
                     return CompletableFuture.completedFuture(false);
                 }
@@ -290,7 +290,7 @@ public class Visit extends Command {
                             } else {
                                 player.sendMessage(
                                         TranslatableCaption.of("errors.invalid_player"),
-                                        Template.of("value", finalArgs[0])
+                                        Template.template("value", finalArgs[0])
                                 );
                             }
                         } else {

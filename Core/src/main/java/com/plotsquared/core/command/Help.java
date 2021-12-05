@@ -122,17 +122,17 @@ public class Help extends Command {
                     builder.append(Component.newline()).append(MINI_MESSAGE
                             .parse(
                                     TranslatableCaption.of("help.help_info_item").getComponent(player),
-                                    Template.of("command", "/plot help"),
-                                    Template.of("category", c.name().toLowerCase()),
-                                    Template.of("category_desc", c.getComponent(player))
+                                    Template.template("command", "/plot help"),
+                                    Template.template("category", c.name().toLowerCase()),
+                                    Template.template("category_desc", c.getComponent(player))
                             ));
                 }
                 builder.append(Component.newline()).append(MINI_MESSAGE
                         .parse(
                                 TranslatableCaption.of("help.help_info_item").getComponent(player),
-                                Template.of("command", "/plot help"),
-                                Template.of("category", "all"),
-                                Template.of("category_desc", "Display all commands")
+                                Template.template("command", "/plot help"),
+                                Template.template("category", "all"),
+                                Template.template("category_desc", "Display all commands")
                         ));
                 builder.append(Component.newline()).append(MINI_MESSAGE.parse(TranslatableCaption
                         .of("help.help_footer")

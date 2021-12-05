@@ -130,7 +130,7 @@ public class Set extends SubCommand {
                             }
                             player.sendMessage(
                                     TranslatableCaption.of("invalid.component_illegal_block"),
-                                    Template.of("value", forbiddenType)
+                                    Template.template("value", forbiddenType)
                             );
                             return true;
                         }
@@ -142,7 +142,7 @@ public class Set extends SubCommand {
                         if (!Permissions.hasPermission(player, Permission.PERMISSION_SET_COMPONENT.format(component))) {
                             player.sendMessage(
                                     TranslatableCaption.of("permission.no_permission"),
-                                    Template.of("node", Permission.PERMISSION_SET_COMPONENT.format(component))
+                                    Template.template("node", Permission.PERMISSION_SET_COMPONENT.format(component))
                             );
                             return false;
                         }
@@ -165,7 +165,7 @@ public class Set extends SubCommand {
                                 plot.removeRunning();
                                 player.sendMessage(
                                         TranslatableCaption.of("working.component_complete"),
-                                        Template.of("plot", plot.getId().toString())
+                                        Template.template("plot", plot.getId().toString())
                                 );
                             });
                             if (Settings.QUEUE.NOTIFY_PROGRESS) {

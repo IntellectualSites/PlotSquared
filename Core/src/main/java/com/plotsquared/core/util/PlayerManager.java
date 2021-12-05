@@ -149,9 +149,9 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
         TextComponent.Builder list = Component.text();
         for (int x = 0; x < users.size(); x++) {
             if (x + 1 == uuids.size()) {
-                list.append(MINI_MESSAGE.parse(c, Template.of("user", users.get(x))));
+                list.append(MINI_MESSAGE.parse(c, Template.template("user", users.get(x))));
             } else {
-                list.append(MINI_MESSAGE.parse(c + ", ", Template.of("user", users.get(x))));
+                list.append(MINI_MESSAGE.parse(c + ", ", Template.template("user", users.get(x))));
             }
         }
         return list.asComponent();
