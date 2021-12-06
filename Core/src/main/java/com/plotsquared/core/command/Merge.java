@@ -43,6 +43,7 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.StringMan;
 import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.UUID;
@@ -275,10 +276,12 @@ public class Merge extends SubCommand {
             };
             if (!force && hasConfirmation(player)) {
                 CmdConfirm.addPending(accepter, MINI_MESSAGE.serialize(MINI_MESSAGE
-                                .parse(
+                                .deserialize(
                                         TranslatableCaption.of("merge.merge_request_confirm").getComponent(player),
-                                        Template.template("player", player.getName()),
-                                        Template.template("location", plot.getWorldName() + ";" + plot.getId())
+                                        TemplateResolver.templates(
+                                                Template.template("player", player.getName()),
+                                                Template.template("location", plot.getWorldName() + ";" + plot.getId())
+                                        )
                                 )),
                         run
                 );

@@ -32,6 +32,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.StringMan;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,11 +59,12 @@ public class HelpPage {
             Template header = Template.template("header", TranslatableCaption.of("help.help_header").getComponent(player));
             Template page_header = Template.template(
                     "page_header",
-                    MINI_MESSAGE.parse(
+                    MINI_MESSAGE.deserialize(
                             TranslatableCaption.of("help.help_page_header").getComponent(player),
-                            catTemplate,
-                            curTemplate,
-                            maxTemplate
+                            TemplateResolver.templates(
+                                    catTemplate,
+                                    curTemplate,
+                                    maxTemplate)
                     )
             );
             Template help_objects = Template.template("help_objects", StringMan.join(this.helpObjects, "\n"));

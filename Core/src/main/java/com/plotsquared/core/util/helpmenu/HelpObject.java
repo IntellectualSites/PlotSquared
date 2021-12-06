@@ -33,6 +33,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.StringMan;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 
 public class HelpObject {
 
@@ -41,13 +42,15 @@ public class HelpObject {
     private final String rendered;
 
     public HelpObject(final Command command, final String label, final PlotPlayer<?> audience) {
-        rendered = MINI_MESSAGE.serialize(MINI_MESSAGE.parse(
+        rendered = MINI_MESSAGE.serialize(MINI_MESSAGE.deserialize(
                 TranslatableCaption.of("help.help_item").getComponent(audience),
-                Template.template("usage", command.getUsage().replace("{label}", label)),
-                Template.template("alias", command.getAliases().isEmpty() ? "" : StringMan.join(command.getAliases(), " | ")),
-                Templates.of(audience, "desc", command.getDescription()),
-                Template.template("arguments", buildArgumentList(command.getRequiredArguments())),
-                Template.template("label", label)
+                TemplateResolver.templates(
+                        Template.template("usage", command.getUsage().replace("{label}", label)),
+                        Template.template("alias", command.getAliases().isEmpty() ? "" : StringMan.join(command.getAliases(), " | ")),
+                        Templates.of(audience, "desc", command.getDescription()),
+                        Template.template("arguments", buildArgumentList(command.getRequiredArguments())),
+                        Template.template("label", label)
+                )
         ));
     }
 

@@ -106,9 +106,9 @@ public class CaptionUtility {
      */
     public static String stripClickEvents(final @NonNull String miniMessageString) {
         // parse, transform and serialize again
-        Component component = MiniMessage.get().parse(miniMessageString);
+        Component component = MiniMessage.miniMessage().parse(miniMessageString);
         component = CLICK_STRIP_TRANSFORM.transform(component);
-        return MiniMessage.get().serialize(component);
+        return MiniMessage.miniMessage().serialize(component);
     }
 
     /**

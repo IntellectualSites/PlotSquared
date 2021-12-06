@@ -54,6 +54,7 @@ import com.plotsquared.core.uuid.UUIDMapping;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -426,13 +427,13 @@ public class ListCmd extends SubCommand {
                 } else {
                     color = TranslatableCaption.of("info.plot_list_default");
                 }
-                Component trusted = MINI_MESSAGE.parse(
+                Component trusted = MINI_MESSAGE.deserialize(
                         TranslatableCaption.of("info.plot_info_trusted").getComponent(player),
-                        Template.template("trusted", PlayerManager.getPlayerList(plot.getTrusted(), player))
+                        TemplateResolver.templates(Template.template("trusted", PlayerManager.getPlayerList(plot.getTrusted(), player)))
                 );
-                Component members = MINI_MESSAGE.parse(
+                Component members = MINI_MESSAGE.deserialize(
                         TranslatableCaption.of("info.plot_info_members").getComponent(player),
-                        Template.template("members", PlayerManager.getPlayerList(plot.getMembers(), player))
+                        TemplateResolver.templates(Template.template("members", PlayerManager.getPlayerList(plot.getMembers(), player)))
                 );
                 Template command_tp = Template.template("command_tp", "/plot visit " + plot.getArea() + ";" + plot.getId());
                 Template command_info = Template.template("command_info", "/plot info " + plot.getArea() + ";" + plot.getId());
@@ -449,7 +450,7 @@ public class ListCmd extends SubCommand {
                 Template numberTemplate = Template.template("number", String.valueOf(i));
                 Template plotTemplate = Template.template(
                         "plot",
-                        MINI_MESSAGE.parse(color.getComponent(player), Template.template("plot", plot.toString()))
+                        MINI_MESSAGE.deserialize(color.getComponent(player), TemplateResolver.templates(Template.template("plot", plot.toString())))
                 );
 
                 String prefix = "";
@@ -464,9 +465,9 @@ public class ListCmd extends SubCommand {
                         Template prefixTemplate = Template.template("prefix", prefix);
                         Template playerTemplate = Template.template("player", uuidMapping.getUsername());
                         if (pp != null) {
-                            builder.append(MINI_MESSAGE.parse(online, prefixTemplate, playerTemplate));
+                            builder.append(MINI_MESSAGE.deserialize(online, TemplateResolver.templates(prefixTemplate, playerTemplate)));
                         } else {
-                            builder.append(MINI_MESSAGE.parse(offline, prefixTemplate, playerTemplate));
+                            builder.append(MINI_MESSAGE.deserialize(offline, TemplateResolver.templates(prefixTemplate, playerTemplate)));
                         }
                         prefix = ", ";
                     }

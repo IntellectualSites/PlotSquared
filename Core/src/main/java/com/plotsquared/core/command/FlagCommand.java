@@ -54,6 +54,7 @@ import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -576,20 +577,22 @@ public final class FlagCommand extends Command {
         for (final Map.Entry<String, ArrayList<String>> entry : flags.entrySet()) {
             Collections.sort(entry.getValue());
             Component category =
-                    MINI_MESSAGE.parse(
+                    MINI_MESSAGE.deserialize(
                             TranslatableCaption.of("flag.flag_list_categories").getComponent(player),
-                            Template.template("category", entry.getKey())
+                            TemplateResolver.templates(Template.template("category", entry.getKey()))
                     );
             TextComponent.Builder builder = Component.text().append(category);
             final Iterator<String> flagIterator = entry.getValue().iterator();
             while (flagIterator.hasNext()) {
                 final String flag = flagIterator.next();
                 builder.append(MINI_MESSAGE
-                        .parse(
+                        .deserialize(
                                 TranslatableCaption.of("flag.flag_list_flag").getComponent(player),
-                                Template.template("command", "/plot flag info " + flag),
-                                Template.template("flag", flag),
-                                Template.template("suffix", flagIterator.hasNext() ? ", " : "")
+                                TemplateResolver.templates(
+                                        Template.template("command", "/plot flag info " + flag),
+                                        Template.template("flag", flag),
+                                        Template.template("suffix", flagIterator.hasNext() ? ", " : "")
+                                )
                         ));
             }
             player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(builder.build())));

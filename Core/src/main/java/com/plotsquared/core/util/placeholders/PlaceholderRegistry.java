@@ -80,7 +80,7 @@ public final class PlaceholderRegistry {
      * @return a legacy-formatted string.
      */
     private static String legacyComponent(TranslatableCaption caption, LocaleHolder localeHolder) {
-        Component component = MiniMessage.get().parse(caption.getComponent(localeHolder));
+        Component component = MiniMessage.miniMessage().parse(caption.getComponent(localeHolder));
         return PlotSquared.platform().toLegacyPlatformString(component);
     }
 
