@@ -426,8 +426,11 @@ public class ExpireManager {
                     .callUnlink(plot.getArea(), plot, true, false,
                             PlotUnlinkEvent.REASON.EXPIRE_DELETE
                     );
-            if (event.getEventResult() != Result.DENY) {
-                plot.getPlotModificationManager().unlinkPlot(event.isCreateRoad(), event.isCreateSign());
+            if (event.getEventResult() != Result.DENY && plot.getPlotModificationManager().unlinkPlot(
+                    event.isCreateRoad(),
+                    event.isCreateSign()
+            )) {
+                this.eventDispatcher.callPostUnlink(plot, PlotUnlinkEvent.REASON.EXPIRE_DELETE);
             }
         }
         for (UUID helper : plot.getTrusted()) {

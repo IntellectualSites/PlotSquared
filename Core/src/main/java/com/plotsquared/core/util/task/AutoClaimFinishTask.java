@@ -69,6 +69,7 @@ public final class AutoClaimFinishTask implements Callable<Boolean> {
             return false;
         }
         plot.claim(player, true, schematic, false, true);
+        eventDispatcher.callPostAuto(player, plot);
         if (area.isAutoMerge()) {
             PlotMergeEvent event = this.eventDispatcher.callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
             if (event.getEventResult() == Result.DENY) {
@@ -77,7 +78,9 @@ public final class AutoClaimFinishTask implements Callable<Boolean> {
                         Templates.of("value", "Auto Merge")
                 );
             } else {
-                plot.getPlotModificationManager().autoMerge(event.getDir(), event.getMax(), player.getUUID(), player, true);
+                if (plot.getPlotModificationManager().autoMerge(event.getDir(), event.getMax(), player.getUUID(), player, true)) {
+                    eventDispatcher.callPostMerge(player, plot);
+                }
             }
         }
         return true;
