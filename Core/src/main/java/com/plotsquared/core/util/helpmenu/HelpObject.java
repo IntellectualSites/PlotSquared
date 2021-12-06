@@ -47,7 +47,7 @@ public class HelpObject {
                 TemplateResolver.templates(
                         Template.template("usage", command.getUsage().replace("{label}", label)),
                         Template.template("alias", command.getAliases().isEmpty() ? "" : StringMan.join(command.getAliases(), " | ")),
-                        Templates.of(audience, "desc", command.getDescription()),
+                        Templates.template(audience, "desc", command.getDescription()),
                         Template.template("arguments", buildArgumentList(command.getRequiredArguments())),
                         Template.template("label", label)
                 )

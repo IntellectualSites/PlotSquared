@@ -59,7 +59,6 @@ public final class Templates {
      * be removed once MiniMessage drops {@link MiniMessage#parse(String, Template...)}
      */
     @Deprecated(forRemoval = true, since = "6.2.0")
-    @SuppressWarnings("all")
     public static @NonNull Template of(
             final @NonNull LocaleHolder localeHolder,
             final @NonNull String key, final @NonNull Caption caption,

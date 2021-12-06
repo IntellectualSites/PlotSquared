@@ -628,7 +628,7 @@ public final class FlagCommand extends Command {
             // Flag category
             player.sendMessage(
                     TranslatableCaption.of("flag.flag_info_category"),
-                    Templates.of(player, "value", plotFlag.getFlagCategory())
+                    Templates.template(player, "value", plotFlag.getFlagCategory())
             );
             // Flag description
             // TODO maybe merge and \n instead?
