@@ -64,6 +64,7 @@ public final class PlaceholderRegistry {
 
     private final Map<String, Placeholder> placeholders;
     private final EventDispatcher eventDispatcher;
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     @Inject
     public PlaceholderRegistry(final @NonNull EventDispatcher eventDispatcher) {
@@ -80,7 +81,7 @@ public final class PlaceholderRegistry {
      * @return a legacy-formatted string.
      */
     private static String legacyComponent(TranslatableCaption caption, LocaleHolder localeHolder) {
-        Component component = MiniMessage.miniMessage().parse(caption.getComponent(localeHolder));
+        Component component = MINI_MESSAGE.parse(caption.getComponent(localeHolder));
         return PlotSquared.platform().toLegacyPlatformString(component);
     }
 
