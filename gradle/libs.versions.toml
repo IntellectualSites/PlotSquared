@@ -13,7 +13,7 @@ snakeyaml = "1.28" # Version set by Bukkit
 # Adventure & MiniMessage
 adventure-api = "4.9.3"
 adventure-text-minimessage = "4.1.0-SNAPSHOT"
-adventure-platform-bukkit = "4.0.0"
+adventure-platform-bukkit = "4.0.1"
 
 # Plugins
 worldedit = "7.2.7"
