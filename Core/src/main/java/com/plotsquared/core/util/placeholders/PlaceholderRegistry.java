@@ -62,9 +62,9 @@ import java.util.function.BiFunction;
 @Singleton
 public final class PlaceholderRegistry {
 
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     private final Map<String, Placeholder> placeholders;
     private final EventDispatcher eventDispatcher;
-    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     @Inject
     public PlaceholderRegistry(final @NonNull EventDispatcher eventDispatcher) {

@@ -156,14 +156,14 @@ public class Debug extends SubCommand {
                         TemplateResolver.templates(
                                 Template.template("var", "Plot Worlds"),
                                 Template.template("val", StringMan.join(this.plotAreaManager.getAllPlotAreas(), ", "))
-                )));
+                        )));
         information.append(
                 MINI_MESSAGE.deserialize(
                         line,
                         TemplateResolver.templates(
                                 Template.template("var", "Owned Plots"),
                                 Template.template("val", String.valueOf(PlotQuery.newQuery().allPlots().count()))
-                )));
+                        )));
         information.append(MINI_MESSAGE.deserialize(section,
                 TemplateResolver.templates(Template.template("val", "Messages"))));
         information.append(MINI_MESSAGE.deserialize(
@@ -171,7 +171,7 @@ public class Debug extends SubCommand {
                 TemplateResolver.templates(
                         Template.template("var", "Total Messages"),
                         Template.template("val", String.valueOf(captions.size()))
-        )));
+                )));
         player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(information.build())));
         return true;
     }

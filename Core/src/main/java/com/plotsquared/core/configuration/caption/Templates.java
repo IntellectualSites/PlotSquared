@@ -54,7 +54,6 @@ public final class Templates {
      * @param caption      Caption object
      * @param replacements Replacements
      * @return Generated template
-     *
      * @deprecated Use {@link #template(LocaleHolder, String, Caption, Template...)} instead. This method is going to
      * be removed once MiniMessage drops {@link MiniMessage#parse(String, Template...)}
      */
@@ -75,7 +74,6 @@ public final class Templates {
      * @param caption      Caption object
      * @param replacements Replacements
      * @return Generated template
-     *
      * @since 6.2.0
      */
     public static @NonNull Template template(

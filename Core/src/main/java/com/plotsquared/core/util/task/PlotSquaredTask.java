@@ -60,7 +60,7 @@ public interface PlotSquaredTask extends Runnable {
      * Check if the task has been cancelled
      *
      * @return {@code true} if the tasks is cancelled,
-     *         {@code false} if not
+     * {@code false} if not
      */
     boolean isCancelled();
 

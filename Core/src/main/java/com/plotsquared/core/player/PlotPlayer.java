@@ -106,6 +106,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
             Collections.synchronizedSet(new HashSet<>());
 
     private static final Map<Class, PlotPlayerConverter> converters = new HashMap<>();
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     private final LockRepository lockRepository = new LockRepository();
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
@@ -119,7 +120,6 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     private Locale locale;
     // Delayed initialisation
     private PermissionProfile permissionProfile;
-    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     public PlotPlayer(
             final @NonNull PlotAreaManager plotAreaManager, final @NonNull EventDispatcher eventDispatcher,

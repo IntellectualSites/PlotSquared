@@ -457,7 +457,7 @@ public abstract class PlotArea {
                                         ConsolePlayer.getConsole(),
                                         TranslatableCaption.of("info.plot_flag_list").getComponent(LocaleHolder.console())
                                 ),
-                        TemplateResolver.templates( Template.template("flag", flag.getName()),
+                        TemplateResolver.templates(Template.template("flag", flag.getName()),
                                 Template.template("value", CaptionUtility.formatRaw(ConsolePlayer.getConsole(), value.toString())))
                 );
                 if (flagsComponent != null) {
@@ -1306,8 +1306,8 @@ public abstract class PlotArea {
      *
      * @return the legacy sign material.
      * @deprecated Use {@link #signMaterial()}. This method is used for 1.13 only and
-     *         will be removed without replacement in favor of {@link #signMaterial()}
-     *         once we remove the support for 1.13.
+     * will be removed without replacement in favor of {@link #signMaterial()}
+     * once we remove the support for 1.13.
      */
     @Deprecated(forRemoval = true)
     public String getLegacySignMaterial() {
