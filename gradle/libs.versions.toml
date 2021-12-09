@@ -1,10 +1,10 @@
 [versions]
 # Minecraft expectations
-gson = "2.8.8" # Version set by Minecraft
+gson = "2.8.0" # Version set by Minecraft
 log4j-api = "2.14.1" # Version set by Minecraft
 
 # Platform expectations
-paper = "1.18-R0.1-SNAPSHOT"
+paper = "1.17.1-R0.1-SNAPSHOT"
 checker-qual = "3.19.0"
 guice = "5.0.1"
 findbugs = "3.0.1"
@@ -26,7 +26,7 @@ hyperverse = "0.6.0-SNAPSHOT"
 mvdwapi = "3.1.1"
 
 # Third party
-prtree = "1.5.0"
+prtree = "2.0.0"
 aopalliance = "1.0"
 pipeline = "1.4.0-SNAPSHOT"
 arkitektonika = "2.1.0"
@@ -75,7 +75,7 @@ essentialsx = { group = "net.essentialsx", name = "EssentialsX", version.ref = "
 hyperverse = { group = "se.hyperver.hyperverse", name = "Core", version.ref = "hyperverse" }
 
 # Third party
-prtree = { group = "org.khelekore", name = "prtree", version.ref = "prtree" }
+prtree = { group = "com.intellectualsites.prtree", name = "PRTree", version.ref = "prtree" }
 aopalliance = { group = "aopalliance", name = "aopalliance", version.ref = "aopalliance" }
 pipeline = { group = "com.intellectualsites", name = "Pipeline", version.ref = "pipeline" }
 mvdwapi = { group = "be.maximvdw", name = "MVdWPlaceholderAPI", version.ref = "mvdwapi" }
