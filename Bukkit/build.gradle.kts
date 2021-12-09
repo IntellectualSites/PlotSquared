@@ -94,7 +94,7 @@ tasks.named<ShadowJar>("shadowJar") {
 tasks {
     withType<Javadoc> {
         val opt = options as StandardJavadocDocletOptions
-        opt.links("https://papermc.io/javadocs/paper/1.18/")
+        opt.links("https://papermc.io/javadocs/paper/1.17/")
         opt.links("https://docs.enginehub.org/javadoc/com.sk89q.worldedit/worldedit-core/7.2.7/")
         opt.links("https://docs.enginehub.org/javadoc/com.sk89q.worldedit/worldedit-bukkit/7.2.7/")
         opt.links("https://jd.adventure.kyori.net/api/4.9.3/")
