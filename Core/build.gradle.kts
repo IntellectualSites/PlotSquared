@@ -6,6 +6,7 @@ dependencies {
 
     // Minecraft expectations
     compileOnlyApi(libs.gson)
+    compileOnly(libs.guava)
 
     // Platform expectations
     compileOnlyApi(libs.snakeyaml)
@@ -39,7 +40,7 @@ dependencies {
     // Other libraries
     api(libs.prtree)
     api(libs.aopalliance)
-    api(libs.pipeline) {
+    api(libs.rorledning) {
         exclude(group = "com.google.guava")
     }
     api(libs.arkitektonika)
