@@ -18,7 +18,7 @@ plugins {
     idea
 }
 
-version = "6.2.0"
+version = "6.2.1-SNAPSHOT"
 
 allprojects {
     group = "com.plotsquared"
