@@ -17,7 +17,7 @@ adventure-text-minimessage = "4.2.0-SNAPSHOT"
 adventure-platform-bukkit = "4.0.1"
 
 # Plugins
-worldedit = "7.2.7"
+worldedit = "7.2.8"
 fawe = "1.17-410"
 vault = "1.7.1"
 placeholderapi = "2.10.10"
