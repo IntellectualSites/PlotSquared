@@ -39,23 +39,20 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public abstract class QueueCoordinator {
 
+    private final AtomicBoolean enqueued = new AtomicBoolean();
     private boolean forceSync = false;
     @Nullable
     private Object chunkObject;
-    private final AtomicBoolean enqueued = new AtomicBoolean();
-
     @Inject
     private GlobalBlockQueue blockQueue;
 
@@ -205,8 +202,8 @@ public abstract class QueueCoordinator {
      * @param biome biome
      * @return success or not
      * @deprecated Biomes now take XYZ, see {@link #setBiome(int, int, int, BiomeType)}
-     *         <br>
-     *         Scheduled for removal once we drop the support for versions not supporting 3D biomes.
+     * <br>
+     * Scheduled for removal once we drop the support for versions not supporting 3D biomes.
      */
     @Deprecated(forRemoval = true)
     public abstract boolean setBiome(int x, int z, @NonNull BiomeType biome);

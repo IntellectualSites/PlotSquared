@@ -110,8 +110,8 @@ public class Move extends SubCommand {
             if (result) {
                 player.sendMessage(
                         TranslatableCaption.of("move.move_success"),
-                        Template.of("origin", plot1.toString()),
-                        Template.of("target", plot2.toString())
+                        Template.template("origin", plot1.toString()),
+                        Template.template("target", plot2.toString())
                 );
                 return true;
             } else {

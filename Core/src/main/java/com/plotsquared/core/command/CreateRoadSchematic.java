@@ -68,7 +68,7 @@ public class CreateRoadSchematic extends SubCommand {
         this.hybridUtils.setupRoadSchematic(plot);
         player.sendMessage(
                 TranslatableCaption.of("schematics.schematic_road_created"),
-                Template.of("command", "/plot debugroadregen")
+                Template.template("command", "/plot debugroadregen")
         );
         return true;
     }

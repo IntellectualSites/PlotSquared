@@ -38,7 +38,6 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.uuid.UUIDMapping;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -116,7 +115,6 @@ public final class TabCompletions {
      * @param input    Command input
      * @param existing Players that should not be included in completions
      * @return List of completions
-     *
      * @deprecated In favor {@link #completeAddedPlayers(PlotPlayer, Plot, String, List)}
      */
     @Deprecated(forRemoval = true)

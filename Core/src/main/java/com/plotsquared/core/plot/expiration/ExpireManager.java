@@ -152,14 +152,14 @@ public class ExpireManager {
                             current.getCenter(pp::teleport);
                             metaDataAccess.remove();
                             Caption msg = TranslatableCaption.of("expiry.expired_options_clicky");
-                            Template numTemplate = Template.of("num", String.valueOf(num));
-                            Template areIsTemplate = Template.of("are_or_is", (num > 1 ? "plots are" : "plot is"));
-                            Template list_cmd = Template.of("list_cmd", "/plot list expired");
-                            Template plot = Template.of("plot", current.toString());
-                            Template cmd_del = Template.of("cmd_del", "/plot delete");
-                            Template cmd_keep_1d = Template.of("cmd_keep_1d", "/plot flag set keep 1d");
-                            Template cmd_keep = Template.of("cmd_keep", "/plot flag set keep true");
-                            Template cmd_no_show_expir = Template.of("cmd_no_show_expir", "/plot toggle clear-confirmation");
+                            Template numTemplate = Template.template("num", String.valueOf(num));
+                            Template areIsTemplate = Template.template("are_or_is", (num > 1 ? "plots are" : "plot is"));
+                            Template list_cmd = Template.template("list_cmd", "/plot list expired");
+                            Template plot = Template.template("plot", current.toString());
+                            Template cmd_del = Template.template("cmd_del", "/plot delete");
+                            Template cmd_keep_1d = Template.template("cmd_keep_1d", "/plot flag set keep 1d");
+                            Template cmd_keep = Template.template("cmd_keep", "/plot flag set keep true");
+                            Template cmd_no_show_expir = Template.template("cmd_no_show_expir", "/plot toggle clear-confirmation");
                             pp.sendMessage(
                                     msg,
                                     numTemplate,

@@ -54,6 +54,7 @@ import com.plotsquared.core.uuid.UUIDMapping;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -166,7 +167,7 @@ public class ListCmd extends SubCommand {
             if (query == null) {
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.did_you_mean"),
-                        Template.of(
+                        Template.template(
                                 "value",
                                 new StringComparison<>(args[0], new String[]{"mine", "shared", "world", "all"}).getBestMatch()
                         )
@@ -426,18 +427,18 @@ public class ListCmd extends SubCommand {
                 } else {
                     color = TranslatableCaption.of("info.plot_list_default");
                 }
-                Component trusted = MINI_MESSAGE.parse(
+                Component trusted = MINI_MESSAGE.deserialize(
                         TranslatableCaption.of("info.plot_info_trusted").getComponent(player),
-                        Template.of("trusted", PlayerManager.getPlayerList(plot.getTrusted(), player))
+                        TemplateResolver.templates(Template.template("trusted", PlayerManager.getPlayerList(plot.getTrusted(), player)))
                 );
-                Component members = MINI_MESSAGE.parse(
+                Component members = MINI_MESSAGE.deserialize(
                         TranslatableCaption.of("info.plot_info_members").getComponent(player),
-                        Template.of("members", PlayerManager.getPlayerList(plot.getMembers(), player))
+                        TemplateResolver.templates(Template.template("members", PlayerManager.getPlayerList(plot.getMembers(), player)))
                 );
-                Template command_tp = Template.of("command_tp", "/plot visit " + plot.getArea() + ";" + plot.getId());
-                Template command_info = Template.of("command_info", "/plot info " + plot.getArea() + ";" + plot.getId());
+                Template command_tp = Template.template("command_tp", "/plot visit " + plot.getArea() + ";" + plot.getId());
+                Template command_info = Template.template("command_info", "/plot info " + plot.getArea() + ";" + plot.getId());
                 Template hover_info =
-                        Template.of(
+                        Template.template(
                                 "hover_info",
                                 MINI_MESSAGE.serialize(Component
                                         .text()
@@ -446,10 +447,10 @@ public class ListCmd extends SubCommand {
                                         .append(members)
                                         .asComponent())
                         );
-                Template numberTemplate = Template.of("number", String.valueOf(i));
-                Template plotTemplate = Template.of(
+                Template numberTemplate = Template.template("number", String.valueOf(i));
+                Template plotTemplate = Template.template(
                         "plot",
-                        MINI_MESSAGE.parse(color.getComponent(player), Template.of("plot", plot.toString()))
+                        MINI_MESSAGE.deserialize(color.getComponent(player), TemplateResolver.templates(Template.template("plot", plot.toString())))
                 );
 
                 String prefix = "";
@@ -461,12 +462,12 @@ public class ListCmd extends SubCommand {
                             .get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS);
                     for (final UUIDMapping uuidMapping : names) {
                         PlotPlayer<?> pp = PlotSquared.platform().playerManager().getPlayerIfExists(uuidMapping.getUuid());
-                        Template prefixTemplate = Template.of("prefix", prefix);
-                        Template playerTemplate = Template.of("player", uuidMapping.getUsername());
+                        Template prefixTemplate = Template.template("prefix", prefix);
+                        Template playerTemplate = Template.template("player", uuidMapping.getUsername());
                         if (pp != null) {
-                            builder.append(MINI_MESSAGE.parse(online, prefixTemplate, playerTemplate));
+                            builder.append(MINI_MESSAGE.deserialize(online, TemplateResolver.templates(prefixTemplate, playerTemplate)));
                         } else {
-                            builder.append(MINI_MESSAGE.parse(offline, prefixTemplate, playerTemplate));
+                            builder.append(MINI_MESSAGE.deserialize(offline, TemplateResolver.templates(prefixTemplate, playerTemplate)));
                         }
                         prefix = ", ";
                     }
@@ -487,7 +488,7 @@ public class ListCmd extends SubCommand {
                 } catch (TimeoutException e) {
                     player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                 }
-                Template players = Template.of("players", builder.asComponent());
+                Template players = Template.template("players", builder.asComponent());
                 caption.set(TranslatableCaption.of("info.plot_list_item"));
                 caption.setTemplates(command_tp, command_info, hover_info, numberTemplate, plotTemplate, players);
             }

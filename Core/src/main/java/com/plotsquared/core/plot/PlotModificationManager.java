@@ -387,7 +387,7 @@ public final class PlotModificationManager {
             Caption[] lines = new Caption[]{TranslatableCaption.of("signs.owner_sign_line_1"), TranslatableCaption.of(
                     "signs.owner_sign_line_2"),
                     TranslatableCaption.of("signs.owner_sign_line_3"), TranslatableCaption.of("signs.owner_sign_line_4")};
-            PlotSquared.platform().worldUtil().setSign(location, lines, Template.of("id", id), Template.of("owner", name));
+            PlotSquared.platform().worldUtil().setSign(location, lines, Template.template("id", id), Template.template("owner", name));
         }
     }
 
@@ -497,7 +497,7 @@ public final class PlotModificationManager {
                         if (player != null) {
                             player.sendMessage(
                                     TranslatableCaption.of("events.event_denied"),
-                                    Template.of("value", "Auto merge on claim")
+                                    Template.template("value", "Auto merge on claim")
                             );
                         }
                         return;

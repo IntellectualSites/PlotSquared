@@ -89,7 +89,7 @@ public class Kick extends SubCommand {
             } else if (throwable != null || uuids.isEmpty()) {
                 player.sendMessage(
                         TranslatableCaption.of("errors.invalid_player"),
-                        Template.of("value", args[0])
+                        Template.template("value", args[0])
                 );
             } else {
                 Set<PlotPlayer<?>> players = new HashSet<>();
@@ -113,7 +113,7 @@ public class Kick extends SubCommand {
                 if (players.isEmpty()) {
                     player.sendMessage(
                             TranslatableCaption.of("errors.invalid_player"),
-                            Template.of("value", args[0])
+                            Template.template("value", args[0])
                     );
                     return;
                 }
@@ -121,14 +121,14 @@ public class Kick extends SubCommand {
                     if (!plot.equals(player2.getCurrentPlot())) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
-                                Template.of("value", args[0])
+                                Template.template("value", args[0])
                         );
                         return;
                     }
                     if (Permissions.hasPermission(player2, Permission.PERMISSION_ADMIN_ENTRY_DENIED)) {
                         player.sendMessage(
                                 TranslatableCaption.of("cluster.cannot_kick_player"),
-                                Template.of("name", player2.getName())
+                                Template.template("name", player2.getName())
                         );
                         return;
                     }

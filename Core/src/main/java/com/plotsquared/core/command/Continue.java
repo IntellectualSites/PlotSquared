@@ -64,7 +64,7 @@ public class Continue extends SubCommand {
                 .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_CONTINUE)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", TranslatableCaption.of("permission.no_plot_perms").getComponent(player))
+                    Template.template("node", TranslatableCaption.of("permission.no_plot_perms").getComponent(player))
             );
             return false;
         }
@@ -77,7 +77,7 @@ public class Continue extends SubCommand {
                 < player.getPlotCount() + size)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.cant_claim_more_plots"),
-                    Template.of("amount", String.valueOf(player.getAllowedPlots()))
+                    Template.template("amount", String.valueOf(player.getAllowedPlots()))
             );
             return false;
         }
@@ -91,7 +91,7 @@ public class Continue extends SubCommand {
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Done flag removal")
+                    Template.template("value", "Done flag removal")
             );
             return true;
         }

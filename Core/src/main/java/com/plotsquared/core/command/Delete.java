@@ -85,7 +85,7 @@ public class Delete extends SubCommand {
         if (eventResult == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Delete")
+                    Template.template("value", "Delete")
             );
             return true;
         }
@@ -121,14 +121,14 @@ public class Delete extends SubCommand {
                         this.econHandler.depositMoney(player, value);
                         player.sendMessage(
                                 TranslatableCaption.of("economy.added_balance"),
-                                Template.of("money", this.econHandler.format(value))
+                                Template.template("money", this.econHandler.format(value))
                         );
                     }
                 }
                 player.sendMessage(
                         TranslatableCaption.of("working.deleting_done"),
-                        Template.of("amount", String.valueOf(System.currentTimeMillis() - start)),
-                        Template.of("plot", plot.getId().toString())
+                        Template.template("amount", String.valueOf(System.currentTimeMillis() - start)),
+                        Template.template("plot", plot.getId().toString())
                 );
                 eventDispatcher.callPostDelete(plot);
             });

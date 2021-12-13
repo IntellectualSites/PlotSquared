@@ -77,8 +77,8 @@ public class CommentManager {
                             player.sendTitle(
                                     StaticCaption.of(""),
                                     TranslatableCaption.of("comment.inbox_notification"),
-                                    Template.of("amount", Integer.toString(total)),
-                                    Template.of("command", "/plot inbox")
+                                    Template.template("amount", Integer.toString(total)),
+                                    Template.template("command", "/plot inbox")
                             );
                         }
                     }

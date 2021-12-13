@@ -62,7 +62,7 @@ public class Caps extends SubCommand {
                 .hasPermission(player, Permission.PERMISSION_ADMIN_CAPS_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_CAPS_OTHER))
+                    Template.template("node", String.valueOf(Permission.PERMISSION_ADMIN_CAPS_OTHER))
             );
             return false;
         }
@@ -94,10 +94,10 @@ public class Caps extends SubCommand {
                 : String.valueOf(max);
         player.sendMessage(
                 TranslatableCaption.of("info.plot_caps_format"),
-                Template.of("cap", name),
-                Template.of("current", String.valueOf(current)),
-                Template.of("limit", maxBeautified),
-                Template.of("percentage", percentage)
+                Template.template("cap", name),
+                Template.template("current", String.valueOf(current)),
+                Template.template("limit", maxBeautified),
+                Template.template("percentage", percentage)
         );
     }
 

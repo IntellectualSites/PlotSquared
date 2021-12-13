@@ -119,8 +119,8 @@ public final class LegacyConverter {
         this.setString(section, key, bucket);
         ConsolePlayer.getConsole().sendMessage(
                 TranslatableCaption.of("legacyconfig.legacy_config_replaced"),
-                Template.of("value1", block),
-                Template.of("value2", bucket.toString())
+                Template.template("value1", block),
+                Template.template("value2", bucket.toString())
         );
     }
 
@@ -135,8 +135,8 @@ public final class LegacyConverter {
         ConsolePlayer.getConsole()
                 .sendMessage(
                         TranslatableCaption.of("legacyconfig.legacy_config_replaced"),
-                        Template.of("value1", plotBlockArrayString(blocks)),
-                        Template.of("value2", bucket.toString())
+                        Template.template("value1", plotBlockArrayString(blocks)),
+                        Template.template("value2", bucket.toString())
                 );
     }
 

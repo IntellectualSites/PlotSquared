@@ -42,6 +42,7 @@ import com.sk89q.worldedit.world.entity.EntityType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
@@ -75,7 +76,7 @@ public class Debug extends SubCommand {
         if (args.length == 0) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot debug <loadedchunks | player | debug-players | entitytypes | msg>")
+                    Template.template("value", "/plot debug <loadedchunks | player | debug-players | entitytypes | msg>")
             );
         }
         if (args.length > 0) {
@@ -102,7 +103,7 @@ public class Debug extends SubCommand {
             final Collection<UUIDMapping> mappings = PlotSquared.get().getImpromptuUUIDPipeline().getAllImmediately();
             player.sendMessage(
                     TranslatableCaption.of("debug.cached_uuids"),
-                    Template.of("value", String.valueOf(mappings.size()))
+                    Template.template("value", String.valueOf(mappings.size()))
             );
             return true;
         }
@@ -111,7 +112,7 @@ public class Debug extends SubCommand {
             for (final PlotPlayer<?> pp : PlotPlayer.getDebugModePlayers()) {
                 player.sendMessage(
                         TranslatableCaption.of("debug.player_in_debugmode_list"),
-                        Template.of("value", pp.getName())
+                        Template.template("value", pp.getName())
                 );
             }
             return true;
@@ -148,25 +149,29 @@ public class Debug extends SubCommand {
         String line = TranslatableCaption.of("debug.debug_line").getComponent(player) + "\n";
         String section = TranslatableCaption.of("debug.debug_section").getComponent(player) + "\n";
         information.append(header);
-        information.append(MINI_MESSAGE.parse(section, Template.of("val", "PlotArea")));
+        information.append(MINI_MESSAGE.deserialize(section, TemplateResolver.templates(Template.template("val", "PlotArea"))));
         information.append(MINI_MESSAGE
-                .parse(
+                .deserialize(
                         line,
-                        Template.of("var", "Plot Worlds"),
-                        Template.of("val", StringMan.join(this.plotAreaManager.getAllPlotAreas(), ", "))
-                ));
+                        TemplateResolver.templates(
+                                Template.template("var", "Plot Worlds"),
+                                Template.template("val", StringMan.join(this.plotAreaManager.getAllPlotAreas(), ", "))
+                        )));
         information.append(
-                MINI_MESSAGE.parse(
+                MINI_MESSAGE.deserialize(
                         line,
-                        Template.of("var", "Owned Plots"),
-                        Template.of("val", String.valueOf(PlotQuery.newQuery().allPlots().count()))
-                ));
-        information.append(MINI_MESSAGE.parse(section, Template.of("val", "Messages")));
-        information.append(MINI_MESSAGE.parse(
+                        TemplateResolver.templates(
+                                Template.template("var", "Owned Plots"),
+                                Template.template("val", String.valueOf(PlotQuery.newQuery().allPlots().count()))
+                        )));
+        information.append(MINI_MESSAGE.deserialize(section,
+                TemplateResolver.templates(Template.template("val", "Messages"))));
+        information.append(MINI_MESSAGE.deserialize(
                 line,
-                Template.of("var", "Total Messages"),
-                Template.of("val", String.valueOf(captions.size()))
-        ));
+                TemplateResolver.templates(
+                        Template.template("var", "Total Messages"),
+                        Template.template("val", String.valueOf(captions.size()))
+                )));
         player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(information.build())));
         return true;
     }

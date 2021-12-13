@@ -73,7 +73,7 @@ public class Owner extends SetCommand {
         if (value == null || value.isEmpty()) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot setowner <owner>")
+                    Template.template("value", "/plot setowner <owner>")
             );
             return false;
         }
@@ -85,7 +85,7 @@ public class Owner extends SetCommand {
                     && !value.equalsIgnoreCase("-")) {
                 player.sendMessage(
                         TranslatableCaption.of("errors.invalid_player"),
-                        Template.of("value", value)
+                        Template.template("value", value)
                 );
                 return;
             }
@@ -99,7 +99,7 @@ public class Owner extends SetCommand {
             if (event.getEventResult() == Result.DENY) {
                 player.sendMessage(
                         TranslatableCaption.of("events.event_denied"),
-                        Template.of("value", "Owner change")
+                        Template.template("value", "Owner change")
                 );
                 return;
             }
@@ -122,7 +122,7 @@ public class Owner extends SetCommand {
                 if (unlinkEvent.getEventResult() == Result.DENY) {
                     player.sendMessage(
                             TranslatableCaption.of("events.event_denied"),
-                            Template.of("value", "Unlink on owner change")
+                            Template.template("value", "Unlink on owner change")
                     );
                     return;
                 }
@@ -142,7 +142,7 @@ public class Owner extends SetCommand {
             if (plot.isOwner(uuid)) {
                 player.sendMessage(
                         TranslatableCaption.of("member.already_owner"),
-                        Template.of("player", PlayerManager.getName(uuid, false))
+                        Template.template("player", PlayerManager.getName(uuid, false))
                 );
                 return;
             }
@@ -151,7 +151,7 @@ public class Owner extends SetCommand {
                 if (other == null) {
                     player.sendMessage(
                             TranslatableCaption.of("errors.invalid_player_offline"),
-                            Template.of("player", PlayerManager.getName(uuid))
+                            Template.template("player", PlayerManager.getName(uuid))
                     );
                     return;
                 }
@@ -187,7 +187,7 @@ public class Owner extends SetCommand {
                         if (other != null) {
                             other.sendMessage(
                                     TranslatableCaption.of("owner.now_owner"),
-                                    Template.of("plot", plot.getArea() + ";" + plot.getId())
+                                    Template.template("plot", plot.getArea() + ";" + plot.getId())
                             );
                         }
                     } else {

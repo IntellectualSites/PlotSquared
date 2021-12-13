@@ -263,9 +263,9 @@ public abstract class Command {
             max = c.size();
         }
         // Send the header
-        Template curTemplate = Template.of("cur", String.valueOf(page + 1));
-        Template maxTemplate = Template.of("max", String.valueOf(totalPages + 1));
-        Template amountTemplate = Template.of("amount", String.valueOf(c.size()));
+        Template curTemplate = Template.template("cur", String.valueOf(page + 1));
+        Template maxTemplate = Template.template("max", String.valueOf(totalPages + 1));
+        Template amountTemplate = Template.template("amount", String.valueOf(c.size()));
         player.sendMessage(header, curTemplate, maxTemplate, amountTemplate);
         // Send the page content
         List<T> subList = c.subList(page * size, max);
@@ -277,9 +277,9 @@ public abstract class Command {
             player.sendMessage(msg.get(), msg.getTemplates());
         }
         // Send the footer
-        Template command1 = Template.of("command1", baseCommand + " " + page);
-        Template command2 = Template.of("command2", baseCommand + " " + (page + 2));
-        Template clickable = Template.of("clickable", TranslatableCaption.of("list.clickable").getComponent(player));
+        Template command1 = Template.template("command1", baseCommand + " " + page);
+        Template command2 = Template.template("command2", baseCommand + " " + (page + 2));
+        Template clickable = Template.template("clickable", TranslatableCaption.of("list.clickable").getComponent(player));
         player.sendMessage(TranslatableCaption.of("list.page_turn"), command1, command2, clickable);
     }
 
@@ -289,7 +289,7 @@ public abstract class Command {
      * @param confirm  Instance, Success, Failure
      * @param whenDone task to run when done
      * @return CompletableFuture true if the command executed fully, false in
-     *         any other case
+     * any other case
      */
     public CompletableFuture<Boolean> execute(
             PlotPlayer<?> player, String[] args,
@@ -332,7 +332,7 @@ public abstract class Command {
             if (commands.isEmpty()) {
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.did_you_mean"),
-                        Template.of("value", MainCommand.getInstance().help.getUsage())
+                        Template.template("value", MainCommand.getInstance().help.getUsage())
                 );
                 return CompletableFuture.completedFuture(false);
             }
@@ -353,7 +353,7 @@ public abstract class Command {
             }
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.did_you_mean"),
-                    Template.of("value", cmd.getUsage())
+                    Template.template("value", cmd.getUsage())
             );
             return CompletableFuture.completedFuture(false);
         }
@@ -389,7 +389,7 @@ public abstract class Command {
                 // TODO improve or remove the Argument system
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.of("value", StringMan.join(fullSplit, " "))
+                        Template.template("value", StringMan.join(fullSplit, " "))
                 );
                 return false;
             }
@@ -478,7 +478,7 @@ public abstract class Command {
             if (message) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Template.of("node", getPermission())
+                        Template.template("node", getPermission())
                 );
             }
         } else {
@@ -503,7 +503,7 @@ public abstract class Command {
     public void sendUsage(PlotPlayer<?> player) {
         player.sendMessage(
                 TranslatableCaption.of("commandconfig.command_syntax"),
-                Template.of("value", getUsage())
+                Template.template("value", getUsage())
         );
     }
 

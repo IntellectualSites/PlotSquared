@@ -334,7 +334,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 LOGGER.info("- plot schematic: {}", schematic3File.getPath());
             }
         }
-        if ((schematic1 == null&& schematic2 == null) || this.ROAD_WIDTH == 0) {
+        if ((schematic1 == null && schematic2 == null) || this.ROAD_WIDTH == 0) {
             if (Settings.DEBUG) {
                 LOGGER.info("- schematic: false");
             }

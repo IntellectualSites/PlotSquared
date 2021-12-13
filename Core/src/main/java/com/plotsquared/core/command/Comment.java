@@ -51,8 +51,8 @@ public class Comment extends SubCommand {
         if (args.length < 2) {
             player.sendMessage(
                     TranslatableCaption.of("comment.comment_syntax"),
-                    Template.of("command", "/plot comment [X;Z]"),
-                    Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
+                    Template.template("command", "/plot comment [X;Z]"),
+                    Template.template("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
             );
             return false;
         }
@@ -71,8 +71,8 @@ public class Comment extends SubCommand {
             if (args.length < 3) {
                 player.sendMessage(
                         TranslatableCaption.of("comment.comment_syntax"),
-                        Template.of("command", "/plot comment [X;Z]"),
-                        Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
+                        Template.template("command", "/plot comment [X;Z]"),
+                        Template.template("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
                 );
                 return false;
             }
@@ -83,8 +83,8 @@ public class Comment extends SubCommand {
         if (inbox == null) {
             player.sendMessage(
                     TranslatableCaption.of("comment.comment_syntax"),
-                    Template.of("command", "/plot comment [X;Z]"),
-                    Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
+                    Template.template("command", "/plot comment [X;Z]"),
+                    Template.template("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
             );
             return false;
         }
@@ -104,8 +104,8 @@ public class Comment extends SubCommand {
             player.sendMessage(TranslatableCaption.of("comment.no_plot_inbox"));
             player.sendMessage(
                     TranslatableCaption.of("comment.comment_syntax"),
-                    Template.of("command", "/plot comment [X;Z]"),
-                    Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
+                    Template.template("command", "/plot comment [X;Z]"),
+                    Template.template("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
             );
             return false;
         }
