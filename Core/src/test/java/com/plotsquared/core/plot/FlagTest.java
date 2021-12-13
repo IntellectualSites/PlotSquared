@@ -32,10 +32,9 @@ import com.plotsquared.core.plot.flag.implementations.UseFlag;
 import com.sk89q.worldedit.world.item.ItemType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FlagTest {
 
@@ -43,7 +42,7 @@ public class FlagTest {
 
     private ItemType testBlock;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         //EventUtil.manager = new EventUtilTest();
         DBFunc.dbManager = new AbstractDBTest();
@@ -72,7 +71,7 @@ public class FlagTest {
     @Test
     public void testFlagName() {
         String flagName = PlotFlag.getFlagName(UseFlag.class);
-        assertEquals("use", flagName);
+        Assertions.assertEquals("use", flagName);
     }
 
 }

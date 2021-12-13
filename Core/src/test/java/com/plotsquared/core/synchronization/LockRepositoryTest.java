@@ -25,15 +25,13 @@
  */
 package com.plotsquared.core.synchronization;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class LockRepositoryTest {
 
@@ -55,11 +53,9 @@ class LockRepositoryTest {
             throw new IllegalStateException("Expected a ReentrantLock");
         }
 
-        assertThrows(IllegalStateException.class, () -> {
-            this.lockRepository.useLock(this.key, () -> {
-                throw new IllegalStateException();
-            });
-        });
-        assertFalse(lock.isLocked());
+        Assertions.assertThrows(IllegalStateException.class, () -> this.lockRepository.useLock(this.key, () -> {
+            throw new IllegalStateException();
+        }));
+        Assertions.assertFalse(lock.isLocked());
     }
 }

@@ -67,7 +67,6 @@ val javadocDir = rootDir.resolve("docs").resolve("javadoc").resolve(project.name
 allprojects {
     dependencies {
         // Tests
-        testImplementation("junit:junit:4.13.2")
         testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
     }
 

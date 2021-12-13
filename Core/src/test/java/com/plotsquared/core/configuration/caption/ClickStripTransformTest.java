@@ -30,14 +30,12 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.EnumSet;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ClickStripTransformTest {
 
@@ -53,7 +51,7 @@ class ClickStripTransformTest {
                         )
                 );
         var transformedComponent = transform.transform(component);
-        assertNull(transformedComponent.clickEvent());
+        Assertions.assertNull(transformedComponent.clickEvent());
     }
 
     @Test
@@ -68,7 +66,7 @@ class ClickStripTransformTest {
         var component = Component.text("Hello")
                 .clickEvent(originalClickEvent);
         var transformedComponent = transform.transform(component);
-        assertEquals(originalClickEvent, transformedComponent.clickEvent());
+        Assertions.assertEquals(originalClickEvent, transformedComponent.clickEvent());
     }
 
     @Test
@@ -88,9 +86,9 @@ class ClickStripTransformTest {
                         inner.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, "https://example.org"))
                 );
         var transformedComponent = transform.transform(component);
-        assertFalse(transformedComponent.children().isEmpty()); // child still exists
-        assertEquals(inner, transformedComponent.children().get(0)); // only the click event has changed
-        assertNull(transformedComponent.children().get(0).clickEvent());
+        Assertions.assertFalse(transformedComponent.children().isEmpty()); // child still exists
+        Assertions.assertEquals(inner, transformedComponent.children().get(0)); // only the click event has changed
+        Assertions.assertNull(transformedComponent.children().get(0).clickEvent());
     }
 
 }
