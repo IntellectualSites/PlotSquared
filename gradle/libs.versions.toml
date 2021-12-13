@@ -18,7 +18,7 @@ adventure-platform-bukkit = "4.0.1"
 
 # Plugins
 worldedit = "7.2.8"
-fawe = "1.17-410"
+fawe = "1.17-419"
 vault = "1.7.1"
 placeholderapi = "2.10.10"
 luckperms = "5.3"
@@ -29,7 +29,7 @@ mvdwapi = "3.1.1"
 # Third party
 prtree = "2.0.0"
 aopalliance = "1.0"
-rorledning = "1.5.0"
+rorledning = "1.4.0-SNAPSHOT"
 arkitektonika = "2.1.0"
 paster = "1.1.1"
 bstats = "2.2.1"
@@ -78,7 +78,7 @@ hyperverse = { group = "se.hyperver.hyperverse", name = "Core", version.ref = "h
 # Third party
 prtree = { group = "com.intellectualsites.prtree", name = "PRTree", version.ref = "prtree" }
 aopalliance = { group = "aopalliance", name = "aopalliance", version.ref = "aopalliance" }
-rorledning = { group = "com.intellectualsites.rorledning", name = "Rorledning", version.ref = "rorledning" }
+rorledning = { group = "com.intellectualsites", name = "Pipeline", version.ref = "rorledning" }
 mvdwapi = { group = "be.maximvdw", name = "MVdWPlaceholderAPI", version.ref = "mvdwapi" }
 squirrelid = { group = "org.enginehub", name = "squirrelid", version.ref = "squirrelid" }
 serverlib = { group = "dev.notmyfault.serverlib", name = "ServerLib", version.ref = "serverlib" }
