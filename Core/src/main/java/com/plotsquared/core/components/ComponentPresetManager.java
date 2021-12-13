@@ -47,6 +47,7 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -217,7 +218,7 @@ public class ComponentPresetManager {
                         econHandler.withdrawMoney(getPlayer(), componentPreset.getCost());
                         getPlayer().sendMessage(
                                 TranslatableCaption.of("economy.removed_balance"),
-                                Template.of("money", econHandler.format(componentPreset.getCost()))
+                                Template.template("money", econHandler.format(componentPreset.getCost()))
                         );
                     }
                 }
@@ -246,15 +247,15 @@ public class ComponentPresetManager {
             final ComponentPreset preset = allowedPresets.get(i);
             final List<String> lore = new ArrayList<>();
             if (preset.getCost() > 0 && this.econHandler.isEnabled(plot.getArea())) {
-                lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.parse(
+                lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.deserialize(
                         TranslatableCaption.of("preset.preset_lore_cost").getComponent(player),
-                        Template.of("cost", String.format("%.2f", preset.getCost()))
+                        TemplateResolver.templates(Template.template("cost", String.format("%.2f", preset.getCost())))
                 )));
             }
-            lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.parse(
+            lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.deserialize(
                     TranslatableCaption.of("preset.preset_lore_component").getComponent(player),
-                    Template.of("component", preset.getComponent().name().toLowerCase()),
-                    Template.of("prefix", TranslatableCaption.of("core.prefix").getComponent(player))
+                    TemplateResolver.templates(Template.template("component", preset.getComponent().name().toLowerCase()),
+                            Template.template("prefix", TranslatableCaption.of("core.prefix").getComponent(player)))
             )));
             lore.removeIf(String::isEmpty);
             lore.addAll(preset.getDescription());

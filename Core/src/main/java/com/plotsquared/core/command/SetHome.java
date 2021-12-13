@@ -67,7 +67,7 @@ public class SetHome extends SetCommand {
             default -> {
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.of("value", "Use /plot set home [none]")
+                        Template.template("value", "Use /plot set home [none]")
                 );
                 return false;
             }

@@ -61,6 +61,7 @@ public class CaptionUtility {
             )
     );
 
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     /**
      * Format a chat message but keep the formatting keys
@@ -106,9 +107,9 @@ public class CaptionUtility {
      */
     public static String stripClickEvents(final @NonNull String miniMessageString) {
         // parse, transform and serialize again
-        Component component = MiniMessage.get().parse(miniMessageString);
+        Component component = MINI_MESSAGE.parse(miniMessageString);
         component = CLICK_STRIP_TRANSFORM.transform(component);
-        return MiniMessage.get().serialize(component);
+        return MINI_MESSAGE.serialize(component);
     }
 
     /**

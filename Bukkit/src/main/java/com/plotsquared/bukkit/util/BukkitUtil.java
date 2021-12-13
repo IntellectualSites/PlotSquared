@@ -54,6 +54,7 @@ import io.papermc.lib.PaperLib;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -369,7 +370,8 @@ public class BukkitUtil extends WorldUtil {
             if (blockstate instanceof final Sign sign) {
                 for (int i = 0; i < lines.length; i++) {
                     sign.setLine(i, LEGACY_COMPONENT_SERIALIZER
-                            .serialize(MINI_MESSAGE.parse(lines[i].getComponent(LocaleHolder.console()), replacements)));
+                            .serialize(MINI_MESSAGE.deserialize(lines[i].getComponent(LocaleHolder.console()),
+                                    TemplateResolver.templates(replacements))));
                 }
                 sign.update(true);
             }

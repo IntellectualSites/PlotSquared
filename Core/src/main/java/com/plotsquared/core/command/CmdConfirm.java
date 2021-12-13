@@ -59,9 +59,9 @@ public class CmdConfirm {
         if (commandStr != null) {
             player.sendMessage(
                     TranslatableCaption.of("confirm.requires_confirm"),
-                    Template.of("command", commandStr),
-                    Template.of("timeout", String.valueOf(Settings.Confirmation.CONFIRMATION_TIMEOUT_SECONDS)),
-                    Template.of("value", "/plot confirm")
+                    Template.template("command", commandStr),
+                    Template.template("timeout", String.valueOf(Settings.Confirmation.CONFIRMATION_TIMEOUT_SECONDS)),
+                    Template.template("value", "/plot confirm")
             );
         }
         TaskManager.runTaskLater(() -> {

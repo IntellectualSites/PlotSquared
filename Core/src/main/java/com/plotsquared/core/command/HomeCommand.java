@@ -79,8 +79,8 @@ public class HomeCommand extends Command {
         } else if (plots.size() < page || page < 1) {
             player.sendMessage(
                     TranslatableCaption.of("invalid.number_not_in_range"),
-                    Template.of("min", "1"),
-                    Template.of("max", String.valueOf(plots.size()))
+                    Template.template("min", "1"),
+                    Template.template("max", String.valueOf(plots.size()))
             );
             return;
         }
@@ -115,7 +115,7 @@ public class HomeCommand extends Command {
                 .hasPermission(player, Permission.PERMISSION_HOME)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Permission.PERMISSION_VISIT_OWNED.toString())
+                    Template.template("node", Permission.PERMISSION_VISIT_OWNED.toString())
             );
             return CompletableFuture.completedFuture(false);
         }
@@ -137,7 +137,7 @@ public class HomeCommand extends Command {
                     } catch (NumberFormatException ignored) {
                         player.sendMessage(
                                 TranslatableCaption.of("invalid.not_a_number"),
-                                Template.of("value", identifier)
+                                Template.template("value", identifier)
                         );
                         return CompletableFuture.completedFuture(false);
                     }
@@ -178,7 +178,7 @@ public class HomeCommand extends Command {
                     } catch (NumberFormatException ignored) {
                         player.sendMessage(
                                 TranslatableCaption.of("invalid.not_a_number"),
-                                Template.of("value", identifier)
+                                Template.template("value", identifier)
                         );
                         return CompletableFuture.completedFuture(false);
                     }

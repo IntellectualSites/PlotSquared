@@ -93,7 +93,7 @@ public class Unlink extends SubCommand {
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Unlink")
+                    Template.template("value", "Unlink")
             );
             return true;
         }

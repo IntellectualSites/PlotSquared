@@ -117,13 +117,13 @@ public class Auto extends SubCommand {
                     if (diff < 0 && grantedPlots < sizeX * sizeZ) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.cant_claim_more_plots"),
-                                Template.of("amount", String.valueOf(diff + grantedPlots))
+                                Template.template("amount", String.valueOf(diff + grantedPlots))
                         );
                         return false;
                     } else if (diff >= 0 && grantedPlots + diff < sizeX * sizeZ) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.cant_claim_more_plots"),
-                                Template.of("amount", String.valueOf(diff + grantedPlots))
+                                Template.template("amount", String.valueOf(diff + grantedPlots))
                         );
                         return false;
                     } else {
@@ -135,14 +135,14 @@ public class Auto extends SubCommand {
                         }
                         player.sendMessage(
                                 TranslatableCaption.of("economy.removed_granted_plot"),
-                                Template.of("usedGrants", String.valueOf(grantedPlots - left)),
-                                Template.of("remainingGrants", String.valueOf(left))
+                                Template.template("usedGrants", String.valueOf(grantedPlots - left)),
+                                Template.template("remainingGrants", String.valueOf(left))
                         );
                     }
                 } else {
                     player.sendMessage(
                             TranslatableCaption.of("permission.cant_claim_more_plots"),
-                            Template.of("amount", String.valueOf(player.getAllowedPlots())
+                            Template.template("amount", String.valueOf(player.getAllowedPlots())
                             )
                     );
                     return false;
@@ -222,7 +222,7 @@ public class Auto extends SubCommand {
                 } else {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.of("value", getUsage())
+                            Template.template("value", getUsage())
                     );
                     return true;
                 }
@@ -245,7 +245,7 @@ public class Auto extends SubCommand {
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Auto claim")
+                    Template.template("value", "Auto claim")
             );
             return true;
         }
@@ -256,13 +256,13 @@ public class Auto extends SubCommand {
         if (!force && mega && !Permissions.hasPermission(player, Permission.PERMISSION_AUTO_MEGA)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_AUTO_MEGA))
+                    Template.template("node", String.valueOf(Permission.PERMISSION_AUTO_MEGA))
             );
         }
         if (!force && sizeX * sizeZ > Settings.Claim.MAX_AUTO_AREA) {
             player.sendMessage(
                     TranslatableCaption.of("permission.cant_claim_more_plots_num"),
-                    Template.of("amount", String.valueOf(Settings.Claim.MAX_AUTO_AREA))
+                    Template.template("amount", String.valueOf(Settings.Claim.MAX_AUTO_AREA))
             );
             return false;
         }
@@ -280,8 +280,8 @@ public class Auto extends SubCommand {
             if (!plotarea.hasSchematic(schematic)) {
                 player.sendMessage(
                         TranslatableCaption.of("schematics.schematic_invalid_named"),
-                        Template.of("schemname", schematic),
-                        Template.of("reason", "non-existent")
+                        Template.template("schemname", schematic),
+                        Template.template("reason", "non-existent")
                 );
                 return true;
             }
@@ -292,7 +292,7 @@ public class Auto extends SubCommand {
                     .hasPermission(player, "plots.admin.command.schematic")) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Template.of("node", "plots.claim.%s0")
+                        Template.template("node", "plots.claim.%s0")
                 );
                 return true;
             }
@@ -311,15 +311,15 @@ public class Auto extends SubCommand {
                 if (!force && this.econHandler.getMoney(player) < cost) {
                     player.sendMessage(
                             TranslatableCaption.of("economy.cannot_afford_plot"),
-                            Template.of("money", this.econHandler.format(cost)),
-                            Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))
+                            Template.template("money", this.econHandler.format(cost)),
+                            Template.template("balance", this.econHandler.format(this.econHandler.getMoney(player)))
                     );
                     return false;
                 }
                 this.econHandler.withdrawMoney(player, cost);
                 player.sendMessage(
                         TranslatableCaption.of("economy.removed_balance"),
-                        Template.of("money", this.econHandler.format(cost))
+                        Template.template("money", this.econHandler.format(cost))
                 );
             }
         }
@@ -353,7 +353,7 @@ public class Auto extends SubCommand {
             if (!force && mergeEvent.getEventResult() == Result.DENY) {
                 player.sendMessage(
                         TranslatableCaption.of("events.event_denied"),
-                        Template.of("value", "Auto merge")
+                        Template.template("value", "Auto merge")
                 );
                 return false;
             }

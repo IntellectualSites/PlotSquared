@@ -54,12 +54,12 @@ public class Toggle extends Command {
         if (toggle(player, "chatspy")) {
             player.sendMessage(
                     TranslatableCaption.of("toggle.toggle_disabled"),
-                    Template.of("setting", command.toString())
+                    Template.template("setting", command.toString())
             );
         } else {
             player.sendMessage(
                     TranslatableCaption.of("toggle.toggle_enabled"),
-                    Template.of("setting", command.toString())
+                    Template.template("setting", command.toString())
             );
         }
     }
@@ -75,12 +75,12 @@ public class Toggle extends Command {
         if (toggle(player, "worldedit")) {
             player.sendMessage(
                     TranslatableCaption.of("toggle.toggle_disabled"),
-                    Template.of("setting", command.toString())
+                    Template.template("setting", command.toString())
             );
         } else {
             player.sendMessage(
                     TranslatableCaption.of("toggle.toggle_enabled"),
-                    Template.of("setting", command.toString())
+                    Template.template("setting", command.toString())
             );
         }
     }
@@ -95,12 +95,12 @@ public class Toggle extends Command {
         if (toggle(player, "chat")) {
             player.sendMessage(
                     TranslatableCaption.of("toggle.toggle_disabled"),
-                    Template.of("setting", command.toString())
+                    Template.template("setting", command.toString())
             );
         } else {
             player.sendMessage(
                     TranslatableCaption.of("toggle.toggle_enabled"),
-                    Template.of("setting", command.toString())
+                    Template.template("setting", command.toString())
             );
         }
     }
@@ -115,12 +115,12 @@ public class Toggle extends Command {
         if (toggle(player, "ignoreExpireTask")) {
             player.sendMessage(
                     TranslatableCaption.of("toggle.toggle_enabled"),
-                    Template.of("setting", command.toString())
+                    Template.template("setting", command.toString())
             );
         } else {
             player.sendMessage(
                     TranslatableCaption.of("toggle.toggle_disabled"),
-                    Template.of("setting", command.toString())
+                    Template.template("setting", command.toString())
             );
         }
     }
@@ -135,12 +135,12 @@ public class Toggle extends Command {
         if (toggle(player, "disabletitles")) {
             player.sendMessage(
                     TranslatableCaption.of("toggle.toggle_enabled"),
-                    Template.of("setting", command.toString())
+                    Template.template("setting", command.toString())
             );
         } else {
             player.sendMessage(
                     TranslatableCaption.of("toggle.toggle_disabled"),
-                    Template.of("setting", command.toString())
+                    Template.template("setting", command.toString())
             );
         }
     }
@@ -155,12 +155,12 @@ public class Toggle extends Command {
         if (toggle(player, "disabletime")) {
             player.sendMessage(
                     TranslatableCaption.of("toggle.toggle_enabled"),
-                    Template.of("setting", command.toString())
+                    Template.template("setting", command.toString())
             );
         } else {
             player.sendMessage(
                     TranslatableCaption.of("toggle.toggle_disabled"),
-                    Template.of("setting", command.toString())
+                    Template.template("setting", command.toString())
             );
         }
     }
@@ -175,12 +175,12 @@ public class Toggle extends Command {
         if (toggle(player, "debug")) {
             player.sendMessage(
                     TranslatableCaption.of("toggle.toggle_disabled"),
-                    Template.of("setting", command.toString())
+                    Template.template("setting", command.toString())
             );
         } else {
             player.sendMessage(
                     TranslatableCaption.of("toggle.toggle_enabled"),
-                    Template.of("setting", command.toString())
+                    Template.template("setting", command.toString())
             );
         }
         player.refreshDebug();

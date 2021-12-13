@@ -76,6 +76,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
@@ -147,14 +148,14 @@ public class Area extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_CREATE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_AREA_CREATE))
+                            Template.template("node", String.valueOf(Permission.PERMISSION_AREA_CREATE))
                     );
                     return false;
                 }
                 if (args.length < 2) {
                     player.sendMessage(
                             TranslatableCaption.of("single.single_area_needs_name"),
-                            Template.of("command", "/plot area single <name>")
+                            Template.template("command", "/plot area single <name>")
                     );
                     return false;
                 }
@@ -285,7 +286,7 @@ public class Area extends SubCommand {
                     } else {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.error_create"),
-                                Template.of("world", hybridPlotWorld.getWorldName())
+                                Template.template("world", hybridPlotWorld.getWorldName())
                         );
                     }
                 };
@@ -296,7 +297,7 @@ public class Area extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_CREATE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_AREA_CREATE))
+                            Template.template("node", String.valueOf(Permission.PERMISSION_AREA_CREATE))
                     );
                     return false;
                 }
@@ -329,12 +330,12 @@ public class Area extends SubCommand {
                                 );
                                 player.sendMessage(
                                         TranslatableCaption.of("set.set_attribute"),
-                                        Template.of("attribute", "area_pos1"),
-                                        Template.of("value", location.getX() + "," + location.getZ())
+                                        Template.template("attribute", "area_pos1"),
+                                        Template.template("value", location.getX() + "," + location.getZ())
                                 );
                                 player.sendMessage(
                                         TranslatableCaption.of("area.set_pos2"),
-                                        Template.of("command", "/plot area create pos2")
+                                        Template.template("command", "/plot area create pos2")
                                 );
                                 return true;
                             }
@@ -374,7 +375,7 @@ public class Area extends SubCommand {
                                 if (!areas.isEmpty()) {
                                     player.sendMessage(
                                             TranslatableCaption.of("cluster.cluster_intersection"),
-                                            Template.of("cluster", areas.iterator().next().toString())
+                                            Template.template("cluster", areas.iterator().next().toString())
                                     );
                                     return false;
                                 }
@@ -413,7 +414,7 @@ public class Area extends SubCommand {
                                     } else {
                                         player.sendMessage(
                                                 TranslatableCaption.of("errors.error_create"),
-                                                Template.of("world", area.getWorldName())
+                                                Template.template("world", area.getWorldName())
                                         );
                                     }
                                 };
@@ -447,7 +448,7 @@ public class Area extends SubCommand {
                         if (other != null && Objects.equals(pa.getId(), other.getId())) {
                             player.sendMessage(
                                     TranslatableCaption.of("setup.setup_world_taken"),
-                                    Template.of("value", pa.toString())
+                                    Template.template("value", pa.toString())
                             );
                             return false;
                         }
@@ -462,8 +463,8 @@ public class Area extends SubCommand {
                             if (pair.length != 2) {
                                 player.sendMessage(
                                         TranslatableCaption.of("commandconfig.command_syntax_extended"),
-                                        Template.of("value1,", getCommandString()),
-                                        Template.of("value2", " create [world[:id]] [<modifier>=<value>]...")
+                                        Template.template("value1,", getCommandString()),
+                                        Template.template("value2", " create [world[:id]] [<modifier>=<value>]...")
                                 );
                                 return false;
                             }
@@ -499,8 +500,8 @@ public class Area extends SubCommand {
                                 default -> {
                                     player.sendMessage(
                                             TranslatableCaption.of("commandconfig.command_syntax_extended"),
-                                            Template.of("value1", getCommandString()),
-                                            Template.of("value2", " create [world[:id]] [<modifier>=<value>]...")
+                                            Template.template("value1", getCommandString()),
+                                            Template.template("value2", " create [world[:id]] [<modifier>=<value>]...")
                                     );
                                     return false;
                                 }
@@ -510,7 +511,7 @@ public class Area extends SubCommand {
                             if (this.worldUtil.isWorld(pa.getWorldName())) {
                                 player.sendMessage(
                                         TranslatableCaption.of("setup.setup_world_taken"),
-                                        Template.of("value", pa.getWorldName())
+                                        Template.template("value", pa.getWorldName())
                                 );
                                 return false;
                             }
@@ -531,7 +532,7 @@ public class Area extends SubCommand {
                                 } else {
                                     player.sendMessage(
                                             TranslatableCaption.of("errors.error_create"),
-                                            Template.of("world", pa.getWorldName())
+                                            Template.template("world", pa.getWorldName())
                                     );
                                 }
                                 try {
@@ -550,12 +551,12 @@ public class Area extends SubCommand {
                         if (pa.getId() == null) {
                             player.sendMessage(
                                     TranslatableCaption.of("commandconfig.command_syntax"),
-                                    Template.of("value", getUsage())
+                                    Template.template("value", getUsage())
                             );
                             player.sendMessage(
                                     TranslatableCaption.of("commandconfig.command_syntax_extended"),
-                                    Template.of("value1", getCommandString()),
-                                    Template.of("value2", " create [world[:id]] [<modifier>=<value>]...")
+                                    Template.template("value1", getCommandString()),
+                                    Template.template("value2", " create [world[:id]] [<modifier>=<value>]...")
                             );
                             return false;
                         }
@@ -572,7 +573,7 @@ public class Area extends SubCommand {
                         metaData.computeIfAbsent(player.getUUID(), missingUUID -> new HashMap<>()).put("area_create_area", pa);
                         player.sendMessage(
                                 TranslatableCaption.of("single.get_position"),
-                                Template.of("command", getCommandString())
+                                Template.template("command", getCommandString())
                         );
                         break;
                 }
@@ -582,7 +583,7 @@ public class Area extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_INFO)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_AREA_INFO))
+                            Template.template("node", String.valueOf(Permission.PERMISSION_AREA_INFO))
                     );
                     return false;
                 }
@@ -593,15 +594,15 @@ public class Area extends SubCommand {
                     default -> {
                         player.sendMessage(
                                 TranslatableCaption.of("commandconfig.command_syntax_extended"),
-                                Template.of("value1", getCommandString()),
-                                Template.of("value2", " info [area]")
+                                Template.template("value1", getCommandString()),
+                                Template.template("value2", " info [area]")
                         );
                         return false;
                     }
                 }
                 if (area == null) {
                     if (args.length == 2) {
-                        player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"), Template.of("value", args[1]));
+                        player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"), Template.template("value", args[1]));
                     } else {
                         player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
                     }
@@ -625,19 +626,19 @@ public class Area extends SubCommand {
                     percent = claimed == 0 ? 0 : 100d * claimed / Integer.MAX_VALUE;
                     region = "N/A";
                 }
-                Template headerTemplate = Template.of(
+                Template headerTemplate = Template.template(
                         "header",
                         TranslatableCaption.of("info.plot_info_header").getComponent(player)
                 );
-                Template nameTemplate = Template.of("name", name);
-                Template typeTemplate = Template.of("type", area.getType().name());
-                Template terrainTemplate = Template.of("terrain", area.getTerrain().name());
-                Template usageTemplate = Template.of("usage", String.format("%.2f", percent));
-                Template claimedTemplate = Template.of("claimed", String.valueOf(claimed));
-                Template clustersTemplate = Template.of("clusters", String.valueOf(clusters));
-                Template regionTemplate = Template.of("region", region);
-                Template generatorTemplate = Template.of("generator", generator);
-                Template footerTemplate = Template.of(
+                Template nameTemplate = Template.template("name", name);
+                Template typeTemplate = Template.template("type", area.getType().name());
+                Template terrainTemplate = Template.template("terrain", area.getTerrain().name());
+                Template usageTemplate = Template.template("usage", String.format("%.2f", percent));
+                Template claimedTemplate = Template.template("claimed", String.valueOf(claimed));
+                Template clustersTemplate = Template.template("clusters", String.valueOf(clusters));
+                Template regionTemplate = Template.template("region", region);
+                Template generatorTemplate = Template.template("generator", generator);
+                Template footerTemplate = Template.template(
                         "footer",
                         TranslatableCaption.of("info.plot_info_footer").getComponent(player)
                 );
@@ -660,7 +661,7 @@ public class Area extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_LIST)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_AREA_LIST))
+                            Template.template("node", String.valueOf(Permission.PERMISSION_AREA_LIST))
                     );
                     return false;
                 }
@@ -677,13 +678,13 @@ public class Area extends SubCommand {
                     default:
                         player.sendMessage(
                                 TranslatableCaption.of("commandconfig.command_syntax_extended"),
-                                Template.of("value1", getCommandString()),
-                                Template.of("value2", " list [#]")
+                                Template.template("value1", getCommandString()),
+                                Template.template("value2", " list [#]")
                         );
                         return false;
                 }
                 final List<PlotArea> areas = new ArrayList<>(Arrays.asList(this.plotAreaManager.getAllPlotAreas()));
-                paginate(player, areas, 8, page, new RunnableVal3<Integer, PlotArea, CaptionHolder>() {
+                paginate(player, areas, 8, page, new RunnableVal3<>() {
                     @Override
                     public void run(Integer i, PlotArea area, CaptionHolder caption) {
                         String name;
@@ -704,27 +705,27 @@ public class Area extends SubCommand {
                             percent = claimed == 0 ? 0 : (double) claimed / Short.MAX_VALUE * Short.MAX_VALUE;
                             region = "N/A";
                         }
-                        Template claimedTemplate = Template.of("claimed", String.valueOf(claimed));
-                        Template usageTemplate = Template.of("usage", String.format("%.2f", percent) + "%");
-                        Template clustersTemplate = Template.of("clusters", String.valueOf(clusters));
-                        Template regionTemplate = Template.of("region", region);
-                        Template generatorTemplate = Template.of("generator", generator);
+                        Template claimedTemplate = Template.template("claimed", String.valueOf(claimed));
+                        Template usageTemplate = Template.template("usage", String.format("%.2f", percent) + "%");
+                        Template clustersTemplate = Template.template("clusters", String.valueOf(clusters));
+                        Template regionTemplate = Template.template("region", region);
+                        Template generatorTemplate = Template.template("generator", generator);
                         String tooltip = MINI_MESSAGE.serialize(MINI_MESSAGE
-                                .parse(
+                                .deserialize(
                                         TranslatableCaption.of("info.area_list_tooltip").getComponent(player),
-                                        claimedTemplate,
-                                        usageTemplate,
-                                        clustersTemplate,
-                                        regionTemplate,
-                                        generatorTemplate
+                                        TemplateResolver.templates(claimedTemplate,
+                                                usageTemplate,
+                                                clustersTemplate,
+                                                regionTemplate,
+                                                generatorTemplate)
                                 ));
-                        Template tooltipTemplate = Template.of("hover_info", tooltip);
-                        Template visitcmdTemplate = Template.of("command_tp", "/plot area tp " + area);
-                        Template infocmdTemplate = Template.of("command_info", "/plot area info " + area);
-                        Template numberTemplate = Template.of("number", String.valueOf(i));
-                        Template nameTemplate = Template.of("area_name", name);
-                        Template typeTemplate = Template.of("area_type", area.getType().name());
-                        Template terrainTemplate = Template.of("area_terrain", area.getTerrain().name());
+                        Template tooltipTemplate = Template.template("hover_info", tooltip);
+                        Template visitcmdTemplate = Template.template("command_tp", "/plot area tp " + area);
+                        Template infocmdTemplate = Template.template("command_info", "/plot area info " + area);
+                        Template numberTemplate = Template.template("number", String.valueOf(i));
+                        Template nameTemplate = Template.template("area_name", name);
+                        Template typeTemplate = Template.template("area_type", area.getType().name());
+                        Template terrainTemplate = Template.template("area_terrain", area.getTerrain().name());
                         caption.set(TranslatableCaption.of("info.area_list_item"));
                         caption.setTemplates(
                                 tooltipTemplate,
@@ -743,7 +744,7 @@ public class Area extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_REGEN)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_AREA_REGEN))
+                            Template.template("node", String.valueOf(Permission.PERMISSION_AREA_REGEN))
                     );
                     return false;
                 }
@@ -755,7 +756,7 @@ public class Area extends SubCommand {
                 if (area.getType() != PlotAreaType.PARTIAL) {
                     player.sendMessage(
                             TranslatableCaption.of("single.delete_world_region"),
-                            Template.of("world", area.getWorldName())
+                            Template.template("world", area.getWorldName())
                     );
                     return false;
                 }
@@ -776,20 +777,20 @@ public class Area extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_TP)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_AREA_TP))
+                            Template.template("node", String.valueOf(Permission.PERMISSION_AREA_TP))
                     );
                     return false;
                 }
                 if (args.length != 2) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.of("value", "/plot area tp [area]")
+                            Template.template("value", "/plot area tp [area]")
                     );
                     return false;
                 }
                 PlotArea area = this.plotAreaManager.getPlotAreaByString(args[1]);
                 if (area == null) {
-                    player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"), Template.of("value", args[1]));
+                    player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"), Template.template("value", args[1]));
                     return false;
                 }
                 Location center;

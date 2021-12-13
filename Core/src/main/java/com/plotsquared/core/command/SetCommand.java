@@ -48,7 +48,7 @@ public abstract class SetCommand extends SubCommand {
             if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Template.of("node", Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))
+                        Template.template("node", Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))
                 );
                 player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
                 return false;
@@ -58,7 +58,7 @@ public abstract class SetCommand extends SubCommand {
             if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Template.of("node", Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))
+                        Template.template("node", Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))
                 );
                 player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                 return false;

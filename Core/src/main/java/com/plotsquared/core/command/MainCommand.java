@@ -318,7 +318,7 @@ public class MainCommand extends Command {
             if (message != null) {
                 player.sendMessage(
                         TranslatableCaption.of("errors.error"),
-                        net.kyori.adventure.text.minimessage.Template.of("value", message)
+                        net.kyori.adventure.text.minimessage.Template.template("value", message)
                 );
             } else {
                 player.sendMessage(

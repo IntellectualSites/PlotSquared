@@ -94,10 +94,11 @@ tasks.named<ShadowJar>("shadowJar") {
 tasks {
     withType<Javadoc> {
         val opt = options as StandardJavadocDocletOptions
-        opt.links("https://papermc.io/javadocs/paper/1.18/")
+        opt.links("https://papermc.io/javadocs/paper/1.17/")
         opt.links("https://docs.enginehub.org/javadoc/com.sk89q.worldedit/worldedit-core/7.2.7/")
         opt.links("https://docs.enginehub.org/javadoc/com.sk89q.worldedit/worldedit-bukkit/7.2.7/")
         opt.links("https://jd.adventure.kyori.net/api/4.9.3/")
+        opt.links("https://notmyfault.github.io/MiniMessage-Javadocs/") // Temporary hosting for 4.2.0-SNAPSHOT, exchange when we jump to 4.10.0
         opt.links("https://google.github.io/guice/api-docs/5.0.1/javadoc/")
         opt.links("https://checkerframework.org/api/")
     }

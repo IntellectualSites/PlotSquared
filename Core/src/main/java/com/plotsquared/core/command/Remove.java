@@ -86,7 +86,7 @@ public class Remove extends SubCommand {
             } else if (throwable != null) {
                 player.sendMessage(
                         TranslatableCaption.of("errors.invalid_player"),
-                        Template.of("value", args[0])
+                        Template.template("value", args[0])
                 );
                 return;
             } else if (!uuids.isEmpty()) {
@@ -123,12 +123,12 @@ public class Remove extends SubCommand {
             if (count == 0) {
                 player.sendMessage(
                         TranslatableCaption.of("errors.invalid_player"),
-                        Template.of("value", args[0])
+                        Template.template("value", args[0])
                 );
             } else {
                 player.sendMessage(
                         TranslatableCaption.of("member.removed_players"),
-                        Template.of("amount", count + "")
+                        Template.template("amount", count + "")
                 );
             }
         });

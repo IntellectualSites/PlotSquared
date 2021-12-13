@@ -49,7 +49,7 @@ public class FeedFlag extends TimedFlag<Integer, FeedFlag> {
                     this,
                     input,
                     TranslatableCaption.of("invalid.not_a_number"),
-                    Template.of("value", input)
+                    Template.template("value", input)
             );
         }
         if (parsed < 1) {
@@ -57,7 +57,7 @@ public class FeedFlag extends TimedFlag<Integer, FeedFlag> {
                     this,
                     input,
                     TranslatableCaption.of("invalid.number_not_positive"),
-                    Template.of("value", String.valueOf(parsed))
+                    Template.template("value", String.valueOf(parsed))
             );
         }
         return parsed;

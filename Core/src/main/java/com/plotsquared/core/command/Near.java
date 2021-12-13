@@ -55,7 +55,7 @@ public class Near extends Command {
         final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.of("errors.not_in_plot"));
         player.sendMessage(
                 TranslatableCaption.of("near.plot_near"),
-                Template.of("list", StringMan.join(plot.getPlayersInPlot(), ", "))
+                Template.template("list", StringMan.join(plot.getPlayersInPlot(), ", "))
         );
         return CompletableFuture.completedFuture(true);
     }

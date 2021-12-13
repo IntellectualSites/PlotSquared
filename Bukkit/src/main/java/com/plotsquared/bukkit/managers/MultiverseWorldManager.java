@@ -36,7 +36,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * world creation by executing a console command
  *
  * @deprecated Deprecated and scheduled for removal without replacement
- *         in favor of the build in setup wizard.
+ * in favor of the build in setup wizard.
  */
 @Deprecated(forRemoval = true)
 @Singleton

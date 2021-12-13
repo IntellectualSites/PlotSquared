@@ -57,7 +57,7 @@ public class Copy extends SubCommand {
         if (args.length != 1) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot copy <X;Z>")
+                    Template.template("value", "/plot copy <X;Z>")
             );
             return false;
         }
@@ -76,8 +76,8 @@ public class Copy extends SubCommand {
 
         plot1.getPlotModificationManager().copy(plot2, player).thenAccept(result -> {
             if (result) {
-                player.sendMessage(TranslatableCaption.of("move.copy_success"), Template.of("origin", String.valueOf(plot1)),
-                        Template.of("target", String.valueOf(plot2))
+                player.sendMessage(TranslatableCaption.of("move.copy_success"), Template.template("origin", String.valueOf(plot1)),
+                        Template.template("target", String.valueOf(plot2))
                 );
             } else {
                 player.sendMessage(TranslatableCaption.of("move.requires_unowned"));

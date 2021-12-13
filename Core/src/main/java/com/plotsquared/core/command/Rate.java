@@ -155,7 +155,7 @@ public class Rate extends SubCommand {
                     if (plot.getRatings().containsKey(player.getUUID())) {
                         player.sendMessage(
                                 TranslatableCaption.of("ratings.rating_already_exists"),
-                                Template.of("plot", plot.getId().toString())
+                                Template.template("plot", plot.getId().toString())
                         );
                         return;
                     }
@@ -175,7 +175,7 @@ public class Rate extends SubCommand {
                                     plot.addRating(this.getPlayer().getUUID(), event.getRating());
                                     getPlayer().sendMessage(
                                             TranslatableCaption.of("ratings.rating_applied"),
-                                            Template.of("plot", plot.getId().toString())
+                                            Template.template("plot", plot.getId().toString())
                                     );
                                 }
                                 return false;
@@ -248,7 +248,7 @@ public class Rate extends SubCommand {
             if (plot.getRatings().containsKey(uuid)) {
                 player.sendMessage(
                         TranslatableCaption.of("ratings.rating_already_exists"),
-                        Template.of("plot", plot.getId().toString())
+                        Template.template("plot", plot.getId().toString())
                 );
                 return;
             }
@@ -258,7 +258,7 @@ public class Rate extends SubCommand {
                 plot.addRating(uuid, event.getRating());
                 player.sendMessage(
                         TranslatableCaption.of("ratings.rating_applied"),
-                        Template.of("plot", plot.getId().toString())
+                        Template.template("plot", plot.getId().toString())
                 );
             }
         };
