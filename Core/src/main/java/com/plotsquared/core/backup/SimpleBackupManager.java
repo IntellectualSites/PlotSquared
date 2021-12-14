@@ -107,7 +107,7 @@ public class SimpleBackupManager implements BackupManager {
             if (player != null) {
                 player.sendMessage(
                         TranslatableCaption.of("backups.backup_automatic_started"),
-                        Template.template("plot", plot.getId().toString())
+                        Template.of("plot", plot.getId().toString())
                 );
             }
             profile.createBackup().whenComplete((backup, throwable) -> {

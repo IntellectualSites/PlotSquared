@@ -85,8 +85,8 @@ public class Swap extends SubCommand {
         return plot1.getPlotModificationManager().move(plot2, player, () -> {
         }, true).thenApply(result -> {
             if (result) {
-                player.sendMessage(TranslatableCaption.of("swap.swap_success"), Template.template("origin", String.valueOf(plot1)),
-                        Template.template("target", String.valueOf(plot2))
+                player.sendMessage(TranslatableCaption.of("swap.swap_success"), Template.of("origin", String.valueOf(plot1)),
+                        Template.of("target", String.valueOf(plot2))
                 );
                 return true;
             } else {

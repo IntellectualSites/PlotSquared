@@ -103,7 +103,7 @@ public class Purge extends SubCommand {
                     if (area == null) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.not_valid_plot_world"),
-                                Template.template("value", split[1])
+                                Template.of("value", split[1])
                         );
                         return false;
                     }
@@ -115,7 +115,7 @@ public class Purge extends SubCommand {
                     } catch (IllegalArgumentException ignored) {
                         player.sendMessage(
                                 TranslatableCaption.of("invalid.not_valid_plot_id"),
-                                Template.template("value", split[1])
+                                Template.of("value", split[1])
                         );
                         return false;
                     }
@@ -126,7 +126,7 @@ public class Purge extends SubCommand {
                     if (ownerMapping == null) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
-                                Template.template("value", split[1])
+                                Template.of("value", split[1])
                         );
                         return false;
                     }
@@ -138,7 +138,7 @@ public class Purge extends SubCommand {
                     if (addedMapping == null) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
-                                Template.template("value", split[1])
+                                Template.of("value", split[1])
                         );
                         return false;
                     }
@@ -243,7 +243,7 @@ public class Purge extends SubCommand {
                             DBFunc.purgeIds(ids);
                             player.sendMessage(
                                     TranslatableCaption.of("purge.purge_success"),
-                                    Template.template("amount", ids.size() + "/" + toDelete.size())
+                                    Template.of("amount", ids.size() + "/" + toDelete.size())
                             );
                         });
                     }

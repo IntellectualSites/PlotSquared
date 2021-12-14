@@ -133,8 +133,8 @@ public class DebugPaste extends SubCommand {
                 } catch (IOException ignored) {
                     player.sendMessage(
                             TranslatableCaption.of("debugpaste.latest_log"),
-                            Template.template("file", "latest.log"),
-                            Template.template("size", "14MB")
+                            Template.of("file", "latest.log"),
+                            Template.of("size", "14MB")
                     );
                 }
 
@@ -143,7 +143,7 @@ public class DebugPaste extends SubCommand {
                 } catch (final IllegalArgumentException ignored) {
                     player.sendMessage(
                             TranslatableCaption.of("debugpaste.empty_file"),
-                            Template.template("file", "settings.yml")
+                            Template.of("file", "settings.yml")
                     );
                 }
                 try {
@@ -151,7 +151,7 @@ public class DebugPaste extends SubCommand {
                 } catch (final IllegalArgumentException ignored) {
                     player.sendMessage(
                             TranslatableCaption.of("debugpaste.empty_file"),
-                            Template.template("file", "worlds.yml")
+                            Template.of("file", "worlds.yml")
                     );
                 }
 
@@ -164,7 +164,7 @@ public class DebugPaste extends SubCommand {
                 } catch (final IOException ignored) {
                     player.sendMessage(
                             TranslatableCaption.of("debugpaste.skip_multiverse"),
-                            Template.template("file", "worlds.yml")
+                            Template.of("file", "worlds.yml")
                     );
                 }
 
@@ -179,20 +179,20 @@ public class DebugPaste extends SubCommand {
                                 String.format("https://athion.net/ISPaster/paste/view/%s", pasteId);
                         player.sendMessage(
                                 TranslatableCaption.of("debugpaste.debug_report_created"),
-                                Template.template("url", link)
+                                Template.of("url", link)
                         );
                     } else {
                         final String responseMessage = jsonObject.get("response").getAsString();
                         player.sendMessage(
                                 TranslatableCaption.of("debugpaste.creation_failed"),
-                                Template.template("value", responseMessage)
+                                Template.of("value", responseMessage)
                         );
                     }
                 } catch (final Throwable throwable) {
                     throwable.printStackTrace();
                     player.sendMessage(
                             TranslatableCaption.of("debugpaste.creation_failed"),
-                            Template.template("value", throwable.getMessage())
+                            Template.of("value", throwable.getMessage())
                     );
                 }
             } catch (IOException e) {

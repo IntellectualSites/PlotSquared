@@ -40,6 +40,7 @@ import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.generator.ClassicPlotWorld;
+import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Direction;
@@ -79,7 +80,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
-import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -449,7 +449,7 @@ public class Plot {
      * that could alter the de facto owner of the plot.
      *
      * @return The plot owner of this particular (sub-)plot
-     * as stored in the database, if one exists. Else, null.
+     *         as stored in the database, if one exists. Else, null.
      */
     public @Nullable UUID getOwnerAbs() {
         return this.owner;
@@ -1201,12 +1201,12 @@ public class Plot {
      *
      * @return array of entity counts
      * @see RegionManager#countEntities(Plot)
-     * 0 = Entity
-     * 1 = Animal
-     * 2 = Monster
-     * 3 = Mob
-     * 4 = Boat
-     * 5 = Misc
+     *         0 = Entity
+     *         1 = Animal
+     *         2 = Monster
+     *         3 = Mob
+     *         4 = Boat
+     *         5 = Misc
      */
     public int[] countEntities() {
         int[] count = new int[6];
@@ -1564,7 +1564,7 @@ public class Plot {
                 x = bot.getX() + loc.getX();
                 z = bot.getZ() + loc.getZ();
             }
-            if (loc.getY() == Integer.MIN_VALUE) {
+            if (loc.getY()  == Integer.MIN_VALUE) {
                 if (isLoaded()) {
                     this.worldUtil.getHighestBlock(
                             plot.getWorldName(),
@@ -1707,7 +1707,7 @@ public class Plot {
             updateWorldBorder();
         }
         this.getPlotModificationManager().setSign(player.getName());
-        player.sendMessage(TranslatableCaption.of("working.claimed"), Template.template("plot", this.getId().toString()));
+        player.sendMessage(TranslatableCaption.of("working.claimed"), Template.of("plot", this.getId().toString()));
         if (teleport) {
             if (!auto && Settings.Teleport.ON_CLAIM) {
                 teleportPlayer(player, TeleportCause.COMMAND_CLAIM, result -> {
@@ -2575,8 +2575,8 @@ public class Plot {
                 return;
             }
             Caption caption = TranslatableCaption.of("debug.plot_debug");
-            Template plotTemplate = Template.template("plot", this.toString());
-            Template messageTemplate = Template.template("message", message);
+            Template plotTemplate = Template.of("plot", this.toString());
+            Template messageTemplate = Template.of("message", message);
             for (final PlotPlayer<?> player : players) {
                 if (isOwner(player.getUUID()) || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_DEBUG_OTHER)) {
                     player.sendMessage(caption, plotTemplate, messageTemplate);
@@ -2609,7 +2609,7 @@ public class Plot {
         if (result == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.template("value", "Teleport")
+                    Template.of("value", "Teleport")
             );
             resultConsumer.accept(false);
             return;
@@ -2624,7 +2624,7 @@ public class Plot {
             }
             player.sendMessage(
                     TranslatableCaption.of("teleport.teleport_in_seconds"),
-                    Template.template("amount", String.valueOf(Settings.Teleport.DELAY))
+                    Template.of("amount", String.valueOf(Settings.Teleport.DELAY))
             );
             final String name = player.getName();
             TaskManager.addToTeleportQueue(name);
@@ -2845,12 +2845,13 @@ public class Plot {
                             } else {
                                 value = flag.toString();
                             }
-                            Component snip = MINI_MESSAGE.deserialize(
+                            Component snip = MINI_MESSAGE.parse(
                                     prefix + CaptionUtility.format(
                                             player,
-                                            TranslatableCaption.of("info.plot_flag_list").getComponent(player)),
-                                    TemplateResolver.templates(Template.template("flag", flag.getName()),
-                                            Template.template("value", CaptionUtility.formatRaw(player, value.toString())))
+                                            TranslatableCaption.of("info.plot_flag_list").getComponent(player)
+                                    ),
+                                    Template.of("flag", flag.getName()),
+                                    Template.of("value", CaptionUtility.formatRaw(player, value.toString()))
                             );
                             flagBuilder.append(snip);
                             prefix = ", ";
@@ -2868,51 +2869,51 @@ public class Plot {
                     } else {
                         owner = PlayerManager.getPlayerList(this.getOwners(), player);
                     }
-                    Template headerTemplate = Template.template(
+                    Template headerTemplate = Template.of(
                             "header",
                             TranslatableCaption.of("info.plot_info_header").getComponent(player)
                     );
-                    Template footerTemplate = Template.template(
+                    Template footerTemplate = Template.of(
                             "footer",
                             TranslatableCaption.of("info.plot_info_footer").getComponent(player)
                     );
                     Template areaTemplate;
                     if (this.getArea() != null) {
                         areaTemplate =
-                                Template.template(
+                                Template.of(
                                         "area",
                                         this.getArea().getWorldName() + (this.getArea().getId() == null
                                                 ? ""
                                                 : "(" + this.getArea().getId() + ")")
                                 );
                     } else {
-                        areaTemplate = Template.template("area", TranslatableCaption.of("info.none").getComponent(player));
+                        areaTemplate = Template.of("area", TranslatableCaption.of("info.none").getComponent(player));
                     }
                     long creationDate = Long.parseLong(String.valueOf(timestamp));
                     SimpleDateFormat sdf = new SimpleDateFormat(Settings.Timeformat.DATE_FORMAT);
                     sdf.setTimeZone(TimeZone.getTimeZone(Settings.Timeformat.TIME_ZONE));
                     String newDate = sdf.format(creationDate);
 
-                    Template idTemplate = Template.template("id", this.getId().toString());
-                    Template aliasTemplate = Template.template("alias", alias);
-                    Template numTemplate = Template.template("num", String.valueOf(num));
-                    Template descTemplate = Template.template("desc", description);
-                    Template biomeTemplate = Template.template("biome", biome.toString().toLowerCase());
-                    Template ownerTemplate = Template.template("owner", owner);
-                    Template membersTemplate = Template.template("members", members);
-                    Template playerTemplate = Template.template("player", player.getName());
-                    Template trustedTemplate = Template.template("trusted", trusted);
-                    Template helpersTemplate = Template.template("helpers", members);
-                    Template deniedTemplate = Template.template("denied", denied);
-                    Template seenTemplate = Template.template("seen", seen);
-                    Template flagsTemplate = Template.template("flags", flags);
-                    Template creationTemplate = Template.template("creationdate", newDate);
-                    Template buildTemplate = Template.template("build", String.valueOf(build));
+                    Template idTemplate = Template.of("id", this.getId().toString());
+                    Template aliasTemplate = Template.of("alias", alias);
+                    Template numTemplate = Template.of("num", String.valueOf(num));
+                    Template descTemplate = Template.of("desc", description);
+                    Template biomeTemplate = Template.of("biome", biome.toString().toLowerCase());
+                    Template ownerTemplate = Template.of("owner", owner);
+                    Template membersTemplate = Template.of("members", members);
+                    Template playerTemplate = Template.of("player", player.getName());
+                    Template trustedTemplate = Template.of("trusted", trusted);
+                    Template helpersTemplate = Template.of("helpers", members);
+                    Template deniedTemplate = Template.of("denied", denied);
+                    Template seenTemplate = Template.of("seen", seen);
+                    Template flagsTemplate = Template.of("flags", flags);
+                    Template creationTemplate = Template.of("creationdate", newDate);
+                    Template buildTemplate = Template.of("build", String.valueOf(build));
                     if (iInfo.getComponent(player).contains("<rating>")) {
                         TaskManager.runTaskAsync(() -> {
                             Template ratingTemplate;
                             if (Settings.Ratings.USE_LIKES) {
-                                ratingTemplate = Template.template(
+                                ratingTemplate = Template.of(
                                         "rating",
                                         String.format("%.0f%%", Like.getLikesPercentage(this) * 100D)
                                 );
@@ -2930,13 +2931,13 @@ public class Plot {
                                                 .append(String.format("%.1f", ratings[i]));
                                         prefix = ",";
                                     }
-                                    ratingTemplate = Template.template("rating", rating.toString());
+                                    ratingTemplate = Template.of("rating", rating.toString());
                                 } else {
                                     double rating = this.getAverageRating();
                                     if (Double.isFinite(rating)) {
-                                        ratingTemplate = Template.template("rating", String.format("%.1f", rating) + '/' + max);
+                                        ratingTemplate = Template.of("rating", String.format("%.1f", rating) + '/' + max);
                                     } else {
-                                        ratingTemplate = Template.template(
+                                        ratingTemplate = Template.of(
                                                 "rating",
                                                 TranslatableCaption.of("info.none").getComponent(player)
                                         );
@@ -2944,35 +2945,9 @@ public class Plot {
                                 }
                             }
                             future.complete(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
-                                    .deserialize(
+                                    .parse(
                                             iInfo.getComponent(player),
-                                            TemplateResolver.templates(headerTemplate,
-                                                    areaTemplate,
-                                                    idTemplate,
-                                                    aliasTemplate,
-                                                    numTemplate,
-                                                    descTemplate,
-                                                    biomeTemplate,
-                                                    ownerTemplate,
-                                                    membersTemplate,
-                                                    playerTemplate,
-                                                    trustedTemplate,
-                                                    helpersTemplate,
-                                                    deniedTemplate,
-                                                    seenTemplate,
-                                                    flagsTemplate,
-                                                    buildTemplate,
-                                                    ratingTemplate,
-                                                    creationTemplate,
-                                                    footerTemplate)
-                                    ))));
-                        });
-                        return;
-                    }
-                    future.complete(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
-                            .deserialize(
-                                    iInfo.getComponent(player),
-                                    TemplateResolver.templates(headerTemplate,
+                                            headerTemplate,
                                             areaTemplate,
                                             idTemplate,
                                             aliasTemplate,
@@ -2988,7 +2963,33 @@ public class Plot {
                                             seenTemplate,
                                             flagsTemplate,
                                             buildTemplate,
-                                            footerTemplate)
+                                            ratingTemplate,
+                                            creationTemplate,
+                                            footerTemplate
+                                    ))));
+                        });
+                        return;
+                    }
+                    future.complete(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
+                            .parse(
+                                    iInfo.getComponent(player),
+                                    headerTemplate,
+                                    areaTemplate,
+                                    idTemplate,
+                                    aliasTemplate,
+                                    numTemplate,
+                                    descTemplate,
+                                    biomeTemplate,
+                                    ownerTemplate,
+                                    membersTemplate,
+                                    playerTemplate,
+                                    trustedTemplate,
+                                    helpersTemplate,
+                                    deniedTemplate,
+                                    seenTemplate,
+                                    flagsTemplate,
+                                    buildTemplate,
+                                    footerTemplate
                             ))));
                 }
         );

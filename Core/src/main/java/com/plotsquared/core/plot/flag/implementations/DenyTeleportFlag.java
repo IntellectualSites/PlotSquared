@@ -89,7 +89,7 @@ public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, Den
         final DeniedGroup group = DeniedGroup.fromString(input);
         if (group == null) {
             throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_enum"),
-                    Template.template("list", "members, nonmembers, trusted, nontrusted, nonowners")
+                    Template.of("list", "members, nonmembers, trusted, nontrusted, nonowners")
             );
         }
         return flagOf(group);

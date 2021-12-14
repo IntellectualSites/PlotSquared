@@ -69,7 +69,7 @@ public class Cluster extends SubCommand {
             // return arguments
             player.sendMessage(
                     TranslatableCaption.of("cluster.cluster_available_args"),
-                    Template.template(
+                    Template.of(
                             "list",
                             "<dark_aqua>list</dark_aqua><gray>, </gray><dark_aqua>create</dark_aqua><gray>, </gray><dark_aqua>delete</dark_aqua><gray>, </gray><dark_aqua>resize</dark_aqua><gray>, </gray><dark_aqua>invite</dark_aqua><gray>, </gray><dark_aqua>kick</dark_aqua><gray>, </gray><dark_aqua>leave</dark_aqua><gray>, </gray><dark_aqua>members</dark_aqua><gray>, </gray><dark_aqua>info</dark_aqua><gray>, </gray><dark_aqua>tp</dark_aqua><gray>, </gray><dark_aqua>sethome</dark_aqua>"
                     )
@@ -83,14 +83,14 @@ public class Cluster extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_LIST)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.template("node", String.valueOf(Permission.PERMISSION_CLUSTER_LIST))
+                            Template.of("node", String.valueOf(Permission.PERMISSION_CLUSTER_LIST))
                     );
                     return false;
                 }
                 if (args.length != 1) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.template("value", "/plot cluster list")
+                            Template.of("value", "/plot cluster list")
                     );
                     return false;
                 }
@@ -102,7 +102,7 @@ public class Cluster extends SubCommand {
                 Set<PlotCluster> clusters = area.getClusters();
                 player.sendMessage(
                         TranslatableCaption.of("cluster.cluster_list_heading"),
-                        Template.template("amount", clusters.size() + "")
+                        Template.of("amount", clusters.size() + "")
                 );
                 for (PlotCluster cluster : clusters) {
                     // Ignore unmanaged clusters
@@ -110,22 +110,22 @@ public class Cluster extends SubCommand {
                     if (player.getUUID().equals(cluster.owner)) {
                         player.sendMessage(
                                 TranslatableCaption.of("cluster.cluster_list_element_owner"),
-                                Template.template("cluster", name)
+                                Template.of("cluster", name)
                         );
                     } else if (cluster.helpers.contains(player.getUUID())) {
                         player.sendMessage(
                                 TranslatableCaption.of("cluster.cluster_list_element_helpers"),
-                                Template.template("cluster", name)
+                                Template.of("cluster", name)
                         );
                     } else if (cluster.invited.contains(player.getUUID())) {
                         player.sendMessage(
                                 TranslatableCaption.of("cluster.cluster_list_element_invited"),
-                                Template.template("cluster", name)
+                                Template.of("cluster", name)
                         );
                     } else {
                         player.sendMessage(
                                 TranslatableCaption.of("cluster.cluster_list_element"),
-                                Template.template("cluster", cluster.toString())
+                                Template.of("cluster", cluster.toString())
                         );
                     }
                 }
@@ -136,7 +136,7 @@ public class Cluster extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_CREATE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.template("node", String.valueOf(Permission.PERMISSION_CLUSTER_CREATE))
+                            Template.of("node", String.valueOf(Permission.PERMISSION_CLUSTER_CREATE))
                     );
                     return false;
                 }
@@ -148,7 +148,7 @@ public class Cluster extends SubCommand {
                 if (args.length != 4) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.template("value", "/plot cluster create <name> <id-bot> <id-top>")
+                            Template.of("value", "/plot cluster create <name> <id-bot> <id-top>")
                     );
                     return false;
                 }
@@ -158,7 +158,7 @@ public class Cluster extends SubCommand {
                 if (currentClusters >= player.getAllowedPlots()) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.cant_claim_more_clusters"),
-                            Template.template("amount", String.valueOf(player.getAllowedPlots()))
+                            Template.of("amount", String.valueOf(player.getAllowedPlots()))
                     );
                 }
                 PlotId pos1;
@@ -176,7 +176,7 @@ public class Cluster extends SubCommand {
                 if (area.getCluster(name) != null) {
                     player.sendMessage(
                             TranslatableCaption.of("alias.alias_is_taken"),
-                            Template.template("alias", name)
+                            Template.of("alias", name)
                     );
                     return false;
                 }
@@ -190,7 +190,7 @@ public class Cluster extends SubCommand {
                 if (cluster != null) {
                     player.sendMessage(
                             TranslatableCaption.of("cluster.cluster_intersection"),
-                            Template.template("cluster", cluster.getName())
+                            Template.of("cluster", cluster.getName())
                     );
                     return false;
                 }
@@ -198,7 +198,7 @@ public class Cluster extends SubCommand {
                 if (!area.contains(pos1) || !area.contains(pos2)) {
                     player.sendMessage(
                             TranslatableCaption.of("cluster.cluster_outside"),
-                            Template.template("area", String.valueOf(area))
+                            Template.of("area", String.valueOf(area))
                     );
                     return false;
                 }
@@ -211,7 +211,7 @@ public class Cluster extends SubCommand {
                             if (!plot.isOwner(uuid)) {
                                 player.sendMessage(
                                         TranslatableCaption.of("permission.no_permission"),
-                                        Template.template("node", String.valueOf(Permission.PERMISSION_CLUSTER_CREATE_OTHER))
+                                        Template.of("node", String.valueOf(Permission.PERMISSION_CLUSTER_CREATE_OTHER))
                                 );
                                 return false;
                             }
@@ -233,7 +233,7 @@ public class Cluster extends SubCommand {
                 if (current + cluster.getArea() > allowed) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.template("node", Permission.PERMISSION_CLUSTER_SIZE + "." + (current + cluster.getArea()))
+                            Template.of("node", Permission.PERMISSION_CLUSTER_SIZE + "." + (current + cluster.getArea()))
                     );
                     return false;
                 }
@@ -252,7 +252,7 @@ public class Cluster extends SubCommand {
                 }
                 player.sendMessage(
                         TranslatableCaption.of("cluster.cluster_created"),
-                        Template.template("name", name)
+                        Template.of("name", name)
                 );
                 return true;
             }
@@ -262,14 +262,14 @@ public class Cluster extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_DELETE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.template("node", String.valueOf(Permission.PERMISSION_CLUSTER_DELETE))
+                            Template.of("node", String.valueOf(Permission.PERMISSION_CLUSTER_DELETE))
                     );
                     return false;
                 }
                 if (args.length != 1 && args.length != 2) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.template("value", "/plot cluster delete [name]")
+                            Template.of("value", "/plot cluster delete [name]")
                     );
                     return false;
                 }
@@ -284,7 +284,7 @@ public class Cluster extends SubCommand {
                     if (cluster == null) {
                         player.sendMessage(
                                 TranslatableCaption.of("cluster.invalid_cluster_name"),
-                                Template.template("cluster", args[1])
+                                Template.of("cluster", args[1])
                         );
                         return false;
                     }
@@ -300,13 +300,13 @@ public class Cluster extends SubCommand {
                             .hasPermission(player, Permission.PERMISSION_CLUSTER_DELETE_OTHER)) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.template("node", String.valueOf(Permission.PERMISSION_CLUSTER_DELETE_OTHER))
+                                Template.of("node", String.valueOf(Permission.PERMISSION_CLUSTER_DELETE_OTHER))
                         );
                         return false;
                     }
                 }
                 DBFunc.delete(cluster);
-                player.sendMessage(TranslatableCaption.of("cluster.cluster_deleted"), Template.template(
+                player.sendMessage(TranslatableCaption.of("cluster.cluster_deleted"), Template.of(
                         "cluster",
                         String.valueOf(cluster)
                 ));
@@ -317,14 +317,14 @@ public class Cluster extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_RESIZE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.template("node", String.valueOf(Permission.PERMISSION_CLUSTER_RESIZE))
+                            Template.of("node", String.valueOf(Permission.PERMISSION_CLUSTER_RESIZE))
                     );
                     return false;
                 }
                 if (args.length != 3) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.template("value", "/plot cluster resize [name]")
+                            Template.of("value", "/plot cluster resize [name]")
                     );
                     return false;
                 }
@@ -358,7 +358,7 @@ public class Cluster extends SubCommand {
                             .hasPermission(player, Permission.PERMISSION_CLUSTER_RESIZE_OTHER)) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.template("node", String.valueOf(Permission.PERMISSION_CLUSTER_RESIZE_OTHER))
+                                Template.of("node", String.valueOf(Permission.PERMISSION_CLUSTER_RESIZE_OTHER))
                         );
                         return false;
                     }
@@ -368,7 +368,7 @@ public class Cluster extends SubCommand {
                 if (intersect != null) {
                     player.sendMessage(
                             TranslatableCaption.of("cluster.cluster_intersection"),
-                            Template.template("cluster", intersect.getName())
+                            Template.of("cluster", intersect.getName())
                     );
                     return false;
                 }
@@ -384,7 +384,7 @@ public class Cluster extends SubCommand {
                             .hasPermission(player, Permission.PERMISSION_CLUSTER_RESIZE_SHRINK)) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.template("node", String.valueOf(Permission.PERMISSION_CLUSTER_RESIZE_SHRINK))
+                                Template.of("node", String.valueOf(Permission.PERMISSION_CLUSTER_RESIZE_SHRINK))
                         );
                         return false;
                     }
@@ -395,7 +395,7 @@ public class Cluster extends SubCommand {
                             .hasPermission(player, Permission.PERMISSION_CLUSTER_RESIZE_EXPAND)) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.template("node", String.valueOf(Permission.PERMISSION_CLUSTER_RESIZE_EXPAND))
+                                Template.of("node", String.valueOf(Permission.PERMISSION_CLUSTER_RESIZE_EXPAND))
                         );
                         return false;
                     }
@@ -414,7 +414,7 @@ public class Cluster extends SubCommand {
                 if (current + cluster.getArea() > allowed) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.template("node", Permission.PERMISSION_CLUSTER + "." + (current + cluster.getArea()))
+                            Template.of("node", Permission.PERMISSION_CLUSTER + "." + (current + cluster.getArea()))
                     );
                     return false;
                 }
@@ -429,14 +429,14 @@ public class Cluster extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_INVITE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.template("node", String.valueOf(Permission.PERMISSION_CLUSTER_INVITE))
+                            Template.of("node", String.valueOf(Permission.PERMISSION_CLUSTER_INVITE))
                     );
                     return false;
                 }
                 if (args.length != 2) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.template("value", "/plot cluster invite <player>")
+                            Template.of("value", "/plot cluster invite <player>")
                     );
                     return false;
                 }
@@ -455,7 +455,7 @@ public class Cluster extends SubCommand {
                             .hasPermission(player, Permission.PERMISSION_CLUSTER_INVITE_OTHER)) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.template("node", Permission.PERMISSION_CLUSTER_INVITE_OTHER.toString())
+                                Template.of("node", Permission.PERMISSION_CLUSTER_INVITE_OTHER.toString())
                         );
                         return false;
                     }
@@ -468,7 +468,7 @@ public class Cluster extends SubCommand {
                             } else if (throwable != null) {
                                 player.sendMessage(
                                         TranslatableCaption.of("errors.invalid_player"),
-                                        Template.template("value", args[1])
+                                        Template.of("value", args[1])
                                 );
                             } else {
                                 if (!cluster.isAdded(uuid)) {
@@ -480,7 +480,7 @@ public class Cluster extends SubCommand {
                                     if (otherPlayer != null) {
                                         player.sendMessage(
                                                 TranslatableCaption.of("cluster.cluster_invited"),
-                                                Template.template("cluster", cluster.getName())
+                                                Template.of("cluster", cluster.getName())
                                         );
                                     }
                                 }
@@ -495,14 +495,14 @@ public class Cluster extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_KICK)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.template("node", Permission.PERMISSION_CLUSTER_KICK.toString())
+                            Template.of("node", Permission.PERMISSION_CLUSTER_KICK.toString())
                     );
                     return false;
                 }
                 if (args.length != 2) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.template("value", "/plot cluster kick <player>")
+                            Template.of("value", "/plot cluster kick <player>")
                     );
                     return false;
                 }
@@ -520,7 +520,7 @@ public class Cluster extends SubCommand {
                             .hasPermission(player, Permission.PERMISSION_CLUSTER_KICK_OTHER)) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.template("node", Permission.PERMISSION_CLUSTER_KICK_OTHER.toString())
+                                Template.of("node", Permission.PERMISSION_CLUSTER_KICK_OTHER.toString())
                         );
                         return false;
                     }
@@ -533,7 +533,7 @@ public class Cluster extends SubCommand {
                             } else if (throwable != null) {
                                 player.sendMessage(
                                         TranslatableCaption.of("errors.invalid_player"),
-                                        Template.template("value", args[1])
+                                        Template.of("value", args[1])
                                 );
                             } else {
                                 // Can't kick if the player is yourself, the owner, or not added to the cluster
@@ -541,7 +541,7 @@ public class Cluster extends SubCommand {
                                         || !cluster.isAdded(uuid)) {
                                     player.sendMessage(
                                             TranslatableCaption.of("cluster.cannot_kick_player"),
-                                            Template.template("value", cluster.getName())
+                                            Template.of("value", cluster.getName())
                                     );
                                 } else {
                                     if (cluster.helpers.contains(uuid)) {
@@ -556,7 +556,7 @@ public class Cluster extends SubCommand {
                                     if (player2 != null) {
                                         player.sendMessage(
                                                 TranslatableCaption.of("cluster.cluster_removed"),
-                                                Template.template("cluster", cluster.getName())
+                                                Template.of("cluster", cluster.getName())
                                         );
                                     }
                                     for (final Plot plot : PlotQuery.newQuery().inWorld(player2.getLocation()
@@ -577,14 +577,14 @@ public class Cluster extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_LEAVE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.template("node", Permission.PERMISSION_CLUSTER_LEAVE.toString())
+                            Template.of("node", Permission.PERMISSION_CLUSTER_LEAVE.toString())
                     );
                     return false;
                 }
                 if (args.length != 1 && args.length != 2) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.template("value", "/plot cluster leave [name]")
+                            Template.of("value", "/plot cluster leave [name]")
                     );
                     return false;
                 }
@@ -598,7 +598,7 @@ public class Cluster extends SubCommand {
                     if (cluster == null) {
                         player.sendMessage(
                                 TranslatableCaption.of("cluster.invalid_cluster_name"),
-                                Template.template("cluster", args[1])
+                                Template.of("cluster", args[1])
                         );
                         return false;
                     }
@@ -626,7 +626,7 @@ public class Cluster extends SubCommand {
                 DBFunc.removeInvited(cluster, uuid);
                 player.sendMessage(
                         TranslatableCaption.of("cluster.cluster_removed"),
-                        Template.template("cluster", cluster.getName())
+                        Template.of("cluster", cluster.getName())
                 );
                 for (final Plot plot : PlotQuery.newQuery().inWorld(player.getLocation().getWorldName())
                         .ownedBy(uuid)) {
@@ -641,14 +641,14 @@ public class Cluster extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_HELPERS)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.template("node", Permission.PERMISSION_CLUSTER_HELPERS.toString())
+                            Template.of("node", Permission.PERMISSION_CLUSTER_HELPERS.toString())
                     );
                     return false;
                 }
                 if (args.length != 3) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.template("value", "/plot cluster members <add | remove> <player>")
+                            Template.of("value", "/plot cluster members <add | remove> <player>")
                     );
                     return false;
                 }
@@ -669,7 +669,7 @@ public class Cluster extends SubCommand {
                             } else if (throwable != null) {
                                 player.sendMessage(
                                         TranslatableCaption.of("errors.invalid_player"),
-                                        Template.template("value", args[2])
+                                        Template.of("value", args[2])
                                 );
                             } else {
                                 if (args[1].equalsIgnoreCase("add")) {
@@ -683,7 +683,7 @@ public class Cluster extends SubCommand {
                                 } else {
                                     player.sendMessage(
                                             TranslatableCaption.of("commandconfig.command_syntax"),
-                                            Template.template("value", "/plot cluster members <add | remove> <player>")
+                                            Template.of("value", "/plot cluster members <add | remove> <player>")
                                     );
                                 }
                             }
@@ -696,14 +696,14 @@ public class Cluster extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_TP)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.template("node", Permission.PERMISSION_CLUSTER_TP.toString())
+                            Template.of("node", Permission.PERMISSION_CLUSTER_TP.toString())
                     );
                     return false;
                 }
                 if (args.length != 2) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.template("value", "/plot cluster tp <name>")
+                            Template.of("value", "/plot cluster tp <name>")
                     );
                     return false;
                 }
@@ -716,7 +716,7 @@ public class Cluster extends SubCommand {
                 if (cluster == null) {
                     player.sendMessage(
                             TranslatableCaption.of("cluster.invalid_cluster_name"),
-                            Template.template("cluster", args[1])
+                            Template.of("cluster", args[1])
                     );
                     return false;
                 }
@@ -725,7 +725,7 @@ public class Cluster extends SubCommand {
                     if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_TP_OTHER)) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.template("node", Permission.PERMISSION_CLUSTER_TP_OTHER.toString())
+                                Template.of("node", Permission.PERMISSION_CLUSTER_TP_OTHER.toString())
                         );
                         return false;
                     }
@@ -741,14 +741,14 @@ public class Cluster extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_INFO)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.template("node", Permission.PERMISSION_CLUSTER_TP.toString())
+                            Template.of("node", Permission.PERMISSION_CLUSTER_TP.toString())
                     );
                     return false;
                 }
                 if (args.length != 1 && args.length != 2) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.template("value", "/plot cluster info [name]")
+                            Template.of("value", "/plot cluster info [name]")
                     );
                 }
                 PlotArea area = player.getApplicablePlotArea();
@@ -762,7 +762,7 @@ public class Cluster extends SubCommand {
                     if (cluster == null) {
                         player.sendMessage(
                                 TranslatableCaption.of("cluster.invalid_cluster_name"),
-                                Template.template("cluster", args[1])
+                                Template.of("cluster", args[1])
                         );
                         return false;
                     }
@@ -791,11 +791,11 @@ public class Cluster extends SubCommand {
                                         cluster.getP2().getY() - cluster.getP1().getY() + 1);
                                 String rights = cluster.isAdded(player.getUUID()) + "";
                                 Caption message = TranslatableCaption.of("cluster.cluster_info");
-                                Template idTemplate = Template.template("id", id);
-                                Template ownerTemplate = Template.template("owner", owner);
-                                Template nameTemplate = Template.template("name", name);
-                                Template sizeTemplate = Template.template("size", size);
-                                Template rightsTemplate = Template.template("rights", rights);
+                                Template idTemplate = Template.of("id", id);
+                                Template ownerTemplate = Template.of("owner", owner);
+                                Template nameTemplate = Template.of("name", name);
+                                Template sizeTemplate = Template.of("size", size);
+                                Template rightsTemplate = Template.of("rights", rights);
                                 player.sendMessage(
                                         message,
                                         idTemplate,
@@ -814,14 +814,14 @@ public class Cluster extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_SETHOME)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.template("node", Permission.PERMISSION_CLUSTER_SETHOME.toString())
+                            Template.of("node", Permission.PERMISSION_CLUSTER_SETHOME.toString())
                     );
                     return false;
                 }
                 if (args.length != 1 && args.length != 2) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.template("value", "/plot cluster sethome")
+                            Template.of("value", "/plot cluster sethome")
                     );
                     return false;
                 }
@@ -839,7 +839,7 @@ public class Cluster extends SubCommand {
                             .hasPermission(player, Permission.PERMISSION_CLUSTER_SETHOME_OTHER)) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.template("node", Permission.PERMISSION_CLUSTER_SETHOME_OTHER.toString())
+                                Template.of("node", Permission.PERMISSION_CLUSTER_SETHOME_OTHER.toString())
                         );
                         return false;
                     }
@@ -858,7 +858,7 @@ public class Cluster extends SubCommand {
         }
         player.sendMessage(
                 TranslatableCaption.of("cluster.cluster_available_args"),
-                Template.template(
+                Template.of(
                         "list",
                         "<dark_aqua>list</dark_aqua><gray>, </gray><dark_aqua>create</dark_aqua><gray>, </gray><dark_aqua>delete</dark_aqua><gray>, </gray><dark_aqua>resize</dark_aqua><gray>, </gray><dark_aqua>invite</dark_aqua><gray>, </gray><dark_aqua>kick</dark_aqua><gray>, </gray><dark_aqua>leave</dark_aqua><gray>, </gray><dark_aqua>members</dark_aqua><gray>, </gray><dark_aqua>info</dark_aqua><gray>, </gray><dark_aqua>tp</dark_aqua><gray>, </gray><dark_aqua>sethome</dark_aqua>"
                 )

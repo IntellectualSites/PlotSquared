@@ -50,7 +50,6 @@ import com.sk89q.worldedit.world.item.ItemType;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
-import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.UUID;
@@ -162,8 +161,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
                 .replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&')
                 .replace("<prefix>", TranslatableCaption.of("core.prefix").getComponent(this));
         // Parse the message
-        PlotSquared.platform().consoleAudience().sendMessage(MINI_MESSAGE.deserialize(message,
-                TemplateResolver.templates(replacements)));
+        PlotSquared.platform().consoleAudience().sendMessage(MINI_MESSAGE.parse(message, replacements));
     }
 
     @Override

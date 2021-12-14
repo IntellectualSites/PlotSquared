@@ -93,7 +93,7 @@ public class Trust extends Command {
                 } else {
                     player.sendMessage(
                             TranslatableCaption.of("errors.invalid_player"),
-                            Template.template("value", args[0])
+                            Template.of("value", args[0])
                     );
                 }
                 future.completeExceptionally(throwable);
@@ -112,7 +112,7 @@ public class Trust extends Command {
                                     .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST))) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
-                                Template.template("value", PlayerManager.getName(uuid))
+                                Template.of("value", PlayerManager.getName(uuid))
                         );
                         iterator.remove();
                         continue;
@@ -120,7 +120,7 @@ public class Trust extends Command {
                     if (currentPlot.isOwner(uuid)) {
                         player.sendMessage(
                                 TranslatableCaption.of("member.already_added"),
-                                Template.template("value", PlayerManager.getName(uuid))
+                                Template.of("value", PlayerManager.getName(uuid))
                         );
                         iterator.remove();
                         continue;
@@ -128,7 +128,7 @@ public class Trust extends Command {
                     if (currentPlot.getTrusted().contains(uuid)) {
                         player.sendMessage(
                                 TranslatableCaption.of("member.already_added"),
-                                Template.template("value", PlayerManager.getName(uuid))
+                                Template.of("value", PlayerManager.getName(uuid))
                         );
                         iterator.remove();
                         continue;
@@ -141,7 +141,7 @@ public class Trust extends Command {
                 if (localTrustSize >= maxTrustSize) {
                     player.sendMessage(
                             TranslatableCaption.of("members.plot_max_members_trusted"),
-                            Template.template("amount", String.valueOf(localTrustSize))
+                            Template.of("amount", String.valueOf(localTrustSize))
                     );
                     return;
                 }

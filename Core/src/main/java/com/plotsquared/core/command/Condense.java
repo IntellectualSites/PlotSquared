@@ -74,7 +74,7 @@ public class Condense extends SubCommand {
         if (args.length != 2 && args.length != 3) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.template("value", "/plot condense <area> <start | stop | info> [radius]")
+                    Template.of("value", "/plot condense <area> <start | stop | info> [radius]")
             );
             return false;
         }
@@ -88,7 +88,7 @@ public class Condense extends SubCommand {
                 if (args.length == 2) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.template("value", "/plot condense" + area + " start <radius>")
+                            Template.of("value", "/plot condense" + area + " start <radius>")
                     );
                     return false;
                 }
@@ -187,8 +187,8 @@ public class Condense extends SubCommand {
                                     if (result.get()) {
                                         player.sendMessage(
                                                 TranslatableCaption.of("condense.moving"),
-                                                Template.template("origin", String.valueOf(origin)),
-                                                Template.template("possible", String.valueOf(possible))
+                                                Template.of("origin", String.valueOf(origin)),
+                                                Template.of("possible", String.valueOf(possible))
                                         );
                                         TaskManager.runTaskLater(task, TaskTime.ticks(1L));
                                     }
@@ -208,7 +208,7 @@ public class Condense extends SubCommand {
                         if (i >= free.size()) {
                             player.sendMessage(
                                     TranslatableCaption.of("condense.skipping"),
-                                    Template.template("plot", String.valueOf(origin))
+                                    Template.of("plot", String.valueOf(origin))
                             );
                         }
                     }
@@ -229,7 +229,7 @@ public class Condense extends SubCommand {
                 if (args.length == 2) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.template("value", "/plot condense " + area + " info <radius>")
+                            Template.of("value", "/plot condense " + area + " info <radius>")
                     );
                     return false;
                 }
@@ -250,20 +250,20 @@ public class Condense extends SubCommand {
                 player.sendMessage(TranslatableCaption.of("condense.default_eval"));
                 player.sendMessage(
                         TranslatableCaption.of("condense.minimum_radius"),
-                        Template.template("minimumRadius", String.valueOf(minimumRadius))
+                        Template.of("minimumRadius", String.valueOf(minimumRadius))
                 );
                 player.sendMessage(
                         TranslatableCaption.of("condense.minimum_radius"),
-                        Template.template("maxMove", String.valueOf(maxMove))
+                        Template.of("maxMove", String.valueOf(maxMove))
                 );
                 player.sendMessage(TranslatableCaption.of("condense.input_eval"));
                 player.sendMessage(
                         TranslatableCaption.of("condense.input_radius"),
-                        Template.template("radius", String.valueOf(radius))
+                        Template.of("radius", String.valueOf(radius))
                 );
                 player.sendMessage(
                         TranslatableCaption.of("condense.estimated_moves"),
-                        Template.template("userMove", String.valueOf(userMove))
+                        Template.of("userMove", String.valueOf(userMove))
                 );
                 player.sendMessage(TranslatableCaption.of("condense.eta"));
                 player.sendMessage(TranslatableCaption.of("condense.radius_measured"));
@@ -272,7 +272,7 @@ public class Condense extends SubCommand {
         }
         player.sendMessage(
                 TranslatableCaption.of("commandconfig.command_syntax"),
-                Template.template("value", "/plot condense " + area.getWorldName() + " <start | stop | info> [radius]")
+                Template.of("value", "/plot condense " + area.getWorldName() + " <start | stop | info> [radius]")
         );
         return false;
     }

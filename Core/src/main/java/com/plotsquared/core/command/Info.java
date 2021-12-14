@@ -97,7 +97,7 @@ public class Info extends SubCommand {
                             .hasPermission(Permission.PERMISSION_AREA_INFO_FORCE.toString())) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.template("node", Permission.PERMISSION_AREA_INFO_FORCE.toString())
+                                Template.of("node", Permission.PERMISSION_AREA_INFO_FORCE.toString())
                         );
                         return true;
                     }
@@ -119,7 +119,7 @@ public class Info extends SubCommand {
         if (!hasOwner && !containsEveryone && !trustedEveryone) {
             player.sendMessage(
                     TranslatableCaption.of("info.plot_info_unclaimed"),
-                    Template.template("plot", plot.getId().getX() + ";" + plot.getId().getY())
+                    Template.of("plot", plot.getId().getX() + ";" + plot.getId().getY())
             );
             return true;
         }

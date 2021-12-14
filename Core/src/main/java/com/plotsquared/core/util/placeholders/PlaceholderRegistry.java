@@ -62,7 +62,6 @@ import java.util.function.BiFunction;
 @Singleton
 public final class PlaceholderRegistry {
 
-    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     private final Map<String, Placeholder> placeholders;
     private final EventDispatcher eventDispatcher;
 
@@ -81,7 +80,7 @@ public final class PlaceholderRegistry {
      * @return a legacy-formatted string.
      */
     private static String legacyComponent(TranslatableCaption caption, LocaleHolder localeHolder) {
-        Component component = MINI_MESSAGE.parse(caption.getComponent(localeHolder));
+        Component component = MiniMessage.get().parse(caption.getComponent(localeHolder));
         return PlotSquared.platform().toLegacyPlatformString(component);
     }
 

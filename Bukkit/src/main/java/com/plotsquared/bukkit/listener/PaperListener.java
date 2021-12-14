@@ -302,7 +302,7 @@ public class PaperListener implements Listener {
             final PlotPlayer<?> plotPlayer = BukkitUtil.adapt(event.getPlayer());
             plotPlayer.sendMessage(
                     TranslatableCaption.of("errors.tile_entity_cap_reached"),
-                    Template.template("amount", String.valueOf(Settings.Chunk_Processor.MAX_TILES))
+                    Template.of("amount", String.valueOf(Settings.Chunk_Processor.MAX_TILES))
             );
             event.setCancelled(true);
             event.setBuild(false);

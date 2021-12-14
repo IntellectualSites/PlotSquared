@@ -105,7 +105,7 @@ public class Load extends SubCommand {
                         // No schematics found:
                         player.sendMessage(
                                 TranslatableCaption.of("web.load_null"),
-                                Template.template("command", "/plot load")
+                                Template.of("command", "/plot load")
                         );
                         return false;
                     }
@@ -116,7 +116,7 @@ public class Load extends SubCommand {
                         // use /plot load <index>
                         player.sendMessage(
                                 TranslatableCaption.of("invalid.not_valid_number"),
-                                Template.template("value", "(1, " + schematics.size() + ')')
+                                Template.of("value", "(1, " + schematics.size() + ')')
                         );
                         return false;
                     }
@@ -136,7 +136,7 @@ public class Load extends SubCommand {
                             plot.removeRunning();
                             player.sendMessage(
                                     TranslatableCaption.of("schematics.schematic_invalid"),
-                                    Template.template("reason", "non-existent or not in gzip format")
+                                    Template.of("reason", "non-existent or not in gzip format")
                             );
                             return;
                         }
@@ -167,7 +167,7 @@ public class Load extends SubCommand {
                 plot.removeRunning();
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.template("value", "/plot load <index>")
+                        Template.of("value", "/plot load <index>")
                 );
                 return false;
             }
@@ -218,7 +218,7 @@ public class Load extends SubCommand {
             }
             player.sendMessage(
                     TranslatableCaption.of("web.load_list"),
-                    Template.template("command", "/plot load #")
+                    Template.of("command", "/plot load #")
             );
         }
     }

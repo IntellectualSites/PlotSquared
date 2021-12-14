@@ -80,7 +80,7 @@ public class SchematicCmd extends SubCommand {
         if (args.length < 1) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.template("value", "Possible values: save, paste, exportall, list")
+                    Template.of("value", "Possible values: save, paste, exportall, list")
             );
             return true;
         }
@@ -90,14 +90,14 @@ public class SchematicCmd extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_PASTE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.template("node", String.valueOf(Permission.PERMISSION_SCHEMATIC_PASTE))
+                            Template.of("node", String.valueOf(Permission.PERMISSION_SCHEMATIC_PASTE))
                     );
                     return false;
                 }
                 if (args.length < 2) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.template("value", "Possible values: save, paste, exportall, list")
+                            Template.of("value", "Possible values: save, paste, exportall, list")
                     );
                     break;
                 }
@@ -138,7 +138,7 @@ public class SchematicCmd extends SubCommand {
                             e.printStackTrace();
                             player.sendMessage(
                                     TranslatableCaption.of("schematics.schematic_invalid"),
-                                    Template.template("reason", "non-existent url: " + location)
+                                    Template.of("reason", "non-existent url: " + location)
                             );
                             SchematicCmd.this.running = false;
                             return;
@@ -154,7 +154,7 @@ public class SchematicCmd extends SubCommand {
                         SchematicCmd.this.running = false;
                         player.sendMessage(
                                 TranslatableCaption.of("schematics.schematic_invalid"),
-                                Template.template("reason", "non-existent or not in gzip format")
+                                Template.of("reason", "non-existent or not in gzip format")
                         );
                         return;
                     }
@@ -191,7 +191,7 @@ public class SchematicCmd extends SubCommand {
                     player.sendMessage(TranslatableCaption.of("schematics.schematic_exportall_world_args"));
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.template("value", "Use /plot schematic exportall <area>")
+                            Template.of("value", "Use /plot schematic exportall <area>")
                     );
                     return false;
                 }
@@ -199,7 +199,7 @@ public class SchematicCmd extends SubCommand {
                 if (area == null) {
                     player.sendMessage(
                             TranslatableCaption.of("errors.not_valid_plot_world"),
-                            Template.template("value", args[1])
+                            Template.of("value", args[1])
                     );
                     return false;
                 }
@@ -208,7 +208,7 @@ public class SchematicCmd extends SubCommand {
                     player.sendMessage(TranslatableCaption.of("schematic.schematic_exportall_world"));
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.template("value", "Use /plot sch exportall <area>")
+                            Template.of("value", "Use /plot sch exportall <area>")
                     );
                     return false;
                 }
@@ -222,7 +222,7 @@ public class SchematicCmd extends SubCommand {
                     player.sendMessage(TranslatableCaption.of("schematics.schematic_exportall_started"));
                     player.sendMessage(
                             TranslatableCaption.of("schematics.plot_to_schem"),
-                            Template.template("amount", String.valueOf(plots.size()))
+                            Template.of("amount", String.valueOf(plots.size()))
                     );
                 }
             }
@@ -230,7 +230,7 @@ public class SchematicCmd extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_SAVE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.template("node", String.valueOf(Permission.PERMISSION_SCHEMATIC_SAVE))
+                            Template.of("node", String.valueOf(Permission.PERMISSION_SCHEMATIC_SAVE))
                     );
                     return false;
                 }
@@ -273,19 +273,19 @@ public class SchematicCmd extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_LIST)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.template("node", String.valueOf(Permission.PERMISSION_SCHEMATIC_LIST))
+                            Template.of("node", String.valueOf(Permission.PERMISSION_SCHEMATIC_LIST))
                     );
                     return false;
                 }
                 final String string = StringMan.join(this.schematicHandler.getSchematicNames(), "$2, $1");
                 player.sendMessage(
                         TranslatableCaption.of("schematics.schematic_list"),
-                        Template.template("list", string)
+                        Template.of("list", string)
                 );
             }
             default -> player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.template("value", "Possible values: save, paste, exportall, list")
+                    Template.of("value", "Possible values: save, paste, exportall, list")
             );
         }
         return true;

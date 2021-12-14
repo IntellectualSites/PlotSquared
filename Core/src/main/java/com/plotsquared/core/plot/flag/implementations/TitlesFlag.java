@@ -54,7 +54,7 @@ public class TitlesFlag extends PlotFlag<TitlesFlag.TitlesFlagValue, TitlesFlag>
                     this,
                     input,
                     TranslatableCaption.of("flags.flag_error_enum"),
-                    Template.template("list", "none, true, false")
+                    Template.of("list", "none, true, false")
             );
         }
         return flagOf(titlesFlagValue);

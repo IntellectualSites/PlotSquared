@@ -108,7 +108,7 @@ public class DatabaseCommand extends SubCommand {
         if (args.length < 1) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.template("value", "/plot database [area] <sqlite | mysql | import>")
+                    Template.of("value", "/plot database [area] <sqlite | mysql | import>")
             );
             return false;
         }
@@ -123,7 +123,7 @@ public class DatabaseCommand extends SubCommand {
         if (args.length < 1) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.template("value", "/plot database [area] <sqlite|mysql|import>")
+                    Template.of("value", "/plot database [area] <sqlite|mysql|import>")
             );
             player.sendMessage(TranslatableCaption.of("database.arg"));
             return false;
@@ -136,7 +136,7 @@ public class DatabaseCommand extends SubCommand {
                     if (args.length < 2) {
                         player.sendMessage(
                                 TranslatableCaption.of("commandconfig.command_syntax"),
-                                Template.template("value", "/plot database import <sqlite file> [prefix]")
+                                Template.of("value", "/plot database import <sqlite file> [prefix]")
                         );
                         return false;
                     }
@@ -147,7 +147,7 @@ public class DatabaseCommand extends SubCommand {
                     if (!file.exists()) {
                         player.sendMessage(
                                 TranslatableCaption.of("database.does_not_exist"),
-                                Template.template("value", String.valueOf(file))
+                                Template.of("value", String.valueOf(file))
                         );
                         return false;
                     }
@@ -191,8 +191,8 @@ public class DatabaseCommand extends SubCommand {
                                     }
                                     player.sendMessage(
                                             TranslatableCaption.of("database.skipping_duplicated_plot"),
-                                            Template.template("plot", String.valueOf(plot)),
-                                            Template.template("id", String.valueOf(plot.temp))
+                                            Template.of("plot", String.valueOf(plot)),
+                                            Template.of("id", String.valueOf(plot.temp))
                                     );
                                     continue;
                                 }

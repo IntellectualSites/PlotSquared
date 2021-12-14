@@ -62,7 +62,7 @@ public abstract class MetaDataAccess<T> implements AutoCloseable {
      * Check if the player has meta data stored with the given key
      *
      * @return {@code true} if player has meta data with this key, or
-     * {@code false}
+     *         {@code false}
      */
     public abstract boolean isPresent();
 

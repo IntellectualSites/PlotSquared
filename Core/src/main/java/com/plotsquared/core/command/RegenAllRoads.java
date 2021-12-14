@@ -65,18 +65,18 @@ public class RegenAllRoads extends SubCommand {
             } catch (NumberFormatException ignored) {
                 player.sendMessage(
                         TranslatableCaption.of("invalid.not_valid_number"),
-                        Template.template("value", "(0, 256)")
+                        Template.of("value", "(0, 256)")
                 );
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.template("value", "/plot regenallroads <world> [height]")
+                        Template.of("value", "/plot regenallroads <world> [height]")
                 );
                 return false;
             }
         } else if (args.length != 1) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.template("value", "/plot regenallroads <world> [height]")
+                    Template.of("value", "/plot regenallroads <world> [height]")
             );
             return false;
         }
@@ -84,7 +84,7 @@ public class RegenAllRoads extends SubCommand {
         if (area == null) {
             player.sendMessage(
                     TranslatableCaption.of("errors.not_valid_plot_world"),
-                    Template.template("value", args[0])
+                    Template.of("value", args[0])
             );
             return false;
         }
@@ -96,7 +96,7 @@ public class RegenAllRoads extends SubCommand {
         }
         player.sendMessage(
                 TranslatableCaption.of("debugroadregen.schematic"),
-                Template.template("command", "/plot createroadschematic")
+                Template.of("command", "/plot createroadschematic")
         );
         player.sendMessage(TranslatableCaption.of("debugroadregen.regenallroads_started"));
         boolean result = this.hybridUtils.scheduleRoadUpdate(area, height);

@@ -77,7 +77,7 @@ public class Add extends Command {
                 TranslatableCaption.of("permission.no_plot_perms")
         );
         checkTrue(args.length == 1, TranslatableCaption.of("commandconfig.command_syntax"),
-                Template.template("value", "/plot add <player | *>")
+                Template.of("value", "/plot add <player | *>")
         );
         final CompletableFuture<Boolean> future = new CompletableFuture<>();
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
@@ -87,7 +87,7 @@ public class Add extends Command {
                 } else {
                     player.sendMessage(
                             TranslatableCaption.of("errors.invalid_player"),
-                            Template.template("value", args[0])
+                            Template.of("value", args[0])
                     );
                 }
                 future.completeExceptionally(throwable);
@@ -95,7 +95,7 @@ public class Add extends Command {
             } else {
                 try {
                     checkTrue(!uuids.isEmpty(), TranslatableCaption.of("errors.invalid_player"),
-                            Template.template("value", args[0])
+                            Template.of("value", args[0])
                     );
                     Iterator<UUID> iterator = uuids.iterator();
                     int size = plot.getTrusted().size() + plot.getMembers().size();
@@ -106,7 +106,7 @@ public class Add extends Command {
                                         .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST))) {
                             player.sendMessage(
                                     TranslatableCaption.of("errors.invalid_player"),
-                                    Template.template("value", PlayerManager.getName(uuid))
+                                    Template.of("value", PlayerManager.getName(uuid))
                             );
                             iterator.remove();
                             continue;
@@ -114,7 +114,7 @@ public class Add extends Command {
                         if (plot.isOwner(uuid)) {
                             player.sendMessage(
                                     TranslatableCaption.of("member.already_added"),
-                                    Template.template("player", PlayerManager.getName(uuid))
+                                    Template.of("player", PlayerManager.getName(uuid))
                             );
                             iterator.remove();
                             continue;
@@ -122,7 +122,7 @@ public class Add extends Command {
                         if (plot.getMembers().contains(uuid)) {
                             player.sendMessage(
                                     TranslatableCaption.of("member.already_added"),
-                                    Template.template("player", PlayerManager.getName(uuid))
+                                    Template.of("player", PlayerManager.getName(uuid))
                             );
                             iterator.remove();
                             continue;
@@ -135,7 +135,7 @@ public class Add extends Command {
                     if (localAddSize >= maxAddSize) {
                         player.sendMessage(
                                 TranslatableCaption.of("members.plot_max_members_added"),
-                                Template.template("amount", String.valueOf(localAddSize))
+                                Template.of("amount", String.valueOf(localAddSize))
                         );
                         return;
                     }

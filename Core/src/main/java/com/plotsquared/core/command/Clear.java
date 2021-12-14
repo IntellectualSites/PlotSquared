@@ -85,7 +85,7 @@ public class Clear extends Command {
         if (eventResult == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.template("value", "Clear")
+                    Template.of("value", "Clear")
             );
             return CompletableFuture.completedFuture(true);
         }
@@ -136,8 +136,8 @@ public class Clear extends Command {
                         }
                         player.sendMessage(
                                 TranslatableCaption.of("working.clearing_done"),
-                                Template.template("amount", String.valueOf(System.currentTimeMillis() - start)),
-                                Template.template("plot", plot.getId().toString())
+                                Template.of("amount", String.valueOf(System.currentTimeMillis() - start)),
+                                Template.of("plot", plot.getId().toString())
                         );
                     });
                 });

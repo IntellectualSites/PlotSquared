@@ -44,7 +44,6 @@ import com.plotsquared.core.util.task.RunnableVal;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.Template;
-import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -80,9 +79,9 @@ public class Inbox extends SubCommand {
             max = comments.length;
         }
         TextComponent.Builder builder = Component.text();
-        builder.append(MINI_MESSAGE.deserialize(TranslatableCaption.of("list.comment_list_header_paged").getComponent(player) + '\n',
-                TemplateResolver.templates(Template.template("amount", String.valueOf(comments.length)), Template.template("cur", String.valueOf(page + 1)),
-                        Template.template("max", String.valueOf(totalPages + 1)), Template.template("word", "all"))
+        builder.append(MINI_MESSAGE.parse(TranslatableCaption.of("list.comment_list_header_paged").getComponent(player) + '\n',
+                Template.of("amount", String.valueOf(comments.length)), Template.of("cur", String.valueOf(page + 1)),
+                Template.of("max", String.valueOf(totalPages + 1)), Template.of("word", "all")
         ));
 
         // This might work xD
@@ -91,32 +90,30 @@ public class Inbox extends SubCommand {
             Component commentColored;
             if (player.getName().equals(comment.senderName)) {
                 commentColored = MINI_MESSAGE
-                        .deserialize(
+                        .parse(
                                 TranslatableCaption.of("list.comment_list_by_lister").getComponent(player),
-                                TemplateResolver.templates(Template.template("comment", comment.comment))
+                                Template.of("comment", comment.comment)
                         );
             } else {
                 commentColored = MINI_MESSAGE
-                        .deserialize(
+                        .parse(
                                 TranslatableCaption.of("list.comment_list_by_other").getComponent(player),
-                                TemplateResolver.templates(Template.template("comment", comment.comment))
+                                Template.of("comment", comment.comment)
                         );
             }
-            Template number = Template.template("number", String.valueOf(x));
-            Template world = Template.template("world", comment.world);
-            Template plot_id = Template.template("plot_id", comment.id.getX() + ";" + comment.id.getY());
-            Template commenter = Template.template("commenter", comment.senderName);
-            Template commentTemplate = Template.template("comment", commentColored);
+            Template number = Template.of("number", String.valueOf(x));
+            Template world = Template.of("world", comment.world);
+            Template plot_id = Template.of("plot_id", comment.id.getX() + ";" + comment.id.getY());
+            Template commenter = Template.of("commenter", comment.senderName);
+            Template commentTemplate = Template.of("comment", commentColored);
             builder.append(MINI_MESSAGE
-                    .deserialize(
+                    .parse(
                             TranslatableCaption.of("list.comment_list_comment").getComponent(player),
-                            TemplateResolver.templates(
-                                    number,
-                                    world,
-                                    plot_id,
-                                    commenter,
-                                    commentTemplate
-                            )
+                            number,
+                            world,
+                            plot_id,
+                            commenter,
+                            commentTemplate
                     ));
         }
         player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(builder.build())));
@@ -153,20 +150,20 @@ public class Inbox extends SubCommand {
                                 if (total != 0) {
                                     player.sendMessage(
                                             TranslatableCaption.of("comment.inbox_item"),
-                                            Template.template("value", inbox + " (" + total + '/' + unread + ')')
+                                            Template.of("value", inbox + " (" + total + '/' + unread + ')')
                                     );
                                     return;
                                 }
                             }
                             player.sendMessage(
                                     TranslatableCaption.of("comment.inbox_item"),
-                                    Template.template("value", inbox.toString())
+                                    Template.of("value", inbox.toString())
                             );
                         }
                     })) {
                         player.sendMessage(
                                 TranslatableCaption.of("comment.inbox_item"),
-                                Template.template("value", inbox.toString())
+                                Template.of("value", inbox.toString())
                         );
                     }
                 }
@@ -177,7 +174,7 @@ public class Inbox extends SubCommand {
         if (inbox == null) {
             player.sendMessage(
                     TranslatableCaption.of("comment.invalid_inbox"),
-                    Template.template("list", StringMan.join(CommentManager.inboxes.keySet(), ", "))
+                    Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), ", "))
             );
             return false;
         }
@@ -200,7 +197,7 @@ public class Inbox extends SubCommand {
                     if (args.length != 3) {
                         player.sendMessage(
                                 TranslatableCaption.of("commandconfig.command_syntax"),
-                                Template.template("value", "/plot inbox " + inbox + " delete <index>")
+                                Template.of("value", "/plot inbox " + inbox + " delete <index>")
                         );
                         return true;
                     }
@@ -217,7 +214,7 @@ public class Inbox extends SubCommand {
                     } catch (NumberFormatException ignored) {
                         player.sendMessage(
                                 TranslatableCaption.of("commandconfig.command_syntax"),
-                                Template.template("value", "/plot inbox " + inbox + " delete <index>")
+                                Template.of("value", "/plot inbox " + inbox + " delete <index>")
                         );
                         return false;
                     }
@@ -238,7 +235,7 @@ public class Inbox extends SubCommand {
                             if (success) {
                                 player.sendMessage(
                                         TranslatableCaption.of("comment.comment_removed_success"),
-                                        Template.template("value", comment.comment)
+                                        Template.of("value", comment.comment)
                                 );
                             } else {
                                 player.sendMessage(
@@ -259,7 +256,7 @@ public class Inbox extends SubCommand {
                     if (!comments.isEmpty()) {
                         player.sendMessage(
                                 TranslatableCaption.of("comment.comment_removed_success"),
-                                Template.template("value", String.valueOf(comments))
+                                Template.of("value", String.valueOf(comments))
                         );
                         plot.getPlotCommentContainer().removeComments(comments);
                     }

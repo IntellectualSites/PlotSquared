@@ -77,7 +77,7 @@ public class Done extends SubCommand {
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.template("value", "Done")
+                    Template.of("value", "Done")
             );
             return true;
         }
@@ -98,7 +98,7 @@ public class Done extends SubCommand {
         plot.addRunning();
         player.sendMessage(
                 TranslatableCaption.of("web.generating_link"),
-                Template.template("plot", plot.getId().toString())
+                Template.of("plot", plot.getId().toString())
         );
         final Settings.Auto_Clear doneRequirements = Settings.AUTO_CLEAR.get("done");
         if (ExpireManager.IMP == null || doneRequirements == null) {
