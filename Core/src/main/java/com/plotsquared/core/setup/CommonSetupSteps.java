@@ -213,7 +213,7 @@ public enum CommonSetupSteps implements SetupStep {
             }
             if (PlotSquared.platform().worldUtil().isWorld(argument)) {
                 if (PlotSquared.get().getPlotAreaManager().hasPlotArea(argument)) {
-                    plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_taken"), Template.template("value", argument));
+                    plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_taken"), Template.of("value", argument));
                     return this;
                 }
                 plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_apply_plotsquared"));

@@ -160,7 +160,7 @@ public class Like extends SubCommand {
             if (oldRating != null) {
                 player.sendMessage(
                         TranslatableCaption.of("ratings.rating_already_exists"),
-                        Template.template("plot", plot.getId().toString())
+                        Template.of("plot", plot.getId().toString())
                 );
                 return;
             }
@@ -178,12 +178,12 @@ public class Like extends SubCommand {
                 if (like) {
                     player.sendMessage(
                             TranslatableCaption.of("ratings.rating_liked"),
-                            Template.template("plot", plot.getId().toString())
+                            Template.of("plot", plot.getId().toString())
                     );
                 } else {
                     player.sendMessage(
                             TranslatableCaption.of("ratings.rating_disliked"),
-                            Template.template("plot", plot.getId().toString())
+                            Template.of("plot", plot.getId().toString())
                     );
                 }
             }

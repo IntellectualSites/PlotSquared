@@ -74,7 +74,7 @@ public class Leave extends Command {
                 }
                 player.sendMessage(
                         TranslatableCaption.of("member.plot_left"),
-                        Template.template("player", player.getName())
+                        Template.of("player", player.getName())
                 );
             } else {
                 player.sendMessage(

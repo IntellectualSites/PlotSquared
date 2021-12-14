@@ -84,10 +84,10 @@ public class SettingsNodeStep implements SetupStep {
     public void announce(PlotPlayer<?> plotPlayer) {
         plotPlayer.sendMessage(
                 TranslatableCaption.of("setup.setup_step"),
-                Template.template("step", String.valueOf(this.getId() + 1)),
-                Template.template("description", this.configurationNode.getDescription().getComponent(plotPlayer)),
-                Template.template("type", this.configurationNode.getType().getType()),
-                Template.template("value", String.valueOf(this.configurationNode.getDefaultValue()))
+                Template.of("step", String.valueOf(this.getId() + 1)),
+                Template.of("description", this.configurationNode.getDescription().getComponent(plotPlayer)),
+                Template.of("type", this.configurationNode.getType().getType()),
+                Template.of("value", String.valueOf(this.configurationNode.getDefaultValue()))
         );
     }
 

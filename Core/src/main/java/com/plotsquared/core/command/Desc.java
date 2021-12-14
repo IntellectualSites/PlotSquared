@@ -61,7 +61,7 @@ public class Desc extends SetCommand {
             if (event.getEventResult() == Result.DENY) {
                 player.sendMessage(
                         TranslatableCaption.of("events.event_denied"),
-                        Template.template("value", "Description removal")
+                        Template.of("value", "Description removal")
                 );
                 return false;
             }
@@ -76,7 +76,7 @@ public class Desc extends SetCommand {
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.template("value", "Description set")
+                    Template.of("value", "Description set")
             );
             return false;
         }

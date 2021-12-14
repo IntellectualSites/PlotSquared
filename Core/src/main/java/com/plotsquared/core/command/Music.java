@@ -80,7 +80,7 @@ public class Music extends SubCommand {
                 .hasPermission(player, Permission.PERMISSION_ADMIN_MUSIC_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.template("node", String.valueOf(Permission.PERMISSION_ADMIN_MUSIC_OTHER))
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_MUSIC_OTHER))
             );
             return true;
         }
@@ -103,15 +103,15 @@ public class Music extends SubCommand {
                     if (event.getEventResult() == Result.DENY) {
                         getPlayer().sendMessage(
                                 TranslatableCaption.of("events.event_denied"),
-                                Template.template("value", "Music removal")
+                                Template.of("value", "Music removal")
                         );
                         return true;
                     }
                     plot.removeFlag(event.getFlag());
                     getPlayer().sendMessage(
                             TranslatableCaption.of("flag.flag_removed"),
-                            Template.template("flag", "music"),
-                            Template.template("value", "music_disc")
+                            Template.of("flag", "music"),
+                            Template.of("value", "music_disc")
                     );
                 } else if (item.getName().toLowerCase(Locale.ENGLISH).contains("disc")) {
                     PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(MusicFlag.class)
@@ -120,13 +120,13 @@ public class Music extends SubCommand {
                     if (event.getEventResult() == Result.DENY) {
                         getPlayer().sendMessage(
                                 TranslatableCaption.of("events.event_denied"),
-                                Template.template("value", "Music addition")
+                                Template.of("value", "Music addition")
                         );
                         return true;
                     }
                     plot.setFlag(event.getFlag());
-                    getPlayer().sendMessage(TranslatableCaption.of("flag.flag_added"), Template.template("flag", "music"),
-                            Template.template("value", String.valueOf(event.getFlag().getValue()))
+                    getPlayer().sendMessage(TranslatableCaption.of("flag.flag_added"), Template.of("flag", "music"),
+                            Template.of("value", String.valueOf(event.getFlag().getValue()))
                     );
                 } else {
                     getPlayer().sendMessage(TranslatableCaption.of("flag.flag_not_added"));

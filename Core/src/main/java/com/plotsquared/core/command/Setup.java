@@ -85,7 +85,7 @@ public class Setup extends SubCommand {
                     player.sendMessage(TranslatableCaption.of("setup.setup_not_started"));
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.template("value", "Use /plot setup to start a setup process.")
+                            Template.of("value", "Use /plot setup to start a setup process.")
                     );
                     return true;
                 }

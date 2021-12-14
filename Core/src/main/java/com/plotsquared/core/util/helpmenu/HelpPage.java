@@ -32,7 +32,6 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.StringMan;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
-import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,28 +46,27 @@ public class HelpPage {
 
     public HelpPage(CommandCategory category, int currentPage, int maxPages) {
         this.helpObjects = new ArrayList<>();
-        this.catTemplate = Template.template("category", category == null ? "ALL" : category.name());
-        this.curTemplate = Template.template("current", String.valueOf(currentPage + 1));
-        this.maxTemplate = Template.template("max", String.valueOf(maxPages + 1));
+        this.catTemplate = Template.of("category", category == null ? "ALL" : category.name());
+        this.curTemplate = Template.of("current", String.valueOf(currentPage + 1));
+        this.maxTemplate = Template.of("max", String.valueOf(maxPages + 1));
     }
 
     public void render(PlotPlayer<?> player) {
         if (this.helpObjects.size() < 1) {
             player.sendMessage(TranslatableCaption.of("help.no_permission"));
         } else {
-            Template header = Template.template("header", TranslatableCaption.of("help.help_header").getComponent(player));
-            Template page_header = Template.template(
+            Template header = Template.of("header", TranslatableCaption.of("help.help_header").getComponent(player));
+            Template page_header = Template.of(
                     "page_header",
-                    MINI_MESSAGE.deserialize(
+                    MINI_MESSAGE.parse(
                             TranslatableCaption.of("help.help_page_header").getComponent(player),
-                            TemplateResolver.templates(
-                                    catTemplate,
-                                    curTemplate,
-                                    maxTemplate)
+                            catTemplate,
+                            curTemplate,
+                            maxTemplate
                     )
             );
-            Template help_objects = Template.template("help_objects", StringMan.join(this.helpObjects, "\n"));
-            Template footer = Template.template("footer", TranslatableCaption.of("help.help_footer").getComponent(player));
+            Template help_objects = Template.of("help_objects", StringMan.join(this.helpObjects, "\n"));
+            Template footer = Template.of("footer", TranslatableCaption.of("help.help_footer").getComponent(player));
             player.sendMessage(
                     StaticCaption.of("<header>\n<page_header>\n<help_objects>\n<footer>"),
                     header,

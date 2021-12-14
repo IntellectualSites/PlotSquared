@@ -120,7 +120,7 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
                         }
                         actor.sendMessage(
                                 caption,
-                                Template.template("progress", String.format("%.2f", this.progress.doubleValue() * 100))
+                                Template.of("progress", String.format("%.2f", this.progress.doubleValue() * 100))
                         );
                     }, interval), wait);
         }

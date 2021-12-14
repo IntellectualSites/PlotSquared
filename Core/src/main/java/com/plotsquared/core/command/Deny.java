@@ -97,7 +97,7 @@ public class Deny extends SubCommand {
         if (size >= maxDenySize) {
             player.sendMessage(
                     TranslatableCaption.of("members.plot_max_members_denied"),
-                    Template.template("amount", String.valueOf(size))
+                    Template.of("amount", String.valueOf(size))
             );
             return false;
         }
@@ -108,7 +108,7 @@ public class Deny extends SubCommand {
             } else if (throwable != null || uuids.isEmpty()) {
                 player.sendMessage(
                         TranslatableCaption.of("errors.invalid_player"),
-                        Template.template("value", args[0])
+                        Template.of("value", args[0])
                 );
             } else {
                 for (UUID uuid : uuids) {
@@ -117,7 +117,7 @@ public class Deny extends SubCommand {
                                     .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DENY))) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
-                                Template.template("value", args[0])
+                                Template.of("value", args[0])
                         );
                     } else if (plot.isOwner(uuid)) {
                         player.sendMessage(TranslatableCaption.of("deny.cant_remove_owner"));
@@ -125,7 +125,7 @@ public class Deny extends SubCommand {
                     } else if (plot.getDenied().contains(uuid)) {
                         player.sendMessage(
                                 TranslatableCaption.of("member.already_added"),
-                                Template.template("player", PlayerManager.getName(uuid))
+                                Template.of("player", PlayerManager.getName(uuid))
                         );
                         return;
                     } else {

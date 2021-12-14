@@ -36,7 +36,6 @@ import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.Template;
-import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 
 import java.util.Collection;
 import java.util.Locale;
@@ -121,23 +120,19 @@ public class Help extends Command {
                 builder.append(MINI_MESSAGE.parse(TranslatableCaption.of("help.help_header").getComponent(player)));
                 for (CommandCategory c : CommandCategory.values()) {
                     builder.append(Component.newline()).append(MINI_MESSAGE
-                            .deserialize(
+                            .parse(
                                     TranslatableCaption.of("help.help_info_item").getComponent(player),
-                                    TemplateResolver.templates(
-                                            Template.template("command", "/plot help"),
-                                            Template.template("category", c.name().toLowerCase()),
-                                            Template.template("category_desc", c.getComponent(player))
-                                    )
+                                    Template.of("command", "/plot help"),
+                                    Template.of("category", c.name().toLowerCase()),
+                                    Template.of("category_desc", c.getComponent(player))
                             ));
                 }
                 builder.append(Component.newline()).append(MINI_MESSAGE
-                        .deserialize(
+                        .parse(
                                 TranslatableCaption.of("help.help_info_item").getComponent(player),
-                                TemplateResolver.templates(
-                                        Template.template("command", "/plot help"),
-                                        Template.template("category", "all"),
-                                        Template.template("category_desc", "Display all commands")
-                                )
+                                Template.of("command", "/plot help"),
+                                Template.of("category", "all"),
+                                Template.of("category_desc", "Display all commands")
                         ));
                 builder.append(Component.newline()).append(MINI_MESSAGE.parse(TranslatableCaption
                         .of("help.help_footer")

@@ -98,7 +98,7 @@ public class WESubscriber {
                     if (Permissions.hasPermission(plotPlayer, "plots.worldedit.bypass")) {
                         plotPlayer.sendMessage(
                                 TranslatableCaption.of("worldedit.worldedit_bypass"),
-                                Template.template("command", "/plot toggle worldedit")
+                                Template.of("command", "/plot toggle worldedit")
                         );
                     }
                     if (this.plotAreaManager.hasPlotArea(world)) {

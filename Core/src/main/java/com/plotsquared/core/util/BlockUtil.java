@@ -84,7 +84,7 @@ public final class BlockUtil {
      *
      * @param id String or integer ID
      * @return Parsed block state, or {@code null} if none
-     * could be parsed
+     *         could be parsed
      */
     public static @Nullable BlockState get(final @NonNull String id) {
         if (id.length() == 1 && id.charAt(0) == '*') {
@@ -136,7 +136,7 @@ public final class BlockUtil {
      *
      * @param map Serialized block state
      * @return Deserialized block state, or {@code null} if the map is
-     * not a properly serialized block state
+     *         not a properly serialized block state
      */
     public static @Nullable BlockState deserialize(final @NonNull Map<String, Object> map) {
         if (map.containsKey("material")) {

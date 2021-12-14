@@ -29,7 +29,6 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.PlayerManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
-import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.UUID;
@@ -54,35 +53,13 @@ public final class Templates {
      * @param caption      Caption object
      * @param replacements Replacements
      * @return Generated template
-     * @deprecated Use {@link #template(LocaleHolder, String, Caption, Template...)} instead. This method is going to
-     * be removed once MiniMessage drops {@link MiniMessage#parse(String, Template...)}
      */
-    @Deprecated(forRemoval = true, since = "6.2.0")
     public static @NonNull Template of(
             final @NonNull LocaleHolder localeHolder,
             final @NonNull String key, final @NonNull Caption caption,
             final @NonNull Template... replacements
     ) {
-        return Template.template(key, MINI_MESSAGE.parse(caption.getComponent(localeHolder), replacements));
-    }
-
-    /**
-     * Create a {@link net.kyori.adventure.text.minimessage.Template} from a PlotSquared {@link Caption}
-     *
-     * @param localeHolder Locale holder
-     * @param key          Template key
-     * @param caption      Caption object
-     * @param replacements Replacements
-     * @return Generated template
-     * @since 6.2.0
-     */
-    public static @NonNull Template template(
-            final @NonNull LocaleHolder localeHolder,
-            final @NonNull String key, final @NonNull Caption caption,
-            final @NonNull Template... replacements
-    ) {
-        return Template.template(key, MINI_MESSAGE.deserialize(caption.getComponent(localeHolder),
-                TemplateResolver.templates(replacements)));
+        return Template.of(key, MINI_MESSAGE.parse(caption.getComponent(localeHolder), replacements));
     }
 
     /**
@@ -94,7 +71,7 @@ public final class Templates {
      */
     public static @NonNull Template of(final @NonNull String key, final @NonNull UUID uuid) {
         final String username = PlayerManager.getName(uuid);
-        return Template.template(key, username);
+        return Template.of(key, username);
     }
 
     /**
@@ -105,7 +82,7 @@ public final class Templates {
      * @return Generated template
      */
     public static @NonNull Template of(final @NonNull String key, final @NonNull String value) {
-        return Template.template(key, value);
+        return Template.of(key, value);
     }
 
     /**
@@ -116,7 +93,7 @@ public final class Templates {
      * @return Generated template
      */
     public static @NonNull Template of(final @NonNull String key, final @NonNull PlotArea area) {
-        return Template.template(key, area.toString());
+        return Template.of(key, area.toString());
     }
 
     /**
@@ -127,7 +104,7 @@ public final class Templates {
      * @return Generated template
      */
     public static @NonNull Template of(final @NonNull String key, final @NonNull Number number) {
-        return Template.template(key, number.toString());
+        return Template.of(key, number.toString());
     }
 
 }

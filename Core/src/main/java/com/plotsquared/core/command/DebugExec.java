@@ -102,7 +102,7 @@ public class DebugExec extends SubCommand {
                     if (analysis != null) {
                         player.sendMessage(
                                 TranslatableCaption.of("debugexec.changes_column"),
-                                Template.template("value", String.valueOf(analysis.changes))
+                                Template.of("value", String.valueOf(analysis.changes))
                         );
                         return true;
                     }
@@ -112,7 +112,7 @@ public class DebugExec extends SubCommand {
                         public void run(PlotAnalysis value) {
                             player.sendMessage(
                                     TranslatableCaption.of("debugexec.analyze_done"),
-                                    Template.template("command", "/plot debugexec analyze")
+                                    Template.of("command", "/plot debugexec analyze")
                             );
                         }
                     });
@@ -122,7 +122,7 @@ public class DebugExec extends SubCommand {
                     if (args.length != 2) {
                         player.sendMessage(
                                 TranslatableCaption.of("commandconfig.command_syntax"),
-                                Template.template("value", "/plot debugexec analyze <threshold>")
+                                Template.of("value", "/plot debugexec analyze <threshold>")
                         );
                         player.sendMessage(TranslatableCaption.of("debugexec.threshold_default"));
                         return false;
@@ -133,7 +133,7 @@ public class DebugExec extends SubCommand {
                     } catch (NumberFormatException ignored) {
                         player.sendMessage(
                                 TranslatableCaption.of("debugexec.invalid_threshold"),
-                                Template.template("value", args[1])
+                                Template.of("value", args[1])
                         );
                         player.sendMessage(TranslatableCaption.of("debugexec.threshold_default_double"));
                         return false;
@@ -167,7 +167,7 @@ public class DebugExec extends SubCommand {
                     if (args.length != 2) {
                         player.sendMessage(
                                 TranslatableCaption.of("commandconfig.command_syntax"),
-                                Template.template("value", "/plot debugexec remove-flag <flag>")
+                                Template.of("value", "/plot debugexec remove-flag <flag>")
                         );
                         return false;
                     }
@@ -185,7 +185,7 @@ public class DebugExec extends SubCommand {
                     }
                     player.sendMessage(
                             TranslatableCaption.of("debugexec.cleared_flag"),
-                            Template.template("value", flag)
+                            Template.of("value", flag)
                     );
                     return true;
                 }
@@ -193,7 +193,7 @@ public class DebugExec extends SubCommand {
                     if (args.length != 2) {
                         player.sendMessage(
                                 TranslatableCaption.of("commandconfig.command_syntax"),
-                                Template.template("value", "Invalid syntax: /plot debugexec start-rgar <world>")
+                                Template.of("value", "Invalid syntax: /plot debugexec start-rgar <world>")
                         );
                         return false;
                     }
@@ -201,7 +201,7 @@ public class DebugExec extends SubCommand {
                     if (area == null) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.not_valid_plot_world"),
-                                Template.template("value", args[1])
+                                Template.of("value", args[1])
                         );
                         return false;
                     }

@@ -67,7 +67,7 @@ public class DebugRoadRegen extends SubCommand {
         if (args.length < 1) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.template("value", DebugRoadRegen.USAGE)
+                    Template.of("value", DebugRoadRegen.USAGE)
             );
             return false;
         }
@@ -87,7 +87,7 @@ public class DebugRoadRegen extends SubCommand {
             default:
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.template("value", DebugRoadRegen.USAGE)
+                        Template.of("value", DebugRoadRegen.USAGE)
                 );
                 return false;
         }
@@ -110,11 +110,11 @@ public class DebugRoadRegen extends SubCommand {
             queue.setCompleteTask(() -> {
                 player.sendMessage(
                         TranslatableCaption.of("debugroadregen.regen_done"),
-                        Template.template("value", plot.getId().toString())
+                        Template.of("value", plot.getId().toString())
                 );
                 player.sendMessage(
                         TranslatableCaption.of("debugroadregen.regen_all"),
-                        Template.template("value", "/plot regenallroads")
+                        Template.of("value", "/plot regenallroads")
                 );
             });
             manager.createRoadEast(plot, queue);
@@ -133,18 +133,18 @@ public class DebugRoadRegen extends SubCommand {
             } catch (NumberFormatException ignored) {
                 player.sendMessage(
                         TranslatableCaption.of("invalid.not_valid_number"),
-                        Template.template("value", "0, 256")
+                        Template.of("value", "0, 256")
                 );
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.template("value", DebugRoadRegen.USAGE)
+                        Template.of("value", DebugRoadRegen.USAGE)
                 );
                 return false;
             }
         } else if (args.length != 0) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.template("value", DebugRoadRegen.USAGE)
+                    Template.of("value", DebugRoadRegen.USAGE)
             );
             return false;
         }
@@ -162,11 +162,11 @@ public class DebugRoadRegen extends SubCommand {
         }
         player.sendMessage(
                 TranslatableCaption.of("debugroadregen.schematic"),
-                Template.template("command", "/plot createroadschematic")
+                Template.of("command", "/plot createroadschematic")
         );
         player.sendMessage(
                 TranslatableCaption.of("debugroadregen.regenallroads"),
-                Template.template("command", "/plot regenallroads")
+                Template.of("command", "/plot regenallroads")
         );
         boolean result = this.hybridUtils.scheduleSingleRegionRoadUpdate(plot, height);
         if (!result) {

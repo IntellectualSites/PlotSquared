@@ -91,7 +91,7 @@ public class PatternUtil {
         } catch (InputParseException e) {
             throw new Command.CommandException(
                     TranslatableCaption.of("invalid.not_valid_block"),
-                    Template.template("value", e.getMessage())
+                    Template.of("value", e.getMessage())
             );
         }
     }

@@ -121,7 +121,7 @@ public class Download extends SubCommand {
             if (!Permissions.hasPermission(player, Permission.PERMISSION_DOWNLOAD_WORLD)) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Template.template("node", Permission.PERMISSION_DOWNLOAD_WORLD.toString())
+                        Template.of("node", Permission.PERMISSION_DOWNLOAD_WORLD.toString())
                 );
                 return false;
             }
@@ -135,18 +135,18 @@ public class Download extends SubCommand {
                     if (url == null) {
                         player.sendMessage(
                                 TranslatableCaption.of("web.generating_link_failed"),
-                                Template.template("plot", plot.getId().toString())
+                                Template.of("plot", plot.getId().toString())
                         );
                         return;
                     }
-                    player.sendMessage(TranslatableCaption.of("web.generation_link_success_legacy_world"), Template.template("url", url.toString()));
+                    player.sendMessage(TranslatableCaption.of("web.generation_link_success_legacy_world"), Template.of("url", url.toString()));
                 }
             });
         } else {
             sendUsage(player);
             return false;
         }
-        player.sendMessage(TranslatableCaption.of("web.generating_link"), Template.template("plot", plot.getId().toString()));
+        player.sendMessage(TranslatableCaption.of("web.generating_link"), Template.of("plot", plot.getId().toString()));
         return true;
     }
 
@@ -190,8 +190,8 @@ public class Download extends SubCommand {
                             public void run(URL value) {
                                 player.sendMessage(
                                         TranslatableCaption.of("web.generation_link_success"),
-                                        Template.template("download", value.toString()),
-                                        Template.template("delete", "Not available")
+                                        Template.of("download", value.toString()),
+                                        Template.of("delete", "Not available")
                                 );
                                 player.sendMessage(StaticCaption.of(value.toString()));
                             }
@@ -205,13 +205,13 @@ public class Download extends SubCommand {
                     if (throwable != null || !result.isSuccess()) {
                         player.sendMessage(
                                 TranslatableCaption.of("web.generating_link_failed"),
-                                Template.template("plot", plot.getId().toString())
+                                Template.of("plot", plot.getId().toString())
                         );
                     } else {
                         player.sendMessage(
                                 TranslatableCaption.of("web.generation_link_success"),
-                                Template.template("download", result.getDownloadUrl()),
-                                Template.template("delete", result.getDeletionUrl())
+                                Template.of("download", result.getDownloadUrl()),
+                                Template.of("delete", result.getDeletionUrl())
                         );
                     }
                 });

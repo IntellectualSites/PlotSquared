@@ -63,7 +63,7 @@ public class Biome extends SetCommand {
             player.sendMessage(TranslatableCaption.of("biome.need_biome"));
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.subcommand_set_options_header"),
-                    Template.template("values", biomes)
+                    Template.of("values", biomes)
             );
             return false;
         }
@@ -80,7 +80,7 @@ public class Biome extends SetCommand {
             plot.removeRunning();
             player.sendMessage(
                     TranslatableCaption.of("biome.biome_set_to"),
-                    Template.template("value", value.toLowerCase())
+                    Template.of("value", value.toLowerCase())
             );
         });
         return true;

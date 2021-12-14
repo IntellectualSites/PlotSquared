@@ -95,7 +95,7 @@ public class Permissions {
             if (notify) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.template("node", permission)
+                        Template.of("node", permission)
                 );
             }
             return false;

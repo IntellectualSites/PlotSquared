@@ -99,7 +99,7 @@ public class Alias extends SubCommand {
                 } else {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.template("node", String.valueOf(Permission.PERMISSION_ALIAS_SET))
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ALIAS_SET))
                     );
                 }
             }
@@ -115,7 +115,7 @@ public class Alias extends SubCommand {
                 } else {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.template("node", String.valueOf(Permission.PERMISSION_ALIAS_REMOVE))
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ALIAS_REMOVE))
                     );
                 }
             }
@@ -156,13 +156,13 @@ public class Alias extends SubCommand {
                     .anyMatch()) {
                 player.sendMessage(
                         TranslatableCaption.of("alias.alias_is_taken"),
-                        Template.template("alias", alias)
+                        Template.of("alias", alias)
                 );
                 return;
             }
             if (Settings.UUID.OFFLINE) {
                 plot.setAlias(alias);
-                player.sendMessage(TranslatableCaption.of("alias.alias_set_to"), Template.template("alias", alias));
+                player.sendMessage(TranslatableCaption.of("alias.alias_set_to"), Template.of("alias", alias));
                 return;
             }
             PlotSquared.get().getImpromptuUUIDPipeline().getSingle(alias, ((uuid, throwable) -> {
@@ -171,13 +171,13 @@ public class Alias extends SubCommand {
                 } else if (uuid != null) {
                     player.sendMessage(
                             TranslatableCaption.of("alias.alias_is_taken"),
-                            Template.template("alias", alias)
+                            Template.of("alias", alias)
                     );
                 } else {
                     plot.setAlias(alias);
                     player.sendMessage(
                             TranslatableCaption.of("alias.alias_set_to"),
-                            Template.template("alias", alias)
+                            Template.of("alias", alias)
                     );
                 }
             }));
@@ -189,7 +189,7 @@ public class Alias extends SubCommand {
         if (!plot.getAlias().isEmpty()) {
             player.sendMessage(
                     TranslatableCaption.of("alias.alias_removed"),
-                    Template.template("alias", alias)
+                    Template.of("alias", alias)
             );
         } else {
             player.sendMessage(
