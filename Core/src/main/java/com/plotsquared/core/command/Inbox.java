@@ -112,6 +112,10 @@ public class Inbox extends SubCommand {
                                     commenter,
                                     commentColored
                             )));
+            // Apply line break if not last entry
+            if (x != max - 1) {
+                builder.append(Component.newline());
+            }
         }
         player.sendMessage(StaticCaption.miniMessage(MINI_MESSAGE.serialize(builder.build())));
     }

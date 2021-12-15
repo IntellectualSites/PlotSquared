@@ -390,7 +390,7 @@
   "working.progress": "<prefix><gray>Current progress: </gray><gold><progress></gold><gray>%</gray>",
   "working.component_complete": "<prefix><gold>Component generation has finished for plot <plot>.</gold>",
   "list.comment_list_header_paged": "<gray>(Page </gray><gold><cur></gold><gray>/</gray><gold><max></gold><gray>) </gray><gold>List of <amount> comment(s):</gold>",
-  "list.comment_list_comment": "<dark_gray>[</dark_gray><gray>#<number></gray><dark_gray>] [</dark_gray><gray><world>;<plot_id></gray><dark_gray>] [</dark_gray><gold><commenter></gold><dark_gray>]: </dark_gray><comment>\n",
+  "list.comment_list_comment": "<dark_gray>[</dark_gray><gray>#<number></gray><dark_gray>] [</dark_gray><gray><world>;<plot_id></gray><dark_gray>] [</dark_gray><gold><commenter></gold><dark_gray>]: </dark_gray><comment>",
   "list.comment_list_by_lister": "<green><comment></green>",
   "list.comment_list_by_other": "<gray><comment></gray>",
   "list.clickable": "<gray> (interactive)</gray>",
