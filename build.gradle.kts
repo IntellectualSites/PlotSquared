@@ -151,7 +151,7 @@ allprojects {
                         developerConnection.set("scm:git://github.com/IntellectualSites/PlotSquared.git")
                     }
 
-                    issueManagement{
+                    issueManagement {
                         system.set("GitHub")
                         url.set("https://github.com/IntellectualSites/PlotSquared/issues")
                     }
@@ -180,9 +180,9 @@ allprojects {
             val opt = options as StandardJavadocDocletOptions
             opt.addStringOption("Xdoclint:none", "-quiet")
             opt.tags(
-                    "apiNote:a:API Note:",
-                    "implSpec:a:Implementation Requirements:",
-                    "implNote:a:Implementation Note:"
+                "apiNote:a:API Note:",
+                "implSpec:a:Implementation Requirements:",
+                "implNote:a:Implementation Note:"
             )
         }
 

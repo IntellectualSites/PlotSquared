@@ -4,17 +4,14 @@
 
 ---
 
-PlotSquared is a land and world management plugin for Minecraft. 
-It includes several highly configurable world generators. 
-You can create plots of land in existing worlds using plot clusters, or you can have a full world of plots.
+PlotSquared is a land and world management plugin for Minecraft. It includes several highly configurable world
+generators. You can create plots of land in existing worlds using plot clusters, or you can have a full world of plots.
 
-For the end user, PlotSquared is packed with a tonne of cool features.
-It allows you to merge plots, and build together with your friends. 
-You can also change a lot of plot specific settings in the form of
-flags. Such as: weather, time, game modes, pvp status. 
+For the end user, PlotSquared is packed with a tonne of cool features. It allows you to merge plots, and build together
+with your friends. You can also change a lot of plot specific settings in the form of flags. Such as: weather, time,
+game modes, pvp status.
 
-Whilst we provide a whole load of unique features, the biggest focus
-is to provide a lag-free and smooth experience.
+Whilst we provide a whole load of unique features, the biggest focus is to provide a lag-free and smooth experience.
 
 
 <p align="center">
@@ -33,15 +30,19 @@ is to provide a lag-free and smooth experience.
 * [Contributing](https://github.com/IntellectualSites/.github/blob/main/CONTRIBUTING.md)
 
 ### Developer Resources
+
 * [API Documentation](https://github.com/IntellectualSites/PlotSquared-Documentation/wiki/API-Documentation)
 * [Event API](https://github.com/IntellectualSites/PlotSquared-Documentation/wiki/Events)
 * [Flag API](https://github.com/IntellectualSites/PlotSquared-Documentation/wiki/API-Flag)
 
 # Official Addons
+
 * [Plot2Dynmap](http://www.spigotmc.org/resources/plot2dynmap.1292/)
 * [HoloPlots](https://www.spigotmc.org/resources/holoplots.4880/)
 * [PlotHider](https://www.spigotmc.org/resources/plot-hider.20701/)
-### Unmaintained or integrated into PlotSquared  
+
+### Unmaintained or integrated into PlotSquared
+
 * [AdvPlots](http://www.spigotmc.org/resources/advplots-%CE%B2.1500/)
 * [PlotRankup](http://www.spigotmc.org/resources/plotrankup.1571/)
 * [PlotZSux](https://www.spigotmc.org/resources/plotzsux.9563/)
@@ -51,5 +52,7 @@ is to provide a lag-free and smooth experience.
 * [BasicPlots](https://www.spigotmc.org/resources/basicplots.6901/)
 
 # Sponsors
+
 Our official sponsor list can be found [here](https://intellectualsites.github.io/download/sponsors.html). <br>
-If you are interested and want to be listed here, [contact us](https://intellectualsites.github.io/download/contact.html).
+If you are interested and want to be listed
+here, [contact us](https://intellectualsites.github.io/download/contact.html).

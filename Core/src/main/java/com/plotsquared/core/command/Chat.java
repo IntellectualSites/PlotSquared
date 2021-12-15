@@ -32,7 +32,7 @@ import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 /**
  * @deprecated In favor of "/plot toggle chat" and
- *         scheduled for removal within the next major release.
+ * scheduled for removal within the next major release.
  */
 @Deprecated(forRemoval = true)
 @CommandDeclaration(command = "chat",

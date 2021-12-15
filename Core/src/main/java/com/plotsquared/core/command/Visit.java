@@ -143,7 +143,7 @@ public class Visit extends Command {
             // allow visit, if UntrustedVisit flag is set, or if the player has either the plot.visit.other or
             // plot.admin.visit.untrusted permission
             if (!plot.getFlag(UntrustedVisitFlag.class) && !Permissions.hasPermission(player, Permission.PERMISSION_VISIT_OTHER)
-                && !Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
+                    && !Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
                 player.sendMessage(
                         TranslatableCaption.miniMessage("permission.no_permission"),
                         Placeholders.miniMessage("node", "plots.visit.other")

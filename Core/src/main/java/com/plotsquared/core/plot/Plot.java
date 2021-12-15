@@ -40,7 +40,6 @@ import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.generator.ClassicPlotWorld;
-import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Direction;
@@ -450,7 +449,7 @@ public class Plot {
      * that could alter the de facto owner of the plot.
      *
      * @return The plot owner of this particular (sub-)plot
-     *         as stored in the database, if one exists. Else, null.
+     * as stored in the database, if one exists. Else, null.
      */
     public @Nullable UUID getOwnerAbs() {
         return this.owner;
@@ -1202,12 +1201,12 @@ public class Plot {
      *
      * @return array of entity counts
      * @see RegionManager#countEntities(Plot)
-     *         0 = Entity
-     *         1 = Animal
-     *         2 = Monster
-     *         3 = Mob
-     *         4 = Boat
-     *         5 = Misc
+     * 0 = Entity
+     * 1 = Animal
+     * 2 = Monster
+     * 3 = Mob
+     * 4 = Boat
+     * 5 = Misc
      */
     public int[] countEntities() {
         int[] count = new int[6];
@@ -1565,7 +1564,7 @@ public class Plot {
                 x = bot.getX() + loc.getX();
                 z = bot.getZ() + loc.getZ();
             }
-            if (loc.getY()  == Integer.MIN_VALUE) {
+            if (loc.getY() == Integer.MIN_VALUE) {
                 if (isLoaded()) {
                     this.worldUtil.getHighestBlock(
                             plot.getWorldName(),
@@ -2852,8 +2851,8 @@ public class Plot {
                                             TranslatableCaption.miniMessage("info.plot_flag_list").getComponent(player)
                                     ),
                                     PlaceholderResolver.placeholders(
-                                    Placeholder.miniMessage("flag", flag.getName()),
-                                    Placeholder.miniMessage("value", CaptionUtility.formatRaw(player, value.toString()))
+                                            Placeholder.miniMessage("flag", flag.getName()),
+                                            Placeholder.miniMessage("value", CaptionUtility.formatRaw(player, value.toString()))
                                     )
                             );
                             flagBuilder.append(snip);
@@ -2903,7 +2902,7 @@ public class Plot {
                     Placeholder<?> descTemplate = Placeholder.miniMessage("desc", description);
                     Placeholder<?> biomeTemplate = Placeholder.miniMessage("biome", biome.toString().toLowerCase());
                     Placeholder<?> ownerTemplate = Placeholder.miniMessage("owner", owner.toString());
-                    Placeholder<?> membersTemplate =Placeholder.miniMessage("members", members.toString());
+                    Placeholder<?> membersTemplate = Placeholder.miniMessage("members", members.toString());
                     Placeholder<?> playerTemplate = Placeholder.miniMessage("player", player.getName());
                     Placeholder<?> trustedTemplate = Placeholder.miniMessage("trusted", trusted.toString());
                     Placeholder<?> helpersTemplate = Placeholder.miniMessage("helpers", members.toString());
@@ -2951,6 +2950,33 @@ public class Plot {
                                     .deserialize(
                                             iInfo.getComponent(player),
                                             PlaceholderResolver.placeholders(
+                                                    headerTemplate,
+                                                    areaTemplate,
+                                                    idTemplate,
+                                                    aliasTemplate,
+                                                    numTemplate,
+                                                    descTemplate,
+                                                    biomeTemplate,
+                                                    ownerTemplate,
+                                                    membersTemplate,
+                                                    playerTemplate,
+                                                    trustedTemplate,
+                                                    helpersTemplate,
+                                                    deniedTemplate,
+                                                    seenTemplate,
+                                                    flagsTemplate,
+                                                    buildTemplate,
+                                                    ratingTemplate,
+                                                    creationTemplate,
+                                                    footerTemplate
+                                            )))));
+                        });
+                        return;
+                    }
+                    future.complete(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
+                            .deserialize(
+                                    iInfo.getComponent(player),
+                                    PlaceholderResolver.placeholders(
                                             headerTemplate,
                                             areaTemplate,
                                             idTemplate,
@@ -2967,34 +2993,7 @@ public class Plot {
                                             seenTemplate,
                                             flagsTemplate,
                                             buildTemplate,
-                                            ratingTemplate,
-                                            creationTemplate,
                                             footerTemplate
-                                    )))));
-                        });
-                        return;
-                    }
-                    future.complete(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
-                            .deserialize(
-                                    iInfo.getComponent(player),
-                                    PlaceholderResolver.placeholders(
-                                    headerTemplate,
-                                    areaTemplate,
-                                    idTemplate,
-                                    aliasTemplate,
-                                    numTemplate,
-                                    descTemplate,
-                                    biomeTemplate,
-                                    ownerTemplate,
-                                    membersTemplate,
-                                    playerTemplate,
-                                    trustedTemplate,
-                                    helpersTemplate,
-                                    deniedTemplate,
-                                    seenTemplate,
-                                    flagsTemplate,
-                                    buildTemplate,
-                                    footerTemplate
                                     )))));
                 }
         );

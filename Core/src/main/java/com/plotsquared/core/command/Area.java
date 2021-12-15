@@ -714,12 +714,12 @@ public class Area extends SubCommand {
                                 .deserialize(
                                         TranslatableCaption.miniMessage("info.area_list_tooltip").getComponent(player),
                                         PlaceholderResolver.placeholders(
-                                        claimedTemplate,
-                                        usageTemplate,
-                                        clustersTemplate,
-                                        regionTemplate,
-                                        generatorTemplate
-                                )));
+                                                claimedTemplate,
+                                                usageTemplate,
+                                                clustersTemplate,
+                                                regionTemplate,
+                                                generatorTemplate
+                                        )));
                         Placeholder<?> tooltipTemplate = Placeholder.miniMessage("hover_info", tooltip);
                         Placeholder<?> visitcmdTemplate = Placeholder.miniMessage("command_tp", "/plot area tp " + area);
                         Placeholder<?> infocmdTemplate = Placeholder.miniMessage("command_info", "/plot area info " + area);

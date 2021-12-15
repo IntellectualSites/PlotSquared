@@ -91,7 +91,7 @@ public abstract class WorldUtil {
      *
      * @param worldName World name
      * @return {@code true} if there exists a world with the given world name,
-     *         {@code false} if not
+     * {@code false} if not
      */
     public abstract boolean isWorld(@NonNull String worldName);
 

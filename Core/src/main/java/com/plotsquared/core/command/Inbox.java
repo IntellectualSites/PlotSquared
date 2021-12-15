@@ -97,14 +97,14 @@ public class Inbox extends SubCommand {
                                 TranslatableCaption.miniMessage("list.comment_list_by_lister").getComponent(player),
                                 PlaceholderResolver.placeholders(
                                         Placeholder.miniMessage("comment", comment.comment)
-                        ));
+                                ));
             } else {
                 commentColored = MINI_MESSAGE
                         .deserialize(
                                 TranslatableCaption.miniMessage("list.comment_list_by_other").getComponent(player),
                                 PlaceholderResolver.placeholders(
                                         Placeholder.miniMessage("comment", comment.comment)
-                        ));
+                                ));
             }
             Placeholder<?> number = Placeholder.miniMessage("number", String.valueOf(x));
             Placeholder<?> world = Placeholder.miniMessage("world", comment.world);
@@ -120,7 +120,7 @@ public class Inbox extends SubCommand {
                                     plot_id,
                                     commenter,
                                     commentTemplate
-                    )));
+                            )));
         }
         player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(builder.build())));
     }
