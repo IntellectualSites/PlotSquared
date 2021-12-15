@@ -628,7 +628,7 @@ public final class FlagCommand extends Command {
             // Flag category
             player.sendMessage(
                     TranslatableCaption.miniMessage("flag.flag_info_category"),
-                    Placeholders.miniMessage(player, "value", plotFlag.getFlagCategory())
+                    Placeholder.component("value", MINI_MESSAGE.parse(plotFlag.getFlagCategory().getComponent(player)))
             );
             // Flag description
             // TODO maybe merge and \n instead?
