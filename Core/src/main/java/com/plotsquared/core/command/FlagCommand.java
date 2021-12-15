@@ -327,7 +327,7 @@ public final class FlagCommand extends Command {
         if (args.length < 2) {
             player.sendMessage(
                     TranslatableCaption.miniMessage("commandconfig.command_syntax"),
-                    Placeholder.miniMessage("value", "/plot flag set <flag> <value>")
+                    Placeholder.component("value", Component.text("/plot flag set <flag> <value>"))
             );
             return;
         }
