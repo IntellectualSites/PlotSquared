@@ -493,7 +493,7 @@ public class ListCmd extends SubCommand {
                 }
                 Placeholder<?> players = Placeholder.miniMessage("players", builder.asComponent().toString());
                 caption.set(TranslatableCaption.miniMessage("info.plot_list_item"));
-                caption.setPlaceholders(command_tp, command_info, hover_info, numberTemplate, plotTemplate, players);
+                caption.parsePlaceholders(command_tp, command_info, hover_info, numberTemplate, plotTemplate, players);
             }
         }, "/plot list " + args[0], TranslatableCaption.miniMessage("list.plot_list_header_paged"));
     }

@@ -41,8 +41,21 @@ public final class StaticCaption implements Caption {
      *
      * @param text Text
      * @return Created caption
+     * @deprecated Use {@link #miniMessage(String)} instead
      */
+    @Deprecated(forRemoval = true, since = "6.3.0")
     public static @NonNull StaticCaption of(final @NonNull String text) {
+        return new StaticCaption(Preconditions.checkNotNull(text, "Text may not be null"));
+    }
+
+    /**
+     * Create a new static caption from the given text
+     *
+     * @param text Text
+     * @return Created caption
+     * @since 6.3.0
+     */
+    public static @NonNull StaticCaption miniMessage(final @NonNull String text) {
         return new StaticCaption(Preconditions.checkNotNull(text, "Text may not be null"));
     }
 

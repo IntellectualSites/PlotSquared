@@ -72,7 +72,7 @@ public class Setup extends SubCommand {
                 message.append("\n<dark_gray> - </dark_gray><gray>").append(entry.getKey()).append(" (Unknown structure)</gray>");
             }
         }
-        player.sendMessage(StaticCaption.of(message.toString()));
+        player.sendMessage(StaticCaption.miniMessage(message.toString()));
     }
 
     @Override

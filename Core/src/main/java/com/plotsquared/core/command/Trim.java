@@ -104,9 +104,9 @@ public class Trim extends SubCommand {
         }
         result.value1 = new HashSet<>(PlotSquared.platform().worldUtil().getChunkChunks(world));
         result.value2 = new HashSet<>();
-        StaticCaption.of(" - MCA #: " + result.value1.size());
-        StaticCaption.of(" - CHUNKS: " + (result.value1.size() * 1024) + " (max)");
-        StaticCaption.of(" - TIME ESTIMATE: 12 Parsecs");
+        StaticCaption.miniMessage(" - MCA #: " + result.value1.size());
+        StaticCaption.miniMessage(" - CHUNKS: " + (result.value1.size() * 1024) + " (max)");
+        StaticCaption.miniMessage(" - TIME ESTIMATE: 12 Parsecs");
         TaskManager.getPlatformImplementation().objectTask(plots, new RunnableVal<>() {
             @Override
             public void run(Plot plot) {

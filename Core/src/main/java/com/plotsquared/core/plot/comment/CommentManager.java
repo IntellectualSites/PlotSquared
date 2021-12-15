@@ -75,7 +75,7 @@ public class CommentManager {
                         }
                         if ((size.decrementAndGet() == 0) && (total > 0)) {
                             player.sendTitle(
-                                    StaticCaption.of(""),
+                                    StaticCaption.miniMessage(""),
                                     TranslatableCaption.miniMessage("comment.inbox_notification"),
                                     Placeholder.miniMessage("amount", Integer.toString(total)),
                                     Placeholder.miniMessage("command", "/plot inbox")

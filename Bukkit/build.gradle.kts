@@ -100,5 +100,6 @@ tasks {
         opt.links("https://jd.adventure.kyori.net/api/4.9.3/")
         opt.links("https://google.github.io/guice/api-docs/5.0.1/javadoc/")
         opt.links("https://checkerframework.org/api/")
+        opt.links("https://notmyfault.github.io/MiniMessage-Javadocs/") // Temporary hosting until Kyori adds hosted Javadocs
     }
 }

@@ -204,7 +204,7 @@ public class Set extends SubCommand {
         if (plot != null) {
             newValues.addAll(Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
         }
-        player.sendMessage(StaticCaption.of(TranslatableCaption
+        player.sendMessage(StaticCaption.miniMessage(TranslatableCaption
                 .miniMessage("commandconfig.subcommand_set_options_header_only")
                 .getComponent(player) + StringMan
                 .join(newValues, TranslatableCaption.miniMessage("blocklist.block_list_separator").getComponent(player))));

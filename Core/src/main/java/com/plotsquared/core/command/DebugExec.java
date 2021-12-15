@@ -228,7 +228,7 @@ public class DebugExec extends SubCommand {
                 }
             }
         }
-        player.sendMessage(StaticCaption.of("<prefix><gold>Possible sub commands: </gold><gray>/plot debugexec <"
+        player.sendMessage(StaticCaption.miniMessage("<prefix><gold>Possible sub commands: </gold><gray>/plot debugexec <"
                 + StringMan.join(allowedParams, " | ") + "></gray>"));
         return false;
     }

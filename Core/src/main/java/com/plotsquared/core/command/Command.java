@@ -215,7 +215,7 @@ public abstract class Command {
             String descriptionKey = String.join(".", path);
             this.description = TranslatableCaption.miniMessage(String.format("commands.description.%s", descriptionKey));
         } else {
-            this.description = StaticCaption.of(declaration.description());
+            this.description = StaticCaption.miniMessage(declaration.description());
         }
         this.usage = declaration.usage();
         this.confirmation = declaration.confirmation();
@@ -274,7 +274,7 @@ public abstract class Command {
             i++;
             final CaptionHolder msg = new CaptionHolder();
             add.run(i, obj, msg);
-            player.sendMessage(msg.get(), msg.getPlaceholders());
+            player.sendMessage(msg.caption(), msg.placeholders());
         }
         // Send the footer
         Placeholder<?> command1 = Placeholder.miniMessage("command1", baseCommand + " " + page);
@@ -307,7 +307,7 @@ public abstract class Command {
         }
         if (this.allCommands.isEmpty()) {
             player.sendMessage(
-                    StaticCaption.of("Not Implemented: https://github.com/IntellectualSites/PlotSquared/issues"));
+                    StaticCaption.miniMessage("Not Implemented: https://github.com/IntellectualSites/PlotSquared/issues"));
             return CompletableFuture.completedFuture(false);
         }
         Command cmd = getCommand(args[0]);
@@ -608,12 +608,30 @@ public abstract class Command {
         return this.getFullId().hashCode();
     }
 
+    /**
+     * Check whether a given condition is true
+     *
+     * @param mustBeTrue The condition to check, that must be true
+     * @param message The message to send
+     * @param args The arguments to send with the message
+     * @since 6.3.0
+     */
     public void checkTrue(boolean mustBeTrue, Caption message, Placeholder<?>... args) {
         if (!mustBeTrue) {
             throw new CommandException(message, args);
         }
     }
 
+    /**
+     * Check whether a given condition is true
+     *
+     * @param object The condition to check, that must be true
+     * @param message The message to send
+     * @param args The arguments to send with the message
+     * @param <T> The type of the object
+     * @return The object
+     * @since 6.3.0
+     */
     public <T> T check(T object, Caption message, Placeholder<?>... args) {
         if (object == null) {
             throw new CommandException(message, args);
@@ -633,6 +651,13 @@ public abstract class Command {
         private final Placeholder<?>[] placeholders;
         private final Caption message;
 
+        /**
+         * Create a new CommandException
+         *
+         * @param message The message to send
+         * @param placeholders The placeholders to send with the message
+         * @since 6.3.0
+         */
         public CommandException(final @Nullable Caption message, final Placeholder<?>... placeholders) {
             this.message = message;
             this.placeholders = placeholders;

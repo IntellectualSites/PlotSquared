@@ -30,7 +30,7 @@ import com.plotsquared.core.plot.Plot;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * A {@link Placeholder placeholder} that requires a {@link com.plotsquared.core.plot.Plot plot}
+ * A {@link net.kyori.adventure.text.minimessage.placeholder.Placeholder} that requires a {@link com.plotsquared.core.plot.Plot plot}
  */
 public abstract class PlotSpecificPlaceholder extends Placeholder {
 

@@ -728,7 +728,7 @@ public class Area extends SubCommand {
                         Placeholder<?> typeTemplate = Placeholder.miniMessage("area_type", area.getType().name());
                         Placeholder<?> terrainTemplate = Placeholder.miniMessage("area_terrain", area.getTerrain().name());
                         caption.set(TranslatableCaption.miniMessage("info.area_list_item"));
-                        caption.setPlaceholders(
+                        caption.parsePlaceholders(
                                 tooltipTemplate,
                                 visitcmdTemplate,
                                 numberTemplate,

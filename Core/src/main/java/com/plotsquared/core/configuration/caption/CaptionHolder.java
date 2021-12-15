@@ -29,22 +29,34 @@ import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 public class CaptionHolder {
 
-    private Caption caption = StaticCaption.of("");
+    private Caption caption = StaticCaption.miniMessage("");
     private Placeholder<?>[] placeholders = new Placeholder[0];
 
     public void set(Caption caption) {
         this.caption = caption;
     }
 
-    public Caption get() {
+    /**
+     * @return a {@link Caption} from a {@link StaticCaption}
+     * @since 6.3.0
+     */
+    public Caption caption() {
         return this.caption;
     }
 
-    public Placeholder<?>[] getPlaceholders() {
+    /**
+     * @return an array of {@link net.kyori.adventure.text.minimessage.placeholder.Placeholder}s
+     * @since 6.3.0
+     */
+    public Placeholder<?>[] placeholders() {
         return this.placeholders;
     }
 
-    public void setPlaceholders(Placeholder<?>... placeholders) {
+    /**
+     * @param placeholders placeholders
+     * @since 6.3.0
+     */
+    public void parsePlaceholders(Placeholder<?>... placeholders) {
         this.placeholders = placeholders;
     }
 

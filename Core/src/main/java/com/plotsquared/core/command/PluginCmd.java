@@ -43,19 +43,23 @@ public class PluginCmd extends SubCommand {
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         TaskManager.getPlatformImplementation().taskAsync(() -> {
             player.sendMessage(
-                    StaticCaption.of("<gray>>> </gray><gold><bold>" + PlotSquared
+                    StaticCaption.miniMessage("<gray>>> </gray><gold><bold>" + PlotSquared
                             .platform()
                             .pluginName() + " <reset><gray>(<gold>Version</gold><gray>: </gray><gold><version></gold><gray>)</gray>"),
                     Placeholder.miniMessage("version", String.valueOf(PlotSquared.get().getVersion()))
             );
-            player.sendMessage(StaticCaption.of(
-                    "<gray>>> </gray><gold><bold>Authors<reset><gray>: </gray><gold>Citymonstret </gold><gray>& </gray><gold>Empire92 </gold><gray>& </gray><gold>MattBDev </gold><gray>& </gray><gold>dordsor21 </gold><gray>& </gray><gold>NotMyFault </gold><gray>& </gray><gold>SirYwell</gold>"));
-            player.sendMessage(StaticCaption.of(
-                    "<gray>>> </gray><gold><bold>Wiki<reset><gray>: </gray><gold><click:open_url:https://github.com/IntellectualSites/PlotSquared-Documentation/wiki>https://github.com/IntellectualSites/PlotSquared-Documentation/wiki</gold>"));
-            player.sendMessage(StaticCaption.of(
-                    "<gray>>> </gray><gold><bold>Discord<reset><gray>: </gray><gold><click:open_url:https://discord.gg/intellectualsites>https://discord.gg/intellectualsites</gold>"));
+            player.sendMessage(StaticCaption.miniMessage(
+                    "<gray>>> </gray><gold><bold>Authors<reset><gray>: </gray><gold>Citymonstret </gold><gray>& </gray>" +
+                            "<gold>Empire92 </gold><gray>& </gray><gold>MattBDev </gold><gray>& </gray>" +
+                            "<gold>dordsor21 </gold><gray>& </gray><gold>NotMyFault </gold><gray>& </gray><gold>SirYwell</gold>"));
+            player.sendMessage(StaticCaption.miniMessage(
+                    "<gray>>> </gray><gold><bold>Wiki<reset><gray>:" +
+                            "</gray><gold><click:open_url:https://github.com/IntellectualSites/PlotSquared-Documentation/wiki>https://github.com/IntellectualSites/PlotSquared-Documentation/wiki</gold>"));
+            player.sendMessage(StaticCaption.miniMessage(
+                    "<gray>>> </gray><gold><bold>Discord<reset><gray>:" +
+                            "</gray><gold><click:open_url:https://discord.gg/intellectualsites>https://discord.gg/intellectualsites</gold>"));
             player.sendMessage(
-                    StaticCaption.of("<gray>>> </gray><gold><bold>Premium<reset><gray>: <gold><value></gold>"),
+                    StaticCaption.miniMessage("<gray>>> </gray><gold><bold>Premium<reset><gray>: <gold><value></gold>"),
                     Placeholder.miniMessage("value", String.valueOf(PremiumVerification.isPremium()))
             );
         });

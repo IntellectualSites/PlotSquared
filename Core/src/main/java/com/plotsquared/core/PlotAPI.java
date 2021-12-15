@@ -155,7 +155,7 @@ public class PlotAPI {
             final @NonNull String message,
             final @NonNull Placeholder<?> @NonNull ... replacements
     ) {
-        ConsolePlayer.getConsole().sendMessage(StaticCaption.of(message), replacements);
+        ConsolePlayer.getConsole().sendMessage(StaticCaption.miniMessage(message), replacements);
     }
 
     /**

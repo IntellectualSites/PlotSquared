@@ -142,7 +142,7 @@ public class Help extends Command {
                 builder.append(Component.newline()).append(MINI_MESSAGE.parse(TranslatableCaption
                         .miniMessage("help.help_footer")
                         .getComponent(player)));
-                player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(builder.asComponent())));
+                player.sendMessage(StaticCaption.miniMessage(MINI_MESSAGE.serialize(builder.asComponent())));
                 return true;
             }
             new HelpMenu(player).setCategory(catEnum).getCommands().generateMaxPages().generatePage(

@@ -193,7 +193,7 @@ public class Download extends SubCommand {
                                         Placeholder.miniMessage("download", value.toString()),
                                         Placeholder.miniMessage("delete", "Not available")
                                 );
-                                player.sendMessage(StaticCaption.of(value.toString()));
+                                player.sendMessage(StaticCaption.miniMessage(value.toString()));
                             }
                         });
                     });

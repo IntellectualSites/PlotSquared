@@ -129,11 +129,11 @@ public class Info extends SubCommand {
             info = getCaption(arg);
             if (info == null) {
                 if (Settings.Ratings.USE_LIKES) {
-                    player.sendMessage(StaticCaption.of(
+                    player.sendMessage(StaticCaption.miniMessage(
                             "&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &aseen&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, "
                                     + "&aowner&7, " + " &alikes"));
                 } else {
-                    player.sendMessage(StaticCaption.of(
+                    player.sendMessage(StaticCaption.miniMessage(
                             "&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &aseen&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, "
                                     + "&aowner&7, " + " &arating"));
                 }

@@ -733,7 +733,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         Placeholder<?> plotTemplate = Placeholder.miniMessage("plot_id", id.toString());
         Placeholder<?> senderTemplate = Placeholder.miniMessage("sender", sender);
         // If we do/don't want colour, we need to be careful about how to go about it, as players could attempt either <gold></gold> or &6 etc.
-        // In both cases, we want to use a Component Template to ensure that the player cannot use any of in their message on purpose
+        // In both cases, we want to use a Component Template to ensure that the player cannot use any placeholders in their message on purpose
         //  or accidentally, as component templates are done at the end. We also need to deserialize from legacy color codes to a Component if
         //  allowing colour.
         if (plotPlayer.hasPermission("plots.chat.color")) {

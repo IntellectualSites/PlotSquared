@@ -210,7 +210,7 @@ public class Load extends SubCommand {
                     PlotId id = PlotId.fromString(split[2] + ';' + split[3]);
                     String size = split[4];
                     String color = "<dark_aqua>";
-                    player.sendMessage(StaticCaption.of("<dark_gray>[</dark_gray><gray>" + (i + 1) + "</gray><dark_aqua>] </dark_aqua>" + color + time + "<dark_gray> | </dark_gray>" + color + world + ';' + id
+                    player.sendMessage(StaticCaption.miniMessage("<dark_gray>[</dark_gray><gray>" + (i + 1) + "</gray><dark_aqua>] </dark_aqua>" + color + time + "<dark_gray> | </dark_gray>" + color + world + ';' + id
                             + "<dark_gray> | </dark_gray>" + color + size + 'x' + size));
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -213,7 +213,7 @@ public class DatabaseCommand extends SubCommand {
                 }
                 case "mysql" -> {
                     if (args.length < 6) {
-                        player.sendMessage(StaticCaption.of(
+                        player.sendMessage(StaticCaption.miniMessage(
                                 "/plot database mysql [host] [port] [username] [password] [database] {prefix}"));
                         return false;
                     }
@@ -229,7 +229,7 @@ public class DatabaseCommand extends SubCommand {
                 }
                 case "sqlite" -> {
                     if (args.length < 2) {
-                        player.sendMessage(StaticCaption.of("/plot database sqlite [file]"));
+                        player.sendMessage(StaticCaption.miniMessage("/plot database sqlite [file]"));
                         return false;
                     }
                     File sqliteFile =
@@ -237,7 +237,7 @@ public class DatabaseCommand extends SubCommand {
                     implementation = new SQLite(sqliteFile);
                 }
                 default -> {
-                    player.sendMessage(StaticCaption.of("/plot database [sqlite/mysql]"));
+                    player.sendMessage(StaticCaption.miniMessage("/plot database [sqlite/mysql]"));
                     return false;
                 }
             }

@@ -82,7 +82,7 @@ public class Debug extends SubCommand {
         if (args.length > 0) {
             if ("player".equalsIgnoreCase(args[0])) {
                 for (Map.Entry<String, Object> meta : player.getMeta().entrySet()) {
-                    player.sendMessage(StaticCaption.of("Key: " + meta.getKey() + " Value: " + meta
+                    player.sendMessage(StaticCaption.miniMessage("Key: " + meta.getKey() + " Value: " + meta
                             .getValue()
                             .toString() + " , "));
                 }
@@ -93,7 +93,7 @@ public class Debug extends SubCommand {
             final long start = System.currentTimeMillis();
             player.sendMessage(TranslatableCaption.miniMessage("debug.fetching_loaded_chunks"));
             TaskManager.runTaskAsync(() -> player.sendMessage(StaticCaption
-                    .of("Loaded chunks: " + this.worldUtil
+                    .miniMessage("Loaded chunks: " + this.worldUtil
                             .getChunkChunks(player.getLocation().getWorldName())
                             .size() + " (" + (System.currentTimeMillis()
                             - start) + "ms) using thread: " + Thread.currentThread().getName())));
@@ -126,7 +126,7 @@ public class Debug extends SubCommand {
                 for (final EntityType entityType : category.getAll()) {
                     builder.append(entityType.getId()).append(" ");
                 }
-                player.sendMessage(StaticCaption.of("<prefix>" + builder));
+                player.sendMessage(StaticCaption.miniMessage("<prefix>" + builder));
             });
             EntityType.REGISTRY.values().stream().sorted(Comparator.comparing(EntityType::getId))
                     .forEach(entityType -> {
@@ -135,7 +135,7 @@ public class Debug extends SubCommand {
                         if (categoryCount > 0) {
                             return;
                         }
-                        player.sendMessage(StaticCaption.of("<prefix>" + entityType.getName() + " is in "
+                        player.sendMessage(StaticCaption.miniMessage("<prefix>" + entityType.getName() + " is in "
                                 + categoryCount + " categories"));
                     });
             return true;
@@ -170,7 +170,7 @@ public class Debug extends SubCommand {
                 PlaceholderResolver.placeholders(Placeholder.miniMessage("var", "Total Messages"),
                         Placeholder.miniMessage("val", String.valueOf(captions.size())))
         ));
-        player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(information.build())));
+        player.sendMessage(StaticCaption.miniMessage(MINI_MESSAGE.serialize(information.build())));
         return true;
     }
 

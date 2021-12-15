@@ -328,9 +328,9 @@ public class PlotListener {
                         if ((lastPlot != null) && plot.getId().equals(lastPlot.getId()) && plot.hasOwner()) {
                             final UUID plotOwner = plot.getOwnerAbs();
                             String owner = PlayerManager.getName(plotOwner, false);
-                            Caption header = fromFlag ? StaticCaption.of(title) : TranslatableCaption.miniMessage("titles" +
+                            Caption header = fromFlag ? StaticCaption.miniMessage(title) : TranslatableCaption.miniMessage("titles" +
                                     ".title_entered_plot");
-                            Caption subHeader = fromFlag ? StaticCaption.of(subtitle) : TranslatableCaption.miniMessage("titles" +
+                            Caption subHeader = fromFlag ? StaticCaption.miniMessage(subtitle) : TranslatableCaption.miniMessage("titles" +
                                     ".title_entered_plot_sub");
                             Placeholder<?> plotTemplate = Placeholder.miniMessage("plot", lastPlot.getId().toString());
                             Placeholder<?> worldTemplate = Placeholder.miniMessage("world", player.getLocation().getWorldName());

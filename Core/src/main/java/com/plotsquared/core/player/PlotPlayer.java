@@ -836,6 +836,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      * @param title        Title text
      * @param subtitle     Subtitle text
      * @param replacements Variable replacements
+     * @since 6.3.0
      */
     public void sendTitle(
             final @NonNull Caption title, final @NonNull Caption subtitle,
@@ -860,6 +861,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      * @param stay         The title stays for (in ticks)
      * @param fadeOut      Fade out time (in ticks)
      * @param replacements Variable replacements
+     * @since 6.3.0
      */
     public void sendTitle(
             final @NonNull Caption title, final @NonNull Caption subtitle,
@@ -885,6 +887,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      *
      * @param caption      Caption
      * @param replacements Variable replacements
+     * @since 6.3.0
      */
     public void sendActionBar(
             final @NonNull Caption caption,

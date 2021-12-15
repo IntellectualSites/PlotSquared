@@ -33,7 +33,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 public enum RequiredType {
     CONSOLE(TranslatableCaption.miniMessage("console.not_console")),
     PLAYER(TranslatableCaption.miniMessage("console.is_console")),
-    NONE(StaticCaption.of("Something went wrong: RequiredType=NONE")); // this caption should never be sent
+    NONE(StaticCaption.miniMessage("Something went wrong: RequiredType=NONE")); // this caption should never be sent
 
     private final Caption caption;
 

@@ -2946,7 +2946,7 @@ public class Plot {
                                     }
                                 }
                             }
-                            future.complete(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
+                            future.complete(StaticCaption.miniMessage(MINI_MESSAGE.serialize(MINI_MESSAGE
                                     .deserialize(
                                             iInfo.getComponent(player),
                                             PlaceholderResolver.placeholders(
@@ -2973,7 +2973,7 @@ public class Plot {
                         });
                         return;
                     }
-                    future.complete(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
+                    future.complete(StaticCaption.miniMessage(MINI_MESSAGE.serialize(MINI_MESSAGE
                             .deserialize(
                                     iInfo.getComponent(player),
                                     PlaceholderResolver.placeholders(

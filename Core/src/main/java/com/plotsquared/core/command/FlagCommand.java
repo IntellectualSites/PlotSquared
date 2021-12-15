@@ -595,7 +595,7 @@ public final class FlagCommand extends Command {
                                 )
                         ));
             }
-            player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(builder.build())));
+            player.sendMessage(StaticCaption.miniMessage(MINI_MESSAGE.serialize(builder.build())));
         }
     }
 
