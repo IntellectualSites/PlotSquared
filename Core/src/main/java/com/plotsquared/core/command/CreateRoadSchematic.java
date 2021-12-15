@@ -32,7 +32,7 @@ import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(command = "createroadschematic",
@@ -55,20 +55,20 @@ public class CreateRoadSchematic extends SubCommand {
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
         if (plot == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return false;
         }
         if (plot.getVolume() > Integer.MAX_VALUE) {
-            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
+            player.sendMessage(TranslatableCaption.miniMessage("schematics.schematic_too_large"));
             return false;
         }
         if (!(location.getPlotArea() instanceof HybridPlotWorld)) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot_world"));
         }
         this.hybridUtils.setupRoadSchematic(plot);
         player.sendMessage(
-                TranslatableCaption.of("schematics.schematic_road_created"),
-                Template.of("command", "/plot debugroadregen")
+                TranslatableCaption.miniMessage("schematics.schematic_road_created"),
+                Placeholder.miniMessage("command", "/plot debugroadregen")
         );
         return true;
     }

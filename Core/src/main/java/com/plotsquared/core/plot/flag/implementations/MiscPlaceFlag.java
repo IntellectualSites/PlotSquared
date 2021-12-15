@@ -35,7 +35,7 @@ public class MiscPlaceFlag extends BooleanFlag<MiscPlaceFlag> {
     public static final MiscPlaceFlag MISC_PLACE_FALSE = new MiscPlaceFlag(false);
 
     private MiscPlaceFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_misc_place"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_misc_place"));
     }
 
     @Override

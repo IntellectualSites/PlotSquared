@@ -35,7 +35,7 @@ public class RedstoneFlag extends BooleanFlag<RedstoneFlag> {
     public static final RedstoneFlag REDSTONE_FALSE = new RedstoneFlag(false);
 
     private RedstoneFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_redstone"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_redstone"));
     }
 
     @Override

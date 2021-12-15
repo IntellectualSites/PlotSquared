@@ -56,8 +56,35 @@ public final class TranslatableCaption implements NamespacedCaption {
      * @param rawKey Caption key in the format namespace:key. If no namespace is
      *               included, {@link #DEFAULT_NAMESPACE} will be used.
      * @return Caption instance
+     * @deprecated Use {@link #miniMessage(String)} instead
      */
+    @Deprecated(forRemoval = true, since = "6.3.0")
     public static @NonNull TranslatableCaption of(final @NonNull String rawKey) {
+        final String namespace;
+        final String key;
+        if (rawKey.contains(":")) {
+            final String[] split = rawKey.split(Pattern.quote(":"));
+            namespace = split[0];
+            key = split[1];
+        } else {
+            namespace = DEFAULT_NAMESPACE;
+            key = rawKey;
+        }
+        return new TranslatableCaption(
+                namespace.toLowerCase(Locale.ENGLISH),
+                key.toLowerCase(Locale.ENGLISH)
+        );
+    }
+
+    /**
+     * Get a new {@link TranslatableCaption} instance
+     *
+     * @param rawKey Caption key in the format namespace:key. If no namespace is
+     *               included, {@link #DEFAULT_NAMESPACE} will be used.
+     * @return Caption instance
+     * @since 6.3.0
+     */
+    public static @NonNull TranslatableCaption miniMessage(final @NonNull String rawKey) {
         final String namespace;
         final String key;
         if (rawKey.contains(":")) {
@@ -80,8 +107,28 @@ public final class TranslatableCaption implements NamespacedCaption {
      * @param namespace Caption namespace
      * @param key       Caption key
      * @return Caption instance
+     * @deprecated Use {@link #miniMessage(String)} instead
      */
+    @Deprecated(forRemoval = true, since = "6.3.0")
     public static @NonNull TranslatableCaption of(
+            final @NonNull String namespace,
+            final @NonNull String key
+    ) {
+        return new TranslatableCaption(
+                namespace.toLowerCase(Locale.ENGLISH),
+                key.toLowerCase(Locale.ENGLISH)
+        );
+    }
+
+    /**
+     * Get a new {@link TranslatableCaption} instance
+     *
+     * @param namespace Caption namespace
+     * @param key       Caption key
+     * @return Caption instance
+     * @since 6.3.0
+     */
+    public static @NonNull TranslatableCaption miniMessage(
             final @NonNull String namespace,
             final @NonNull String key
     ) {

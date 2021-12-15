@@ -35,7 +35,7 @@ public class PveFlag extends BooleanFlag<PveFlag> {
     public static final PveFlag PVE_FALSE = new PveFlag(false);
 
     private PveFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_pve"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_pve"));
     }
 
     @Override

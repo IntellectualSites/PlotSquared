@@ -39,7 +39,7 @@ public class DoneFlag extends StringFlag<DoneFlag> implements InternalFlag {
      * @param value Flag value
      */
     public DoneFlag(@NonNull String value) {
-        super(value, TranslatableCaption.of("info.none"), TranslatableCaption.of("info.none"));
+        super(value, TranslatableCaption.miniMessage("info.none"), TranslatableCaption.miniMessage("info.none"));
     }
 
     public static boolean isDone(final Plot plot) {

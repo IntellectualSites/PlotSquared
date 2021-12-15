@@ -51,7 +51,7 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -384,10 +384,10 @@ public final class PlotModificationManager {
         if (this.plot.getArea().allowSigns()) {
             Location location = manager.getSignLoc(this.plot);
             String id = this.plot.getId().toString();
-            Caption[] lines = new Caption[]{TranslatableCaption.of("signs.owner_sign_line_1"), TranslatableCaption.of(
+            Caption[] lines = new Caption[]{TranslatableCaption.miniMessage("signs.owner_sign_line_1"), TranslatableCaption.miniMessage(
                     "signs.owner_sign_line_2"),
-                    TranslatableCaption.of("signs.owner_sign_line_3"), TranslatableCaption.of("signs.owner_sign_line_4")};
-            PlotSquared.platform().worldUtil().setSign(location, lines, Template.of("id", id), Template.of("owner", name));
+                    TranslatableCaption.miniMessage("signs.owner_sign_line_3"), TranslatableCaption.miniMessage("signs.owner_sign_line_4")};
+            PlotSquared.platform().worldUtil().setSign(location, lines, Placeholder.miniMessage("id", id), Placeholder.miniMessage("owner", name));
         }
     }
 
@@ -496,8 +496,8 @@ public final class PlotModificationManager {
                     if (event.getEventResult() == Result.DENY) {
                         if (player != null) {
                             player.sendMessage(
-                                    TranslatableCaption.of("events.event_denied"),
-                                    Template.of("value", "Auto merge on claim")
+                                    TranslatableCaption.miniMessage("events.event_denied"),
+                                    Placeholder.miniMessage("value", "Auto merge on claim")
                             );
                         }
                         return;

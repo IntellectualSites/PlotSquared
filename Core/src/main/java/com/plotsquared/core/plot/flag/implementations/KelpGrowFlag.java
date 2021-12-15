@@ -35,7 +35,7 @@ public class KelpGrowFlag extends BooleanFlag<KelpGrowFlag> {
     public static final KelpGrowFlag KELP_GROW_FALSE = new KelpGrowFlag(false);
 
     private KelpGrowFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_kelp_grow"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_kelp_grow"));
     }
 
     @Override

@@ -46,10 +46,10 @@ public class DebugAllowUnsafe extends SubCommand {
 
         if (unsafeAllowed.contains(player.getUUID())) {
             unsafeAllowed.remove(player.getUUID());
-            player.sendMessage(TranslatableCaption.of("unsafe.debugallowunsafe_off"));
+            player.sendMessage(TranslatableCaption.miniMessage("unsafe.debugallowunsafe_off"));
         } else {
             unsafeAllowed.add(player.getUUID());
-            player.sendMessage(TranslatableCaption.of("unsafe.debugallowunsafe_on"));
+            player.sendMessage(TranslatableCaption.miniMessage("unsafe.debugallowunsafe_on"));
         }
         return true;
     }

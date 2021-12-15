@@ -38,7 +38,7 @@ import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
@@ -69,33 +69,33 @@ public class Add extends Command {
             RunnableVal3<Command, Runnable, Runnable> confirm,
             RunnableVal2<Command, CommandResult> whenDone
     ) throws CommandException {
-        final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.of("errors.not_in_plot"));
-        checkTrue(plot.hasOwner(), TranslatableCaption.of("info.plot_unowned"));
+        final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.miniMessage("errors.not_in_plot"));
+        checkTrue(plot.hasOwner(), TranslatableCaption.miniMessage("info.plot_unowned"));
         checkTrue(
                 plot.isOwner(player.getUUID()) || Permissions
                         .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST),
-                TranslatableCaption.of("permission.no_plot_perms")
+                TranslatableCaption.miniMessage("permission.no_plot_perms")
         );
-        checkTrue(args.length == 1, TranslatableCaption.of("commandconfig.command_syntax"),
-                Template.of("value", "/plot add <player | *>")
+        checkTrue(args.length == 1, TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                Placeholder.miniMessage("value", "/plot add <player | *>")
         );
         final CompletableFuture<Boolean> future = new CompletableFuture<>();
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             if (throwable != null) {
                 if (throwable instanceof TimeoutException) {
-                    player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
+                    player.sendMessage(TranslatableCaption.miniMessage("players.fetching_players_timeout"));
                 } else {
                     player.sendMessage(
-                            TranslatableCaption.of("errors.invalid_player"),
-                            Template.of("value", args[0])
+                            TranslatableCaption.miniMessage("errors.invalid_player"),
+                            Placeholder.miniMessage("value", args[0])
                     );
                 }
                 future.completeExceptionally(throwable);
                 return;
             } else {
                 try {
-                    checkTrue(!uuids.isEmpty(), TranslatableCaption.of("errors.invalid_player"),
-                            Template.of("value", args[0])
+                    checkTrue(!uuids.isEmpty(), TranslatableCaption.miniMessage("errors.invalid_player"),
+                            Placeholder.miniMessage("value", args[0])
                     );
                     Iterator<UUID> iterator = uuids.iterator();
                     int size = plot.getTrusted().size() + plot.getMembers().size();
@@ -105,24 +105,24 @@ public class Add extends Command {
                                 Permissions.hasPermission(player, Permission.PERMISSION_TRUST_EVERYONE) || Permissions
                                         .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST))) {
                             player.sendMessage(
-                                    TranslatableCaption.of("errors.invalid_player"),
-                                    Template.of("value", PlayerManager.getName(uuid))
+                                    TranslatableCaption.miniMessage("errors.invalid_player"),
+                                    Placeholder.miniMessage("value", PlayerManager.getName(uuid))
                             );
                             iterator.remove();
                             continue;
                         }
                         if (plot.isOwner(uuid)) {
                             player.sendMessage(
-                                    TranslatableCaption.of("member.already_added"),
-                                    Template.of("player", PlayerManager.getName(uuid))
+                                    TranslatableCaption.miniMessage("member.already_added"),
+                                    Placeholder.miniMessage("player", PlayerManager.getName(uuid))
                             );
                             iterator.remove();
                             continue;
                         }
                         if (plot.getMembers().contains(uuid)) {
                             player.sendMessage(
-                                    TranslatableCaption.of("member.already_added"),
-                                    Template.of("player", PlayerManager.getName(uuid))
+                                    TranslatableCaption.miniMessage("member.already_added"),
+                                    Placeholder.miniMessage("player", PlayerManager.getName(uuid))
                             );
                             iterator.remove();
                             continue;
@@ -134,8 +134,8 @@ public class Add extends Command {
                     int maxAddSize = Permissions.hasPermissionRange(player, Permission.PERMISSION_ADD, Settings.Limit.MAX_PLOTS);
                     if (localAddSize >= maxAddSize) {
                         player.sendMessage(
-                                TranslatableCaption.of("members.plot_max_members_added"),
-                                Template.of("amount", String.valueOf(localAddSize))
+                                TranslatableCaption.miniMessage("members.plot_max_members_added"),
+                                Placeholder.miniMessage("amount", String.valueOf(localAddSize))
                         );
                         return;
                     }
@@ -151,7 +151,7 @@ public class Add extends Command {
                             }
                             plot.addMember(uuid);
                             this.eventDispatcher.callMember(player, plot, uuid, true);
-                            player.sendMessage(TranslatableCaption.of("member.member_added"));
+                            player.sendMessage(TranslatableCaption.miniMessage("member.member_added"));
                         }
                     }, null);
                 } catch (final Throwable exception) {

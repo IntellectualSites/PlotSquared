@@ -35,7 +35,7 @@ public class NotifyLeaveFlag extends BooleanFlag<NotifyLeaveFlag> {
     public static final NotifyLeaveFlag NOTIFY_LEAVE_FALSE = new NotifyLeaveFlag(false);
 
     private NotifyLeaveFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_notify_leave"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_notify_leave"));
     }
 
     @Override

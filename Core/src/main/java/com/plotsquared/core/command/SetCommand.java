@@ -32,7 +32,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 public abstract class SetCommand extends SubCommand {
 
@@ -41,26 +41,26 @@ public abstract class SetCommand extends SubCommand {
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
         if (plot == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return false;
         }
         if (!plot.hasOwner()) {
             if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))) {
                 player.sendMessage(
-                        TranslatableCaption.of("permission.no_permission"),
-                        Template.of("node", Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))
+                        TranslatableCaption.miniMessage("permission.no_permission"),
+                        Placeholder.miniMessage("node", Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))
                 );
-                player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
+                player.sendMessage(TranslatableCaption.miniMessage("working.plot_not_claimed"));
                 return false;
             }
         }
         if (!plot.isOwner(player.getUUID())) {
             if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))) {
                 player.sendMessage(
-                        TranslatableCaption.of("permission.no_permission"),
-                        Template.of("node", Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))
+                        TranslatableCaption.miniMessage("permission.no_permission"),
+                        Placeholder.miniMessage("node", Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))
                 );
-                player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
+                player.sendMessage(TranslatableCaption.miniMessage("permission.no_plot_perms"));
                 return false;
             }
         }

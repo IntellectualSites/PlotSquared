@@ -35,7 +35,7 @@ public class CoralDryFlag extends BooleanFlag<CoralDryFlag> {
     public static final CoralDryFlag CORAL_DRY_FALSE = new CoralDryFlag(false);
 
     private CoralDryFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_coral_dry"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_coral_dry"));
     }
 
     @Override

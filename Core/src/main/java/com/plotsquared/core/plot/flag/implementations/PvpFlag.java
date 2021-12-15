@@ -35,7 +35,7 @@ public class PvpFlag extends BooleanFlag<PvpFlag> {
     public static final PvpFlag PVP_FALSE = new PvpFlag(false);
 
     private PvpFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_pvp"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_pvp"));
     }
 
     @Override

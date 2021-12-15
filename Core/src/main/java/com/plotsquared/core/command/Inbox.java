@@ -26,8 +26,8 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.TypeLiteral;
+import com.plotsquared.core.configuration.caption.Placeholders;
 import com.plotsquared.core.configuration.caption.StaticCaption;
-import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.MetaDataAccess;
@@ -43,7 +43,8 @@ import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
+import net.kyori.adventure.text.minimessage.placeholder.PlaceholderResolver;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -60,7 +61,7 @@ public class Inbox extends SubCommand {
 
     public void displayComments(PlotPlayer<?> player, List<PlotComment> oldComments, int page) {
         if (oldComments == null || oldComments.isEmpty()) {
-            player.sendMessage(TranslatableCaption.of("comment.inbox_empty"));
+            player.sendMessage(TranslatableCaption.miniMessage("comment.inbox_empty"));
             return;
         }
         PlotComment[] comments = oldComments.toArray(new PlotComment[0]);
@@ -79,9 +80,11 @@ public class Inbox extends SubCommand {
             max = comments.length;
         }
         TextComponent.Builder builder = Component.text();
-        builder.append(MINI_MESSAGE.parse(TranslatableCaption.of("list.comment_list_header_paged").getComponent(player) + '\n',
-                Template.of("amount", String.valueOf(comments.length)), Template.of("cur", String.valueOf(page + 1)),
-                Template.of("max", String.valueOf(totalPages + 1)), Template.of("word", "all")
+        builder.append(MINI_MESSAGE.deserialize(TranslatableCaption.miniMessage("list.comment_list_header_paged").getComponent(player) + '\n',
+                PlaceholderResolver.placeholders(
+                        Placeholder.miniMessage("amount", String.valueOf(comments.length)), Placeholder.miniMessage("cur", String.valueOf(page + 1)),
+                        Placeholder.miniMessage("max", String.valueOf(totalPages + 1)), Placeholder.miniMessage("word", "all")
+                )
         ));
 
         // This might work xD
@@ -90,31 +93,34 @@ public class Inbox extends SubCommand {
             Component commentColored;
             if (player.getName().equals(comment.senderName)) {
                 commentColored = MINI_MESSAGE
-                        .parse(
-                                TranslatableCaption.of("list.comment_list_by_lister").getComponent(player),
-                                Template.of("comment", comment.comment)
-                        );
+                        .deserialize(
+                                TranslatableCaption.miniMessage("list.comment_list_by_lister").getComponent(player),
+                                PlaceholderResolver.placeholders(
+                                        Placeholder.miniMessage("comment", comment.comment)
+                        ));
             } else {
                 commentColored = MINI_MESSAGE
-                        .parse(
-                                TranslatableCaption.of("list.comment_list_by_other").getComponent(player),
-                                Template.of("comment", comment.comment)
-                        );
+                        .deserialize(
+                                TranslatableCaption.miniMessage("list.comment_list_by_other").getComponent(player),
+                                PlaceholderResolver.placeholders(
+                                        Placeholder.miniMessage("comment", comment.comment)
+                        ));
             }
-            Template number = Template.of("number", String.valueOf(x));
-            Template world = Template.of("world", comment.world);
-            Template plot_id = Template.of("plot_id", comment.id.getX() + ";" + comment.id.getY());
-            Template commenter = Template.of("commenter", comment.senderName);
-            Template commentTemplate = Template.of("comment", commentColored);
+            Placeholder<?> number = Placeholder.miniMessage("number", String.valueOf(x));
+            Placeholder<?> world = Placeholder.miniMessage("world", comment.world);
+            Placeholder<?> plot_id = Placeholder.miniMessage("plot_id", comment.id.getX() + ";" + comment.id.getY());
+            Placeholder<?> commenter = Placeholder.miniMessage("commenter", comment.senderName);
+            Placeholder<?> commentTemplate = Placeholder.miniMessage("comment", commentColored.toString());
             builder.append(MINI_MESSAGE
-                    .parse(
-                            TranslatableCaption.of("list.comment_list_comment").getComponent(player),
-                            number,
-                            world,
-                            plot_id,
-                            commenter,
-                            commentTemplate
-                    ));
+                    .deserialize(
+                            TranslatableCaption.miniMessage("list.comment_list_comment").getComponent(player),
+                            PlaceholderResolver.placeholders(
+                                    number,
+                                    world,
+                                    plot_id,
+                                    commenter,
+                                    commentTemplate
+                    )));
         }
         player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(builder.build())));
     }
@@ -123,11 +129,11 @@ public class Inbox extends SubCommand {
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return false;
         }
         if (!plot.hasOwner()) {
-            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
+            player.sendMessage(TranslatableCaption.miniMessage("info.plot_unowned"));
             return false;
         }
         if (args.length == 0) {
@@ -149,21 +155,21 @@ public class Inbox extends SubCommand {
                                 }
                                 if (total != 0) {
                                     player.sendMessage(
-                                            TranslatableCaption.of("comment.inbox_item"),
-                                            Template.of("value", inbox + " (" + total + '/' + unread + ')')
+                                            TranslatableCaption.miniMessage("comment.inbox_item"),
+                                            Placeholder.miniMessage("value", inbox + " (" + total + '/' + unread + ')')
                                     );
                                     return;
                                 }
                             }
                             player.sendMessage(
-                                    TranslatableCaption.of("comment.inbox_item"),
-                                    Template.of("value", inbox.toString())
+                                    TranslatableCaption.miniMessage("comment.inbox_item"),
+                                    Placeholder.miniMessage("value", inbox.toString())
                             );
                         }
                     })) {
                         player.sendMessage(
-                                TranslatableCaption.of("comment.inbox_item"),
-                                Template.of("value", inbox.toString())
+                                TranslatableCaption.miniMessage("comment.inbox_item"),
+                                Placeholder.miniMessage("value", inbox.toString())
                         );
                     }
                 }
@@ -173,8 +179,8 @@ public class Inbox extends SubCommand {
         final CommentInbox inbox = CommentManager.inboxes.get(args[0].toLowerCase());
         if (inbox == null) {
             player.sendMessage(
-                    TranslatableCaption.of("comment.invalid_inbox"),
-                    Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), ", "))
+                    TranslatableCaption.miniMessage("comment.invalid_inbox"),
+                    Placeholder.miniMessage("list", StringMan.join(CommentManager.inboxes.keySet(), ", "))
             );
             return false;
         }
@@ -191,13 +197,13 @@ public class Inbox extends SubCommand {
             switch (args[1].toLowerCase()) {
                 case "delete":
                     if (!inbox.canModify(plot, player)) {
-                        player.sendMessage(TranslatableCaption.of("comment.no_perm_inbox_modify"));
+                        player.sendMessage(TranslatableCaption.miniMessage("comment.no_perm_inbox_modify"));
                         return false;
                     }
                     if (args.length != 3) {
                         player.sendMessage(
-                                TranslatableCaption.of("commandconfig.command_syntax"),
-                                Template.of("value", "/plot inbox " + inbox + " delete <index>")
+                                TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                                Placeholder.miniMessage("value", "/plot inbox " + inbox + " delete <index>")
                         );
                         return true;
                     }
@@ -206,15 +212,15 @@ public class Inbox extends SubCommand {
                         index = Integer.parseInt(args[2]);
                         if (index < 1) {
                             player.sendMessage(
-                                    TranslatableCaption.of("comment.not_valid_inbox_index"),
-                                    Templates.of("number", index)
+                                    TranslatableCaption.miniMessage("comment.not_valid_inbox_index"),
+                                    Placeholders.miniMessage("number", index)
                             );
                             return false;
                         }
                     } catch (NumberFormatException ignored) {
                         player.sendMessage(
-                                TranslatableCaption.of("commandconfig.command_syntax"),
-                                Template.of("value", "/plot inbox " + inbox + " delete <index>")
+                                TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                                Placeholder.miniMessage("value", "/plot inbox " + inbox + " delete <index>")
                         );
                         return false;
                     }
@@ -224,8 +230,8 @@ public class Inbox extends SubCommand {
                         public void run(List<PlotComment> value) {
                             if (index > value.size()) {
                                 player.sendMessage(
-                                        TranslatableCaption.of("comment.not_valid_inbox_index"),
-                                        Templates.of("number", index)
+                                        TranslatableCaption.miniMessage("comment.not_valid_inbox_index"),
+                                        Placeholders.miniMessage("number", index)
                                 );
                                 return;
                             }
@@ -234,29 +240,29 @@ public class Inbox extends SubCommand {
                             boolean success = plot.getPlotCommentContainer().removeComment(comment);
                             if (success) {
                                 player.sendMessage(
-                                        TranslatableCaption.of("comment.comment_removed_success"),
-                                        Template.of("value", comment.comment)
+                                        TranslatableCaption.miniMessage("comment.comment_removed_success"),
+                                        Placeholder.miniMessage("value", comment.comment)
                                 );
                             } else {
                                 player.sendMessage(
-                                        TranslatableCaption.of("comment.comment_removed_failure"));
+                                        TranslatableCaption.miniMessage("comment.comment_removed_failure"));
                             }
                         }
                     })) {
-                        player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+                        player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
                         return false;
                     }
                     return true;
                 case "clear":
                     if (!inbox.canModify(plot, player)) {
-                        player.sendMessage(TranslatableCaption.of("comment.no_perm_inbox_modify"));
+                        player.sendMessage(TranslatableCaption.miniMessage("comment.no_perm_inbox_modify"));
                     }
                     inbox.clearInbox(plot);
                     List<PlotComment> comments = plot.getPlotCommentContainer().getComments(inbox.toString());
                     if (!comments.isEmpty()) {
                         player.sendMessage(
-                                TranslatableCaption.of("comment.comment_removed_success"),
-                                Template.of("value", String.valueOf(comments))
+                                TranslatableCaption.miniMessage("comment.comment_removed_success"),
+                                Placeholder.miniMessage("value", String.valueOf(comments))
                         );
                         plot.getPlotCommentContainer().removeComments(comments);
                     }
@@ -273,7 +279,7 @@ public class Inbox extends SubCommand {
             page = 1;
         }
         if (!inbox.canRead(plot, player)) {
-            player.sendMessage(TranslatableCaption.of("comment.no_perm_inbox"));
+            player.sendMessage(TranslatableCaption.miniMessage("comment.no_perm_inbox"));
             return false;
         }
         if (!inbox.getComments(plot, new RunnableVal<>() {
@@ -282,7 +288,7 @@ public class Inbox extends SubCommand {
                 displayComments(player, value, page);
             }
         })) {
-            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
+            player.sendMessage(TranslatableCaption.miniMessage("info.plot_unowned"));
             return false;
         }
         return true;

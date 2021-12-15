@@ -43,7 +43,7 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
@@ -95,24 +95,24 @@ public class DebugExec extends SubCommand {
                 case "analyze" -> {
                     Plot plot = player.getCurrentPlot();
                     if (plot == null) {
-                        player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+                        player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
                         return false;
                     }
                     PlotAnalysis analysis = plot.getComplexity(null);
                     if (analysis != null) {
                         player.sendMessage(
-                                TranslatableCaption.of("debugexec.changes_column"),
-                                Template.of("value", String.valueOf(analysis.changes))
+                                TranslatableCaption.miniMessage("debugexec.changes_column"),
+                                Placeholder.miniMessage("value", String.valueOf(analysis.changes))
                         );
                         return true;
                     }
-                    player.sendMessage(TranslatableCaption.of("debugexec.starting_task"));
+                    player.sendMessage(TranslatableCaption.miniMessage("debugexec.starting_task"));
                     this.hybridUtils.analyzePlot(plot, new RunnableVal<>() {
                         @Override
                         public void run(PlotAnalysis value) {
                             player.sendMessage(
-                                    TranslatableCaption.of("debugexec.analyze_done"),
-                                    Template.of("command", "/plot debugexec analyze")
+                                    TranslatableCaption.miniMessage("debugexec.analyze_done"),
+                                    Placeholder.miniMessage("command", "/plot debugexec analyze")
                             );
                         }
                     });
@@ -121,10 +121,10 @@ public class DebugExec extends SubCommand {
                 case "calibrate-analysis" -> {
                     if (args.length != 2) {
                         player.sendMessage(
-                                TranslatableCaption.of("commandconfig.command_syntax"),
-                                Template.of("value", "/plot debugexec analyze <threshold>")
+                                TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                                Placeholder.miniMessage("value", "/plot debugexec analyze <threshold>")
                         );
-                        player.sendMessage(TranslatableCaption.of("debugexec.threshold_default"));
+                        player.sendMessage(TranslatableCaption.miniMessage("debugexec.threshold_default"));
                         return false;
                     }
                     double threshold;
@@ -132,14 +132,14 @@ public class DebugExec extends SubCommand {
                         threshold = Integer.parseInt(args[1]) / 100d;
                     } catch (NumberFormatException ignored) {
                         player.sendMessage(
-                                TranslatableCaption.of("debugexec.invalid_threshold"),
-                                Template.of("value", args[1])
+                                TranslatableCaption.miniMessage("debugexec.invalid_threshold"),
+                                Placeholder.miniMessage("value", args[1])
                         );
-                        player.sendMessage(TranslatableCaption.of("debugexec.threshold_default_double"));
+                        player.sendMessage(TranslatableCaption.miniMessage("debugexec.threshold_default_double"));
                         return false;
                     }
                     PlotAnalysis.calcOptimalModifiers(
-                            () -> player.sendMessage(TranslatableCaption.of("debugexec.calibration_done")),
+                            () -> player.sendMessage(TranslatableCaption.miniMessage("debugexec.calibration_done")),
                             threshold
                     );
                     return true;
@@ -149,25 +149,25 @@ public class DebugExec extends SubCommand {
                         ExpireManager.IMP = new ExpireManager(this.eventDispatcher);
                     }
                     if (ExpireManager.IMP.runAutomatedTask()) {
-                        player.sendMessage(TranslatableCaption.of("debugexec.expiry_started"));
+                        player.sendMessage(TranslatableCaption.miniMessage("debugexec.expiry_started"));
                     } else {
-                        player.sendMessage(TranslatableCaption.of("debugexec.expiry_already_started"));
+                        player.sendMessage(TranslatableCaption.miniMessage("debugexec.expiry_already_started"));
                     }
                     return true;
                 }
                 case "stop-expire" -> {
                     if (ExpireManager.IMP == null || !ExpireManager.IMP.cancelTask()) {
-                        player.sendMessage(TranslatableCaption.of("debugexec.task_halted"));
+                        player.sendMessage(TranslatableCaption.miniMessage("debugexec.task_halted"));
                     } else {
-                        player.sendMessage(TranslatableCaption.of("debugexec.task_cancelled"));
+                        player.sendMessage(TranslatableCaption.miniMessage("debugexec.task_cancelled"));
                     }
                     return true;
                 }
                 case "remove-flag" -> {
                     if (args.length != 2) {
                         player.sendMessage(
-                                TranslatableCaption.of("commandconfig.command_syntax"),
-                                Template.of("value", "/plot debugexec remove-flag <flag>")
+                                TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                                Placeholder.miniMessage("value", "/plot debugexec remove-flag <flag>")
                         );
                         return false;
                     }
@@ -184,24 +184,24 @@ public class DebugExec extends SubCommand {
                         }
                     }
                     player.sendMessage(
-                            TranslatableCaption.of("debugexec.cleared_flag"),
-                            Template.of("value", flag)
+                            TranslatableCaption.miniMessage("debugexec.cleared_flag"),
+                            Placeholder.miniMessage("value", flag)
                     );
                     return true;
                 }
                 case "start-rgar" -> {
                     if (args.length != 2) {
                         player.sendMessage(
-                                TranslatableCaption.of("commandconfig.command_syntax"),
-                                Template.of("value", "Invalid syntax: /plot debugexec start-rgar <world>")
+                                TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                                Placeholder.miniMessage("value", "Invalid syntax: /plot debugexec start-rgar <world>")
                         );
                         return false;
                     }
                     PlotArea area = this.plotAreaManager.getPlotAreaByString(args[1]);
                     if (area == null) {
                         player.sendMessage(
-                                TranslatableCaption.of("errors.not_valid_plot_world"),
-                                Template.of("value", args[1])
+                                TranslatableCaption.miniMessage("errors.not_valid_plot_world"),
+                                Placeholder.miniMessage("value", args[1])
                         );
                         return false;
                     }
@@ -212,18 +212,18 @@ public class DebugExec extends SubCommand {
                         result = this.hybridUtils.scheduleRoadUpdate(area, 0);
                     }
                     if (!result) {
-                        player.sendMessage(TranslatableCaption.of("debugexec.mass_schematic_update_in_progress"));
+                        player.sendMessage(TranslatableCaption.miniMessage("debugexec.mass_schematic_update_in_progress"));
                         return false;
                     }
                     return true;
                 }
                 case "stop-rgar" -> {
                     if (!HybridUtils.UPDATE) {
-                        player.sendMessage(TranslatableCaption.of("debugexec.task_not_running"));
+                        player.sendMessage(TranslatableCaption.miniMessage("debugexec.task_not_running"));
                         return false;
                     }
                     HybridUtils.UPDATE = false;
-                    player.sendMessage(TranslatableCaption.of("debugexec.task_cancelled"));
+                    player.sendMessage(TranslatableCaption.miniMessage("debugexec.task_cancelled"));
                     return true;
                 }
             }

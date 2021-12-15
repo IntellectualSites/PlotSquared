@@ -37,7 +37,7 @@ import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(command = "continue",
@@ -57,32 +57,32 @@ public class Continue extends SubCommand {
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Plot plot = player.getCurrentPlot();
         if ((plot == null) || !plot.hasOwner()) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_CONTINUE)) {
             player.sendMessage(
-                    TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", TranslatableCaption.of("permission.no_plot_perms").getComponent(player))
+                    TranslatableCaption.miniMessage("permission.no_permission"),
+                    Placeholder.miniMessage("node", TranslatableCaption.miniMessage("permission.no_plot_perms").getComponent(player))
             );
             return false;
         }
         if (!DoneFlag.isDone(plot)) {
-            player.sendMessage(TranslatableCaption.of("done.done_not_done"));
+            player.sendMessage(TranslatableCaption.miniMessage("done.done_not_done"));
             return false;
         }
         int size = plot.getConnectedPlots().size();
         if (Settings.Done.COUNTS_TOWARDS_LIMIT && (player.getAllowedPlots()
                 < player.getPlotCount() + size)) {
             player.sendMessage(
-                    TranslatableCaption.of("permission.cant_claim_more_plots"),
-                    Template.of("amount", String.valueOf(player.getAllowedPlots()))
+                    TranslatableCaption.miniMessage("permission.cant_claim_more_plots"),
+                    Placeholder.miniMessage("amount", String.valueOf(player.getAllowedPlots()))
             );
             return false;
         }
         if (plot.getRunning() > 0) {
-            player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.wait_for_timer"));
             return false;
         }
         PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(DoneFlag.class);
@@ -90,13 +90,13 @@ public class Continue extends SubCommand {
                 this.eventDispatcher.callFlagRemove(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
-                    TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Done flag removal")
+                    TranslatableCaption.miniMessage("events.event_denied"),
+                    Placeholder.miniMessage("value", "Done flag removal")
             );
             return true;
         }
         plot.removeFlag(event.getFlag());
-        player.sendMessage(TranslatableCaption.of("done.done_removed"));
+        player.sendMessage(TranslatableCaption.miniMessage("done.done_removed"));
         return true;
     }
 

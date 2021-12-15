@@ -35,7 +35,7 @@ public class TamedInteractFlag extends BooleanFlag<TamedInteractFlag> {
     public static final TamedInteractFlag TAMED_INTERACT_FALSE = new TamedInteractFlag(false);
 
     private TamedInteractFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_tamed_interact"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_tamed_interact"));
     }
 
     @Override

@@ -35,7 +35,7 @@ public class VehicleCapFlag extends NonNegativeIntegerFlag<VehicleCapFlag> {
             new VehicleCapFlag(Integer.MAX_VALUE);
 
     protected VehicleCapFlag(int value) {
-        super(value, TranslatableCaption.of("flags.flag_description_vehicle_cap"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_vehicle_cap"));
     }
 
     @Override

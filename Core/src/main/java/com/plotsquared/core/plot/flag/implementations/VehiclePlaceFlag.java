@@ -35,7 +35,7 @@ public class VehiclePlaceFlag extends BooleanFlag<VehiclePlaceFlag> {
     public static final VehiclePlaceFlag VEHICLE_PLACE_FALSE = new VehiclePlaceFlag(false);
 
     private VehiclePlaceFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_vehicle_place"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_vehicle_place"));
     }
 
     @Override

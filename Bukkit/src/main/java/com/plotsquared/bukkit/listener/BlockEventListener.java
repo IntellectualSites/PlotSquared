@@ -68,7 +68,7 @@ import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -282,16 +282,16 @@ public class BlockEventListener implements Listener {
                     .hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 event.setCancelled(true);
                 pp.sendMessage(
-                        TranslatableCaption.of("height.height_limit"),
-                        Template.of("minHeight", String.valueOf(area.getMinBuildHeight())),
-                        Template.of("maxHeight", String.valueOf(area.getMaxBuildHeight()))
+                        TranslatableCaption.miniMessage("height.height_limit"),
+                        Placeholder.miniMessage("minHeight", String.valueOf(area.getMinBuildHeight())),
+                        Placeholder.miniMessage("maxHeight", String.valueOf(area.getMaxBuildHeight()))
                 );
             }
             if (!plot.hasOwner()) {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_UNOWNED)) {
                     pp.sendMessage(
-                            TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_UNOWNED))
+                            TranslatableCaption.miniMessage("permission.no_permission_event"),
+                            Placeholder.miniMessage("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_UNOWNED))
                     );
                     event.setCancelled(true);
                     return;
@@ -307,8 +307,8 @@ public class BlockEventListener implements Listener {
                 }
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                     pp.sendMessage(
-                            TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
+                            TranslatableCaption.miniMessage("permission.no_permission_event"),
+                            Placeholder.miniMessage("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
                     );
                     event.setCancelled(true);
                     plot.debug(player.getName() + " could not place " + event.getBlock().getType()
@@ -318,7 +318,7 @@ public class BlockEventListener implements Listener {
             } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                     pp.sendMessage(
-                            TranslatableCaption.of("done.building_restricted")
+                            TranslatableCaption.miniMessage("done.building_restricted")
                     );
                     event.setCancelled(true);
                     return;
@@ -334,8 +334,8 @@ public class BlockEventListener implements Listener {
             }
         } else if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_ROAD)) {
             pp.sendMessage(
-                    TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
+                    TranslatableCaption.miniMessage("permission.no_permission_event"),
+                    Placeholder.miniMessage("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
             );
             event.setCancelled(true);
         }
@@ -356,8 +356,8 @@ public class BlockEventListener implements Listener {
                 if (!Permissions
                         .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL)) {
                     plotPlayer.sendMessage(
-                            TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL))
+                            TranslatableCaption.miniMessage("permission.no_permission_event"),
+                            Placeholder.miniMessage("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL))
                     );
                     event.setCancelled(true);
                     return;
@@ -367,9 +367,9 @@ public class BlockEventListener implements Listener {
                     .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 event.setCancelled(true);
                 plotPlayer.sendMessage(
-                        TranslatableCaption.of("height.height_limit"),
-                        Template.of("minHeight", String.valueOf(area.getMinBuildHeight())),
-                        Template.of("maxHeight", String.valueOf(area.getMaxBuildHeight()))
+                        TranslatableCaption.miniMessage("height.height_limit"),
+                        Placeholder.miniMessage("minHeight", String.valueOf(area.getMinBuildHeight())),
+                        Placeholder.miniMessage("maxHeight", String.valueOf(area.getMaxBuildHeight()))
                 );
             }
             if (!plot.hasOwner()) {
@@ -393,14 +393,14 @@ public class BlockEventListener implements Listener {
                     return;
                 }
                 plotPlayer.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_OTHER))
+                        TranslatableCaption.miniMessage("permission.no_permission_event"),
+                        Placeholder.miniMessage("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_OTHER))
                 );
                 event.setCancelled(true);
             } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
                 if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                     plotPlayer.sendMessage(
-                            TranslatableCaption.of("done.building_restricted")
+                            TranslatableCaption.miniMessage("done.building_restricted")
                     );
                     event.setCancelled(true);
                     return;
@@ -419,8 +419,8 @@ public class BlockEventListener implements Listener {
             }
         }
         pp.sendMessage(
-                TranslatableCaption.of("permission.no_permission_event"),
-                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_ROAD))
+                TranslatableCaption.miniMessage("permission.no_permission_event"),
+                Placeholder.miniMessage("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_ROAD))
         );
         event.setCancelled(true);
     }
@@ -1094,24 +1094,24 @@ public class BlockEventListener implements Listener {
             if (plot == null) {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_ROAD)) {
                     pp.sendMessage(
-                            TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
+                            TranslatableCaption.miniMessage("permission.no_permission_event"),
+                            Placeholder.miniMessage("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
                     );
                     event.setCancelled(true);
                 }
             } else if (!plot.hasOwner()) {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_UNOWNED)) {
                     pp.sendMessage(
-                            TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_UNOWNED))
+                            TranslatableCaption.miniMessage("permission.no_permission_event"),
+                            Placeholder.miniMessage("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_UNOWNED))
                     );
                     event.setCancelled(true);
                 }
             } else if (!plot.isAdded(pp.getUUID())) {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                     pp.sendMessage(
-                            TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
+                            TranslatableCaption.miniMessage("permission.no_permission_event"),
+                            Placeholder.miniMessage("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
                     );
                     event.setCancelled(true);
                 }

@@ -35,7 +35,7 @@ public class ItemDropFlag extends BooleanFlag<ItemDropFlag> {
     public static final ItemDropFlag ITEM_DROP_FALSE = new ItemDropFlag(false);
 
     private ItemDropFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_item_drop"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_item_drop"));
     }
 
     @Override

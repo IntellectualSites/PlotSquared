@@ -36,9 +36,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum PlotAreaType {
-    NORMAL(TranslatableCaption.of("plotareatype.plot_area_type_normal")),
-    AUGMENTED(TranslatableCaption.of("plotareatype.plot_area_type_augmented")),
-    PARTIAL(TranslatableCaption.of("plotareatype.plot_area_type_partial"));
+    NORMAL(TranslatableCaption.miniMessage("plotareatype.plot_area_type_normal")),
+    AUGMENTED(TranslatableCaption.miniMessage("plotareatype.plot_area_type_augmented")),
+    PARTIAL(TranslatableCaption.miniMessage("plotareatype.plot_area_type_partial"));
 
     private static final Map<String, PlotAreaType> types = Stream.of(values())
             .collect(Collectors.toMap(e -> e.toString().toLowerCase(), Function.identity()));

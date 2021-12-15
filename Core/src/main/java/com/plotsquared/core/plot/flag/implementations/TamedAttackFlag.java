@@ -35,7 +35,7 @@ public class TamedAttackFlag extends BooleanFlag<TamedAttackFlag> {
     public static final TamedAttackFlag TAMED_ATTACK_FALSE = new TamedAttackFlag(false);
 
     private TamedAttackFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_tamed_attack"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_tamed_attack"));
     }
 
     @Override

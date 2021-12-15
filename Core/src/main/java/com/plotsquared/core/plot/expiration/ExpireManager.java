@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.expiration;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.Caption;
-import com.plotsquared.core.configuration.caption.Templates;
+import com.plotsquared.core.configuration.caption.Placeholders;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotFlagAddEvent;
@@ -51,7 +51,7 @@ import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayDeque;
@@ -151,15 +151,15 @@ public class ExpireManager {
                             metaDataAccess.set(true);
                             current.getCenter(pp::teleport);
                             metaDataAccess.remove();
-                            Caption msg = TranslatableCaption.of("expiry.expired_options_clicky");
-                            Template numTemplate = Template.of("num", String.valueOf(num));
-                            Template areIsTemplate = Template.of("are_or_is", (num > 1 ? "plots are" : "plot is"));
-                            Template list_cmd = Template.of("list_cmd", "/plot list expired");
-                            Template plot = Template.of("plot", current.toString());
-                            Template cmd_del = Template.of("cmd_del", "/plot delete");
-                            Template cmd_keep_1d = Template.of("cmd_keep_1d", "/plot flag set keep 1d");
-                            Template cmd_keep = Template.of("cmd_keep", "/plot flag set keep true");
-                            Template cmd_no_show_expir = Template.of("cmd_no_show_expir", "/plot toggle clear-confirmation");
+                            Caption msg = TranslatableCaption.miniMessage("expiry.expired_options_clicky");
+                            Placeholder<?> numTemplate = Placeholder.miniMessage("num", String.valueOf(num));
+                            Placeholder<?> areIsTemplate = Placeholder.miniMessage("are_or_is", (num > 1 ? "plots are" : "plot is"));
+                            Placeholder<?> list_cmd = Placeholder.miniMessage("list_cmd", "/plot list expired");
+                            Placeholder<?> plot = Placeholder.miniMessage("plot", current.toString());
+                            Placeholder<?> cmd_del = Placeholder.miniMessage("cmd_del", "/plot delete");
+                            Placeholder<?> cmd_keep_1d = Placeholder.miniMessage("cmd_keep_1d", "/plot flag set keep 1d");
+                            Placeholder<?> cmd_keep = Placeholder.miniMessage("cmd_keep", "/plot flag set keep true");
+                            Placeholder<?> cmd_no_show_expir = Placeholder.miniMessage("cmd_no_show_expir", "/plot toggle clear-confirmation");
                             pp.sendMessage(
                                     msg,
                                     numTemplate,
@@ -437,8 +437,8 @@ public class ExpireManager {
             PlotPlayer<?> player = PlotSquared.platform().playerManager().getPlayerIfExists(helper);
             if (player != null) {
                 player.sendMessage(
-                        TranslatableCaption.of("trusted.plot_removed_user"),
-                        Templates.of("plot", plot.toString())
+                        TranslatableCaption.miniMessage("trusted.plot_removed_user"),
+                        Placeholders.miniMessage("plot", plot.toString())
                 );
             }
         }
@@ -446,8 +446,8 @@ public class ExpireManager {
             PlotPlayer<?> player = PlotSquared.platform().playerManager().getPlayerIfExists(helper);
             if (player != null) {
                 player.sendMessage(
-                        TranslatableCaption.of("trusted.plot_removed_user"),
-                        Templates.of("plot", plot.toString())
+                        TranslatableCaption.miniMessage("trusted.plot_removed_user"),
+                        Placeholders.miniMessage("plot", plot.toString())
                 );
             }
         }

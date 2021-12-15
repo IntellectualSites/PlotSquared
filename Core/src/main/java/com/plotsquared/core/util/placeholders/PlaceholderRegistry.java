@@ -57,7 +57,7 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 
 /**
- * Registry that contains {@link Placeholder placeholders}
+ * Registry that contains {@link net.kyori.adventure.text.minimessage.placeholder.Placeholder placeholder}
  */
 @Singleton
 public final class PlaceholderRegistry {
@@ -80,7 +80,7 @@ public final class PlaceholderRegistry {
      * @return a legacy-formatted string.
      */
     private static String legacyComponent(TranslatableCaption caption, LocaleHolder localeHolder) {
-        Component component = MiniMessage.get().parse(caption.getComponent(localeHolder));
+        Component component = MiniMessage.miniMessage().parse(caption.getComponent(localeHolder));
         return PlotSquared.platform().toLegacyPlatformString(component);
     }
 
@@ -98,77 +98,77 @@ public final class PlaceholderRegistry {
         this.createPlaceholder("has_plot", player -> player.getPlotCount() > 0 ? "true" : "false");
         this.createPlaceholder("allowed_plot_count", (player) -> {
             if (player.getAllowedPlots() >= Integer.MAX_VALUE) { // Beautifies cases with '*' permission
-                return legacyComponent(TranslatableCaption.of("info.infinite"), player);
+                return legacyComponent(TranslatableCaption.miniMessage("info.infinite"), player);
             }
             return Integer.toString(player.getAllowedPlots());
         });
         this.createPlaceholder("plot_count", player -> Integer.toString(player.getPlotCount()));
         this.createPlaceholder("currentplot_alias", (player, plot) -> {
             if (plot.getAlias().isEmpty()) {
-                return legacyComponent(TranslatableCaption.of("info.none"), player);
+                return legacyComponent(TranslatableCaption.miniMessage("info.none"), player);
             }
             return plot.getAlias();
         });
         this.createPlaceholder("currentplot_owner", (player, plot) -> {
             final UUID plotOwner = plot.getOwnerAbs();
             if (plotOwner == null) {
-                return legacyComponent(TranslatableCaption.of("generic.generic_unowned"), player);
+                return legacyComponent(TranslatableCaption.miniMessage("generic.generic_unowned"), player);
             }
 
             try {
                 return PlayerManager.getName(plotOwner, false);
             } catch (final Exception ignored) {
             }
-            return legacyComponent(TranslatableCaption.of("info.unknown"), player);
+            return legacyComponent(TranslatableCaption.miniMessage("info.unknown"), player);
         });
         this.createPlaceholder("currentplot_members", (player, plot) -> {
             if (plot.getMembers().isEmpty() && plot.getTrusted().isEmpty()) {
-                return legacyComponent(TranslatableCaption.of("info.none"), player);
+                return legacyComponent(TranslatableCaption.miniMessage("info.none"), player);
             }
             return String.valueOf(plot.getMembers().size() + plot.getTrusted().size());
         });
         this.createPlaceholder("currentplot_members_added", (player, plot) -> {
             if (plot.getMembers().isEmpty()) {
-                return legacyComponent(TranslatableCaption.of("info.none"), player);
+                return legacyComponent(TranslatableCaption.miniMessage("info.none"), player);
             }
             return String.valueOf(plot.getMembers().size());
         });
         this.createPlaceholder("currentplot_members_trusted", (player, plot) -> {
             if (plot.getTrusted().isEmpty()) {
-                return legacyComponent(TranslatableCaption.of("info.none"), player);
+                return legacyComponent(TranslatableCaption.miniMessage("info.none"), player);
             }
             return String.valueOf(plot.getTrusted().size());
         });
         this.createPlaceholder("currentplot_members_denied", (player, plot) -> {
             if (plot.getDenied().isEmpty()) {
-                return legacyComponent(TranslatableCaption.of("info.none"), player);
+                return legacyComponent(TranslatableCaption.miniMessage("info.none"), player);
             }
             return String.valueOf(plot.getDenied().size());
         });
         this.createPlaceholder("currentplot_members_trusted_list", (player, plot) -> {
             if (plot.getTrusted().isEmpty()) {
-                return legacyComponent(TranslatableCaption.of("info.none"), player);
+                return legacyComponent(TranslatableCaption.miniMessage("info.none"), player);
             }
             return PlotSquared.platform().toLegacyPlatformString(
                     PlayerManager.getPlayerList(plot.getTrusted(), player));
         });
         this.createPlaceholder("currentplot_members_added_list", (player, plot) -> {
             if (plot.getMembers().isEmpty()) {
-                return legacyComponent(TranslatableCaption.of("info.none"), player);
+                return legacyComponent(TranslatableCaption.miniMessage("info.none"), player);
             }
             return PlotSquared.platform().toLegacyPlatformString(
                     PlayerManager.getPlayerList(plot.getMembers(), player));
         });
         this.createPlaceholder("currentplot_members_denied_list", (player, plot) -> {
             if (plot.getDenied().isEmpty()) {
-                return legacyComponent(TranslatableCaption.of("info.none"), player);
+                return legacyComponent(TranslatableCaption.miniMessage("info.none"), player);
             }
             return PlotSquared.platform().toLegacyPlatformString(
                     PlayerManager.getPlayerList(plot.getDenied(), player));
         });
         this.createPlaceholder("currentplot_creationdate", (player, plot) -> {
             if (plot.getTimestamp() == 0) {
-                return legacyComponent(TranslatableCaption.of("info.unknown"), player);
+                return legacyComponent(TranslatableCaption.miniMessage("info.unknown"), player);
             }
             long creationDate = plot.getTimestamp();
             SimpleDateFormat sdf = new SimpleDateFormat(Settings.Timeformat.DATE_FORMAT);
@@ -182,7 +182,7 @@ public final class PlaceholderRegistry {
         this.createPlaceholder("currentplot_xy", (player, plot) -> plot.getId().toString());
         this.createPlaceholder("currentplot_rating", (player, plot) -> {
             if (Double.isNaN(plot.getAverageRating())) {
-                return legacyComponent(TranslatableCaption.of("placeholder.nan"), player);
+                return legacyComponent(TranslatableCaption.miniMessage("placeholder.nan"), player);
             }
             BigDecimal roundRating = BigDecimal.valueOf(plot.getAverageRating()).setScale(2, RoundingMode.HALF_UP);
             if (!Settings.General.SCIENTIFIC) {
@@ -286,7 +286,7 @@ public final class PlaceholderRegistry {
             }
         } catch (final Exception exception) {
             new RuntimeException(String
-                    .format("Placeholder '%s' failed to evalulate for player '%s'",
+                    .format("Placeholder '%s' failed to evaluate for player '%s'",
                             placeholder.getKey(), player.getName()
                     ), exception).printStackTrace();
         }
@@ -296,14 +296,15 @@ public final class PlaceholderRegistry {
     /**
      * Get all placeholders
      *
-     * @return Unmodifiable collection of placeholders
+     * @return Unmodifiable collection of miniMessage
+     * @since 6.3.0
      */
-    public @NonNull Collection<Placeholder> getPlaceholders() {
+    public @NonNull Collection<Placeholder> allPlaceholders() {
         return Collections.unmodifiableCollection(this.placeholders.values());
     }
 
     /**
-     * Event called when a new {@link Placeholder} has been added
+     * Event called when a new {@link net.kyori.adventure.text.minimessage.placeholder.Placeholder} has been added
      */
     public static class PlaceholderAddedEvent {
 

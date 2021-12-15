@@ -97,7 +97,7 @@ public class Trim extends SubCommand {
         if (result == null) {
             return false;
         }
-        TranslatableCaption.of("trim.trim_starting");
+        TranslatableCaption.miniMessage("trim.trim_starting");
         final List<Plot> plots = PlotQuery.newQuery().inWorld(world).asList();
         if (ExpireManager.IMP != null) {
             plots.removeAll(ExpireManager.IMP.getPendingExpired());
@@ -138,11 +138,11 @@ public class Trim extends SubCommand {
         }
         final String world = args[0];
         if (!this.worldUtil.isWorld(world) || !this.plotAreaManager.hasPlotArea(world)) {
-            player.sendMessage(TranslatableCaption.of("errors.not_valid_world"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_valid_world"));
             return false;
         }
         if (Trim.TASK) {
-            player.sendMessage(TranslatableCaption.of("trim.trim_in_progress"));
+            player.sendMessage(TranslatableCaption.miniMessage("trim.trim_in_progress"));
             return false;
         }
         Trim.TASK = true;
@@ -160,7 +160,7 @@ public class Trim extends SubCommand {
                         public void run() {
                             if (nonViable.isEmpty()) {
                                 Trim.TASK = false;
-                                player.sendMessage(TranslatableCaption.of("trim.trim_done"));
+                                player.sendMessage(TranslatableCaption.miniMessage("trim.trim_done"));
                                 LOGGER.info("Trim done!");
                                 return;
                             }
@@ -211,7 +211,7 @@ public class Trim extends SubCommand {
                 } else {
                     regenTask = () -> {
                         Trim.TASK = false;
-                        player.sendMessage(TranslatableCaption.of("trim.trim_done"));
+                        player.sendMessage(TranslatableCaption.miniMessage("trim.trim_done"));
                         LOGGER.info("Trim done!");
                     };
                 }

@@ -353,7 +353,7 @@ public class UUIDPipeline {
                     mappings.add(new UUIDMapping(
                             uuid,
                             MINI_MESSAGE.stripTokens(TranslatableCaption
-                                    .of("info.unknown")
+                                    .miniMessage("info.unknown")
                                     .getComponent(ConsolePlayer.getConsole()))
                     ));
                 }

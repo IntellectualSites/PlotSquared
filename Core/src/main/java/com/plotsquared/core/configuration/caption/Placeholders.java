@@ -28,83 +28,90 @@ package com.plotsquared.core.configuration.caption;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.PlayerManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
+import net.kyori.adventure.text.minimessage.placeholder.PlaceholderResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.UUID;
 
 /**
- * Utility class that generates {@link net.kyori.adventure.text.minimessage.Template templates}
+ * Utility class that generates {@link net.kyori.adventure.text.minimessage.placeholder.Placeholder placeholder}
  */
-public final class Templates {
+public final class Placeholders {
 
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
-    private Templates() {
+    private Placeholders() {
         throw new UnsupportedOperationException(
                 "This is a utility class and cannot be instantiated");
     }
 
     /**
-     * Create a {@link net.kyori.adventure.text.minimessage.Template} from a PlotSquared {@link Caption}
+     * Create a {@link net.kyori.adventure.text.minimessage.placeholder.Placeholder} from a PlotSquared {@link Caption}
      *
      * @param localeHolder Locale holder
      * @param key          Template key
      * @param caption      Caption object
      * @param replacements Replacements
      * @return Generated template
+     * @since 6.3.0
      */
-    public static @NonNull Template of(
+    public static @NonNull Placeholder<?> miniMessage(
             final @NonNull LocaleHolder localeHolder,
             final @NonNull String key, final @NonNull Caption caption,
-            final @NonNull Template... replacements
+            final @NonNull Placeholder<?>... replacements
     ) {
-        return Template.of(key, MINI_MESSAGE.parse(caption.getComponent(localeHolder), replacements));
+        return Placeholder.miniMessage(key, MINI_MESSAGE.deserialize(caption.getComponent(localeHolder),
+                PlaceholderResolver.placeholders(replacements)).toString());
     }
 
     /**
-     * Create a {@link Template} from a username (using UUID mappings)
+     * Create a {@link net.kyori.adventure.text.minimessage.placeholder.Placeholder} from a username (using UUID mappings)
      *
      * @param key  Template key
      * @param uuid Player UUID
      * @return Generated template
+     * @since 6.3.0
      */
-    public static @NonNull Template of(final @NonNull String key, final @NonNull UUID uuid) {
+    public static @NonNull Placeholder<?> miniMessage(final @NonNull String key, final @NonNull UUID uuid) {
         final String username = PlayerManager.getName(uuid);
-        return Template.of(key, username);
+        return Placeholder.miniMessage(key, username);
     }
 
     /**
-     * Create a {@link Template} from a string
+     * Create a {@link net.kyori.adventure.text.minimessage.placeholder.Placeholder} from a string
      *
      * @param key   Template key
      * @param value Template value
      * @return Generated template
+     * @since 6.3.0
      */
-    public static @NonNull Template of(final @NonNull String key, final @NonNull String value) {
-        return Template.of(key, value);
+    public static @NonNull Placeholder<?> miniMessage(final @NonNull String key, final @NonNull String value) {
+        return Placeholder.miniMessage(key, value);
     }
 
     /**
-     * Create a {@link Template} from a plot area
+     * Create a {@link net.kyori.adventure.text.minimessage.placeholder.Placeholder} from a plot area
      *
      * @param key  Template Key
      * @param area Plot area
      * @return Generated template
+     * @since 6.3.0
      */
-    public static @NonNull Template of(final @NonNull String key, final @NonNull PlotArea area) {
-        return Template.of(key, area.toString());
+    public static @NonNull Placeholder<?> miniMessage(final @NonNull String key, final @NonNull PlotArea area) {
+        return Placeholder.miniMessage(key, area.toString());
     }
 
     /**
-     * Create a {@link Template} from a number
+     * Create a {@link net.kyori.adventure.text.minimessage.placeholder.Placeholder} from a number
      *
      * @param key    Template key
      * @param number Number
      * @return Generated template
+     * @since 6.3.0
      */
-    public static @NonNull Template of(final @NonNull String key, final @NonNull Number number) {
-        return Template.of(key, number.toString());
+    public static @NonNull Placeholder<?> miniMessage(final @NonNull String key, final @NonNull Number number) {
+        return Placeholder.miniMessage(key, number.toString());
     }
 
 }

@@ -79,7 +79,8 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
+import net.kyori.adventure.text.minimessage.placeholder.PlaceholderResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -372,13 +373,13 @@ public class Plot {
                 }
             }
             if (message && player != null) {
-                player.sendMessage(TranslatableCaption.of("invalid.not_valid_plot_id"));
+                player.sendMessage(TranslatableCaption.miniMessage("invalid.not_valid_plot_id"));
             }
             return null;
         }
         if (area == null) {
             if (message && player != null) {
-                player.sendMessage(TranslatableCaption.of("errors.invalid_plot_world"));
+                player.sendMessage(TranslatableCaption.miniMessage("errors.invalid_plot_world"));
             }
             return null;
         }
@@ -1707,7 +1708,7 @@ public class Plot {
             updateWorldBorder();
         }
         this.getPlotModificationManager().setSign(player.getName());
-        player.sendMessage(TranslatableCaption.of("working.claimed"), Template.of("plot", this.getId().toString()));
+        player.sendMessage(TranslatableCaption.miniMessage("working.claimed"), Placeholder.miniMessage("plot", this.getId().toString()));
         if (teleport) {
             if (!auto && Settings.Teleport.ON_CLAIM) {
                 teleportPlayer(player, TeleportCause.COMMAND_CLAIM, result -> {
@@ -1745,9 +1746,9 @@ public class Plot {
                         @Override
                         public void run(Boolean value) {
                             if (value) {
-                                player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_success"));
+                                player.sendMessage(TranslatableCaption.miniMessage("schematics.schematic_paste_success"));
                             } else {
-                                player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_failed"));
+                                player.sendMessage(TranslatableCaption.miniMessage("schematics.schematic_paste_failed"));
                             }
                         }
                     }
@@ -2574,9 +2575,9 @@ public class Plot {
             if (players.isEmpty()) {
                 return;
             }
-            Caption caption = TranslatableCaption.of("debug.plot_debug");
-            Template plotTemplate = Template.of("plot", this.toString());
-            Template messageTemplate = Template.of("message", message);
+            Caption caption = TranslatableCaption.miniMessage("debug.plot_debug");
+            Placeholder<?> plotTemplate = Placeholder.miniMessage("plot", this.toString());
+            Placeholder<?> messageTemplate = Placeholder.miniMessage("message", message);
             for (final PlotPlayer<?> player : players) {
                 if (isOwner(player.getUUID()) || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_DEBUG_OTHER)) {
                     player.sendMessage(caption, plotTemplate, messageTemplate);
@@ -2608,8 +2609,8 @@ public class Plot {
         Result result = this.eventDispatcher.callTeleport(player, player.getLocation(), plot, cause).getEventResult();
         if (result == Result.DENY) {
             player.sendMessage(
-                    TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Teleport")
+                    TranslatableCaption.miniMessage("events.event_denied"),
+                    Placeholder.miniMessage("value", "Teleport")
             );
             resultConsumer.accept(false);
             return;
@@ -2617,14 +2618,14 @@ public class Plot {
         final Consumer<Location> locationConsumer = location -> {
             if (Settings.Teleport.DELAY == 0 || Permissions
                     .hasPermission(player, "plots.teleport.delay.bypass")) {
-                player.sendMessage(TranslatableCaption.of("teleport.teleported_to_plot"));
+                player.sendMessage(TranslatableCaption.miniMessage("teleport.teleported_to_plot"));
                 player.teleport(location, cause);
                 resultConsumer.accept(true);
                 return;
             }
             player.sendMessage(
-                    TranslatableCaption.of("teleport.teleport_in_seconds"),
-                    Template.of("amount", String.valueOf(Settings.Teleport.DELAY))
+                    TranslatableCaption.miniMessage("teleport.teleport_in_seconds"),
+                    Placeholder.miniMessage("amount", String.valueOf(Settings.Teleport.DELAY))
             );
             final String name = player.getName();
             TaskManager.addToTeleportQueue(name);
@@ -2633,7 +2634,7 @@ public class Plot {
                     return;
                 }
                 try {
-                    player.sendMessage(TranslatableCaption.of("teleport.teleported_to_plot"));
+                    player.sendMessage(TranslatableCaption.miniMessage("teleport.teleported_to_plot"));
                     player.teleport(location, cause);
                 } catch (final Exception ignored) {
                 }
@@ -2800,7 +2801,7 @@ public class Plot {
     public CompletableFuture<Caption> format(final Caption iInfo, PlotPlayer<?> player, final boolean full) {
         final CompletableFuture<Caption> future = new CompletableFuture<>();
         int num = this.getConnectedPlots().size();
-        String alias = !this.getAlias().isEmpty() ? this.getAlias() : TranslatableCaption.of("info.none").getComponent(player);
+        String alias = !this.getAlias().isEmpty() ? this.getAlias() : TranslatableCaption.miniMessage("info.none").getComponent(player);
         Location bot = this.getCorners()[0];
         PlotSquared.platform().worldUtil().getBiome(
                 Objects.requireNonNull(this.getWorldName()),
@@ -2813,28 +2814,28 @@ public class Plot {
                     String seen;
                     if (Settings.Enabled_Components.PLOT_EXPIRY && ExpireManager.IMP != null) {
                         if (this.isOnline()) {
-                            seen = TranslatableCaption.of("info.now").getComponent(player);
+                            seen = TranslatableCaption.miniMessage("info.now").getComponent(player);
                         } else {
                             int time = (int) (ExpireManager.IMP.getAge(this) / 1000);
                             if (time != 0) {
                                 seen = TimeUtil.secToTime(time);
                             } else {
-                                seen = TranslatableCaption.of("info.known").getComponent(player);
+                                seen = TranslatableCaption.miniMessage("info.known").getComponent(player);
                             }
                         }
                     } else {
-                        seen = TranslatableCaption.of("info.never").getComponent(player);
+                        seen = TranslatableCaption.miniMessage("info.never").getComponent(player);
                     }
 
                     String description = this.getFlag(DescriptionFlag.class);
                     if (description.isEmpty()) {
-                        description = TranslatableCaption.of("info.plot_no_description").getComponent(player);
+                        description = TranslatableCaption.miniMessage("info.plot_no_description").getComponent(player);
                     }
 
                     Component flags;
                     Collection<PlotFlag<?, ?>> flagCollection = this.getApplicableFlags(true);
                     if (flagCollection.isEmpty()) {
-                        flags = MINI_MESSAGE.parse(TranslatableCaption.of("info.none").getComponent(player));
+                        flags = MINI_MESSAGE.parse(TranslatableCaption.miniMessage("info.none").getComponent(player));
                     } else {
                         TextComponent.Builder flagBuilder = Component.text();
                         String prefix = " ";
@@ -2845,13 +2846,15 @@ public class Plot {
                             } else {
                                 value = flag.toString();
                             }
-                            Component snip = MINI_MESSAGE.parse(
+                            Component snip = MINI_MESSAGE.deserialize(
                                     prefix + CaptionUtility.format(
                                             player,
-                                            TranslatableCaption.of("info.plot_flag_list").getComponent(player)
+                                            TranslatableCaption.miniMessage("info.plot_flag_list").getComponent(player)
                                     ),
-                                    Template.of("flag", flag.getName()),
-                                    Template.of("value", CaptionUtility.formatRaw(player, value.toString()))
+                                    PlaceholderResolver.placeholders(
+                                    Placeholder.miniMessage("flag", flag.getName()),
+                                    Placeholder.miniMessage("value", CaptionUtility.formatRaw(player, value.toString()))
+                                    )
                             );
                             flagBuilder.append(snip);
                             prefix = ", ";
@@ -2864,56 +2867,56 @@ public class Plot {
                         owner = Component.text("unowned");
                     } else if (this.getOwner().equals(DBFunc.SERVER)) {
                         owner = Component.text(MINI_MESSAGE.stripTokens(TranslatableCaption
-                                .of("info.server")
+                                .miniMessage("info.server")
                                 .getComponent(player)));
                     } else {
                         owner = PlayerManager.getPlayerList(this.getOwners(), player);
                     }
-                    Template headerTemplate = Template.of(
+                    Placeholder<?> headerTemplate = Placeholder.miniMessage(
                             "header",
-                            TranslatableCaption.of("info.plot_info_header").getComponent(player)
+                            TranslatableCaption.miniMessage("info.plot_info_header").getComponent(player)
                     );
-                    Template footerTemplate = Template.of(
+                    Placeholder<?> footerTemplate = Placeholder.miniMessage(
                             "footer",
-                            TranslatableCaption.of("info.plot_info_footer").getComponent(player)
+                            TranslatableCaption.miniMessage("info.plot_info_footer").getComponent(player)
                     );
-                    Template areaTemplate;
+                    Placeholder<?> areaTemplate;
                     if (this.getArea() != null) {
                         areaTemplate =
-                                Template.of(
+                                Placeholder.miniMessage(
                                         "area",
                                         this.getArea().getWorldName() + (this.getArea().getId() == null
                                                 ? ""
                                                 : "(" + this.getArea().getId() + ")")
                                 );
                     } else {
-                        areaTemplate = Template.of("area", TranslatableCaption.of("info.none").getComponent(player));
+                        areaTemplate = Placeholder.miniMessage("area", TranslatableCaption.miniMessage("info.none").getComponent(player));
                     }
                     long creationDate = Long.parseLong(String.valueOf(timestamp));
                     SimpleDateFormat sdf = new SimpleDateFormat(Settings.Timeformat.DATE_FORMAT);
                     sdf.setTimeZone(TimeZone.getTimeZone(Settings.Timeformat.TIME_ZONE));
                     String newDate = sdf.format(creationDate);
 
-                    Template idTemplate = Template.of("id", this.getId().toString());
-                    Template aliasTemplate = Template.of("alias", alias);
-                    Template numTemplate = Template.of("num", String.valueOf(num));
-                    Template descTemplate = Template.of("desc", description);
-                    Template biomeTemplate = Template.of("biome", biome.toString().toLowerCase());
-                    Template ownerTemplate = Template.of("owner", owner);
-                    Template membersTemplate = Template.of("members", members);
-                    Template playerTemplate = Template.of("player", player.getName());
-                    Template trustedTemplate = Template.of("trusted", trusted);
-                    Template helpersTemplate = Template.of("helpers", members);
-                    Template deniedTemplate = Template.of("denied", denied);
-                    Template seenTemplate = Template.of("seen", seen);
-                    Template flagsTemplate = Template.of("flags", flags);
-                    Template creationTemplate = Template.of("creationdate", newDate);
-                    Template buildTemplate = Template.of("build", String.valueOf(build));
+                    Placeholder<?> idTemplate = Placeholder.miniMessage("id", this.getId().toString());
+                    Placeholder<?> aliasTemplate = Placeholder.miniMessage("alias", alias);
+                    Placeholder<?> numTemplate = Placeholder.miniMessage("num", String.valueOf(num));
+                    Placeholder<?> descTemplate = Placeholder.miniMessage("desc", description);
+                    Placeholder<?> biomeTemplate = Placeholder.miniMessage("biome", biome.toString().toLowerCase());
+                    Placeholder<?> ownerTemplate = Placeholder.miniMessage("owner", owner.toString());
+                    Placeholder<?> membersTemplate =Placeholder.miniMessage("members", members.toString());
+                    Placeholder<?> playerTemplate = Placeholder.miniMessage("player", player.getName());
+                    Placeholder<?> trustedTemplate = Placeholder.miniMessage("trusted", trusted.toString());
+                    Placeholder<?> helpersTemplate = Placeholder.miniMessage("helpers", members.toString());
+                    Placeholder<?> deniedTemplate = Placeholder.miniMessage("denied", denied.toString());
+                    Placeholder<?> seenTemplate = Placeholder.miniMessage("seen", seen);
+                    Placeholder<?> flagsTemplate = Placeholder.miniMessage("flags", flags.toString());
+                    Placeholder<?> creationTemplate = Placeholder.miniMessage("creationdate", newDate);
+                    Placeholder<?> buildTemplate = Placeholder.miniMessage("build", String.valueOf(build));
                     if (iInfo.getComponent(player).contains("<rating>")) {
                         TaskManager.runTaskAsync(() -> {
-                            Template ratingTemplate;
+                            Placeholder<?> ratingTemplate;
                             if (Settings.Ratings.USE_LIKES) {
-                                ratingTemplate = Template.of(
+                                ratingTemplate = Placeholder.miniMessage(
                                         "rating",
                                         String.format("%.0f%%", Like.getLikesPercentage(this) * 100D)
                                 );
@@ -2931,22 +2934,23 @@ public class Plot {
                                                 .append(String.format("%.1f", ratings[i]));
                                         prefix = ",";
                                     }
-                                    ratingTemplate = Template.of("rating", rating.toString());
+                                    ratingTemplate = Placeholder.miniMessage("rating", rating.toString());
                                 } else {
                                     double rating = this.getAverageRating();
                                     if (Double.isFinite(rating)) {
-                                        ratingTemplate = Template.of("rating", String.format("%.1f", rating) + '/' + max);
+                                        ratingTemplate = Placeholder.miniMessage("rating", String.format("%.1f", rating) + '/' + max);
                                     } else {
-                                        ratingTemplate = Template.of(
+                                        ratingTemplate = Placeholder.miniMessage(
                                                 "rating",
-                                                TranslatableCaption.of("info.none").getComponent(player)
+                                                TranslatableCaption.miniMessage("info.none").getComponent(player)
                                         );
                                     }
                                 }
                             }
                             future.complete(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
-                                    .parse(
+                                    .deserialize(
                                             iInfo.getComponent(player),
+                                            PlaceholderResolver.placeholders(
                                             headerTemplate,
                                             areaTemplate,
                                             idTemplate,
@@ -2966,13 +2970,14 @@ public class Plot {
                                             ratingTemplate,
                                             creationTemplate,
                                             footerTemplate
-                                    ))));
+                                    )))));
                         });
                         return;
                     }
                     future.complete(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
-                            .parse(
+                            .deserialize(
                                     iInfo.getComponent(player),
+                                    PlaceholderResolver.placeholders(
                                     headerTemplate,
                                     areaTemplate,
                                     idTemplate,
@@ -2990,7 +2995,7 @@ public class Plot {
                                     flagsTemplate,
                                     buildTemplate,
                                     footerTemplate
-                            ))));
+                                    )))));
                 }
         );
         return future;

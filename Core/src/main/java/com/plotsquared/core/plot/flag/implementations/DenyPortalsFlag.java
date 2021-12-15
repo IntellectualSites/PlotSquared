@@ -35,7 +35,7 @@ public class DenyPortalsFlag extends BooleanFlag<DenyPortalsFlag> {
     public static final DenyPortalsFlag DENY_PORTALS_FALSE = new DenyPortalsFlag(false);
 
     private DenyPortalsFlag(final boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_deny_portals"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_deny_portals"));
     }
 
     @Override

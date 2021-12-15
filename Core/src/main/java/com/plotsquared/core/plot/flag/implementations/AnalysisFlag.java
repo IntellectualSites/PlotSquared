@@ -37,7 +37,7 @@ import java.util.List;
 public class AnalysisFlag extends ListFlag<Integer, AnalysisFlag> implements InternalFlag {
 
     public AnalysisFlag(final List<Integer> valueList) {
-        super(valueList, TranslatableCaption.of("info.none"), TranslatableCaption.of("info.none"));
+        super(valueList, TranslatableCaption.miniMessage("info.none"), TranslatableCaption.miniMessage("info.none"));
     }
 
     @Override

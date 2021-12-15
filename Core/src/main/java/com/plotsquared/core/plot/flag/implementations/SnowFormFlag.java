@@ -35,7 +35,7 @@ public class SnowFormFlag extends BooleanFlag<SnowFormFlag> {
     public static final SnowFormFlag SNOW_FORM_FALSE = new SnowFormFlag(false);
 
     private SnowFormFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_snow_form"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_snow_form"));
     }
 
     @Override

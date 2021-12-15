@@ -38,7 +38,7 @@ public class UseFlag extends BlockTypeListFlag<UseFlag> {
     public static final UseFlag USE_NONE = new UseFlag(Collections.emptyList());
 
     protected UseFlag(List<BlockTypeWrapper> blockTypeList) {
-        super(blockTypeList, TranslatableCaption.of("flags.flag_description_use"));
+        super(blockTypeList, TranslatableCaption.miniMessage("flags.flag_description_use"));
     }
 
     @Override

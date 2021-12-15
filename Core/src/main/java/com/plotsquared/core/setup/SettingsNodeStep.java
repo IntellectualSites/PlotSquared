@@ -31,7 +31,7 @@ import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.TabCompletions;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -83,11 +83,11 @@ public class SettingsNodeStep implements SetupStep {
     @Override
     public void announce(PlotPlayer<?> plotPlayer) {
         plotPlayer.sendMessage(
-                TranslatableCaption.of("setup.setup_step"),
-                Template.of("step", String.valueOf(this.getId() + 1)),
-                Template.of("description", this.configurationNode.getDescription().getComponent(plotPlayer)),
-                Template.of("type", this.configurationNode.getType().getType()),
-                Template.of("value", String.valueOf(this.configurationNode.getDefaultValue()))
+                TranslatableCaption.miniMessage("setup.setup_step"),
+                Placeholder.miniMessage("step", String.valueOf(this.getId() + 1)),
+                Placeholder.miniMessage("description", this.configurationNode.getDescription().getComponent(plotPlayer)),
+                Placeholder.miniMessage("type", this.configurationNode.getType().getType()),
+                Placeholder.miniMessage("value", String.valueOf(this.configurationNode.getDefaultValue()))
         );
     }
 

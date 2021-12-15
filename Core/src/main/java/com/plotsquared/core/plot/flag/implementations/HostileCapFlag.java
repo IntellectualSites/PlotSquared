@@ -35,7 +35,7 @@ public class HostileCapFlag extends NonNegativeIntegerFlag<HostileCapFlag> {
             new HostileCapFlag(Integer.MAX_VALUE);
 
     protected HostileCapFlag(int value) {
-        super(value, TranslatableCaption.of("flags.flag_description_hostile_cap"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_hostile_cap"));
     }
 
     @Override

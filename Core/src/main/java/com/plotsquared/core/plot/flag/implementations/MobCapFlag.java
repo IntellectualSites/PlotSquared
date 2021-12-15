@@ -34,7 +34,7 @@ public class MobCapFlag extends NonNegativeIntegerFlag<MobCapFlag> {
     public static final MobCapFlag MOB_CAP_UNLIMITED = new MobCapFlag(Integer.MAX_VALUE);
 
     protected MobCapFlag(int value) {
-        super(value, TranslatableCaption.of("flags.flag_description_mob_cap"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_mob_cap"));
     }
 
     @Override

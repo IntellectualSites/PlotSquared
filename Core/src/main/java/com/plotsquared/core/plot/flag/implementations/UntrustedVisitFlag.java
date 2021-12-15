@@ -34,7 +34,7 @@ public class UntrustedVisitFlag extends BooleanFlag<UntrustedVisitFlag> {
     public static final UntrustedVisitFlag UNTRUSTED_VISIT_FLAG_TRUE = new UntrustedVisitFlag(true);
 
     protected UntrustedVisitFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_untrusted"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_untrusted"));
     }
 
     @Override

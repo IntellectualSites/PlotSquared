@@ -37,7 +37,7 @@ public abstract class TimedFlag<T, F extends PlotFlag<TimedFlag.Timed<T>, F>>
     private final T defaultValue;
 
     protected TimedFlag(@NonNull Timed<T> value, T defaultValue, @NonNull Caption flagDescription) {
-        super(value, TranslatableCaption.of("flags.flag_category_intervals"), flagDescription);
+        super(value, TranslatableCaption.miniMessage("flags.flag_category_intervals"), flagDescription);
         this.defaultValue = defaultValue;
     }
 
@@ -51,14 +51,14 @@ public abstract class TimedFlag<T, F extends PlotFlag<TimedFlag.Timed<T>, F>>
             throw new FlagParseException(
                     this,
                     input,
-                    TranslatableCaption.of("flags.flag_error_integer")
+                    TranslatableCaption.miniMessage("flags.flag_error_integer")
             );
         }
         if (interval < 1) {
             throw new FlagParseException(
                     this,
                     input,
-                    TranslatableCaption.of("flags.flag_error_integer")
+                    TranslatableCaption.miniMessage("flags.flag_error_integer")
             );
         }
         if (split.length == 1) {

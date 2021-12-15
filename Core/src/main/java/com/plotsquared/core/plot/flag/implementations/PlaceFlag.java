@@ -38,7 +38,7 @@ public class PlaceFlag extends BlockTypeListFlag<PlaceFlag> {
     public static final PlaceFlag PLACE_NONE = new PlaceFlag(Collections.emptyList());
 
     protected PlaceFlag(List<BlockTypeWrapper> blockTypeList) {
-        super(blockTypeList, TranslatableCaption.of("flags.flag_description_place"));
+        super(blockTypeList, TranslatableCaption.miniMessage("flags.flag_description_place"));
     }
 
     @Override

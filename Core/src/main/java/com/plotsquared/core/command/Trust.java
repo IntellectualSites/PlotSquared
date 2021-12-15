@@ -27,7 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.configuration.caption.Templates;
+import com.plotsquared.core.configuration.caption.Placeholders;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.permissions.Permission;
@@ -39,7 +39,7 @@ import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
@@ -72,35 +72,35 @@ public class Trust extends Command {
     ) throws CommandException {
         final Plot currentPlot = player.getCurrentPlot();
         if (currentPlot == null) {
-            throw new CommandException(TranslatableCaption.of("errors.not_in_plot"));
+            throw new CommandException(TranslatableCaption.miniMessage("errors.not_in_plot"));
         }
-        checkTrue(currentPlot.hasOwner(), TranslatableCaption.of("info.plot_unowned"));
+        checkTrue(currentPlot.hasOwner(), TranslatableCaption.miniMessage("info.plot_unowned"));
         checkTrue(
                 currentPlot.isOwner(player.getUUID()) || Permissions
                         .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST),
-                TranslatableCaption.of("permission.no_plot_perms")
+                TranslatableCaption.miniMessage("permission.no_plot_perms")
         );
 
-        checkTrue(args.length == 1, TranslatableCaption.of("commandconfig.command_syntax"),
-                Templates.of("value", getUsage())
+        checkTrue(args.length == 1, TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                Placeholders.miniMessage("value", getUsage())
         );
 
         final CompletableFuture<Boolean> future = new CompletableFuture<>();
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             if (throwable != null) {
                 if (throwable instanceof TimeoutException) {
-                    player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
+                    player.sendMessage(TranslatableCaption.miniMessage("players.fetching_players_timeout"));
                 } else {
                     player.sendMessage(
-                            TranslatableCaption.of("errors.invalid_player"),
-                            Template.of("value", args[0])
+                            TranslatableCaption.miniMessage("errors.invalid_player"),
+                            Placeholder.miniMessage("value", args[0])
                     );
                 }
                 future.completeExceptionally(throwable);
                 return;
             } else {
-                checkTrue(!uuids.isEmpty(), TranslatableCaption.of("errors.invalid_player"),
-                        Templates.of("value", args[0])
+                checkTrue(!uuids.isEmpty(), TranslatableCaption.miniMessage("errors.invalid_player"),
+                        Placeholders.miniMessage("value", args[0])
                 );
 
                 Iterator<UUID> iterator = uuids.iterator();
@@ -111,24 +111,24 @@ public class Trust extends Command {
                             Permissions.hasPermission(player, Permission.PERMISSION_TRUST_EVERYONE) || Permissions
                                     .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST))) {
                         player.sendMessage(
-                                TranslatableCaption.of("errors.invalid_player"),
-                                Template.of("value", PlayerManager.getName(uuid))
+                                TranslatableCaption.miniMessage("errors.invalid_player"),
+                                Placeholder.miniMessage("value", PlayerManager.getName(uuid))
                         );
                         iterator.remove();
                         continue;
                     }
                     if (currentPlot.isOwner(uuid)) {
                         player.sendMessage(
-                                TranslatableCaption.of("member.already_added"),
-                                Template.of("value", PlayerManager.getName(uuid))
+                                TranslatableCaption.miniMessage("member.already_added"),
+                                Placeholder.miniMessage("value", PlayerManager.getName(uuid))
                         );
                         iterator.remove();
                         continue;
                     }
                     if (currentPlot.getTrusted().contains(uuid)) {
                         player.sendMessage(
-                                TranslatableCaption.of("member.already_added"),
-                                Template.of("value", PlayerManager.getName(uuid))
+                                TranslatableCaption.miniMessage("member.already_added"),
+                                Placeholder.miniMessage("value", PlayerManager.getName(uuid))
                         );
                         iterator.remove();
                         continue;
@@ -140,8 +140,8 @@ public class Trust extends Command {
                 int maxTrustSize = Permissions.hasPermissionRange(player, Permission.PERMISSION_TRUST, Settings.Limit.MAX_PLOTS);
                 if (localTrustSize >= maxTrustSize) {
                     player.sendMessage(
-                            TranslatableCaption.of("members.plot_max_members_trusted"),
-                            Template.of("amount", String.valueOf(localTrustSize))
+                            TranslatableCaption.miniMessage("members.plot_max_members_trusted"),
+                            Placeholder.miniMessage("amount", String.valueOf(localTrustSize))
                     );
                     return;
                 }
@@ -157,7 +157,7 @@ public class Trust extends Command {
                         }
                         currentPlot.addTrusted(uuid);
                         this.eventDispatcher.callTrusted(player, currentPlot, uuid, true);
-                        player.sendMessage(TranslatableCaption.of("trusted.trusted_added"));
+                        player.sendMessage(TranslatableCaption.miniMessage("trusted.trusted_added"));
                     }
                 }, null);
             }

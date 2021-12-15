@@ -36,7 +36,7 @@ public abstract class LongFlag<F extends NumberFlag<Long, F>> extends NumberFlag
             @NonNull Long value, Long minimum, Long maximum,
             @NonNull Caption flagDescription
     ) {
-        super(value, minimum, maximum, TranslatableCaption.of("flags.flag_category_integers"), flagDescription);
+        super(value, minimum, maximum, TranslatableCaption.miniMessage("flags.flag_category_integers"), flagDescription);
     }
 
     protected LongFlag(@NonNull Long value, @NonNull Caption flagDescription) {
@@ -67,7 +67,7 @@ public abstract class LongFlag<F extends NumberFlag<Long, F>> extends NumberFlag
             throw new FlagParseException(
                     this,
                     input,
-                    TranslatableCaption.of("flags.flag_error_long")
+                    TranslatableCaption.miniMessage("flags.flag_error_long")
             );
         }
     }

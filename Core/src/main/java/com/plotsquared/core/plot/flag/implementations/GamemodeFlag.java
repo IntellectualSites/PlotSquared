@@ -58,8 +58,8 @@ public class GamemodeFlag extends PlotFlag<GameMode, GamemodeFlag> {
     protected GamemodeFlag(@NonNull GameMode value) {
         super(
                 value,
-                TranslatableCaption.of("flags.flag_category_gamemode"),
-                TranslatableCaption.of("flags.flag_description_gamemode")
+                TranslatableCaption.miniMessage("flags.flag_category_gamemode"),
+                TranslatableCaption.miniMessage("flags.flag_description_gamemode")
         );
     }
 

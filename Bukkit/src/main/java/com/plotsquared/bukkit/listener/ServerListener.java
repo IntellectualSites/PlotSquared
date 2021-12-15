@@ -50,7 +50,7 @@ public class ServerListener implements Listener {
     public void onServerLoad(ServerLoadEvent event) {
         if (Bukkit.getPluginManager().getPlugin("MVdWPlaceholderAPI") != null && Settings.Enabled_Components.USE_MVDWAPI) {
             new MVdWPlaceholders(this.plugin, this.plugin.placeholderRegistry());
-            ConsolePlayer.getConsole().sendMessage(TranslatableCaption.of("placeholder.hooked"));
+            ConsolePlayer.getConsole().sendMessage(TranslatableCaption.miniMessage("placeholder.hooked"));
         }
     }
 

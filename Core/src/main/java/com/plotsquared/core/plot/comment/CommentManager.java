@@ -37,7 +37,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -76,9 +76,9 @@ public class CommentManager {
                         if ((size.decrementAndGet() == 0) && (total > 0)) {
                             player.sendTitle(
                                     StaticCaption.of(""),
-                                    TranslatableCaption.of("comment.inbox_notification"),
-                                    Template.of("amount", Integer.toString(total)),
-                                    Template.of("command", "/plot inbox")
+                                    TranslatableCaption.miniMessage("comment.inbox_notification"),
+                                    Placeholder.miniMessage("amount", Integer.toString(total)),
+                                    Placeholder.miniMessage("command", "/plot inbox")
                             );
                         }
                     }

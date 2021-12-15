@@ -42,7 +42,7 @@ public class KeepFlag extends PlotFlag<Object, KeepFlag> {
      * @param value Flag value
      */
     protected KeepFlag(@NonNull Object value) {
-        super(value, TranslatableCaption.of("flags.flag_category_mixed"), TranslatableCaption.of("flags.flag_description_keep"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_category_mixed"), TranslatableCaption.miniMessage("flags.flag_description_keep"));
     }
 
     @Override
@@ -50,7 +50,7 @@ public class KeepFlag extends PlotFlag<Object, KeepFlag> {
         if (MathMan.isInteger(input)) {
             final long value = Long.parseLong(input);
             if (value < 0) {
-                throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_keep"));
+                throw new FlagParseException(this, input, TranslatableCaption.miniMessage("flags.flag_error_keep"));
             } else {
                 return flagOf(value);
             }

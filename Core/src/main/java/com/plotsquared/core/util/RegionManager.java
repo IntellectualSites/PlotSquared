@@ -214,7 +214,7 @@ public abstract class RegionManager {
                             actor,
                             Settings.QUEUE.NOTIFY_INTERVAL,
                             Settings.QUEUE.NOTIFY_WAIT,
-                            TranslatableCaption.of("swap.progress_region_copy")
+                            TranslatableCaption.miniMessage("swap.progress_region_copy")
                     ));
         }
         copyFrom
@@ -229,7 +229,7 @@ public abstract class RegionManager {
                             actor,
                             Settings.QUEUE.NOTIFY_INTERVAL,
                             Settings.QUEUE.NOTIFY_WAIT,
-                            TranslatableCaption.of("swap.progress_region_paste")
+                            TranslatableCaption.miniMessage("swap.progress_region_paste")
                     ));
         }
         return copyFrom.enqueue();
@@ -295,7 +295,7 @@ public abstract class RegionManager {
                     actor,
                     Settings.QUEUE.NOTIFY_INTERVAL,
                     Settings.QUEUE.NOTIFY_WAIT,
-                    TranslatableCaption.of("swap.progress_region2_paste")
+                    TranslatableCaption.miniMessage("swap.progress_region2_paste")
             ));
         }
 
@@ -305,7 +305,7 @@ public abstract class RegionManager {
                     actor,
                     Settings.QUEUE.NOTIFY_INTERVAL,
                     Settings.QUEUE.NOTIFY_WAIT,
-                    TranslatableCaption.of("swap.progress_region1_paste")
+                    TranslatableCaption.miniMessage("swap.progress_region1_paste")
             ));
         }
 
@@ -316,7 +316,7 @@ public abstract class RegionManager {
                             actor,
                             Settings.QUEUE.NOTIFY_INTERVAL,
                             Settings.QUEUE.NOTIFY_WAIT,
-                            TranslatableCaption.of("swap.progress_region2_copy")
+                            TranslatableCaption.miniMessage("swap.progress_region2_copy")
                     ));
         }
 
@@ -327,7 +327,7 @@ public abstract class RegionManager {
                             actor,
                             Settings.QUEUE.NOTIFY_INTERVAL,
                             Settings.QUEUE.NOTIFY_WAIT,
-                            TranslatableCaption.of("swap.progress_region1_copy")
+                            TranslatableCaption.miniMessage("swap.progress_region1_copy")
                     ));
         }
         fromQueue1.enqueue();

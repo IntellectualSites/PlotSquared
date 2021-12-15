@@ -30,7 +30,7 @@ import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 @CommandDeclaration(command = "sethome",
         permission = "plots.set.home",
@@ -43,14 +43,14 @@ public class SetHome extends SetCommand {
     @Override
     public boolean set(PlotPlayer<?> player, Plot plot, String value) {
         if (!plot.hasOwner()) {
-            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
+            player.sendMessage(TranslatableCaption.miniMessage("info.plot_unowned"));
             return false;
         }
         switch (value.toLowerCase()) {
             case "unset", "reset", "remove", "none" -> {
                 Plot base = plot.getBasePlot(false);
                 base.setHome(null);
-                player.sendMessage(TranslatableCaption.of("position.position_unset"));
+                player.sendMessage(TranslatableCaption.miniMessage("position.position_unset"));
                 return true;
             }
             case "" -> {
@@ -61,13 +61,13 @@ public class SetHome extends SetCommand {
                         location.getZ() - bottom.getZ(), location.getYaw(), location.getPitch()
                 );
                 base.setHome(rel);
-                player.sendMessage(TranslatableCaption.of("position.position_set"));
+                player.sendMessage(TranslatableCaption.miniMessage("position.position_set"));
                 return true;
             }
             default -> {
                 player.sendMessage(
-                        TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.of("value", "Use /plot set home [none]")
+                        TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                        Placeholder.miniMessage("value", "Use /plot set home [none]")
                 );
                 return false;
             }

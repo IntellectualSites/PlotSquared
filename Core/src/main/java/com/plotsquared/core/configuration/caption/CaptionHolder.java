@@ -25,12 +25,12 @@
  */
 package com.plotsquared.core.configuration.caption;
 
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 public class CaptionHolder {
 
     private Caption caption = StaticCaption.of("");
-    private Template[] templates = new Template[0];
+    private Placeholder<?>[] placeholders = new Placeholder[0];
 
     public void set(Caption caption) {
         this.caption = caption;
@@ -40,12 +40,12 @@ public class CaptionHolder {
         return this.caption;
     }
 
-    public Template[] getTemplates() {
-        return this.templates;
+    public Placeholder<?>[] getPlaceholders() {
+        return this.placeholders;
     }
 
-    public void setTemplates(Template... templates) {
-        this.templates = templates;
+    public void setPlaceholders(Placeholder<?>... placeholders) {
+        this.placeholders = placeholders;
     }
 
 }

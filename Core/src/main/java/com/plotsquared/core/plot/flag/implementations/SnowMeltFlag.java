@@ -35,7 +35,7 @@ public class SnowMeltFlag extends BooleanFlag<SnowMeltFlag> {
     public static final SnowMeltFlag SNOW_MELT_FALSE = new SnowMeltFlag(false);
 
     private SnowMeltFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_snow_melt"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_snow_melt"));
     }
 
     @Override

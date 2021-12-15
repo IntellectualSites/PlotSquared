@@ -34,7 +34,7 @@ public class AnimalCapFlag extends NonNegativeIntegerFlag<AnimalCapFlag> {
     public static final AnimalCapFlag ANIMAL_CAP_UNLIMITED = new AnimalCapFlag(Integer.MAX_VALUE);
 
     protected AnimalCapFlag(int value) {
-        super(value, TranslatableCaption.of("flags.flag_description_animal_cap"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_animal_cap"));
     }
 
     @Override

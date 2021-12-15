@@ -37,7 +37,7 @@ import com.plotsquared.core.queue.ChunkCoordinator;
 import com.plotsquared.core.util.task.PlotSquaredTask;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nullable;
@@ -80,7 +80,7 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
         this.actor = actor;
         this.interval = TaskTime.ms(Settings.QUEUE.NOTIFY_INTERVAL);
         this.wait = TaskTime.ms(Settings.QUEUE.NOTIFY_WAIT);
-        this.caption = TranslatableCaption.of("working.progress");
+        this.caption = TranslatableCaption.miniMessage("working.progress");
     }
 
     @AssistedInject
@@ -98,7 +98,7 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
         this.interval = TaskTime.ms(interval);
         this.wait = TaskTime.ms(wait);
         if (caption == null) {
-            this.caption = TranslatableCaption.of("working.progress");
+            this.caption = TranslatableCaption.miniMessage("working.progress");
         } else {
             this.caption = caption;
         }
@@ -120,7 +120,7 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
                         }
                         actor.sendMessage(
                                 caption,
-                                Template.of("progress", String.format("%.2f", this.progress.doubleValue() * 100))
+                                Placeholder.miniMessage("progress", String.format("%.2f", this.progress.doubleValue() * 100))
                         );
                     }, interval), wait);
         }

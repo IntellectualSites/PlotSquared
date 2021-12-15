@@ -36,7 +36,7 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
@@ -65,28 +65,28 @@ public class Remove extends SubCommand {
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
         if (plot == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return false;
         }
         if (!plot.hasOwner()) {
-            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
+            player.sendMessage(TranslatableCaption.miniMessage("info.plot_unowned"));
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_REMOVE)) {
-            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
+            player.sendMessage(TranslatableCaption.miniMessage("permission.no_plot_perms"));
             return true;
         }
 
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             int count = 0;
             if (throwable instanceof TimeoutException) {
-                player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
+                player.sendMessage(TranslatableCaption.miniMessage("players.fetching_players_timeout"));
                 return;
             } else if (throwable != null) {
                 player.sendMessage(
-                        TranslatableCaption.of("errors.invalid_player"),
-                        Template.of("value", args[0])
+                        TranslatableCaption.miniMessage("errors.invalid_player"),
+                        Placeholder.miniMessage("value", args[0])
                 );
                 return;
             } else if (!uuids.isEmpty()) {
@@ -122,13 +122,13 @@ public class Remove extends SubCommand {
             }
             if (count == 0) {
                 player.sendMessage(
-                        TranslatableCaption.of("errors.invalid_player"),
-                        Template.of("value", args[0])
+                        TranslatableCaption.miniMessage("errors.invalid_player"),
+                        Placeholder.miniMessage("value", args[0])
                 );
             } else {
                 player.sendMessage(
-                        TranslatableCaption.of("member.removed_players"),
-                        Template.of("amount", count + "")
+                        TranslatableCaption.miniMessage("member.removed_players"),
+                        Placeholder.miniMessage("amount", count + "")
                 );
             }
         });

@@ -36,7 +36,7 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -64,12 +64,12 @@ public class Move extends SubCommand {
         Location location = player.getLocation();
         Plot plot1 = location.getPlotAbs();
         if (plot1 == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return CompletableFuture.completedFuture(false);
         }
         if (!plot1.isOwner(player.getUUID()) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN)) {
-            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
+            player.sendMessage(TranslatableCaption.miniMessage("permission.no_plot_perms"));
             return CompletableFuture.completedFuture(false);
         }
         boolean override = false;
@@ -92,16 +92,16 @@ public class Move extends SubCommand {
             plot2 = area.getPlotAbs(plot1.getId());
         }
         if (plot1.equals(plot2)) {
-            player.sendMessage(TranslatableCaption.of("invalid.origin_cant_be_target"));
+            player.sendMessage(TranslatableCaption.miniMessage("invalid.origin_cant_be_target"));
             return CompletableFuture.completedFuture(false);
         }
         if (!plot1.getArea().isCompatible(plot2.getArea()) && (!override || !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN))) {
-            player.sendMessage(TranslatableCaption.of("errors.plotworld_incompatible"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.plotworld_incompatible"));
             return CompletableFuture.completedFuture(false);
         }
         if (plot1.isMerged() || plot2.isMerged()) {
-            player.sendMessage(TranslatableCaption.of("move.move_merged"));
+            player.sendMessage(TranslatableCaption.miniMessage("move.move_merged"));
             return CompletableFuture.completedFuture(false);
         }
 
@@ -109,13 +109,13 @@ public class Move extends SubCommand {
         }, false).thenApply(result -> {
             if (result) {
                 player.sendMessage(
-                        TranslatableCaption.of("move.move_success"),
-                        Template.of("origin", plot1.toString()),
-                        Template.of("target", plot2.toString())
+                        TranslatableCaption.miniMessage("move.move_success"),
+                        Placeholder.miniMessage("origin", plot1.toString()),
+                        Placeholder.miniMessage("target", plot2.toString())
                 );
                 return true;
             } else {
-                player.sendMessage(TranslatableCaption.of("move.requires_unowned"));
+                player.sendMessage(TranslatableCaption.miniMessage("move.requires_unowned"));
                 return false;
             }
         });

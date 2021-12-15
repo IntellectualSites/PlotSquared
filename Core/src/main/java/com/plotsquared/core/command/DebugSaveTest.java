@@ -43,10 +43,10 @@ public class DebugSaveTest extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         final List<Plot> plots = PlotQuery.newQuery().allPlots().asList();
-        player.sendMessage(TranslatableCaption.of("debugsavetest.starting"));
+        player.sendMessage(TranslatableCaption.miniMessage("debugsavetest.starting"));
         DBFunc.createPlotsAndData(
                 plots,
-                () -> player.sendMessage(TranslatableCaption.of("debugsavetest.done"))
+                () -> player.sendMessage(TranslatableCaption.miniMessage("debugsavetest.done"))
         );
         return true;
     }

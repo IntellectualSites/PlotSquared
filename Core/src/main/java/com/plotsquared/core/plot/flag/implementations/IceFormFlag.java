@@ -35,7 +35,7 @@ public class IceFormFlag extends BooleanFlag<IceFormFlag> {
     public static final IceFormFlag ICE_FORM_FALSE = new IceFormFlag(false);
 
     private IceFormFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_ice_form"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_ice_form"));
     }
 
     @Override

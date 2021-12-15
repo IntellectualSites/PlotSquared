@@ -35,7 +35,7 @@ public class MiscBreakFlag extends BooleanFlag<MiscBreakFlag> {
     public static final MiscBreakFlag MISC_BREAK_FALSE = new MiscBreakFlag(false);
 
     private MiscBreakFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_misc_break"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_misc_break"));
     }
 
     @Override

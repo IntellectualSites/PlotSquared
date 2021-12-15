@@ -31,7 +31,7 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.plot.BlockBucket;
 import com.sk89q.worldedit.world.block.BlockState;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -118,9 +118,9 @@ public final class LegacyConverter {
         final BlockBucket bucket = this.blockToBucket(block);
         this.setString(section, key, bucket);
         ConsolePlayer.getConsole().sendMessage(
-                TranslatableCaption.of("legacyconfig.legacy_config_replaced"),
-                Template.of("value1", block),
-                Template.of("value2", bucket.toString())
+                TranslatableCaption.miniMessage("legacyconfig.legacy_config_replaced"),
+                Placeholder.miniMessage("value1", block),
+                Placeholder.miniMessage("value2", bucket.toString())
         );
     }
 
@@ -134,9 +134,9 @@ public final class LegacyConverter {
         this.setString(section, key, bucket);
         ConsolePlayer.getConsole()
                 .sendMessage(
-                        TranslatableCaption.of("legacyconfig.legacy_config_replaced"),
-                        Template.of("value1", plotBlockArrayString(blocks)),
-                        Template.of("value2", bucket.toString())
+                        TranslatableCaption.miniMessage("legacyconfig.legacy_config_replaced"),
+                        Placeholder.miniMessage("value1", plotBlockArrayString(blocks)),
+                        Placeholder.miniMessage("value2", bucket.toString())
                 );
     }
 

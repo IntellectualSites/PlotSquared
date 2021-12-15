@@ -38,42 +38,42 @@ public enum CommandCategory implements Caption {
      * Claiming CommandConfig.
      * Such as: /plot claim
      */
-    CLAIMING(TranslatableCaption.of("category.command_category_claiming")),
+    CLAIMING(TranslatableCaption.miniMessage("category.command_category_claiming")),
     /**
      * Teleportation CommandConfig.
      * Such as: /plot visit
      */
-    TELEPORT(TranslatableCaption.of("category.command_category_teleport")),
+    TELEPORT(TranslatableCaption.miniMessage("category.command_category_teleport")),
     /**
      * Protection.
      */
-    SETTINGS(TranslatableCaption.of("category.command_category_settings")),
+    SETTINGS(TranslatableCaption.miniMessage("category.command_category_settings")),
     /**
      * Chat.
      */
-    CHAT(TranslatableCaption.of("category.command_category_chat")),
+    CHAT(TranslatableCaption.miniMessage("category.command_category_chat")),
     /**
      * Web.
      */
-    SCHEMATIC(TranslatableCaption.of("category.command_category_schematic")),
+    SCHEMATIC(TranslatableCaption.miniMessage("category.command_category_schematic")),
     /**
      * Cosmetic.
      */
-    APPEARANCE(TranslatableCaption.of("category.command_category_appearance")),
+    APPEARANCE(TranslatableCaption.miniMessage("category.command_category_appearance")),
     /**
      * Information CommandConfig.
      * Such as: /plot info
      */
-    INFO(TranslatableCaption.of("category.command_category_info")),
+    INFO(TranslatableCaption.miniMessage("category.command_category_info")),
     /**
      * Debug CommandConfig.
      * Such as: /plot debug
      */
-    DEBUG(TranslatableCaption.of("category.command_category_debug")),
+    DEBUG(TranslatableCaption.miniMessage("category.command_category_debug")),
     /**
      * Administration commands.
      */
-    ADMINISTRATION(TranslatableCaption.of("category.command_category_administration"));
+    ADMINISTRATION(TranslatableCaption.miniMessage("category.command_category_administration"));
     /**
      * The category name (Readable).
      */

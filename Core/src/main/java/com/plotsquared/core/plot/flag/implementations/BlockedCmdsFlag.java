@@ -40,8 +40,8 @@ public class BlockedCmdsFlag extends ListFlag<String, BlockedCmdsFlag> {
             new BlockedCmdsFlag(Collections.emptyList());
 
     protected BlockedCmdsFlag(List<String> valueList) {
-        super(valueList, TranslatableCaption.of("flags.flag_category_string_list"),
-                TranslatableCaption.of("flags.flag_description_blocked_cmds")
+        super(valueList, TranslatableCaption.miniMessage("flags.flag_category_string_list"),
+                TranslatableCaption.miniMessage("flags.flag_description_blocked_cmds")
         );
     }
 

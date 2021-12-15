@@ -35,7 +35,7 @@ public class ForcefieldFlag extends BooleanFlag<ForcefieldFlag> {
     public static final ForcefieldFlag FORCEFIELD_FALSE = new ForcefieldFlag(false);
 
     private ForcefieldFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_forcefield"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_forcefield"));
     }
 
     @Override

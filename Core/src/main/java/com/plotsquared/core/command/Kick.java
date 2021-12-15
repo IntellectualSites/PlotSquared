@@ -38,7 +38,7 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
@@ -74,22 +74,22 @@ public class Kick extends SubCommand {
         Location location = player.getLocation();
         Plot plot = location.getPlot();
         if (plot == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return false;
         }
         if ((!plot.hasOwner() || !plot.isOwner(player.getUUID())) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_KICK)) {
-            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
+            player.sendMessage(TranslatableCaption.miniMessage("permission.no_plot_perms"));
             return false;
         }
 
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             if (throwable instanceof TimeoutException) {
-                player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
+                player.sendMessage(TranslatableCaption.miniMessage("players.fetching_players_timeout"));
             } else if (throwable != null || uuids.isEmpty()) {
                 player.sendMessage(
-                        TranslatableCaption.of("errors.invalid_player"),
-                        Template.of("value", args[0])
+                        TranslatableCaption.miniMessage("errors.invalid_player"),
+                        Placeholder.miniMessage("value", args[0])
                 );
             } else {
                 Set<PlotPlayer<?>> players = new HashSet<>();
@@ -112,28 +112,28 @@ public class Kick extends SubCommand {
                 players.remove(player); // Don't ever kick the calling player
                 if (players.isEmpty()) {
                     player.sendMessage(
-                            TranslatableCaption.of("errors.invalid_player"),
-                            Template.of("value", args[0])
+                            TranslatableCaption.miniMessage("errors.invalid_player"),
+                            Placeholder.miniMessage("value", args[0])
                     );
                     return;
                 }
                 for (PlotPlayer<?> player2 : players) {
                     if (!plot.equals(player2.getCurrentPlot())) {
                         player.sendMessage(
-                                TranslatableCaption.of("errors.invalid_player"),
-                                Template.of("value", args[0])
+                                TranslatableCaption.miniMessage("errors.invalid_player"),
+                                Placeholder.miniMessage("value", args[0])
                         );
                         return;
                     }
                     if (Permissions.hasPermission(player2, Permission.PERMISSION_ADMIN_ENTRY_DENIED)) {
                         player.sendMessage(
-                                TranslatableCaption.of("cluster.cannot_kick_player"),
-                                Template.of("name", player2.getName())
+                                TranslatableCaption.miniMessage("cluster.cannot_kick_player"),
+                                Placeholder.miniMessage("name", player2.getName())
                         );
                         return;
                     }
                     Location spawn = this.worldUtil.getSpawn(location.getWorldName());
-                    player2.sendMessage(TranslatableCaption.of("kick.you_got_kicked"));
+                    player2.sendMessage(TranslatableCaption.miniMessage("kick.you_got_kicked"));
                     if (plot.equals(spawn.getPlot())) {
                         Location newSpawn = this.worldUtil.getSpawn(this.plotAreaManager.getAllWorlds()[0]);
                         if (plot.equals(newSpawn.getPlot())) {

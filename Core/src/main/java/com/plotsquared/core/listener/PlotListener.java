@@ -73,7 +73,7 @@ import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.HashMap;
@@ -145,8 +145,8 @@ public class PlotListener {
         if (plot.isDenied(player.getUUID()) && !Permissions
                 .hasPermission(player, "plots.admin.entry.denied")) {
             player.sendMessage(
-                    TranslatableCaption.of("deny.no_enter"),
-                    Template.of("plot", plot.toString())
+                    TranslatableCaption.miniMessage("deny.no_enter"),
+                    Placeholder.miniMessage("plot", plot.toString())
             );
             return false;
         }
@@ -175,19 +175,19 @@ public class PlotListener {
             if (!greeting.isEmpty()) {
                 if (!Settings.Chat.NOTIFICATION_AS_ACTIONBAR) {
                     player.sendMessage(
-                            TranslatableCaption.of("flags.greeting_flag_format"),
-                            Template.of("world", plot.getWorldName()),
-                            Template.of("plot_id", plot.getId().toString()),
-                            Template.of("alias", plot.getAlias()),
-                            Template.of("greeting", greeting)
+                            TranslatableCaption.miniMessage("flags.greeting_flag_format"),
+                            Placeholder.miniMessage("world", plot.getWorldName()),
+                            Placeholder.miniMessage("plot_id", plot.getId().toString()),
+                            Placeholder.miniMessage("alias", plot.getAlias()),
+                            Placeholder.miniMessage("greeting", greeting)
                     );
                 } else {
                     player.sendActionBar(
-                            TranslatableCaption.of("flags.greeting_flag_format"),
-                            Template.of("world", plot.getWorldName()),
-                            Template.of("plot_id", plot.getId().toString()),
-                            Template.of("alias", plot.getAlias()),
-                            Template.of("greeting", greeting)
+                            TranslatableCaption.miniMessage("flags.greeting_flag_format"),
+                            Placeholder.miniMessage("world", plot.getWorldName()),
+                            Placeholder.miniMessage("plot_id", plot.getId().toString()),
+                            Placeholder.miniMessage("alias", plot.getAlias()),
+                            Placeholder.miniMessage("greeting", greeting)
                     );
                 }
             }
@@ -197,9 +197,9 @@ public class PlotListener {
                     for (UUID uuid : plot.getOwners()) {
                         final PlotPlayer<?> owner = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                         if (owner != null && !owner.getUUID().equals(player.getUUID()) && owner.canSee(player)) {
-                            Caption caption = TranslatableCaption.of("notification.notify_enter");
-                            Template playerTemplate = Template.of("player", player.getName());
-                            Template plotTemplate = Template.of("plot", plot.getId().toString());
+                            Caption caption = TranslatableCaption.miniMessage("notification.notify_enter");
+                            Placeholder<?> playerTemplate = Placeholder.miniMessage("player", player.getName());
+                            Placeholder<?> plotTemplate = Placeholder.miniMessage("plot", plot.getId().toString());
                             if (!Settings.Chat.NOTIFICATION_AS_ACTIONBAR) {
                                 owner.sendMessage(caption, playerTemplate, plotTemplate);
                             } else {
@@ -231,9 +231,9 @@ public class PlotListener {
                         player.setGameMode(gameMode);
                     } else {
                         player.sendMessage(
-                                TranslatableCaption.of("gamemode.gamemode_was_bypassed"),
-                                Template.of("gamemode", String.valueOf(gameMode)),
-                                Template.of("plot", plot.getId().toString())
+                                TranslatableCaption.miniMessage("gamemode.gamemode_was_bypassed"),
+                                Placeholder.miniMessage("gamemode", String.valueOf(gameMode)),
+                                Placeholder.miniMessage("plot", plot.getId().toString())
                         );
                     }
                 }
@@ -246,9 +246,9 @@ public class PlotListener {
                         player.setGameMode(guestGameMode);
                     } else {
                         player.sendMessage(
-                                TranslatableCaption.of("gamemode.gamemode_was_bypassed"),
-                                Template.of("gamemode", String.valueOf(guestGameMode)),
-                                Template.of("plot", plot.getId().toString())
+                                TranslatableCaption.miniMessage("gamemode.gamemode_was_bypassed"),
+                                Placeholder.miniMessage("gamemode", String.valueOf(guestGameMode)),
+                                Placeholder.miniMessage("plot", plot.getId().toString())
                         );
                     }
                 }
@@ -328,14 +328,14 @@ public class PlotListener {
                         if ((lastPlot != null) && plot.getId().equals(lastPlot.getId()) && plot.hasOwner()) {
                             final UUID plotOwner = plot.getOwnerAbs();
                             String owner = PlayerManager.getName(plotOwner, false);
-                            Caption header = fromFlag ? StaticCaption.of(title) : TranslatableCaption.of("titles" +
+                            Caption header = fromFlag ? StaticCaption.of(title) : TranslatableCaption.miniMessage("titles" +
                                     ".title_entered_plot");
-                            Caption subHeader = fromFlag ? StaticCaption.of(subtitle) : TranslatableCaption.of("titles" +
+                            Caption subHeader = fromFlag ? StaticCaption.of(subtitle) : TranslatableCaption.miniMessage("titles" +
                                     ".title_entered_plot_sub");
-                            Template plotTemplate = Template.of("plot", lastPlot.getId().toString());
-                            Template worldTemplate = Template.of("world", player.getLocation().getWorldName());
-                            Template ownerTemplate = Template.of("owner", owner);
-                            Template aliasTemplate = Template.of("alias", plot.getAlias());
+                            Placeholder<?> plotTemplate = Placeholder.miniMessage("plot", lastPlot.getId().toString());
+                            Placeholder<?> worldTemplate = Placeholder.miniMessage("world", player.getLocation().getWorldName());
+                            Placeholder<?> ownerTemplate = Placeholder.miniMessage("owner", owner);
+                            Placeholder<?> aliasTemplate = Placeholder.miniMessage("alias", plot.getAlias());
 
                             final Consumer<String> userConsumer = user -> {
                                 if (Settings.Titles.TITLES_AS_ACTIONBAR) {
@@ -408,9 +408,9 @@ public class PlotListener {
                             player.setGameMode(pw.getGameMode());
                         } else {
                             player.sendMessage(
-                                    TranslatableCaption.of("gamemode.gamemode_was_bypassed"),
-                                    Template.of("gamemode", pw.getGameMode().getName().toLowerCase()),
-                                    Template.of("plot", plot.toString())
+                                    TranslatableCaption.miniMessage("gamemode.gamemode_was_bypassed"),
+                                    Placeholder.miniMessage("gamemode", pw.getGameMode().getName().toLowerCase()),
+                                    Placeholder.miniMessage("plot", plot.toString())
                             );
                         }
                     }
@@ -420,19 +420,19 @@ public class PlotListener {
                 if (!farewell.isEmpty()) {
                     if (!Settings.Chat.NOTIFICATION_AS_ACTIONBAR) {
                         player.sendMessage(
-                                TranslatableCaption.of("flags.farewell_flag_format"),
-                                Template.of("world", plot.getWorldName()),
-                                Template.of("plot_id", plot.getId().toString()),
-                                Template.of("alias", plot.getAlias()),
-                                Template.of("farewell", farewell)
+                                TranslatableCaption.miniMessage("flags.farewell_flag_format"),
+                                Placeholder.miniMessage("world", plot.getWorldName()),
+                                Placeholder.miniMessage("plot_id", plot.getId().toString()),
+                                Placeholder.miniMessage("alias", plot.getAlias()),
+                                Placeholder.miniMessage("farewell", farewell)
                         );
                     } else {
                         player.sendActionBar(
-                                TranslatableCaption.of("flags.farewell_flag_format"),
-                                Template.of("world", plot.getWorldName()),
-                                Template.of("plot_id", plot.getId().toString()),
-                                Template.of("alias", plot.getAlias()),
-                                Template.of("farewell", farewell)
+                                TranslatableCaption.miniMessage("flags.farewell_flag_format"),
+                                Placeholder.miniMessage("world", plot.getWorldName()),
+                                Placeholder.miniMessage("plot_id", plot.getId().toString()),
+                                Placeholder.miniMessage("alias", plot.getAlias()),
+                                Placeholder.miniMessage("farewell", farewell)
                         );
                     }
                 }
@@ -442,9 +442,9 @@ public class PlotListener {
                         for (UUID uuid : plot.getOwners()) {
                             final PlotPlayer<?> owner = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                             if ((owner != null) && !owner.getUUID().equals(player.getUUID()) && owner.canSee(player)) {
-                                Caption caption = TranslatableCaption.of("notification.notify_leave");
-                                Template playerTemplate = Template.of("player", player.getName());
-                                Template plotTemplate = Template.of("plot", plot.getId().toString());
+                                Caption caption = TranslatableCaption.miniMessage("notification.notify_leave");
+                                Placeholder<?> playerTemplate = Placeholder.miniMessage("player", player.getName());
+                                Placeholder<?> plotTemplate = Placeholder.miniMessage("plot", plot.getId().toString());
                                 if (!Settings.Chat.NOTIFICATION_AS_ACTIONBAR) {
                                     owner.sendMessage(caption, playerTemplate, plotTemplate);
                                 } else {

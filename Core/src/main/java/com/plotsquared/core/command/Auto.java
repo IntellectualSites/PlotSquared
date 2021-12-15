@@ -51,7 +51,7 @@ import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.AutoClaimFinishTask;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -116,14 +116,14 @@ public class Auto extends SubCommand {
                     int grantedPlots = metaDataAccess.get().orElse(0);
                     if (diff < 0 && grantedPlots < sizeX * sizeZ) {
                         player.sendMessage(
-                                TranslatableCaption.of("permission.cant_claim_more_plots"),
-                                Template.of("amount", String.valueOf(diff + grantedPlots))
+                                TranslatableCaption.miniMessage("permission.cant_claim_more_plots"),
+                                Placeholder.miniMessage("amount", String.valueOf(diff + grantedPlots))
                         );
                         return false;
                     } else if (diff >= 0 && grantedPlots + diff < sizeX * sizeZ) {
                         player.sendMessage(
-                                TranslatableCaption.of("permission.cant_claim_more_plots"),
-                                Template.of("amount", String.valueOf(diff + grantedPlots))
+                                TranslatableCaption.miniMessage("permission.cant_claim_more_plots"),
+                                Placeholder.miniMessage("amount", String.valueOf(diff + grantedPlots))
                         );
                         return false;
                     } else {
@@ -134,15 +134,15 @@ public class Auto extends SubCommand {
                             metaDataAccess.set(left);
                         }
                         player.sendMessage(
-                                TranslatableCaption.of("economy.removed_granted_plot"),
-                                Template.of("usedGrants", String.valueOf(grantedPlots - left)),
-                                Template.of("remainingGrants", String.valueOf(left))
+                                TranslatableCaption.miniMessage("economy.removed_granted_plot"),
+                                Placeholder.miniMessage("usedGrants", String.valueOf(grantedPlots - left)),
+                                Placeholder.miniMessage("remainingGrants", String.valueOf(left))
                         );
                     }
                 } else {
                     player.sendMessage(
-                            TranslatableCaption.of("permission.cant_claim_more_plots"),
-                            Template.of("amount", String.valueOf(player.getAllowedPlots())
+                            TranslatableCaption.miniMessage("permission.cant_claim_more_plots"),
+                            Placeholder.miniMessage("amount", String.valueOf(player.getAllowedPlots())
                             )
                     );
                     return false;
@@ -205,7 +205,7 @@ public class Auto extends SubCommand {
                 plotarea = this.plotAreaManager.getAllPlotAreas()[0];
             }
             if (plotarea == null) {
-                player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
+                player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot_world"));
                 return false;
             }
         }
@@ -221,13 +221,13 @@ public class Auto extends SubCommand {
                     sizeZ = Integer.parseInt(split[1]);
                 } else {
                     player.sendMessage(
-                            TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.of("value", getUsage())
+                            TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                            Placeholder.miniMessage("value", getUsage())
                     );
                     return true;
                 }
                 if (sizeX < 1 || sizeZ < 1) {
-                    player.sendMessage(TranslatableCaption.of("error.plot_size_negative"));
+                    player.sendMessage(TranslatableCaption.miniMessage("error.plot_size_negative"));
                     return true;
                 }
                 if (args.length > 1) {
@@ -244,8 +244,8 @@ public class Auto extends SubCommand {
                 .callAuto(player, plotarea, schematic, sizeX, sizeZ);
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
-                    TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Auto claim")
+                    TranslatableCaption.miniMessage("events.event_denied"),
+                    Placeholder.miniMessage("value", "Auto claim")
             );
             return true;
         }
@@ -255,14 +255,14 @@ public class Auto extends SubCommand {
         schematic = event.getSchematic();
         if (!force && mega && !Permissions.hasPermission(player, Permission.PERMISSION_AUTO_MEGA)) {
             player.sendMessage(
-                    TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_AUTO_MEGA))
+                    TranslatableCaption.miniMessage("permission.no_permission"),
+                    Placeholder.miniMessage("node", String.valueOf(Permission.PERMISSION_AUTO_MEGA))
             );
         }
         if (!force && sizeX * sizeZ > Settings.Claim.MAX_AUTO_AREA) {
             player.sendMessage(
-                    TranslatableCaption.of("permission.cant_claim_more_plots_num"),
-                    Template.of("amount", String.valueOf(Settings.Claim.MAX_AUTO_AREA))
+                    TranslatableCaption.miniMessage("permission.cant_claim_more_plots_num"),
+                    Placeholder.miniMessage("amount", String.valueOf(Settings.Claim.MAX_AUTO_AREA))
             );
             return false;
         }
@@ -279,9 +279,9 @@ public class Auto extends SubCommand {
         if (schematic != null && !schematic.isEmpty()) {
             if (!plotarea.hasSchematic(schematic)) {
                 player.sendMessage(
-                        TranslatableCaption.of("schematics.schematic_invalid_named"),
-                        Template.of("schemname", schematic),
-                        Template.of("reason", "non-existent")
+                        TranslatableCaption.miniMessage("schematics.schematic_invalid_named"),
+                        Placeholder.miniMessage("schemname", schematic),
+                        Placeholder.miniMessage("reason", "non-existent")
                 );
                 return true;
             }
@@ -291,8 +291,8 @@ public class Auto extends SubCommand {
             ) && !Permissions
                     .hasPermission(player, "plots.admin.command.schematic")) {
                 player.sendMessage(
-                        TranslatableCaption.of("permission.no_permission"),
-                        Template.of("node", "plots.claim.%s0")
+                        TranslatableCaption.miniMessage("permission.no_permission"),
+                        Placeholder.miniMessage("node", "plots.claim.%s0")
                 );
                 return true;
             }
@@ -305,21 +305,21 @@ public class Auto extends SubCommand {
             cost = (sizeX * sizeZ) * cost;
             if (cost > 0d) {
                 if (!this.econHandler.isSupported()) {
-                    player.sendMessage(TranslatableCaption.of("economy.vault_or_consumer_null"));
+                    player.sendMessage(TranslatableCaption.miniMessage("economy.vault_or_consumer_null"));
                     return false;
                 }
                 if (!force && this.econHandler.getMoney(player) < cost) {
                     player.sendMessage(
-                            TranslatableCaption.of("economy.cannot_afford_plot"),
-                            Template.of("money", this.econHandler.format(cost)),
-                            Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))
+                            TranslatableCaption.miniMessage("economy.cannot_afford_plot"),
+                            Placeholder.miniMessage("money", this.econHandler.format(cost)),
+                            Placeholder.miniMessage("balance", this.econHandler.format(this.econHandler.getMoney(player)))
                     );
                     return false;
                 }
                 this.econHandler.withdrawMoney(player, cost);
                 player.sendMessage(
-                        TranslatableCaption.of("economy.removed_balance"),
-                        Template.of("money", this.econHandler.format(cost))
+                        TranslatableCaption.miniMessage("economy.removed_balance"),
+                        Placeholder.miniMessage("money", this.econHandler.format(cost))
                 );
             }
         }
@@ -332,7 +332,7 @@ public class Auto extends SubCommand {
         plots = this.eventDispatcher.callAutoPlotsChosen(player, plots).getPlots();
 
         if (plots.isEmpty()) {
-            player.sendMessage(TranslatableCaption.of("errors.no_free_plots"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.no_free_plots"));
             return false;
         } else if (plots.size() == 1) {
             this.claimSingle(player, plots.get(0), plotarea, schematic);
@@ -352,8 +352,8 @@ public class Auto extends SubCommand {
             );
             if (!force && mergeEvent.getEventResult() == Result.DENY) {
                 player.sendMessage(
-                        TranslatableCaption.of("events.event_denied"),
-                        Template.of("value", "Auto merge")
+                        TranslatableCaption.miniMessage("events.event_denied"),
+                        Placeholder.miniMessage("value", "Auto merge")
                 );
                 return false;
             }

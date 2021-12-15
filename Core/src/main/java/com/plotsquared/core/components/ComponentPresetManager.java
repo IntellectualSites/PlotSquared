@@ -46,7 +46,8 @@ import com.plotsquared.core.util.Permissions;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
+import net.kyori.adventure.text.minimessage.placeholder.PlaceholderResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -154,19 +155,19 @@ public class ComponentPresetManager {
         final Plot plot = player.getCurrentPlot();
 
         if (plot == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return null;
         } else if (!plot.hasOwner()) {
-            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
+            player.sendMessage(TranslatableCaption.miniMessage("info.plot_unowned"));
             return null;
         } else if (!plot.isOwner(player.getUUID()) && !plot.getTrusted().contains(player.getUUID()) && !Permissions.hasPermission(
                 player,
                 Permission.PERMISSION_ADMIN_COMPONENTS_OTHER
         )) {
-            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
+            player.sendMessage(TranslatableCaption.miniMessage("permission.no_plot_perms"));
             return null;
         } else if (plot.getVolume() > Integer.MAX_VALUE) {
-            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
+            player.sendMessage(TranslatableCaption.miniMessage("schematics.schematic_too_large"));
             return null;
         }
 
@@ -182,7 +183,7 @@ public class ComponentPresetManager {
         }
         final int size = (int) Math.ceil((double) allowedPresets.size() / 9.0D);
         final PlotInventory plotInventory = new PlotInventory(this.inventoryUtil, player, size,
-                TranslatableCaption.of("preset.title").getComponent(player)) {
+                TranslatableCaption.miniMessage("preset.title").getComponent(player)) {
             @Override
             public boolean onClick(final int index) {
                 if (!getPlayer().getCurrentPlot().equals(plot)) {
@@ -199,25 +200,25 @@ public class ComponentPresetManager {
                 }
 
                 if (plot.getRunning() > 0) {
-                    getPlayer().sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
+                    getPlayer().sendMessage(TranslatableCaption.miniMessage("errors.wait_for_timer"));
                     return false;
                 }
 
                 final Pattern pattern = PatternUtil.parse(null, componentPreset.getPattern(), false);
                 if (pattern == null) {
-                    getPlayer().sendMessage(TranslatableCaption.of("preset.preset_invalid"));
+                    getPlayer().sendMessage(TranslatableCaption.miniMessage("preset.preset_invalid"));
                     return false;
                 }
 
                 if (componentPreset.getCost() > 0.0D && econHandler.isEnabled(plot.getArea())) {
                     if (econHandler.getMoney(getPlayer()) < componentPreset.getCost()) {
-                        getPlayer().sendMessage(TranslatableCaption.of("preset.preset_cannot_afford"));
+                        getPlayer().sendMessage(TranslatableCaption.miniMessage("preset.preset_cannot_afford"));
                         return false;
                     } else {
                         econHandler.withdrawMoney(getPlayer(), componentPreset.getCost());
                         getPlayer().sendMessage(
-                                TranslatableCaption.of("economy.removed_balance"),
-                                Template.of("money", econHandler.format(componentPreset.getCost()))
+                                TranslatableCaption.miniMessage("economy.removed_balance"),
+                                Placeholder.miniMessage("money", econHandler.format(componentPreset.getCost()))
                         );
                     }
                 }
@@ -235,7 +236,7 @@ public class ComponentPresetManager {
                         );
                     }
                     queue.enqueue();
-                    getPlayer().sendMessage(TranslatableCaption.of("working.generating_component"));
+                    getPlayer().sendMessage(TranslatableCaption.miniMessage("working.generating_component"));
                 });
                 return false;
             }
@@ -246,15 +247,17 @@ public class ComponentPresetManager {
             final ComponentPreset preset = allowedPresets.get(i);
             final List<String> lore = new ArrayList<>();
             if (preset.getCost() > 0 && this.econHandler.isEnabled(plot.getArea())) {
-                lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.parse(
-                        TranslatableCaption.of("preset.preset_lore_cost").getComponent(player),
-                        Template.of("cost", String.format("%.2f", preset.getCost()))
+                lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.deserialize(
+                        TranslatableCaption.miniMessage("preset.preset_lore_cost").getComponent(player),
+                        PlaceholderResolver.placeholders(Placeholder.miniMessage("cost", String.format("%.2f", preset.getCost())))
                 )));
             }
-            lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.parse(
-                    TranslatableCaption.of("preset.preset_lore_component").getComponent(player),
-                    Template.of("component", preset.getComponent().name().toLowerCase()),
-                    Template.of("prefix", TranslatableCaption.of("core.prefix").getComponent(player))
+            lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.deserialize(
+                    TranslatableCaption.miniMessage("preset.preset_lore_component").getComponent(player),
+                    PlaceholderResolver.placeholders(
+                            Placeholder.miniMessage("component", preset.getComponent().name().toLowerCase()),
+                            Placeholder.miniMessage("prefix", TranslatableCaption.miniMessage("core.prefix").getComponent(player))
+                    )
             )));
             lore.removeIf(String::isEmpty);
             lore.addAll(preset.getDescription());

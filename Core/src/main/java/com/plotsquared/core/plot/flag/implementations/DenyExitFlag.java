@@ -35,7 +35,7 @@ public class DenyExitFlag extends BooleanFlag<DenyExitFlag> {
     public static final DenyExitFlag DENY_EXIT_FLAG_FALSE = new DenyExitFlag(false);
 
     protected DenyExitFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_deny_exit"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_deny_exit"));
     }
 
     @Override

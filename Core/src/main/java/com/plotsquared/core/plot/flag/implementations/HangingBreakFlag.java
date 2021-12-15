@@ -35,7 +35,7 @@ public class HangingBreakFlag extends BooleanFlag<HangingBreakFlag> {
     public static final HangingBreakFlag HANGING_BREAK_FALSE = new HangingBreakFlag(false);
 
     private HangingBreakFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_hanging_break"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_hanging_break"));
     }
 
     @Override

@@ -28,7 +28,7 @@ package com.plotsquared.core.command;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.configuration.caption.Templates;
+import com.plotsquared.core.configuration.caption.Placeholders;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.permissions.Permission;
@@ -45,7 +45,7 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -102,13 +102,13 @@ public class Visit extends Command {
         final List<Plot> plots = query.asList();
 
         if (plots.isEmpty()) {
-            player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
+            player.sendMessage(TranslatableCaption.miniMessage("invalid.found_no_plots"));
             return;
         } else if (plots.size() < page || page < 1) {
             player.sendMessage(
-                    TranslatableCaption.of("invalid.number_not_in_range"),
-                    Template.of("min", "1"),
-                    Template.of("max", String.valueOf(plots.size()))
+                    TranslatableCaption.miniMessage("invalid.number_not_in_range"),
+                    Placeholder.miniMessage("min", "1"),
+                    Placeholder.miniMessage("max", String.valueOf(plots.size()))
             );
             return;
         }
@@ -117,8 +117,8 @@ public class Visit extends Command {
         if (!plot.hasOwner()) {
             if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_UNOWNED)) {
                 player.sendMessage(
-                        TranslatableCaption.of("permission.no_permission"),
-                        Templates.of("node", "plots.visit.unowned")
+                        TranslatableCaption.miniMessage("permission.no_permission"),
+                        Placeholders.miniMessage("node", "plots.visit.unowned")
                 );
                 return;
             }
@@ -126,16 +126,16 @@ public class Visit extends Command {
             if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_OWNED) && !Permissions
                     .hasPermission(player, Permission.PERMISSION_HOME)) {
                 player.sendMessage(
-                        TranslatableCaption.of("permission.no_permission"),
-                        Templates.of("node", "plots.visit.owned")
+                        TranslatableCaption.miniMessage("permission.no_permission"),
+                        Placeholders.miniMessage("node", "plots.visit.owned")
                 );
                 return;
             }
         } else if (plot.isAdded(player.getUUID())) {
             if (!Permissions.hasPermission(player, Permission.PERMISSION_SHARED)) {
                 player.sendMessage(
-                        TranslatableCaption.of("permission.no_permission"),
-                        Templates.of("node", "plots.visit.shared")
+                        TranslatableCaption.miniMessage("permission.no_permission"),
+                        Placeholders.miniMessage("node", "plots.visit.shared")
                 );
                 return;
             }
@@ -145,16 +145,16 @@ public class Visit extends Command {
             if (!plot.getFlag(UntrustedVisitFlag.class) && !Permissions.hasPermission(player, Permission.PERMISSION_VISIT_OTHER)
                 && !Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
                 player.sendMessage(
-                        TranslatableCaption.of("permission.no_permission"),
-                        Templates.of("node", "plots.visit.other")
+                        TranslatableCaption.miniMessage("permission.no_permission"),
+                        Placeholders.miniMessage("node", "plots.visit.other")
                 );
                 return;
             }
             if (plot.isDenied(player.getUUID())) {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_DENIED)) {
                     player.sendMessage(
-                            TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_VISIT_DENIED))
+                            TranslatableCaption.miniMessage("permission.no_permission"),
+                            Placeholder.miniMessage("node", String.valueOf(Permission.PERMISSION_VISIT_DENIED))
                     );
                     return;
                 }
@@ -195,12 +195,12 @@ public class Visit extends Command {
             case 3:
                 if (!MathMan.isInteger(args[2])) {
                     player.sendMessage(
-                            TranslatableCaption.of("invalid.not_valid_number"),
-                            Templates.of("value", "(1, ∞)")
+                            TranslatableCaption.miniMessage("invalid.not_valid_number"),
+                            Placeholders.miniMessage("value", "(1, ∞)")
                     );
                     player.sendMessage(
-                            TranslatableCaption.of("commandconfig.command_syntax"),
-                            Templates.of("value", getUsage())
+                            TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                            Placeholders.miniMessage("value", getUsage())
                     );
                     return CompletableFuture.completedFuture(false);
                 }
@@ -212,12 +212,12 @@ public class Visit extends Command {
                     sortByArea = this.plotAreaManager.getPlotAreaByString(args[1]);
                     if (sortByArea == null) {
                         player.sendMessage(
-                                TranslatableCaption.of("invalid.not_valid_number"),
-                                Templates.of("value", "(1, ∞)")
+                                TranslatableCaption.miniMessage("invalid.not_valid_number"),
+                                Placeholders.miniMessage("value", "(1, ∞)")
                         );
                         player.sendMessage(
-                                TranslatableCaption.of("commandconfig.command_syntax"),
-                                Templates.of("value", getUsage())
+                                TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                                Placeholders.miniMessage("value", getUsage())
                         );
                         return CompletableFuture.completedFuture(false);
                     }
@@ -226,11 +226,11 @@ public class Visit extends Command {
                     int finalPage1 = page;
                     PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
                         if (throwable instanceof TimeoutException) {
-                            player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
+                            player.sendMessage(TranslatableCaption.miniMessage("players.fetching_players_timeout"));
                         } else if (throwable != null || uuids.size() != 1) {
                             player.sendMessage(
-                                    TranslatableCaption.of("commandconfig.command_syntax"),
-                                    Templates.of("value", getUsage())
+                                    TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                                    Placeholders.miniMessage("value", getUsage())
                             );
                         } else {
                             final UUID uuid = uuids.toArray(new UUID[0])[0];
@@ -256,8 +256,8 @@ public class Visit extends Command {
                     page = Integer.parseInt(args[1]);
                 } catch (NumberFormatException ignored) {
                     player.sendMessage(
-                            TranslatableCaption.of("invalid.not_a_number"),
-                            Template.of("value", args[1])
+                            TranslatableCaption.miniMessage("invalid.not_a_number"),
+                            Placeholder.miniMessage("value", args[1])
                     );
                     return CompletableFuture.completedFuture(false);
                 }
@@ -272,10 +272,10 @@ public class Visit extends Command {
                     PlotSquared.get().getImpromptuUUIDPipeline().getSingle(args[0], (uuid, throwable) -> {
                         if (throwable instanceof TimeoutException) {
                             // The request timed out
-                            player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
+                            player.sendMessage(TranslatableCaption.miniMessage("players.fetching_players_timeout"));
                         } else if (uuid != null && !PlotQuery.newQuery().ownedBy(uuid).anyMatch()) {
                             // It was a valid UUID but the player has no plots
-                            player.sendMessage(TranslatableCaption.of("errors.player_no_plots"));
+                            player.sendMessage(TranslatableCaption.miniMessage("errors.player_no_plots"));
                         } else if (uuid == null) {
                             // player not found, so we assume it's an alias if no page was provided
                             if (finalPage == Integer.MIN_VALUE) {
@@ -289,8 +289,8 @@ public class Visit extends Command {
                                 );
                             } else {
                                 player.sendMessage(
-                                        TranslatableCaption.of("errors.invalid_player"),
-                                        Template.of("value", finalArgs[0])
+                                        TranslatableCaption.miniMessage("errors.invalid_player"),
+                                        Placeholder.miniMessage("value", finalArgs[0])
                                 );
                             }
                         } else {
@@ -315,8 +315,8 @@ public class Visit extends Command {
             case 0:
                 // /p v is invalid
                 player.sendMessage(
-                        TranslatableCaption.of("commandconfig.command_syntax"),
-                        Templates.of("value", getUsage())
+                        TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                        Placeholders.miniMessage("value", getUsage())
                 );
                 return CompletableFuture.completedFuture(false);
             default:

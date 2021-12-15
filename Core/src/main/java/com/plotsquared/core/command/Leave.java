@@ -32,7 +32,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.UUID;
@@ -59,10 +59,10 @@ public class Leave extends Command {
             RunnableVal3<Command, Runnable, Runnable> confirm,
             RunnableVal2<Command, CommandResult> whenDone
     ) throws CommandException {
-        final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.of("errors.not_in_plot"));
-        checkTrue(plot.hasOwner(), TranslatableCaption.of("info.plot_unowned"));
+        final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.miniMessage("errors.not_in_plot"));
+        checkTrue(plot.hasOwner(), TranslatableCaption.miniMessage("info.plot_unowned"));
         if (plot.isOwner(player.getUUID())) {
-            player.sendMessage(TranslatableCaption.of("member.plot_cant_leave_owner"));
+            player.sendMessage(TranslatableCaption.miniMessage("member.plot_cant_leave_owner"));
         } else {
             UUID uuid = player.getUUID();
             if (plot.isAdded(uuid)) {
@@ -73,12 +73,12 @@ public class Leave extends Command {
                     this.eventDispatcher.callMember(player, plot, uuid, false);
                 }
                 player.sendMessage(
-                        TranslatableCaption.of("member.plot_left"),
-                        Template.of("player", player.getName())
+                        TranslatableCaption.miniMessage("member.plot_left"),
+                        Placeholder.miniMessage("player", player.getName())
                 );
             } else {
                 player.sendMessage(
-                        TranslatableCaption.of("members.not_added_trusted")
+                        TranslatableCaption.miniMessage("members.not_added_trusted")
                 );
             }
         }

@@ -30,7 +30,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.CaptionHolder;
-import com.plotsquared.core.configuration.caption.Templates;
+import com.plotsquared.core.configuration.caption.Placeholders;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
@@ -53,7 +53,8 @@ import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.uuid.UUIDMapping;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
+import net.kyori.adventure.text.minimessage.placeholder.PlaceholderResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -129,8 +130,8 @@ public class ListCmd extends SubCommand {
 
     public void noArgs(PlotPlayer<?> player) {
         player.sendMessage(
-                TranslatableCaption.of("commandconfig.subcommand_set_options_header"),
-                Templates.of("values", Arrays.toString(getArgumentList(player)))
+                TranslatableCaption.miniMessage("commandconfig.subcommand_set_options_header"),
+                Placeholders.miniMessage("values", Arrays.toString(getArgumentList(player)))
         );
     }
 
@@ -165,8 +166,8 @@ public class ListCmd extends SubCommand {
         final Consumer<PlotQuery> plotConsumer = query -> {
             if (query == null) {
                 player.sendMessage(
-                        TranslatableCaption.of("commandconfig.did_you_mean"),
-                        Template.of(
+                        TranslatableCaption.miniMessage("commandconfig.did_you_mean"),
+                        Placeholder.miniMessage(
                                 "value",
                                 new StringComparison<>(args[0], new String[]{"mine", "shared", "world", "all"}).getBestMatch()
                         )
@@ -185,7 +186,7 @@ public class ListCmd extends SubCommand {
             final List<Plot> plots = query.asList();
 
             if (plots.isEmpty()) {
-                player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
+                player.sendMessage(TranslatableCaption.miniMessage("invalid.found_no_plots"));
                 return;
             }
             displayPlots(player, plots, 12, page, args);
@@ -195,8 +196,8 @@ public class ListCmd extends SubCommand {
             case "mine" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_MINE)) {
                     player.sendMessage(
-                            TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.mine")
+                            TranslatableCaption.miniMessage("permission.no_permission"),
+                            Placeholders.miniMessage("node", "plots.list.mine")
                     );
                     return false;
                 }
@@ -210,8 +211,8 @@ public class ListCmd extends SubCommand {
             case "shared" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_SHARED)) {
                     player.sendMessage(
-                            TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.shared")
+                            TranslatableCaption.miniMessage("permission.no_permission"),
+                            Placeholders.miniMessage("node", "plots.list.shared")
                     );
                     return false;
                 }
@@ -223,15 +224,15 @@ public class ListCmd extends SubCommand {
             case "world" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_WORLD)) {
                     player.sendMessage(
-                            TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.world")
+                            TranslatableCaption.miniMessage("permission.no_permission"),
+                            Placeholders.miniMessage("node", "plots.list.world")
                     );
                     return false;
                 }
                 if (!Permissions.hasPermission(player, "plots.list.world." + world)) {
                     player.sendMessage(
-                            TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.world." + world)
+                            TranslatableCaption.miniMessage("permission.no_permission"),
+                            Placeholders.miniMessage("node", "plots.list.world." + world)
                     );
                     return false;
                 }
@@ -240,8 +241,8 @@ public class ListCmd extends SubCommand {
             case "expired" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_EXPIRED)) {
                     player.sendMessage(
-                            TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.expired")
+                            TranslatableCaption.miniMessage("permission.no_permission"),
+                            Placeholders.miniMessage("node", "plots.list.expired")
                     );
                     return false;
                 }
@@ -254,15 +255,15 @@ public class ListCmd extends SubCommand {
             case "area" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_AREA)) {
                     player.sendMessage(
-                            TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.area")
+                            TranslatableCaption.miniMessage("permission.no_permission"),
+                            Placeholders.miniMessage("node", "plots.list.area")
                     );
                     return false;
                 }
                 if (!Permissions.hasPermission(player, "plots.list.world." + world)) {
                     player.sendMessage(
-                            TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.world." + world)
+                            TranslatableCaption.miniMessage("permission.no_permission"),
+                            Placeholders.miniMessage("node", "plots.list.world." + world)
                     );
                     return false;
                 }
@@ -275,8 +276,8 @@ public class ListCmd extends SubCommand {
             case "all" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_ALL)) {
                     player.sendMessage(
-                            TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.all")
+                            TranslatableCaption.miniMessage("permission.no_permission"),
+                            Placeholders.miniMessage("node", "plots.list.all")
                     );
                     return false;
                 }
@@ -285,8 +286,8 @@ public class ListCmd extends SubCommand {
             case "done" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_DONE)) {
                     player.sendMessage(
-                            TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.done")
+                            TranslatableCaption.miniMessage("permission.no_permission"),
+                            Placeholders.miniMessage("node", "plots.list.done")
                     );
                     return false;
                 }
@@ -300,8 +301,8 @@ public class ListCmd extends SubCommand {
             case "top" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_TOP)) {
                     player.sendMessage(
-                            TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.top")
+                            TranslatableCaption.miniMessage("permission.no_permission"),
+                            Placeholders.miniMessage("node", "plots.list.top")
                     );
                     return false;
                 }
@@ -311,8 +312,8 @@ public class ListCmd extends SubCommand {
             case "forsale" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_FOR_SALE)) {
                     player.sendMessage(
-                            TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.forsale")
+                            TranslatableCaption.miniMessage("permission.no_permission"),
+                            Placeholders.miniMessage("node", "plots.list.forsale")
                     );
                     return false;
                 }
@@ -324,8 +325,8 @@ public class ListCmd extends SubCommand {
             case "unowned" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_UNOWNED)) {
                     player.sendMessage(
-                            TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.unowned")
+                            TranslatableCaption.miniMessage("permission.no_permission"),
+                            Placeholders.miniMessage("node", "plots.list.unowned")
                     );
                     return false;
                 }
@@ -334,15 +335,15 @@ public class ListCmd extends SubCommand {
             case "fuzzy" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_FUZZY)) {
                     player.sendMessage(
-                            TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.fuzzy")
+                            TranslatableCaption.miniMessage("permission.no_permission"),
+                            Placeholders.miniMessage("node", "plots.list.fuzzy")
                     );
                     return false;
                 }
                 if (args.length < (page == -1 ? 2 : 3)) {
                     player.sendMessage(
-                            TranslatableCaption.of("commandconfig.command_syntax"),
-                            Templates.of("value", "/plot list fuzzy <search...> [#]")
+                            TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                            Placeholders.miniMessage("value", "/plot list fuzzy <search...> [#]")
                     );
                     return false;
                 }
@@ -359,15 +360,15 @@ public class ListCmd extends SubCommand {
                 if (this.plotAreaManager.hasPlotArea(args[0])) {
                     if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_WORLD)) {
                         player.sendMessage(
-                                TranslatableCaption.of("permission.no_permission"),
-                                Templates.of("node", "plots.list.world")
+                                TranslatableCaption.miniMessage("permission.no_permission"),
+                                Placeholders.miniMessage("node", "plots.list.world")
                         );
                         return false;
                     }
                     if (!Permissions.hasPermission(player, "plots.list.world." + args[0])) {
                         player.sendMessage(
-                                TranslatableCaption.of("permission.no_permission"),
-                                Templates.of("node", "plots.list.world." + args[0])
+                                TranslatableCaption.miniMessage("permission.no_permission"),
+                                Placeholders.miniMessage("node", "plots.list.world." + args[0])
                         );
                         return false;
                     }
@@ -376,7 +377,7 @@ public class ListCmd extends SubCommand {
                 }
                 PlotSquared.get().getImpromptuUUIDPipeline().getSingle(args[0], (uuid, throwable) -> {
                     if (throwable instanceof TimeoutException) {
-                        player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
+                        player.sendMessage(TranslatableCaption.miniMessage("players.fetching_players_timeout"));
                     } else if (throwable != null) {
                         if (uuid == null) {
                             try {
@@ -386,12 +387,12 @@ public class ListCmd extends SubCommand {
                         }
                     }
                     if (uuid == null) {
-                        player.sendMessage(TranslatableCaption.of("errors.invalid_player"), Templates.of("value", args[0]));
+                        player.sendMessage(TranslatableCaption.miniMessage("errors.invalid_player"), Placeholders.miniMessage("value", args[0]));
                     } else {
                         if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_PLAYER)) {
                             player.sendMessage(
-                                    TranslatableCaption.of("permission.no_permission"),
-                                    Templates.of("node", "plots.list.player")
+                                    TranslatableCaption.miniMessage("permission.no_permission"),
+                                    Placeholders.miniMessage("node", "plots.list.player")
                             );
                         } else {
                             sort[0] = false;
@@ -416,28 +417,30 @@ public class ListCmd extends SubCommand {
             public void run(Integer i, Plot plot, CaptionHolder caption) {
                 Caption color;
                 if (plot.getOwner() == null) {
-                    color = TranslatableCaption.of("info.plot_list_no_owner");
+                    color = TranslatableCaption.miniMessage("info.plot_list_no_owner");
                 } else if (plot.isOwner(player.getUUID())) {
-                    color = TranslatableCaption.of("info.plot_list_owned_by");
+                    color = TranslatableCaption.miniMessage("info.plot_list_owned_by");
                 } else if (plot.isAdded(player.getUUID())) {
-                    color = TranslatableCaption.of("info.plot_list_added_to");
+                    color = TranslatableCaption.miniMessage("info.plot_list_added_to");
                 } else if (plot.isDenied(player.getUUID())) {
-                    color = TranslatableCaption.of("info.plot_list_denied_on");
+                    color = TranslatableCaption.miniMessage("info.plot_list_denied_on");
                 } else {
-                    color = TranslatableCaption.of("info.plot_list_default");
+                    color = TranslatableCaption.miniMessage("info.plot_list_default");
                 }
-                Component trusted = MINI_MESSAGE.parse(
-                        TranslatableCaption.of("info.plot_info_trusted").getComponent(player),
-                        Template.of("trusted", PlayerManager.getPlayerList(plot.getTrusted(), player))
+                Component trusted = MINI_MESSAGE.deserialize(
+                        TranslatableCaption.miniMessage("info.plot_info_trusted").getComponent(player),
+                        PlaceholderResolver.placeholders(Placeholder.miniMessage("trusted",
+                                PlayerManager.getPlayerList(plot.getTrusted(), player).toString()))
                 );
-                Component members = MINI_MESSAGE.parse(
-                        TranslatableCaption.of("info.plot_info_members").getComponent(player),
-                        Template.of("members", PlayerManager.getPlayerList(plot.getMembers(), player))
+                Component members = MINI_MESSAGE.deserialize(
+                        TranslatableCaption.miniMessage("info.plot_info_members").getComponent(player),
+                        PlaceholderResolver.placeholders(Placeholder.miniMessage("trusted",
+                                PlayerManager.getPlayerList(plot.getTrusted(), player).toString()))
                 );
-                Template command_tp = Template.of("command_tp", "/plot visit " + plot.getArea() + ";" + plot.getId());
-                Template command_info = Template.of("command_info", "/plot info " + plot.getArea() + ";" + plot.getId());
-                Template hover_info =
-                        Template.of(
+                Placeholder<?> command_tp = Placeholder.miniMessage("command_tp", "/plot visit " + plot.getArea() + ";" + plot.getId());
+                Placeholder<?> command_info = Placeholder.miniMessage("command_info", "/plot info " + plot.getArea() + ";" + plot.getId());
+                Placeholder<?> hover_info =
+                        Placeholder.miniMessage(
                                 "hover_info",
                                 MINI_MESSAGE.serialize(Component
                                         .text()
@@ -446,27 +449,28 @@ public class ListCmd extends SubCommand {
                                         .append(members)
                                         .asComponent())
                         );
-                Template numberTemplate = Template.of("number", String.valueOf(i));
-                Template plotTemplate = Template.of(
+                Placeholder<?> numberTemplate = Placeholder.miniMessage("number", String.valueOf(i));
+                Placeholder<?> plotTemplate = Placeholder.miniMessage(
                         "plot",
-                        MINI_MESSAGE.parse(color.getComponent(player), Template.of("plot", plot.toString()))
+                        MINI_MESSAGE.deserialize(color.getComponent(player),
+                                PlaceholderResolver.placeholders(Placeholder.miniMessage("plot", plot.toString()))).toString()
                 );
 
                 String prefix = "";
-                String online = TranslatableCaption.of("info.plot_list_player_online").getComponent(player);
-                String offline = TranslatableCaption.of("info.plot_list_player_offline").getComponent(player);
+                String online = TranslatableCaption.miniMessage("info.plot_list_player_online").getComponent(player);
+                String offline = TranslatableCaption.miniMessage("info.plot_list_player_offline").getComponent(player);
                 TextComponent.Builder builder = Component.text();
                 try {
                     final List<UUIDMapping> names = PlotSquared.get().getImpromptuUUIDPipeline().getNames(plot.getOwners())
                             .get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS);
                     for (final UUIDMapping uuidMapping : names) {
                         PlotPlayer<?> pp = PlotSquared.platform().playerManager().getPlayerIfExists(uuidMapping.getUuid());
-                        Template prefixTemplate = Template.of("prefix", prefix);
-                        Template playerTemplate = Template.of("player", uuidMapping.getUsername());
+                        Placeholder<?> prefixTemplate = Placeholder.miniMessage("prefix", prefix);
+                        Placeholder<?> playerTemplate = Placeholder.miniMessage("player", uuidMapping.getUsername());
                         if (pp != null) {
-                            builder.append(MINI_MESSAGE.parse(online, prefixTemplate, playerTemplate));
+                            builder.append(MINI_MESSAGE.deserialize(online, PlaceholderResolver.placeholders(prefixTemplate, playerTemplate)));
                         } else {
-                            builder.append(MINI_MESSAGE.parse(offline, prefixTemplate, playerTemplate));
+                            builder.append(MINI_MESSAGE.deserialize(offline, PlaceholderResolver.placeholders(prefixTemplate, playerTemplate)));
                         }
                         prefix = ", ";
                     }
@@ -481,17 +485,17 @@ public class ListCmd extends SubCommand {
                         }
                     }
                     player.sendMessage(
-                            TranslatableCaption.of("errors.invalid_player"),
-                            Templates.of("value", playerBuilder.toString())
+                            TranslatableCaption.miniMessage("errors.invalid_player"),
+                            Placeholders.miniMessage("value", playerBuilder.toString())
                     );
                 } catch (TimeoutException e) {
-                    player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
+                    player.sendMessage(TranslatableCaption.miniMessage("players.fetching_players_timeout"));
                 }
-                Template players = Template.of("players", builder.asComponent());
-                caption.set(TranslatableCaption.of("info.plot_list_item"));
-                caption.setTemplates(command_tp, command_info, hover_info, numberTemplate, plotTemplate, players);
+                Placeholder<?> players = Placeholder.miniMessage("players", builder.asComponent().toString());
+                caption.set(TranslatableCaption.miniMessage("info.plot_list_item"));
+                caption.setPlaceholders(command_tp, command_info, hover_info, numberTemplate, plotTemplate, players);
             }
-        }, "/plot list " + args[0], TranslatableCaption.of("list.plot_list_header_paged"));
+        }, "/plot list " + args[0], TranslatableCaption.miniMessage("list.plot_list_header_paged"));
     }
 
     @Override

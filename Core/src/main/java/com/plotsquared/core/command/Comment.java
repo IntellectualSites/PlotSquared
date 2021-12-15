@@ -34,7 +34,7 @@ import com.plotsquared.core.plot.comment.CommentInbox;
 import com.plotsquared.core.plot.comment.CommentManager;
 import com.plotsquared.core.plot.comment.PlotComment;
 import com.plotsquared.core.util.StringMan;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -50,9 +50,9 @@ public class Comment extends SubCommand {
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length < 2) {
             player.sendMessage(
-                    TranslatableCaption.of("comment.comment_syntax"),
-                    Template.of("command", "/plot comment [X;Z]"),
-                    Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
+                    TranslatableCaption.miniMessage("comment.comment_syntax"),
+                    Placeholder.miniMessage("command", "/plot comment [X;Z]"),
+                    Placeholder.miniMessage("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
             );
             return false;
         }
@@ -70,9 +70,9 @@ public class Comment extends SubCommand {
         } else {
             if (args.length < 3) {
                 player.sendMessage(
-                        TranslatableCaption.of("comment.comment_syntax"),
-                        Template.of("command", "/plot comment [X;Z]"),
-                        Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
+                        TranslatableCaption.miniMessage("comment.comment_syntax"),
+                        Placeholder.miniMessage("command", "/plot comment [X;Z]"),
+                        Placeholder.miniMessage("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
                 );
                 return false;
             }
@@ -82,15 +82,15 @@ public class Comment extends SubCommand {
         CommentInbox inbox = CommentManager.inboxes.get(args[index - 1].toLowerCase());
         if (inbox == null) {
             player.sendMessage(
-                    TranslatableCaption.of("comment.comment_syntax"),
-                    Template.of("command", "/plot comment [X;Z]"),
-                    Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
+                    TranslatableCaption.miniMessage("comment.comment_syntax"),
+                    Placeholder.miniMessage("command", "/plot comment [X;Z]"),
+                    Placeholder.miniMessage("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
             );
             return false;
         }
 
         if (!inbox.canWrite(plot, player)) {
-            player.sendMessage(TranslatableCaption.of("comment.no_perm_inbox"));
+            player.sendMessage(TranslatableCaption.miniMessage("comment.no_perm_inbox"));
             return false;
         }
 
@@ -101,11 +101,11 @@ public class Comment extends SubCommand {
                 );
         boolean result = inbox.addComment(plot, comment);
         if (!result) {
-            player.sendMessage(TranslatableCaption.of("comment.no_plot_inbox"));
+            player.sendMessage(TranslatableCaption.miniMessage("comment.no_plot_inbox"));
             player.sendMessage(
-                    TranslatableCaption.of("comment.comment_syntax"),
-                    Template.of("command", "/plot comment [X;Z]"),
-                    Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
+                    TranslatableCaption.miniMessage("comment.comment_syntax"),
+                    Placeholder.miniMessage("command", "/plot comment [X;Z]"),
+                    Placeholder.miniMessage("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
             );
             return false;
         }
@@ -116,7 +116,7 @@ public class Comment extends SubCommand {
             }
         }
 
-        player.sendMessage(TranslatableCaption.of("comment.comment_added"));
+        player.sendMessage(TranslatableCaption.miniMessage("comment.comment_added"));
         return true;
     }
 

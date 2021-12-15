@@ -35,7 +35,7 @@ public class MycelGrowFlag extends BooleanFlag<MycelGrowFlag> {
     public static final MycelGrowFlag MYCEL_GROW_FALSE = new MycelGrowFlag(false);
 
     private MycelGrowFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_mycel_grow"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_mycel_grow"));
     }
 
     @Override

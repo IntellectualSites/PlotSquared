@@ -53,8 +53,8 @@ public class GuestGamemodeFlag extends PlotFlag<GameMode, GuestGamemodeFlag> {
     protected GuestGamemodeFlag(@NonNull GameMode value) {
         super(
                 value,
-                TranslatableCaption.of("flags.flag_category_gamemode"),
-                TranslatableCaption.of("flags.flag_description_guest_gamemode")
+                TranslatableCaption.miniMessage("flags.flag_category_gamemode"),
+                TranslatableCaption.miniMessage("flags.flag_description_guest_gamemode")
         );
     }
 

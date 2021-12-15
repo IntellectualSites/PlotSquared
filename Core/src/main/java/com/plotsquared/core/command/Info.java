@@ -36,7 +36,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.HideInfoFlag;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -76,7 +76,7 @@ public class Info extends SubCommand {
             plot = player.getCurrentPlot();
         }
         if (plot == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return false;
         }
 
@@ -96,8 +96,8 @@ public class Info extends SubCommand {
                     if (!player
                             .hasPermission(Permission.PERMISSION_AREA_INFO_FORCE.toString())) {
                         player.sendMessage(
-                                TranslatableCaption.of("permission.no_permission"),
-                                Template.of("node", Permission.PERMISSION_AREA_INFO_FORCE.toString())
+                                TranslatableCaption.miniMessage("permission.no_permission"),
+                                Placeholder.miniMessage("node", Permission.PERMISSION_AREA_INFO_FORCE.toString())
                         );
                         return true;
                     }
@@ -106,7 +106,7 @@ public class Info extends SubCommand {
                 }
             }
             if (!allowed) {
-                player.sendMessage(TranslatableCaption.of("info.plot_info_hidden"));
+                player.sendMessage(TranslatableCaption.miniMessage("info.plot_info_hidden"));
                 return true;
             }
         }
@@ -118,12 +118,12 @@ public class Info extends SubCommand {
         // Unclaimed?
         if (!hasOwner && !containsEveryone && !trustedEveryone) {
             player.sendMessage(
-                    TranslatableCaption.of("info.plot_info_unclaimed"),
-                    Template.of("plot", plot.getId().getX() + ";" + plot.getId().getY())
+                    TranslatableCaption.miniMessage("info.plot_info_unclaimed"),
+                    Placeholder.miniMessage("plot", plot.getId().getX() + ";" + plot.getId().getY())
             );
             return true;
         }
-        Caption info = TranslatableCaption.of("info.plot_info_format");
+        Caption info = TranslatableCaption.miniMessage("info.plot_info_format");
         boolean full;
         if (arg != null) {
             info = getCaption(arg);
@@ -169,19 +169,19 @@ public class Info extends SubCommand {
 
     private Caption getCaption(String string) {
         return switch (string) {
-            case "trusted" -> TranslatableCaption.of("info.plot_info_trusted");
-            case "alias" -> TranslatableCaption.of("info.plot_info_alias");
-            case "biome" -> TranslatableCaption.of("info.plot_info_biome");
-            case "denied" -> TranslatableCaption.of("info.plot_info_denied");
-            case "flags" -> TranslatableCaption.of("info.plot_info_flags");
-            case "id" -> TranslatableCaption.of("info.plot_info_id");
-            case "size" -> TranslatableCaption.of("info.plot_info_size");
-            case "members" -> TranslatableCaption.of("info.plot_info_members");
-            case "owner" -> TranslatableCaption.of("info.plot_info_owner");
-            case "rating" -> TranslatableCaption.of("info.plot_info_rating");
-            case "likes" -> TranslatableCaption.of("info.plot_info_likes");
-            case "seen" -> TranslatableCaption.of("info.plot_info_seen");
-            case "creationdate" -> TranslatableCaption.of("info.plot_info_creationdate");
+            case "trusted" -> TranslatableCaption.miniMessage("info.plot_info_trusted");
+            case "alias" -> TranslatableCaption.miniMessage("info.plot_info_alias");
+            case "biome" -> TranslatableCaption.miniMessage("info.plot_info_biome");
+            case "denied" -> TranslatableCaption.miniMessage("info.plot_info_denied");
+            case "flags" -> TranslatableCaption.miniMessage("info.plot_info_flags");
+            case "id" -> TranslatableCaption.miniMessage("info.plot_info_id");
+            case "size" -> TranslatableCaption.miniMessage("info.plot_info_size");
+            case "members" -> TranslatableCaption.miniMessage("info.plot_info_members");
+            case "owner" -> TranslatableCaption.miniMessage("info.plot_info_owner");
+            case "rating" -> TranslatableCaption.miniMessage("info.plot_info_rating");
+            case "likes" -> TranslatableCaption.miniMessage("info.plot_info_likes");
+            case "seen" -> TranslatableCaption.miniMessage("info.plot_info_seen");
+            case "creationdate" -> TranslatableCaption.miniMessage("info.plot_info_creationdate");
             default -> null;
         };
     }

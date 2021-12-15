@@ -35,7 +35,7 @@ public class HostileAttackFlag extends BooleanFlag<HostileAttackFlag> {
     public static final HostileAttackFlag HOSTILE_ATTACK_FALSE = new HostileAttackFlag(false);
 
     private HostileAttackFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_hostile_attack"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_hostile_attack"));
     }
 
     @Override

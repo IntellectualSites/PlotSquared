@@ -35,7 +35,7 @@ public class LecternReadBookFlag extends BooleanFlag<LecternReadBookFlag> {
     public static final LecternReadBookFlag LECTERN_READ_BOOK_FALSE = new LecternReadBookFlag(false);
 
     private LecternReadBookFlag(final boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_lectern_read_book"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_lectern_read_book"));
     }
 
     @Override

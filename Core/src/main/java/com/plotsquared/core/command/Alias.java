@@ -35,7 +35,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.query.PlotQuery;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -67,12 +67,12 @@ public class Alias extends SubCommand {
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
         if (plot == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return false;
         }
 
         if (!plot.hasOwner()) {
-            player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
+            player.sendMessage(TranslatableCaption.miniMessage("working.plot_not_claimed"));
             return false;
         }
 
@@ -90,7 +90,7 @@ public class Alias extends SubCommand {
                 permission = isPermitted(player, Permission.PERMISSION_ALIAS_SET);
                 admin = isPermitted(player, Permission.PERMISSION_ADMIN_ALIAS_SET);
                 if (!admin && !owner) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
+                    player.sendMessage(TranslatableCaption.miniMessage("permission.no_plot_perms"));
                     return false;
                 }
                 if (permission) { // is either admin or owner
@@ -98,8 +98,8 @@ public class Alias extends SubCommand {
                     return true;
                 } else {
                     player.sendMessage(
-                            TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ALIAS_SET))
+                            TranslatableCaption.miniMessage("permission.no_permission"),
+                            Placeholder.miniMessage("node", String.valueOf(Permission.PERMISSION_ALIAS_SET))
                     );
                 }
             }
@@ -107,15 +107,15 @@ public class Alias extends SubCommand {
                 permission = isPermitted(player, Permission.PERMISSION_ALIAS_REMOVE);
                 admin = isPermitted(player, Permission.PERMISSION_ADMIN_ALIAS_REMOVE);
                 if (!admin && !owner) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
+                    player.sendMessage(TranslatableCaption.miniMessage("permission.no_plot_perms"));
                     return false;
                 }
                 if (permission) {
                     result = removeAlias(player, plot);
                 } else {
                     player.sendMessage(
-                            TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ALIAS_REMOVE))
+                            TranslatableCaption.miniMessage("permission.no_permission"),
+                            Placeholder.miniMessage("node", String.valueOf(Permission.PERMISSION_ALIAS_REMOVE))
                     );
                 }
             }
@@ -147,37 +147,37 @@ public class Alias extends SubCommand {
         if (alias.isEmpty()) {
             sendUsage(player);
         } else if (alias.length() >= 50) {
-            player.sendMessage(TranslatableCaption.of("alias.alias_too_long"));
+            player.sendMessage(TranslatableCaption.miniMessage("alias.alias_too_long"));
         } else if (MathMan.isInteger(alias)) {
-            player.sendMessage(TranslatableCaption.of("flag.not_valid_value")); // TODO this is obviously wrong
+            player.sendMessage(TranslatableCaption.miniMessage("flag.not_valid_value")); // TODO this is obviously wrong
         } else {
             if (PlotQuery.newQuery().inArea(plot.getArea())
                     .withAlias(alias)
                     .anyMatch()) {
                 player.sendMessage(
-                        TranslatableCaption.of("alias.alias_is_taken"),
-                        Template.of("alias", alias)
+                        TranslatableCaption.miniMessage("alias.alias_is_taken"),
+                        Placeholder.miniMessage("alias", alias)
                 );
                 return;
             }
             if (Settings.UUID.OFFLINE) {
                 plot.setAlias(alias);
-                player.sendMessage(TranslatableCaption.of("alias.alias_set_to"), Template.of("alias", alias));
+                player.sendMessage(TranslatableCaption.miniMessage("alias.alias_set_to"), Placeholder.miniMessage("alias", alias));
                 return;
             }
             PlotSquared.get().getImpromptuUUIDPipeline().getSingle(alias, ((uuid, throwable) -> {
                 if (throwable instanceof TimeoutException) {
-                    player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
+                    player.sendMessage(TranslatableCaption.miniMessage("players.fetching_players_timeout"));
                 } else if (uuid != null) {
                     player.sendMessage(
-                            TranslatableCaption.of("alias.alias_is_taken"),
-                            Template.of("alias", alias)
+                            TranslatableCaption.miniMessage("alias.alias_is_taken"),
+                            Placeholder.miniMessage("alias", alias)
                     );
                 } else {
                     plot.setAlias(alias);
                     player.sendMessage(
-                            TranslatableCaption.of("alias.alias_set_to"),
-                            Template.of("alias", alias)
+                            TranslatableCaption.miniMessage("alias.alias_set_to"),
+                            Placeholder.miniMessage("alias", alias)
                     );
                 }
             }));
@@ -188,12 +188,12 @@ public class Alias extends SubCommand {
         String alias = plot.getAlias();
         if (!plot.getAlias().isEmpty()) {
             player.sendMessage(
-                    TranslatableCaption.of("alias.alias_removed"),
-                    Template.of("alias", alias)
+                    TranslatableCaption.miniMessage("alias.alias_removed"),
+                    Placeholder.miniMessage("alias", alias)
             );
         } else {
             player.sendMessage(
-                    TranslatableCaption.of("alias.no_alias_set")
+                    TranslatableCaption.miniMessage("alias.no_alias_set")
             );
         }
         plot.setAlias(null);

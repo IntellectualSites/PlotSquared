@@ -54,7 +54,7 @@ public abstract class NumberFlag<N extends Number & Comparable<N>, F extends Plo
     public F parse(@NonNull String input) throws FlagParseException {
         final N parsed = parseNumber(input);
         if (parsed.compareTo(minimum) < 0 || parsed.compareTo(maximum) > 0) {
-            throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_integer"));
+            throw new FlagParseException(this, input, TranslatableCaption.miniMessage("flags.flag_error_integer"));
         }
         return flagOf(parsed);
 

@@ -35,7 +35,7 @@ public class ServerPlotFlag extends BooleanFlag<ServerPlotFlag> {
     public static final ServerPlotFlag SERVER_PLOT_FALSE = new ServerPlotFlag(false);
 
     private ServerPlotFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_server_plot"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_server_plot"));
     }
 
     @Override

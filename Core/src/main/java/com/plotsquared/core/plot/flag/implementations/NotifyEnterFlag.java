@@ -35,7 +35,7 @@ public class NotifyEnterFlag extends BooleanFlag<NotifyEnterFlag> {
     public static final NotifyEnterFlag NOTIFY_ENTER_FALSE = new NotifyEnterFlag(false);
 
     private NotifyEnterFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_notify_enter"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_notify_enter"));
     }
 
     @Override

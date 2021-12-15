@@ -35,7 +35,7 @@ public class InstabreakFlag extends BooleanFlag<InstabreakFlag> {
     public static final InstabreakFlag INSTABREAK_FALSE = new InstabreakFlag(false);
 
     private InstabreakFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_instabreak"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_instabreak"));
     }
 
     @Override

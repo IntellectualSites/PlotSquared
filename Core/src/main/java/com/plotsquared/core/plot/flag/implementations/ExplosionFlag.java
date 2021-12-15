@@ -35,7 +35,7 @@ public class ExplosionFlag extends BooleanFlag<ExplosionFlag> {
     public static final ExplosionFlag EXPLOSION_FALSE = new ExplosionFlag(false);
 
     private ExplosionFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_explosion"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_explosion"));
     }
 
     @Override

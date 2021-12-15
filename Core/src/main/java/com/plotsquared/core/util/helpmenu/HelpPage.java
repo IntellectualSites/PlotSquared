@@ -31,7 +31,8 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.StringMan;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
+import net.kyori.adventure.text.minimessage.placeholder.PlaceholderResolver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,33 +41,35 @@ public class HelpPage {
 
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
     private final List<HelpObject> helpObjects;
-    private final Template catTemplate;
-    private final Template curTemplate;
-    private final Template maxTemplate;
+    private final Placeholder<?> catTemplate;
+    private final Placeholder<?> curTemplate;
+    private final Placeholder<?> maxTemplate;
 
     public HelpPage(CommandCategory category, int currentPage, int maxPages) {
         this.helpObjects = new ArrayList<>();
-        this.catTemplate = Template.of("category", category == null ? "ALL" : category.name());
-        this.curTemplate = Template.of("current", String.valueOf(currentPage + 1));
-        this.maxTemplate = Template.of("max", String.valueOf(maxPages + 1));
+        this.catTemplate = Placeholder.miniMessage("category", category == null ? "ALL" : category.name());
+        this.curTemplate = Placeholder.miniMessage("current", String.valueOf(currentPage + 1));
+        this.maxTemplate = Placeholder.miniMessage("max", String.valueOf(maxPages + 1));
     }
 
     public void render(PlotPlayer<?> player) {
         if (this.helpObjects.size() < 1) {
-            player.sendMessage(TranslatableCaption.of("help.no_permission"));
+            player.sendMessage(TranslatableCaption.miniMessage("help.no_permission"));
         } else {
-            Template header = Template.of("header", TranslatableCaption.of("help.help_header").getComponent(player));
-            Template page_header = Template.of(
+            Placeholder<?> header = Placeholder.miniMessage("header", TranslatableCaption.miniMessage("help.help_header").getComponent(player));
+            Placeholder<?> page_header = Placeholder.miniMessage(
                     "page_header",
-                    MINI_MESSAGE.parse(
-                            TranslatableCaption.of("help.help_page_header").getComponent(player),
-                            catTemplate,
-                            curTemplate,
-                            maxTemplate
-                    )
+                    MINI_MESSAGE.deserialize(
+                            TranslatableCaption.miniMessage("help.help_page_header").getComponent(player),
+                            PlaceholderResolver.placeholders(
+                                    catTemplate,
+                                    curTemplate,
+                                    maxTemplate
+                            )
+                    ).toString()
             );
-            Template help_objects = Template.of("help_objects", StringMan.join(this.helpObjects, "\n"));
-            Template footer = Template.of("footer", TranslatableCaption.of("help.help_footer").getComponent(player));
+            Placeholder<?> help_objects = Placeholder.miniMessage("help_objects", StringMan.join(this.helpObjects, "\n"));
+            Placeholder<?> footer = Placeholder.miniMessage("footer", TranslatableCaption.miniMessage("help.help_footer").getComponent(player));
             player.sendMessage(
                     StaticCaption.of("<header>\n<page_header>\n<help_objects>\n<footer>"),
                     header,

@@ -38,7 +38,7 @@ public class BreakFlag extends BlockTypeListFlag<BreakFlag> {
     public static final BreakFlag BREAK_NONE = new BreakFlag(Collections.emptyList());
 
     protected BreakFlag(List<BlockTypeWrapper> blockTypeList) {
-        super(blockTypeList, TranslatableCaption.of("flags.flag_description_break"));
+        super(blockTypeList, TranslatableCaption.miniMessage("flags.flag_description_break"));
     }
 
     @Override

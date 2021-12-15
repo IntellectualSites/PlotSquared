@@ -35,7 +35,7 @@ public class SoilDryFlag extends BooleanFlag<SoilDryFlag> {
     public static final SoilDryFlag SOIL_DRY_FALSE = new SoilDryFlag(false);
 
     private SoilDryFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_soil_dry"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_soil_dry"));
     }
 
     @Override

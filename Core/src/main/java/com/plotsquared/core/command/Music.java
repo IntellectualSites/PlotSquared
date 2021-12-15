@@ -41,7 +41,7 @@ import com.plotsquared.core.plot.flag.implementations.MusicFlag;
 import com.plotsquared.core.util.InventoryUtil;
 import com.plotsquared.core.util.Permissions;
 import com.sk89q.worldedit.world.item.ItemTypes;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -73,14 +73,14 @@ public class Music extends SubCommand {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if (plot == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return false;
         }
         if (!plot.isAdded(player.getUUID()) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN_MUSIC_OTHER)) {
             player.sendMessage(
-                    TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_MUSIC_OTHER))
+                    TranslatableCaption.miniMessage("permission.no_permission"),
+                    Placeholder.miniMessage("node", String.valueOf(Permission.PERMISSION_ADMIN_MUSIC_OTHER))
             );
             return true;
         }
@@ -88,7 +88,7 @@ public class Music extends SubCommand {
                 this.inventoryUtil,
                 player,
                 2,
-                TranslatableCaption.of("plotjukebox.jukebox_header").getComponent(player)
+                TranslatableCaption.miniMessage("plotjukebox.jukebox_header").getComponent(player)
         ) {
             @Override
             public boolean onClick(int index) {
@@ -102,16 +102,16 @@ public class Music extends SubCommand {
                     PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(plotFlag, plot);
                     if (event.getEventResult() == Result.DENY) {
                         getPlayer().sendMessage(
-                                TranslatableCaption.of("events.event_denied"),
-                                Template.of("value", "Music removal")
+                                TranslatableCaption.miniMessage("events.event_denied"),
+                                Placeholder.miniMessage("value", "Music removal")
                         );
                         return true;
                     }
                     plot.removeFlag(event.getFlag());
                     getPlayer().sendMessage(
-                            TranslatableCaption.of("flag.flag_removed"),
-                            Template.of("flag", "music"),
-                            Template.of("value", "music_disc")
+                            TranslatableCaption.miniMessage("flag.flag_removed"),
+                            Placeholder.miniMessage("flag", "music"),
+                            Placeholder.miniMessage("value", "music_disc")
                     );
                 } else if (item.getName().toLowerCase(Locale.ENGLISH).contains("disc")) {
                     PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(MusicFlag.class)
@@ -119,17 +119,17 @@ public class Music extends SubCommand {
                     PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
                     if (event.getEventResult() == Result.DENY) {
                         getPlayer().sendMessage(
-                                TranslatableCaption.of("events.event_denied"),
-                                Template.of("value", "Music addition")
+                                TranslatableCaption.miniMessage("events.event_denied"),
+                                Placeholder.miniMessage("value", "Music addition")
                         );
                         return true;
                     }
                     plot.setFlag(event.getFlag());
-                    getPlayer().sendMessage(TranslatableCaption.of("flag.flag_added"), Template.of("flag", "music"),
-                            Template.of("value", String.valueOf(event.getFlag().getValue()))
+                    getPlayer().sendMessage(TranslatableCaption.miniMessage("flag.flag_added"), Placeholder.miniMessage("flag", "music"),
+                            Placeholder.miniMessage("value", String.valueOf(event.getFlag().getValue()))
                     );
                 } else {
-                    getPlayer().sendMessage(TranslatableCaption.of("flag.flag_not_added"));
+                    getPlayer().sendMessage(TranslatableCaption.miniMessage("flag.flag_not_added"));
                 }
                 return false;
             }
@@ -138,15 +138,15 @@ public class Music extends SubCommand {
 
         for (final String disc : DISCS) {
             final String name = String.format("<gold>%s</gold>", disc);
-            final String[] lore = {TranslatableCaption.of("plotjukebox.click_to_play").getComponent(player)};
+            final String[] lore = {TranslatableCaption.miniMessage("plotjukebox.click_to_play").getComponent(player)};
             final PlotItemStack item = new PlotItemStack(disc, 1, name, lore);
             inv.setItem(index++, item);
         }
 
         // Always add the cancel button
         // if (player.getMeta("music") != null) {
-        String name = TranslatableCaption.of("plotjukebox.cancel_music").getComponent(player);
-        String[] lore = {TranslatableCaption.of("plotjukebox.reset_music").getComponent(player)};
+        String name = TranslatableCaption.miniMessage("plotjukebox.cancel_music").getComponent(player);
+        String[] lore = {TranslatableCaption.miniMessage("plotjukebox.reset_music").getComponent(player)};
         inv.setItem(index, new PlotItemStack("bedrock", 1, name, lore));
         // }
 

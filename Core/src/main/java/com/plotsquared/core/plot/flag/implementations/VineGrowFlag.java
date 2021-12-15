@@ -35,7 +35,7 @@ public class VineGrowFlag extends BooleanFlag<VineGrowFlag> {
     public static final VineGrowFlag VINE_GROW_FALSE = new VineGrowFlag(false);
 
     private VineGrowFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_vine_grow"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_vine_grow"));
     }
 
     @Override

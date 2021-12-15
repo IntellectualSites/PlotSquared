@@ -35,7 +35,7 @@ public class DisablePhysicsFlag extends BooleanFlag<DisablePhysicsFlag> {
     public static final DisablePhysicsFlag DISABLE_PHYSICS_FALSE = new DisablePhysicsFlag(false);
 
     private DisablePhysicsFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_disable_physics"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_disable_physics"));
     }
 
     @Override

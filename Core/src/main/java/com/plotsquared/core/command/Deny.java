@@ -42,7 +42,7 @@ import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.world.gamemode.GameModes;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
@@ -79,16 +79,16 @@ public class Deny extends SubCommand {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if (plot == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return false;
         }
         if (!plot.hasOwner()) {
-            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
+            player.sendMessage(TranslatableCaption.miniMessage("info.plot_unowned"));
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DENY)) {
-            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
+            player.sendMessage(TranslatableCaption.miniMessage("permission.no_plot_perms"));
             return true;
         }
 
@@ -96,19 +96,19 @@ public class Deny extends SubCommand {
         int size = plot.getDenied().size();
         if (size >= maxDenySize) {
             player.sendMessage(
-                    TranslatableCaption.of("members.plot_max_members_denied"),
-                    Template.of("amount", String.valueOf(size))
+                    TranslatableCaption.miniMessage("members.plot_max_members_denied"),
+                    Placeholder.miniMessage("amount", String.valueOf(size))
             );
             return false;
         }
 
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             if (throwable instanceof TimeoutException) {
-                player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
+                player.sendMessage(TranslatableCaption.miniMessage("players.fetching_players_timeout"));
             } else if (throwable != null || uuids.isEmpty()) {
                 player.sendMessage(
-                        TranslatableCaption.of("errors.invalid_player"),
-                        Template.of("value", args[0])
+                        TranslatableCaption.miniMessage("errors.invalid_player"),
+                        Placeholder.miniMessage("value", args[0])
                 );
             } else {
                 for (UUID uuid : uuids) {
@@ -116,16 +116,16 @@ public class Deny extends SubCommand {
                             Permissions.hasPermission(player, Permission.PERMISSION_DENY_EVERYONE) || Permissions
                                     .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DENY))) {
                         player.sendMessage(
-                                TranslatableCaption.of("errors.invalid_player"),
-                                Template.of("value", args[0])
+                                TranslatableCaption.miniMessage("errors.invalid_player"),
+                                Placeholder.miniMessage("value", args[0])
                         );
                     } else if (plot.isOwner(uuid)) {
-                        player.sendMessage(TranslatableCaption.of("deny.cant_remove_owner"));
+                        player.sendMessage(TranslatableCaption.miniMessage("deny.cant_remove_owner"));
                         return;
                     } else if (plot.getDenied().contains(uuid)) {
                         player.sendMessage(
-                                TranslatableCaption.of("member.already_added"),
-                                Template.of("player", PlayerManager.getName(uuid))
+                                TranslatableCaption.miniMessage("member.already_added"),
+                                Placeholder.miniMessage("player", PlayerManager.getName(uuid))
                         );
                         return;
                     } else {
@@ -148,7 +148,7 @@ public class Deny extends SubCommand {
                         }
                     }
                 }
-                player.sendMessage(TranslatableCaption.of("deny.denied_added"));
+                player.sendMessage(TranslatableCaption.miniMessage("deny.denied_added"));
             }
         });
 
@@ -175,7 +175,7 @@ public class Deny extends SubCommand {
         }
         Location location = player.getLocation();
         Location spawn = this.worldUtil.getSpawn(location.getWorldName());
-        player.sendMessage(TranslatableCaption.of("deny.you_got_denied"));
+        player.sendMessage(TranslatableCaption.miniMessage("deny.you_got_denied"));
         if (plot.equals(spawn.getPlot())) {
             Location newSpawn = this.worldUtil.getSpawn(this.plotAreaManager.getAllWorlds()[0]);
             if (plot.equals(newSpawn.getPlot())) {

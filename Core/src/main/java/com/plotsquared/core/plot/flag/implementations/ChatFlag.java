@@ -35,7 +35,7 @@ public class ChatFlag extends BooleanFlag<ChatFlag> {
     public static final ChatFlag CHAT_FLAG_FALSE = new ChatFlag(false);
 
     protected ChatFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_chat"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_chat"));
     }
 
     @Override

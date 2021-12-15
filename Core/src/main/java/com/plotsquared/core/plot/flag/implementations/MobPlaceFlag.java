@@ -35,7 +35,7 @@ public class MobPlaceFlag extends BooleanFlag<MobPlaceFlag> {
     public static final MobPlaceFlag MOB_PLACE_FALSE = new MobPlaceFlag(false);
 
     private MobPlaceFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_mob_place"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_mob_place"));
     }
 
     @Override

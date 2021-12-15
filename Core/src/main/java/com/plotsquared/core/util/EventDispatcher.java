@@ -80,7 +80,7 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.ApiStatus;
@@ -312,7 +312,7 @@ public class EventDispatcher {
         }
         if (this.worldEdit != null) {
             if (player.getAttribute("worldedit")) {
-                player.sendMessage(TranslatableCaption.of("worldedit.worldedit_bypassed"));
+                player.sendMessage(TranslatableCaption.miniMessage("worldedit.worldedit_bypassed"));
             }
         }
         final Plot plot = player.getCurrentPlot();
@@ -320,7 +320,7 @@ public class EventDispatcher {
                 .getArea() instanceof SinglePlotArea)) {
             TaskManager.runTask(() -> plot.teleportPlayer(player, TeleportCause.LOGIN, result -> {
             }));
-            player.sendMessage(TranslatableCaption.of("teleport.teleported_to_road"));
+            player.sendMessage(TranslatableCaption.miniMessage("teleport.teleported_to_road"));
         }
     }
 
@@ -329,7 +329,7 @@ public class EventDispatcher {
         if (Settings.Teleport.ON_DEATH && plot != null) {
             TaskManager.runTask(() -> plot.teleportPlayer(player, TeleportCause.DEATH, result -> {
             }));
-            player.sendMessage(TranslatableCaption.of("teleport.teleported_to_road"));
+            player.sendMessage(TranslatableCaption.miniMessage("teleport.teleported_to_road"));
         }
     }
 
@@ -379,8 +379,8 @@ public class EventDispatcher {
                 }
                 if (notifyPerms) {
                     player.sendMessage(
-                            TranslatableCaption.of("commandconfig.flag_tutorial_usage"),
-                            Template.of("flag", PlaceFlag.getFlagName(UseFlag.class))
+                            TranslatableCaption.miniMessage("commandconfig.flag_tutorial_usage"),
+                            Placeholder.miniMessage("flag", PlaceFlag.getFlagName(UseFlag.class))
                     );
                 }
                 return false;
@@ -446,8 +446,8 @@ public class EventDispatcher {
                 }
                 if (notifyPerms) {
                     player.sendMessage(
-                            TranslatableCaption.of("commandconfig.flag_tutorial_usage"),
-                            Template.of("flag", PlotFlag.getFlagName(MobPlaceFlag.class)
+                            TranslatableCaption.miniMessage("commandconfig.flag_tutorial_usage"),
+                            Placeholder.miniMessage("flag", PlotFlag.getFlagName(MobPlaceFlag.class)
                                     + '/' + PlotFlag.getFlagName(PlaceFlag.class))
                     );
                 }
@@ -482,8 +482,8 @@ public class EventDispatcher {
                 }
                 if (notifyPerms) {
                     player.sendMessage(
-                            TranslatableCaption.of("commandconfig.flag_tutorial_usage"),
-                            Template.of("flag", PlotFlag.getFlagName(MiscPlaceFlag.class)
+                            TranslatableCaption.miniMessage("commandconfig.flag_tutorial_usage"),
+                            Placeholder.miniMessage("flag", PlotFlag.getFlagName(MiscPlaceFlag.class)
                                     + '/' + PlotFlag.getFlagName(PlaceFlag.class))
                     );
                 }

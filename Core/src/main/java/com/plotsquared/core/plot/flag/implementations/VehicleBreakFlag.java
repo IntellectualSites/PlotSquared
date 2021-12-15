@@ -35,7 +35,7 @@ public class VehicleBreakFlag extends BooleanFlag<VehicleBreakFlag> {
     public static final VehicleBreakFlag VEHICLE_BREAK_FALSE = new VehicleBreakFlag(false);
 
     private VehicleBreakFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_vehicle_break"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_vehicle_break"));
     }
 
     @Override

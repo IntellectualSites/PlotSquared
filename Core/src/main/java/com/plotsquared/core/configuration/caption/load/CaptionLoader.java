@@ -214,7 +214,7 @@ public final class CaptionLoader {
             }
             return new LocalizedCaptionMap(locale, map.entrySet().stream()
                     .collect(Collectors.toMap(
-                                    entry -> TranslatableCaption.of(this.namespace, entry.getKey()),
+                                    entry -> TranslatableCaption.miniMessage(this.namespace, entry.getKey()),
                                     Map.Entry::getValue
                             )
                     ));

@@ -36,7 +36,7 @@ public abstract class DoubleFlag<F extends NumberFlag<Double, F>> extends Number
             @NonNull Double value, Double minimum, Double maximum,
             @NonNull Caption flagDescription
     ) {
-        super(value, minimum, maximum, TranslatableCaption.of("flags.flag_category_doubles"), flagDescription);
+        super(value, minimum, maximum, TranslatableCaption.miniMessage("flags.flag_category_doubles"), flagDescription);
     }
 
     protected DoubleFlag(@NonNull Double value, @NonNull Caption flagDescription) {
@@ -64,7 +64,7 @@ public abstract class DoubleFlag<F extends NumberFlag<Double, F>> extends Number
         try {
             return Double.parseDouble(input);
         } catch (Throwable throwable) {
-            throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_double"));
+            throw new FlagParseException(this, input, TranslatableCaption.miniMessage("flags.flag_error_double"));
         }
     }
 

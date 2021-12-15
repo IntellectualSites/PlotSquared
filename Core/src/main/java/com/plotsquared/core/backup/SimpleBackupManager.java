@@ -31,13 +31,12 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.configuration.caption.Templates;
+import com.plotsquared.core.configuration.caption.Placeholders;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.inject.factory.PlayerBackupProfileFactory;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -106,22 +105,22 @@ public class SimpleBackupManager implements BackupManager {
         } else {
             if (player != null) {
                 player.sendMessage(
-                        TranslatableCaption.of("backups.backup_automatic_started"),
-                        Template.of("plot", plot.getId().toString())
+                        TranslatableCaption.miniMessage("backups.backup_automatic_started"),
+                        Placeholders.miniMessage("plot", plot.getId().toString())
                 );
             }
             profile.createBackup().whenComplete((backup, throwable) -> {
                 if (throwable != null) {
                     if (player != null) {
                         player.sendMessage(
-                                TranslatableCaption.of("backups.backup_automatic_failure"),
-                                Templates.of("reason", throwable.getMessage())
+                                TranslatableCaption.miniMessage("backups.backup_automatic_failure"),
+                                Placeholders.miniMessage("reason", throwable.getMessage())
                         );
                     }
                     throwable.printStackTrace();
                 } else {
                     if (player != null) {
-                        player.sendMessage(TranslatableCaption.of("backups.backup_automatic_finished"));
+                        player.sendMessage(TranslatableCaption.miniMessage("backups.backup_automatic_finished"));
                         TaskManager.runTaskAsync(whenDone);
                     }
                 }

@@ -35,7 +35,7 @@ public class DeviceInteractFlag extends BooleanFlag<DeviceInteractFlag> {
     public static final DeviceInteractFlag DEVICE_INTERACT_FALSE = new DeviceInteractFlag(false);
 
     private DeviceInteractFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_device_interact"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_device_interact"));
     }
 
     @Override

@@ -35,7 +35,7 @@ public class BlockIgnitionFlag extends BooleanFlag<BlockIgnitionFlag> {
     public static final BlockIgnitionFlag BLOCK_IGNITION_FALSE = new BlockIgnitionFlag(false);
 
     private BlockIgnitionFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_block_ignition"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_block_ignition"));
     }
 
     @Override

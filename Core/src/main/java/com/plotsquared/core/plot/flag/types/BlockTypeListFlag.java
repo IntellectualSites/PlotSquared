@@ -45,7 +45,7 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
     public static boolean skipCategoryVerification = false;
 
     protected BlockTypeListFlag(List<BlockTypeWrapper> blockTypeList, Caption description) {
-        super(blockTypeList, TranslatableCaption.of("flags.flag_category_block_list"), description);
+        super(blockTypeList, TranslatableCaption.miniMessage("flags.flag_category_block_list"), description);
     }
 
     @Override
@@ -90,7 +90,7 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
 
     private BlockTypeWrapper getCategory(final String blockString) throws FlagParseException {
         if (!blockString.startsWith("#")) {
-            throw new FlagParseException(this, blockString, TranslatableCaption.of("flags.flag_error_invalid_block"));
+            throw new FlagParseException(this, blockString, TranslatableCaption.miniMessage("flags.flag_error_invalid_block"));
         }
         String categoryId = blockString.substring(1);
         BlockTypeWrapper blockTypeWrapper;
@@ -99,7 +99,7 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
         } else {
             BlockCategory blockCategory = BlockCategory.REGISTRY.get(categoryId);
             if (blockCategory == null) {
-                throw new FlagParseException(this, blockString, TranslatableCaption.of("flags.flag_error_invalid_block"));
+                throw new FlagParseException(this, blockString, TranslatableCaption.miniMessage("flags.flag_error_invalid_block"));
             }
             blockTypeWrapper = BlockTypeWrapper.get(blockCategory);
         }

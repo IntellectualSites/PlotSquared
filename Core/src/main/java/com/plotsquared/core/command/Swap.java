@@ -33,7 +33,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -53,12 +53,12 @@ public class Swap extends SubCommand {
         Location location = player.getLocation();
         Plot plot1 = location.getPlotAbs();
         if (plot1 == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return CompletableFuture.completedFuture(false);
         }
         if (!plot1.isOwner(player.getUUID()) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN)) {
-            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
+            player.sendMessage(TranslatableCaption.miniMessage("permission.no_plot_perms"));
             return CompletableFuture.completedFuture(false);
         }
         if (args.length != 1) {
@@ -70,27 +70,27 @@ public class Swap extends SubCommand {
             return CompletableFuture.completedFuture(false);
         }
         if (plot1.equals(plot2)) {
-            player.sendMessage(TranslatableCaption.of("invalid.origin_cant_be_target"));
+            player.sendMessage(TranslatableCaption.miniMessage("invalid.origin_cant_be_target"));
             return CompletableFuture.completedFuture(false);
         }
         if (!plot1.getArea().isCompatible(plot2.getArea())) {
-            player.sendMessage(TranslatableCaption.of("errors.plotworld_incompatible"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.plotworld_incompatible"));
             return CompletableFuture.completedFuture(false);
         }
         if (plot1.isMerged() || plot2.isMerged()) {
-            player.sendMessage(TranslatableCaption.of("swap.swap_merged"));
+            player.sendMessage(TranslatableCaption.miniMessage("swap.swap_merged"));
             return CompletableFuture.completedFuture(false);
         }
 
         return plot1.getPlotModificationManager().move(plot2, player, () -> {
         }, true).thenApply(result -> {
             if (result) {
-                player.sendMessage(TranslatableCaption.of("swap.swap_success"), Template.of("origin", String.valueOf(plot1)),
-                        Template.of("target", String.valueOf(plot2))
+                player.sendMessage(TranslatableCaption.miniMessage("swap.swap_success"), Placeholder.miniMessage("origin", String.valueOf(plot1)),
+                        Placeholder.miniMessage("target", String.valueOf(plot2))
                 );
                 return true;
             } else {
-                player.sendMessage(TranslatableCaption.of("swap.swap_overlap"));
+                player.sendMessage(TranslatableCaption.miniMessage("swap.swap_overlap"));
                 return false;
             }
         });

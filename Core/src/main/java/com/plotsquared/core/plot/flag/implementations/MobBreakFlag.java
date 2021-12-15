@@ -35,7 +35,7 @@ public class MobBreakFlag extends BooleanFlag<MobBreakFlag> {
     public static final MobBreakFlag MOB_BREAK_FALSE = new MobBreakFlag(false);
 
     private MobBreakFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_mob_break"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_mob_break"));
     }
 
     @Override

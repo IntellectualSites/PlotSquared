@@ -35,7 +35,7 @@ public class CopperOxideFlag extends BooleanFlag<CopperOxideFlag> {
     public static final CopperOxideFlag COPPER_OXIDE_FALSE = new CopperOxideFlag(false);
 
     private CopperOxideFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_copper_oxide"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_copper_oxide"));
     }
 
     @Override

@@ -45,7 +45,7 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
@@ -108,17 +108,17 @@ public class Rate extends SubCommand {
                                 .isAdded(uuid)) {
                             p.teleportPlayer(player, TeleportCause.COMMAND_RATE, result -> {
                             });
-                            player.sendMessage(TranslatableCaption.of("tutorial.rate_this"));
+                            player.sendMessage(TranslatableCaption.miniMessage("tutorial.rate_this"));
                             return true;
                         }
                     }
-                    player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
+                    player.sendMessage(TranslatableCaption.miniMessage("invalid.found_no_plots"));
                     return false;
                 }
                 case "purge" -> {
                     final Plot plot = player.getCurrentPlot();
                     if (plot == null) {
-                        player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+                        player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
                         return false;
                     }
                     if (!Permissions
@@ -126,26 +126,26 @@ public class Rate extends SubCommand {
                         return false;
                     }
                     plot.clearRatings();
-                    player.sendMessage(TranslatableCaption.of("ratings.ratings_purged"));
+                    player.sendMessage(TranslatableCaption.miniMessage("ratings.ratings_purged"));
                     return true;
                 }
             }
         }
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return false;
         }
         if (!plot.hasOwner()) {
-            player.sendMessage(TranslatableCaption.of("ratings.rating_not_owned"));
+            player.sendMessage(TranslatableCaption.miniMessage("ratings.rating_not_owned"));
             return false;
         }
         if (plot.isOwner(player.getUUID())) {
-            player.sendMessage(TranslatableCaption.of("ratings.rating_not_your_own"));
+            player.sendMessage(TranslatableCaption.miniMessage("ratings.rating_not_your_own"));
             return false;
         }
         if (Settings.Done.REQUIRED_FOR_RATINGS && !DoneFlag.isDone(plot)) {
-            player.sendMessage(TranslatableCaption.of("ratings.rating_not_done"));
+            player.sendMessage(TranslatableCaption.miniMessage("ratings.rating_not_done"));
             return false;
         }
         if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES.isEmpty()) {
@@ -154,8 +154,8 @@ public class Rate extends SubCommand {
                 public void run() {
                     if (plot.getRatings().containsKey(player.getUUID())) {
                         player.sendMessage(
-                                TranslatableCaption.of("ratings.rating_already_exists"),
-                                Template.of("plot", plot.getId().toString())
+                                TranslatableCaption.miniMessage("ratings.rating_already_exists"),
+                                Placeholder.miniMessage("plot", plot.getId().toString())
                         );
                         return;
                     }
@@ -174,8 +174,8 @@ public class Rate extends SubCommand {
                                 if (event.getRating() != null) {
                                     plot.addRating(this.getPlayer().getUUID(), event.getRating());
                                     getPlayer().sendMessage(
-                                            TranslatableCaption.of("ratings.rating_applied"),
-                                            Template.of("plot", plot.getId().toString())
+                                            TranslatableCaption.miniMessage("ratings.rating_applied"),
+                                            Placeholder.miniMessage("plot", plot.getId().toString())
                                     );
                                 }
                                 return false;
@@ -185,31 +185,31 @@ public class Rate extends SubCommand {
                         }
                     };
                     inventory.setItem(0, new PlotItemStack(Settings.Ratings.BLOCK_0, 1,
-                            TranslatableCaption.of("ratings.0-8").getComponent(player)
+                            TranslatableCaption.miniMessage("ratings.0-8").getComponent(player)
                     ));
                     inventory.setItem(1, new PlotItemStack(Settings.Ratings.BLOCK_1, 1,
-                            TranslatableCaption.of("ratings.1-8").getComponent(player)
+                            TranslatableCaption.miniMessage("ratings.1-8").getComponent(player)
                     ));
                     inventory.setItem(2, new PlotItemStack(Settings.Ratings.BLOCK_2, 2,
-                            TranslatableCaption.of("ratings.2-8").getComponent(player)
+                            TranslatableCaption.miniMessage("ratings.2-8").getComponent(player)
                     ));
                     inventory.setItem(3, new PlotItemStack(Settings.Ratings.BLOCK_3, 3,
-                            TranslatableCaption.of("ratings.3-8").getComponent(player)
+                            TranslatableCaption.miniMessage("ratings.3-8").getComponent(player)
                     ));
                     inventory.setItem(4, new PlotItemStack(Settings.Ratings.BLOCK_4, 4,
-                            TranslatableCaption.of("ratings.4-8").getComponent(player)
+                            TranslatableCaption.miniMessage("ratings.4-8").getComponent(player)
                     ));
                     inventory.setItem(5, new PlotItemStack(Settings.Ratings.BLOCK_5, 5,
-                            TranslatableCaption.of("ratings.5-8").getComponent(player)
+                            TranslatableCaption.miniMessage("ratings.5-8").getComponent(player)
                     ));
                     inventory.setItem(6, new PlotItemStack(Settings.Ratings.BLOCK_6, 6,
-                            TranslatableCaption.of("ratings.6-8").getComponent(player)
+                            TranslatableCaption.miniMessage("ratings.6-8").getComponent(player)
                     ));
                     inventory.setItem(7, new PlotItemStack(Settings.Ratings.BLOCK_7, 7,
-                            TranslatableCaption.of("ratings.7-8").getComponent(player)
+                            TranslatableCaption.miniMessage("ratings.7-8").getComponent(player)
                     ));
                     inventory.setItem(8, new PlotItemStack(Settings.Ratings.BLOCK_8, 8,
-                            TranslatableCaption.of("ratings.8-8").getComponent(player)
+                            TranslatableCaption.miniMessage("ratings.8-8").getComponent(player)
                     ));
                     inventory.openInventory();
                 }
@@ -228,7 +228,7 @@ public class Rate extends SubCommand {
             return true;
         }
         if (args.length < 1) {
-            player.sendMessage(TranslatableCaption.of("ratings.rating_not_valid"));
+            player.sendMessage(TranslatableCaption.miniMessage("ratings.rating_not_valid"));
             return true;
         }
         String arg = args[0];
@@ -236,19 +236,19 @@ public class Rate extends SubCommand {
         if (MathMan.isInteger(arg) && arg.length() < 3 && !arg.isEmpty()) {
             rating = Integer.parseInt(arg);
             if (rating > 10 || rating < 1) {
-                player.sendMessage(TranslatableCaption.of("ratings.rating_not_valid"));
+                player.sendMessage(TranslatableCaption.miniMessage("ratings.rating_not_valid"));
                 return false;
             }
         } else {
-            player.sendMessage(TranslatableCaption.of("ratings.rating_not_valid"));
+            player.sendMessage(TranslatableCaption.miniMessage("ratings.rating_not_valid"));
             return false;
         }
         final UUID uuid = player.getUUID();
         final Runnable run = () -> {
             if (plot.getRatings().containsKey(uuid)) {
                 player.sendMessage(
-                        TranslatableCaption.of("ratings.rating_already_exists"),
-                        Template.of("plot", plot.getId().toString())
+                        TranslatableCaption.miniMessage("ratings.rating_already_exists"),
+                        Placeholder.miniMessage("plot", plot.getId().toString())
                 );
                 return;
             }
@@ -257,8 +257,8 @@ public class Rate extends SubCommand {
             if (event.getRating() != null) {
                 plot.addRating(uuid, event.getRating());
                 player.sendMessage(
-                        TranslatableCaption.of("ratings.rating_applied"),
-                        Template.of("plot", plot.getId().toString())
+                        TranslatableCaption.miniMessage("ratings.rating_applied"),
+                        Placeholder.miniMessage("plot", plot.getId().toString())
                 );
             }
         };

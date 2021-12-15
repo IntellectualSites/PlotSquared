@@ -39,7 +39,7 @@ import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDMapping;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -102,8 +102,8 @@ public class Purge extends SubCommand {
                     area = this.plotAreaManager.getPlotAreaByString(split[1]);
                     if (area == null) {
                         player.sendMessage(
-                                TranslatableCaption.of("errors.not_valid_plot_world"),
-                                Template.of("value", split[1])
+                                TranslatableCaption.miniMessage("errors.not_valid_plot_world"),
+                                Placeholder.miniMessage("value", split[1])
                         );
                         return false;
                     }
@@ -114,8 +114,8 @@ public class Purge extends SubCommand {
                         id = PlotId.fromString(split[1]);
                     } catch (IllegalArgumentException ignored) {
                         player.sendMessage(
-                                TranslatableCaption.of("invalid.not_valid_plot_id"),
-                                Template.of("value", split[1])
+                                TranslatableCaption.miniMessage("invalid.not_valid_plot_id"),
+                                Placeholder.miniMessage("value", split[1])
                         );
                         return false;
                     }
@@ -125,8 +125,8 @@ public class Purge extends SubCommand {
                     UUIDMapping ownerMapping = PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(split[1]);
                     if (ownerMapping == null) {
                         player.sendMessage(
-                                TranslatableCaption.of("errors.invalid_player"),
-                                Template.of("value", split[1])
+                                TranslatableCaption.miniMessage("errors.invalid_player"),
+                                Placeholder.miniMessage("value", split[1])
                         );
                         return false;
                     }
@@ -137,8 +137,8 @@ public class Purge extends SubCommand {
                     UUIDMapping addedMapping = PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(split[1]);
                     if (addedMapping == null) {
                         player.sendMessage(
-                                TranslatableCaption.of("errors.invalid_player"),
-                                Template.of("value", split[1])
+                                TranslatableCaption.miniMessage("errors.invalid_player"),
+                                Placeholder.miniMessage("value", split[1])
                         );
                         return false;
                     }
@@ -198,7 +198,7 @@ public class Purge extends SubCommand {
             }
         }
         if (toDelete.isEmpty()) {
-            player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
+            player.sendMessage(TranslatableCaption.miniMessage("invalid.found_no_plots"));
             return false;
         }
         String cmd =
@@ -242,8 +242,8 @@ public class Purge extends SubCommand {
                         TaskManager.runTask(() -> {
                             DBFunc.purgeIds(ids);
                             player.sendMessage(
-                                    TranslatableCaption.of("purge.purge_success"),
-                                    Template.of("amount", ids.size() + "/" + toDelete.size())
+                                    TranslatableCaption.miniMessage("purge.purge_success"),
+                                    Placeholder.miniMessage("amount", ids.size() + "/" + toDelete.size())
                             );
                         });
                     }

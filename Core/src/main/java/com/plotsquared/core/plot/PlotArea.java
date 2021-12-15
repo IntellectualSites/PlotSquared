@@ -70,7 +70,8 @@ import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
+import net.kyori.adventure.text.minimessage.placeholder.PlaceholderResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -410,8 +411,8 @@ public abstract class PlotArea {
         }
         this.getFlagContainer().addAll(parseFlags(flags));
         ConsolePlayer.getConsole().sendMessage(
-                TranslatableCaption.of("flags.area_flags"),
-                Template.of("flags", flags.toString())
+                TranslatableCaption.miniMessage("flags.area_flags"),
+                Placeholder.miniMessage("flags", flags.toString())
         );
 
         this.spawnEggs = config.getBoolean("event.spawn.egg");
@@ -431,8 +432,8 @@ public abstract class PlotArea {
         }
         this.getRoadFlagContainer().addAll(parseFlags(roadflags));
         ConsolePlayer.getConsole().sendMessage(
-                TranslatableCaption.of("flags.road_flags"),
-                Template.of("flags", roadflags.toString())
+                TranslatableCaption.miniMessage("flags.road_flags"),
+                Placeholder.miniMessage("flags", roadflags.toString())
         );
 
         loadConfiguration(config);
@@ -440,7 +441,7 @@ public abstract class PlotArea {
 
     private Component getFlagsComponent(Component flagsComponent, Collection<PlotFlag<?, ?>> flagCollection) {
         if (flagCollection.isEmpty()) {
-            flagsComponent = MINI_MESSAGE.parse(TranslatableCaption.of("flag.no_flags").getComponent(LocaleHolder.console()));
+            flagsComponent = MINI_MESSAGE.parse(TranslatableCaption.miniMessage("flag.no_flags").getComponent(LocaleHolder.console()));
         } else {
             String prefix = " ";
             for (final PlotFlag<?, ?> flag : flagCollection) {
@@ -450,14 +451,16 @@ public abstract class PlotArea {
                 } else {
                     value = flag.toString();
                 }
-                Component snip = MINI_MESSAGE.parse(
+                Component snip = MINI_MESSAGE.deserialize(
                         prefix + CaptionUtility
                                 .format(
                                         ConsolePlayer.getConsole(),
-                                        TranslatableCaption.of("info.plot_flag_list").getComponent(LocaleHolder.console())
+                                        TranslatableCaption.miniMessage("info.plot_flag_list").getComponent(LocaleHolder.console())
                                 ),
-                        Template.of("flag", flag.getName()),
-                        Template.of("value", CaptionUtility.formatRaw(ConsolePlayer.getConsole(), value.toString()))
+                        PlaceholderResolver.placeholders(
+                        Placeholder.miniMessage("flag", flag.getName()),
+                        Placeholder.miniMessage("value", CaptionUtility.formatRaw(ConsolePlayer.getConsole(), value.toString()))
+                        )
                 );
                 if (flagsComponent != null) {
                     flagsComponent.append(snip);

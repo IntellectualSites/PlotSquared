@@ -70,14 +70,14 @@ public class DebugImportWorlds extends Command {
     ) throws CommandException {
         // UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8))
         if (!(this.plotAreaManager instanceof SinglePlotAreaManager)) {
-            player.sendMessage(TranslatableCaption.of("debugimportworlds.single_plot_area"));
+            player.sendMessage(TranslatableCaption.miniMessage("debugimportworlds.single_plot_area"));
             return CompletableFuture.completedFuture(false);
         }
         SinglePlotArea area = ((SinglePlotAreaManager) this.plotAreaManager).getArea();
         PlotId id = PlotId.of(0, 0);
         File container = PlotSquared.platform().worldContainer();
         if (container.equals(new File("."))) {
-            player.sendMessage(TranslatableCaption.of("debugimportworlds.world_container"));
+            player.sendMessage(TranslatableCaption.miniMessage("debugimportworlds.world_container"));
             return CompletableFuture.completedFuture(false);
         }
         for (File folder : container.listFiles()) {
@@ -87,7 +87,7 @@ public class DebugImportWorlds extends Command {
                 if (name.length() > 16) {
                     uuid = UUID.fromString(name);
                 } else {
-                    player.sendMessage(TranslatableCaption.of("players.fetching_player"));
+                    player.sendMessage(TranslatableCaption.miniMessage("players.fetching_player"));
                     uuid = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(name, 60000L);
                 }
                 if (uuid == null) {
@@ -103,7 +103,7 @@ public class DebugImportWorlds extends Command {
                 }
             }
         }
-        player.sendMessage(TranslatableCaption.of("players.done"));
+        player.sendMessage(TranslatableCaption.miniMessage("players.done"));
         return CompletableFuture.completedFuture(true);
     }
 

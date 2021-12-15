@@ -36,8 +36,8 @@ public class DescriptionFlag extends StringFlag<DescriptionFlag> {
     protected DescriptionFlag(@NonNull String value) {
         super(
                 value,
-                TranslatableCaption.of("flags.flag_category_string"),
-                TranslatableCaption.of("flags.flag_description_description")
+                TranslatableCaption.miniMessage("flags.flag_category_string"),
+                TranslatableCaption.miniMessage("flags.flag_description_description")
         );
     }
 

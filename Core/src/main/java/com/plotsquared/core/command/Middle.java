@@ -46,11 +46,11 @@ public class Middle extends SubCommand {
         Location location = player.getLocation();
         Plot plot = location.getPlot();
         if (plot == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return false;
         }
         plot.getCenter(center -> player.teleport(center, TeleportCause.COMMAND_MIDDLE));
-        player.sendMessage(TranslatableCaption.of("teleport.teleported_to_plot"));
+        player.sendMessage(TranslatableCaption.miniMessage("teleport.teleported_to_plot"));
         return true;
     }
 

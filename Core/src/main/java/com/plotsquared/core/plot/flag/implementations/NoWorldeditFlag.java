@@ -35,7 +35,7 @@ public class NoWorldeditFlag extends BooleanFlag<NoWorldeditFlag> {
     public static final NoWorldeditFlag NO_WORLDEDIT_FALSE = new NoWorldeditFlag(false);
 
     private NoWorldeditFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_no_worldedit"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_no_worldedit"));
     }
 
     @Override

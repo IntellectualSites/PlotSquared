@@ -43,8 +43,8 @@ public class PlotTitleFlag extends PlotFlag<PlotTitle, PlotTitleFlag> {
     protected PlotTitleFlag(PlotTitle value) {
         super(
                 value,
-                TranslatableCaption.of("flags.flag_category_string"),
-                TranslatableCaption.of("flags.flag_description_title")
+                TranslatableCaption.miniMessage("flags.flag_category_string"),
+                TranslatableCaption.miniMessage("flags.flag_description_title")
         );
     }
 
@@ -65,7 +65,7 @@ public class PlotTitleFlag extends PlotFlag<PlotTitle, PlotTitleFlag> {
         } else if (inputs.length > 3) {
             value = new PlotTitle(inputs[1], inputs[3]);
         } else {
-            throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_title"));
+            throw new FlagParseException(this, input, TranslatableCaption.miniMessage("flags.flag_error_title"));
         }
         return new PlotTitleFlag(value);
     }

@@ -35,7 +35,7 @@ public class AnimalAttackFlag extends BooleanFlag<AnimalAttackFlag> {
     public static final AnimalAttackFlag ANIMAL_ATTACK_FALSE = new AnimalAttackFlag(false);
 
     private AnimalAttackFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_animal_attack"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_animal_attack"));
     }
 
     @Override

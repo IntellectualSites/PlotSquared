@@ -35,7 +35,7 @@ public class MiscInteractFlag extends BooleanFlag<MiscInteractFlag> {
     public static final MiscInteractFlag MISC_INTERACT_FALSE = new MiscInteractFlag(false);
 
     private MiscInteractFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_misc_interact"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_misc_interact"));
     }
 
     @Override

@@ -77,43 +77,43 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     @Override
     public ConfigurationNode[] getSettingNodes() {
         return new ConfigurationNode[]{
-                new ConfigurationNode("plot.height", this.PLOT_HEIGHT, TranslatableCaption.of("setup.plot_height"),
+                new ConfigurationNode("plot.height", this.PLOT_HEIGHT, TranslatableCaption.miniMessage("setup.plot_height"),
                         ConfigurationUtil.INTEGER
                 ),
-                new ConfigurationNode("plot.size", this.PLOT_WIDTH, TranslatableCaption.of("setup.plot_width"),
+                new ConfigurationNode("plot.size", this.PLOT_WIDTH, TranslatableCaption.miniMessage("setup.plot_width"),
                         ConfigurationUtil.INTEGER
                 ),
-                new ConfigurationNode("plot.filling", this.MAIN_BLOCK, TranslatableCaption.of("setup.plot_block"),
+                new ConfigurationNode("plot.filling", this.MAIN_BLOCK, TranslatableCaption.miniMessage("setup.plot_block"),
                         ConfigurationUtil.BLOCK_BUCKET
                 ),
                 new ConfigurationNode("wall.place_top_block", this.PLACE_TOP_BLOCK,
-                        TranslatableCaption.of("setup.top_block_boolean"), ConfigurationUtil.BOOLEAN
+                        TranslatableCaption.miniMessage("setup.top_block_boolean"), ConfigurationUtil.BOOLEAN
                 ),
-                new ConfigurationNode("plot.floor", this.TOP_BLOCK, TranslatableCaption.of("setup.plot_block_floor"),
+                new ConfigurationNode("plot.floor", this.TOP_BLOCK, TranslatableCaption.miniMessage("setup.plot_block_floor"),
                         ConfigurationUtil.BLOCK_BUCKET
                 ),
-                new ConfigurationNode("wall.block", this.WALL_BLOCK, TranslatableCaption.of("setup.top_wall_block"),
+                new ConfigurationNode("wall.block", this.WALL_BLOCK, TranslatableCaption.miniMessage("setup.top_wall_block"),
                         ConfigurationUtil.BLOCK_BUCKET
                 ),
                 new ConfigurationNode("wall.block_claimed", this.CLAIMED_WALL_BLOCK,
-                        TranslatableCaption.of("setup.wall_block_claimed"), ConfigurationUtil.BLOCK_BUCKET
+                        TranslatableCaption.miniMessage("setup.wall_block_claimed"), ConfigurationUtil.BLOCK_BUCKET
                 ),
-                new ConfigurationNode("road.width", this.ROAD_WIDTH, TranslatableCaption.of("setup.road_width"),
+                new ConfigurationNode("road.width", this.ROAD_WIDTH, TranslatableCaption.miniMessage("setup.road_width"),
                         ConfigurationUtil.INTEGER
                 ),
-                new ConfigurationNode("road.height", this.ROAD_HEIGHT, TranslatableCaption.of("setup.road_height"),
+                new ConfigurationNode("road.height", this.ROAD_HEIGHT, TranslatableCaption.miniMessage("setup.road_height"),
                         ConfigurationUtil.INTEGER
                 ),
-                new ConfigurationNode("road.block", this.ROAD_BLOCK, TranslatableCaption.of("setup.road_block"),
+                new ConfigurationNode("road.block", this.ROAD_BLOCK, TranslatableCaption.miniMessage("setup.road_block"),
                         ConfigurationUtil.BLOCK_BUCKET
                 ),
-                new ConfigurationNode("wall.filling", this.WALL_FILLING, TranslatableCaption.of("setup.wall_filling_block"),
+                new ConfigurationNode("wall.filling", this.WALL_FILLING, TranslatableCaption.miniMessage("setup.wall_filling_block"),
                         ConfigurationUtil.BLOCK_BUCKET
                 ),
-                new ConfigurationNode("wall.height", this.WALL_HEIGHT, TranslatableCaption.of("setup.wall_height"),
+                new ConfigurationNode("wall.height", this.WALL_HEIGHT, TranslatableCaption.miniMessage("setup.wall_height"),
                         ConfigurationUtil.INTEGER
                 ),
-                new ConfigurationNode("plot.bedrock", this.PLOT_BEDROCK, TranslatableCaption.of("setup.bedrock_boolean"),
+                new ConfigurationNode("plot.bedrock", this.PLOT_BEDROCK, TranslatableCaption.miniMessage("setup.bedrock_boolean"),
                         ConfigurationUtil.BOOLEAN
                 )};
     }

@@ -12,8 +12,7 @@ findbugs = "3.0.1"
 snakeyaml = "1.28" # Version set by Bukkit
 
 # Adventure & MiniMessage
-adventure-api = "4.9.3"
-adventure-text-minimessage = "4.1.0-SNAPSHOT"
+adventure-api = "4.10.0-SNAPSHOT"
 adventure-platform-bukkit = "4.0.1"
 
 # Plugins
@@ -61,7 +60,7 @@ findbugs = { group = "com.google.code.findbugs", name = "annotations", version.r
 
 # Adventure & MiniMessage
 adventure = { group = "net.kyori", name = "adventure-api", version.ref = "adventure-api" }
-minimessage = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "adventure-text-minimessage" }
+minimessage = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "adventure-api" }
 adventurePlatformBukkit = { group = "net.kyori", name = "adventure-platform-bukkit", version.ref = "adventure-platform-bukkit" }
 
 # Plugins

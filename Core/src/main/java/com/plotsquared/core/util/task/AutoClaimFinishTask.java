@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.util.task;
 
-import com.plotsquared.core.configuration.caption.Templates;
+import com.plotsquared.core.configuration.caption.Placeholders;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.Result;
@@ -65,7 +65,7 @@ public final class AutoClaimFinishTask implements Callable<Boolean> {
             autoAccess.remove();
         }
         if (plot == null) {
-            player.sendMessage(TranslatableCaption.of("errors.no_free_plots"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.no_free_plots"));
             return false;
         }
         plot.claim(player, true, schematic, false, true);
@@ -74,8 +74,8 @@ public final class AutoClaimFinishTask implements Callable<Boolean> {
             PlotMergeEvent event = this.eventDispatcher.callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
             if (event.getEventResult() == Result.DENY) {
                 player.sendMessage(
-                        TranslatableCaption.of("events.event_denied"),
-                        Templates.of("value", "Auto Merge")
+                        TranslatableCaption.miniMessage("events.event_denied"),
+                        Placeholders.miniMessage("value", "Auto Merge")
                 );
             } else {
                 if (plot.getPlotModificationManager().autoMerge(event.getDir(), event.getMax(), player.getUUID(), player, true)) {

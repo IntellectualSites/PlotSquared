@@ -120,10 +120,10 @@ public class Reload extends SubCommand {
                 }
             });
             this.worldConfiguration.save(this.worldFile);
-            player.sendMessage(TranslatableCaption.of("reload.reloaded_configs"));
+            player.sendMessage(TranslatableCaption.miniMessage("reload.reloaded_configs"));
         } catch (Exception e) {
             e.printStackTrace();
-            player.sendMessage(TranslatableCaption.of("reload.reload_failed"));
+            player.sendMessage(TranslatableCaption.miniMessage("reload.reload_failed"));
         }
         return true;
     }

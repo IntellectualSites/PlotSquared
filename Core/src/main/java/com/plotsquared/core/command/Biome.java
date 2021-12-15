@@ -32,7 +32,7 @@ import com.plotsquared.core.util.StringMan;
 import com.sk89q.worldedit.command.util.SuggestionHelper;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 import java.util.Collection;
 import java.util.Locale;
@@ -57,30 +57,30 @@ public class Biome extends SetCommand {
             String biomes = StringMan.join(
                     BiomeType.REGISTRY.values(),
                     MINI_MESSAGE.serialize(MINI_MESSAGE.parse(TranslatableCaption
-                            .of("blocklist.block_list_separator")
+                            .miniMessage("blocklist.block_list_separator")
                             .getComponent(player)))
             );
-            player.sendMessage(TranslatableCaption.of("biome.need_biome"));
+            player.sendMessage(TranslatableCaption.miniMessage("biome.need_biome"));
             player.sendMessage(
-                    TranslatableCaption.of("commandconfig.subcommand_set_options_header"),
-                    Template.of("values", biomes)
+                    TranslatableCaption.miniMessage("commandconfig.subcommand_set_options_header"),
+                    Placeholder.miniMessage("values", biomes)
             );
             return false;
         }
         if (plot.getRunning() > 0) {
-            player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.wait_for_timer"));
             return false;
         }
         if (plot.getVolume() > Integer.MAX_VALUE) {
-            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
+            player.sendMessage(TranslatableCaption.miniMessage("schematics.schematic_too_large"));
             return false;
         }
         plot.addRunning();
         plot.getPlotModificationManager().setBiome(biome, () -> {
             plot.removeRunning();
             player.sendMessage(
-                    TranslatableCaption.of("biome.biome_set_to"),
-                    Template.of("value", value.toLowerCase())
+                    TranslatableCaption.miniMessage("biome.biome_set_to"),
+                    Placeholder.miniMessage("value", value.toLowerCase())
             );
         });
         return true;

@@ -35,7 +35,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.queue.QueueCoordinator;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
@@ -66,16 +66,16 @@ public class DebugRoadRegen extends SubCommand {
         Plot plot = location.getPlotAbs();
         if (args.length < 1) {
             player.sendMessage(
-                    TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", DebugRoadRegen.USAGE)
+                    TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                    Placeholder.miniMessage("value", DebugRoadRegen.USAGE)
             );
             return false;
         }
 
         PlotArea area = player.getPlotAreaAbs();
-        check(area, TranslatableCaption.of("errors.not_in_plot_world"));
+        check(area, TranslatableCaption.miniMessage("errors.not_in_plot_world"));
         if (plot.getVolume() > Integer.MAX_VALUE) {
-            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
+            player.sendMessage(TranslatableCaption.miniMessage("schematics.schematic_too_large"));
             return false;
         }
         String kind = args[0].toLowerCase();
@@ -86,8 +86,8 @@ public class DebugRoadRegen extends SubCommand {
                 return regenRegion(player, Arrays.copyOfRange(args, 1, args.length));
             default:
                 player.sendMessage(
-                        TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.of("value", DebugRoadRegen.USAGE)
+                        TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                        Placeholder.miniMessage("value", DebugRoadRegen.USAGE)
                 );
                 return false;
         }
@@ -97,24 +97,24 @@ public class DebugRoadRegen extends SubCommand {
         Location location = player.getLocation();
         PlotArea area = location.getPlotArea();
         if (area == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot_world"));
         }
         Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
         } else if (plot.isMerged()) {
-            player.sendMessage(TranslatableCaption.of("debug.requires_unmerged"));
+            player.sendMessage(TranslatableCaption.miniMessage("debug.requires_unmerged"));
         } else {
             PlotManager manager = area.getPlotManager();
             QueueCoordinator queue = area.getQueue();
             queue.setCompleteTask(() -> {
                 player.sendMessage(
-                        TranslatableCaption.of("debugroadregen.regen_done"),
-                        Template.of("value", plot.getId().toString())
+                        TranslatableCaption.miniMessage("debugroadregen.regen_done"),
+                        Placeholder.miniMessage("value", plot.getId().toString())
                 );
                 player.sendMessage(
-                        TranslatableCaption.of("debugroadregen.regen_all"),
-                        Template.of("value", "/plot regenallroads")
+                        TranslatableCaption.miniMessage("debugroadregen.regen_all"),
+                        Placeholder.miniMessage("value", "/plot regenallroads")
                 );
             });
             manager.createRoadEast(plot, queue);
@@ -132,19 +132,19 @@ public class DebugRoadRegen extends SubCommand {
                 height = Integer.parseInt(args[0]);
             } catch (NumberFormatException ignored) {
                 player.sendMessage(
-                        TranslatableCaption.of("invalid.not_valid_number"),
-                        Template.of("value", "0, 256")
+                        TranslatableCaption.miniMessage("invalid.not_valid_number"),
+                        Placeholder.miniMessage("value", "0, 256")
                 );
                 player.sendMessage(
-                        TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.of("value", DebugRoadRegen.USAGE)
+                        TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                        Placeholder.miniMessage("value", DebugRoadRegen.USAGE)
                 );
                 return false;
             }
         } else if (args.length != 0) {
             player.sendMessage(
-                    TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", DebugRoadRegen.USAGE)
+                    TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                    Placeholder.miniMessage("value", DebugRoadRegen.USAGE)
             );
             return false;
         }
@@ -152,25 +152,25 @@ public class DebugRoadRegen extends SubCommand {
         Location location = player.getLocation();
         PlotArea area = location.getPlotArea();
         if (area == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot_world"));
         }
         Plot plot = player.getCurrentPlot();
         PlotManager manager = area.getPlotManager();
         if (!(manager instanceof HybridPlotManager)) {
-            player.sendMessage(TranslatableCaption.of("errors.invalid_plot_world"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.invalid_plot_world"));
             return true;
         }
         player.sendMessage(
-                TranslatableCaption.of("debugroadregen.schematic"),
-                Template.of("command", "/plot createroadschematic")
+                TranslatableCaption.miniMessage("debugroadregen.schematic"),
+                Placeholder.miniMessage("command", "/plot createroadschematic")
         );
         player.sendMessage(
-                TranslatableCaption.of("debugroadregen.regenallroads"),
-                Template.of("command", "/plot regenallroads")
+                TranslatableCaption.miniMessage("debugroadregen.regenallroads"),
+                Placeholder.miniMessage("command", "/plot regenallroads")
         );
         boolean result = this.hybridUtils.scheduleSingleRegionRoadUpdate(plot, height);
         if (!result) {
-            player.sendMessage(TranslatableCaption.of("debugexec.mass_schematic_update_in_progress"));
+            player.sendMessage(TranslatableCaption.miniMessage("debugexec.mass_schematic_update_in_progress"));
             return false;
         }
         return true;

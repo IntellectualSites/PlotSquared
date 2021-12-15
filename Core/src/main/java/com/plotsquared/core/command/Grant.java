@@ -40,7 +40,7 @@ import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.uuid.UUIDMapping;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -70,16 +70,16 @@ public class Grant extends Command {
     ) throws CommandException {
         checkTrue(
                 args.length >= 1 && args.length <= 2,
-                TranslatableCaption.of("commandconfig.command_syntax"),
-                Template.of("value", "/plot grant <check | add> [player]")
+                TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                Placeholder.miniMessage("value", "/plot grant <check | add> [player]")
         );
         final String arg0 = args[0].toLowerCase();
         switch (arg0) {
             case "add", "check" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_GRANT.format(arg0))) {
                     player.sendMessage(
-                            TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", Permission.PERMISSION_GRANT.format(arg0))
+                            TranslatableCaption.miniMessage("permission.no_permission"),
+                            Placeholder.miniMessage("node", Permission.PERMISSION_GRANT.format(arg0))
                     );
                     return CompletableFuture.completedFuture(false);
                 }
@@ -88,11 +88,11 @@ public class Grant extends Command {
                 }
                 PlayerManager.getUUIDsFromString(args[1], (uuids, throwable) -> {
                     if (throwable instanceof TimeoutException) {
-                        player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
+                        player.sendMessage(TranslatableCaption.miniMessage("players.fetching_players_timeout"));
                     } else if (throwable != null || uuids.size() != 1) {
                         player.sendMessage(
-                                TranslatableCaption.of("errors.invalid_player"),
-                                Template.of("value", String.valueOf(uuids))
+                                TranslatableCaption.miniMessage("errors.invalid_player"),
+                                Placeholder.miniMessage("value", String.valueOf(uuids))
                         );
                     } else {
                         final UUIDMapping uuid = uuids.toArray(new UUIDMapping[0])[0];
@@ -102,8 +102,8 @@ public class Grant extends Command {
                                     PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
                                 if (args[0].equalsIgnoreCase("check")) {
                                     player.sendMessage(
-                                            TranslatableCaption.of("grants.granted_plots"),
-                                            Template.of("amount", String.valueOf(access.get().orElse(0)))
+                                            TranslatableCaption.miniMessage("grants.granted_plots"),
+                                            Placeholder.miniMessage("amount", String.valueOf(access.get().orElse(0)))
                                     );
                                 } else {
                                     access.set(access.get().orElse(0) + 1);
@@ -122,8 +122,8 @@ public class Grant extends Command {
                                             granted = Ints.fromByteArray(array);
                                         }
                                         player.sendMessage(
-                                                TranslatableCaption.of("grants.granted_plots"),
-                                                Template.of("amount", String.valueOf(granted))
+                                                TranslatableCaption.miniMessage("grants.granted_plots"),
+                                                Placeholder.miniMessage("amount", String.valueOf(granted))
                                         );
                                     } else { // add
                                         int amount;
@@ -137,8 +137,8 @@ public class Grant extends Command {
                                         byte[] rawData = Ints.toByteArray(amount);
                                         DBFunc.addPersistentMeta(uuid.getUuid(), key, rawData, replace);
                                         player.sendMessage(
-                                                TranslatableCaption.of("grants.added"),
-                                                Template.of("grants", String.valueOf(amount))
+                                                TranslatableCaption.miniMessage("grants.added"),
+                                                Placeholder.miniMessage("grants", String.valueOf(amount))
                                         );
                                     }
                                 }

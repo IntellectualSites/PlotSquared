@@ -209,7 +209,7 @@ public class PlayerBackupProfile implements BackupProfile {
                                     } else {
                                         future.completeExceptionally(new RuntimeException(MINI_MESSAGE.stripTokens(
                                                 TranslatableCaption
-                                                        .of("schematics.schematic_paste_failed")
+                                                        .miniMessage("schematics.schematic_paste_failed")
                                                         .getComponent(ConsolePlayer.getConsole()))));
                                     }
                                 }

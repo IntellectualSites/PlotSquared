@@ -34,7 +34,7 @@ public class TimeFlag extends LongFlag<TimeFlag> {
     public static final TimeFlag TIME_DISABLED = new TimeFlag(Long.MIN_VALUE);
 
     protected TimeFlag(@NonNull Long value) {
-        super(value, TranslatableCaption.of("flags.flag_description_time"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_time"));
     }
 
     @Override

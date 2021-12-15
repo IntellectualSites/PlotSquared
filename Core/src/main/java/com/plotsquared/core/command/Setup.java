@@ -36,7 +36,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.setup.SetupProcess;
 import com.plotsquared.core.setup.SetupStep;
 import com.plotsquared.core.util.SetupUtils;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -61,7 +61,7 @@ public class Setup extends SubCommand {
 
     public void displayGenerators(PlotPlayer<?> player) {
         StringBuilder message = new StringBuilder();
-        message.append(TranslatableCaption.of("setup.choose_generator").getComponent(player));
+        message.append(TranslatableCaption.miniMessage("setup.choose_generator").getComponent(player));
         for (Entry<String, GeneratorWrapper<?>> entry : SetupUtils.generators.entrySet()) {
             if (entry.getKey().equals(PlotSquared.platform().pluginName())) {
                 message.append("\n<dark_gray> - </dark_gray><dark_green>").append(entry.getKey()).append(
@@ -82,10 +82,10 @@ public class Setup extends SubCommand {
             SetupProcess process = metaDataAccess.get().orElse(null);
             if (process == null) {
                 if (args.length > 0) {
-                    player.sendMessage(TranslatableCaption.of("setup.setup_not_started"));
+                    player.sendMessage(TranslatableCaption.miniMessage("setup.setup_not_started"));
                     player.sendMessage(
-                            TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.of("value", "Use /plot setup to start a setup process.")
+                            TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                            Placeholder.miniMessage("value", "Use /plot setup to start a setup process.")
                     );
                     return true;
                 }
@@ -103,7 +103,7 @@ public class Setup extends SubCommand {
                     process.getCurrentStep().announce(player);
                 } else if ("cancel".equalsIgnoreCase(args[0])) {
                     metaDataAccess.remove();
-                    player.sendMessage(TranslatableCaption.of("setup.setup_cancelled"));
+                    player.sendMessage(TranslatableCaption.miniMessage("setup.setup_cancelled"));
                 } else {
                     process.handleInput(player, args[0]);
                     if (process.getCurrentStep() != null) {

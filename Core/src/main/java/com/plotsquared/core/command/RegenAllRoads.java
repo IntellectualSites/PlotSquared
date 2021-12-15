@@ -33,7 +33,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(command = "regenallroads",
@@ -64,44 +64,44 @@ public class RegenAllRoads extends SubCommand {
                 height = Integer.parseInt(args[1]);
             } catch (NumberFormatException ignored) {
                 player.sendMessage(
-                        TranslatableCaption.of("invalid.not_valid_number"),
-                        Template.of("value", "(0, 256)")
+                        TranslatableCaption.miniMessage("invalid.not_valid_number"),
+                        Placeholder.miniMessage("value", "(0, 256)")
                 );
                 player.sendMessage(
-                        TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.of("value", "/plot regenallroads <world> [height]")
+                        TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                        Placeholder.miniMessage("value", "/plot regenallroads <world> [height]")
                 );
                 return false;
             }
         } else if (args.length != 1) {
             player.sendMessage(
-                    TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot regenallroads <world> [height]")
+                    TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                    Placeholder.miniMessage("value", "/plot regenallroads <world> [height]")
             );
             return false;
         }
         PlotArea area = this.plotAreaManager.getPlotAreaByString(args[0]);
         if (area == null) {
             player.sendMessage(
-                    TranslatableCaption.of("errors.not_valid_plot_world"),
-                    Template.of("value", args[0])
+                    TranslatableCaption.miniMessage("errors.not_valid_plot_world"),
+                    Placeholder.miniMessage("value", args[0])
             );
             return false;
         }
         String name = args[0];
         PlotManager manager = area.getPlotManager();
         if (!(manager instanceof HybridPlotManager)) {
-            player.sendMessage(TranslatableCaption.of("errors.invalid_plot_world"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.invalid_plot_world"));
             return false;
         }
         player.sendMessage(
-                TranslatableCaption.of("debugroadregen.schematic"),
-                Template.of("command", "/plot createroadschematic")
+                TranslatableCaption.miniMessage("debugroadregen.schematic"),
+                Placeholder.miniMessage("command", "/plot createroadschematic")
         );
-        player.sendMessage(TranslatableCaption.of("debugroadregen.regenallroads_started"));
+        player.sendMessage(TranslatableCaption.miniMessage("debugroadregen.regenallroads_started"));
         boolean result = this.hybridUtils.scheduleRoadUpdate(area, height);
         if (!result) {
-            player.sendMessage(TranslatableCaption.of("debugexec.mass_schematic_update_in_progress"));
+            player.sendMessage(TranslatableCaption.miniMessage("debugexec.mass_schematic_update_in_progress"));
             return false;
         }
         return true;

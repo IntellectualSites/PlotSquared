@@ -35,7 +35,7 @@ public class GrassGrowFlag extends BooleanFlag<GrassGrowFlag> {
     public static final GrassGrowFlag GRASS_GROW_FALSE = new GrassGrowFlag(false);
 
     private GrassGrowFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_grass_grow"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_grass_grow"));
     }
 
     @Override

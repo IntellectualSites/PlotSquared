@@ -42,7 +42,7 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -72,8 +72,8 @@ public class Owner extends SetCommand {
     public boolean set(final PlotPlayer<?> player, final Plot plot, String value) {
         if (value == null || value.isEmpty()) {
             player.sendMessage(
-                    TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot setowner <owner>")
+                    TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                    Placeholder.miniMessage("value", "/plot setowner <owner>")
             );
             return false;
         }
@@ -84,8 +84,8 @@ public class Owner extends SetCommand {
             if (uuid == null && !value.equalsIgnoreCase("none") && !value.equalsIgnoreCase("null")
                     && !value.equalsIgnoreCase("-")) {
                 player.sendMessage(
-                        TranslatableCaption.of("errors.invalid_player"),
-                        Template.of("value", value)
+                        TranslatableCaption.miniMessage("errors.invalid_player"),
+                        Placeholder.miniMessage("value", value)
                 );
                 return;
             }
@@ -98,8 +98,8 @@ public class Owner extends SetCommand {
             );
             if (event.getEventResult() == Result.DENY) {
                 player.sendMessage(
-                        TranslatableCaption.of("events.event_denied"),
-                        Template.of("value", "Owner change")
+                        TranslatableCaption.miniMessage("events.event_denied"),
+                        Placeholder.miniMessage("value", "Owner change")
                 );
                 return;
             }
@@ -121,8 +121,8 @@ public class Owner extends SetCommand {
                 );
                 if (unlinkEvent.getEventResult() == Result.DENY) {
                     player.sendMessage(
-                            TranslatableCaption.of("events.event_denied"),
-                            Template.of("value", "Unlink on owner change")
+                            TranslatableCaption.miniMessage("events.event_denied"),
+                            Placeholder.miniMessage("value", "Unlink on owner change")
                     );
                     return;
                 }
@@ -135,14 +135,14 @@ public class Owner extends SetCommand {
                     current.getPlotModificationManager().removeSign();
                 }
                 eventDispatcher.callPostOwnerChange(player, plot, oldOwner);
-                player.sendMessage(TranslatableCaption.of("owner.set_owner"));
+                player.sendMessage(TranslatableCaption.miniMessage("owner.set_owner"));
                 return;
             }
             final PlotPlayer<?> other = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
             if (plot.isOwner(uuid)) {
                 player.sendMessage(
-                        TranslatableCaption.of("member.already_owner"),
-                        Template.of("player", PlayerManager.getName(uuid, false))
+                        TranslatableCaption.miniMessage("member.already_owner"),
+                        Placeholder.miniMessage("player", PlayerManager.getName(uuid, false))
                 );
                 return;
             }
@@ -150,8 +150,8 @@ public class Owner extends SetCommand {
                     .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_SET_OWNER)) {
                 if (other == null) {
                     player.sendMessage(
-                            TranslatableCaption.of("errors.invalid_player_offline"),
-                            Template.of("player", PlayerManager.getName(uuid))
+                            TranslatableCaption.miniMessage("errors.invalid_player_offline"),
+                            Placeholder.miniMessage("player", PlayerManager.getName(uuid))
                     );
                     return;
                 }
@@ -166,7 +166,7 @@ public class Owner extends SetCommand {
                             grants = metaDataAccess.get().orElse(0);
                             if (grants <= 0) {
                                 metaDataAccess.remove();
-                                player.sendMessage(TranslatableCaption.of("permission.cant_transfer_more_plots"));
+                                player.sendMessage(TranslatableCaption.miniMessage("permission.cant_transfer_more_plots"));
                                 return;
                             }
                         }
@@ -182,16 +182,16 @@ public class Owner extends SetCommand {
                             plot.removeDenied(finalUUID);
                         }
                         plot.getPlotModificationManager().setSign(finalName);
-                        player.sendMessage(TranslatableCaption.of("owner.set_owner"));
+                        player.sendMessage(TranslatableCaption.miniMessage("owner.set_owner"));
                         eventDispatcher.callPostOwnerChange(player, plot, oldOwner);
                         if (other != null) {
                             other.sendMessage(
-                                    TranslatableCaption.of("owner.now_owner"),
-                                    Template.of("plot", plot.getArea() + ";" + plot.getId())
+                                    TranslatableCaption.miniMessage("owner.now_owner"),
+                                    Placeholder.miniMessage("plot", plot.getArea() + ";" + plot.getId())
                             );
                         }
                     } else {
-                        player.sendMessage(TranslatableCaption.of("owner.set_owner_cancelled"));
+                        player.sendMessage(TranslatableCaption.miniMessage("owner.set_owner_cancelled"));
                     }
                 };
                 if (hasConfirmation(player)) {

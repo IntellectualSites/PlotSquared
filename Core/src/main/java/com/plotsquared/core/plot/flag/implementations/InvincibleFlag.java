@@ -35,7 +35,7 @@ public class InvincibleFlag extends BooleanFlag<InvincibleFlag> {
     public static final InvincibleFlag INVINCIBLE_FALSE = new InvincibleFlag(false);
 
     private InvincibleFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_invincible"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_invincible"));
     }
 
     @Override

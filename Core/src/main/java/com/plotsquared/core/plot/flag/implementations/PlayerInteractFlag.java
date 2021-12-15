@@ -35,7 +35,7 @@ public class PlayerInteractFlag extends BooleanFlag<PlayerInteractFlag> {
     public static final PlayerInteractFlag PLAYER_INTERACT_FALSE = new PlayerInteractFlag(false);
 
     private PlayerInteractFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_player_interact"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_player_interact"));
     }
 
     @Override

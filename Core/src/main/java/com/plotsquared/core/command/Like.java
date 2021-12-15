@@ -41,7 +41,7 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
@@ -115,17 +115,17 @@ public class Like extends SubCommand {
                                 .isBasePlot() && (!plot.getLikes().containsKey(uuid))) {
                             plot.teleportPlayer(player, TeleportCause.COMMAND_LIKE, result -> {
                             });
-                            player.sendMessage(TranslatableCaption.of("tutorial.rate_this"));
+                            player.sendMessage(TranslatableCaption.miniMessage("tutorial.rate_this"));
                             return true;
                         }
                     }
-                    player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
+                    player.sendMessage(TranslatableCaption.miniMessage("invalid.found_no_plots"));
                     return true;
                 }
                 case "purge" -> {
                     final Plot plot = player.getCurrentPlot();
                     if (plot == null) {
-                        player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+                        player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
                         return false;
                     }
                     if (!Permissions
@@ -133,34 +133,34 @@ public class Like extends SubCommand {
                         return false;
                     }
                     plot.clearRatings();
-                    player.sendMessage(TranslatableCaption.of("ratings.ratings_purged"));
+                    player.sendMessage(TranslatableCaption.miniMessage("ratings.ratings_purged"));
                     return true;
                 }
             }
         }
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return false;
         }
         if (!plot.hasOwner()) {
-            player.sendMessage(TranslatableCaption.of("ratings.rating_not_owned"));
+            player.sendMessage(TranslatableCaption.miniMessage("ratings.rating_not_owned"));
             return false;
         }
         if (plot.isOwner(player.getUUID())) {
-            player.sendMessage(TranslatableCaption.of("ratings.rating_not_your_own"));
+            player.sendMessage(TranslatableCaption.miniMessage("ratings.rating_not_your_own"));
             return false;
         }
         if (Settings.Done.REQUIRED_FOR_RATINGS && !DoneFlag.isDone(plot)) {
-            player.sendMessage(TranslatableCaption.of("ratings.rating_not_done"));
+            player.sendMessage(TranslatableCaption.miniMessage("ratings.rating_not_done"));
             return false;
         }
         final Runnable run = () -> {
             final Boolean oldRating = plot.getLikes().get(uuid);
             if (oldRating != null) {
                 player.sendMessage(
-                        TranslatableCaption.of("ratings.rating_already_exists"),
-                        Template.of("plot", plot.getId().toString())
+                        TranslatableCaption.miniMessage("ratings.rating_already_exists"),
+                        Placeholder.miniMessage("plot", plot.getId().toString())
                 );
                 return;
             }
@@ -177,13 +177,13 @@ public class Like extends SubCommand {
                 plot.addRating(uuid, event.getRating());
                 if (like) {
                     player.sendMessage(
-                            TranslatableCaption.of("ratings.rating_liked"),
-                            Template.of("plot", plot.getId().toString())
+                            TranslatableCaption.miniMessage("ratings.rating_liked"),
+                            Placeholder.miniMessage("plot", plot.getId().toString())
                     );
                 } else {
                     player.sendMessage(
-                            TranslatableCaption.of("ratings.rating_disliked"),
-                            Template.of("plot", plot.getId().toString())
+                            TranslatableCaption.miniMessage("ratings.rating_disliked"),
+                            Placeholder.miniMessage("plot", plot.getId().toString())
                     );
                 }
             }

@@ -39,13 +39,13 @@ public class Confirm extends SubCommand {
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         CmdInstance command = CmdConfirm.getPending(player);
         if (command == null) {
-            player.sendMessage(TranslatableCaption.of("confirm.failed_confirm"));
+            player.sendMessage(TranslatableCaption.miniMessage("confirm.failed_confirm"));
             return false;
         }
         CmdConfirm.removePending(player);
         if ((System.currentTimeMillis() - command.timestamp)
                 > Settings.Confirmation.CONFIRMATION_TIMEOUT_SECONDS * 1000) {
-            player.sendMessage(TranslatableCaption.of("confirm.expired_confirm"));
+            player.sendMessage(TranslatableCaption.miniMessage("confirm.expired_confirm"));
             return false;
         }
         TaskManager.runTaskAsync(command.command);

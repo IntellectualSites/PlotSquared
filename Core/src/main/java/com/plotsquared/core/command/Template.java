@@ -51,6 +51,7 @@ import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
@@ -175,14 +176,14 @@ public class Template extends SubCommand {
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("export")) {
                     player.sendMessage(
-                            TranslatableCaption.of("commandconfig.command_syntax"),
-                            net.kyori.adventure.text.minimessage.Template.of("value", "/plot template export <world>")
+                            TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                            Placeholder.miniMessage("value", "/plot template export <world>")
                     );
                     return true;
                 } else if (args[0].equalsIgnoreCase("import")) {
                     player.sendMessage(
-                            TranslatableCaption.of("commandconfig.command_syntax"),
-                            net.kyori.adventure.text.minimessage.Template.of("value", "/plot template import <world> <template>")
+                            TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                            Placeholder.miniMessage("value", "/plot template import <world> <template>")
                     );
                     return true;
                 }
@@ -195,23 +196,23 @@ public class Template extends SubCommand {
             case "import" -> {
                 if (args.length != 3) {
                     player.sendMessage(
-                            TranslatableCaption.of("commandconfig.command_syntax"),
-                            net.kyori.adventure.text.minimessage.Template.of("value", "/plot template import <world> <template>")
+                            TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                            Placeholder.miniMessage("value", "/plot template import <world> <template>")
                     );
                     return false;
                 }
                 if (this.plotAreaManager.hasPlotArea(world)) {
                     player.sendMessage(
-                            TranslatableCaption.of("setup.setup_world_taken"),
-                            net.kyori.adventure.text.minimessage.Template.of("value", world)
+                            TranslatableCaption.miniMessage("setup.setup_world_taken"),
+                            Placeholder.miniMessage("value", world)
                     );
                     return false;
                 }
                 boolean result = extractAllFiles(world, args[2]);
                 if (!result) {
                     player.sendMessage(
-                            TranslatableCaption.of("template.invalid_template"),
-                            net.kyori.adventure.text.minimessage.Template.of("value", args[2])
+                            TranslatableCaption.miniMessage("template.invalid_template"),
+                            Placeholder.miniMessage("value", args[2])
                     );
                     return false;
                 }
@@ -241,23 +242,23 @@ public class Template extends SubCommand {
                 this.setupUtils.setupWorld(builder);
                 TaskManager.runTask(() -> {
                     player.teleport(this.worldUtil.getSpawn(world), TeleportCause.COMMAND_TEMPLATE);
-                    player.sendMessage(TranslatableCaption.of("setup.setup_finished"));
+                    player.sendMessage(TranslatableCaption.miniMessage("setup.setup_finished"));
                 });
                 return true;
             }
             case "export" -> {
                 if (args.length != 2) {
                     player.sendMessage(
-                            TranslatableCaption.of("commandconfig.command_syntax"),
-                            net.kyori.adventure.text.minimessage.Template.of("value", "/plot template export <world>")
+                            TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                            Placeholder.miniMessage("value", "/plot template export <world>")
                     );
                     return false;
                 }
                 final PlotArea area = this.plotAreaManager.getPlotAreaByString(world);
                 if (area == null) {
                     player.sendMessage(
-                            TranslatableCaption.of("errors.not_valid_plot_world"),
-                            net.kyori.adventure.text.minimessage.Template.of("value", args[1])
+                            TranslatableCaption.miniMessage("errors.not_valid_plot_world"),
+                            Placeholder.miniMessage("value", args[1])
                     );
                     return false;
                 }
@@ -268,12 +269,12 @@ public class Template extends SubCommand {
                     } catch (Exception e) { // Must recover from any exception thrown a third party template manager
                         e.printStackTrace();
                         player.sendMessage(
-                                TranslatableCaption.of("template.template_failed"),
-                                net.kyori.adventure.text.minimessage.Template.of("value", e.getMessage())
+                                TranslatableCaption.miniMessage("template.template_failed"),
+                                Placeholder.miniMessage("value", e.getMessage())
                         );
                         return;
                     }
-                    player.sendMessage(TranslatableCaption.of("setup.setup_finished"));
+                    player.sendMessage(TranslatableCaption.miniMessage("setup.setup_finished"));
                 });
                 return true;
             }

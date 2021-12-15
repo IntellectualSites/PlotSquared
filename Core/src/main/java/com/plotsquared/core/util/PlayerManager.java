@@ -37,7 +37,8 @@ import com.plotsquared.core.uuid.UUIDMapping;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
+import net.kyori.adventure.text.minimessage.placeholder.PlaceholderResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -111,7 +112,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
 
     /**
      * Get a list of names given a list of UUIDs.
-     * - Uses the format {@link TranslatableCaption#of(String)} of "info.plot_user_list" for the returned string
+     * - Uses the format {@link TranslatableCaption#miniMessage(String)} of "info.plot_user_list" for the returned string
      *
      * @param uuids        UUIDs
      * @param localeHolder the localeHolder to localize the component for
@@ -119,18 +120,18 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      */
     public static @NonNull Component getPlayerList(final @NonNull Collection<UUID> uuids, LocaleHolder localeHolder) {
         if (uuids.isEmpty()) {
-            return MINI_MESSAGE.parse(TranslatableCaption.of("info.none").getComponent(localeHolder));
+            return MINI_MESSAGE.parse(TranslatableCaption.miniMessage("info.none").getComponent(localeHolder));
         }
 
         final List<UUID> players = new LinkedList<>();
         final List<String> users = new LinkedList<>();
         for (final UUID uuid : uuids) {
             if (uuid == null) {
-                users.add(MINI_MESSAGE.stripTokens(TranslatableCaption.of("info.none").getComponent(localeHolder)));
+                users.add(MINI_MESSAGE.stripTokens(TranslatableCaption.miniMessage("info.none").getComponent(localeHolder)));
             } else if (DBFunc.EVERYONE.equals(uuid)) {
-                users.add(MINI_MESSAGE.stripTokens(TranslatableCaption.of("info.everyone").getComponent(localeHolder)));
+                users.add(MINI_MESSAGE.stripTokens(TranslatableCaption.miniMessage("info.everyone").getComponent(localeHolder)));
             } else if (DBFunc.SERVER.equals(uuid)) {
-                users.add(MINI_MESSAGE.stripTokens(TranslatableCaption.of("info.console").getComponent(localeHolder)));
+                users.add(MINI_MESSAGE.stripTokens(TranslatableCaption.miniMessage("info.console").getComponent(localeHolder)));
             } else {
                 players.add(uuid);
             }
@@ -145,13 +146,15 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
             e.printStackTrace();
         }
 
-        String c = TranslatableCaption.of("info.plot_user_list").getComponent(ConsolePlayer.getConsole());
+        String c = TranslatableCaption.miniMessage("info.plot_user_list").getComponent(ConsolePlayer.getConsole());
         TextComponent.Builder list = Component.text();
         for (int x = 0; x < users.size(); x++) {
             if (x + 1 == uuids.size()) {
-                list.append(MINI_MESSAGE.parse(c, Template.of("user", users.get(x))));
+                list.append(MINI_MESSAGE.deserialize(c,
+                        PlaceholderResolver.placeholders(Placeholder.miniMessage("user", users.get(x)))));
             } else {
-                list.append(MINI_MESSAGE.parse(c + ", ", Template.of("user", users.get(x))));
+                list.append(MINI_MESSAGE.deserialize(c + ", ",
+                        PlaceholderResolver.placeholders(Placeholder.miniMessage("user", users.get(x)))));
             }
         }
         return list.asComponent();
@@ -176,13 +179,13 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      */
     public static @NonNull String getName(final @Nullable UUID owner, final boolean blocking) {
         if (owner == null) {
-            TranslatableCaption.of("info.none");
+            TranslatableCaption.miniMessage("info.none");
         }
         if (owner.equals(DBFunc.EVERYONE)) {
-            TranslatableCaption.of("info.everyone");
+            TranslatableCaption.miniMessage("info.everyone");
         }
         if (owner.equals(DBFunc.SERVER)) {
-            TranslatableCaption.of("info.server");
+            TranslatableCaption.miniMessage("info.server");
         }
         final String name;
         if (blocking) {
@@ -198,7 +201,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
             }
         }
         if (name == null) {
-            TranslatableCaption.of("info.unknown");
+            TranslatableCaption.miniMessage("info.unknown");
         }
         return name;
     }

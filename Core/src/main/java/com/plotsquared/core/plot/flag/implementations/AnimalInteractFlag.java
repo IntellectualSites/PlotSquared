@@ -35,7 +35,7 @@ public class AnimalInteractFlag extends BooleanFlag<AnimalInteractFlag> {
     public static final AnimalInteractFlag ANIMAL_INTERACT_FALSE = new AnimalInteractFlag(false);
 
     private AnimalInteractFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_animal_interact"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_animal_interact"));
     }
 
     @Override

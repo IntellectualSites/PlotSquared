@@ -31,7 +31,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -52,10 +52,10 @@ public class Near extends Command {
             RunnableVal3<Command, Runnable, Runnable> confirm,
             RunnableVal2<Command, CommandResult> whenDone
     ) throws CommandException {
-        final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.of("errors.not_in_plot"));
+        final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.miniMessage("errors.not_in_plot"));
         player.sendMessage(
-                TranslatableCaption.of("near.plot_near"),
-                Template.of("list", StringMan.join(plot.getPlayersInPlot(), ", "))
+                TranslatableCaption.miniMessage("near.plot_near"),
+                Placeholder.miniMessage("list", StringMan.join(plot.getPlayersInPlot(), ", "))
         );
         return CompletableFuture.completedFuture(true);
     }

@@ -36,8 +36,8 @@ public class FarewellFlag extends StringFlag<FarewellFlag> {
     protected FarewellFlag(@NonNull String value) {
         super(
                 value,
-                TranslatableCaption.of("flags.flag_category_string"),
-                TranslatableCaption.of("flags.flag_description_farewell")
+                TranslatableCaption.miniMessage("flags.flag_category_string"),
+                TranslatableCaption.miniMessage("flags.flag_description_farewell")
         );
     }
 

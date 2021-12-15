@@ -47,7 +47,7 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
@@ -91,13 +91,13 @@ public class DatabaseCommand extends SubCommand {
         TaskManager.runTaskAsync(() -> {
             try {
                 ArrayList<Plot> ps = new ArrayList<>(plots);
-                player.sendMessage(TranslatableCaption.of("database.starting_conversion"));
+                player.sendMessage(TranslatableCaption.miniMessage("database.starting_conversion"));
                 manager.createPlotsAndData(ps, () -> {
-                    player.sendMessage(TranslatableCaption.of("database.conversion_done"));
+                    player.sendMessage(TranslatableCaption.miniMessage("database.conversion_done"));
                     manager.close();
                 });
             } catch (Exception e) {
-                player.sendMessage(TranslatableCaption.of("database.conversion_failed"));
+                player.sendMessage(TranslatableCaption.miniMessage("database.conversion_failed"));
                 e.printStackTrace();
             }
         });
@@ -107,8 +107,8 @@ public class DatabaseCommand extends SubCommand {
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length < 1) {
             player.sendMessage(
-                    TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot database [area] <sqlite | mysql | import>")
+                    TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                    Placeholder.miniMessage("value", "/plot database [area] <sqlite | mysql | import>")
             );
             return false;
         }
@@ -122,10 +122,10 @@ public class DatabaseCommand extends SubCommand {
         }
         if (args.length < 1) {
             player.sendMessage(
-                    TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot database [area] <sqlite|mysql|import>")
+                    TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                    Placeholder.miniMessage("value", "/plot database [area] <sqlite|mysql|import>")
             );
-            player.sendMessage(TranslatableCaption.of("database.arg"));
+            player.sendMessage(TranslatableCaption.miniMessage("database.arg"));
             return false;
         }
         try {
@@ -135,8 +135,8 @@ public class DatabaseCommand extends SubCommand {
                 case "import" -> {
                     if (args.length < 2) {
                         player.sendMessage(
-                                TranslatableCaption.of("commandconfig.command_syntax"),
-                                Template.of("value", "/plot database import <sqlite file> [prefix]")
+                                TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                                Placeholder.miniMessage("value", "/plot database import <sqlite file> [prefix]")
                         );
                         return false;
                     }
@@ -146,12 +146,12 @@ public class DatabaseCommand extends SubCommand {
                     );
                     if (!file.exists()) {
                         player.sendMessage(
-                                TranslatableCaption.of("database.does_not_exist"),
-                                Template.of("value", String.valueOf(file))
+                                TranslatableCaption.miniMessage("database.does_not_exist"),
+                                Placeholder.miniMessage("value", String.valueOf(file))
                         );
                         return false;
                     }
-                    player.sendMessage(TranslatableCaption.of("database.starting_conversion"));
+                    player.sendMessage(TranslatableCaption.miniMessage("database.starting_conversion"));
                     implementation = new SQLite(file);
                     SQLManager manager = new SQLManager(implementation, args.length == 3 ? args[2] : "",
                             this.eventDispatcher, this.plotListener, this.worldConfiguration
@@ -190,9 +190,9 @@ public class DatabaseCommand extends SubCommand {
                                         }
                                     }
                                     player.sendMessage(
-                                            TranslatableCaption.of("database.skipping_duplicated_plot"),
-                                            Template.of("plot", String.valueOf(plot)),
-                                            Template.of("id", String.valueOf(plot.temp))
+                                            TranslatableCaption.miniMessage("database.skipping_duplicated_plot"),
+                                            Placeholder.miniMessage("plot", String.valueOf(plot)),
+                                            Placeholder.miniMessage("id", String.valueOf(plot.temp))
                                     );
                                     continue;
                                 }
@@ -207,7 +207,7 @@ public class DatabaseCommand extends SubCommand {
                     }
                     DBFunc.createPlotsAndData(
                             plots,
-                            () -> player.sendMessage(TranslatableCaption.of("database.conversion_done"))
+                            () -> player.sendMessage(TranslatableCaption.miniMessage("database.conversion_done"))
                     );
                     return true;
                 }
@@ -252,19 +252,19 @@ public class DatabaseCommand extends SubCommand {
                 DatabaseCommand.insertPlots(manager, plots, player);
                 return true;
             } catch (ClassNotFoundException | SQLException e) {
-                player.sendMessage(TranslatableCaption.of("database.failed_to_save_plots"));
-                player.sendMessage(TranslatableCaption.of("errors.stacktrace_begin"));
+                player.sendMessage(TranslatableCaption.miniMessage("database.failed_to_save_plots"));
+                player.sendMessage(TranslatableCaption.miniMessage("errors.stacktrace_begin"));
                 e.printStackTrace();
-                player.sendMessage(TranslatableCaption.of(("errors.stacktrace_end")));
-                player.sendMessage(TranslatableCaption.of("database.invalid_args"));
+                player.sendMessage(TranslatableCaption.miniMessage(("errors.stacktrace_end")));
+                player.sendMessage(TranslatableCaption.miniMessage("database.invalid_args"));
                 return false;
             }
         } catch (ClassNotFoundException | SQLException e) {
-            player.sendMessage(TranslatableCaption.of("database.failed_to_open"));
-            player.sendMessage(TranslatableCaption.of("errors.stacktrace_begin"));
+            player.sendMessage(TranslatableCaption.miniMessage("database.failed_to_open"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.stacktrace_begin"));
             e.printStackTrace();
-            player.sendMessage(TranslatableCaption.of("errors.stacktrace_end"));
-            player.sendMessage(TranslatableCaption.of("database.invalid_args"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.stacktrace_end"));
+            player.sendMessage(TranslatableCaption.miniMessage("database.invalid_args"));
             return false;
         }
     }

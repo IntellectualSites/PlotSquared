@@ -34,7 +34,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.DescriptionFlag;
 import com.plotsquared.core.util.EventDispatcher;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(command = "setdescription",
@@ -60,13 +60,13 @@ public class Desc extends SetCommand {
                     .getFlag(DescriptionFlag.class), plot);
             if (event.getEventResult() == Result.DENY) {
                 player.sendMessage(
-                        TranslatableCaption.of("events.event_denied"),
-                        Template.of("value", "Description removal")
+                        TranslatableCaption.miniMessage("events.event_denied"),
+                        Placeholder.miniMessage("value", "Description removal")
                 );
                 return false;
             }
             plot.removeFlag(event.getFlag());
-            player.sendMessage(TranslatableCaption.of("desc.desc_unset"));
+            player.sendMessage(TranslatableCaption.miniMessage("desc.desc_unset"));
             return true;
         }
         PlotFlagAddEvent event = this.eventDispatcher.callFlagAdd(plot
@@ -75,17 +75,17 @@ public class Desc extends SetCommand {
                 .createFlagInstance(desc), plot);
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
-                    TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Description set")
+                    TranslatableCaption.miniMessage("events.event_denied"),
+                    Placeholder.miniMessage("value", "Description set")
             );
             return false;
         }
         boolean result = plot.setFlag(event.getFlag());
         if (!result) {
-            player.sendMessage(TranslatableCaption.of("flag.flag_not_added"));
+            player.sendMessage(TranslatableCaption.miniMessage("flag.flag_not_added"));
             return false;
         }
-        player.sendMessage(TranslatableCaption.of("desc.desc_set"));
+        player.sendMessage(TranslatableCaption.miniMessage("desc.desc_set"));
         return true;
     }
 

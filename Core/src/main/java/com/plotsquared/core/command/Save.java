@@ -39,7 +39,7 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.net.URL;
@@ -73,29 +73,29 @@ public class Save extends SubCommand {
     public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
         final String world = player.getLocation().getWorldName();
         if (!this.plotAreaManager.hasPlotArea(world)) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot_world"));
             return false;
         }
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return false;
         }
         if (!plot.hasOwner()) {
-            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
+            player.sendMessage(TranslatableCaption.miniMessage("info.plot_unowned"));
             return false;
         }
         if (plot.getVolume() > Integer.MAX_VALUE) {
-            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
+            player.sendMessage(TranslatableCaption.miniMessage("schematics.schematic_too_large"));
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_SAVE)) {
-            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
+            player.sendMessage(TranslatableCaption.miniMessage("permission.no_plot_perms"));
             return false;
         }
         if (plot.getRunning() > 0) {
-            player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.wait_for_timer"));
             return false;
         }
         plot.addRunning();
@@ -117,13 +117,13 @@ public class Save extends SubCommand {
                             public void run(URL url) {
                                 plot.removeRunning();
                                 if (url == null) {
-                                    player.sendMessage(TranslatableCaption.of("backups.backup_save_failed"));
+                                    player.sendMessage(TranslatableCaption.miniMessage("backups.backup_save_failed"));
                                     return;
                                 }
-                                player.sendMessage(TranslatableCaption.of("web.save_success"));
+                                player.sendMessage(TranslatableCaption.miniMessage("web.save_success"));
                                 player.sendMessage(
-                                        TranslatableCaption.of("errors.deprecated_commands"),
-                                        Template.of("replacement", "/plot download")
+                                        TranslatableCaption.miniMessage("errors.deprecated_commands"),
+                                        Placeholder.miniMessage("replacement", "/plot download")
                                 );
                                 try (final MetaDataAccess<List<String>> schematicAccess =
                                              player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SCHEMATICS)) {

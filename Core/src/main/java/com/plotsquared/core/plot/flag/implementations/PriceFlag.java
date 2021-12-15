@@ -34,7 +34,7 @@ public class PriceFlag extends DoubleFlag<PriceFlag> {
     public static final PriceFlag PRICE_NOT_BUYABLE = new PriceFlag(0D);
 
     protected PriceFlag(@NonNull Double value) {
-        super(value, Double.MIN_NORMAL, Double.MAX_VALUE, TranslatableCaption.of("flags.flag_description_price"));
+        super(value, Double.MIN_NORMAL, Double.MAX_VALUE, TranslatableCaption.miniMessage("flags.flag_description_price"));
     }
 
     @Override

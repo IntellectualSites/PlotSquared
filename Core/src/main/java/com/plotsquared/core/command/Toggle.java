@@ -29,7 +29,7 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 @CommandDeclaration(command = "toggle",
         aliases = {"attribute"},
@@ -53,13 +53,13 @@ public class Toggle extends Command {
     ) {
         if (toggle(player, "chatspy")) {
             player.sendMessage(
-                    TranslatableCaption.of("toggle.toggle_disabled"),
-                    Template.of("setting", command.toString())
+                    TranslatableCaption.miniMessage("toggle.toggle_disabled"),
+                    Placeholder.miniMessage("setting", command.toString())
             );
         } else {
             player.sendMessage(
-                    TranslatableCaption.of("toggle.toggle_enabled"),
-                    Template.of("setting", command.toString())
+                    TranslatableCaption.miniMessage("toggle.toggle_enabled"),
+                    Placeholder.miniMessage("setting", command.toString())
             );
         }
     }
@@ -74,13 +74,13 @@ public class Toggle extends Command {
     ) {
         if (toggle(player, "worldedit")) {
             player.sendMessage(
-                    TranslatableCaption.of("toggle.toggle_disabled"),
-                    Template.of("setting", command.toString())
+                    TranslatableCaption.miniMessage("toggle.toggle_disabled"),
+                    Placeholder.miniMessage("setting", command.toString())
             );
         } else {
             player.sendMessage(
-                    TranslatableCaption.of("toggle.toggle_enabled"),
-                    Template.of("setting", command.toString())
+                    TranslatableCaption.miniMessage("toggle.toggle_enabled"),
+                    Placeholder.miniMessage("setting", command.toString())
             );
         }
     }
@@ -94,13 +94,13 @@ public class Toggle extends Command {
     ) {
         if (toggle(player, "chat")) {
             player.sendMessage(
-                    TranslatableCaption.of("toggle.toggle_disabled"),
-                    Template.of("setting", command.toString())
+                    TranslatableCaption.miniMessage("toggle.toggle_disabled"),
+                    Placeholder.miniMessage("setting", command.toString())
             );
         } else {
             player.sendMessage(
-                    TranslatableCaption.of("toggle.toggle_enabled"),
-                    Template.of("setting", command.toString())
+                    TranslatableCaption.miniMessage("toggle.toggle_enabled"),
+                    Placeholder.miniMessage("setting", command.toString())
             );
         }
     }
@@ -114,13 +114,13 @@ public class Toggle extends Command {
     ) {
         if (toggle(player, "ignoreExpireTask")) {
             player.sendMessage(
-                    TranslatableCaption.of("toggle.toggle_enabled"),
-                    Template.of("setting", command.toString())
+                    TranslatableCaption.miniMessage("toggle.toggle_enabled"),
+                    Placeholder.miniMessage("setting", command.toString())
             );
         } else {
             player.sendMessage(
-                    TranslatableCaption.of("toggle.toggle_disabled"),
-                    Template.of("setting", command.toString())
+                    TranslatableCaption.miniMessage("toggle.toggle_disabled"),
+                    Placeholder.miniMessage("setting", command.toString())
             );
         }
     }
@@ -134,13 +134,13 @@ public class Toggle extends Command {
     ) {
         if (toggle(player, "disabletitles")) {
             player.sendMessage(
-                    TranslatableCaption.of("toggle.toggle_enabled"),
-                    Template.of("setting", command.toString())
+                    TranslatableCaption.miniMessage("toggle.toggle_enabled"),
+                    Placeholder.miniMessage("setting", command.toString())
             );
         } else {
             player.sendMessage(
-                    TranslatableCaption.of("toggle.toggle_disabled"),
-                    Template.of("setting", command.toString())
+                    TranslatableCaption.miniMessage("toggle.toggle_disabled"),
+                    Placeholder.miniMessage("setting", command.toString())
             );
         }
     }
@@ -154,13 +154,13 @@ public class Toggle extends Command {
     ) {
         if (toggle(player, "disabletime")) {
             player.sendMessage(
-                    TranslatableCaption.of("toggle.toggle_enabled"),
-                    Template.of("setting", command.toString())
+                    TranslatableCaption.miniMessage("toggle.toggle_enabled"),
+                    Placeholder.miniMessage("setting", command.toString())
             );
         } else {
             player.sendMessage(
-                    TranslatableCaption.of("toggle.toggle_disabled"),
-                    Template.of("setting", command.toString())
+                    TranslatableCaption.miniMessage("toggle.toggle_disabled"),
+                    Placeholder.miniMessage("setting", command.toString())
             );
         }
     }
@@ -174,13 +174,13 @@ public class Toggle extends Command {
     ) {
         if (toggle(player, "debug")) {
             player.sendMessage(
-                    TranslatableCaption.of("toggle.toggle_disabled"),
-                    Template.of("setting", command.toString())
+                    TranslatableCaption.miniMessage("toggle.toggle_disabled"),
+                    Placeholder.miniMessage("setting", command.toString())
             );
         } else {
             player.sendMessage(
-                    TranslatableCaption.of("toggle.toggle_enabled"),
-                    Template.of("setting", command.toString())
+                    TranslatableCaption.miniMessage("toggle.toggle_enabled"),
+                    Placeholder.miniMessage("setting", command.toString())
             );
         }
         player.refreshDebug();

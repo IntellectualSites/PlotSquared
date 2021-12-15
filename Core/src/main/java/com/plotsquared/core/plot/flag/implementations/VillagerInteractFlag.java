@@ -37,7 +37,7 @@ public class VillagerInteractFlag extends BooleanFlag<VillagerInteractFlag> {
             new VillagerInteractFlag(false);
 
     private VillagerInteractFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_villager_interact"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_villager_interact"));
     }
 
     @Override

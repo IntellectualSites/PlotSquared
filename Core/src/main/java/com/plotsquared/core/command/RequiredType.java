@@ -31,8 +31,8 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public enum RequiredType {
-    CONSOLE(TranslatableCaption.of("console.not_console")),
-    PLAYER(TranslatableCaption.of("console.is_console")),
+    CONSOLE(TranslatableCaption.miniMessage("console.not_console")),
+    PLAYER(TranslatableCaption.miniMessage("console.is_console")),
     NONE(StaticCaption.of("Something went wrong: RequiredType=NONE")); // this caption should never be sent
 
     private final Caption caption;

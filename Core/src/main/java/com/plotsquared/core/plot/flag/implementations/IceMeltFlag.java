@@ -35,7 +35,7 @@ public class IceMeltFlag extends BooleanFlag<IceMeltFlag> {
     public static final IceMeltFlag ICE_MELT_FALSE = new IceMeltFlag(false);
 
     private IceMeltFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_ice_melt"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_ice_melt"));
     }
 
     @Override

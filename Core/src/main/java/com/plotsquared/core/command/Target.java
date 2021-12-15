@@ -31,7 +31,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.query.PlotQuery;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 import java.util.Collection;
 import java.util.Locale;
@@ -53,13 +53,13 @@ public class Target extends SubCommand {
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         if (!location.isPlotArea()) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot_world"));
             return false;
         }
         if (args.length == 0) {
             player.sendMessage(
-                    TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot target <<X;Z> | nearest>")
+                    TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                    Placeholder.miniMessage("value", "/plot target <<X;Z> | nearest>")
             );
             return false;
         }
@@ -74,7 +74,7 @@ public class Target extends SubCommand {
                 }
             }
             if (target == null) {
-                player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
+                player.sendMessage(TranslatableCaption.miniMessage("invalid.found_no_plots"));
                 return false;
             }
         } else if ((target = Plot.getPlotFromString(player, args[0], true)) == null) {
@@ -82,8 +82,8 @@ public class Target extends SubCommand {
         }
         target.getCenter(player::setCompassTarget);
         player.sendMessage(
-                TranslatableCaption.of("compass.compass_target"),
-                Template.of("target", target.toString())
+                TranslatableCaption.miniMessage("compass.compass_target"),
+                Placeholder.miniMessage("target", target.toString())
         );
         return true;
     }

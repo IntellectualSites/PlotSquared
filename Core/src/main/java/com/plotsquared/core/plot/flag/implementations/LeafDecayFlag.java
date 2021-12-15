@@ -35,7 +35,7 @@ public class LeafDecayFlag extends BooleanFlag<LeafDecayFlag> {
     public static final LeafDecayFlag LEAF_DECAY_FALSE = new LeafDecayFlag(false);
 
     private LeafDecayFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_leaf_decay"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_leaf_decay"));
     }
 
     @Override

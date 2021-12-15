@@ -43,7 +43,7 @@ import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(command = "done",
@@ -70,35 +70,35 @@ public class Done extends SubCommand {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if ((plot == null) || !plot.hasOwner()) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return false;
         }
         PlotDoneEvent event = this.eventDispatcher.callDone(plot);
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
-                    TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Done")
+                    TranslatableCaption.miniMessage("events.event_denied"),
+                    Placeholder.miniMessage("value", "Done")
             );
             return true;
         }
         boolean force = event.getEventResult() == Result.FORCE;
         if (!force && !plot.isOwner(player.getUUID()) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DONE)) {
-            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
+            player.sendMessage(TranslatableCaption.miniMessage("permission.no_plot_perms"));
             return false;
         }
         if (DoneFlag.isDone(plot)) {
-            player.sendMessage(TranslatableCaption.of("done.done_already_done"));
+            player.sendMessage(TranslatableCaption.miniMessage("done.done_already_done"));
             return false;
         }
         if (plot.getRunning() > 0) {
-            player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.wait_for_timer"));
             return false;
         }
         plot.addRunning();
         player.sendMessage(
-                TranslatableCaption.of("web.generating_link"),
-                Template.of("plot", plot.getId().toString())
+                TranslatableCaption.miniMessage("web.generating_link"),
+                Placeholder.miniMessage("plot", plot.getId().toString())
         );
         final Settings.Auto_Clear doneRequirements = Settings.AUTO_CLEAR.get("done");
         if (ExpireManager.IMP == null || doneRequirements == null) {
@@ -120,7 +120,7 @@ public class Done extends SubCommand {
 
     private void finish(Plot plot, PlotPlayer<?> player, boolean success) {
         if (!success) {
-            player.sendMessage(TranslatableCaption.of("done.done_insufficient_complexity"));
+            player.sendMessage(TranslatableCaption.miniMessage("done.done_insufficient_complexity"));
             return;
         }
         long flagValue = System.currentTimeMillis() / 1000;
@@ -128,11 +128,11 @@ public class Done extends SubCommand {
                 .createFlagInstance(Long.toString(flagValue));
         PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {
-            player.sendMessage(TranslatableCaption.of("events.event_denied"));
+            player.sendMessage(TranslatableCaption.miniMessage("events.event_denied"));
             return;
         }
         plot.setFlag(plotFlag);
-        player.sendMessage(TranslatableCaption.of("done.done_success"));
+        player.sendMessage(TranslatableCaption.miniMessage("done.done_success"));
     }
 
 }

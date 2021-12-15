@@ -30,7 +30,7 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.permissions.PermissionHolder;
 import com.plotsquared.core.player.PlotPlayer;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -94,8 +94,8 @@ public class Permissions {
         if (!hasPermission(player, permission)) {
             if (notify) {
                 player.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", permission)
+                        TranslatableCaption.miniMessage("permission.no_permission_event"),
+                        Placeholder.miniMessage("node", permission)
                 );
             }
             return false;

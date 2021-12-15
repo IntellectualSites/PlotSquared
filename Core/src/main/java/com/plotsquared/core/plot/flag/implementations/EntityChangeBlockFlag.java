@@ -35,7 +35,7 @@ public class EntityChangeBlockFlag extends BooleanFlag<EntityChangeBlockFlag> {
     public static final EntityChangeBlockFlag ENTITY_CHANGE_BLOCK_FALSE = new EntityChangeBlockFlag(false);
 
     private EntityChangeBlockFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_entity_change_block"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_entity_change_block"));
     }
 
     @Override

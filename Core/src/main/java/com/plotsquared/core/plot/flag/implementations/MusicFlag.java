@@ -43,7 +43,7 @@ public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
      * @param value Flag value
      */
     protected MusicFlag(ItemType value) {
-        super(value, TranslatableCaption.of("flags.flag_category_music"), TranslatableCaption.of("flags.flag_description_music"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_category_music"), TranslatableCaption.miniMessage("flags.flag_description_music"));
     }
 
     @Override
@@ -56,7 +56,7 @@ public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
                 .getId().contains("music_disc_"))) {
             return new MusicFlag(ItemUtil.get(input));
         } else {
-            throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_music"));
+            throw new FlagParseException(this, input, TranslatableCaption.miniMessage("flags.flag_error_music"));
         }
     }
 

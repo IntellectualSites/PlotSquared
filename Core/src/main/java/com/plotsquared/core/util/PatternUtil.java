@@ -41,7 +41,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -90,8 +90,8 @@ public class PatternUtil {
             return WorldEdit.getInstance().getPatternFactory().parseFromInput(input, context);
         } catch (InputParseException e) {
             throw new Command.CommandException(
-                    TranslatableCaption.of("invalid.not_valid_block"),
-                    Template.of("value", e.getMessage())
+                    TranslatableCaption.miniMessage("invalid.not_valid_block"),
+                    Placeholder.miniMessage("value", e.getMessage())
             );
         }
     }

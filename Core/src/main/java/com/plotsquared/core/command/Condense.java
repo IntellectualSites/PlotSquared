@@ -36,7 +36,7 @@ import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -73,31 +73,31 @@ public class Condense extends SubCommand {
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length != 2 && args.length != 3) {
             player.sendMessage(
-                    TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot condense <area> <start | stop | info> [radius]")
+                    TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                    Placeholder.miniMessage("value", "/plot condense <area> <start | stop | info> [radius]")
             );
             return false;
         }
         PlotArea area = this.plotAreaManager.getPlotAreaByString(args[0]);
         if (area == null || !this.worldUtil.isWorld(area.getWorldName())) {
-            player.sendMessage(TranslatableCaption.of("invalid.invalid_area"));
+            player.sendMessage(TranslatableCaption.miniMessage("invalid.invalid_area"));
             return false;
         }
         switch (args[1].toLowerCase()) {
             case "start" -> {
                 if (args.length == 2) {
                     player.sendMessage(
-                            TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.of("value", "/plot condense" + area + " start <radius>")
+                            TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                            Placeholder.miniMessage("value", "/plot condense" + area + " start <radius>")
                     );
                     return false;
                 }
                 if (Condense.TASK) {
-                    player.sendMessage(TranslatableCaption.of("condense.task_already_started"));
+                    player.sendMessage(TranslatableCaption.miniMessage("condense.task_already_started"));
                     return false;
                 }
                 if (!MathMan.isInteger(args[2])) {
-                    player.sendMessage(TranslatableCaption.of("condense.invalid_radius"));
+                    player.sendMessage(TranslatableCaption.miniMessage("condense.invalid_radius"));
                     return false;
                 }
                 int radius = Integer.parseInt(args[2]);
@@ -141,7 +141,7 @@ public class Condense extends SubCommand {
                 int size = allPlots.size();
                 int minimumRadius = (int) Math.ceil(Math.sqrt(size) / 2 + 1);
                 if (radius < minimumRadius) {
-                    player.sendMessage(TranslatableCaption.of("condense.radius_too_small"));
+                    player.sendMessage(TranslatableCaption.miniMessage("condense.radius_too_small"));
                     return false;
                 }
                 List<PlotId> toMove = new ArrayList<>(getPlots(allPlots, radius));
@@ -155,20 +155,20 @@ public class Condense extends SubCommand {
                     start = start.getNextId();
                 }
                 if (free.isEmpty() || toMove.isEmpty()) {
-                    player.sendMessage(TranslatableCaption.of("condense.no_free_plots_found"));
+                    player.sendMessage(TranslatableCaption.miniMessage("condense.no_free_plots_found"));
                     return false;
                 }
-                player.sendMessage(TranslatableCaption.of("condense.task_started"));
+                player.sendMessage(TranslatableCaption.miniMessage("condense.task_started"));
                 Condense.TASK = true;
                 Runnable run = new Runnable() {
                     @Override
                     public void run() {
                         if (!Condense.TASK) {
-                            player.sendMessage(TranslatableCaption.of("debugexec.task_cancelled"));
+                            player.sendMessage(TranslatableCaption.miniMessage("debugexec.task_cancelled"));
                         }
                         if (allPlots.isEmpty()) {
                             Condense.TASK = false;
-                            player.sendMessage(TranslatableCaption.of("condense.task_complete"));
+                            player.sendMessage(TranslatableCaption.miniMessage("condense.task_complete"));
                             return;
                         }
                         final Runnable task = this;
@@ -186,9 +186,9 @@ public class Condense extends SubCommand {
                                 result.set(origin.getPlotModificationManager().move(possible, player, () -> {
                                     if (result.get()) {
                                         player.sendMessage(
-                                                TranslatableCaption.of("condense.moving"),
-                                                Template.of("origin", String.valueOf(origin)),
-                                                Template.of("possible", String.valueOf(possible))
+                                                TranslatableCaption.miniMessage("condense.moving"),
+                                                Placeholder.miniMessage("origin", String.valueOf(origin)),
+                                                Placeholder.miniMessage("possible", String.valueOf(possible))
                                         );
                                         TaskManager.runTaskLater(task, TaskTime.ticks(1L));
                                     }
@@ -202,13 +202,13 @@ public class Condense extends SubCommand {
                         }
                         if (free.isEmpty()) {
                             Condense.TASK = false;
-                            player.sendMessage(TranslatableCaption.of("condense.task_failed"));
+                            player.sendMessage(TranslatableCaption.miniMessage("condense.task_failed"));
                             return;
                         }
                         if (i >= free.size()) {
                             player.sendMessage(
-                                    TranslatableCaption.of("condense.skipping"),
-                                    Template.of("plot", String.valueOf(origin))
+                                    TranslatableCaption.miniMessage("condense.skipping"),
+                                    Placeholder.miniMessage("plot", String.valueOf(origin))
                             );
                         }
                     }
@@ -218,23 +218,23 @@ public class Condense extends SubCommand {
             }
             case "stop" -> {
                 if (!Condense.TASK) {
-                    player.sendMessage(TranslatableCaption.of("condense.task_stopped"));
+                    player.sendMessage(TranslatableCaption.miniMessage("condense.task_stopped"));
                     return false;
                 }
                 Condense.TASK = false;
-                player.sendMessage(TranslatableCaption.of("condense.task_stopped"));
+                player.sendMessage(TranslatableCaption.miniMessage("condense.task_stopped"));
                 return true;
             }
             case "info" -> {
                 if (args.length == 2) {
                     player.sendMessage(
-                            TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.of("value", "/plot condense " + area + " info <radius>")
+                            TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                            Placeholder.miniMessage("value", "/plot condense " + area + " info <radius>")
                     );
                     return false;
                 }
                 if (!MathMan.isInteger(args[2])) {
-                    player.sendMessage(TranslatableCaption.of("condense.invalid_radius"));
+                    player.sendMessage(TranslatableCaption.miniMessage("condense.invalid_radius"));
                     return false;
                 }
                 int radius = Integer.parseInt(args[2]);
@@ -242,37 +242,37 @@ public class Condense extends SubCommand {
                 int size = plots.size();
                 int minimumRadius = (int) Math.ceil(Math.sqrt(size) / 2 + 1);
                 if (radius < minimumRadius) {
-                    player.sendMessage(TranslatableCaption.of("condense.radius_too_small"));
+                    player.sendMessage(TranslatableCaption.miniMessage("condense.radius_too_small"));
                     return false;
                 }
                 int maxMove = getPlots(plots, minimumRadius).size();
                 int userMove = getPlots(plots, radius).size();
-                player.sendMessage(TranslatableCaption.of("condense.default_eval"));
+                player.sendMessage(TranslatableCaption.miniMessage("condense.default_eval"));
                 player.sendMessage(
-                        TranslatableCaption.of("condense.minimum_radius"),
-                        Template.of("minimumRadius", String.valueOf(minimumRadius))
+                        TranslatableCaption.miniMessage("condense.minimum_radius"),
+                        Placeholder.miniMessage("minimumRadius", String.valueOf(minimumRadius))
                 );
                 player.sendMessage(
-                        TranslatableCaption.of("condense.minimum_radius"),
-                        Template.of("maxMove", String.valueOf(maxMove))
+                        TranslatableCaption.miniMessage("condense.minimum_radius"),
+                        Placeholder.miniMessage("maxMove", String.valueOf(maxMove))
                 );
-                player.sendMessage(TranslatableCaption.of("condense.input_eval"));
+                player.sendMessage(TranslatableCaption.miniMessage("condense.input_eval"));
                 player.sendMessage(
-                        TranslatableCaption.of("condense.input_radius"),
-                        Template.of("radius", String.valueOf(radius))
+                        TranslatableCaption.miniMessage("condense.input_radius"),
+                        Placeholder.miniMessage("radius", String.valueOf(radius))
                 );
                 player.sendMessage(
-                        TranslatableCaption.of("condense.estimated_moves"),
-                        Template.of("userMove", String.valueOf(userMove))
+                        TranslatableCaption.miniMessage("condense.estimated_moves"),
+                        Placeholder.miniMessage("userMove", String.valueOf(userMove))
                 );
-                player.sendMessage(TranslatableCaption.of("condense.eta"));
-                player.sendMessage(TranslatableCaption.of("condense.radius_measured"));
+                player.sendMessage(TranslatableCaption.miniMessage("condense.eta"));
+                player.sendMessage(TranslatableCaption.miniMessage("condense.radius_measured"));
                 return true;
             }
         }
         player.sendMessage(
-                TranslatableCaption.of("commandconfig.command_syntax"),
-                Template.of("value", "/plot condense " + area.getWorldName() + " <start | stop | info> [radius]")
+                TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                Placeholder.miniMessage("value", "/plot condense " + area.getWorldName() + " <start | stop | info> [radius]")
         );
         return false;
     }

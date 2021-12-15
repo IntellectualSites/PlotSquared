@@ -34,7 +34,7 @@ public class EntityCapFlag extends NonNegativeIntegerFlag<EntityCapFlag> {
     public static final EntityCapFlag ENTITY_CAP_UNLIMITED = new EntityCapFlag(Integer.MAX_VALUE);
 
     protected EntityCapFlag(int value) {
-        super(value, TranslatableCaption.of("flags.flag_description_entity_cap"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_entity_cap"));
     }
 
     @Override

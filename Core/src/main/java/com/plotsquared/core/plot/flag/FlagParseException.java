@@ -26,14 +26,14 @@
 package com.plotsquared.core.plot.flag;
 
 import com.plotsquared.core.configuration.caption.Caption;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 
 public class FlagParseException extends Exception {
 
     private final PlotFlag<?, ?> flag;
     private final String value;
     private final Caption errorMessage;
-    private final Template[] templates;
+    private final Placeholder<?>[] placeholders;
 
     /**
      * Construct a new flag parse exception to indicate that an attempt to parse a plot
@@ -43,10 +43,11 @@ public class FlagParseException extends Exception {
      * @param value        Value that failed ot parse
      * @param errorMessage An error message explaining the failure
      * @param args         Arguments used to format the error message
+     * @since 6.3.0
      */
     public FlagParseException(
             final PlotFlag<?, ?> flag, final String value,
-            final Caption errorMessage, final Template... args
+            final Caption errorMessage, final Placeholder<?>... args
     ) {
         super(String.format("Failed to parse flag of type '%s'. Value '%s' was not accepted.",
                 flag.getName(), value
@@ -54,7 +55,7 @@ public class FlagParseException extends Exception {
         this.flag = flag;
         this.value = value;
         this.errorMessage = errorMessage;
-        this.templates = args;
+        this.placeholders = args;
     }
 
     /**
@@ -85,12 +86,13 @@ public class FlagParseException extends Exception {
     }
 
     /**
-     * Get the templates that were supplied by the flag instance.
+     * Get the placeholders that were supplied by the flag instance.
      *
-     * @return Message templates.
+     * @return Message miniMessage.
+     * @since 6.3.0
      */
-    public Template[] getTemplates() {
-        return templates;
+    public Placeholder<?>[] placeholders() {
+        return placeholders;
     }
 
 }

@@ -42,7 +42,7 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -74,13 +74,13 @@ public class HomeCommand extends Command {
     ) {
         List<Plot> plots = query.asList();
         if (plots.isEmpty()) {
-            player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
+            player.sendMessage(TranslatableCaption.miniMessage("invalid.found_no_plots"));
             return;
         } else if (plots.size() < page || page < 1) {
             player.sendMessage(
-                    TranslatableCaption.of("invalid.number_not_in_range"),
-                    Template.of("min", "1"),
-                    Template.of("max", String.valueOf(plots.size()))
+                    TranslatableCaption.miniMessage("invalid.number_not_in_range"),
+                    Placeholder.miniMessage("min", "1"),
+                    Placeholder.miniMessage("max", String.valueOf(plots.size()))
             );
             return;
         }
@@ -114,8 +114,8 @@ public class HomeCommand extends Command {
         if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_OWNED) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_HOME)) {
             player.sendMessage(
-                    TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Permission.PERMISSION_VISIT_OWNED.toString())
+                    TranslatableCaption.miniMessage("permission.no_permission"),
+                    Placeholder.miniMessage("node", Permission.PERMISSION_VISIT_OWNED.toString())
             );
             return CompletableFuture.completedFuture(false);
         }
@@ -136,8 +136,8 @@ public class HomeCommand extends Command {
                         page = Integer.parseInt(identifier);
                     } catch (NumberFormatException ignored) {
                         player.sendMessage(
-                                TranslatableCaption.of("invalid.not_a_number"),
-                                Template.of("value", identifier)
+                                TranslatableCaption.miniMessage("invalid.not_a_number"),
+                                Placeholder.miniMessage("value", identifier)
                         );
                         return CompletableFuture.completedFuture(false);
                     }
@@ -177,8 +177,8 @@ public class HomeCommand extends Command {
                         page = Integer.parseInt(identifier);
                     } catch (NumberFormatException ignored) {
                         player.sendMessage(
-                                TranslatableCaption.of("invalid.not_a_number"),
-                                Template.of("value", identifier)
+                                TranslatableCaption.miniMessage("invalid.not_a_number"),
+                                Placeholder.miniMessage("value", identifier)
                         );
                         return CompletableFuture.completedFuture(false);
                     }

@@ -41,8 +41,8 @@ public class FlyFlag extends PlotFlag<FlyFlag.FlyStatus, FlyFlag> {
     protected FlyFlag(final FlyStatus value) {
         super(
                 value,
-                TranslatableCaption.of("flags.flag_category_boolean"),
-                TranslatableCaption.of("flags.flag_description_flight")
+                TranslatableCaption.miniMessage("flags.flag_category_boolean"),
+                TranslatableCaption.miniMessage("flags.flag_description_flight")
         );
     }
 

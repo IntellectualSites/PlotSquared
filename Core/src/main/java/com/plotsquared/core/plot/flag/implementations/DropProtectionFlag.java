@@ -35,7 +35,7 @@ public class DropProtectionFlag extends BooleanFlag<DropProtectionFlag> {
     public static final DropProtectionFlag DROP_PROTECTION_FALSE = new DropProtectionFlag(false);
 
     private DropProtectionFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_drop_protection"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_drop_protection"));
     }
 
     @Override

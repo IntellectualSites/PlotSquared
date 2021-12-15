@@ -35,7 +35,7 @@ public class CropGrowFlag extends BooleanFlag<CropGrowFlag> {
     public static final CropGrowFlag CROP_GROW_FALSE = new CropGrowFlag(false);
 
     private CropGrowFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_crop_grow"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_crop_grow"));
     }
 
     @Override

@@ -40,7 +40,7 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 
@@ -70,29 +70,29 @@ public class Delete extends SubCommand {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if (plot == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return false;
         }
         if (!plot.hasOwner()) {
-            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
+            player.sendMessage(TranslatableCaption.miniMessage("info.plot_unowned"));
             return false;
         }
         if (plot.getVolume() > Integer.MAX_VALUE) {
-            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
+            player.sendMessage(TranslatableCaption.miniMessage("schematics.schematic_too_large"));
             return false;
         }
         Result eventResult = this.eventDispatcher.callDelete(plot).getEventResult();
         if (eventResult == Result.DENY) {
             player.sendMessage(
-                    TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Delete")
+                    TranslatableCaption.miniMessage("events.event_denied"),
+                    Placeholder.miniMessage("value", "Delete")
             );
             return true;
         }
         boolean force = eventResult == Result.FORCE;
         if (!force && !plot.isOwner(player.getUUID()) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DELETE)) {
-            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
+            player.sendMessage(TranslatableCaption.miniMessage("permission.no_plot_perms"));
             return false;
         }
         final PlotArea plotArea = plot.getArea();
@@ -102,7 +102,7 @@ public class Delete extends SubCommand {
                 player.getPlotCount(location.getWorldName());
         Runnable run = () -> {
             if (plot.getRunning() > 0) {
-                player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
+                player.sendMessage(TranslatableCaption.miniMessage("errors.wait_for_timer"));
                 return;
             }
             final long start = System.currentTimeMillis();
@@ -120,22 +120,22 @@ public class Delete extends SubCommand {
                     if (value > 0d) {
                         this.econHandler.depositMoney(player, value);
                         player.sendMessage(
-                                TranslatableCaption.of("economy.added_balance"),
-                                Template.of("money", this.econHandler.format(value))
+                                TranslatableCaption.miniMessage("economy.added_balance"),
+                                Placeholder.miniMessage("money", this.econHandler.format(value))
                         );
                     }
                 }
                 player.sendMessage(
-                        TranslatableCaption.of("working.deleting_done"),
-                        Template.of("amount", String.valueOf(System.currentTimeMillis() - start)),
-                        Template.of("plot", plot.getId().toString())
+                        TranslatableCaption.miniMessage("working.deleting_done"),
+                        Placeholder.miniMessage("amount", String.valueOf(System.currentTimeMillis() - start)),
+                        Placeholder.miniMessage("plot", plot.getId().toString())
                 );
                 eventDispatcher.callPostDelete(plot);
             });
             if (result) {
                 plot.addRunning();
             } else {
-                player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
+                player.sendMessage(TranslatableCaption.miniMessage("errors.wait_for_timer"));
             }
         };
         if (hasConfirmation(player)) {

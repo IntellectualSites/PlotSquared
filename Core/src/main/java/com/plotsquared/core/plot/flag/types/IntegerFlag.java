@@ -36,7 +36,7 @@ public abstract class IntegerFlag<F extends NumberFlag<Integer, F>> extends Numb
             final int value, int minimum, int maximum,
             @NonNull Caption flagDescription
     ) {
-        super(value, minimum, maximum, TranslatableCaption.of("flags.flag_category_integers"), flagDescription);
+        super(value, minimum, maximum, TranslatableCaption.miniMessage("flags.flag_category_integers"), flagDescription);
     }
 
     protected IntegerFlag(@NonNull Caption flagDescription) {
@@ -64,7 +64,7 @@ public abstract class IntegerFlag<F extends NumberFlag<Integer, F>> extends Numb
         try {
             return Integer.parseInt(input);
         } catch (Throwable throwable) {
-            throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_integer"));
+            throw new FlagParseException(this, input, TranslatableCaption.miniMessage("flags.flag_error_integer"));
         }
     }
 

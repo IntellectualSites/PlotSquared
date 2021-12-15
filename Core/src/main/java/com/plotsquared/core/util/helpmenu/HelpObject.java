@@ -27,12 +27,13 @@ package com.plotsquared.core.util.helpmenu;
 
 import com.plotsquared.core.command.Argument;
 import com.plotsquared.core.command.Command;
-import com.plotsquared.core.configuration.caption.Templates;
+import com.plotsquared.core.configuration.caption.Placeholders;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.StringMan;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
+import net.kyori.adventure.text.minimessage.placeholder.PlaceholderResolver;
 
 public class HelpObject {
 
@@ -41,13 +42,15 @@ public class HelpObject {
     private final String rendered;
 
     public HelpObject(final Command command, final String label, final PlotPlayer<?> audience) {
-        rendered = MINI_MESSAGE.serialize(MINI_MESSAGE.parse(
-                TranslatableCaption.of("help.help_item").getComponent(audience),
-                Template.of("usage", command.getUsage().replace("{label}", label)),
-                Template.of("alias", command.getAliases().isEmpty() ? "" : StringMan.join(command.getAliases(), " | ")),
-                Templates.of(audience, "desc", command.getDescription()),
-                Template.of("arguments", buildArgumentList(command.getRequiredArguments())),
-                Template.of("label", label)
+        rendered = MINI_MESSAGE.serialize(MINI_MESSAGE.deserialize(
+                TranslatableCaption.miniMessage("help.help_item").getComponent(audience),
+                PlaceholderResolver.placeholders(
+                        Placeholder.miniMessage("usage", command.getUsage().replace("{label}", label)),
+                        Placeholder.miniMessage("alias", command.getAliases().isEmpty() ? "" : StringMan.join(command.getAliases(), " | ")),
+                        Placeholders.miniMessage(audience, "desc", command.getDescription()),
+                        Placeholder.miniMessage("arguments", buildArgumentList(command.getRequiredArguments())),
+                        Placeholder.miniMessage("label", label)
+                )
         ));
     }
 

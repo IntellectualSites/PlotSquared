@@ -37,7 +37,7 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(command = "unlink",
@@ -60,19 +60,19 @@ public class Unlink extends SubCommand {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if (plot == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return false;
         }
         if (!plot.hasOwner()) {
-            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
+            player.sendMessage(TranslatableCaption.miniMessage("info.plot_unowned"));
             return false;
         }
         if (plot.getVolume() > Integer.MAX_VALUE) {
-            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
+            player.sendMessage(TranslatableCaption.miniMessage("schematics.schematic_too_large"));
             return false;
         }
         if (!plot.isMerged()) {
-            player.sendMessage(TranslatableCaption.of("merge.unlink_impossible"));
+            player.sendMessage(TranslatableCaption.miniMessage("merge.unlink_impossible"));
             return false;
         }
         final boolean createRoad;
@@ -92,23 +92,23 @@ public class Unlink extends SubCommand {
                 );
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
-                    TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Unlink")
+                    TranslatableCaption.miniMessage("events.event_denied"),
+                    Placeholder.miniMessage("value", "Unlink")
             );
             return true;
         }
         boolean force = event.getEventResult() == Result.FORCE;
         if (!force && !plot.isOwner(player.getUUID()) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_UNLINK)) {
-            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
+            player.sendMessage(TranslatableCaption.miniMessage("permission.no_plot_perms"));
             return true;
         }
         Runnable runnable = () -> {
             if (!plot.getPlotModificationManager().unlinkPlot(createRoad, createRoad)) {
-                player.sendMessage(TranslatableCaption.of("merge.unmerge_cancelled"));
+                player.sendMessage(TranslatableCaption.miniMessage("merge.unmerge_cancelled"));
                 return;
             }
-            player.sendMessage(TranslatableCaption.of("merge.unlink_success"));
+            player.sendMessage(TranslatableCaption.miniMessage("merge.unlink_success"));
             eventDispatcher.callPostUnlink(plot, PlotUnlinkEvent.REASON.PLAYER_COMMAND);
         };
         if (hasConfirmation(player)) {

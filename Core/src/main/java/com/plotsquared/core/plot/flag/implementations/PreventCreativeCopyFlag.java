@@ -37,7 +37,7 @@ public class PreventCreativeCopyFlag extends BooleanFlag<PreventCreativeCopyFlag
             new PreventCreativeCopyFlag(false);
 
     private PreventCreativeCopyFlag(final @NonNull Boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_prevent_creative_copy"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_prevent_creative_copy"));
     }
 
     @Override

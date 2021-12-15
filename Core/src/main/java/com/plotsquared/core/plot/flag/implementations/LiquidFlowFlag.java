@@ -42,8 +42,8 @@ public class LiquidFlowFlag extends PlotFlag<LiquidFlowFlag.FlowStatus, LiquidFl
     private LiquidFlowFlag(FlowStatus value) {
         super(
                 value,
-                TranslatableCaption.of("flags.flag_category_boolean"),
-                TranslatableCaption.of("flags.flag_description_liquid_flow")
+                TranslatableCaption.miniMessage("flags.flag_category_boolean"),
+                TranslatableCaption.miniMessage("flags.flag_description_liquid_flow")
         );
     }
 

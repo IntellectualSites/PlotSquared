@@ -38,7 +38,7 @@ import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
@@ -132,9 +132,9 @@ public class DebugPaste extends SubCommand {
                             .addFile(logFile);
                 } catch (IOException ignored) {
                     player.sendMessage(
-                            TranslatableCaption.of("debugpaste.latest_log"),
-                            Template.of("file", "latest.log"),
-                            Template.of("size", "14MB")
+                            TranslatableCaption.miniMessage("debugpaste.latest_log"),
+                            Placeholder.miniMessage("file", "latest.log"),
+                            Placeholder.miniMessage("size", "14MB")
                     );
                 }
 
@@ -142,16 +142,16 @@ public class DebugPaste extends SubCommand {
                     incendoPaster.addFile(this.configFile);
                 } catch (final IllegalArgumentException ignored) {
                     player.sendMessage(
-                            TranslatableCaption.of("debugpaste.empty_file"),
-                            Template.of("file", "settings.yml")
+                            TranslatableCaption.miniMessage("debugpaste.empty_file"),
+                            Placeholder.miniMessage("file", "settings.yml")
                     );
                 }
                 try {
                     incendoPaster.addFile(this.worldfile);
                 } catch (final IllegalArgumentException ignored) {
                     player.sendMessage(
-                            TranslatableCaption.of("debugpaste.empty_file"),
-                            Template.of("file", "worlds.yml")
+                            TranslatableCaption.miniMessage("debugpaste.empty_file"),
+                            Placeholder.miniMessage("file", "worlds.yml")
                     );
                 }
 
@@ -163,8 +163,8 @@ public class DebugPaste extends SubCommand {
                     incendoPaster.addFile(MultiverseWorlds, "Multiverse-Core/worlds.yml");
                 } catch (final IOException ignored) {
                     player.sendMessage(
-                            TranslatableCaption.of("debugpaste.skip_multiverse"),
-                            Template.of("file", "worlds.yml")
+                            TranslatableCaption.miniMessage("debugpaste.skip_multiverse"),
+                            Placeholder.miniMessage("file", "worlds.yml")
                     );
                 }
 
@@ -178,21 +178,21 @@ public class DebugPaste extends SubCommand {
                         final String link =
                                 String.format("https://athion.net/ISPaster/paste/view/%s", pasteId);
                         player.sendMessage(
-                                TranslatableCaption.of("debugpaste.debug_report_created"),
-                                Template.of("url", link)
+                                TranslatableCaption.miniMessage("debugpaste.debug_report_created"),
+                                Placeholder.miniMessage("url", link)
                         );
                     } else {
                         final String responseMessage = jsonObject.get("response").getAsString();
                         player.sendMessage(
-                                TranslatableCaption.of("debugpaste.creation_failed"),
-                                Template.of("value", responseMessage)
+                                TranslatableCaption.miniMessage("debugpaste.creation_failed"),
+                                Placeholder.miniMessage("value", responseMessage)
                         );
                     }
                 } catch (final Throwable throwable) {
                     throwable.printStackTrace();
                     player.sendMessage(
-                            TranslatableCaption.of("debugpaste.creation_failed"),
-                            Template.of("value", throwable.getMessage())
+                            TranslatableCaption.miniMessage("debugpaste.creation_failed"),
+                            Placeholder.miniMessage("value", throwable.getMessage())
                     );
                 }
             } catch (IOException e) {

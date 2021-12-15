@@ -35,7 +35,7 @@ public class HideInfoFlag extends BooleanFlag<HideInfoFlag> {
     public static final HideInfoFlag HIDE_INFO_FALSE = new HideInfoFlag(false);
 
     private HideInfoFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_hide_info"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_hide_info"));
     }
 
     @Override

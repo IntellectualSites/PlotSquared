@@ -34,7 +34,7 @@ public class MiscCapFlag extends NonNegativeIntegerFlag<MiscCapFlag> {
     public static final MiscCapFlag MISC_CAP_UNLIMITED = new MiscCapFlag(Integer.MAX_VALUE);
 
     protected MiscCapFlag(int value) {
-        super(value, TranslatableCaption.of("flags.flag_description_misc_cap"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_misc_cap"));
     }
 
     @Override

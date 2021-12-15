@@ -43,6 +43,7 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -274,7 +275,7 @@ public class MainCommand extends Command {
                     }
                     tp = true;
                 } else {
-                    player.sendMessage(TranslatableCaption.of("border.denied"));
+                    player.sendMessage(TranslatableCaption.miniMessage("border.denied"));
                 }
                 // Trim command
                 args = Arrays.copyOfRange(args, 1, args.length);
@@ -303,7 +304,7 @@ public class MainCommand extends Command {
                     };
                     args = Arrays.copyOfRange(args, 1, args.length);
                 } else {
-                    player.sendMessage(TranslatableCaption.of("errors.invalid_command_flag"));
+                    player.sendMessage(TranslatableCaption.miniMessage("errors.invalid_command_flag"));
                     return CompletableFuture.completedFuture(false);
                 }
             }
@@ -317,12 +318,12 @@ public class MainCommand extends Command {
             String message = e.getMessage();
             if (message != null) {
                 player.sendMessage(
-                        TranslatableCaption.of("errors.error"),
-                        net.kyori.adventure.text.minimessage.Template.of("value", message)
+                        TranslatableCaption.miniMessage("errors.error"),
+                        Placeholder.miniMessage("value", message)
                 );
             } else {
                 player.sendMessage(
-                        TranslatableCaption.of("errors.error_console"));
+                        TranslatableCaption.miniMessage("errors.error_console"));
             }
         }
         // Reset command scope //

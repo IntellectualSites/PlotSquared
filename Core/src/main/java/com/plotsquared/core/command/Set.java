@@ -47,7 +47,7 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockCategory;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -129,8 +129,8 @@ public class Set extends SubCommand {
                                 continue;
                             }
                             player.sendMessage(
-                                    TranslatableCaption.of("invalid.component_illegal_block"),
-                                    Template.of("value", forbiddenType)
+                                    TranslatableCaption.miniMessage("invalid.component_illegal_block"),
+                                    Placeholder.miniMessage("value", forbiddenType)
                             );
                             return true;
                         }
@@ -141,20 +141,20 @@ public class Set extends SubCommand {
                     if (component.equalsIgnoreCase(args[0])) {
                         if (!Permissions.hasPermission(player, Permission.PERMISSION_SET_COMPONENT.format(component))) {
                             player.sendMessage(
-                                    TranslatableCaption.of("permission.no_permission"),
-                                    Template.of("node", Permission.PERMISSION_SET_COMPONENT.format(component))
+                                    TranslatableCaption.miniMessage("permission.no_permission"),
+                                    Placeholder.miniMessage("node", Permission.PERMISSION_SET_COMPONENT.format(component))
                             );
                             return false;
                         }
                         if (args.length < 2) {
-                            player.sendMessage(TranslatableCaption.of("need.need_block"));
+                            player.sendMessage(TranslatableCaption.miniMessage("need.need_block"));
                             return true;
                         }
 
                         Pattern pattern = PatternUtil.parse(player, material, false);
 
                         if (plot.getRunning() > 0) {
-                            player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
+                            player.sendMessage(TranslatableCaption.miniMessage("errors.wait_for_timer"));
                             return false;
                         }
 
@@ -164,8 +164,8 @@ public class Set extends SubCommand {
                             queue.setCompleteTask(() -> {
                                 plot.removeRunning();
                                 player.sendMessage(
-                                        TranslatableCaption.of("working.component_complete"),
-                                        Template.of("plot", plot.getId().toString())
+                                        TranslatableCaption.miniMessage("working.component_complete"),
+                                        Placeholder.miniMessage("plot", plot.getId().toString())
                                 );
                             });
                             if (Settings.QUEUE.NOTIFY_PROGRESS) {
@@ -180,7 +180,7 @@ public class Set extends SubCommand {
                                 current.getPlotModificationManager().setComponent(component, pattern, player, queue);
                             }
                             queue.enqueue();
-                            player.sendMessage(TranslatableCaption.of("working.generating_component"));
+                            player.sendMessage(TranslatableCaption.miniMessage("working.generating_component"));
                         });
                         return true;
                     }
@@ -205,9 +205,9 @@ public class Set extends SubCommand {
             newValues.addAll(Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
         }
         player.sendMessage(StaticCaption.of(TranslatableCaption
-                .of("commandconfig.subcommand_set_options_header_only")
+                .miniMessage("commandconfig.subcommand_set_options_header_only")
                 .getComponent(player) + StringMan
-                .join(newValues, TranslatableCaption.of("blocklist.block_list_separator").getComponent(player))));
+                .join(newValues, TranslatableCaption.miniMessage("blocklist.block_list_separator").getComponent(player))));
         return false;
     }
 
@@ -227,11 +227,11 @@ public class Set extends SubCommand {
         // Additional checks
         Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return false;
         }
         if (plot.getVolume() > Integer.MAX_VALUE) {
-            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
+            player.sendMessage(TranslatableCaption.miniMessage("schematics.schematic_too_large"));
             return false;
         }
         // components

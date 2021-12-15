@@ -42,7 +42,7 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.net.MalformedURLException;
@@ -74,25 +74,25 @@ public class Load extends SubCommand {
     public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
         final String world = player.getLocation().getWorldName();
         if (!this.plotAreaManager.hasPlotArea(world)) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot_world"));
             return false;
         }
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.not_in_plot"));
             return false;
         }
         if (!plot.hasOwner()) {
-            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
+            player.sendMessage(TranslatableCaption.miniMessage("info.plot_unowned"));
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_LOAD)) {
-            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
+            player.sendMessage(TranslatableCaption.miniMessage("permission.no_plot_perms"));
             return false;
         }
         if (plot.getRunning() > 0) {
-            player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
+            player.sendMessage(TranslatableCaption.miniMessage("errors.wait_for_timer"));
             return false;
         }
 
@@ -104,8 +104,8 @@ public class Load extends SubCommand {
                     if (schematics == null) {
                         // No schematics found:
                         player.sendMessage(
-                                TranslatableCaption.of("web.load_null"),
-                                Template.of("command", "/plot load")
+                                TranslatableCaption.miniMessage("web.load_null"),
+                                Placeholder.miniMessage("command", "/plot load")
                         );
                         return false;
                     }
@@ -115,8 +115,8 @@ public class Load extends SubCommand {
                     } catch (Exception ignored) {
                         // use /plot load <index>
                         player.sendMessage(
-                                TranslatableCaption.of("invalid.not_valid_number"),
-                                Template.of("value", "(1, " + schematics.size() + ')')
+                                TranslatableCaption.miniMessage("invalid.not_valid_number"),
+                                Placeholder.miniMessage("value", "(1, " + schematics.size() + ')')
                         );
                         return false;
                     }
@@ -125,18 +125,18 @@ public class Load extends SubCommand {
                         url = new URL(Settings.Web.URL + "saves/" + player.getUUID() + '/' + schematic);
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
-                        player.sendMessage(TranslatableCaption.of("web.load_failed"));
+                        player.sendMessage(TranslatableCaption.miniMessage("web.load_failed"));
                         return false;
                     }
                     plot.addRunning();
-                    player.sendMessage(TranslatableCaption.of("working.generating_component"));
+                    player.sendMessage(TranslatableCaption.miniMessage("working.generating_component"));
                     TaskManager.runTaskAsync(() -> {
                         Schematic taskSchematic = this.schematicHandler.getSchematic(url);
                         if (taskSchematic == null) {
                             plot.removeRunning();
                             player.sendMessage(
-                                    TranslatableCaption.of("schematics.schematic_invalid"),
-                                    Template.of("reason", "non-existent or not in gzip format")
+                                    TranslatableCaption.miniMessage("schematics.schematic_invalid"),
+                                    Placeholder.miniMessage("reason", "non-existent or not in gzip format")
                             );
                             return;
                         }
@@ -154,9 +154,9 @@ public class Load extends SubCommand {
                                     public void run(Boolean value) {
                                         plot.removeRunning();
                                         if (value) {
-                                            player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_success"));
+                                            player.sendMessage(TranslatableCaption.miniMessage("schematics.schematic_paste_success"));
                                         } else {
-                                            player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_failed"));
+                                            player.sendMessage(TranslatableCaption.miniMessage("schematics.schematic_paste_failed"));
                                         }
                                     }
                                 }
@@ -166,8 +166,8 @@ public class Load extends SubCommand {
                 }
                 plot.removeRunning();
                 player.sendMessage(
-                        TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.of("value", "/plot load <index>")
+                        TranslatableCaption.miniMessage("commandconfig.command_syntax"),
+                        Placeholder.miniMessage("value", "/plot load <index>")
                 );
                 return false;
             }
@@ -181,7 +181,7 @@ public class Load extends SubCommand {
                     List<String> schematics1 = this.schematicHandler.getSaves(player.getUUID());
                     plot.removeRunning();
                     if ((schematics1 == null) || schematics1.isEmpty()) {
-                        player.sendMessage(TranslatableCaption.of("web.load_failed"));
+                        player.sendMessage(TranslatableCaption.miniMessage("web.load_failed"));
                         return;
                     }
                     metaDataAccess.set(schematics1);
@@ -217,8 +217,8 @@ public class Load extends SubCommand {
                 }
             }
             player.sendMessage(
-                    TranslatableCaption.of("web.load_list"),
-                    Template.of("command", "/plot load #")
+                    TranslatableCaption.miniMessage("web.load_list"),
+                    Placeholder.miniMessage("command", "/plot load #")
             );
         }
     }

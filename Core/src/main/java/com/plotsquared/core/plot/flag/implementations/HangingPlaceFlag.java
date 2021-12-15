@@ -35,7 +35,7 @@ public class HangingPlaceFlag extends BooleanFlag<HangingPlaceFlag> {
     public static final HangingPlaceFlag HANGING_PLACE_FALSE = new HangingPlaceFlag(false);
 
     private HangingPlaceFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_hanging_place"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_hanging_place"));
     }
 
     @Override

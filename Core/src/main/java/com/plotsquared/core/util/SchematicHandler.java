@@ -312,7 +312,7 @@ public abstract class SchematicHandler {
                             (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ() + zOffset + 1) < LENGTH) || (HEIGHT
                             > 256);
             if (!Settings.Schematics.PASTE_MISMATCHES && sizeMismatch) {
-                actor.sendMessage(TranslatableCaption.of("schematics.schematic_size_mismatch"));
+                actor.sendMessage(TranslatableCaption.miniMessage("schematics.schematic_size_mismatch"));
                 TaskManager.runTask(whenDone);
                 return;
             }

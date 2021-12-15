@@ -32,7 +32,7 @@ import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class CmdConfirm {
@@ -58,10 +58,10 @@ public class CmdConfirm {
         removePending(player);
         if (commandStr != null) {
             player.sendMessage(
-                    TranslatableCaption.of("confirm.requires_confirm"),
-                    Template.of("command", commandStr),
-                    Template.of("timeout", String.valueOf(Settings.Confirmation.CONFIRMATION_TIMEOUT_SECONDS)),
-                    Template.of("value", "/plot confirm")
+                    TranslatableCaption.miniMessage("confirm.requires_confirm"),
+                    Placeholder.miniMessage("command", commandStr),
+                    Placeholder.miniMessage("timeout", String.valueOf(Settings.Confirmation.CONFIRMATION_TIMEOUT_SECONDS)),
+                    Placeholder.miniMessage("value", "/plot confirm")
             );
         }
         TaskManager.runTaskLater(() -> {

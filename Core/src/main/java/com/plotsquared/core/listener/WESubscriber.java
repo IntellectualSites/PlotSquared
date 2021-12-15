@@ -45,7 +45,7 @@ import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 import com.sk89q.worldedit.util.eventbus.Subscribe;
 import com.sk89q.worldedit.world.World;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Set;
@@ -97,8 +97,8 @@ public class WESubscriber {
                 if (mask.isEmpty()) {
                     if (Permissions.hasPermission(plotPlayer, "plots.worldedit.bypass")) {
                         plotPlayer.sendMessage(
-                                TranslatableCaption.of("worldedit.worldedit_bypass"),
-                                Template.of("command", "/plot toggle worldedit")
+                                TranslatableCaption.miniMessage("worldedit.worldedit_bypass"),
+                                Placeholder.miniMessage("command", "/plot toggle worldedit")
                         );
                     }
                     if (this.plotAreaManager.hasPlotArea(world)) {

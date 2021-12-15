@@ -28,7 +28,7 @@ package com.plotsquared.core.plot.flag.implementations;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.types.TimedFlag;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class HealFlag extends TimedFlag<Integer, HealFlag> {
@@ -36,7 +36,7 @@ public class HealFlag extends TimedFlag<Integer, HealFlag> {
     public static final HealFlag HEAL_NOTHING = new HealFlag(new Timed<>(0, 0));
 
     protected HealFlag(@NonNull Timed<Integer> value) {
-        super(value, 1, TranslatableCaption.of("flags.flag_description_heal"));
+        super(value, 1, TranslatableCaption.miniMessage("flags.flag_description_heal"));
     }
 
     @Override
@@ -48,16 +48,16 @@ public class HealFlag extends TimedFlag<Integer, HealFlag> {
             throw new FlagParseException(
                     this,
                     input,
-                    TranslatableCaption.of("invalid.not_a_number"),
-                    Template.of("value", input)
+                    TranslatableCaption.miniMessage("invalid.not_a_number"),
+                    Placeholder.miniMessage("value", input)
             );
         }
         if (parsed < 1) {
             throw new FlagParseException(
                     this,
                     input,
-                    TranslatableCaption.of("invalid.number_not_positive"),
-                    Template.of("value", String.valueOf(parsed))
+                    TranslatableCaption.miniMessage("invalid.number_not_positive"),
+                    Placeholder.miniMessage("value", String.valueOf(parsed))
             );
         }
         return parsed;

@@ -35,7 +35,7 @@ public class KeepInventoryFlag extends BooleanFlag<KeepInventoryFlag> {
     public static final KeepInventoryFlag KEEP_INVENTORY_FALSE = new KeepInventoryFlag(false);
 
     private KeepInventoryFlag(final boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_keep_inventory"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_keep_inventory"));
     }
 
     @Override

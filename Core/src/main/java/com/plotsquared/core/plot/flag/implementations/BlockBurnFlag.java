@@ -35,7 +35,7 @@ public class BlockBurnFlag extends BooleanFlag<BlockBurnFlag> {
     public static final BlockBurnFlag BLOCK_BURN_FALSE = new BlockBurnFlag(false);
 
     private BlockBurnFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_block_burn"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_block_burn"));
     }
 
     @Override

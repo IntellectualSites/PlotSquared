@@ -217,7 +217,7 @@ public class SinglePlotArea extends GridPlotWorld {
                 new ConfigurationNode(
                         "void",
                         this.VOID,
-                        TranslatableCaption.of("setup.singleplotarea_void_world"),
+                        TranslatableCaption.miniMessage("setup.singleplotarea_void_world"),
                         ConfigurationUtil.BOOLEAN
                 )};
     }

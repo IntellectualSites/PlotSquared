@@ -48,8 +48,8 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
     protected WeatherFlag(@NonNull PlotWeather value) {
         super(
                 value,
-                TranslatableCaption.of("flags.flag_category_weather"),
-                TranslatableCaption.of("flags.flag_description_weather")
+                TranslatableCaption.miniMessage("flags.flag_category_weather"),
+                TranslatableCaption.miniMessage("flags.flag_description_weather")
         );
     }
 

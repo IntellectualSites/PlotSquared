@@ -35,7 +35,7 @@ public class HostileInteractFlag extends BooleanFlag<HostileInteractFlag> {
     public static final HostileInteractFlag HOSTILE_INTERACT_FALSE = new HostileInteractFlag(false);
 
     private HostileInteractFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_hostile_interact"));
+        super(value, TranslatableCaption.miniMessage("flags.flag_description_hostile_interact"));
     }
 
     @Override

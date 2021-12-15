@@ -43,7 +43,7 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.entity.EntityType;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -146,7 +146,7 @@ public abstract class WorldUtil {
     public abstract void setSign(
             @NonNull Location location,
             @NonNull Caption[] lines,
-            @NonNull Template... replacements
+            @NonNull Placeholder<?>... replacements
     );
 
     /**

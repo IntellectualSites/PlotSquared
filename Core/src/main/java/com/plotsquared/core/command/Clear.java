@@ -43,7 +43,8 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -80,28 +81,28 @@ public class Clear extends Command {
             sendUsage(player);
             return CompletableFuture.completedFuture(false);
         }
-        final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.of("errors.not_in_plot"));
+        final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.miniMessage("errors.not_in_plot"));
         Result eventResult = this.eventDispatcher.callClear(plot).getEventResult();
         if (eventResult == Result.DENY) {
             player.sendMessage(
-                    TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Clear")
+                    TranslatableCaption.miniMessage("events.event_denied"),
+                    Placeholder.miniMessage("value", "Clear")
             );
             return CompletableFuture.completedFuture(true);
         }
         if (plot.getVolume() > Integer.MAX_VALUE) {
-            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
+            player.sendMessage(TranslatableCaption.miniMessage("schematics.schematic_too_large"));
             return CompletableFuture.completedFuture(true);
         }
         boolean force = eventResult == Result.FORCE;
         checkTrue(
                 force || plot.isOwner(player.getUUID()) || Permissions
                         .hasPermission(player, "plots.admin.command.clear"),
-                TranslatableCaption.of("permission.no_plot_perms")
+                TranslatableCaption.miniMessage("permission.no_plot_perms")
         );
-        checkTrue(plot.getRunning() == 0, TranslatableCaption.of("errors.wait_for_timer"));
+        checkTrue(plot.getRunning() == 0, TranslatableCaption.miniMessage("errors.wait_for_timer"));
         checkTrue(force || !Settings.Done.RESTRICT_BUILDING || !DoneFlag.isDone(plot) || Permissions
-                .hasPermission(player, "plots.continue"), TranslatableCaption.of("done.done_already_done"));
+                .hasPermission(player, "plots.continue"), TranslatableCaption.miniMessage("done.done_already_done"));
         confirm.run(this, () -> {
             if (Settings.Teleport.ON_CLEAR) {
                 plot.getPlayersInPlot().forEach(playerInPlot -> plot.teleportPlayer(playerInPlot, TeleportCause.COMMAND_CLEAR,
@@ -135,14 +136,14 @@ public class Clear extends Command {
                             }
                         }
                         player.sendMessage(
-                                TranslatableCaption.of("working.clearing_done"),
-                                Template.of("amount", String.valueOf(System.currentTimeMillis() - start)),
-                                Template.of("plot", plot.getId().toString())
+                                TranslatableCaption.miniMessage("working.clearing_done"),
+                                Placeholder.miniMessage("amount", String.valueOf(System.currentTimeMillis() - start)),
+                                Placeholder.miniMessage("plot", plot.getId().toString())
                         );
                     });
                 });
                 if (!result) {
-                    player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
+                    player.sendMessage(TranslatableCaption.miniMessage("errors.wait_for_timer"));
                 } else {
                     plot.addRunning();
                 }
