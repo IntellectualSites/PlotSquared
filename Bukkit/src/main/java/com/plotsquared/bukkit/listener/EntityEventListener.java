@@ -371,14 +371,14 @@ public class EntityEventListener implements Listener {
             if (shooter instanceof Player) {
                 PlotPlayer<?> pp = BukkitUtil.adapt((Player) shooter);
                 if (plot == null) {
-                    if (!Permissions.hasPermission(pp, Permission.PERMISSION_PROJECTILE_UNOWNED)) {
+                    if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
                         entity.remove();
                         event.setCancelled(true);
                     }
                     return;
                 }
                 if (plot.isAdded(pp.getUUID()) || Permissions
-                        .hasPermission(pp, Permission.PERMISSION_PROJECTILE_OTHER)) {
+                        .hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
                     return;
                 }
                 entity.remove();

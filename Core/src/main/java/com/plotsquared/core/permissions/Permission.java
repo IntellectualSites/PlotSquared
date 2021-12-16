@@ -37,8 +37,6 @@ public enum Permission {
     PERMISSION_STAR("*"),
     PERMISSION_ADMIN("plots.admin"),
     PERMISSION_ADMIN_AREA_SUDO("plots.admin.area.sudo"),
-    PERMISSION_PROJECTILE_UNOWNED("plots.projectile.unowned"),
-    PERMISSION_PROJECTILE_OTHER("plots.projectile.other"),
     PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS("plots.admin.interact.blockedcommands"),
     PERMISSION_WORLDEDIT_BYPASS("plots.worldedit.bypass"),
     PERMISSION_PLOT_TOGGLE_TITLES("plots.toggle.titles"),

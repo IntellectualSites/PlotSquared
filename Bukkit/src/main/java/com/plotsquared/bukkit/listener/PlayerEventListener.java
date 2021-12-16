@@ -127,7 +127,6 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -1606,43 +1605,6 @@ public class PlayerEventListener extends PlotListener implements Listener {
                                 + " could not break vehicle because vehicle-break = false");
                     }
                 }
-            }
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onPlayerEggThrow(PlayerEggThrowEvent event) {
-        Location location = BukkitUtil.adapt(event.getEgg().getLocation());
-        PlotArea area = location.getPlotArea();
-        if (area == null) {
-            return;
-        }
-        Player player = event.getPlayer();
-        BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
-        Plot plot = area.getPlot(location);
-        if (plot == null) {
-            if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PROJECTILE_ROAD)) {
-                plotPlayer.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_ROAD))
-                );
-                event.setHatching(false);
-            }
-        } else if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
-                plotPlayer.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED))
-                );
-                event.setHatching(false);
-            }
-        } else if (!plot.isAdded(plotPlayer.getUUID())) {
-            if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
-                plotPlayer.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER))
-                );
-                event.setHatching(false);
             }
         }
     }

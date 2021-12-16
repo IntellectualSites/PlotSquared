@@ -39,11 +39,13 @@ import com.plotsquared.core.command.MainCommand;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.util.Permissions;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
@@ -53,7 +55,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Slime;
-import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -321,9 +322,6 @@ public class PaperListener implements Listener {
             return;
         }
         Projectile entity = event.getProjectile();
-        if (!(entity instanceof ThrownPotion)) {
-            return;
-        }
         ProjectileSource shooter = entity.getShooter();
         if (!(shooter instanceof Player)) {
             return;
@@ -332,11 +330,36 @@ public class PaperListener implements Listener {
         if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
             return;
         }
-        PlotPlayer<?> pp = BukkitUtil.adapt((Player) shooter);
+        PlotPlayer<Player> pp = BukkitUtil.adapt((Player) shooter);
         Plot plot = location.getOwnedPlot();
-        if (plot != null && !plot.isAdded(pp.getUUID())) {
-            entity.remove();
-            event.setCancelled(true);
+
+        if (plot == null) {
+            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_ROAD)) {
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_ROAD))
+                );
+                entity.remove();
+                event.setCancelled(true);
+            }
+        } else if (!plot.hasOwner()) {
+            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED))
+                );
+                entity.remove();
+                event.setCancelled(true);
+            }
+        } else if (!plot.isAdded(pp.getUUID())) {
+            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER))
+                );
+                entity.remove();
+                event.setCancelled(true);
+            }
         }
     }
 
