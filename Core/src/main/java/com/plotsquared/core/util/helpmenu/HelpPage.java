@@ -57,7 +57,7 @@ public class HelpPage {
             player.sendMessage(TranslatableCaption.miniMessage("help.no_permission"));
         } else {
             Placeholder<?> header = Placeholder.miniMessage("header", TranslatableCaption.miniMessage("help.help_header").getComponent(player));
-            Placeholder<?> page_header = Placeholder.miniMessage(
+            Placeholder<?> page_header = Placeholder.component(
                     "page_header",
                     MINI_MESSAGE.deserialize(
                             TranslatableCaption.miniMessage("help.help_page_header").getComponent(player),
@@ -66,7 +66,7 @@ public class HelpPage {
                                     curTemplate,
                                     maxTemplate
                             )
-                    ).toString()
+                    )
             );
             Placeholder<?> help_objects = Placeholder.miniMessage("help_objects", StringMan.join(this.helpObjects, "\n"));
             Placeholder<?> footer = Placeholder.miniMessage("footer", TranslatableCaption.miniMessage("help.help_footer").getComponent(player));

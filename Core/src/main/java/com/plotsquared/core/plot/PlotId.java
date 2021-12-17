@@ -110,7 +110,7 @@ public final class PlotId {
      * @return Plot ID
      */
     public static @NonNull PlotId unpair(final int hash) {
-        return PlotId.of(hash >> 16, hash & 0xFFFF);
+        return PlotId.of(hash >> 16, (short) (hash & 0xFFFF));
     }
 
     /**

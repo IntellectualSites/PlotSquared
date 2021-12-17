@@ -429,13 +429,13 @@ public class ListCmd extends SubCommand {
                 }
                 Component trusted = MINI_MESSAGE.deserialize(
                         TranslatableCaption.miniMessage("info.plot_info_trusted").getComponent(player),
-                        PlaceholderResolver.placeholders(Placeholder.miniMessage("trusted",
-                                PlayerManager.getPlayerList(plot.getTrusted(), player).toString()))
+                        PlaceholderResolver.placeholders(Placeholder.component("trusted",
+                                PlayerManager.getPlayerList(plot.getTrusted(), player)))
                 );
                 Component members = MINI_MESSAGE.deserialize(
                         TranslatableCaption.miniMessage("info.plot_info_members").getComponent(player),
-                        PlaceholderResolver.placeholders(Placeholder.miniMessage("trusted",
-                                PlayerManager.getPlayerList(plot.getTrusted(), player).toString()))
+                        PlaceholderResolver.placeholders(Placeholder.component("members",
+                                PlayerManager.getPlayerList(plot.getTrusted(), player)))
                 );
                 Placeholder<?> command_tp = Placeholder.miniMessage("command_tp", "/plot visit " + plot.getArea() + ";" + plot.getId());
                 Placeholder<?> command_info = Placeholder.miniMessage("command_info", "/plot info " + plot.getArea() + ";" + plot.getId());
@@ -450,10 +450,12 @@ public class ListCmd extends SubCommand {
                                         .asComponent())
                         );
                 Placeholder<?> numberTemplate = Placeholder.miniMessage("number", String.valueOf(i));
-                Placeholder<?> plotTemplate = Placeholder.miniMessage(
+                Placeholder<?> plotTemplate = Placeholder.component(
                         "plot",
                         MINI_MESSAGE.deserialize(color.getComponent(player),
-                                PlaceholderResolver.placeholders(Placeholder.miniMessage("plot", plot.toString()))).toString()
+                                PlaceholderResolver.placeholders(
+                                        Placeholder.component("plot", Component.text(plot.toString()))
+                                ))
                 );
 
                 String prefix = "";
@@ -491,7 +493,7 @@ public class ListCmd extends SubCommand {
                 } catch (TimeoutException e) {
                     player.sendMessage(TranslatableCaption.miniMessage("players.fetching_players_timeout"));
                 }
-                Placeholder<?> players = Placeholder.miniMessage("players", builder.asComponent().toString());
+                Placeholder<?> players = Placeholder.component("players", builder.asComponent());
                 caption.set(TranslatableCaption.miniMessage("info.plot_list_item"));
                 caption.parsePlaceholders(command_tp, command_info, hover_info, numberTemplate, plotTemplate, players);
             }

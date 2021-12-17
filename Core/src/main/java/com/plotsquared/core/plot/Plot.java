@@ -2901,14 +2901,14 @@ public class Plot {
                     Placeholder<?> numTemplate = Placeholder.miniMessage("num", String.valueOf(num));
                     Placeholder<?> descTemplate = Placeholder.miniMessage("desc", description);
                     Placeholder<?> biomeTemplate = Placeholder.miniMessage("biome", biome.toString().toLowerCase());
-                    Placeholder<?> ownerTemplate = Placeholder.miniMessage("owner", owner.toString());
-                    Placeholder<?> membersTemplate = Placeholder.miniMessage("members", members.toString());
+                    Placeholder<?> ownerTemplate = Placeholder.component("owner", owner);
+                    Placeholder<?> membersTemplate = Placeholder.component("members", members);
                     Placeholder<?> playerTemplate = Placeholder.miniMessage("player", player.getName());
-                    Placeholder<?> trustedTemplate = Placeholder.miniMessage("trusted", trusted.toString());
-                    Placeholder<?> helpersTemplate = Placeholder.miniMessage("helpers", members.toString());
-                    Placeholder<?> deniedTemplate = Placeholder.miniMessage("denied", denied.toString());
+                    Placeholder<?> trustedTemplate = Placeholder.component("trusted", trusted);
+                    Placeholder<?> helpersTemplate = Placeholder.component("helpers", members);
+                    Placeholder<?> deniedTemplate = Placeholder.component("denied", denied);
                     Placeholder<?> seenTemplate = Placeholder.miniMessage("seen", seen);
-                    Placeholder<?> flagsTemplate = Placeholder.miniMessage("flags", flags.toString());
+                    Placeholder<?> flagsTemplate = Placeholder.component("flags", flags);
                     Placeholder<?> creationTemplate = Placeholder.miniMessage("creationdate", newDate);
                     Placeholder<?> buildTemplate = Placeholder.miniMessage("build", String.valueOf(build));
                     if (iInfo.getComponent(player).contains("<rating>")) {

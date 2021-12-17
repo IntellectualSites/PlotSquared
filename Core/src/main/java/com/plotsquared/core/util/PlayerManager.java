@@ -30,7 +30,6 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
-import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.uuid.UUIDMapping;
@@ -123,15 +122,19 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
             return MINI_MESSAGE.parse(TranslatableCaption.miniMessage("info.none").getComponent(localeHolder));
         }
 
+        final List<Component> users = new LinkedList<>();
+
         final List<UUID> players = new LinkedList<>();
-        final List<String> users = new LinkedList<>();
         for (final UUID uuid : uuids) {
             if (uuid == null) {
-                users.add(MINI_MESSAGE.stripTokens(TranslatableCaption.miniMessage("info.none").getComponent(localeHolder)));
+                users.add(MINI_MESSAGE.deserialize(MINI_MESSAGE.stripTokens(TranslatableCaption
+                        .miniMessage("info.none").getComponent(localeHolder))));
             } else if (DBFunc.EVERYONE.equals(uuid)) {
-                users.add(MINI_MESSAGE.stripTokens(TranslatableCaption.miniMessage("info.everyone").getComponent(localeHolder)));
+                users.add(MINI_MESSAGE.deserialize(MINI_MESSAGE.stripTokens(TranslatableCaption
+                        .miniMessage("info.everyone").getComponent(localeHolder))));
             } else if (DBFunc.SERVER.equals(uuid)) {
-                users.add(MINI_MESSAGE.stripTokens(TranslatableCaption.miniMessage("info.console").getComponent(localeHolder)));
+                users.add(MINI_MESSAGE.deserialize(MINI_MESSAGE.stripTokens(TranslatableCaption
+                        .miniMessage("info.console").getComponent(localeHolder))));
             } else {
                 players.add(uuid);
             }
@@ -140,21 +143,25 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
         try {
             for (final UUIDMapping mapping : PlotSquared.get().getImpromptuUUIDPipeline()
                     .getNames(players).get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS)) {
-                users.add(mapping.getUsername());
+                users.add(Component.text(mapping.getUsername()));
             }
         } catch (final Exception e) {
             e.printStackTrace();
         }
 
-        String c = TranslatableCaption.miniMessage("info.plot_user_list").getComponent(ConsolePlayer.getConsole());
+        String c = TranslatableCaption.miniMessage("info.plot_user_list").getComponent(localeHolder);
         TextComponent.Builder list = Component.text();
         for (int x = 0; x < users.size(); x++) {
             if (x + 1 == uuids.size()) {
-                list.append(MINI_MESSAGE.deserialize(c,
-                        PlaceholderResolver.placeholders(Placeholder.miniMessage("user", users.get(x)))));
+                list.append(MINI_MESSAGE.deserialize(
+                        c,
+                        PlaceholderResolver.placeholders(Placeholder.component("user", users.get(x)))
+                ));
             } else {
-                list.append(MINI_MESSAGE.deserialize(c + ", ",
-                        PlaceholderResolver.placeholders(Placeholder.miniMessage("user", users.get(x)))));
+                list.append(MINI_MESSAGE.deserialize(
+                        c + ", ",
+                        PlaceholderResolver.placeholders(Placeholder.component("user", users.get(x)))
+                ));
             }
         }
         return list.asComponent();

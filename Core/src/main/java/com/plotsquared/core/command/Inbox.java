@@ -90,27 +90,18 @@ public class Inbox extends SubCommand {
         // This might work xD
         for (int x = page * 12; x < max; x++) {
             PlotComment comment = comments[x];
-            Component commentColored;
-            if (player.getName().equals(comment.senderName)) {
-                commentColored = MINI_MESSAGE
-                        .deserialize(
-                                TranslatableCaption.miniMessage("list.comment_list_by_lister").getComponent(player),
-                                PlaceholderResolver.placeholders(
-                                        Placeholder.miniMessage("comment", comment.comment)
-                                ));
-            } else {
-                commentColored = MINI_MESSAGE
-                        .deserialize(
-                                TranslatableCaption.miniMessage("list.comment_list_by_other").getComponent(player),
-                                PlaceholderResolver.placeholders(
-                                        Placeholder.miniMessage("comment", comment.comment)
-                                ));
-            }
+            String localeKey = player.getName().equals(comment.senderName) ?
+                    "list.comment_list_by_lister" : "list.comment_list_by_other";
+
+            Placeholder<Component> commentColored = Placeholder.component("comment", MINI_MESSAGE.deserialize(
+                    TranslatableCaption.miniMessage(localeKey).getComponent(player), PlaceholderResolver.placeholders(
+                            Placeholder.miniMessage("comment", comment.comment)
+                    ))
+            );
             Placeholder<?> number = Placeholder.miniMessage("number", String.valueOf(x));
             Placeholder<?> world = Placeholder.miniMessage("world", comment.world);
             Placeholder<?> plot_id = Placeholder.miniMessage("plot_id", comment.id.getX() + ";" + comment.id.getY());
             Placeholder<?> commenter = Placeholder.miniMessage("commenter", comment.senderName);
-            Placeholder<?> commentTemplate = Placeholder.miniMessage("comment", commentColored.toString());
             builder.append(MINI_MESSAGE
                     .deserialize(
                             TranslatableCaption.miniMessage("list.comment_list_comment").getComponent(player),
@@ -119,8 +110,12 @@ public class Inbox extends SubCommand {
                                     world,
                                     plot_id,
                                     commenter,
-                                    commentTemplate
+                                    commentColored
                             )));
+            // Apply line break if not last entry
+            if (x != max - 1) {
+                builder.append(Component.newline());
+            }
         }
         player.sendMessage(StaticCaption.miniMessage(MINI_MESSAGE.serialize(builder.build())));
     }

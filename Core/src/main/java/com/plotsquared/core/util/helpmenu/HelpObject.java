@@ -47,7 +47,7 @@ public class HelpObject {
                 PlaceholderResolver.placeholders(
                         Placeholder.miniMessage("usage", command.getUsage().replace("{label}", label)),
                         Placeholder.miniMessage("alias", command.getAliases().isEmpty() ? "" : StringMan.join(command.getAliases(), " | ")),
-                        Placeholders.miniMessage(audience, "desc", command.getDescription()),
+                        Placeholder.miniMessage("desc", command.getDescription().getComponent(audience)),
                         Placeholder.miniMessage("arguments", buildArgumentList(command.getRequiredArguments())),
                         Placeholder.miniMessage("label", label)
                 )

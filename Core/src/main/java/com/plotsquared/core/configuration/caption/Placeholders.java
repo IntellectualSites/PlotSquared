@@ -61,8 +61,8 @@ public final class Placeholders {
             final @NonNull String key, final @NonNull Caption caption,
             final @NonNull Placeholder<?>... replacements
     ) {
-        return Placeholder.miniMessage(key, MINI_MESSAGE.deserialize(caption.getComponent(localeHolder),
-                PlaceholderResolver.placeholders(replacements)).toString());
+        return Placeholder.component(key, MINI_MESSAGE.deserialize(caption.getComponent(localeHolder),
+                PlaceholderResolver.placeholders(replacements)));
     }
 
     /**
