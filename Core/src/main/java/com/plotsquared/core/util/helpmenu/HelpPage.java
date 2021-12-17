@@ -68,7 +68,7 @@ public class HelpPage {
                             )
                     )
             );
-            Placeholder<?> help_objects = Placeholder.miniMessage("help_objects", StringMan.join(this.helpObjects, ""));
+            Placeholder<?> help_objects = Placeholder.miniMessage("help_objects", StringMan.join(this.helpObjects, "\n"));
             Placeholder<?> footer = Placeholder.miniMessage("footer", TranslatableCaption.miniMessage("help.help_footer").getComponent(player));
             player.sendMessage(
                     StaticCaption.miniMessage("<header>\n<page_header>\n<help_objects>\n<footer>"),
