@@ -1239,13 +1239,6 @@ public class PlayerEventListener extends PlotListener implements Listener {
             );
             event.setCancelled(true);
         } else if (!plot.isAdded(pp.getUUID())) {
-            List<BlockTypeWrapper> use = plot.getFlag(UseFlag.class);
-            final BlockType blockType = BukkitAdapter.asBlockType(block.getType());
-            for (final BlockTypeWrapper blockTypeWrapper : use) {
-                if (blockTypeWrapper.accepts(blockType)) {
-                    return;
-                }
-            }
             if (Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                 return;
             }
@@ -1311,14 +1304,6 @@ public class PlayerEventListener extends PlotListener implements Listener {
             );
             event.setCancelled(true);
         } else if (!plot.isAdded(plotPlayer.getUUID())) {
-            List<BlockTypeWrapper> use = plot.getFlag(UseFlag.class);
-            Block block = event.getBlockClicked();
-            final BlockType blockType = BukkitAdapter.asBlockType(block.getType());
-            for (final BlockTypeWrapper blockTypeWrapper : use) {
-                if (blockTypeWrapper.accepts(blockType)) {
-                    return;
-                }
-            }
             if (Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                 return;
             }
