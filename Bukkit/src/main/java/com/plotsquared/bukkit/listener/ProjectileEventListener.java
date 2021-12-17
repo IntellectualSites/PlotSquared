@@ -28,6 +28,7 @@ package com.plotsquared.bukkit.listener;
 import com.google.inject.Inject;
 import com.plotsquared.bukkit.util.BukkitEntityUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
@@ -36,6 +37,7 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotHandler;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.Permissions;
+import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -96,9 +98,6 @@ public class ProjectileEventListener implements Listener {
     @EventHandler
     public void onProjectileLaunch(ProjectileLaunchEvent event) {
         Projectile entity = event.getEntity();
-        if (!(entity instanceof ThrownPotion)) {
-            return;
-        }
         ProjectileSource shooter = entity.getShooter();
         if (!(shooter instanceof Player)) {
             return;
@@ -109,9 +108,34 @@ public class ProjectileEventListener implements Listener {
         }
         PlotPlayer<Player> pp = BukkitUtil.adapt((Player) shooter);
         Plot plot = location.getOwnedPlot();
-        if (plot != null && !plot.isAdded(pp.getUUID())) {
-            entity.remove();
-            event.setCancelled(true);
+
+        if (plot == null) {
+            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_ROAD)) {
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_ROAD))
+                );
+                entity.remove();
+                event.setCancelled(true);
+            }
+        } else if (!plot.hasOwner()) {
+            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED))
+                );
+                entity.remove();
+                event.setCancelled(true);
+            }
+        } else if (!plot.isAdded(pp.getUUID())) {
+            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER))
+                );
+                entity.remove();
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -131,14 +155,14 @@ public class ProjectileEventListener implements Listener {
         if (shooter instanceof Player) {
             PlotPlayer<?> pp = BukkitUtil.adapt((Player) shooter);
             if (plot == null) {
-                if (!Permissions.hasPermission(pp, Permission.PERMISSION_PROJECTILE_UNOWNED)) {
+                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
                     entity.remove();
                     event.setCancelled(true);
                 }
                 return;
             }
             if (plot.isAdded(pp.getUUID()) || Permissions
-                    .hasPermission(pp, Permission.PERMISSION_PROJECTILE_OTHER)) {
+                    .hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
                 return;
             }
             entity.remove();

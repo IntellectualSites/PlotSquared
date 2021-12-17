@@ -127,7 +127,6 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -1239,13 +1238,6 @@ public class PlayerEventListener extends PlotListener implements Listener {
             );
             event.setCancelled(true);
         } else if (!plot.isAdded(pp.getUUID())) {
-            List<BlockTypeWrapper> use = plot.getFlag(UseFlag.class);
-            final BlockType blockType = BukkitAdapter.asBlockType(block.getType());
-            for (final BlockTypeWrapper blockTypeWrapper : use) {
-                if (blockTypeWrapper.accepts(blockType)) {
-                    return;
-                }
-            }
             if (Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                 return;
             }
@@ -1311,14 +1303,6 @@ public class PlayerEventListener extends PlotListener implements Listener {
             );
             event.setCancelled(true);
         } else if (!plot.isAdded(plotPlayer.getUUID())) {
-            List<BlockTypeWrapper> use = plot.getFlag(UseFlag.class);
-            Block block = event.getBlockClicked();
-            final BlockType blockType = BukkitAdapter.asBlockType(block.getType());
-            for (final BlockTypeWrapper blockTypeWrapper : use) {
-                if (blockTypeWrapper.accepts(blockType)) {
-                    return;
-                }
-            }
             if (Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                 return;
             }
@@ -1606,43 +1590,6 @@ public class PlayerEventListener extends PlotListener implements Listener {
                                 + " could not break vehicle because vehicle-break = false");
                     }
                 }
-            }
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onPlayerEggThrow(PlayerEggThrowEvent event) {
-        Location location = BukkitUtil.adapt(event.getEgg().getLocation());
-        PlotArea area = location.getPlotArea();
-        if (area == null) {
-            return;
-        }
-        Player player = event.getPlayer();
-        BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
-        Plot plot = area.getPlot(location);
-        if (plot == null) {
-            if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PROJECTILE_ROAD)) {
-                plotPlayer.sendMessage(
-                        TranslatableCaption.miniMessage("permission.no_permission_event"),
-                        Placeholder.miniMessage("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_ROAD))
-                );
-                event.setHatching(false);
-            }
-        } else if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
-                plotPlayer.sendMessage(
-                        TranslatableCaption.miniMessage("permission.no_permission_event"),
-                        Placeholder.miniMessage("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED))
-                );
-                event.setHatching(false);
-            }
-        } else if (!plot.isAdded(plotPlayer.getUUID())) {
-            if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
-                plotPlayer.sendMessage(
-                        TranslatableCaption.miniMessage("permission.no_permission_event"),
-                        Placeholder.miniMessage("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER))
-                );
-                event.setHatching(false);
             }
         }
     }
