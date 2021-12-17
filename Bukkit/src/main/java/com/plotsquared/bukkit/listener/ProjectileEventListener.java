@@ -37,7 +37,7 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotHandler;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.Permissions;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.placeholder.Placeholder;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -112,8 +112,8 @@ public class ProjectileEventListener implements Listener {
         if (plot == null) {
             if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_ROAD)) {
                 pp.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_ROAD))
+                        TranslatableCaption.miniMessage("permission.no_permission_event"),
+                        Placeholder.miniMessage("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_ROAD))
                 );
                 entity.remove();
                 event.setCancelled(true);
@@ -121,8 +121,8 @@ public class ProjectileEventListener implements Listener {
         } else if (!plot.hasOwner()) {
             if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
                 pp.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED))
+                        TranslatableCaption.miniMessage("permission.no_permission_event"),
+                        Placeholder.miniMessage("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED))
                 );
                 entity.remove();
                 event.setCancelled(true);
@@ -130,8 +130,8 @@ public class ProjectileEventListener implements Listener {
         } else if (!plot.isAdded(pp.getUUID())) {
             if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
                 pp.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER))
+                        TranslatableCaption.miniMessage("permission.no_permission_event"),
+                        Placeholder.miniMessage("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER))
                 );
                 entity.remove();
                 event.setCancelled(true);
