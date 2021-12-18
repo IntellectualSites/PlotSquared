@@ -1,6 +1,6 @@
 {
   "scanSettings": {
-    "baseBranches": []
+    "baseBranches": "v6"
   },
   "checkRunSettings": {
     "vulnerableCheckRunConclusionLevel": "failure",
@@ -8,5 +8,6 @@
   },
   "issueSettings": {
     "minSeverityLevel": "LOW"
-  }
+  },
+  "enableRenovate": "true"
 }
