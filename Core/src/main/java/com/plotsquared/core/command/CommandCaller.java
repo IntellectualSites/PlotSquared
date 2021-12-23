@@ -40,7 +40,6 @@ public interface CommandCaller {
      *
      * @param caption      Caption to send
      * @param replacements Variable replacements
-     * @since 6.3.0
      */
     void sendMessage(@NonNull Caption caption, @NonNull Placeholder<?>... replacements);
 

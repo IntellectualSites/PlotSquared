@@ -38,6 +38,16 @@ public class CaptionHolder {
 
     /**
      * @return a {@link Caption} from a {@link StaticCaption}
+     *
+     * @deprecated use {@link #caption()} instead
+     */
+    @Deprecated(forRemoval = true, since = "6.3.0")
+    public Caption get() {
+        return this.caption;
+    }
+
+    /**
+     * @return a {@link Caption} from a {@link StaticCaption}
      * @since 6.3.0
      */
     public Caption caption() {
@@ -46,10 +56,29 @@ public class CaptionHolder {
 
     /**
      * @return an array of {@link net.kyori.adventure.text.minimessage.placeholder.Placeholder}s
+     * @deprecated use {@link #placeholders()} instead
+     */
+    @Deprecated(forRemoval = true, since = "6.3.0")
+    public Placeholder<?>[] getTemplates() {
+        return this.placeholders;
+    }
+
+    /**
+     * @return an array of {@link net.kyori.adventure.text.minimessage.placeholder.Placeholder}s
      * @since 6.3.0
      */
     public Placeholder<?>[] placeholders() {
         return this.placeholders;
+    }
+
+    /**
+     * @param placeholders placeholders
+     *
+     * @deprecated use {@link #parsePlaceholders(Placeholder...)} instead
+     */
+    @Deprecated(forRemoval = true, since = "6.3.0")
+    public void setTemplates(Placeholder<?>... placeholders) {
+        this.placeholders = placeholders;
     }
 
     /**

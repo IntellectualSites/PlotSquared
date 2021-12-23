@@ -51,7 +51,7 @@ public class MVdWPlaceholders {
     ) {
         this.plugin = plugin;
         this.registry = registry;
-        for (final Placeholder placeholder : registry.allPlaceholders()) {
+        for (final Placeholder placeholder : registry.getPlaceholders()) {
             this.addPlaceholder(placeholder);
         }
         PlotSquared.get().getEventDispatcher().registerListener(this);

@@ -375,7 +375,6 @@ public final class PlotModificationManager {
      * Sets the sign for a plot to a specific name
      *
      * @param name name
-     * @since 6.3.0
      */
     public void setSign(final @NonNull String name) {
         if (!this.plot.isLoaded()) {

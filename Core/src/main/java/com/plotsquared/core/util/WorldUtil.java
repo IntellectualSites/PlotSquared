@@ -142,7 +142,6 @@ public abstract class WorldUtil {
      * @param location     Block location
      * @param lines        Sign text
      * @param replacements Text replacements
-     * @since 6.3.0
      */
     public abstract void setSign(
             @NonNull Location location,

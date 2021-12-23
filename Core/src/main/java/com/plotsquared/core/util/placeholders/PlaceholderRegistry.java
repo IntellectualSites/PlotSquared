@@ -296,10 +296,9 @@ public final class PlaceholderRegistry {
     /**
      * Get all placeholders
      *
-     * @return Unmodifiable collection of miniMessage
-     * @since 6.3.0
+     * @return Unmodifiable collection of placeholders
      */
-    public @NonNull Collection<Placeholder> allPlaceholders() {
+    public @NonNull Collection<Placeholder> getPlaceholders() {
         return Collections.unmodifiableCollection(this.placeholders.values());
     }
 

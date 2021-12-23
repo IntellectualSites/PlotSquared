@@ -43,7 +43,6 @@ public class FlagParseException extends Exception {
      * @param value        Value that failed ot parse
      * @param errorMessage An error message explaining the failure
      * @param args         Arguments used to format the error message
-     * @since 6.3.0
      */
     public FlagParseException(
             final PlotFlag<?, ?> flag, final String value,

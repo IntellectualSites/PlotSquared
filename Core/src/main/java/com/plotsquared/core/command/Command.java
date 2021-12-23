@@ -614,7 +614,6 @@ public abstract class Command {
      * @param mustBeTrue The condition to check, that must be true
      * @param message The message to send
      * @param args The arguments to send with the message
-     * @since 6.3.0
      */
     public void checkTrue(boolean mustBeTrue, Caption message, Placeholder<?>... args) {
         if (!mustBeTrue) {
@@ -630,7 +629,6 @@ public abstract class Command {
      * @param args The arguments to send with the message
      * @param <T> The type of the object
      * @return The object
-     * @since 6.3.0
      */
     public <T> T check(T object, Caption message, Placeholder<?>... args) {
         if (object == null) {
@@ -656,7 +654,6 @@ public abstract class Command {
          *
          * @param message The message to send
          * @param placeholders The placeholders to send with the message
-         * @since 6.3.0
          */
         public CommandException(final @Nullable Caption message, final Placeholder<?>... placeholders) {
             this.message = message;

@@ -149,7 +149,6 @@ public class PlotAPI {
      *
      * @param message      the message
      * @param replacements Variable replacements
-     * @since 6.3.0
      */
     public void sendConsoleMessage(
             final @NonNull String message,
@@ -163,7 +162,6 @@ public class PlotAPI {
      *
      * @param caption      the message
      * @param replacements Variable replacements
-     * @since 6.3.0
      */
     public void sendConsoleMessage(
             final @NonNull Caption caption,
