@@ -286,15 +286,13 @@ public class StringMan {
     }
 
     public static boolean isEqualIgnoreCase(String a, String b) {
-        return (a == b) || ((a != null) && (b != null) && (a.length() == b.length()) && a
+        return (a.equals(b)) || ((a != null) && (b != null) && (a.length() == b.length()) && a
                 .equalsIgnoreCase(b));
     }
 
     public static String repeat(String s, int n) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < n; i++) {
-            sb.append(s);
-        }
+        sb.append(String.valueOf(s).repeat(Math.max(0, n)));
         return sb.toString();
     }
 

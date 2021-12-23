@@ -1,15 +1,15 @@
 [versions]
 # Minecraft expectations
-gson = "2.8.0" # Version set by Minecraft
-log4j-api = "2.16.0" # Version set by Minecraft
-guava = "21.0" # Version set by Minecraft
+gson = "2.8.9" # Version set by Minecraft
+log4j-api = "2.17.0" # Version set by Minecraft
+guava = "31.0.1-jre" # Version set by Minecraft
 
 # Platform expectations
-paper = "1.17.1-R0.1-SNAPSHOT"
-checker-qual = "3.20.0"
+paper = "1.18.1-R0.1-SNAPSHOT"
+checker-qual = "3.21.0"
 guice = "5.0.1"
 findbugs = "3.0.1"
-snakeyaml = "1.28" # Version set by Bukkit
+snakeyaml = "1.30" # Version set by Bukkit
 
 # Adventure & MiniMessage
 adventure-api = "4.10.0-SNAPSHOT"
@@ -19,9 +19,9 @@ adventure-platform-bukkit = "4.0.1"
 worldedit = "7.2.8"
 fawe = "1.17-419"
 vault = "1.7.1"
-placeholderapi = "2.10.10"
+placeholderapi = "2.11.0"
 luckperms = "5.3"
-essentialsx = "2.19.0"
+essentialsx = "2.19.2"
 hyperverse = "0.6.0-SNAPSHOT"
 mvdwapi = "3.1.1"
 
@@ -30,7 +30,7 @@ prtree = "2.0.0"
 aopalliance = "1.0"
 rorledning = "1.4.0-SNAPSHOT"
 arkitektonika = "2.1.1"
-paster = "1.1.1"
+paster = "1.1.3"
 bstats = "2.2.1"
 paperlib = "1.0.7"
 squirrelid = "0.3.0"
@@ -38,7 +38,7 @@ serverlib = "2.3.1"
 http4j = "1.3"
 
 # Gradle plugins
-shadow = "7.1.0"
+shadow = "7.1.1"
 grgit = "4.1.1"
 licenser = "0.6.1"
 nexus = "1.1.0"

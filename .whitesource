@@ -1,0 +1,13 @@
+{
+  "scanSettings": {
+    "baseBranches": ["v6"]
+  },
+  "checkRunSettings": {
+    "vulnerableCheckRunConclusionLevel": "success",
+    "displayMode": "diff"
+  },
+  "issueSettings": {
+    "minSeverityLevel": "LOW"
+  },
+  "enableRenovate": "true"
+}
