@@ -75,8 +75,7 @@ public class EntitySpawnListener implements Listener {
 
     public static void testCreate(final Entity entity) {
         @NonNull World world = entity.getWorld();
-        if (areaName.equals(world.getName())) {
-        } else {
+        if (!world.getName().equals(areaName)) {
             areaName = world.getName();
             hasPlotArea = PlotSquared.get().getPlotAreaManager().hasPlotArea(areaName);
         }
