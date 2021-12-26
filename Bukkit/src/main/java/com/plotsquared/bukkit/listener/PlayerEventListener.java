@@ -417,8 +417,8 @@ public class PlayerEventListener extends PlotListener implements Listener {
                             .getHomeSynchronous()
                             .equals(BukkitUtil.adaptComplete(to)))) {
                         pp.sendMessage(
-                                TranslatableCaption.of("permission.no_permission_event"),
-                                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_ENTRY_DENIED))
+                                TranslatableCaption.of("deny.no_enter"),
+                                Template.of("plot", plot.toString())
                         );
                         event.setCancelled(true);
                     }
@@ -551,8 +551,8 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 ForceFieldListener.handleForcefield(player, pp, now);
             } else if (!plotEntry(pp, now) && this.tmpTeleport) {
                 pp.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_ENTRY_DENIED))
+                        TranslatableCaption.of("deny.no_enter"),
+                        Template.of("plot", now.toString())
                 );
                 this.tmpTeleport = false;
                 to.setX(from.getBlockX());
@@ -612,13 +612,13 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 }
                 return;
             }
-            Plot now = area.getPlot(location);
+            Plot plot = area.getPlot(location);
             Plot lastPlot;
             try (final MetaDataAccess<Plot> lastPlotAccess =
                          pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
                 lastPlot = lastPlotAccess.get().orElse(null);
             }
-            if (now == null) {
+            if (plot == null) {
                 try (final MetaDataAccess<Boolean> kickAccess =
                              pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
                     if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(false)) {
@@ -637,12 +637,12 @@ public class PlayerEventListener extends PlotListener implements Listener {
                         return;
                     }
                 }
-            } else if (now.equals(lastPlot)) {
-                ForceFieldListener.handleForcefield(player, pp, now);
-            } else if (!plotEntry(pp, now) && this.tmpTeleport) {
+            } else if (plot.equals(lastPlot)) {
+                ForceFieldListener.handleForcefield(player, pp, plot);
+            } else if (!plotEntry(pp, plot) && this.tmpTeleport) {
                 pp.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_ENTRY_DENIED))
+                        TranslatableCaption.of("deny.no_enter"),
+                        Template.of("plot", plot.toString())
                 );
                 this.tmpTeleport = false;
                 player.teleport(from);
