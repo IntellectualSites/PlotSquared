@@ -40,7 +40,6 @@ import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.generator.ClassicPlotWorld;
-import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Direction;
@@ -59,6 +58,7 @@ import com.plotsquared.core.plot.flag.implementations.KeepFlag;
 import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
 import com.plotsquared.core.plot.flag.types.DoubleFlag;
 import com.plotsquared.core.plot.schematic.Schematic;
+import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
@@ -1512,6 +1512,12 @@ public class Plot {
             int z;
             if (loc.getX() == Integer.MAX_VALUE && loc.getZ() == Integer.MAX_VALUE) {
                 // center
+                if (getArea() instanceof SinglePlotArea) {
+                    int y = loc.getY() == Integer.MIN_VALUE
+                            ? (isLoaded() ? this.worldUtil.getHighestBlockSynchronous(plot.getWorldName(), 0, 0) + 1 : 63)
+                            : loc.getY();
+                    return Location.at(plot.getWorldName(), 0, y, 0, 0, 0);
+                }
                 CuboidRegion largest = plot.getLargestRegion();
                 x = (largest.getMaximumPoint().getX() >> 1) - (largest.getMinimumPoint().getX() >> 1) + largest
                         .getMinimumPoint()
@@ -1529,6 +1535,10 @@ public class Plot {
                     ? (isLoaded() ? this.worldUtil.getHighestBlockSynchronous(plot.getWorldName(), x, z) + 1 : 63)
                     : loc.getY();
             return Location.at(plot.getWorldName(), x, y, z, loc.getYaw(), loc.getPitch());
+        }
+        if (getArea() instanceof SinglePlotArea) {
+            int y = isLoaded() ? this.worldUtil.getHighestBlockSynchronous(plot.getWorldName(), 0, 0) + 1 : 63;
+            return Location.at(plot.getWorldName(), 0, y, 0, 0, 0);
         }
         // Side
         return plot.getSideSynchronous();
@@ -1551,20 +1561,25 @@ public class Plot {
             int z;
             if (loc.getX() == Integer.MAX_VALUE && loc.getZ() == Integer.MAX_VALUE) {
                 // center
-                CuboidRegion largest = plot.getLargestRegion();
-                x = (largest.getMaximumPoint().getX() >> 1) - (largest.getMinimumPoint().getX() >> 1) + largest
-                        .getMinimumPoint()
-                        .getX();
-                z = (largest.getMaximumPoint().getZ() >> 1) - (largest.getMinimumPoint().getZ() >> 1) + largest
-                        .getMinimumPoint()
-                        .getZ();
+                if (getArea() instanceof SinglePlotArea) {
+                    x = 0;
+                    z = 0;
+                } else {
+                    CuboidRegion largest = plot.getLargestRegion();
+                    x = (largest.getMaximumPoint().getX() >> 1) - (largest.getMinimumPoint().getX() >> 1) + largest
+                            .getMinimumPoint()
+                            .getX();
+                    z = (largest.getMaximumPoint().getZ() >> 1) - (largest.getMinimumPoint().getZ() >> 1) + largest
+                            .getMinimumPoint()
+                            .getZ();
+                }
             } else {
                 // specific
                 Location bot = plot.getBottomAbs();
                 x = bot.getX() + loc.getX();
                 z = bot.getZ() + loc.getZ();
             }
-            if (loc.getY()  == Integer.MIN_VALUE) {
+            if (loc.getY() == Integer.MIN_VALUE) {
                 if (isLoaded()) {
                     this.worldUtil.getHighestBlock(
                             plot.getWorldName(),
@@ -1582,6 +1597,10 @@ public class Plot {
             return;
         }
         // Side
+        if (getArea() instanceof SinglePlotArea) {
+            int y = isLoaded() ? this.worldUtil.getHighestBlockSynchronous(plot.getWorldName(), 0, 0) + 1 : 63;
+            result.accept(Location.at(plot.getWorldName(), 0, y, 0, 0, 0));
+        }
         plot.getSide(result);
     }
 
@@ -2837,7 +2856,7 @@ public class Plot {
                         flags = MINI_MESSAGE.parse(TranslatableCaption.of("info.none").getComponent(player));
                     } else {
                         TextComponent.Builder flagBuilder = Component.text();
-                        String prefix = " ";
+                        String prefix = "";
                         for (final PlotFlag<?, ?> flag : flagCollection) {
                             Object value;
                             if (flag instanceof DoubleFlag && !Settings.General.SCIENTIFIC) {
