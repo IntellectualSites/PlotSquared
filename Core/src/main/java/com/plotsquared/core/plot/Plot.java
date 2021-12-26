@@ -2856,7 +2856,7 @@ public class Plot {
                         flags = MINI_MESSAGE.parse(TranslatableCaption.of("info.none").getComponent(player));
                     } else {
                         TextComponent.Builder flagBuilder = Component.text();
-                        String prefix = " ";
+                        String prefix = "";
                         for (final PlotFlag<?, ?> flag : flagCollection) {
                             Object value;
                             if (flag instanceof DoubleFlag && !Settings.General.SCIENTIFIC) {
