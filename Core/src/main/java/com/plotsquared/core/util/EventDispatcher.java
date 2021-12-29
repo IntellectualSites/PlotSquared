@@ -83,13 +83,13 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@ApiStatus.Internal
+@AnnotationHelper.ApiDescription(info = "This is an internal class used by PlotSquared to dispatch events." +
+        "This is in no form part of the API and is subject to change at any time.")
 public class EventDispatcher {
 
     private final EventBus eventBus = new EventBus("PlotSquaredEvents");

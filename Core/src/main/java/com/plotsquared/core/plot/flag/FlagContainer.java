@@ -28,11 +28,11 @@ package com.plotsquared.core.plot.flag;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
+import com.plotsquared.core.util.AnnotationHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -349,7 +349,7 @@ public class FlagContainer {
      *
      * @return a new Runnable that cleans up once the FlagContainer isn't needed anymore.
      */
-    @ApiStatus.Internal
+    @AnnotationHelper.ApiDescription(info = "This method should not be considered as public or API.")
     public Runnable createCleanupHook() {
         return () -> GlobalFlagContainer.getInstance().unsubscribe(unknownsRef);
     }
