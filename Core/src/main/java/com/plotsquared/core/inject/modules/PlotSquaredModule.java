@@ -25,8 +25,8 @@
  */
 package com.plotsquared.core.inject.modules;
 
+import cloud.commandframework.services.ServicePipeline;
 import com.google.inject.AbstractModule;
-import com.intellectualsites.services.ServicePipeline;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.inject.annotations.BackgroundPipeline;

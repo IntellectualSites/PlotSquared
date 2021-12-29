@@ -25,9 +25,8 @@
  */
 package com.plotsquared.core.command;
 
-import com.google.common.reflect.TypeToken;
+import cloud.commandframework.services.ServicePipeline;
 import com.google.inject.Inject;
-import com.intellectualsites.services.ServicePipeline;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -51,6 +50,7 @@ import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.AutoClaimFinishTask;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -84,7 +84,7 @@ public class Auto extends SubCommand {
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
         this.servicePipeline = servicePipeline;
-        this.servicePipeline.registerServiceType(TypeToken.of(AutoService.class), new AutoService.DefaultAutoService());
+        this.servicePipeline.registerServiceType(TypeToken.get(AutoService.class), new AutoService.DefaultAutoService());
         final AutoService.MultiPlotService multiPlotService = new AutoService.MultiPlotService();
         this.servicePipeline.registerServiceImplementation(AutoService.class, multiPlotService,
                 Collections.singletonList(multiPlotService)
