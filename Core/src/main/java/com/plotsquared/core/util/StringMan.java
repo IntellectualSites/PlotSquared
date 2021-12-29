@@ -30,15 +30,20 @@ import com.plotsquared.core.configuration.caption.Caption;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 public class StringMan {
+
+    private static final Pattern STRING_SPLIT_PATTERN = Pattern.compile("(?<quoted>\"[\\w ]+\")|(?<single>\\w+)");
 
     public static String replaceFromMap(String string, Map<String, String> replacements) {
         StringBuilder sb = new StringBuilder(string);
@@ -318,6 +323,48 @@ public class StringMan {
             }
         }
         return col;
+    }
+
+    /**
+     * @param message an input string
+     * @return a list of strings
+     * @since TODO
+     *
+     *         <table border="1">
+     *         <caption>Converts multiple quoted and single strings into a list of strings</caption>
+     *         <thead>
+     *           <tr>
+     *             <th>Input</th>
+     *             <th>Output</th>
+     *           </tr>
+     *         </thead>
+     *         <tbody>
+     *           <tr>
+     *             <td>title "sub title"</td>
+     *             <td>["title", "sub title"]</td>
+     *           </tr>
+     *           <tr>
+     *             <td>"a title" subtitle</td>
+     *             <td>["a title", "subtitle"]</td>
+     *           </tr>
+     *           <tr>
+     *             <td>"title" "subtitle"</td>
+     *             <td>["title", "subtitle"]</td>
+     *           </tr>
+     *           <tr>
+     *             <td>"PlotSquared is going well" the authors "and many contributors"</td>
+     *             <td>["PlotSquared is going well", "the", "authors", "and many contributors"]</td>
+     *           </tr>
+     *         </tbody>
+     *         </table>
+     */
+    public static @NonNull List<String> splitMessage(@NonNull String message) {
+        var matcher = StringMan.STRING_SPLIT_PATTERN.matcher(message);
+        List<String> splitMessages = new ArrayList<>();
+        while (matcher.find()) {
+            splitMessages.add(matcher.group(0).replaceAll("\"", ""));
+        }
+        return splitMessages;
     }
 
 }
