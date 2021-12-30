@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.plot.comment;
 
-import com.google.common.annotations.Beta;
 import com.google.inject.TypeLiteral;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.StaticCaption;
@@ -44,7 +43,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Beta
 public class CommentManager {
 
     public static final HashMap<String, CommentInbox> inboxes = new HashMap<>();
