@@ -2928,12 +2928,19 @@ public class Plot {
                     Template flagsTemplate = Template.of("flags", flags);
                     Template creationTemplate = Template.of("creationdate", newDate);
                     Template buildTemplate = Template.of("build", String.valueOf(build));
-                    if (iInfo.getComponent(player).contains("<rating>")) {
+                    Template sizeTemplate = Template.of("size", String.valueOf(getConnectedPlots().size()));
+                    String component = iInfo.getComponent(player);
+                    if (component.contains("<rating>") || component.contains("<likes>")) {
                         TaskManager.runTaskAsync(() -> {
                             Template ratingTemplate;
+                            Template likesTemplate;
                             if (Settings.Ratings.USE_LIKES) {
                                 ratingTemplate = Template.of(
                                         "rating",
+                                        String.format("%.0f%%", Like.getLikesPercentage(this) * 100D)
+                                );
+                                likesTemplate = Template.of(
+                                        "likes",
                                         String.format("%.0f%%", Like.getLikesPercentage(this) * 100D)
                                 );
                             } else {
@@ -2962,6 +2969,7 @@ public class Plot {
                                         );
                                     }
                                 }
+                                likesTemplate = Template.of("likes", "N/A");
                             }
                             future.complete(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
                                     .parse(
@@ -2984,6 +2992,8 @@ public class Plot {
                                             buildTemplate,
                                             ratingTemplate,
                                             creationTemplate,
+                                            sizeTemplate,
+                                            likesTemplate,
                                             footerTemplate
                                     ))));
                         });
@@ -3008,6 +3018,8 @@ public class Plot {
                                     seenTemplate,
                                     flagsTemplate,
                                     buildTemplate,
+                                    creationTemplate,
+                                    sizeTemplate,
                                     footerTemplate
                             ))));
                 }
