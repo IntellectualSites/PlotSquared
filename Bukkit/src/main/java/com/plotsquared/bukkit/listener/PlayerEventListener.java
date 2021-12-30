@@ -68,11 +68,9 @@ import com.plotsquared.core.plot.flag.implementations.PlayerInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.PreventCreativeCopyFlag;
 import com.plotsquared.core.plot.flag.implementations.TamedInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.UntrustedVisitFlag;
-import com.plotsquared.core.plot.flag.implementations.UseFlag;
 import com.plotsquared.core.plot.flag.implementations.VehicleBreakFlag;
 import com.plotsquared.core.plot.flag.implementations.VehicleUseFlag;
 import com.plotsquared.core.plot.flag.implementations.VillagerInteractFlag;
-import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
@@ -94,6 +92,7 @@ import org.bukkit.FluidCollisionMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.ArmorStand;
@@ -155,6 +154,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -1702,22 +1702,51 @@ public class PlayerEventListener extends PlotListener implements Listener {
 
     @EventHandler
     public void onPortalCreation(PortalCreateEvent event) {
-        Location location = BukkitUtil.adapt(event.getEntity().getLocation());
-        PlotArea area = location.getPlotArea();
-        if (area == null) {
+        String world = event.getWorld().getName();
+        if (PlotSquared.get().getPlotAreaManager().getPlotAreasSet(world).size() == 0) {
             return;
         }
-        Plot plot = location.getOwnedPlot();
-        if (plot == null) {
-            if (area.isRoadFlags() && area.getRoadFlag(DenyPortalsFlag.class)) {
-                event.setCancelled(true);
+        int minX = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE;
+        int minZ = Integer.MAX_VALUE;
+        int maxZ = Integer.MIN_VALUE;
+        for (BlockState state : event.getBlocks()) {
+            minX = Math.min(state.getX(), minX);
+            maxX = Math.max(state.getX(), maxX);
+            minZ = Math.min(state.getZ(), minZ);
+            maxZ = Math.max(state.getZ(), maxZ);
+        }
+        int y = event.getBlocks().get(0).getY(); // Don't need to worry about this too much
+        for (Location location : new HashSet<>(Arrays.asList( // Use HashSet to lazily avoid duplicate locations
+                Location.at(world, minX, y, maxX),
+                Location.at(world, minZ, y, maxZ),
+                Location.at(world, minX, y, maxZ),
+                Location.at(world, minZ, y, maxX)
+        ))) {
+            PlotArea area = location.getPlotArea();
+            if (area == null) {
+                continue;
             }
-            return;
-        }
-        if (plot.getFlag(DenyPortalsFlag.class)) {
+            Plot plot = location.getOwnedPlot();
+            if (plot == null) {
+                if (area.isRoadFlags() && area.getRoadFlag(DenyPortalsFlag.class)) {
+                    event.setCancelled(true);
+                    return;
+                }
+                continue;
+            }
             if (plot.getFlag(DenyPortalsFlag.class)) {
-                plot.debug(event.getEntity().getName() + " did not create a portal because of deny-portals = true");
-                event.setCancelled(true);
+                if (plot.getFlag(DenyPortalsFlag.class)) {
+                    StringBuilder builder = new StringBuilder();
+                    if (event.getEntity() != null) {
+                        builder.append(event.getEntity().getName()).append(" did not create a portal");
+                    } else {
+                        builder.append("Portal creation cancelled");
+                    }
+                    plot.debug(builder.append(" because of deny-portals = true").toString());
+                    event.setCancelled(true);
+                    return;
+                }
             }
         }
     }
