@@ -571,7 +571,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     player.teleport(event.getTo());
                     this.tmpTeleport = true;
                     pp.sendMessage(TranslatableCaption.of("border.denied"));
-                } else {
+                } else if (MathMan.roundInt(from.getX()) <= border) { // Only send if they just moved out of the border
                     pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
                 }
             } else if (x2 < -border && this.tmpTeleport) {
@@ -581,7 +581,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     player.teleport(event.getTo());
                     this.tmpTeleport = true;
                     pp.sendMessage(TranslatableCaption.of("border.denied"));
-                } else {
+                } else if (MathMan.roundInt(from.getX()) >= -border) { // Only send if they just moved out of the border
                     pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
                 }
             } else if (((x1 = MathMan.roundInt(from.getX())) >= border && x2 <= border) || (x1 <= -border && x2 >= -border)) {
@@ -662,7 +662,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     player.teleport(event.getTo());
                     this.tmpTeleport = true;
                     pp.sendMessage(TranslatableCaption.of("border.denied"));
-                } else {
+                } else if (MathMan.roundInt(from.getZ()) <= border) { // Only send if they just moved out of the border
                     pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
                 }
             } else if (z2 < -border && this.tmpTeleport) {
@@ -672,7 +672,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     player.teleport(event.getTo());
                     this.tmpTeleport = true;
                     pp.sendMessage(TranslatableCaption.of("border.denied"));
-                } else {
+                } else if (MathMan.roundInt(from.getZ()) >= -border) { // Only send if they just moved out of the border
                     pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
                 }
             } else if (((z1 = MathMan.roundInt(from.getZ())) >= border && z2 <= border) || (z1 <= -border && z2 >= -border)) {
