@@ -38,11 +38,6 @@ allprojects {
         }
 
         maven {
-            name = "IntellectualSites"
-            url = uri("https://mvn.intellectualsites.com/content/groups/public/")
-        }
-
-        maven {
             name = "EngineHub"
             url = uri("https://maven.enginehub.org/repo/")
         }
