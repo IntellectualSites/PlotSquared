@@ -559,13 +559,7 @@ public class Cluster extends SubCommand {
                                                 Template.of("cluster", cluster.getName())
                                         );
                                     }
-                                    for (final Plot plot : PlotQuery.newQuery().inWorld(player2.getLocation()
-                                            .getWorldName()).ownedBy(uuid)) {
-                                        PlotCluster current = plot.getCluster();
-                                        if (current != null && current.equals(cluster)) {
-                                            plot.unclaim();
-                                        }
-                                    }
+                                    removePlayerPlots(cluster, uuid, player2.getLocation().getWorldName());
                                     player.sendMessage(TranslatableCaption.of("cluster.cluster_kicked_user"));
                                 }
                             }
@@ -628,13 +622,7 @@ public class Cluster extends SubCommand {
                         TranslatableCaption.of("cluster.cluster_removed"),
                         Template.of("cluster", cluster.getName())
                 );
-                for (final Plot plot : PlotQuery.newQuery().inWorld(player.getLocation().getWorldName())
-                        .ownedBy(uuid)) {
-                    PlotCluster current = plot.getCluster();
-                    if (current != null && current.equals(cluster)) {
-                        plot.unclaim();
-                    }
-                }
+                removePlayerPlots(cluster, uuid, player.getLocation().getWorldName());
                 return true;
             }
             case "members": {
@@ -864,6 +852,24 @@ public class Cluster extends SubCommand {
                 )
         );
         return false;
+    }
+
+    private void removePlayerPlots(final PlotCluster cluster, final UUID uuid, final String world) {
+        for (final Plot plot : PlotQuery.newQuery().inWorld(world).ownedBy(uuid)) {
+            PlotCluster current = plot.getCluster();
+            if (current != null && current.equals(cluster)) {
+                if (plot.getOwners().size() == 1) {
+                    plot.unclaim();
+                } else {
+                    for (UUID newOwner : plot.getOwners()) {
+                        if (!newOwner.equals(uuid)) {
+                            plot.setOwner(newOwner);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override

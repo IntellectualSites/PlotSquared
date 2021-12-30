@@ -56,6 +56,8 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
 
+import static com.plotsquared.core.configuration.Settings.Teleport.VISIT_MERGED_OWNERS;
+
 @CommandDeclaration(command = "visit",
         permission = "plots.visit",
         usage = "/plot visit <player> | <alias> | <plot> [area]|[#] [#]",
@@ -235,8 +237,8 @@ public class Visit extends Command {
                         } else {
                             final UUID uuid = uuids.toArray(new UUID[0])[0];
                             PlotQuery query = PlotQuery.newQuery();
-                            if (Settings.Teleport.VISIT_MERGED_OWNERS) {
-                                query.ownersInclude(uuid);
+                            if (VISIT_MERGED_OWNERS) {
+                                query.whereBasePlot().ownersInclude(uuid);
                             } else {
                                 query.whereBasePlot().ownedBy(uuid);
                             }
@@ -273,7 +275,8 @@ public class Visit extends Command {
                         if (throwable instanceof TimeoutException) {
                             // The request timed out
                             player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
-                        } else if (uuid != null && !PlotQuery.newQuery().ownedBy(uuid).anyMatch()) {
+                        } else if (uuid != null && (VISIT_MERGED_OWNERS ? !PlotQuery.newQuery().ownersInclude(uuid).anyMatch() :
+                                !PlotQuery.newQuery().ownedBy(uuid).anyMatch())) {
                             // It was a valid UUID but the player has no plots
                             player.sendMessage(TranslatableCaption.of("errors.player_no_plots"));
                         } else if (uuid == null) {
@@ -296,7 +299,8 @@ public class Visit extends Command {
                         } else {
                             this.visit(
                                     player,
-                                    PlotQuery.newQuery().ownedBy(uuid).whereBasePlot(),
+                                    VISIT_MERGED_OWNERS ? PlotQuery.newQuery().ownersInclude(uuid).whereBasePlot() :
+                                            PlotQuery.newQuery().ownedBy(uuid).whereBasePlot(),
                                     null,
                                     confirm,
                                     whenDone,
