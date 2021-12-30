@@ -37,7 +37,7 @@ import static java.lang.annotation.ElementType.RECORD_COMPONENT;
 import static java.lang.annotation.ElementType.TYPE;
 
 /**
- * @since 6.3.0
+ * @since 6.2.2
  */
 @AnnotationHelper.ApiDescription(info = "An internal class for custom annotations." +
         "This is in no form part of the API and is subject to change at any time.")
@@ -54,7 +54,7 @@ public final class AnnotationHelper {
          * Returns additional information how to use a class for the API
          *
          * @return the version string
-         * @since 6.3.0
+         * @since 6.2.2
          */
         String info() default "";
     }
