@@ -1736,17 +1736,15 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 continue;
             }
             if (plot.getFlag(DenyPortalsFlag.class)) {
-                if (plot.getFlag(DenyPortalsFlag.class)) {
-                    StringBuilder builder = new StringBuilder();
-                    if (event.getEntity() != null) {
-                        builder.append(event.getEntity().getName()).append(" did not create a portal");
-                    } else {
-                        builder.append("Portal creation cancelled");
-                    }
-                    plot.debug(builder.append(" because of deny-portals = true").toString());
-                    event.setCancelled(true);
-                    return;
+                StringBuilder builder = new StringBuilder();
+                if (event.getEntity() != null) {
+                    builder.append(event.getEntity().getName()).append(" did not create a portal");
+                } else {
+                    builder.append("Portal creation cancelled");
                 }
+                plot.debug(builder.append(" because of deny-portals = true").toString());
+                event.setCancelled(true);
+                return;
             }
         }
     }
