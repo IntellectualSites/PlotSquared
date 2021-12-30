@@ -25,10 +25,10 @@
  */
 package com.plotsquared.core;
 
+import cloud.commandframework.services.ServicePipeline;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
-import com.intellectualsites.services.ServicePipeline;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.generator.GeneratorWrapper;

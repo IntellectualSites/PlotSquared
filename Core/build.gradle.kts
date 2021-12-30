@@ -22,7 +22,7 @@ dependencies {
     api(libs.guiceassistedinject) {
         exclude("com.google.inject", "guice")
     }
-    compileOnlyApi(libs.findbugs)
+    api(libs.findbugs)
 
     // Plugins
     compileOnly(libs.worldeditCore) {
@@ -40,9 +40,7 @@ dependencies {
     // Other libraries
     api(libs.prtree)
     api(libs.aopalliance)
-    api(libs.rorledning) {
-        exclude(group = "com.google.guava")
-    }
+    api(libs.cloudServices)
     api(libs.arkitektonika)
     api(libs.paster)
 }
