@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.listener.PlotListener;
@@ -86,6 +87,7 @@ public class Purge extends SubCommand {
         UUID owner = null;
         UUID added = null;
         boolean clear = false;
+        boolean unknown = false;
         for (String arg : args) {
             String[] split = arg.split(":");
             if (split.length != 2) {
@@ -142,7 +144,7 @@ public class Purge extends SubCommand {
                         );
                         return false;
                     }
-                    owner = addedMapping.getUuid();
+                    added = addedMapping.getUuid();
                     break;
                 case "clear":
                 case "c":
@@ -150,6 +152,11 @@ public class Purge extends SubCommand {
                 case "d":
                 case "del":
                     clear = Boolean.parseBoolean(split[1]);
+                    break;
+                case "unknown":
+                case "?":
+                case "u":
+                    unknown = Boolean.parseBoolean(split[1]);
                     break;
                 default:
                     sendUsage(player);
@@ -173,6 +180,12 @@ public class Purge extends SubCommand {
             if (added != null && !plot.isAdded(added)) {
                 continue;
             }
+            if (unknown) {
+                UUIDMapping uuidMapping = PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(plot.getOwner());
+                if (uuidMapping != null) {
+                    continue;
+                }
+            }
             toDelete.addAll(plot.getConnectedPlots());
         }
         if (PlotSquared.get().plots_tmp != null) {
@@ -184,6 +197,9 @@ public class Purge extends SubCommand {
                 }
                 for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
                     Plot plot = entry2.getValue();
+                    if (area != null && !plot.getArea().equals(area)) {
+                        continue;
+                    }
                     if (id != null && !plot.getId().equals(id)) {
                         continue;
                     }
@@ -192,6 +208,12 @@ public class Purge extends SubCommand {
                     }
                     if (added != null && !plot.isAdded(added)) {
                         continue;
+                    }
+                    if (unknown) {
+                        UUIDMapping addedMapping = PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(plot.getOwner());
+                        if (addedMapping != null) {
+                            continue;
+                        }
                     }
                     toDelete.add(plot);
                 }
@@ -252,6 +274,13 @@ public class Purge extends SubCommand {
             TaskManager.runTaskAsync(runasync);
         };
         if (hasConfirmation(player)) {
+            if (unknown) {
+                if (Settings.UUID.BACKGROUND_CACHING_ENABLED) {
+                    player.sendMessage(TranslatableCaption.of("purge.confirm_purge_unknown_bg_enabled"));
+                } else {
+                    player.sendMessage(TranslatableCaption.of("purge.confirm_purge_unknown_bg_disabled"));
+                }
+            }
             CmdConfirm.addPending(player, cmd, run);
         } else {
             run.run();
