@@ -75,7 +75,8 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("org.khelekore.prtree", "com.plotsquared.prtree")
     relocate("com.google.inject", "com.plotsquared.google")
     relocate("org.aopalliance", "com.plotsquared.core.aopalliance")
-    relocate("com.intellectualsites.services", "com.plotsquared.core.services")
+    relocate("cloud.commandframework.services", "com.plotsquared.core.services")
+    relocate("io.leangen.geantyref", "com.plotsquared.core.geantyref")
     relocate("com.intellectualsites.arkitektonika", "com.plotsquared.core.arkitektonika")
     relocate("com.intellectualsites.http", "com.plotsquared.core.http")
     relocate("com.intellectualsites.paster", "com.plotsquared.core.paster")
@@ -83,6 +84,7 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("org.jetbrains", "com.plotsquared.core.annotations")
     relocate("org.intellij.lang", "com.plotsquared.core.intellij.annotations")
     relocate("javax.annotation", "com.plotsquared.core.annotation")
+    relocate("com.google.code.findbugs", "com.plotsquared.core.findbugs")
     relocate("javax.inject", "com.plotsquared.core.annotation.inject")
 
     // Get rid of all the libs which are 100% unused.

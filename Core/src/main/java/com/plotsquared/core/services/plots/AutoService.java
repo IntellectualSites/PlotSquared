@@ -25,9 +25,9 @@
  */
 package com.plotsquared.core.services.plots;
 
+import cloud.commandframework.services.types.Service;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.intellectualsites.services.types.Service;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
