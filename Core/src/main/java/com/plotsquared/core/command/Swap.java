@@ -82,11 +82,17 @@ public class Swap extends SubCommand {
             return CompletableFuture.completedFuture(false);
         }
 
+        // Set strings here as the plot objects are mutable (the PlotID changes after being moved).
+        String p1 = plot1.toString();
+        String p2 = plot2.toString();
+
         return plot1.getPlotModificationManager().move(plot2, player, () -> {
         }, true).thenApply(result -> {
             if (result) {
-                player.sendMessage(TranslatableCaption.of("swap.swap_success"), Template.of("origin", String.valueOf(plot1)),
-                        Template.of("target", String.valueOf(plot2))
+                player.sendMessage(
+                        TranslatableCaption.of("swap.swap_success"),
+                        Template.of("origin", p1),
+                        Template.of("target", p2)
                 );
                 return true;
             } else {

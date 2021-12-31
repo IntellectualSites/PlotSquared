@@ -57,7 +57,8 @@ public class Info extends SubCommand {
         if (args.length > 0) {
             arg = args[0];
             switch (arg) {
-                case "trusted", "alias", "inv", "biome", "denied", "flags", "id", "size", "members", "creationdate", "seen", "owner", "rating", "likes" -> plot = Plot
+                // TODO: (re?)implement /plot info inv. (it was never properly implemented)
+                case "trusted", "alias", "biome", "denied", "flags", "id", "size", "members", "creationdate", "seen", "owner", "rating", "likes" -> plot = Plot
                         .getPlotFromString(player, null, false);
                 default -> {
                     plot = Plot.getPlotFromString(player, arg, false);
