@@ -79,7 +79,7 @@ hyperverse = { group = "se.hyperver.hyperverse", name = "Core", version.ref = "h
 prtree = { group = "com.intellectualsites.prtree", name = "PRTree", version.ref = "prtree" }
 aopalliance = { group = "aopalliance", name = "aopalliance", version.ref = "aopalliance" }
 rorledning = { group = "com.intellectualsites", name = "Pipeline", version.ref = "rorledning" }
-mvdwapi = { group = "be.maximvdw", name = "MVdWPlaceholderAPI", version.ref = "mvdwapi" }
+mvdwapi = { group = "com.intellectualsites.mvdwplaceholderapi", name = "MVdWPlaceholderAPI", version.ref = "mvdwapi" }
 squirrelid = { group = "org.enginehub", name = "squirrelid", version.ref = "squirrelid" }
 serverlib = { group = "dev.notmyfault.serverlib", name = "ServerLib", version.ref = "serverlib" }
 bstats = { group = "org.bstats", name = "bstats-bukkit", version.ref = "bstats" }
