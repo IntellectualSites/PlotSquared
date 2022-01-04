@@ -1717,12 +1717,12 @@ public class PlayerEventListener extends PlotListener implements Listener {
             maxZ = Math.max(state.getZ(), maxZ);
         }
         int y = event.getBlocks().get(0).getY(); // Don't need to worry about this too much
-        for (Location location : new HashSet<>(Arrays.asList( // Use HashSet to lazily avoid duplicate locations
+        for (Location location : Set.of( // Use Set to lazily avoid duplicate locations
                 Location.at(world, minX, y, maxX),
                 Location.at(world, minZ, y, maxZ),
                 Location.at(world, minX, y, maxZ),
                 Location.at(world, minZ, y, maxX)
-        ))) {
+        )) {
             PlotArea area = location.getPlotArea();
             if (area == null) {
                 continue;
