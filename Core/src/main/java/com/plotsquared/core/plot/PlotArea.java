@@ -124,7 +124,7 @@ public abstract class PlotArea {
             new FlagContainer(GlobalFlagContainer.getInstance());
     private final YamlConfiguration worldConfiguration;
     private final GlobalBlockQueue globalBlockQueue;
-    private final boolean roadFlags = false;
+    private boolean roadFlags = false;
     private boolean autoMerge = false;
     private boolean allowSigns = true;
     private boolean miscSpawnUnowned = false;
@@ -429,6 +429,7 @@ public abstract class PlotArea {
                 }
             }
         }
+        this.roadFlags = roadflags.size() > 0;
         this.getRoadFlagContainer().addAll(parseFlags(roadflags));
         ConsolePlayer.getConsole().sendMessage(
                 TranslatableCaption.of("flags.road_flags"),
