@@ -203,7 +203,7 @@ public class ListCmd extends SubCommand {
                 sort[0] = false;
                 plotConsumer.accept(PlotQuery
                         .newQuery()
-                        .ownedBy(player)
+                        .ownersInclude(player)
                         .whereBasePlot()
                         .withSortingStrategy(SortingStrategy.SORT_BY_TEMP));
             }
@@ -397,7 +397,8 @@ public class ListCmd extends SubCommand {
                             sort[0] = false;
                             plotConsumer.accept(PlotQuery
                                     .newQuery()
-                                    .ownedBy(uuid)
+                                    .ownersInclude(uuid)
+                                    .whereBasePlot()
                                     .withSortingStrategy(SortingStrategy.SORT_BY_TEMP));
                         }
                     }
