@@ -279,7 +279,7 @@ public class Settings extends Config {
         public static boolean SCIENTIFIC = false;
         @Comment("Replace wall when merging")
         public static boolean MERGE_REPLACE_WALL = true;
-        @Comment("Always show explosion Particles")
+        @Comment("Always show explosion Particles, even if explosion flag is set to false")
         public static boolean ALWAYS_SHOW_EXPLOSIONS = false;
         @Comment({"Blocks that may not be used in plot components",
                 "Checkout the wiki article regarding plot components before modifying: https://github.com/IntellectualSites/PlotSquared-Documentation/wiki/Plot-Components"})
