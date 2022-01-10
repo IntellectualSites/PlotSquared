@@ -164,25 +164,51 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @return The player's name, None, Everyone or Unknown
      */
     public static @NonNull String getName(final @Nullable UUID owner) {
-        return getName(owner, true);
+        return getName(owner, LocaleHolder.console());
+    }
+
+    /**
+     * Get the name from a UUID.
+     *
+     * @param owner        Owner UUID
+     * @param localeHolder The locale holder to use as the translation provider
+     * @return The player's name, None, Everyone or Unknown
+     */
+    public static @NonNull String getName(final @Nullable UUID owner, final @NonNull LocaleHolder localeHolder) {
+        return getName(owner, localeHolder, true);
     }
 
     /**
      * Get the name from a UUID.
      *
      * @param owner    Owner UUID
-     * @param blocking Whether or not the operation can be blocking
+     * @param blocking Whether the operation can be blocking
      * @return The player's name, None, Everyone or Unknown
      */
     public static @NonNull String getName(final @Nullable UUID owner, final boolean blocking) {
+        return getName(owner, LocaleHolder.console(), blocking);
+    }
+
+    /**
+     * Get the name from a UUID.
+     *
+     * @param owner        Owner UUID
+     * @param localeHolder The locale holder to use as the translation provider
+     * @param blocking     Whether the operation can be blocking
+     * @return The player's name, None, Everyone or Unknown
+     */
+    public static @NonNull String getName(
+            final @Nullable UUID owner, final @NonNull LocaleHolder localeHolder,
+            final boolean blocking
+    ) {
         if (owner == null) {
-            TranslatableCaption.of("info.none");
+            return TranslatableCaption.of("info.none").getComponent(localeHolder);
         }
         if (owner.equals(DBFunc.EVERYONE)) {
-            TranslatableCaption.of("info.everyone");
+            return TranslatableCaption.of("info.everyone").getComponent(localeHolder);
         }
         if (owner.equals(DBFunc.SERVER)) {
-            TranslatableCaption.of("info.server");
+            return TranslatableCaption.of("info.server").getComponent(localeHolder);
         }
         final String name;
         if (blocking) {
@@ -198,7 +224,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
             }
         }
         if (name == null) {
-            TranslatableCaption.of("info.unknown");
+            return TranslatableCaption.of("info.unknown").getComponent(localeHolder);
         }
         return name;
     }
