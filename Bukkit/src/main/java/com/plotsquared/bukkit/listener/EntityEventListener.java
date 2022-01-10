@@ -48,6 +48,7 @@ import com.plotsquared.core.util.Permissions;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Ageable;
@@ -323,6 +324,10 @@ public class EntityEventListener implements Listener {
             }
         }
         event.setCancelled(true);
+        //Spawn Explosion Particles when enabled in settings
+        if (Settings.General.ALWAYS_SHOW_EXPLOSIONS) {
+            event.getLocation().getWorld().spawnParticle(Particle.EXPLOSION_HUGE, event.getLocation(), 0);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
