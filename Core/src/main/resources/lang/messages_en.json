@@ -322,6 +322,8 @@
   "debugsavetest.starting": "<prefix><gold>Starting debugsavetest.</gold>",
   "debugsavetest.done": "<prefix><gold>Database sync finished.</gold>",
   "purge.purge_success": "<prefix><dark_aqua>Successfully purged <amount> plots.</dark_aqua>",
+  "purge.confirm_purge_unknown_bg_enabled": "<prefix><gray>Background UUID caching is enabled. Unknown plot owners may be found using this!</gray>",
+  "purge.confirm_purge_unknown_bg_disabled": "<prefix><gray>Background UUID caching is disabled. Unknown plot owners may be found using this! Enable it in settings.yml.</gray>",
   "players.fetching_player": "<prefix><gold>PlotSquared is attempting to find the specified player from your argument(s). This may take a while.</gold>",
   "players.fetching_players_timeout": "<prefix><red>The specified users did not exist in the cache and will be fetched in the background. Please wait a couple of minutes.</red>",
   "trim.trim_in_progress": "<prefix><red>A world trim task is already in progress!</red>",
