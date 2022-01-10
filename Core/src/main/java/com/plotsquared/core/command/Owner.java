@@ -29,6 +29,7 @@ import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.database.SQLManager;
 import com.plotsquared.core.events.PlotChangeOwnerEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.Result;
@@ -43,6 +44,7 @@ import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
+import org.apache.logging.log4j.LogManager;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -53,7 +55,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 @CommandDeclaration(command = "setowner",
-        permission = "plots.admin.command.setowner",
+        permission = "plots.command.setowner",
         usage = "/plot setowner <player>",
         aliases = {"owner", "so", "seto"},
         category = CommandCategory.CLAIMING,
@@ -142,7 +144,7 @@ public class Owner extends SetCommand {
             if (plot.isOwner(uuid)) {
                 player.sendMessage(
                         TranslatableCaption.of("member.already_owner"),
-                        Template.of("player", PlayerManager.getName(uuid, false))
+                        Template.of("player", PlayerManager.getName(uuid, player, false))
                 );
                 return;
             }
@@ -151,7 +153,7 @@ public class Owner extends SetCommand {
                 if (other == null) {
                     player.sendMessage(
                             TranslatableCaption.of("errors.invalid_player_offline"),
-                            Template.of("player", PlayerManager.getName(uuid))
+                            Template.of("player", PlayerManager.getName(uuid, player))
                     );
                     return;
                 }
@@ -204,11 +206,12 @@ public class Owner extends SetCommand {
 
         if (value.length() == 36) {
             try {
-                uuidConsumer.accept(UUID.fromString(value));
+                TaskManager.runTaskAsync(() -> uuidConsumer.accept(UUID.fromString(value)));
             } catch (Exception ignored) {
             }
         } else {
-            PlotSquared.get().getImpromptuUUIDPipeline().getSingle(value, (uuid, throwable) -> uuidConsumer.accept(uuid));
+            PlotSquared.get().getImpromptuUUIDPipeline().getSingle(value, (uuid, throwable) ->
+                    TaskManager.runTaskAsync(() -> uuidConsumer.accept(uuid)));
         }
         return true;
     }
