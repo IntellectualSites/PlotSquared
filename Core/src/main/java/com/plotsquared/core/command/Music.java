@@ -76,6 +76,10 @@ public class Music extends SubCommand {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
         }
+        if (!plot.hasOwner()) {
+            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
+            return false;
+        }
         if (!plot.isAdded(player.getUUID()) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN_MUSIC_OTHER)) {
             player.sendMessage(
