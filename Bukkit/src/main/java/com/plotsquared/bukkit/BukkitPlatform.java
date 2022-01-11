@@ -147,6 +147,8 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1141,8 +1143,10 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     @Override
     public @NonNull String pluginsFormatted() {
         StringBuilder msg = new StringBuilder();
-        Plugin[] plugins = Bukkit.getServer().getPluginManager().getPlugins();
-        msg.append("Plugins (").append(plugins.length).append("): \n");
+        List<Plugin> plugins = new ArrayList<>();
+        Collections.addAll(plugins, Bukkit.getServer().getPluginManager().getPlugins());
+        plugins.sort(Comparator.comparing(Plugin::getName));
+        msg.append("Plugins (").append(plugins.size()).append("): \n");
         for (Plugin p : plugins) {
             msg.append(" - ").append(p.getName()).append(":").append("\n")
                     .append("  • Version: ").append(p.getDescription().getVersion()).append("\n")

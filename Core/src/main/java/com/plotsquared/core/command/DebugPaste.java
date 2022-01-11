@@ -75,8 +75,11 @@ public class DebugPaste extends SubCommand {
             try {
                 StringBuilder b = new StringBuilder();
                 b.append(
-                        "# Welcome to this paste\n# It is meant to provide us at IntellectualSites with better information about your "
-                                + "problem\n\n");
+                        """
+                         # Welcome to this paste
+                         # It is meant to provide us at IntellectualSites with better information about your problem
+                         """
+                );
                 b.append("# PlotSquared Information\n");
                 b.append("PlotSquared Version: ").append(PlotSquared.get().getVersion())
                         .append("\n");
