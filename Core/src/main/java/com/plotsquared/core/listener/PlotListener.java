@@ -281,7 +281,7 @@ public class PlotListener {
                         Location location = player.getLocation();
                         Location lastLocation = musicMeta.get().orElse(null);
                         if (lastLocation != null) {
-                            player.playMusic(lastLocation, musicFlag);
+                            plot.getCenter(center -> player.playMusic(center.add(0, Short.MAX_VALUE, 0), musicFlag));
                             if (musicFlag == ItemTypes.AIR) {
                                 musicMeta.remove();
                             }
@@ -289,7 +289,7 @@ public class PlotListener {
                         if (musicFlag != ItemTypes.AIR) {
                             try {
                                 musicMeta.set(location);
-                                player.playMusic(location, musicFlag);
+                                plot.getCenter(center -> player.playMusic(center.add(0, Short.MAX_VALUE, 0), musicFlag));
                             } catch (Exception ignored) {
                             }
                         }
