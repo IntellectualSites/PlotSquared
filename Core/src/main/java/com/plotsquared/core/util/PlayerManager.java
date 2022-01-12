@@ -217,7 +217,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param owner The UUID of the owner
      * @return A caption containing either the name, {@code None}, {@code Everyone} or {@code Unknown}
      * @see #resolveName(UUID, boolean)
-     * @since 6.2.3
+     * @since TODO
      */
     public static @NonNull Caption resolveName(final @Nullable UUID owner) {
         return resolveName(owner, true);
@@ -229,7 +229,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param owner    The UUID of the owner
      * @param blocking If the operation should block the current thread for {@link Settings.UUID#BLOCKING_TIMEOUT} milliseconds
      * @return A caption containing either the name, {@code None}, {@code Everyone} or {@code Unknown}
-     * @since 6.2.3
+     * @since TODO
      */
     public static @NonNull Caption resolveName(final @Nullable UUID owner, final boolean blocking) {
         if (owner == null) {
