@@ -112,7 +112,7 @@ public class Trust extends Command {
                                     .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST))) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
-                                Template.of("value", PlayerManager.getName(uuid))
+                                Template.of("value", PlayerManager.resolveName(uuid).getComponent(player))
                         );
                         iterator.remove();
                         continue;
@@ -120,7 +120,7 @@ public class Trust extends Command {
                     if (currentPlot.isOwner(uuid)) {
                         player.sendMessage(
                                 TranslatableCaption.of("member.already_added"),
-                                Template.of("value", PlayerManager.getName(uuid))
+                                Template.of("value", PlayerManager.resolveName(uuid).getComponent(player))
                         );
                         iterator.remove();
                         continue;
@@ -128,7 +128,7 @@ public class Trust extends Command {
                     if (currentPlot.getTrusted().contains(uuid)) {
                         player.sendMessage(
                                 TranslatableCaption.of("member.already_added"),
-                                Template.of("value", PlayerManager.getName(uuid))
+                                Template.of("value", PlayerManager.resolveName(uuid).getComponent(player))
                         );
                         iterator.remove();
                         continue;

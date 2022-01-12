@@ -106,7 +106,7 @@ public class Add extends Command {
                                         .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST))) {
                             player.sendMessage(
                                     TranslatableCaption.of("errors.invalid_player"),
-                                    Template.of("value", PlayerManager.getName(uuid))
+                                    Template.of("value", PlayerManager.resolveName(uuid).getComponent(player))
                             );
                             iterator.remove();
                             continue;
@@ -114,7 +114,7 @@ public class Add extends Command {
                         if (plot.isOwner(uuid)) {
                             player.sendMessage(
                                     TranslatableCaption.of("member.already_added"),
-                                    Template.of("player", PlayerManager.getName(uuid))
+                                    Template.of("player", PlayerManager.resolveName(uuid).getComponent(player))
                             );
                             iterator.remove();
                             continue;
@@ -122,7 +122,7 @@ public class Add extends Command {
                         if (plot.getMembers().contains(uuid)) {
                             player.sendMessage(
                                     TranslatableCaption.of("member.already_added"),
-                                    Template.of("player", PlayerManager.getName(uuid))
+                                    Template.of("player", PlayerManager.resolveName(uuid).getComponent(player))
                             );
                             iterator.remove();
                             continue;

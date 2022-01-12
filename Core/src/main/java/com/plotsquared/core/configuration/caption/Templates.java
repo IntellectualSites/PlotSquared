@@ -70,7 +70,7 @@ public final class Templates {
      * @return Generated template
      */
     public static @NonNull Template of(final @NonNull String key, final @NonNull UUID uuid) {
-        final String username = PlayerManager.getName(uuid);
+        final String username = PlayerManager.resolveName(uuid).getComponent(LocaleHolder.console());
         return Template.of(key, username);
     }
 

@@ -30,6 +30,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
+import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotComponentSetEvent;
@@ -358,7 +359,8 @@ public final class PlotModificationManager {
         if (createSign) {
             queue.setCompleteTask(() -> TaskManager.runTaskAsync(() -> {
                 for (Plot current : plots) {
-                    current.getPlotModificationManager().setSign(PlayerManager.getName(current.getOwnerAbs()));
+                    current.getPlotModificationManager().setSign(PlayerManager.resolveName(current.getOwnerAbs()).getComponent(
+                            LocaleHolder.console()));
                 }
             }));
         }
