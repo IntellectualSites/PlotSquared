@@ -88,6 +88,8 @@ public class DebugPaste extends SubCommand {
                 b.append("Download ID: ").append(PremiumVerification.getDownloadID()).append("\n");
                 b.append("This PlotSquared version is licensed to the spigot user ")
                         .append(PremiumVerification.getUserID()).append("\n\n");
+                b.append("# WorldEdit implementation:\n");
+                b.append(PlotSquared.platform().worldEditImplementations()).append("\n\n");
                 b.append("# Server Information\n");
                 b.append("Server Version: ").append(PlotSquared.platform().serverImplementation())
                         .append("\n");

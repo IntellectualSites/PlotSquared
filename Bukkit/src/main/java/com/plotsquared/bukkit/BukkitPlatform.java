@@ -268,7 +268,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                     faweHook = true;
                 } catch (Exception ignored) {
                     LOGGER.error("Incompatible version of FAWE to enable hook, please upgrade: https://ci.athion" +
-                            ".net/job/FastAsyncWorldEdit-1.17/");
+                            ".net/job/FastAsyncWorldEdit/");
                 }
             }
         }
@@ -1156,6 +1156,21 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                     .append("  • Load Before: ").append(p.getDescription().getLoadBefore()).append("\n")
                     .append("  • Dependencies: ").append(p.getDescription().getDepend()).append("\n")
                     .append("  • Soft Dependencies: ").append(p.getDescription().getSoftDepend()).append("\n");
+        }
+        return msg.toString();
+    }
+
+    @Override
+    @SuppressWarnings("ConstantConditions")
+    public @NonNull String worldEditImplementations() {
+        StringBuilder msg = new StringBuilder();
+        if (Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null) {
+            msg.append("FastAsyncWorldEdit: ").append(Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit").getDescription().getVersion());
+        } else if (Bukkit.getPluginManager().getPlugin("AsyncWorldEdit") != null) {
+            msg.append("AsyncWorldEdit: ").append(Bukkit.getPluginManager().getPlugin("AsyncWorldEdit").getDescription().getVersion()).append("\n");
+            msg.append("WorldEdit: ").append(Bukkit.getPluginManager().getPlugin("WorldEdit").getDescription().getVersion());
+        } else {
+            msg.append("WorldEdit: ").append(Bukkit.getPluginManager().getPlugin("WorldEdit").getDescription().getVersion());
         }
         return msg.toString();
     }
