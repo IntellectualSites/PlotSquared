@@ -29,7 +29,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.plotsquared.bukkit.managers.BukkitWorldManager;
-import com.plotsquared.bukkit.managers.HyperverseWorldManager;
 import com.plotsquared.bukkit.managers.MultiverseWorldManager;
 import com.plotsquared.core.util.PlatformWorldManager;
 import org.bukkit.Bukkit;
@@ -40,9 +39,7 @@ public class WorldManagerModule extends AbstractModule {
     @Provides
     @Singleton
     PlatformWorldManager<World> provideWorldManager() {
-        if (Bukkit.getPluginManager().getPlugin("Hyperverse") != null) {
-            return new HyperverseWorldManager();
-        } else if (Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) {
+        if (Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) {
             return new MultiverseWorldManager();
         } else {
             return new BukkitWorldManager();
