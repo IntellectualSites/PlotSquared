@@ -25,6 +25,7 @@
  */
 package com.plotsquared.bukkit.managers;
 
+/*
 import com.google.inject.Singleton;
 import org.bukkit.World;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -35,10 +36,9 @@ import se.hyperver.hyperverse.world.WorldConfigurationBuilder;
 import se.hyperver.hyperverse.world.WorldFeatures;
 import se.hyperver.hyperverse.world.WorldType;
 
-/**
- * Hyperverse specific manager that creates worlds
- * using Hyperverse's API
- */
+Hyperverse implementation is currently put on ice until Hyperverse is released on a stable line and deployed to the central
+repository.
+
 @Singleton
 public class HyperverseWorldManager extends BukkitWorldManager {
 
@@ -67,3 +67,4 @@ public class HyperverseWorldManager extends BukkitWorldManager {
     }
 
 }
+ */

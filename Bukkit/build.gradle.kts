@@ -40,7 +40,6 @@ dependencies {
     compileOnly(libs.placeholderapi)
     compileOnly(libs.luckperms)
     compileOnly(libs.essentialsx)
-    compileOnly(libs.hyperverse) { isTransitive = false }
     compileOnly(libs.mvdwapi) { isTransitive = false }
 
     // Other libraries
