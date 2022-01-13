@@ -2834,7 +2834,7 @@ public class Plot {
                         if (this.isOnline()) {
                             seen = TranslatableCaption.of("info.now").getComponent(player);
                         } else {
-                            int time = (int) (ExpireManager.IMP.getAge(this) / 1000);
+                            int time = (int) (ExpireManager.IMP.getAge(this, false) / 1000);
                             if (time != 0) {
                                 seen = TimeUtil.secToTime(time);
                             } else {

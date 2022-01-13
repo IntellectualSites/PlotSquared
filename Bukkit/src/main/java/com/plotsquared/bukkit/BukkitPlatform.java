@@ -321,8 +321,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         // Comments
         CommentManager.registerDefaultInboxes();
 
-        plotSquared.startExpiryTasks();
-
         // Do stuff that was previously done in PlotSquared
         // Kill entities
         if (Settings.Enabled_Components.KILL_ROAD_MOBS || Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
@@ -418,6 +416,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 }
             }, TaskTime.ticks(1L));
         }
+
+        plotSquared.startExpiryTasks();
 
         // Once the server has loaded force updating all generators known to P2
         TaskManager.runTaskLater(() -> PlotSquared.platform().setupUtils().updateGenerators(true), TaskTime.ticks(1L));

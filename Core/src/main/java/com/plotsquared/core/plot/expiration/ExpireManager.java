@@ -225,7 +225,13 @@ public class ExpireManager {
             return new ArrayList<>();
         }
 
-        long diff = getAge(plot);
+        long diff = 0;
+        for (final ExpiryTask expiryTask : applicable) {
+            long currentDiff = getAge(plot, expiryTask.shouldDeleteForUnknownOwner());
+            if (currentDiff > diff) {
+                diff = currentDiff;
+            }
+        }
         if (diff == 0) {
             return new ArrayList<>();
         }
@@ -243,9 +249,9 @@ public class ExpireManager {
         }
         // Check account age
         if (shouldCheckAccountAge) {
-            long accountAge = getAge(plot);
             for (int i = 0; i < applicable.size(); i++) {
                 ExpiryTask et = applicable.poll();
+                long accountAge = getAge(plot, et.shouldDeleteForUnknownOwner());
                 if (et.appliesAccountAge(accountAge)) {
                     applicable.add(et);
                 }
@@ -309,9 +315,8 @@ public class ExpireManager {
             return false;
         }
         this.running = 2;
-        final ConcurrentLinkedDeque<Plot> plots =
-                new ConcurrentLinkedDeque<>(PlotQuery.newQuery().allPlots().asList());
         TaskManager.runTaskAsync(new Runnable() {
+            private ConcurrentLinkedDeque<Plot> plots = null;
             @Override
             public void run() {
                 final Runnable task = this;
@@ -320,6 +325,9 @@ public class ExpireManager {
                     return;
                 }
                 long start = System.currentTimeMillis();
+                if (plots == null) {
+                    plots = new ConcurrentLinkedDeque<>(PlotQuery.newQuery().allPlots().asList());
+                }
                 while (!plots.isEmpty()) {
                     if (ExpireManager.this.running != 2) {
                         ExpireManager.this.running = 0;
@@ -454,7 +462,19 @@ public class ExpireManager {
         plot.getPlotModificationManager().deletePlot(null, whenDone);
     }
 
+    @Deprecated(forRemoval = true, since = "6.2.3")
     public long getAge(UUID uuid) {
+        return getAge(uuid, false);
+    }
+
+    /**
+     * Get the age (last play time) of the passed player
+     *
+     * @param uuid                     the uuid of the owner to check against
+     * @param shouldDeleteUnknownOwner true if an unknown player should be counted as never online
+     * @return the millis since the player was last online, or {@link Long#MAX_VALUE} if player was never online
+     */
+    public long getAge(UUID uuid, final boolean shouldDeleteUnknownOwner) {
         if (PlotSquared.platform().playerManager().getPlayerIfExists(uuid) != null) {
             return 0;
         }
@@ -464,7 +484,7 @@ public class ExpireManager {
             if (opp != null && (last = opp.getLastPlayed()) != 0) {
                 this.dates_cache.put(uuid, last);
             } else {
-                return 0;
+                return shouldDeleteUnknownOwner ? Long.MAX_VALUE : 0;
             }
         }
         if (last == 0) {
@@ -473,7 +493,7 @@ public class ExpireManager {
         return System.currentTimeMillis() - last;
     }
 
-    public long getAge(Plot plot) {
+    public long getAge(Plot plot, final boolean shouldDeleteUnknownOwner) {
         if (!plot.hasOwner() || Objects.equals(DBFunc.EVERYONE, plot.getOwner())
                 || PlotSquared.platform().playerManager().getPlayerIfExists(plot.getOwner()) != null || plot.getRunning() > 0) {
             return 0;
@@ -495,7 +515,7 @@ public class ExpireManager {
         }
         long min = Long.MAX_VALUE;
         for (UUID owner : plot.getOwners()) {
-            long age = getAge(owner);
+            long age = getAge(owner, shouldDeleteUnknownOwner);
             if (age < min) {
                 min = age;
             }
