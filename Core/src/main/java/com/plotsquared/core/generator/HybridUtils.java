@@ -504,7 +504,10 @@ public class HybridUtils {
         Location top = plot.getTopAbs();
         final HybridPlotWorld plotworld = (HybridPlotWorld) plot.getArea();
         PlotManager plotManager = plotworld.getPlotManager();
-        int schemY = Math.min(plotworld.PLOT_HEIGHT, Math.min(plotworld.WALL_HEIGHT, plotworld.ROAD_HEIGHT));
+        // Do not use plotworld#schematicStartHeight() here as we want to restore the pre 6.1.4 way of doing it if
+        //  USE_WALL_IN_ROAD_SCHEM_HEIGHT is false
+        int schemY = Settings.Schematics.USE_WALL_IN_ROAD_SCHEM_HEIGHT ?
+                Math.min(plotworld.PLOT_HEIGHT, Math.min(plotworld.WALL_HEIGHT, plotworld.ROAD_HEIGHT)) : plotworld.ROAD_HEIGHT;
         int sx = bot.getX() - plotworld.ROAD_WIDTH + 1;
         int sz = bot.getZ() + 1;
         int sy = Settings.Schematics.PASTE_ROAD_ON_TOP ? schemY : plot.getArea().getMinBuildHeight();

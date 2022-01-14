@@ -58,7 +58,8 @@ public class Music extends SubCommand {
     private static final Collection<String> DISCS = Arrays
             .asList("music_disc_13", "music_disc_cat", "music_disc_blocks", "music_disc_chirp",
                     "music_disc_far", "music_disc_mall", "music_disc_mellohi", "music_disc_stal",
-                    "music_disc_strad", "music_disc_ward", "music_disc_11", "music_disc_wait", "music_disc_pigstep"
+                    "music_disc_strad", "music_disc_ward", "music_disc_11", "music_disc_wait", "music_disc_otherside",
+                    "music_disc_pigstep"
             );
 
     private final InventoryUtil inventoryUtil;
@@ -74,6 +75,10 @@ public class Music extends SubCommand {
         final Plot plot = location.getPlotAbs();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
+        }
+        if (!plot.hasOwner()) {
+            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return false;
         }
         if (!plot.isAdded(player.getUUID()) && !Permissions

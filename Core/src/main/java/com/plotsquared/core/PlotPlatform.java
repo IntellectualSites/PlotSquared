@@ -40,6 +40,7 @@ import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
+import com.plotsquared.core.util.AnnotationHelper;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.PlatformWorldManager;
@@ -290,6 +291,15 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * @return Formatted string
      */
     @NonNull String pluginsFormatted();
+
+    /**
+     * Get the kind of WorldEdit implementation
+     *
+     * @return worldedit implementations
+     * @since 6.3.0
+     */
+    @AnnotationHelper.ApiDescription(info = "Internal use only")
+    @NonNull String worldEditImplementations();
 
     /**
      * Load the caption maps
