@@ -253,9 +253,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         int shift = this.ROAD_WIDTH / 2;
         int oddshift = (this.ROAD_WIDTH & 1) == 0 ? 0 : 1;
 
-        SCHEM_Y = Math.min(PLOT_HEIGHT, Math.min(WALL_HEIGHT, ROAD_HEIGHT));
+        SCHEM_Y = schematicStartHeight();
         int plotY = PLOT_HEIGHT - SCHEM_Y;
-        int roadY = Math.min(ROAD_HEIGHT, WALL_HEIGHT) - SCHEM_Y;
+        int minRoadWall = Settings.Schematics.USE_WALL_IN_ROAD_SCHEM_HEIGHT ? Math.min(ROAD_HEIGHT, WALL_HEIGHT) : ROAD_HEIGHT;
+        int roadY = minRoadWall - SCHEM_Y;
 
         if (schematic3 != null) {
             if (schematic3.getClipboard().getDimensions().getY() == 256) {
@@ -350,6 +351,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         short w1 = (short) d1.getX();
         short l1 = (short) d1.getZ();
         short h1 = (short) d1.getY();
+        // Workaround for schematic height issue if proper calculation of road schematic height is disabled
+        if (!Settings.Schematics.USE_WALL_IN_ROAD_SCHEM_HEIGHT) {
+            h1 += Math.max(ROAD_HEIGHT - WALL_HEIGHT, 0);
+        }
 
         BlockVector3 min = blockArrayClipboard1.getMinimumPoint();
         for (short x = 0; x < w1; x++) {
@@ -383,6 +388,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         short w2 = (short) d2.getX();
         short l2 = (short) d2.getZ();
         short h2 = (short) d2.getY();
+        // Workaround for schematic height issue if proper calculation of road schematic height is disabled
+        if (!Settings.Schematics.USE_WALL_IN_ROAD_SCHEM_HEIGHT) {
+            h2 += Math.max(ROAD_HEIGHT - WALL_HEIGHT, 0);
+        }
         min = blockArrayClipboard2.getMinimumPoint();
         for (short x = 0; x < w2; x++) {
             for (short z = 0; z < l2; z++) {
