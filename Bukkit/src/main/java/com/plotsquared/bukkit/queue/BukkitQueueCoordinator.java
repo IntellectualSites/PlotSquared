@@ -266,9 +266,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
         } catch (WorldEditException ignored) {
             // Fallback to not so nice method
             BlockData blockData = BukkitAdapter.adapt(block);
-            Chunk chunk = getBukkitWorld().getChunkAt(blockVector2.getX(), blockVector2.getZ());
-
-            Block existing = chunk.getBlock(x, y, z);
+            Block existing = getBukkitWorld().getBlockAt(x, y, z);
             final BlockState existingBaseBlock = BukkitAdapter.adapt(existing.getBlockData());
             if (BukkitBlockUtil.get(existing).equals(existingBaseBlock) && existing.getBlockData().matches(blockData)) {
                 return;
