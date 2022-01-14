@@ -28,6 +28,7 @@ package com.plotsquared.core.generator;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.inject.annotations.WorldConfig;
@@ -136,6 +137,14 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
         this.WALL_HEIGHT = Math.min(254, config.getInt("wall.height"));
         this.CLAIMED_WALL_BLOCK = new BlockBucket(config.getString("wall.block_claimed"));
         this.PLACE_TOP_BLOCK = config.getBoolean("wall.place_top_block");
+    }
+
+    int schematicStartHeight() {
+        int plotRoadMin = Math.min(PLOT_HEIGHT, ROAD_HEIGHT);
+        if (!Settings.Schematics.USE_WALL_IN_ROAD_SCHEM_HEIGHT) {
+            return plotRoadMin;
+        }
+        return Math.min(WALL_HEIGHT, plotRoadMin);
     }
 
 }

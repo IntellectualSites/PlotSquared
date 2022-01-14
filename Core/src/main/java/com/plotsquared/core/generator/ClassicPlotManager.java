@@ -506,10 +506,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                 Location.at(
                         classicPlotWorld.getWorldName(),
                         sx,
-                        Math.min(
-                                classicPlotWorld.PLOT_HEIGHT,
-                                Math.min(classicPlotWorld.WALL_HEIGHT, classicPlotWorld.ROAD_HEIGHT)
-                        ) + 1,
+                        classicPlotWorld.schematicStartHeight() + 1,
                         sz + 1
                 ),
                 Location.at(classicPlotWorld.getWorldName(), ex, maxY, ez - 1), BlockTypes.AIR.getDefaultState()
@@ -584,10 +581,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                 Location.at(
                         classicPlotWorld.getWorldName(),
                         sx + 1,
-                        Math.min(
-                                classicPlotWorld.PLOT_HEIGHT,
-                                Math.min(classicPlotWorld.WALL_HEIGHT, classicPlotWorld.ROAD_HEIGHT)
-                        ) + 1,
+                        classicPlotWorld.schematicStartHeight() + 1,
                         sz
                 ),
                 Location.at(classicPlotWorld.getWorldName(), ex - 1, classicPlotWorld.getPlotManager().getWorldHeight(), ez),
@@ -682,10 +676,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                         Location.at(
                                 classicPlotWorld.getWorldName(),
                                 sx,
-                                Math.min(
-                                        classicPlotWorld.PLOT_HEIGHT,
-                                        Math.min(classicPlotWorld.WALL_HEIGHT, classicPlotWorld.ROAD_HEIGHT)
-                                ) + 1,
+                                classicPlotWorld.schematicStartHeight() + 1,
                                 sz
                         ),
                         Location.at(classicPlotWorld.getWorldName(), ex, classicPlotWorld.getPlotManager().getWorldHeight(), ez),
@@ -725,10 +716,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                         Location.at(
                                 classicPlotWorld.getWorldName(),
                                 sx,
-                                Math.min(
-                                        classicPlotWorld.PLOT_HEIGHT,
-                                        Math.min(classicPlotWorld.WALL_HEIGHT, classicPlotWorld.ROAD_HEIGHT)
-                                ) + 1,
+                                classicPlotWorld.schematicStartHeight() + 1,
                                 sz
                         ),
                         Location.at(classicPlotWorld.getWorldName(), ex, classicPlotWorld.getPlotManager().getWorldHeight(), ez),
@@ -767,10 +755,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                         Location.at(
                                 classicPlotWorld.getWorldName(),
                                 sx,
-                                Math.min(
-                                        classicPlotWorld.PLOT_HEIGHT,
-                                        Math.min(classicPlotWorld.WALL_HEIGHT, classicPlotWorld.ROAD_HEIGHT)
-                                ) + 1,
+                                classicPlotWorld.schematicStartHeight() + 1,
                                 sz
                         ),
                         Location.at(classicPlotWorld.getWorldName(), ex, classicPlotWorld.getPlotManager().getWorldHeight(), ez),

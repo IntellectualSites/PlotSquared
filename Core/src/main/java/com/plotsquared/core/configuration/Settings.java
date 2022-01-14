@@ -419,6 +419,12 @@ public class Settings extends Config {
                 " - This will still only paste a schematic with a plot's bounds.",
                 " - If a schematic is too big, it will cut off, and if too small, will not full the plot."})
         public static boolean PASTE_MISMATCHES = true;
+        @Comment({"If the wall height should be taken into account when calculating the road schematic paste height",
+                " - If true, will use the lower of wall and road height.",
+                " - If true, will ensure correct schematic behaviour (no parts are cut off).",
+                " - Set to false if you experience the road being set one block too low",
+                "   (only for road schematics created pre 6.1.4)."})
+        public static boolean USE_WALL_IN_ROAD_SCHEM_HEIGHT = true;
 
     }
 
