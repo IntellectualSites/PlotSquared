@@ -228,7 +228,7 @@ public class ExpireManager {
         long diff = 0;
         for (final ExpiryTask expiryTask : applicable) {
             long currentDiff = getAge(plot, expiryTask.shouldDeleteForUnknownOwner());
-            if (currentDiff > diff) {
+            if (currentDiff < diff) {
                 diff = currentDiff;
             }
         }
