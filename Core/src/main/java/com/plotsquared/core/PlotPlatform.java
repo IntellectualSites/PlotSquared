@@ -296,7 +296,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * Get the kind of WorldEdit implementation
      *
      * @return worldedit implementations
-     * @since TODO
+     * @since 6.3.0
      */
     @AnnotationHelper.ApiDescription(info = "Internal use only")
     @NonNull String worldEditImplementations();
