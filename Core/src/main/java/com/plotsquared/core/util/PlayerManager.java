@@ -166,7 +166,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @return The player's name, None, Everyone or Unknown
      * @deprecated Use {@link #resolveName(UUID)}
      */
-    @Deprecated(forRemoval = true, since = "6.2.3")
+    @Deprecated(forRemoval = true, since = "TODO")
     public static @NonNull String getName(final @Nullable UUID owner) {
         return getName(owner, true);
     }
@@ -179,7 +179,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @return The player's name, None, Everyone or Unknown
      * @deprecated Use {@link #resolveName(UUID, boolean)}
      */
-    @Deprecated(forRemoval = true, since = "6.2.3")
+    @Deprecated(forRemoval = true, since = "TODO")
     public static @NonNull String getName(final @Nullable UUID owner, final boolean blocking) {
         if (owner == null) {
             TranslatableCaption.of("info.none");
