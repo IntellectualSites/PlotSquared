@@ -225,10 +225,11 @@ public class ExpireManager {
             return new ArrayList<>();
         }
 
-        long diff = 0;
+        // retrieve lowest diff of all tasks
+        long diff = Short.MAX_VALUE;
         for (final ExpiryTask expiryTask : applicable) {
             long currentDiff = getAge(plot, expiryTask.shouldDeleteForUnknownOwner());
-            if (currentDiff < diff) {
+            if (diff > currentDiff) {
                 diff = currentDiff;
             }
         }
