@@ -200,10 +200,11 @@ public class PlotListener {
                             Caption caption = TranslatableCaption.of("notification.notify_enter");
                             Template playerTemplate = Template.of("player", player.getName());
                             Template plotTemplate = Template.of("plot", plot.getId().toString());
+                            Template worldTemplate = Template.of("world", plot.getWorldName());
                             if (!Settings.Chat.NOTIFICATION_AS_ACTIONBAR) {
-                                owner.sendMessage(caption, playerTemplate, plotTemplate);
+                                owner.sendMessage(caption, playerTemplate, plotTemplate, worldTemplate);
                             } else {
-                                owner.sendActionBar(caption, playerTemplate, plotTemplate);
+                                owner.sendActionBar(caption, playerTemplate, plotTemplate, worldTemplate);
                             }
                         }
                     }
@@ -445,10 +446,11 @@ public class PlotListener {
                                 Caption caption = TranslatableCaption.of("notification.notify_leave");
                                 Template playerTemplate = Template.of("player", player.getName());
                                 Template plotTemplate = Template.of("plot", plot.getId().toString());
+                                Template worldTemplate = Template.of("world", plot.getWorldName());
                                 if (!Settings.Chat.NOTIFICATION_AS_ACTIONBAR) {
-                                    owner.sendMessage(caption, playerTemplate, plotTemplate);
+                                    owner.sendMessage(caption, playerTemplate, plotTemplate, worldTemplate);
                                 } else {
-                                    owner.sendActionBar(caption, playerTemplate, plotTemplate);
+                                    owner.sendActionBar(caption, playerTemplate, plotTemplate, worldTemplate);
                                 }
                             }
                         }
