@@ -216,31 +216,20 @@ public class ExpireManager {
                 applicable.add(et);
             }
         }
-
         if (applicable.isEmpty()) {
             return new ArrayList<>();
         }
 
+        // Don't delete server plots
         if (plot.getFlag(ServerPlotFlag.class)) {
             return new ArrayList<>();
         }
 
-        // retrieve lowest diff of all tasks
-        long diff = Short.MAX_VALUE;
-        for (final ExpiryTask expiryTask : applicable) {
-            long currentDiff = getAge(plot, expiryTask.shouldDeleteForUnknownOwner());
-            if (diff > currentDiff) {
-                diff = currentDiff;
-            }
-        }
-        if (diff == 0) {
-            return new ArrayList<>();
-        }
         // Filter out non old plots
         boolean shouldCheckAccountAge = false;
         for (int i = 0; i < applicable.size(); i++) {
             ExpiryTask et = applicable.poll();
-            if (et.applies(diff)) {
+            if (et.applies(getAge(plot, et.shouldDeleteForUnknownOwner()))) {
                 applicable.add(et);
                 shouldCheckAccountAge |= et.getSettings().SKIP_ACCOUNT_AGE_DAYS != -1;
             }
