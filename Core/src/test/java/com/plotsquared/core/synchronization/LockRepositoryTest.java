@@ -59,3 +59,4 @@ class LockRepositoryTest {
         Assertions.assertFalse(lock.isLocked());
     }
 }
+
