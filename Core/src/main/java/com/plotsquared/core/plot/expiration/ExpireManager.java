@@ -314,7 +314,6 @@ public class ExpireManager {
                     ExpireManager.this.running = 0;
                     return;
                 }
-                long start = System.currentTimeMillis();
                 if (plots == null) {
                     plots = new ConcurrentLinkedDeque<>(PlotQuery.newQuery().allPlots().asList());
                 }
@@ -461,7 +460,7 @@ public class ExpireManager {
      * Get the age (last play time) of the passed player
      *
      * @param uuid                     the uuid of the owner to check against
-     * @param shouldDeleteUnknownOwner true if an unknown player should be counted as never online
+     * @param shouldDeleteUnknownOwner {@code true} if an unknown player should be counted as never online
      * @return the millis since the player was last online, or {@link Long#MAX_VALUE} if player was never online
      * @since TODO
      */
