@@ -145,6 +145,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
                 .toArray(PlotItemStack[]::new);
     }
 
+    @SuppressWarnings("deprecation") // Need #getTitle for Spigot compatibility
     @Override
     public boolean isOpen(PlotInventory plotInventory) {
         if (!plotInventory.isOpen()) {

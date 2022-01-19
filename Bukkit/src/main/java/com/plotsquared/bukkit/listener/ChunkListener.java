@@ -88,6 +88,7 @@ public class ChunkListener implements Listener {
     private boolean ignoreUnload = false;
     private boolean isTrueForNotSave = true;
 
+    @SuppressWarnings({"StaticAssignmentInConstructor", "CatchAndPrintStackTrace"})
     @Inject
     public ChunkListener(final @NonNull PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;

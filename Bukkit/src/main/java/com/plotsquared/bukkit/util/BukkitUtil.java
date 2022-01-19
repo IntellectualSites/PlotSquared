@@ -291,6 +291,7 @@ public class BukkitUtil extends WorldUtil {
         return bukkitWorld.getMaxHeight() - 1;
     }
 
+    @SuppressWarnings("CatchAndPrintStackTrace")
     @Override
     public @NonNull String[] getSignSynchronous(final @NonNull Location location) {
         Block block = Objects.requireNonNull(getWorld(location.getWorldName())).getBlockAt(
@@ -570,6 +571,7 @@ public class BukkitUtil extends WorldUtil {
                 getChunkAt(chunk.getBlockX(), chunk.getBlockZ()).getTileEntities().length;
     }
 
+    @SuppressWarnings("CatchAndPrintStackTrace")
     @Override
     public Set<BlockVector2> getChunkChunks(String world) {
         Set<BlockVector2> chunks = super.getChunkChunks(world);

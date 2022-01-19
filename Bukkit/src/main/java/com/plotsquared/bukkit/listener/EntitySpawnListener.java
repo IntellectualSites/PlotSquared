@@ -121,6 +121,7 @@ public class EntitySpawnListener implements Listener {
         }
     }
 
+    @SuppressWarnings("MissingCaseInEnumSwitch")
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void creatureSpawnEvent(EntitySpawnEvent event) {
         Entity entity = event.getEntity();

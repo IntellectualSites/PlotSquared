@@ -68,7 +68,7 @@ public class UpdateUtility implements Listener {
                         "https://api.spigotmc.org/simple/0.1/index.php?action=getResource&id=77506")
                         .openConnection();
                 connection.setRequestMethod("GET");
-                JsonObject result = (new JsonParser())
+                JsonObject result = new JsonParser()
                         .parse(new JsonReader(new InputStreamReader(connection.getInputStream())))
                         .getAsJsonObject();
                 spigotVersion = result.get("current_version").getAsString();

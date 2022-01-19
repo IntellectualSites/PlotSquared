@@ -218,6 +218,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     private PlatformWorldManager<World> worldManager;
     private Locale serverLocale;
 
+    @SuppressWarnings("StringSplitter")
     @Override
     public int @NonNull [] serverVersion() {
         if (this.version == null) {
@@ -242,6 +243,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         return Bukkit.getVersion();
     }
 
+    @SuppressWarnings("CatchAndPrintStackTrace")
     @Override
     public void onEnable() {
         this.pluginName = getDescription().getName();
@@ -746,7 +748,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         return Bukkit.getWorldContainer();
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({"deprecation", "CatchAndPrintStacktrace"})
     private void runEntityTask() {
         TaskManager.runTaskRepeat(() -> this.plotAreaManager.forEachPlotArea(plotArea -> {
             final World world = Bukkit.getWorld(plotArea.getWorldName());
@@ -970,7 +972,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                                 }
                                                 iterator.remove();
                                                 entity.remove();
-                                                continue;
                                             }
                                         }
                                     } else {
@@ -982,7 +983,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                             }
                                             iterator.remove();
                                             entity.remove();
-                                            continue;
                                         }
                                     }
                                 }
@@ -1223,7 +1223,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
     @Override
     @NonNull
-    @SuppressWarnings("ALL")
+    @SuppressWarnings("unchecked")
     public PlayerManager<? extends PlotPlayer<Player>, ? extends Player> playerManager() {
         return (PlayerManager<BukkitPlayer, Player>) injector().getInstance(PlayerManager.class);
     }

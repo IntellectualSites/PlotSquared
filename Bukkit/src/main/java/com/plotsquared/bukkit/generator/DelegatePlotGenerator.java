@@ -66,6 +66,7 @@ final class DelegatePlotGenerator extends IndependentPlotGenerator {
         return PlotSquared.platform().defaultGenerator().getNewPlotArea(world, id, min, max);
     }
 
+    @SuppressWarnings("EmptyCatch")
     @Override
     public void generateChunk(final ScopedQueueCoordinator result, PlotArea settings) {
         World world = BukkitUtil.getWorld(this.world);

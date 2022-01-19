@@ -224,6 +224,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         }
     }
 
+    @SuppressWarnings("StringSplitter")
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void playerCommand(PlayerCommandPreprocessEvent event) {
         String msg = event.getMessage().toLowerCase().replaceAll("/", "").trim();
@@ -1667,6 +1668,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         }
     }
 
+    @SuppressWarnings("deprecation") // #getLocate is needed for Spigot compatibility
     @EventHandler
     public void onLocaleChange(final PlayerLocaleChangeEvent event) {
         // The event is fired before the player is deemed online upon login

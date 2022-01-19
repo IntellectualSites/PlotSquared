@@ -126,6 +126,7 @@ public class BukkitSetupUtils extends SetupUtils {
         });
     }
 
+    @SuppressWarnings("CatchAndPrintStackTrace")
     @Override
     public String setupWorld(PlotAreaBuilder builder) {
         this.updateGenerators(false);

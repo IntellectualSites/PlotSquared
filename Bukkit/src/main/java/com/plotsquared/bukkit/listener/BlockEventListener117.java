@@ -139,6 +139,7 @@ public class BlockEventListener117 implements Listener {
         }
     }
 
+    @SuppressWarnings("MissingCasesInEnumSwitch")
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockForm(BlockFormEvent event) {
         Block block = event.getBlock();

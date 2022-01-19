@@ -89,6 +89,7 @@ public class BukkitModule extends AbstractModule {
         this.bukkitPlatform = bukkitPlatform;
     }
 
+    @SuppressWarnings("CatchAndPrintStackTrace")
     @Override
     protected void configure() {
         bind(PlayerManager.class).to(BukkitPlayerManager.class);
@@ -132,6 +133,7 @@ public class BukkitModule extends AbstractModule {
         install(new FactoryModuleBuilder().build(ChunkCoordinatorBuilderFactory.class));
     }
 
+    @SuppressWarnings("EmptyCatch")
     @Provides
     @Singleton
     @NonNull EconHandler provideEconHandler() {

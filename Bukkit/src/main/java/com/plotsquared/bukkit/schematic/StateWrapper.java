@@ -166,6 +166,7 @@ public class StateWrapper {
         return str;
     }
 
+    @SuppressWarnings("deprecation") // #setLine is needed for Spigot compatibility
     public boolean restoreTag(String worldName, int x, int y, int z) {
         if (this.tag == null) {
             return false;

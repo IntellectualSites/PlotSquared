@@ -159,6 +159,7 @@ public class PaperListener implements Listener {
         event.setCancelled(true);
     }
 
+    @SuppressWarnings("MissingCasesInEnumSwitch")
     @EventHandler
     public void onPreCreatureSpawnEvent(PreCreatureSpawnEvent event) {
         if (!Settings.Paper_Components.CREATURE_SPAWN) {
@@ -363,6 +364,7 @@ public class PaperListener implements Listener {
         }
     }
 
+    @SuppressWarnings("EmptyCatch")
     @EventHandler
     public void onAsyncTabCompletion(final AsyncTabCompleteEvent event) {
         if (!Settings.Paper_Components.ASYNC_TAB_COMPLETION) {
