@@ -46,13 +46,20 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
     private final int length;
     private final BlockVector3 bot;
     private final BlockVector3 top;
+    private final World weWorld;
 
-    public ChunkQueueCoordinator(@NonNull BlockVector3 bot, @NonNull BlockVector3 top, boolean biomes) {
+    public ChunkQueueCoordinator(
+            final @NonNull World weWorld,
+            @NonNull BlockVector3 bot,
+            @NonNull BlockVector3 top,
+            boolean biomes
+    ) {
         super(null, Location.at("", 0, 0, 0), Location.at("", 15, 255, 15));
+        this.weWorld = weWorld;
         this.width = top.getX() - bot.getX() + 1;
         this.length = top.getZ() - bot.getZ() + 1;
-        this.result = new BlockState[256][][];
-        this.biomeResult = biomes ? new BiomeType[256][][] : null;
+        this.result = new BlockState[256][width][length];
+        this.biomeResult = biomes ? new BiomeType[256][width][length] : null;
         this.bot = bot;
         this.top = top;
     }
@@ -137,7 +144,7 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
 
     @Override
     public @Nullable World getWorld() {
-        return super.getWorld();
+        return weWorld;
     }
 
     @Override
