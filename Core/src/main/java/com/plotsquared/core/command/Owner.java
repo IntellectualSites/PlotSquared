@@ -142,7 +142,7 @@ public class Owner extends SetCommand {
             if (plot.isOwner(uuid)) {
                 player.sendMessage(
                         TranslatableCaption.of("member.already_owner"),
-                        Template.of("player", PlayerManager.getName(uuid, false))
+                        Template.of("player", PlayerManager.resolveName(uuid, false).getComponent(player))
                 );
                 return;
             }
@@ -151,7 +151,7 @@ public class Owner extends SetCommand {
                 if (other == null) {
                     player.sendMessage(
                             TranslatableCaption.of("errors.invalid_player_offline"),
-                            Template.of("player", PlayerManager.getName(uuid))
+                            Template.of("player", PlayerManager.resolveName(uuid).getComponent(player))
                     );
                     return;
                 }

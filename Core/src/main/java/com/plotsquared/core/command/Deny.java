@@ -125,7 +125,7 @@ public class Deny extends SubCommand {
                     } else if (plot.getDenied().contains(uuid)) {
                         player.sendMessage(
                                 TranslatableCaption.of("member.already_added"),
-                                Template.of("player", PlayerManager.getName(uuid))
+                                Template.of("player", PlayerManager.resolveName(uuid).getComponent(player))
                         );
                         return;
                     } else {
