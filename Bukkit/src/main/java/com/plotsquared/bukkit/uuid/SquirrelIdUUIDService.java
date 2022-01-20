@@ -67,7 +67,6 @@ public class SquirrelIdUUIDService implements UUIDService {
         this.rateLimiter = RateLimiter.create(rateLimit / 600.0D);
     }
 
-    @SuppressWarnings("CatchAndPrintStackTrace")
     @Override
     public @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids) {
         final List<UUIDMapping> results = new ArrayList<>(uuids.size());
@@ -103,7 +102,6 @@ public class SquirrelIdUUIDService implements UUIDService {
         return results;
     }
 
-    @SuppressWarnings("CatchAndPrintStackTrace")
     @Override
     public @NonNull List<UUIDMapping> getUUIDs(final @NonNull List<String> usernames) {
         final List<UUIDMapping> results = new ArrayList<>(usernames.size());

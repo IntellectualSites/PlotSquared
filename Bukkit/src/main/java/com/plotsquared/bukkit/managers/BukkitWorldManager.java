@@ -64,7 +64,6 @@ public class BukkitWorldManager implements PlatformWorldManager<World> {
         return Bukkit.createWorld(wc);
     }
 
-    @SuppressWarnings("CatchAndPrintStackTrace")
     protected void setGenerator(final @Nullable String worldName, final @Nullable String generator) {
         if (generator == null) {
             return;

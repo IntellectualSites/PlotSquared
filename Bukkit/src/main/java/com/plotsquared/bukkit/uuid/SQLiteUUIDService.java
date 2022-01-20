@@ -49,7 +49,6 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
 
     private final SQLite sqlite;
 
-    @SuppressWarnings("CatchAndPrintStackTrace")
     public SQLiteUUIDService(final String fileName) {
         this.sqlite =
                 new SQLite(FileUtils.getFile(PlotSquared.platform().getDirectory(), fileName));
@@ -73,7 +72,6 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
         }
     }
 
-    @SuppressWarnings("CatchAndPrintStackTrace")
     @Override
     public @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids) {
         final List<UUIDMapping> mappings = new ArrayList<>(uuids.size());
@@ -93,7 +91,6 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
         return mappings;
     }
 
-    @SuppressWarnings("CatchAndPrintStackTrace")
     @Override
     public @NonNull List<UUIDMapping> getUUIDs(@NonNull List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
@@ -116,7 +113,6 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
         return mappings;
     }
 
-    @SuppressWarnings("CatchAndPrintStackTrace")
     @Override
     public void accept(final List<UUIDMapping> uuidWrappers) {
         try (final PreparedStatement statement = getConnection()
@@ -136,7 +132,6 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
      *
      * @return All read mappings
      */
-    @SuppressWarnings("CatchAndPrintStackTrace")
     public @NonNull List<UUIDMapping> getAll() {
         final List<UUIDMapping> mappings = new LinkedList<>();
         try (final PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM `usercache`")) {

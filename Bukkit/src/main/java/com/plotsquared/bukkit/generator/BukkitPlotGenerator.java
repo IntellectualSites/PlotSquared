@@ -108,7 +108,6 @@ public class BukkitPlotGenerator extends ChunkGenerator
         return this.platformGenerator;
     }
 
-    @SuppressWarnings("CatchAndPrintStackTrace")
     @Override
     public @NonNull List<BlockPopulator> getDefaultPopulators(@NonNull World world) {
         try {
@@ -154,7 +153,6 @@ public class BukkitPlotGenerator extends ChunkGenerator
         return toAdd;
     }
 
-    @SuppressWarnings("CatchAndPrintStackTrace")
     @Override
     public @NonNull ChunkData generateChunkData(
             @NonNull World world, @NonNull Random random, int x, int z,
@@ -197,7 +195,6 @@ public class BukkitPlotGenerator extends ChunkGenerator
         return result.getChunkData();
     }
 
-    @SuppressWarnings("CatchAndPrintStackTrace")
     private void generate(BlockVector2 loc, World world, ScopedQueueCoordinator result) {
         // Load if improperly loaded
         if (!this.loaded) {
@@ -261,7 +258,6 @@ public class BukkitPlotGenerator extends ChunkGenerator
         }
     }
 
-    @SuppressWarnings({"EqualsHashCode", "EqualsGetClass"}) // Valid comparison
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {

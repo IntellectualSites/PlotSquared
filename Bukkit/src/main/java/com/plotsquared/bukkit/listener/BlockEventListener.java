@@ -203,7 +203,6 @@ public class BlockEventListener implements Listener {
         }
     }
 
-    @SuppressWarnings("MissingCasesInEnumSwitch")
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPhysicsEvent(BlockPhysicsEvent event) {
         Block block = event.getBlock();
@@ -426,7 +425,6 @@ public class BlockEventListener implements Listener {
         event.setCancelled(true);
     }
 
-    @SuppressWarnings("FallThrough")
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockSpread(BlockSpreadEvent event) {
         Block block = event.getBlock();
@@ -531,7 +529,6 @@ public class BlockEventListener implements Listener {
         }
     }
 
-    @SuppressWarnings("MissingCasesInEnumSwitch")
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockForm(BlockFormEvent event) {
         if (event instanceof EntityBlockFormEvent) {
@@ -687,7 +684,6 @@ public class BlockEventListener implements Listener {
         event.setCancelled(true);
     }
 
-    @SuppressWarnings("MissingCaseesInEnumSwitch")
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onFade(BlockFadeEvent event) {
         Block block = event.getBlock();
@@ -1076,7 +1072,6 @@ public class BlockEventListener implements Listener {
 
     }
 
-    @SuppressWarnings("OperatorPrecedence")
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockIgnite(BlockIgniteEvent event) {
         Player player = event.getPlayer();

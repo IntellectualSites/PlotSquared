@@ -243,7 +243,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         return Bukkit.getVersion();
     }
 
-    @SuppressWarnings("CatchAndPrintStackTrace")
     @Override
     public void onEnable() {
         this.pluginName = getDescription().getName();
@@ -563,7 +562,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         ServerLib.checkUnsafeForks();
     }
 
-    @SuppressWarnings("CatchAndPrintStackTrace")
     private void unload() {
         if (!this.methodUnloadSetup) {
             this.methodUnloadSetup = true;
@@ -649,7 +647,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         }
     }
 
-    @SuppressWarnings("FutureReturnValueIgnored")
     private void startUuidCaching(
             final @NonNull SQLiteUUIDService sqLiteUUIDService,
             final @NonNull CacheUUIDService cacheUUIDService
@@ -750,7 +747,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         return Bukkit.getWorldContainer();
     }
 
-    @SuppressWarnings({"deprecation", "CatchAndPrintStacktrace"})
+    @SuppressWarnings("deprecation")
     private void runEntityTask() {
         TaskManager.runTaskRepeat(() -> this.plotAreaManager.forEachPlotArea(plotArea -> {
             final World world = Bukkit.getWorld(plotArea.getWorldName());

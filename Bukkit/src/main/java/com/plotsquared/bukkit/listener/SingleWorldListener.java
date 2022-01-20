@@ -48,7 +48,6 @@ public class SingleWorldListener implements Listener {
     private final Method methodGetHandleChunk;
     private Field shouldSave;
 
-    @SuppressWarnings("CatchAndPrintStackTrace")
     public SingleWorldListener() throws Exception {
         ReflectionUtils.RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
         this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle").getRealMethod();
@@ -69,7 +68,6 @@ public class SingleWorldListener implements Listener {
         }
     }
 
-    @SuppressWarnings("CatchAndPrintStackTrace")
     public void markChunkAsClean(Chunk chunk) {
         try {
             Object nmsChunk = methodGetHandleChunk.invoke(chunk);

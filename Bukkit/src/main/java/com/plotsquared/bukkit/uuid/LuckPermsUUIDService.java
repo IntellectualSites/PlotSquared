@@ -53,7 +53,6 @@ public class LuckPermsUUIDService implements UUIDService {
         }
     }
 
-    @SuppressWarnings("EmptyCatch")
     @Override
     public @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids) {
         final List<UUIDMapping> mappings = new ArrayList<>(uuids.size());
@@ -70,7 +69,6 @@ public class LuckPermsUUIDService implements UUIDService {
         return mappings;
     }
 
-    @SuppressWarnings("EmptyCatch")
     @Override
     public @NonNull List<UUIDMapping> getUUIDs(final @NonNull List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());

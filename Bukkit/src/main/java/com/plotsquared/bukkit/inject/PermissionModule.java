@@ -35,7 +35,6 @@ import org.bukkit.Bukkit;
 
 public class PermissionModule extends AbstractModule {
 
-    @SuppressWarnings("EmptyCatch")
     @Provides
     @Singleton
     PermissionHandler providePermissionHandler() {

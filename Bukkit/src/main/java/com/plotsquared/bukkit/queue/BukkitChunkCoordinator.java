@@ -193,7 +193,6 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
     /**
      * Requests a batch of chunks to be loaded
      */
-    @SuppressWarnings("FutureReturnValueIgnored")
     private void requestBatch() {
         BlockVector2 chunk;
         for (int i = 0; i < this.batchSize && (chunk = this.requestedChunks.poll()) != null; i++) {

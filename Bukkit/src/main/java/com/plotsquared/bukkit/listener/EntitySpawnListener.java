@@ -85,7 +85,6 @@ public class EntitySpawnListener implements Listener {
         test(entity);
     }
 
-    @SuppressWarnings("FutureReturnValueIgnored")
     public static void test(Entity entity) {
         @NonNull World world = entity.getWorld();
         List<MetadataValue> meta = entity.getMetadata(KEY);
@@ -122,7 +121,6 @@ public class EntitySpawnListener implements Listener {
         }
     }
 
-    @SuppressWarnings({"MissingCaseesInEnumSwitch", "FallThrough"})
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void creatureSpawnEvent(EntitySpawnEvent event) {
         Entity entity = event.getEntity();

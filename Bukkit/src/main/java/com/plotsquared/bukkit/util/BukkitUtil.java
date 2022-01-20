@@ -193,7 +193,6 @@ public class BukkitUtil extends WorldUtil {
         return Bukkit.getWorld(string);
     }
 
-    @SuppressWarnings("FutureReturnValueIgnored")
     private static void ensureLoaded(
             final @NonNull String world,
             final int x,
@@ -204,7 +203,6 @@ public class BukkitUtil extends WorldUtil {
                 .thenAccept(chunk -> ensureMainThread(chunkConsumer, chunk));
     }
 
-    @SuppressWarnings("FutureReturnValueIgnored")
     private static void ensureLoaded(final @NonNull Location location, final @NonNull Consumer<Chunk> chunkConsumer) {
         PaperLib.getChunkAtAsync(adapt(location), true).thenAccept(chunk -> ensureMainThread(chunkConsumer, chunk));
     }
@@ -293,7 +291,6 @@ public class BukkitUtil extends WorldUtil {
         return bukkitWorld.getMaxHeight() - 1;
     }
 
-    @SuppressWarnings("CatchAndPrintStackTrace")
     @Override
     public @NonNull String[] getSignSynchronous(final @NonNull Location location) {
         Block block = Objects.requireNonNull(getWorld(location.getWorldName())).getBlockAt(
@@ -573,7 +570,6 @@ public class BukkitUtil extends WorldUtil {
                 getChunkAt(chunk.getBlockX(), chunk.getBlockZ()).getTileEntities().length;
     }
 
-    @SuppressWarnings("CatchAndPrintStackTrace")
     @Override
     public Set<BlockVector2> getChunkChunks(String world) {
         Set<BlockVector2> chunks = super.getChunkChunks(world);

@@ -52,7 +52,6 @@ public class EssentialsUUIDService implements UUIDService {
         return Collections.emptyList();
     }
 
-    @SuppressWarnings("EmptyCatch")
     @Override
     public @NonNull List<UUIDMapping> getUUIDs(final @NonNull List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());

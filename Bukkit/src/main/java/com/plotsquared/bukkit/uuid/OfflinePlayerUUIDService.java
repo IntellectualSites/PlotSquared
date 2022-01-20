@@ -43,7 +43,6 @@ import java.util.UUID;
  */
 public class OfflinePlayerUUIDService implements UUIDService {
 
-    @SuppressWarnings({"EmptyCatch", "MixedMutabilityReturnType"})
     @Override
     public @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids) {
         if (Settings.UUID.FORCE_LOWERCASE || Bukkit.getWorlds().isEmpty()) {
