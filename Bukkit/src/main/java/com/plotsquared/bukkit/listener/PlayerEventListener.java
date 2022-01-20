@@ -154,7 +154,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -1065,9 +1064,13 @@ public class PlayerEventListener extends PlotListener implements Listener {
         if (area == null) {
             return;
         }
-        PlayerBlockEventType eventType = null;
+        PlayerBlockEventType eventType;
         BlockType blocktype1;
         Block block = event.getClickedBlock();
+        if (block == null) {
+            // We do not care in this case, the player is likely interacting with air ("nothing").
+            return;
+        }
         Location location = BukkitUtil.adapt(block.getLocation());
         Action action = event.getAction();
         switch (action) {
