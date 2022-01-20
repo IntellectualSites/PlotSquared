@@ -74,6 +74,7 @@ public class BukkitSetupUtils extends SetupUtils {
         this.worldFile = worldFile;
     }
 
+    @SuppressWarnings("CatchAndPrintStackTrace")
     @Override
     public void updateGenerators(final boolean force) {
         if (!SetupUtils.generators.isEmpty() && !force) {

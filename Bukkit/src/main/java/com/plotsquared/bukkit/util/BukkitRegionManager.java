@@ -94,6 +94,7 @@ public class BukkitRegionManager extends RegionManager {
         return false;
     }
 
+    @SuppressWarnings({"FutureReturnValueIgnored", "OperatorPrecedence"})
     @Override
     public int[] countEntities(@NonNull Plot plot) {
         int[] existing = (int[]) plot.getMeta("EntityCount");

@@ -229,6 +229,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         return max;
     }
 
+    @SuppressWarnings("FutureReturnValueIgnored")
     @Override
     public void teleport(final @NonNull Location location, final @NonNull TeleportCause cause) {
         if (Math.abs(location.getX()) >= 30000000 || Math.abs(location.getZ()) >= 30000000) {
@@ -316,6 +317,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         this.player.setAllowFlight(fly);
     }
 
+    @SuppressWarnings("ReferenceEquality")
     @Override
     public void playMusic(final @NonNull Location location, final @NonNull ItemType id) {
         if (id == ItemTypes.AIR) {
@@ -339,6 +341,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         this.player.kickPlayer(message);
     }
 
+    @SuppressWarnings("ReferenceEquality")
     @Override
     public void stopSpectating() {
         if (getGameMode() == SPECTATOR) {

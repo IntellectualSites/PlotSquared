@@ -73,6 +73,7 @@ public class EntityUtil {
         return i;
     }
 
+    @SuppressWarnings("unchecked")
     public static boolean checkEntity(Plot plot, PlotFlag<Integer, ?>... flags) {
         if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
             return true;

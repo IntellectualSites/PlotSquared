@@ -61,6 +61,7 @@ public class UpdateUtility implements Listener {
         internalVersion = PlotSquared.get().getVersion();
     }
 
+    @SuppressWarnings({"deprecation", "DefaultCharset"}) // Suppress Json deprecation, we can't use features from gson 2.8.1 and newer yet
     public void updateChecker() {
         task = Bukkit.getScheduler().runTaskTimerAsynchronously(this.javaPlugin, () -> {
             try {
@@ -91,7 +92,7 @@ public class UpdateUtility implements Listener {
                 notify = false;
                 LOGGER.info("Congratulations! You are running the latest PlotSquared version");
             }
-        }, 0L, Settings.UpdateChecker.POLL_RATE * 60 * 20);
+        }, 0L, (long) Settings.UpdateChecker.POLL_RATE * 60 * 20);
     }
 
     private void cancelTask() {

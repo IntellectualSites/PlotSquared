@@ -96,7 +96,7 @@ public class FlagContainer {
     }
 
     /**
-     * Cast a plot flag with wildcard parameters into a parametrisized
+     * Cast a plot flag with wildcard parameters into a parametrized
      * PlotFlag. This is an unsafe operation, and should only be performed
      * if the generic parameters are known beforehand.
      *
@@ -105,7 +105,7 @@ public class FlagContainer {
      * @param <T>  Flag type
      * @return Casted flag
      */
-    @SuppressWarnings("ALL")
+    @SuppressWarnings("unchecked")
     public static <V, T extends PlotFlag<V, ?>> T castUnsafe(
             final PlotFlag<?, ?> flag
     ) {
@@ -181,6 +181,7 @@ public class FlagContainer {
      * @param <V>  flag value type
      * @return value of flag removed
      */
+    @SuppressWarnings("unchecked")
     public <V, T extends PlotFlag<V, ?>> V removeFlag(final T flag) {
         final Object value = this.flagMap.remove(flag.getClass());
         if (this.plotFlagUpdateHandler != null) {

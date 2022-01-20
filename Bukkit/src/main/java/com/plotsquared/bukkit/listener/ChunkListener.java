@@ -258,6 +258,7 @@ public class ChunkListener implements Listener {
         processChunk(event.getChunk(), false);
     }
 
+    @SuppressWarnings("FutureReturnValueIgnored")
     @EventHandler(priority = EventPriority.LOWEST)
     public void onItemSpawn(ItemSpawnEvent event) {
         Item entity = event.getEntity();
@@ -288,6 +289,7 @@ public class ChunkListener implements Listener {
         }
     }
 
+    @SuppressWarnings("FutureReturnValueIgnored")
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntitySpawn(CreatureSpawnEvent event) {
         LivingEntity entity = event.getEntity();

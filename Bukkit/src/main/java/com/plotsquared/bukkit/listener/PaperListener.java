@@ -83,6 +83,7 @@ public class PaperListener implements Listener {
         this.plotAreaManager = plotAreaManager;
     }
 
+    @SuppressWarnings("ReferenceEquality")
     @EventHandler
     public void onEntityPathfind(EntityPathfindEvent event) {
         if (!Settings.Paper_Components.ENTITY_PATHING) {
@@ -117,6 +118,7 @@ public class PaperListener implements Listener {
         event.setCancelled(true);
     }
 
+    @SuppressWarnings("ReferenceEquality")
     @EventHandler
     public void onEntityPathfind(SlimePathfindEvent event) {
         if (!Settings.Paper_Components.ENTITY_PATHING) {
@@ -159,7 +161,7 @@ public class PaperListener implements Listener {
         event.setCancelled(true);
     }
 
-    @SuppressWarnings("MissingCasesInEnumSwitch")
+    @SuppressWarnings({"MissingCasesInEnumSwitch", "FallThrough"})
     @EventHandler
     public void onPreCreatureSpawnEvent(PreCreatureSpawnEvent event) {
         if (!Settings.Paper_Components.CREATURE_SPAWN) {

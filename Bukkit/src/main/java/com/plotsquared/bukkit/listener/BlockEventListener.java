@@ -426,6 +426,7 @@ public class BlockEventListener implements Listener {
         event.setCancelled(true);
     }
 
+    @SuppressWarnings("FallThrough")
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockSpread(BlockSpreadEvent event) {
         Block block = event.getBlock();
@@ -686,7 +687,7 @@ public class BlockEventListener implements Listener {
         event.setCancelled(true);
     }
 
-    @SuppressWarnings("MissingCaseInEnumSwitch")
+    @SuppressWarnings("MissingCaseesInEnumSwitch")
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onFade(BlockFadeEvent event) {
         Block block = event.getBlock();
@@ -1075,6 +1076,7 @@ public class BlockEventListener implements Listener {
 
     }
 
+    @SuppressWarnings("OperatorPrecedence")
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockIgnite(BlockIgniteEvent event) {
         Player player = event.getPlayer();

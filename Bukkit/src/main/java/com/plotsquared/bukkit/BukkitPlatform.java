@@ -563,6 +563,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         ServerLib.checkUnsafeForks();
     }
 
+    @SuppressWarnings("CatchAndPrintStackTrace")
     private void unload() {
         if (!this.methodUnloadSetup) {
             this.methodUnloadSetup = true;
@@ -648,6 +649,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         }
     }
 
+    @SuppressWarnings("FutureReturnValueIgnored")
     private void startUuidCaching(
             final @NonNull SQLiteUUIDService sqLiteUUIDService,
             final @NonNull CacheUUIDService cacheUUIDService

@@ -193,6 +193,7 @@ public class BukkitUtil extends WorldUtil {
         return Bukkit.getWorld(string);
     }
 
+    @SuppressWarnings("FutureReturnValueIgnored")
     private static void ensureLoaded(
             final @NonNull String world,
             final int x,
@@ -203,6 +204,7 @@ public class BukkitUtil extends WorldUtil {
                 .thenAccept(chunk -> ensureMainThread(chunkConsumer, chunk));
     }
 
+    @SuppressWarnings("FutureReturnValueIgnored")
     private static void ensureLoaded(final @NonNull Location location, final @NonNull Consumer<Chunk> chunkConsumer) {
         PaperLib.getChunkAtAsync(adapt(location), true).thenAccept(chunk -> ensureMainThread(chunkConsumer, chunk));
     }

@@ -337,6 +337,7 @@ public class BukkitEntityUtil {
                 && !(victim instanceof Creature)));
     }
 
+    @SuppressWarnings("OperatorPrecedence")
     public static boolean checkEntity(Entity entity, Plot plot) {
         if (plot == null || !plot.hasOwner() || plot.getFlags().isEmpty() && plot.getArea()
                 .getFlagContainer().getFlagMap().isEmpty()) {

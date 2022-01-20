@@ -63,6 +63,7 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
         return false;
     }
 
+    @SuppressWarnings("MixedMutabilityReturnType")
     @Override
     public List<String> onTabComplete(
             CommandSender commandSender, Command command, String label,

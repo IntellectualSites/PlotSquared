@@ -380,6 +380,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         this.eventDispatcher.doRespawnTask(pp);
     }
 
+    @SuppressWarnings("deprecation") // We explicitly want #getHomeSynchronous here
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onTeleport(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
@@ -429,6 +430,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         playerMove(event);
     }
 
+    @SuppressWarnings("FutureReturnValueIgnored")
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void vehicleMove(VehicleMoveEvent event)
             throws IllegalAccessException {
@@ -806,7 +808,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         }
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({"deprecation", "FallThrough"})
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         /*if (!event.isLeftClick() || (event.getAction() != InventoryAction.PLACE_ALL) || event

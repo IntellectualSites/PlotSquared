@@ -261,6 +261,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
         }
     }
 
+    @SuppressWarnings({"EqualsHashCode", "EqualsGetClass"}) // Valid comparison
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
