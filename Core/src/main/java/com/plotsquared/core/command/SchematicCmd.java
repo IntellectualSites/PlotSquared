@@ -181,8 +181,6 @@ public class SchematicCmd extends SubCommand {
                 });
             }
             case "saveall", "exportall" -> {
-                Location loc = player.getLocation();
-                final Plot plot = loc.getPlotAbs();
                 if (!(player instanceof ConsolePlayer)) {
                     player.sendMessage(TranslatableCaption.of("console.not_console"));
                     return false;

@@ -47,6 +47,7 @@ final class PersistentMetaDataAccess<T> extends MetaDataAccess<T> {
         return this.getPlayer().hasPersistentMeta(getMetaDataKey().toString());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public @Nullable T remove() {
         this.checkClosed();

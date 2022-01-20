@@ -88,7 +88,6 @@ public class RegenAllRoads extends SubCommand {
             );
             return false;
         }
-        String name = args[0];
         PlotManager manager = area.getPlotManager();
         if (!(manager instanceof HybridPlotManager)) {
             player.sendMessage(TranslatableCaption.of("errors.invalid_plot_world"));

@@ -104,7 +104,7 @@ public class Rate extends SubCommand {
                     UUID uuid = player.getUUID();
                     for (Plot p : plots) {
                         if ((!Settings.Done.REQUIRED_FOR_RATINGS || DoneFlag.isDone(p)) && p
-                                .isBasePlot() && (!p.getRatings().containsKey(uuid)) && !p
+                                .isBasePlot() && !p.getRatings().containsKey(uuid) && !p
                                 .isAdded(uuid)) {
                             p.teleportPlayer(player, TeleportCause.COMMAND_RATE, result -> {
                             });

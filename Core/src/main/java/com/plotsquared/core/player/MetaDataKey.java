@@ -62,6 +62,7 @@ public final class MetaDataKey<T> {
      * @param <T>  Type
      * @return MetaData key instance
      */
+    @SuppressWarnings("unchecked")
     public static @NonNull <T> MetaDataKey<T> of(final @NonNull String key, final @NonNull TypeLiteral<T> type) {
         synchronized (keyMetaData) {
             return (MetaDataKey<T>)

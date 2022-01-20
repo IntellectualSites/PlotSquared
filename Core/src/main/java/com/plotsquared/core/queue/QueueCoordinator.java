@@ -56,6 +56,7 @@ public abstract class QueueCoordinator {
     private Object chunkObject;
     private final AtomicBoolean enqueued = new AtomicBoolean();
 
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     @Inject
     private GlobalBlockQueue blockQueue;
 

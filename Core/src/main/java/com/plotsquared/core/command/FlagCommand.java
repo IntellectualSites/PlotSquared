@@ -367,6 +367,7 @@ public final class FlagCommand extends Command {
         );
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @CommandDeclaration(command = "add",
             aliases = {"a", "add"},
             usage = "/plot flag add <flag> <value>",
@@ -435,6 +436,7 @@ public final class FlagCommand extends Command {
         );
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @CommandDeclaration(command = "remove",
             aliases = {"r", "remove", "delete"},
             usage = "/plot flag remove <flag> [values]",

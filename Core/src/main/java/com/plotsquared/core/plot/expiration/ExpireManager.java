@@ -319,7 +319,6 @@ public class ExpireManager {
                     ExpireManager.this.running = 0;
                     return;
                 }
-                long start = System.currentTimeMillis();
                 while (!plots.isEmpty()) {
                     if (ExpireManager.this.running != 2) {
                         ExpireManager.this.running = 0;

@@ -57,7 +57,9 @@ import java.nio.file.Files;
 
 public class SinglePlotArea extends GridPlotWorld {
 
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final EventDispatcher eventDispatcher;
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final PlotListener plotListener;
     public boolean VOID = false;
 
@@ -273,6 +275,7 @@ public class SinglePlotArea extends GridPlotWorld {
         return false; // do not create signs for single plots
     }
 
+    @SuppressWarnings("deprecation")
     protected Plot adapt(Plot p) {
         if (p instanceof SinglePlot) {
             return p;

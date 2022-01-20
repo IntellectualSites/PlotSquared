@@ -57,7 +57,6 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     private final ConcurrentHashMap<BlockVector2, LocalChunk> blockChunks = new ConcurrentHashMap<>();
     private final List<BlockVector2> readRegion = new ArrayList<>();
     private final List<ProgressSubscriber> progressSubscribers = new ArrayList<>();
-    private long modified;
     private LocalChunk lastWrappedChunk;
     private int lastX = Integer.MIN_VALUE;
     private int lastZ = Integer.MIN_VALUE;
@@ -76,7 +75,6 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     public BasicQueueCoordinator(@NonNull World world) {
         super(world);
         this.world = world;
-        this.modified = System.currentTimeMillis();
     }
 
     @Override
@@ -94,7 +92,6 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
 
     @Override
     public final void setModified(long modified) {
-        this.modified = modified;
     }
 
     @Override
@@ -120,6 +117,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         return setBlock(x, y, z, id.toBaseBlock());
     }
 
+    @SuppressWarnings("removal")
     @Override
     public boolean setBiome(int x, int z, @NonNull BiomeType biomeType) {
         LocalChunk chunk = getChunk(x >> 4, z >> 4);

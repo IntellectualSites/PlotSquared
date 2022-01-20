@@ -75,6 +75,7 @@ public class ComponentPresetManager {
     private final InventoryUtil inventoryUtil;
     private File componentsFile;
 
+    @SuppressWarnings("unchecked")
     @Inject
     public ComponentPresetManager(final @NonNull EconHandler econHandler, final @NonNull InventoryUtil inventoryUtil) throws
             IOException {

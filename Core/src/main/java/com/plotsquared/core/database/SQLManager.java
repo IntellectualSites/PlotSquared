@@ -101,7 +101,9 @@ public class SQLManager implements AbstractDB {
     private final String prefix;
     private final Database database;
     private final boolean mySQL;
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final EventDispatcher eventDispatcher;
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final PlotListener plotListener;
     private final YamlConfiguration worldConfiguration;
     /**
@@ -408,7 +410,6 @@ public class SQLManager implements AbstractDB {
                 while (iterator.hasNext()) {
                     try {
                         Entry<Plot, Queue<UniqueStatement>> entry = iterator.next();
-                        Plot plot = entry.getKey();
                         Queue<UniqueStatement> tasks = entry.getValue();
                         if (tasks.isEmpty()) {
                             iterator.remove();
@@ -2295,8 +2296,6 @@ public class SQLManager implements AbstractDB {
                     int size = uniqueIdsList.size();
                     int packet = 990;
                     int amount = size / packet;
-                    int count = 0;
-                    int last = -1;
                     for (int j = 0; j <= amount; j++) {
                         List<Integer> subList =
                                 uniqueIdsList.subList(j * packet, Math.min(size, (j + 1) * packet));
@@ -3200,6 +3199,7 @@ public class SQLManager implements AbstractDB {
         return true;
     }
 
+    @SuppressWarnings({"unchecked", "unused"})
     @Override
     public void validateAllPlots(Set<Plot> toValidate) {
         if (!isValid()) {
@@ -3455,15 +3455,7 @@ public class SQLManager implements AbstractDB {
 
     }
 
-    private static class UUIDPair {
-
-        public final int id;
-        public final UUID uuid;
-
-        public UUIDPair(int id, UUID uuid) {
-            this.id = id;
-            this.uuid = uuid;
-        }
+    private record UUIDPair(int id, UUID uuid) {
 
     }
 

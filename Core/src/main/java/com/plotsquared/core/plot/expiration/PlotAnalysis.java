@@ -558,6 +558,7 @@ public class PlotAnalysis {
         return ranks;
     }
 
+    @SuppressWarnings("unchecked")
     public static void sort(int[] input) {
         int SIZE = 10;
         List<Integer>[] bucket = new ArrayList[SIZE];

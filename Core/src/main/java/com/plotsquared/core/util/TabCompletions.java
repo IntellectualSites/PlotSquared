@@ -265,6 +265,7 @@ public final class TabCompletions {
      * @return List of completions
      * @deprecated In favor {@link #completePlayers(String, PlotPlayer, String, List, Predicate)}
      */
+    @SuppressWarnings("unused")
     @Deprecated(forRemoval = true)
     private static List<Command> completePlayers(
             final @NonNull String cacheIdentifier,

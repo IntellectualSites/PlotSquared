@@ -286,7 +286,7 @@ public class StringMan {
     }
 
     public static boolean isEqualIgnoreCase(String a, String b) {
-        return (a.equals(b)) || ((a != null) && (b != null) && (a.length() == b.length()) && a
+        return a.equals(b) || ((a != null) && (b != null) && (a.length() == b.length()) && a
                 .equalsIgnoreCase(b));
     }
 

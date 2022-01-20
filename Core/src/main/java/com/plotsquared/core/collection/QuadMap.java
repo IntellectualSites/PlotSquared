@@ -241,6 +241,7 @@ public class QuadMap<T> {
         return false;
     }
 
+    @SuppressWarnings("unchecked")
     public void recalculateSkip() {
         QuadMap<T> map = null;
         for (QuadMap<T> current : new QuadMap[]{this.one, this.two, this.three, this.four}) {
