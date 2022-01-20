@@ -77,6 +77,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
         return stack;
     }
 
+    @SuppressWarnings("deprecation") // Paper deprecation
     @Override
     public void open(PlotInventory inv) {
         BukkitPlayer bp = (BukkitPlayer) inv.getPlayer();
@@ -113,6 +114,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
         bp.player.updateInventory();
     }
 
+    @SuppressWarnings("deprecation") // Paper deprecation
     public PlotItemStack getItem(ItemStack item) {
         if (item == null) {
             return null;
@@ -145,6 +147,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
                 .toArray(PlotItemStack[]::new);
     }
 
+    @SuppressWarnings("deprecation") // #getTitle is needed for Spigot compatibility
     @Override
     public boolean isOpen(PlotInventory plotInventory) {
         if (!plotInventory.isOpen()) {

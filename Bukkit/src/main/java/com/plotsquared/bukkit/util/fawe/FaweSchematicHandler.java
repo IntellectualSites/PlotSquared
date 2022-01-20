@@ -75,6 +75,7 @@ public class FaweSchematicHandler extends SchematicHandler {
         return delegate.save(tag, path);
     }
 
+    @SuppressWarnings("removal") // Just the override
     @Override
     public void upload(final CompoundTag tag, final UUID uuid, final String file, final RunnableVal<URL> whenDone) {
         delegate.upload(tag, uuid, file, whenDone);

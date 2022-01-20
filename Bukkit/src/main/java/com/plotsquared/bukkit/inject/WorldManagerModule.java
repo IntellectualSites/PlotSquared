@@ -36,6 +36,7 @@ import org.bukkit.World;
 
 public class WorldManagerModule extends AbstractModule {
 
+    @SuppressWarnings("removal") // Internal use only
     @Provides
     @Singleton
     PlatformWorldManager<World> provideWorldManager() {

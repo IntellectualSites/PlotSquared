@@ -218,6 +218,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     private PlatformWorldManager<World> worldManager;
     private Locale serverLocale;
 
+    @SuppressWarnings("StringSplitter")
     @Override
     public int @NonNull [] serverVersion() {
         if (this.version == null) {
@@ -970,7 +971,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                                 }
                                                 iterator.remove();
                                                 entity.remove();
-                                                continue;
                                             }
                                         }
                                     } else {
@@ -982,7 +982,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                             }
                                             iterator.remove();
                                             entity.remove();
-                                            continue;
                                         }
                                     }
                                 }
@@ -1223,7 +1222,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
     @Override
     @NonNull
-    @SuppressWarnings("ALL")
+    @SuppressWarnings("unchecked")
     public PlayerManager<? extends PlotPlayer<Player>, ? extends Player> playerManager() {
         return (PlayerManager<BukkitPlayer, Player>) injector().getInstance(PlayerManager.class);
     }
