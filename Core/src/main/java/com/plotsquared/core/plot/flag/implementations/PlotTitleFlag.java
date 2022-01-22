@@ -29,6 +29,7 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.PlotTitle;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.util.StringMan;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class PlotTitleFlag extends PlotFlag<PlotTitle, PlotTitleFlag> {
@@ -56,16 +57,17 @@ public class PlotTitleFlag extends PlotFlag<PlotTitle, PlotTitleFlag> {
         if (!input.contains("\"")) {
             return new PlotTitleFlag(new PlotTitle(input, ""));
         }
-        input = input.substring(input.indexOf("\""));
-        input = input.substring(0, input.lastIndexOf("\"") + 1);
-        String[] inputs = input.split("\"");
-        PlotTitle value;
-        if (inputs.length == 2) {
-            value = new PlotTitle(inputs[1], "");
-        } else if (inputs.length > 3) {
-            value = new PlotTitle(inputs[1], inputs[3]);
-        } else {
+
+        var split = StringMan.splitMessage(input);
+
+        if (split.isEmpty() || split.size() > 2) {
             throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_title"));
+        }
+        PlotTitle value;
+        if (split.size() == 1) {
+            value = new PlotTitle(split.get(0), "");
+        } else {
+            value = new PlotTitle(split.get(0), split.get(1));
         }
         return new PlotTitleFlag(value);
     }
