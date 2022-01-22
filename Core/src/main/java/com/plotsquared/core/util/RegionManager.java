@@ -289,7 +289,7 @@ public abstract class RegionManager {
                 true
         );
 
-        toQueue2.setCompleteTask(whenDone::run);
+        toQueue2.setCompleteTask(whenDone);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
             toQueue2.addProgressSubscriber(subscriberFactory.createFull(
                     actor,

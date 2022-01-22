@@ -461,6 +461,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         this.tamed.tamed = tamed.isTamed();
     }
 
+    @SuppressWarnings("deprecation") // Paper deprecation
     @Override
     public Entity spawn(World world, int xOffset, int zOffset) {
         Location location = new Location(world, this.getX() + xOffset, this.getY(), this.z + zOffset);

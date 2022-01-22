@@ -97,8 +97,8 @@ public class HybridGen extends IndependentPlotGenerator {
         }
         // Coords
         Location min = result.getMin();
-        int bx = (min.getX()) - hybridPlotWorld.ROAD_OFFSET_X;
-        int bz = (min.getZ()) - hybridPlotWorld.ROAD_OFFSET_Z;
+        int bx = min.getX() - hybridPlotWorld.ROAD_OFFSET_X;
+        int bz = min.getZ() - hybridPlotWorld.ROAD_OFFSET_Z;
         // The relative X-coordinate (within the plot) of the minimum X coordinate
         // contained in the scoped queue
         short relativeOffsetX;

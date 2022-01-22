@@ -375,7 +375,6 @@ public abstract class Command {
             boolean failed = args.length < reqArgs.length;
             String[] baseSplit = getCommandString().split(" ");
             String[] fullSplit = getUsage().split(" ");
-            String base = getCommandString();
             if (fullSplit.length - baseSplit.length < reqArgs.length) {
                 String[] tmp = new String[baseSplit.length + reqArgs.length];
                 System.arraycopy(fullSplit, 0, tmp, 0, fullSplit.length);

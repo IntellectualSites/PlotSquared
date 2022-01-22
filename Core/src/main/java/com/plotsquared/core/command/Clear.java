@@ -58,6 +58,7 @@ import java.util.concurrent.CompletableFuture;
 public class Clear extends Command {
 
     private final EventDispatcher eventDispatcher;
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final GlobalBlockQueue blockQueue;
 
     @Inject

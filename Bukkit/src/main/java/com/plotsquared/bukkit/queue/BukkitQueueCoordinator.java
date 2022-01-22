@@ -199,7 +199,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                     }
                 }
                 if (localChunk.getTiles().size() > 0) {
-                    localChunk.getTiles().forEach(((blockVector3, tag) -> {
+                    localChunk.getTiles().forEach((blockVector3, tag) -> {
                         try {
                             BaseBlock block = getWorld().getBlock(blockVector3).toBaseBlock(tag);
                             getWorld().setBlock(blockVector3, block, noSideEffectSet);
@@ -207,7 +207,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                             StateWrapper sw = new StateWrapper(tag);
                             sw.restoreTag(getWorld().getName(), blockVector3.getX(), blockVector3.getY(), blockVector3.getZ());
                         }
-                    }));
+                    });
                 }
                 if (localChunk.getEntities().size() > 0) {
                     localChunk.getEntities().forEach((location, entity) -> getWorld().createEntity(location, entity));

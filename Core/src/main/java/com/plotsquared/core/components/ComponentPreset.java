@@ -65,6 +65,7 @@ public class ComponentPreset implements ConfigurationSerializable {
         this.icon = icon;
     }
 
+    @SuppressWarnings("unchecked")
     public static ComponentPreset deserialize(final @NonNull Map<String, Object> map) {
         final ClassicPlotManagerComponent classicPlotManagerComponent = ClassicPlotManagerComponent
                 .fromString(map.getOrDefault("component", "").toString()).orElseThrow(() ->

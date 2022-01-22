@@ -58,6 +58,7 @@ public class Config {
      * @param <T>  value type
      * @return value
      */
+    @SuppressWarnings("unchecked")
     public static <T> T get(String key, Class<?> root) {
         String[] split = key.split("\\.");
         Object instance = getInstance(split, root);
@@ -183,6 +184,7 @@ public class Config {
         return value != null ? value.toString() : "null";
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private static void save(PrintWriter writer, Class<?> clazz, Object instance, int indent) {
         try {
             String lineSeparator = System.lineSeparator();
@@ -259,21 +261,6 @@ public class Config {
     }
 
     /**
-     * Get the field for a specific config node.
-     *
-     * @param split the node (split by period)
-     * @param root
-     * @return
-     */
-    private static Field getField(String[] split, Class<?> root) {
-        Object instance = getInstance(split, root);
-        if (instance == null) {
-            return null;
-        }
-        return getField(split, instance);
-    }
-
-    /**
      * Get the field for a specific config node and instance<br>
      * Note: As expiry can have multiple blocks there will be multiple instances
      *
@@ -305,6 +292,7 @@ public class Config {
      * @param root
      * @return The instance or null
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private static Object getInstance(String[] split, Class<?> root) {
         try {
             Class<?> clazz = root == null ? MethodHandles.lookup().lookupClass() : root;

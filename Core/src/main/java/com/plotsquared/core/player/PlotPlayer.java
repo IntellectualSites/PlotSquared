@@ -104,7 +104,8 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     private static final Set<PlotPlayer<?>> debugModeEnabled =
             Collections.synchronizedSet(new HashSet<>());
 
-    private static final Map<Class, PlotPlayerConverter> converters = new HashMap<>();
+    @SuppressWarnings("rawtypes")
+    private static final Map<Class<?>, PlotPlayerConverter> converters = new HashMap<>();
     private final LockRepository lockRepository = new LockRepository();
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
@@ -128,6 +129,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         this.permissionHandler = permissionHandler;
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static <T> PlotPlayer<T> from(final @NonNull T object) {
         // fast path
         if (converters.containsKey(object.getClass())) {
@@ -234,6 +236,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      * @param <T> the object type to return
      * @return the value assigned to the key or null if it does not exist
      */
+    @SuppressWarnings("unchecked")
     <T> T getMeta(String key) {
         if (this.meta != null) {
             return (T) this.meta.get(key);
@@ -361,7 +364,6 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     }
 
     public int getClusterCount(String world) {
-        UUID uuid = getUUID();
         int count = 0;
         for (PlotArea area : this.plotAreaManager.getPlotAreasSet(world)) {
             for (PlotCluster cluster : area.getClusters()) {
@@ -795,16 +797,16 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
             final @NonNull MetaDataKey<T> key,
             final @NonNull T value
     ) {
-        final Object rawValue = value;
         if (key.getType().getRawType().equals(Integer.class)) {
-            this.setPersistentMeta(key.toString(), Ints.toByteArray((int) rawValue));
+            this.setPersistentMeta(key.toString(), Ints.toByteArray((int) (Object) value));
         } else if (key.getType().getRawType().equals(Boolean.class)) {
-            this.setPersistentMeta(key.toString(), ByteArrayUtilities.booleanToBytes((boolean) rawValue));
+            this.setPersistentMeta(key.toString(), ByteArrayUtilities.booleanToBytes((boolean) (Object) value));
         } else {
             throw new IllegalArgumentException(String.format("Unknown meta data type '%s'", key.getType()));
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Nullable <T> T getPersistentMeta(final @NonNull MetaDataKey<T> key) {
         final byte[] value = this.getPersistentMeta(key.toString());
         if (value == null) {

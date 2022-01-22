@@ -54,6 +54,7 @@ public class WEExtent extends AbstractDelegateExtent {
         this.mask = mask;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean setBlock(BlockVector3 location, BlockStateHolder block)
             throws WorldEditException {

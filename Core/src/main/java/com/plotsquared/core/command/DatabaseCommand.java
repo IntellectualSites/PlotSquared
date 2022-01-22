@@ -255,7 +255,7 @@ public class DatabaseCommand extends SubCommand {
                 player.sendMessage(TranslatableCaption.of("database.failed_to_save_plots"));
                 player.sendMessage(TranslatableCaption.of("errors.stacktrace_begin"));
                 e.printStackTrace();
-                player.sendMessage(TranslatableCaption.of(("errors.stacktrace_end")));
+                player.sendMessage(TranslatableCaption.of("errors.stacktrace_end"));
                 player.sendMessage(TranslatableCaption.of("database.invalid_args"));
                 return false;
             }

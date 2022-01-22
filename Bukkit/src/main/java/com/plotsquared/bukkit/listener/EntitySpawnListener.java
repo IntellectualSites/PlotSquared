@@ -60,7 +60,7 @@ import java.util.List;
 
 public class EntitySpawnListener implements Listener {
 
-    private final static String KEY = "P2";
+    private static final String KEY = "P2";
     private static boolean ignoreTP = false;
     private static boolean hasPlotArea = false;
     private static String areaName = null;

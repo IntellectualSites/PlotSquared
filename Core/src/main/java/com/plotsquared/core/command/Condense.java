@@ -69,6 +69,7 @@ public class Condense extends SubCommand {
         this.worldUtil = worldUtil;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length != 2 && args.length != 3) {

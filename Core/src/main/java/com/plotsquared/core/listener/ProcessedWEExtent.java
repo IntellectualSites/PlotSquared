@@ -42,8 +42,6 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.lang.reflect.Field;
@@ -52,8 +50,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class ProcessedWEExtent extends AbstractDelegateExtent {
-
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + ProcessedWEExtent.class.getSimpleName());
 
     private final Set<CuboidRegion> mask;
     private final String world;
@@ -162,6 +158,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean setBiome(BlockVector2 position, BiomeType biome) {
         return WEManager.maskContains(this.mask, position.getX(), position.getZ()) && super

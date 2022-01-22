@@ -27,7 +27,9 @@ package com.plotsquared.core.util;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.ConsolePlayer;
@@ -162,7 +164,9 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      *
      * @param owner Owner UUID
      * @return The player's name, None, Everyone or Unknown
+     * @deprecated Use {@link #resolveName(UUID)}
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public static @NonNull String getName(final @Nullable UUID owner) {
         return getName(owner, true);
     }
@@ -173,7 +177,9 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param owner    Owner UUID
      * @param blocking Whether or not the operation can be blocking
      * @return The player's name, None, Everyone or Unknown
+     * @deprecated Use {@link #resolveName(UUID, boolean)}
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public static @NonNull String getName(final @Nullable UUID owner, final boolean blocking) {
         if (owner == null) {
             TranslatableCaption.of("info.none");
@@ -201,6 +207,57 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
             TranslatableCaption.of("info.unknown");
         }
         return name;
+    }
+
+    /**
+     * Attempts to resolve the username by an uuid
+     * <p>
+     * <b>Note:</b> blocks the thread until the name was resolved or failed
+     *
+     * @param owner The UUID of the owner
+     * @return A caption containing either the name, {@code None}, {@code Everyone} or {@code Unknown}
+     * @see #resolveName(UUID, boolean)
+     * @since TODO
+     */
+    public static @NonNull Caption resolveName(final @Nullable UUID owner) {
+        return resolveName(owner, true);
+    }
+
+    /**
+     * Attempts to resolve the username by an uuid
+     *
+     * @param owner    The UUID of the owner
+     * @param blocking If the operation should block the current thread for {@link Settings.UUID#BLOCKING_TIMEOUT} milliseconds
+     * @return A caption containing either the name, {@code None}, {@code Everyone} or {@code Unknown}
+     * @since TODO
+     */
+    public static @NonNull Caption resolveName(final @Nullable UUID owner, final boolean blocking) {
+        if (owner == null) {
+            return TranslatableCaption.of("info.none");
+        }
+        if (owner.equals(DBFunc.EVERYONE)) {
+            return TranslatableCaption.of("info.everyone");
+        }
+        if (owner.equals(DBFunc.SERVER)) {
+            return TranslatableCaption.of("info.server");
+        }
+        final String name;
+        if (blocking) {
+            name = PlotSquared.get().getImpromptuUUIDPipeline()
+                    .getSingle(owner, Settings.UUID.BLOCKING_TIMEOUT);
+        } else {
+            final UUIDMapping uuidMapping =
+                    PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(owner);
+            if (uuidMapping != null) {
+                name = uuidMapping.getUsername();
+            } else {
+                name = null;
+            }
+        }
+        if (name == null) {
+            return TranslatableCaption.of("info.unknown");
+        }
+        return StaticCaption.of(name);
     }
 
     /**

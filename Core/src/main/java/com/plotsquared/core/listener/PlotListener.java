@@ -198,13 +198,7 @@ public class PlotListener {
                         final PlotPlayer<?> owner = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                         if (owner != null && !owner.getUUID().equals(player.getUUID()) && owner.canSee(player)) {
                             Caption caption = TranslatableCaption.of("notification.notify_enter");
-                            Template playerTemplate = Template.of("player", player.getName());
-                            Template plotTemplate = Template.of("plot", plot.getId().toString());
-                            if (!Settings.Chat.NOTIFICATION_AS_ACTIONBAR) {
-                                owner.sendMessage(caption, playerTemplate, plotTemplate);
-                            } else {
-                                owner.sendActionBar(caption, playerTemplate, plotTemplate);
-                            }
+                            notifyPlotOwner(player, plot, owner, caption);
                         }
                     }
                 }
@@ -327,7 +321,7 @@ public class PlotListener {
                         }
                         if ((lastPlot != null) && plot.getId().equals(lastPlot.getId()) && plot.hasOwner()) {
                             final UUID plotOwner = plot.getOwnerAbs();
-                            String owner = PlayerManager.getName(plotOwner, false);
+                            String owner = PlayerManager.resolveName(plotOwner, false).getComponent(player);
                             Caption header = fromFlag ? StaticCaption.of(title) : TranslatableCaption.of("titles" +
                                     ".title_entered_plot");
                             Caption subHeader = fromFlag ? StaticCaption.of(subtitle) : TranslatableCaption.of("titles" +
@@ -443,13 +437,7 @@ public class PlotListener {
                             final PlotPlayer<?> owner = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                             if ((owner != null) && !owner.getUUID().equals(player.getUUID()) && owner.canSee(player)) {
                                 Caption caption = TranslatableCaption.of("notification.notify_leave");
-                                Template playerTemplate = Template.of("player", player.getName());
-                                Template plotTemplate = Template.of("plot", plot.getId().toString());
-                                if (!Settings.Chat.NOTIFICATION_AS_ACTIONBAR) {
-                                    owner.sendMessage(caption, playerTemplate, plotTemplate);
-                                } else {
-                                    owner.sendActionBar(caption, playerTemplate, plotTemplate);
-                                }
+                                notifyPlotOwner(player, plot, owner, caption);
                             }
                         }
                     }
@@ -495,6 +483,17 @@ public class PlotListener {
             }
         }
         return true;
+    }
+
+    private void notifyPlotOwner(final PlotPlayer<?> player, final Plot plot, final PlotPlayer<?> owner, final Caption caption) {
+        Template playerTemplate = Template.of("player", player.getName());
+        Template plotTemplate = Template.of("plot", plot.getId().toString());
+        Template areaTemplate = Template.of("area", plot.getArea().toString());
+        if (!Settings.Chat.NOTIFICATION_AS_ACTIONBAR) {
+            owner.sendMessage(caption, playerTemplate, plotTemplate, areaTemplate);
+        } else {
+            owner.sendActionBar(caption, playerTemplate, plotTemplate, areaTemplate);
+        }
     }
 
     public void logout(UUID uuid) {

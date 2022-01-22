@@ -34,6 +34,7 @@ import java.util.function.Consumer;
 /**
  * A repository for keyed {@link java.util.concurrent.locks.Lock locks}
  */
+@SuppressWarnings("UnstableApiUsage")
 public final class LockRepository {
 
     private final Striped<Lock> striped;

@@ -100,7 +100,7 @@ public class Set extends SubCommand {
 
                 if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
                     forbiddenTypes.addAll(worldUtil.getTileEntityTypes().stream().map(
-                            BlockType::getName).collect(Collectors.toList()));
+                            BlockType::getName).toList());
                 }
 
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_ALLOW_UNSAFE) &&

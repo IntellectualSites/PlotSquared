@@ -53,7 +53,7 @@ public abstract class MetaDataAccess<T> implements AutoCloseable {
         this.lockAccess = lockAccess;
     }
 
-    @SuppressWarnings("ALL")
+    @SuppressWarnings("unchecked")
     private static <E extends Throwable> void sneakyThrow(final Throwable e) throws E {
         throw (E) e;
     }

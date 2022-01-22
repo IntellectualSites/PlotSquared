@@ -40,8 +40,6 @@ import java.util.List;
  */
 public class PlayerAutoPlotsChosenEvent extends PlotPlayerEvent {
 
-    private Result eventResult;
-
     private List<Plot> plots;
 
     /**

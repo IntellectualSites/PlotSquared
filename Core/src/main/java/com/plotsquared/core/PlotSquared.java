@@ -342,6 +342,7 @@ public class PlotSquared {
      * @param plotArea the {@link PlotArea} to add.
      * @see #removePlotArea(PlotArea) To remove the reference
      */
+    @SuppressWarnings("unchecked")
     public void addPlotArea(final @NonNull PlotArea plotArea) {
         HashMap<PlotId, Plot> plots;
         if (plots_tmp == null || (plots = plots_tmp.remove(plotArea.toString())) == null) {
@@ -556,6 +557,7 @@ public class PlotSquared {
      *
      * @param input an array of plots to sort
      */
+    @SuppressWarnings("unchecked")
     private void sortPlotsByHash(final @NonNull Plot @NonNull [] input) {
         List<Plot>[] bucket = new ArrayList[32];
         Arrays.fill(bucket, new ArrayList<>());
@@ -696,20 +698,12 @@ public class PlotSquared {
         ArrayList<Plot> toReturn = new ArrayList<>(plots.size());
         for (PlotArea area : areas) {
             switch (type) {
-                case CREATION_DATE:
-                    toReturn.addAll(sortPlotsByTemp(map.get(area)));
-                    break;
-                case CREATION_DATE_TIMESTAMP:
-                    toReturn.addAll(sortPlotsByTimestamp(map.get(area)));
-                    break;
-                case DISTANCE_FROM_ORIGIN:
-                    toReturn.addAll(sortPlotsByHash(map.get(area)));
-                    break;
-                case LAST_MODIFIED:
-                    toReturn.addAll(sortPlotsByModified(map.get(area)));
-                    break;
-                default:
-                    break;
+                case CREATION_DATE -> toReturn.addAll(sortPlotsByTemp(map.get(area)));
+                case CREATION_DATE_TIMESTAMP -> toReturn.addAll(sortPlotsByTimestamp(map.get(area)));
+                case DISTANCE_FROM_ORIGIN -> toReturn.addAll(sortPlotsByHash(map.get(area)));
+                case LAST_MODIFIED -> toReturn.addAll(sortPlotsByModified(map.get(area)));
+                default -> {
+                }
             }
         }
         return toReturn;
@@ -1540,7 +1534,7 @@ public class PlotSquared {
     }
 
     /**
-     * Register a caption map. The namespace needs be equal to the namespace used for
+     * Register a caption map. The namespace needs to be equal to the namespace used for
      * the {@link TranslatableCaption}s inside the map.
      *
      * @param namespace  Namespace

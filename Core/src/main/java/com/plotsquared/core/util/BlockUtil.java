@@ -90,7 +90,7 @@ public final class BlockUtil {
         if (id.length() == 1 && id.charAt(0) == '*') {
             return FuzzyBlockState.builder().type(BlockTypes.AIR).build();
         }
-        String mutableId = id;
+        String mutableId;
         mutableId = id.toLowerCase();
         BlockType type = BlockTypes.get(mutableId);
         if (type != null) {

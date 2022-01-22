@@ -35,6 +35,7 @@ public class FlatRandomCollection<T> extends RandomCollection<T> {
 
     private final T[] values;
 
+    @SuppressWarnings("unchecked")
     public FlatRandomCollection(Map<T, Double> weights, Random random) {
         super(weights, random);
         int max = 0;

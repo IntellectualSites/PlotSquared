@@ -94,12 +94,12 @@ public class Download extends SubCommand {
             player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return false;
         }
-        if ((Settings.Done.REQUIRED_FOR_DOWNLOAD && (!DoneFlag.isDone(plot))) && !Permissions
+        if ((Settings.Done.REQUIRED_FOR_DOWNLOAD && !DoneFlag.isDone(plot)) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DOWNLOAD)) {
             player.sendMessage(TranslatableCaption.of("done.done_not_done"));
             return false;
         }
-        if ((!plot.isOwner(player.getUUID())) && !Permissions
+        if (!plot.isOwner(player.getUUID()) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN.toString())) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;

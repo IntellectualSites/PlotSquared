@@ -116,7 +116,7 @@ public final class PlaceholderRegistry {
             }
 
             try {
-                return PlayerManager.getName(plotOwner, false);
+                return PlayerManager.resolveName(plotOwner, false).getComponent(player);
             } catch (final Exception ignored) {
             }
             return legacyComponent(TranslatableCaption.of("info.unknown"), player);

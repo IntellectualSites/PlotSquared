@@ -2838,7 +2838,7 @@ public class Plot {
                             if (time != 0) {
                                 seen = TimeUtil.secToTime(time);
                             } else {
-                                seen = TranslatableCaption.of("info.known").getComponent(player);
+                                seen = TranslatableCaption.of("info.unknown").getComponent(player);
                             }
                         }
                     } else {

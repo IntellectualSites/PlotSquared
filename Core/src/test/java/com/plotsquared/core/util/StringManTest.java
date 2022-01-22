@@ -23,28 +23,39 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.bukkit.inject;
+package com.plotsquared.core.util;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.plotsquared.bukkit.managers.BukkitWorldManager;
-import com.plotsquared.bukkit.managers.MultiverseWorldManager;
-import com.plotsquared.core.util.PlatformWorldManager;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public class WorldManagerModule extends AbstractModule {
+import java.util.List;
 
-    @SuppressWarnings("removal") // Internal use only
-    @Provides
-    @Singleton
-    PlatformWorldManager<World> provideWorldManager() {
-        if (Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) {
-            return new MultiverseWorldManager();
-        } else {
-            return new BukkitWorldManager();
+public class StringManTest {
+
+    @Test
+    public void ensureThatAllVariationsHasTheExpectedOutcome() {
+
+        List<Message> messages = List.of(
+                new Message("title", List.of("title")),
+                new Message("title \"sub title\"", List.of("title", "sub title")),
+                new Message("\"a title\" subtitle", List.of("a title", "subtitle")),
+                new Message("\"title\" \"subtitle\"", List.of("title", "subtitle"))
+        );
+
+        for (Message message : messages) {
+            var messageList = StringMan.splitMessage(message.input);
+
+            Assertions.assertEquals(message.expected.size(), messageList.size());
+            if (message.expected.size() > 0) {
+                Assertions.assertEquals(message.expected.get(0), messageList.get(0));
+            }
+            if (message.expected.size() > 1) {
+                Assertions.assertEquals(message.expected.get(1), messageList.get(1));
+            }
         }
     }
 
+    private record Message(String input, List<String> expected) {
+
+    }
 }

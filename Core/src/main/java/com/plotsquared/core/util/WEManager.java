@@ -109,7 +109,7 @@ public class WEManager {
                 plot = metaDataAccess.get().orElse(null);
             }
             if (plot != null && (!Settings.Done.RESTRICT_BUILDING || !DoneFlag.isDone(plot)) && (
-                    (allowMember && plot.isAdded(uuid)) || (!allowMember && (plot.isOwner(uuid)) || plot
+                    (allowMember && plot.isAdded(uuid)) || (!allowMember && plot.isOwner(uuid) || plot
                             .getTrusted().contains(uuid))) && !plot.getFlag(NoWorldeditFlag.class)) {
                 for (CuboidRegion region : plot.getRegions()) {
                     BlockVector3 pos1 = region.getMinimumPoint().withY(area.getMinBuildHeight());

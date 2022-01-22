@@ -439,38 +439,6 @@ public abstract class PlotArea {
         loadConfiguration(config);
     }
 
-    private Component getFlagsComponent(Component flagsComponent, Collection<PlotFlag<?, ?>> flagCollection) {
-        if (flagCollection.isEmpty()) {
-            flagsComponent = MINI_MESSAGE.parse(TranslatableCaption.of("flag.no_flags").getComponent(LocaleHolder.console()));
-        } else {
-            String prefix = " ";
-            for (final PlotFlag<?, ?> flag : flagCollection) {
-                Object value;
-                if (flag instanceof DoubleFlag && !Settings.General.SCIENTIFIC) {
-                    value = FLAG_DECIMAL_FORMAT.format(flag.getValue());
-                } else {
-                    value = flag.toString();
-                }
-                Component snip = MINI_MESSAGE.parse(
-                        prefix + CaptionUtility
-                                .format(
-                                        ConsolePlayer.getConsole(),
-                                        TranslatableCaption.of("info.plot_flag_list").getComponent(LocaleHolder.console())
-                                ),
-                        Template.of("flag", flag.getName()),
-                        Template.of("value", CaptionUtility.formatRaw(ConsolePlayer.getConsole(), value.toString()))
-                );
-                if (flagsComponent != null) {
-                    flagsComponent.append(snip);
-                } else {
-                    flagsComponent = snip;
-                }
-                prefix = ", ";
-            }
-        }
-        return flagsComponent;
-    }
-
     public abstract void loadConfiguration(ConfigurationSection config);
 
     /**

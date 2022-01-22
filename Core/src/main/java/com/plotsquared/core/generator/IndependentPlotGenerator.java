@@ -95,6 +95,7 @@ public abstract class IndependentPlotGenerator {
      * @param world ChunkGenerator Implementation
      * @return Chunk generator
      */
+    @SuppressWarnings("unchecked")
     public <T> GeneratorWrapper<T> specify(final @NonNull String world) {
         return (GeneratorWrapper<T>) PlotSquared.platform().wrapPlotGenerator(world, this);
     }

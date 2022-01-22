@@ -47,6 +47,7 @@ final class TemporaryMetaDataAccess<T> extends MetaDataAccess<T> {
         return this.getPlayer().getMeta(this.getMetaDataKey().toString()) != null;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public @Nullable T remove() {
         this.checkClosed();

@@ -59,6 +59,7 @@ public class StringComparison<T> {
         this(input, objects, Object::toString);
     }
 
+    @SuppressWarnings("unchecked")
     public StringComparison(String input, Collection<T> objects, Function<T, String> toString) {
         this(input, (T[]) objects.toArray(), toString);
     }

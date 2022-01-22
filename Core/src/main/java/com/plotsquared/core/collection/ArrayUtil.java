@@ -29,7 +29,8 @@ import java.util.Arrays;
 
 public class ArrayUtil {
 
-    public static final <T> T[] concatAll(T[] first, T[]... rest) {
+    @SuppressWarnings("unchecked")
+    public static <T> T[] concatAll(T[] first, T[]... rest) {
         int totalLength = first.length;
         for (T[] array : rest) {
             totalLength += array.length;
