@@ -196,6 +196,8 @@ public class Settings extends Config {
         public boolean CONFIRMATION = true;
         public int DAYS = 90;
         public int SKIP_ACCOUNT_AGE_DAYS = -1;
+        @Comment("True, if a plot should be deleted if the plot owner is unknown to the server")
+        public boolean DELETE_IF_OWNER_IS_UNKNOWN = false;
         public List<String> WORLDS = new ArrayList<>(Collections.singletonList("*"));
 
 

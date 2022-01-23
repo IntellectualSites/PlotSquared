@@ -51,7 +51,6 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
@@ -238,6 +237,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
     /**
      * Set a block to the world. First tries WNA but defaults to normal block setting methods if that fails
      */
+    @SuppressWarnings("unused")
     private void setWorldBlock(int x, int y, int z, @NonNull BaseBlock block, @NonNull BlockVector2 blockVector2, boolean edge) {
         try {
             BlockVector3 loc = BlockVector3.at(x, y, z);
@@ -266,9 +266,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
         } catch (WorldEditException ignored) {
             // Fallback to not so nice method
             BlockData blockData = BukkitAdapter.adapt(block);
-            Chunk chunk = getBukkitWorld().getChunkAt(blockVector2.getX(), blockVector2.getZ());
-
-            Block existing = chunk.getBlock(x, y, z);
+            Block existing = getBukkitWorld().getBlockAt(x, y, z);
             final BlockState existingBaseBlock = BukkitAdapter.adapt(existing.getBlockData());
             if (BukkitBlockUtil.get(existing).equals(existingBaseBlock) && existing.getBlockData().matches(blockData)) {
                 return;

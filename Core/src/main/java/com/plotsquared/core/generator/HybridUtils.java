@@ -148,12 +148,22 @@ public class HybridUtils {
                 return;
             }
 
-            ChunkQueueCoordinator chunk = new ChunkQueueCoordinator(bot, top, false);
+            ChunkQueueCoordinator chunk = new ChunkQueueCoordinator(worldUtil.getWeWorld(world), bot, top, false);
             hpw.getGenerator().generateChunk(chunk, hpw);
 
+            final BlockState airBlock = BlockTypes.AIR.getDefaultState();
             final BlockState[][][] oldBlocks = chunk.getBlocks();
             final BlockState[][][] newBlocks = new BlockState[256][width][length];
-            final BlockState airBlock = BlockTypes.AIR.getDefaultState();
+            for (final BlockState[][] newBlock : newBlocks) {
+                for (final BlockState[] blockStates : newBlock) {
+                    Arrays.fill(blockStates, airBlock);
+                }
+            }
+            for (final BlockState[][] oldBlock : oldBlocks) {
+                for (final BlockState[] blockStates : oldBlock) {
+                    Arrays.fill(blockStates, airBlock);
+                }
+            }
 
             System.gc();
             System.gc();
@@ -221,9 +231,6 @@ public class HybridUtils {
                         for (int y = 0; y < 256; y++) {
                             BlockState old = oldBlocks[y][x][z];
                             try {
-                                if (old == null) {
-                                    old = airBlock;
-                                }
                                 BlockState now = newBlocks[y][x][z];
                                 if (!old.equals(now)) {
                                     changes[i]++;
