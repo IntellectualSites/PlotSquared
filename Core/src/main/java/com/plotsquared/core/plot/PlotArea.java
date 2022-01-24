@@ -1276,8 +1276,9 @@ public abstract class PlotArea {
      * @deprecated Use {@link #signMaterial()}. This method is used for 1.13 only and
      *         will be removed without replacement in favor of {@link #signMaterial()}
      *         once we remove the support for 1.13.
+     * @since 6.0.3
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "6.0.3")
     public String getLegacySignMaterial() {
         return this.legacySignMaterial;
     }
@@ -1323,14 +1324,18 @@ public abstract class PlotArea {
 
     /**
      * Get the location for non-members to be teleported to.
+     *
+     * @since 6.1.4
      */
     public BlockLoc nonmemberHome() {
         return this.nonmemberHome;
     }
 
     /**
-     * Get the default location for players to be teleported to. May be overriden by {@link #nonmemberHome} if the player is
+     * Get the default location for players to be teleported to. May be overridden by {@link #nonmemberHome} if the player is
      * not a member of the plot.
+     *
+     * @since 6.1.4
      */
     public BlockLoc defaultHome() {
         return this.defaultHome;
@@ -1339,7 +1344,7 @@ public abstract class PlotArea {
     /**
      * @deprecated Use {@link #nonmemberHome}
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "6.1.4")
     public PlotLoc getNonmemberHome() {
         return new PlotLoc(this.defaultHome.getX(), this.defaultHome.getY(), this.defaultHome.getZ());
     }
@@ -1347,7 +1352,7 @@ public abstract class PlotArea {
     /**
      * @deprecated Use {@link #defaultHome}
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "6.1.4")
     public PlotLoc getDefaultHome() {
         return new PlotLoc(this.defaultHome.getX(), this.defaultHome.getY(), this.defaultHome.getZ());
     }

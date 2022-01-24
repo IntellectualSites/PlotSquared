@@ -39,6 +39,7 @@ public interface ComponentTransform {
      *
      * @param transform the transform to apply.
      * @return a new transform which is applied on all child components and the component itself.
+     * @since 6.0.10
      */
     static ComponentTransform nested(ComponentTransform transform) {
         return new NestedComponentTransform(transform);
@@ -51,6 +52,7 @@ public interface ComponentTransform {
      *
      * @param actionsToRemove the actions used to filter which click events should be removed.
      * @return a new transform that removes click events from a component.
+     * @since 6.0.10
      */
     static ComponentTransform stripClicks(ClickEvent.Action... actionsToRemove) {
         return new ClickStripTransform(Set.of(actionsToRemove));
@@ -61,6 +63,7 @@ public interface ComponentTransform {
      *
      * @param original the component to transform.
      * @return the transformed component.
+     * @since 6.0.10
      */
     @NonNull Component transform(@NonNull Component original);
 

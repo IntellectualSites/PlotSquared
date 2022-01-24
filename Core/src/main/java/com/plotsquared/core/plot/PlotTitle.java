@@ -30,6 +30,9 @@ import java.util.Objects;
 
 public class PlotTitle {
 
+    /**
+     * @since 6.1.0
+     */
     public static final PlotTitle CONFIGURED = new PlotTitle();
 
     private final String title;
@@ -40,6 +43,9 @@ public class PlotTitle {
         subtitle = null;
     }
 
+    /**
+     * @since 6.0.10
+     */
     public PlotTitle(String title, String subtitle) {
         Objects.requireNonNull(title);
         Objects.requireNonNull(subtitle);
@@ -47,11 +53,17 @@ public class PlotTitle {
         this.subtitle = subtitle;
     }
 
+    /**
+     * @since 6.0.10
+     */
     @Nullable
     public String title() {
         return title;
     }
 
+    /**
+     * @since 6.0.10
+     */
     @Nullable
     public String subtitle() {
         return subtitle;

@@ -35,6 +35,9 @@ public abstract class SetupUtils {
 
     public static HashMap<String, GeneratorWrapper<?>> generators = new HashMap<>();
 
+    /**
+     * @since 6.1.0
+     */
     public abstract void updateGenerators(final boolean force);
 
     public abstract String getGenerator(final PlotArea plotArea);

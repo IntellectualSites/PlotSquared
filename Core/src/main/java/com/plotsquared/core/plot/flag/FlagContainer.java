@@ -358,6 +358,7 @@ public class FlagContainer {
      * This is to prevent memory leaks. This method is not part of the API.
      *
      * @return a new Runnable that cleans up once the FlagContainer isn't needed anymore.
+     * @since 6.0.10
      */
     @AnnotationHelper.ApiDescription(info = "This method should not be considered as public or API.")
     public Runnable createCleanupHook() {

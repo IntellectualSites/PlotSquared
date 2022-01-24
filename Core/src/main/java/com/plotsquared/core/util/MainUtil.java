@@ -30,7 +30,7 @@ package com.plotsquared.core.util;
  *
  * @deprecated Do not use
  */
-@Deprecated(forRemoval = true)
+@Deprecated(forRemoval = true, since = "6.0.0")
 public class MainUtil {
 
     /**

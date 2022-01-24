@@ -57,12 +57,16 @@ public enum TeleportCause {
     PLUGIN,
     UNKNOWN;
 
+    /**
+     * @since 6.1.0
+     */
     public static final class CauseSets {
 
         public static final Set<TeleportCause> COMMAND = Sets.immutableEnumSet(EnumSet.range(
                 TeleportCause.COMMAND,
                 TeleportCause.COMMAND_VISIT
         ));
+        @SuppressWarnings("unused")
         public static final Set<TeleportCause> PLUGIN = Sets.immutableEnumSet(EnumSet.range(
                 TeleportCause.DEATH,
                 TeleportCause.PLUGIN

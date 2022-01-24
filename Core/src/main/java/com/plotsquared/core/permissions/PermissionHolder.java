@@ -52,6 +52,7 @@ public interface PermissionHolder {
      * @param permission Permission
      * @param key        Permission "key"
      * @return {@code true} if the owner has the given permission, else {@code false}
+     * @since 6.0.10
      */
     default boolean hasKeyedPermission(
             final @NonNull String permission,
@@ -115,6 +116,7 @@ public interface PermissionHolder {
      * @param permission Permission
      * @param key        Permission "key"
      * @return {@code true} if the owner has the given permission, else {@code false}
+     * @since 6.0.10
      */
     boolean hasKeyedPermission(@Nullable String world, @NonNull String permission, @NonNull String key);
 

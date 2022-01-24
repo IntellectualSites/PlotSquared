@@ -50,7 +50,7 @@ import java.util.UUID;
  * @deprecated In favor of "/plot download" (Arkitektonika) and scheduled
  *         for removal within the next major release.
  */
-@Deprecated(forRemoval = true)
+@Deprecated(forRemoval = true, since = "6.0.9")
 @CommandDeclaration(command = "save",
         category = CommandCategory.SCHEMATIC,
         requiredType = RequiredType.NONE,

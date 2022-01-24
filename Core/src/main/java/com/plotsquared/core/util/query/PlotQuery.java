@@ -207,6 +207,7 @@ public final class PlotQuery implements Iterable<Plot> {
      *
      * @param owner Owner UUID
      * @return The query instance
+     * @since 6.1.0
      */
     public @NonNull PlotQuery ownersInclude(final @NonNull UUID owner) {
         Preconditions.checkNotNull(owner, "Owner may not be null");
@@ -218,6 +219,7 @@ public final class PlotQuery implements Iterable<Plot> {
      *
      * @param owner Owner
      * @return The query instance
+     * @since 6.1.0
      */
     public @NonNull PlotQuery ownersInclude(final @NonNull PlotPlayer<?> owner) {
         Preconditions.checkNotNull(owner, "Owner may not be null");

@@ -59,7 +59,9 @@ public interface PermissionProfile {
      * @param permission Permission
      * @param key        Permission "key"
      * @return {@code true} if the owner has the given permission, else {@code false}
+     * @since 6.0.10
      */
+    @SuppressWarnings("unused")
     default boolean hasKeyedPermission(
             final @NonNull String permission,
             final @NonNull String key
@@ -75,6 +77,7 @@ public interface PermissionProfile {
      * @param permission Permission
      * @param key        Permission "key"
      * @return {@code true} if the owner has the given permission, else {@code false}
+     * @since 6.0.10
      */
     boolean hasKeyedPermission(
             @Nullable String world, final @NonNull String permission,
