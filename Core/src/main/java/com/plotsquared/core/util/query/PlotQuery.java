@@ -419,7 +419,7 @@ public final class PlotQuery implements Iterable<Plot> {
      * Get whether any provided plot matches the given filters.
      * If no plot was provided, false will be returned.
      *
-     * @return true if any provided plot matches the filters.
+     * @return {@code true} if any provided plot matches the filters.
      */
     public boolean anyMatch() {
         if (this.filters.isEmpty()) {

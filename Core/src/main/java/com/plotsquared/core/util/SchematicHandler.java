@@ -543,7 +543,7 @@ public abstract class SchematicHandler {
      *
      * @param tag  to save
      * @param path to save in
-     * @return true if succeeded
+     * @return {@code true} if succeeded
      */
     public boolean save(CompoundTag tag, String path) {
         if (tag == null) {

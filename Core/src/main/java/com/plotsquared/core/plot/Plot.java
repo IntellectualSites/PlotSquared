@@ -1225,7 +1225,7 @@ public class Plot {
     /**
      * Returns true if a previous task was running
      *
-     * @return true if a previous task is running
+     * @return {@code true} if a previous task is running
      */
     public int addRunning() {
         int value = this.getRunning();
@@ -1269,7 +1269,7 @@ public class Plot {
     /**
      * Unclaim the plot (does not modify terrain). Changes made to this plot will not be reflected in unclaimed plot objects.
      *
-     * @return false if the Plot has no owner, otherwise true.
+     * @return {@code false} if the Plot has no owner, otherwise {@code true}.
      */
     public boolean unclaim() {
         if (!this.hasOwner()) {
@@ -2669,7 +2669,7 @@ public class Plot {
     /**
      * Checks if the owner of this Plot is online.
      *
-     * @return true if the owner of the Plot is online
+     * @return {@code true} if the owner of the Plot is online
      */
     public boolean isOnline() {
         if (!this.hasOwner()) {

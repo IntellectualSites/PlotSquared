@@ -45,7 +45,7 @@ public class PlayerPlotHelperEvent extends PlotEvent {
      * @param initiator Player that initiated the event
      * @param plot      Plot in which the event occurred
      * @param player    Player that was added/removed from the helper list
-     * @param added     true of the player was added, false if the player was removed
+     * @param added     {@code true} if the player was added, {@code false} if the player was removed
      */
     public PlayerPlotHelperEvent(PlotPlayer<?> initiator, Plot plot, UUID player, boolean added) {
         super(plot);

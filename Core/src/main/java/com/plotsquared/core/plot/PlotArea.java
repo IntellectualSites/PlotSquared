@@ -295,7 +295,7 @@ public abstract class PlotArea {
      * Check if a PlotArea is compatible (move/copy etc.).
      *
      * @param plotArea the {@link PlotArea} to compare
-     * @return true if both areas are compatible
+     * @return {@code true} if both areas are compatible
      */
     public boolean isCompatible(final @NonNull PlotArea plotArea) {
         final ConfigurationSection section = this.worldConfiguration.getConfigurationSection("worlds");
@@ -1101,7 +1101,7 @@ public abstract class PlotArea {
      * If a schematic is available, it can be used for plot claiming.
      *
      * @param schematic the schematic to look for.
-     * @return true if the schematic exists, false otherwise.
+     * @return {@code true} if the schematic exists, {@code false} otherwise.
      */
     public boolean hasSchematic(@NonNull String schematic) {
         return getSchematics().contains(schematic.toLowerCase());
@@ -1110,7 +1110,7 @@ public abstract class PlotArea {
     /**
      * Get whether economy is enabled and used on this plot area or not.
      *
-     * @return true if this plot area uses economy, false otherwise.
+     * @return {@code true} if this plot area uses economy, {@code false} otherwise.
      */
     public boolean useEconomy() {
         return useEconomy;
@@ -1119,7 +1119,7 @@ public abstract class PlotArea {
     /**
      * Get whether the plot area is limited by a world border or not.
      *
-     * @return true if the plot area has a world border, false otherwise.
+     * @return {@code true} if the plot area has a world border, {@code false} otherwise.
      */
     public boolean hasWorldBorder() {
         return worldBorder;
@@ -1128,7 +1128,7 @@ public abstract class PlotArea {
     /**
      * Get whether plot signs are allowed or not.
      *
-     * @return true if plot signs are allow, false otherwise.
+     * @return {@code true} if plot signs are allowed, {@code false} otherwise.
      */
     public boolean allowSigns() {
         return allowSigns;

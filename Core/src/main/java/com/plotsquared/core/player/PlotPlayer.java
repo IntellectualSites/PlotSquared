@@ -501,7 +501,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      * Retrieves the attribute of this player.
      *
      * @param key metadata key
-     * @return the attribute will be either true or false
+     * @return the attribute will be either {@code true} or {@code false}
      */
     public boolean getAttribute(String key) {
         if (!hasPersistentMeta("attrib_" + key)) {
@@ -572,7 +572,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     /**
      * Check if this player is banned.
      *
-     * @return true if the player is banned, false otherwise.
+     * @return {@code true} if the player is banned, {@code false} otherwise.
      */
     public abstract boolean isBanned();
 

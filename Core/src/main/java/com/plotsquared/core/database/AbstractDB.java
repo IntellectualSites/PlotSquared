@@ -371,7 +371,7 @@ public interface AbstractDB {
     /**
      * Don't use this method unless you want to ruin someone's server.
      *
-     * @return true if the tables were deleted, false when an error is encountered
+     * @return {@code true} if the tables were deleted, {@code false} when an error is encountered
      */
     boolean deleteTables();
 

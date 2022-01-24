@@ -99,7 +99,7 @@ public interface ChatFormatter {
          * Whether or not the output should escape
          * any formatting keys
          *
-         * @return True if raw output is to be used
+         * @return {@code true} if raw output is to be used
          */
         public boolean isRawOutput() {
             return this.rawOutput;
