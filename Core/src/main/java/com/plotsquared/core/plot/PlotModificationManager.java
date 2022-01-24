@@ -190,9 +190,12 @@ public final class PlotModificationManager {
     /**
      * Clear the plot
      *
+     * <p>
+     * Use {@link #deletePlot(PlotPlayer, Runnable)} to clear and delete a plot
+     * </p>
+     *
      * @param whenDone A runnable to execute when clearing finishes, or null
      * @see #clear(boolean, boolean, PlotPlayer, Runnable)
-     * @see #deletePlot(PlotPlayer, Runnable) to clear and delete a plot
      */
     public void clear(final @Nullable Runnable whenDone) {
         this.clear(false, false, null, whenDone);
@@ -201,11 +204,14 @@ public final class PlotModificationManager {
     /**
      * Clear the plot
      *
+     * <p>
+     * Use {@link #deletePlot(PlotPlayer, Runnable)} to clear and delete a plot
+     * </p>
+     *
      * @param checkRunning Whether or not already executing tasks should be checked
      * @param isDelete     Whether or not the plot is being deleted
      * @param actor        The actor clearing the plot
      * @param whenDone     A runnable to execute when clearing finishes, or null
-     * @see #deletePlot(PlotPlayer, Runnable) to clear and delete a plot
      */
     public boolean clear(
             final boolean checkRunning,
@@ -858,11 +864,14 @@ public final class PlotModificationManager {
     /**
      * Delete a plot (use null for the runnable if you don't need to be notified on completion)
      *
+     * <p>
+     * Use {@link PlotModificationManager#clear(boolean, boolean, PlotPlayer, Runnable)} to simply clear a plot
+     * </p>
+     *
      * @param actor    The actor executing the task
      * @param whenDone task to run when plot has been deleted. Nullable
      * @return {@code true} if the deletion was successful, {@code false} if not
      * @see PlotSquared#removePlot(Plot, boolean)
-     * @see PlotModificationManager#clear(boolean, boolean, PlotPlayer, Runnable) to simply clear a plot
      */
     public boolean deletePlot(@Nullable PlotPlayer<?> actor, final Runnable whenDone) {
         if (!this.plot.hasOwner()) {
