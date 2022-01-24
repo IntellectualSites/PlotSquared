@@ -36,10 +36,12 @@ import java.util.Locale;
 public interface LocaleHolder {
 
     /**
-     * Get the console locale holder
+     * Get the console locale holder.
+     * <p>
+     * You can use {@link ConsolePlayer#getConsole()} for direct access to the {@link ConsolePlayer}
+     * </p>
      *
      * @return Console locale holder
-     * @see ConsolePlayer#getConsole() for direct access to the {@link ConsolePlayer}
      */
     @NonNull
     static LocaleHolder console() {

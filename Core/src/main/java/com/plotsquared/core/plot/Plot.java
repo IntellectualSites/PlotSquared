@@ -219,10 +219,13 @@ public class Plot {
      * Constructor for a new plot.
      * (Only changes after plot.create() will be properly set in the database)
      *
+     * <p>
+     * See {@link Plot#getPlot(Location)} for existing plots
+     * </p>
+     *
      * @param area  the PlotArea where the plot is located
      * @param id    the plot id
      * @param owner the plot owner
-     * @see Plot#getPlot(Location) for existing plots
      */
     public Plot(final PlotArea area, final @NonNull PlotId id, final UUID owner) {
         this(area, id, owner, 0);
@@ -232,9 +235,12 @@ public class Plot {
      * Constructor for an unowned plot.
      * (Only changes after plot.create() will be properly set in the database)
      *
+     * <p>
+     * See {@link Plot#getPlot(Location)} for existing plots
+     * </p>
+     *
      * @param area the PlotArea where the plot is located
      * @param id   the plot id
-     * @see Plot#getPlot(Location) for existing plots
      */
     public Plot(final @NonNull PlotArea area, final @NonNull PlotId id) {
         this(area, id, null, 0);
@@ -245,11 +251,14 @@ public class Plot {
      * The database will ignore any queries regarding temporary plots.
      * Please note that some bulk plot management functions may still affect temporary plots (TODO: fix this)
      *
+     * <p>
+     * See {@link Plot#getPlot(Location)} for existing plots
+     * </p>
+     *
      * @param area  the PlotArea where the plot is located
      * @param id    the plot id
      * @param owner the owner of the plot
      * @param temp  Represents whatever the database manager needs it to
-     * @see Plot#getPlot(Location) for existing plots
      */
     public Plot(final PlotArea area, final @NonNull PlotId id, final UUID owner, final int temp) {
         this.area = area;
@@ -266,6 +275,10 @@ public class Plot {
     /**
      * Constructor for a saved plots (Used by the database manager when plots are fetched)
      *
+     * <p>
+     * See {@link Plot#getPlot(Location)} for existing plots
+     * </p>
+     *
      * @param id        the plot id
      * @param owner     the plot owner
      * @param trusted   the plot trusted players
@@ -278,7 +291,6 @@ public class Plot {
      * @param merged    an array giving merged plots
      * @param timestamp when the plot was created
      * @param temp      value representing whatever DBManager needs to to. Do not touch tbh.
-     * @see Plot#getPlot(Location) for existing plots
      */
     public Plot(
             @NonNull PlotId id,
@@ -418,9 +430,12 @@ public class Plot {
     /**
      * Return a new/cached plot object at a given location.
      *
+     * <p>
+     * Use {@link PlotPlayer#getCurrentPlot()} if a player is expected here.
+     * </p>
+     *
      * @param location the location of the plot
      * @return plot at location or null
-     * @see PlotPlayer#getCurrentPlot() if a player is expected here.
      */
     public static @Nullable Plot getPlot(final @NonNull Location location) {
         final PlotArea pa = location.getPlotArea();
@@ -449,7 +464,7 @@ public class Plot {
      * that could alter the de facto owner of the plot.
      *
      * @return The plot owner of this particular (sub-)plot
-     *         as stored in the database, if one exists. Else, null.
+     * as stored in the database, if one exists. Else, null.
      */
     public @Nullable UUID getOwnerAbs() {
         return this.owner;
@@ -588,10 +603,13 @@ public class Plot {
     /**
      * Get the plot owner of this particular sub-plot.
      * (Merged plots can have multiple owners)
-     * Direct access is discouraged: use getOwners()
+     * Direct access is discouraged: use {@link #getOwners()}
+     *
+     * <p>
+     * Use {@link #getOwnerAbs()} to get the owner as stored in the database
+     * </p>
      *
      * @return Server if ServerPlot flag set, else {@link #getOwnerAbs()}
-     * @see #getOwnerAbs() getOwnerAbs() to get the owner as stored in the database
      */
     public @Nullable UUID getOwner() {
         if (this.getFlag(ServerPlotFlag.class)) {
@@ -1201,12 +1219,6 @@ public class Plot {
      *
      * @return array of entity counts
      * @see RegionManager#countEntities(Plot)
-     *         0 = Entity
-     *         1 = Animal
-     *         2 = Monster
-     *         3 = Mob
-     *         4 = Boat
-     *         5 = Misc
      */
     public int[] countEntities() {
         int[] count = new int[6];
@@ -3031,8 +3043,11 @@ public class Plot {
      * If rating categories are enabled, get the average rating by category.<br>
      * - The index corresponds to the index of the category in the config
      *
+     * <p>
+     * See {@link Settings.Ratings#CATEGORIES} for rating categories
+     * </p>
+     *
      * @return Average ratings in each category
-     * @see Settings.Ratings#CATEGORIES Rating categories
      */
     public @NonNull double[] getAverageRatings() {
         Map<UUID, Integer> rating;

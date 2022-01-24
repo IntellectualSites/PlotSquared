@@ -338,9 +338,11 @@ public class PlotSquared {
 
     /**
      * Add a global reference to a plot world.
+     * <p>
+     * You can remove the reference by calling {@link #removePlotArea(PlotArea)}
+     * </p>
      *
      * @param plotArea the {@link PlotArea} to add.
-     * @see #removePlotArea(PlotArea) To remove the reference
      */
     @SuppressWarnings("unchecked")
     public void addPlotArea(final @NonNull PlotArea plotArea) {
@@ -1521,10 +1523,12 @@ public class PlotSquared {
     /**
      * Get the caption map belonging to a namespace. If none exists, a dummy
      * caption map will be returned.
+     * <p>
+     * You can register a caption map by calling {@link #registerCaptionMap(String, CaptionMap)}
+     * </p>
      *
      * @param namespace Namespace
      * @return Map instance
-     * @see #registerCaptionMap(String, CaptionMap) To register a caption map
      */
     public @NonNull CaptionMap getCaptionMap(final @NonNull String namespace) {
         return this.captionMaps.computeIfAbsent(

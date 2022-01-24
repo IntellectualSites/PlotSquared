@@ -196,9 +196,12 @@ public interface PlotAreaManager {
     /**
      * Check if a plot world.
      *
+     * <p>
+     * Use {@link #getPlotAreaByString(String)} to get the PlotArea object
+     * </p>
+     *
      * @param world the world
      * @return if a plot world is registered
-     * @see #getPlotAreaByString(String) to get the PlotArea object
      */
     default boolean hasPlotArea(final @NonNull String world) {
         return this.getPlotAreas(world, null).length != 0;

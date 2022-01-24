@@ -378,9 +378,12 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     /**
      * Get a {@link Set} of plots owned by this player.
      *
+     * <p>
+     * Take a look at {@link PlotSquared} for more searching functions.
+     * See {@link #getPlotCount()} for the number of plots.
+     * </p>
+     *
      * @return a {@link Set} of plots owned by the player
-     * @see PlotSquared for more searching functions
-     * @see #getPlotCount() for the number of plots
      */
     public Set<Plot> getPlots() {
         return PlotQuery.newQuery().ownedBy(this).asSet();

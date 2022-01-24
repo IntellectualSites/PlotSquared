@@ -142,10 +142,13 @@ public class FlagContainer {
     /**
      * Add a flag to the container
      *
+     * <p>
+     * Use {@link #addAll(Collection)} to add multiple flags.
+     * </p>
+     *
      * @param flag Flag to add
      * @param <T>  flag type
      * @param <V>  flag value type
-     * @see #addAll(Collection) to add multiple flags
      */
     public <V, T extends PlotFlag<V, ?>> void addFlag(final T flag) {
         try {
@@ -199,8 +202,11 @@ public class FlagContainer {
     /**
      * Add all flags to the container
      *
+     * <p>
+     * Use {@link #addFlag(PlotFlag)} to add a single flag.
+     * </p>
+     *
      * @param flags Flags to add
-     * @see #addFlag(PlotFlag) to add a single flagg
      */
     public void addAll(final Collection<PlotFlag<?, ?>> flags) {
         for (final PlotFlag<?, ?> flag : flags) {
@@ -305,8 +311,11 @@ public class FlagContainer {
      * Updates are: a flag being removed, a flag being added or a flag
      * being updated.
      *
+     * <p>
+     * Use {@link PlotFlagUpdateType} to see the update types available.
+     * </p>
+     *
      * @param plotFlagUpdateHandler The update handler which will react to changes.
-     * @see PlotFlagUpdateType Plot flag update types
      */
     public void subscribe(final @NonNull PlotFlagUpdateHandler plotFlagUpdateHandler) {
         this.updateSubscribers.add(plotFlagUpdateHandler);
