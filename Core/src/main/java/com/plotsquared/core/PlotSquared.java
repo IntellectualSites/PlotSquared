@@ -306,7 +306,7 @@ public class PlotSquared {
      *
      * @param version  First version
      * @param version2 Second version
-     * @return true if `version` is &gt;= `version2`
+     * @return {@code true} if `version` is &gt;= `version2`
      */
     public boolean checkVersion(
             final int[] version,
@@ -733,7 +733,7 @@ public class PlotSquared {
      *
      * @param plot      the plot to remove
      * @param callEvent If to call an event about the plot being removed
-     * @return true if plot existed | false if it didn't
+     * @return {@code true} if plot existed | {@code false} if it didn't
      */
     public boolean removePlot(
             final @NonNull Plot plot,
@@ -1476,7 +1476,7 @@ public class PlotSquared {
      *
      * @param world            World name
      * @param chunkCoordinates Chunk coordinates
-     * @return True if the chunk uses non-standard generation, false if not
+     * @return {@code true} if the chunk uses non-standard generation, {@code false} if not
      */
     public boolean isNonStandardGeneration(
             final @NonNull String world,

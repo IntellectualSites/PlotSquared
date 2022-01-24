@@ -120,7 +120,7 @@ public abstract class RegionManager {
      * @param actor   the actor associated with the cuboid set
      * @param queue   Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
      *                otherwise writes to the queue but does not enqueue.
-     * @return true if not enqueued, otherwise whether the created queue enqueued.
+     * @return {@code true} if not enqueued, otherwise whether the created queue enqueued.
      */
     public boolean setCuboids(
             final @NonNull PlotArea area,
@@ -161,7 +161,7 @@ public abstract class RegionManager {
      * Notify any plugins that may want to modify clear behaviour that a clear is occuring
      *
      * @param manager plot manager
-     * @return true if the notified will accept the clear task
+     * @return {@code true} if the notified will accept the clear task
      */
     public boolean notifyClear(PlotManager manager) {
         return false;
@@ -174,7 +174,7 @@ public abstract class RegionManager {
      * @param whenDone task to run when complete
      * @param manager  plot manager
      * @param actor    the player running the clear
-     * @return true if the clear worked. False if someone went wrong so P2 can then handle the clear
+     * @return {@code true} if the clear worked. {@code false} if someone went wrong so P2 can then handle the clear
      */
     public abstract boolean handleClear(
             @NonNull Plot plot,

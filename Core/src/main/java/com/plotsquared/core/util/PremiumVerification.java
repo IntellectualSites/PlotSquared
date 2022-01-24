@@ -52,7 +52,7 @@ public class PremiumVerification {
 
     /**
      * @param userID Spigot user ID
-     * @return true if userID does not contain __USER__
+     * @return {@code true} if userID does not contain __USER__
      */
     private static Boolean isPremium(String userID) {
         return !userID.contains("__USER__");
@@ -61,7 +61,7 @@ public class PremiumVerification {
     /**
      * Returns true if this plugin is premium
      *
-     * @return if is premium
+     * @return {@code true} if is premium
      */
     public static Boolean isPremium() {
         return usingPremium == null ? (usingPremium = isPremium(getUserID())) : usingPremium;

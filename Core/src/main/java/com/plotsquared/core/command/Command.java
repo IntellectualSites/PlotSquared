@@ -288,7 +288,7 @@ public abstract class Command {
      * @param args     Arguments
      * @param confirm  Instance, Success, Failure
      * @param whenDone task to run when done
-     * @return CompletableFuture true if the command executed fully, false in
+     * @return CompletableFuture {@code true} if the command executed fully, {@code false} in
      *         any other case
      */
     public CompletableFuture<Boolean> execute(

@@ -70,7 +70,7 @@ public interface UUIDService {
      * Check whether or not this service can be safely used synchronously
      * without blocking the server for an extended amount of time.
      *
-     * @return True if the service can be used synchronously
+     * @return {@code true} if the service can be used synchronously
      */
     default boolean canBeSynchronous() {
         return false;

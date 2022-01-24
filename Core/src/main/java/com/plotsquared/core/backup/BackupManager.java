@@ -88,7 +88,7 @@ public interface BackupManager {
      * Returns true if (potentially) destructive actions should cause
      * PlotSquared to create automatic plot backups
      *
-     * @return True if automatic backups are enabled
+     * @return {@code true} if automatic backups are enabled
      */
     boolean shouldAutomaticallyBackup();
 

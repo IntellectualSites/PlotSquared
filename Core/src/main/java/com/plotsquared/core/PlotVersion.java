@@ -122,7 +122,7 @@ public final class PlotVersion {
      * Compare a given version string with the one cached here.
      *
      * @param versionString the version to compare
-     * @return true if the given version is a "later" version
+     * @return {@code true} if the given version is a "later" version
      */
     public boolean isLaterVersion(final @NonNull String versionString) {
         int dash = versionString.indexOf('-');
@@ -144,7 +144,7 @@ public final class PlotVersion {
      * Compare a given version with the one cached here.
      *
      * @param verArray the version to compare
-     * @return true if the given version is a "later" version
+     * @return {@code true} if the given version is a "later" version
      */
     public boolean isLaterVersion(int[] verArray) {
         if (verArray[0] > version[0]) {

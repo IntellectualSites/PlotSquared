@@ -448,7 +448,7 @@ public final class PlotModificationManager {
      * - Any setting from before plot creation will not be saved until the server is stopped properly. i.e. Set any values/options after plot
      * creation.
      *
-     * @return true if plot was created successfully
+     * @return {@code true} if plot was created successfully
      */
     public boolean create() {
         return this.create(this.plot.getOwnerAbs(), true);
@@ -792,7 +792,7 @@ public final class PlotModificationManager {
     /**
      * Unlink a plot and remove the roads
      *
-     * @return true if plot was linked
+     * @return {@code true} if plot was linked
      * @see #unlinkPlot(boolean, boolean)
      */
     public boolean unlink() {

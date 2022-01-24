@@ -123,7 +123,7 @@ public class ChunkUtil {
      * @param pos1  Region minimum point
      * @param pos2  Region maximum point
      * @param chunk BlockVector2 of chunk coordinates
-     * @return true if the region pos1-pos2 contains the chunk
+     * @return {@code true} if the region pos1-pos2 contains the chunk
      */
     public static boolean isWholeChunk(@NonNull Location pos1, @NonNull Location pos2, @NonNull BlockVector2 chunk) {
         int x1 = pos1.getX();

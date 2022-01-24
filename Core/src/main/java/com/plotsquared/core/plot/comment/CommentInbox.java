@@ -54,7 +54,7 @@ public abstract class CommentInbox {
     /**
      * @param plot   the plot's inbox to write to
      * @param player the player trying to write the comment
-     * @return true if the player can write a comment on the plot
+     * @return {@code true} if the player can write a comment on the plot
      */
     public boolean canWrite(Plot plot, PlotPlayer<?> player) {
         if (plot == null) {
@@ -68,7 +68,7 @@ public abstract class CommentInbox {
     /**
      * @param plot   the plot's inbox to write to
      * @param player the player trying to modify the inbox
-     * @return true if the player can write a comment on the plot
+     * @return {@code true} if the player can write a comment on the plot
      */
     @SuppressWarnings({"BooleanMethodIsAlwaysInverted"})
     public boolean canModify(Plot plot, PlotPlayer<?> player) {

@@ -60,7 +60,7 @@ public interface CaptionMap {
      * Check if the map supports a given locale
      *
      * @param locale Locale
-     * @return True if the map supports the locale
+     * @return {@code true} if the map supports the locale
      */
     boolean supportsLocale(final @NonNull Locale locale);
 

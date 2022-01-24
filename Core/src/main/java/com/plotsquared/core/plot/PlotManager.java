@@ -187,7 +187,7 @@ public abstract class PlotManager {
      * @param plotIds list of PlotIds to finish the merge for
      * @param queue   Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
      *                otherwise writes to the queue but does not enqueue.
-     * @return false if part if the merge failed, otherwise true if successful.
+     * @return {@code false} if part if the merge failed, otherwise {@code true} if successful.
      */
     public abstract boolean finishPlotMerge(@NonNull List<PlotId> plotIds, @Nullable QueueCoordinator queue);
 
@@ -224,7 +224,7 @@ public abstract class PlotManager {
      *
      * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
      *              otherwise writes to the queue but does not enqueue.
-     * @return true if the wall blocks were successfully set
+     * @return {@code true} if the wall blocks were successfully set
      */
     public boolean regenerateAllPlotWalls(@Nullable QueueCoordinator queue) {
         boolean success = true;

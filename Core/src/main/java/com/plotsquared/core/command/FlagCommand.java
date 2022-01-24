@@ -165,7 +165,7 @@ public final class FlagCommand extends Command {
     /**
      * Checks if the player is allowed to modify the flags at their current location
      *
-     * @return true if the player is allowed to modify the flags at their current location
+     * @return {@code true} if the player is allowed to modify the flags at their current location
      */
     private static boolean checkRequirements(final @NonNull PlotPlayer<?> player) {
         final Location location = player.getLocation();

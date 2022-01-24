@@ -42,7 +42,7 @@ public class PlayerPlotDeniedEvent extends PlotEvent {
      * @param initiator Player that initiated the event
      * @param plot      Plot in which the event occurred
      * @param player    Player that was denied/un-denied
-     * @param added     true of add to deny list, false if removed
+     * @param added     {@code true} of add to deny list, {@code false} if removed
      */
     public PlayerPlotDeniedEvent(PlotPlayer<?> initiator, Plot plot, UUID player, boolean added) {
         super(plot);

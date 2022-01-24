@@ -52,7 +52,7 @@ public abstract class Database {
     /**
      * Checks if a connection is open with the database.
      *
-     * @return true if the connection is open
+     * @return {@code true} if the connection is open
      * @throws SQLException if the connection cannot be checked
      */
     public abstract boolean checkConnection() throws SQLException;
@@ -67,7 +67,7 @@ public abstract class Database {
     /**
      * Closes the connection with the database.
      *
-     * @return true if successful
+     * @return {@code true} if successful
      * @throws SQLException if the connection cannot be closed
      */
     public abstract boolean closeConnection() throws SQLException;
