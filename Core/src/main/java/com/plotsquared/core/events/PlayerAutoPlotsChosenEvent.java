@@ -47,6 +47,7 @@ public class PlayerAutoPlotsChosenEvent extends PlotPlayerEvent {
      *
      * @param player Player that executed the auto
      * @param plots  Plots that have been chosen to be set to the player
+     * @since 6.1.0
      */
     public PlayerAutoPlotsChosenEvent(PlotPlayer<?> player, List<Plot> plots) {
         super(player, plots.size() > 0 ? plots.get(0) : null);
@@ -67,6 +68,7 @@ public class PlayerAutoPlotsChosenEvent extends PlotPlayerEvent {
      * Get the immutable list of plots selected to be claimed by the player. May be of length 0.
      *
      * @return immutable list.
+     * @since 6.1.0
      */
     public @NonNull List<Plot> getPlots() {
         return plots;
@@ -76,6 +78,7 @@ public class PlayerAutoPlotsChosenEvent extends PlotPlayerEvent {
      * Set the plots to be claimed by the player.
      *
      * @param plots list of plots.
+     * @since 6.1.0
      */
     public void setPlots(final @NonNull List<Plot> plots) {
         this.plots = List.copyOf(plots);

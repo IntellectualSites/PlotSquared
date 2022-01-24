@@ -74,6 +74,7 @@ public class Permissions {
      * @param permission Permission
      * @param key        Permission "key"
      * @return {@code true} if the owner has the given permission, else {@code false}
+     * @since 6.0.10
      */
     public static boolean hasKeyedPermission(
             final @NonNull PermissionHolder caller, final @NonNull String permission,

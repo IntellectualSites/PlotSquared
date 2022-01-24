@@ -1686,7 +1686,7 @@ public class Plot {
         return base.settings != null && base.settings.getRatings() != null;
     }
 
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "6.1.0")
     public boolean claim(final @NonNull PlotPlayer<?> player, boolean teleport, String schematic) {
         if (!canClaim(player)) {
             return false;
@@ -1694,7 +1694,7 @@ public class Plot {
         return claim(player, teleport, schematic, true);
     }
 
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "6.1.0")
     public boolean claim(final @NonNull PlotPlayer<?> player, boolean teleport, String schematic, boolean updateDB) {
         return claim(player, teleport, schematic, updateDB, false);
     }
@@ -1708,6 +1708,7 @@ public class Plot {
      * @param updateDB  If the database should be updated
      * @param auto      If the plot is being claimed by a /plot auto
      * @return success
+     * @since 6.1.0
      */
     public boolean claim(
             final @NonNull PlotPlayer<?> player, boolean teleport, String schematic, boolean updateDB,

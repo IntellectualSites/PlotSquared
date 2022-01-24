@@ -115,7 +115,7 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
     /**
      * @deprecated for removal. Use {@link PlayerAutoPlotEvent#getSizeX()}
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "6.1.0")
     public int getSize_x() {
         return getSizeX();
     }
@@ -123,7 +123,7 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
     /**
      * @deprecated for removal. Use {@link PlayerAutoPlotEvent#setSizeX(int)} )}
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "6.1.0")
     public void setSize_x(int sizeX) {
         setSizeX(sizeX);
     }
@@ -131,7 +131,7 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
     /**
      * @deprecated for removal. Use {@link PlayerAutoPlotEvent#getSizeZ()}
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "6.1.0")
     public int getSize_z() {
         return getSizeZ();
     }
@@ -139,7 +139,7 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
     /**
      * @deprecated for removal. Use {@link PlayerAutoPlotEvent#setSizeZ(int)} )}
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "6.1.0")
     public void setSize_z(int sizeZ) {
         setSizeZ(sizeZ);
     }
@@ -148,6 +148,7 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
      * Get the x size of the auto-area
      *
      * @return x size
+     * @since 6.1.0
      */
     public int getSizeX() {
         return this.sizeX;
@@ -157,6 +158,7 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
      * Set the x size of the auto-area
      *
      * @param sizeX x size
+     * @since 6.1.0
      */
     public void setSizeX(int sizeX) {
         this.sizeX = sizeX;
@@ -166,6 +168,7 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
      * Get the z size of the auto-area
      *
      * @return z size
+     * @since 6.1.0
      */
     public int getSizeZ() {
         return this.sizeZ;
@@ -175,6 +178,7 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
      * Set the z size of the auto-area
      *
      * @param sizeZ z size
+     * @since 6.1.0
      */
     public void setSizeZ(int sizeZ) {
         this.sizeZ = sizeZ;

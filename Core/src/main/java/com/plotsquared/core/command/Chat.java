@@ -34,7 +34,7 @@ import net.kyori.adventure.text.minimessage.Template;
  * @deprecated In favor of "/plot toggle chat" and
  *         scheduled for removal within the next major release.
  */
-@Deprecated(forRemoval = true)
+@Deprecated(forRemoval = true, since = "6.0.0")
 @CommandDeclaration(command = "chat",
         usage = "/plot chat",
         permission = "plots.chat",

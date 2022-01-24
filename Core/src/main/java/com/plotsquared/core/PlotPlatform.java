@@ -274,6 +274,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * Get the {@link PlotAreaManager} implementation.
      *
      * @return the PlotAreaManager
+     * @since 6.1.4
      */
     @NonNull PlotAreaManager plotAreaManager();
 

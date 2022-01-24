@@ -209,7 +209,7 @@ public abstract class QueueCoordinator {
      *         <br>
      *         Scheduled for removal once we drop the support for versions not supporting 3D biomes.
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "6.0.0")
     public abstract boolean setBiome(int x, int z, @NonNull BiomeType biome);
 
     /**
@@ -327,6 +327,7 @@ public abstract class QueueCoordinator {
      * Enqueue the queue to start it
      *
      * @return success or not
+     * @since 6.0.10
      */
     public boolean enqueue() {
         boolean success = false;

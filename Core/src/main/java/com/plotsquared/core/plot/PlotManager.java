@@ -214,7 +214,7 @@ public abstract class PlotManager {
      * @return the world height
      * @deprecated In favor of custom world heights within 1.17 and therefore scheduled for removal without replacement
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "6.0.0")
     public int getWorldHeight() {
         return 255;
     }
