@@ -77,7 +77,7 @@ allprojects {
     }
 
     tasks.compileJava.configure {
-        options.release.set(16)
+        options.release.set(17)
     }
 
     configurations.all {
