@@ -246,7 +246,9 @@ public class BukkitUtil extends WorldUtil {
             final World bukkitWorld = Objects.requireNonNull(getWorld(world));
             // Skip top and bottom block
             int air = 1;
-            for (int y = bukkitWorld.getMaxHeight() - 1; y >= 0; y--) {
+            int maxY = com.plotsquared.bukkit.util.BukkitWorld.getMaxWorldHeight(bukkitWorld);
+            int minY = com.plotsquared.bukkit.util.BukkitWorld.getMinWorldHeight(bukkitWorld);
+            for (int y = maxY - 1; y >= minY; y--) {
                 Block block = bukkitWorld.getBlockAt(x, y, z);
                 Material type = block.getType();
                 if (type.isSolid()) {
@@ -273,7 +275,9 @@ public class BukkitUtil extends WorldUtil {
         final World bukkitWorld = Objects.requireNonNull(getWorld(world));
         // Skip top and bottom block
         int air = 1;
-        for (int y = bukkitWorld.getMaxHeight() - 1; y >= 0; y--) {
+        int maxY = com.plotsquared.bukkit.util.BukkitWorld.getMaxWorldHeight(bukkitWorld);
+        int minY = com.plotsquared.bukkit.util.BukkitWorld.getMinWorldHeight(bukkitWorld);
+        for (int y = maxY - 1; y >= minY; y--) {
             Block block = bukkitWorld.getBlockAt(x, y, z);
             Material type = block.getType();
             if (type.isSolid()) {

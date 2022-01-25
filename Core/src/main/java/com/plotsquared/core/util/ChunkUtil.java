@@ -39,13 +39,13 @@ public class ChunkUtil {
      * - Used for efficient world generation<br>
      */
     private static final short[] x_loc;
-    private static final short[][] y_loc;
+    private static final short[] y_loc;
     private static final short[] z_loc;
     private static final short[][][] CACHE_J;
 
     static {
         x_loc = new short[4096];
-        y_loc = new short[16][4096];
+        y_loc = new short[4096];
         z_loc = new short[4096];
         for (int i = 0; i < 16; i++) {
             int i4 = i << 4;
@@ -55,14 +55,14 @@ public class ChunkUtil {
                 int z1 = a >> 4;
                 int x1 = a - (z1 << 4);
                 x_loc[j] = (short) x1;
-                y_loc[i][j] = (short) y;
+                y_loc[j] = (short) y;
                 z_loc[j] = (short) z1;
             }
         }
-        CACHE_J = new short[256][16][16];
+        CACHE_J = new short[16][16][16];
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                for (int y = 0; y < 256; y++) {
+                for (int y = 0; y < 16; y++) {
                     short j = (short) ((y & 0xF) << 8 | z << 4 | x);
                     CACHE_J[y][x][z] = j;
                 }
@@ -83,7 +83,7 @@ public class ChunkUtil {
      * @return J value for xyz position in Array[4096].
      */
     public static int getJ(int x, int y, int z) {
-        return CACHE_J[y][x][z];
+        return CACHE_J[y & 15][x & 15][z & 15];
     }
 
     /**
@@ -97,14 +97,14 @@ public class ChunkUtil {
     }
 
     /**
-     * Gets the y coordinate for specific I and J values for a Chunk 16x16x16x16 layerxyz Array[16][4096].
+     * Gets the y coordinate for specific I and J values for a Chunk 16x16x16x16 layerxyz Array[N][4096].
      *
-     * @param i Relative layer of the position in the layerxyz Array[16][4096].
+     * @param i Relative layer of the position in the layerxyz Array[16][4096]. May be negative.
      * @param j Position in the xyz Array[4096].
      * @return x coordinate within the chunk
      */
     public static int getY(int i, int j) {
-        return y_loc[i][j];
+        return (i << 4) + y_loc[j];
     }
 
     /**

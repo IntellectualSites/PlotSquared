@@ -70,7 +70,7 @@ public class ContentMap {
         }
         for (int x = x1; x <= x2; x++) {
             for (int z = z1; z <= z2; z++) {
-                saveBlocks(world, 256, x, z, 0, 0);
+                saveBlocks(world, x, z, 0, 0);
             }
         }
     }
@@ -134,13 +134,11 @@ public class ContentMap {
         this.entities.clear();
     }
 
-    //todo optimize maxY
-    void saveBlocks(BukkitWorld world, int maxY, int x, int z, int offsetX, int offsetZ) {
-        maxY = Math.min(255, maxY);
-        BaseBlock[] ids = new BaseBlock[maxY + 1];
-        for (short y = 0; y <= maxY; y++) {
-            BaseBlock block = world.getFullBlock(BlockVector3.at(x, y, z));
-            ids[y] = block;
+    private void saveBlocks(BukkitWorld world, int x, int z, int offsetX, int offsetZ) {
+        BaseBlock[] ids = new BaseBlock[world.getMaxY() - world.getMinY()];
+        for (short yIndex = 0; yIndex <= world.getMaxY() - world.getMinY(); yIndex++) {
+            BaseBlock block = world.getFullBlock(BlockVector3.at(x, yIndex + world.getMinY(), z));
+            ids[yIndex] = block;
         }
         PlotLoc loc = new PlotLoc(x + offsetX, z + offsetZ);
         this.allBlocks.put(loc, ids);

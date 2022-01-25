@@ -36,6 +36,18 @@ import java.util.Objects;
 public class BukkitWorld implements World<org.bukkit.World> {
 
     private static final Map<String, BukkitWorld> worldMap = Maps.newHashMap();
+    private static final boolean HAS_MIN_Y;
+
+    static {
+        boolean temp;
+        try {
+            org.bukkit.World.class.getMethod("getMinHeight");
+            temp = true;
+        } catch (NoSuchMethodException e) {
+            temp = false;
+        }
+        HAS_MIN_Y = temp;
+    }
 
     private final org.bukkit.World world;
 
@@ -73,6 +85,24 @@ public class BukkitWorld implements World<org.bukkit.World> {
         return bukkitWorld;
     }
 
+    /**
+     * Get the min world height from a Bukkit {@link org.bukkit.World}. Inclusive
+     *
+     * @since TODO
+     */
+    public static int getMinWorldHeight(org.bukkit.World world) {
+        return HAS_MIN_Y ? world.getMinHeight() : 0;
+    }
+
+    /**
+     * Get the max world height from a Bukkit {@link org.bukkit.World}. Exclusive
+     *
+     * @since TODO
+     */
+    public static int getMaxWorldHeight(org.bukkit.World world) {
+        return HAS_MIN_Y ? world.getMaxHeight() : 256;
+    }
+
     @Override
     public org.bukkit.World getPlatformWorld() {
         return this.world;
@@ -81,6 +111,16 @@ public class BukkitWorld implements World<org.bukkit.World> {
     @Override
     public @NonNull String getName() {
         return this.world.getName();
+    }
+
+    @Override
+    public int getMinHeight() {
+        return getMinWorldHeight(world);
+    }
+
+    @Override
+    public int getMaxHeight() {
+        return getMaxWorldHeight(world);
     }
 
     @Override

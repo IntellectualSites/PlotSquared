@@ -39,6 +39,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 public class ScopedQueueCoordinator extends DelegateQueueCoordinator {
 
+    private final Location min;
+    private final Location max;
     private final int minX;
     private final int minY;
     private final int minZ;
@@ -53,6 +55,8 @@ public class ScopedQueueCoordinator extends DelegateQueueCoordinator {
 
     public ScopedQueueCoordinator(@Nullable QueueCoordinator parent, @NonNull Location min, @NonNull Location max) {
         super(parent);
+        this.min = min;
+        this.max = max;
         this.minX = min.getX();
         this.minY = min.getY();
         this.minZ = min.getZ();
@@ -112,11 +116,11 @@ public class ScopedQueueCoordinator extends DelegateQueueCoordinator {
     }
 
     public @NonNull Location getMin() {
-        return Location.at(this.getWorld().getName(), this.minX, this.minY, this.minZ);
+        return min;
     }
 
     public @NonNull Location getMax() {
-        return Location.at(this.getWorld().getName(), this.maxX, this.maxY, this.maxZ);
+        return max;
     }
 
 }

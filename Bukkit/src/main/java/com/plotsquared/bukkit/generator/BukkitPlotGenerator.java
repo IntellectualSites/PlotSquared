@@ -27,6 +27,7 @@ package com.plotsquared.bukkit.generator;
 
 import com.plotsquared.bukkit.queue.GenChunk;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.bukkit.util.BukkitWorld;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
@@ -159,12 +160,14 @@ public class BukkitPlotGenerator extends ChunkGenerator
             @NonNull BiomeGrid biome
     ) {
 
-        GenChunk result = new GenChunk();
+        int minY =  BukkitWorld.getMinWorldHeight(world);
+        int maxY =  BukkitWorld.getMaxWorldHeight(world);
+        GenChunk result = new GenChunk(minY, maxY);
         if (this.getPlotGenerator() instanceof SingleWorldGenerator) {
             if (result.getChunkData() != null) {
                 for (int chunkX = 0; chunkX < 16; chunkX++) {
                     for (int chunkZ = 0; chunkZ < 16; chunkZ++) {
-                        for (int y = 0; y < world.getMaxHeight(); y++) {
+                        for (int y = minY; y < maxY; y++) {
                             biome.setBiome(chunkX, y, chunkZ, Biome.PLAINS);
 
                         }

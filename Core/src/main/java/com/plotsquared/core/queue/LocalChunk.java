@@ -42,6 +42,7 @@ public class LocalChunk {
     private final QueueCoordinator parent;
     private final int x;
     private final int z;
+    private final int minSection;
 
     private final BaseBlock[][] baseblocks;
     private final BiomeType[][] biomes;
@@ -52,8 +53,10 @@ public class LocalChunk {
         this.parent = parent;
         this.x = x;
         this.z = z;
-        baseblocks = new BaseBlock[16][];
-        biomes = new BiomeType[16][];
+        this.minSection = parent.getWorld() != null ? (parent.getWorld().getMinY() >> 4) : 0;
+        int sections = parent.getWorld() != null ? (parent.getWorld().getMaxY() >> 4) - minSection : 16;
+        baseblocks = new BaseBlock[sections][];
+        biomes = new BiomeType[sections][];
     }
 
     public @NonNull QueueCoordinator getParent() {
@@ -66,6 +69,13 @@ public class LocalChunk {
 
     public int getZ() {
         return this.z;
+    }
+
+    /**
+     * Get the minimum layer position stored (usually -4 or 0).
+     */
+    public int getMinSection() {
+        return this.minSection;
     }
 
     public @NonNull BaseBlock[][] getBaseblocks() {

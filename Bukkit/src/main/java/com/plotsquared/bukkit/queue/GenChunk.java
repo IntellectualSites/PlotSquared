@@ -61,8 +61,28 @@ public class GenChunk extends ScopedQueueCoordinator {
     public int chunkZ;
     private ChunkData chunkData = null;
 
+
+    /**
+     * Not API. Used as a bridge between P2 and Bukkit {@link Chunk}.
+     *
+     * @deprecated Use {@link GenChunk#regenChunk(int, int)} for extended world heights
+     * @since TODO
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public GenChunk() {
-        super(null, Location.at("", 0, 0, 0), Location.at("", 15, 255, 15));
+        this(0, 255);
+    }
+
+    /**
+     * Not API. Used as a bridge between P2 and Bukkit {@link Chunk}.
+     *
+     * @param minY minimum world Y, inclusive
+     * @param maxY maximum world Y, inclusive
+     *
+     * @since TODO
+     */
+    public GenChunk(int minY, int maxY) {
+        super(null, Location.at("", 0, minY, 0), Location.at("", 15, maxY, 15));
         this.biomes = Biome.values();
     }
 
@@ -117,7 +137,7 @@ public class GenChunk extends ScopedQueueCoordinator {
             return;
         }
         Biome biome = BukkitAdapter.adapt(biomeType);
-        for (int y = 0; y < 256; y++) {
+        for (int y = getMin().getY(); y <= getMax().getY(); y++) {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     this.biomeGrid.setBiome(x, y, z, biome);
@@ -130,7 +150,7 @@ public class GenChunk extends ScopedQueueCoordinator {
     public void setCuboid(@NonNull Location pos1, @NonNull Location pos2, @NonNull BlockState block) {
         if (result != null && pos1.getX() == 0 && pos1.getZ() == 0 && pos2.getX() == 15 && pos2.getZ() == 15) {
             for (int y = pos1.getY(); y <= pos2.getY(); y++) {
-                int layer = y >> 4;
+                int layer = (y - getMin().getY()) >> 4;
                 BlockState[] data = result[layer];
                 if (data == null) {
                     result[layer] = data = new BlockState[4096];
@@ -164,7 +184,7 @@ public class GenChunk extends ScopedQueueCoordinator {
      */
     public boolean setBiome(int x, int z, @NonNull Biome biome) {
         if (this.biomeGrid != null) {
-            for (int y = 0; y < 256; y++) {
+            for (int y = getMin().getY(); y < getMax().getY(); y++) {
                 this.setBiome(x, y, z, biome);
             }
             return true;
@@ -197,7 +217,7 @@ public class GenChunk extends ScopedQueueCoordinator {
     }
 
     private void storeCache(final int x, final int y, final int z, final @NonNull BlockState id) {
-        int i = y >> 4;
+        int i = (y - getMin().getY()) >> 4;
         BlockState[] v = this.result[i];
         if (v == null) {
             this.result[i] = v = new BlockState[4096];
@@ -219,7 +239,7 @@ public class GenChunk extends ScopedQueueCoordinator {
 
     @Override
     public @Nullable BlockState getBlock(int x, int y, int z) {
-        int i = y >> 4;
+        int i = (y - getMin().getY()) >> 4;
         if (result == null) {
             return BukkitBlockUtil.get(chunkData.getType(x, y, z));
         }
@@ -246,16 +266,16 @@ public class GenChunk extends ScopedQueueCoordinator {
 
     @Override
     public @NonNull Location getMax() {
-        return Location.at(getWorld().getName(), 15 + (getX() << 4), 255, 15 + (getZ() << 4));
+        return Location.at(getWorld().getName(), 15 + (getX() << 4), super.getMax().getY(), 15 + (getZ() << 4));
     }
 
     @Override
     public @NonNull Location getMin() {
-        return Location.at(getWorld().getName(), getX() << 4, 0, getZ() << 4);
+        return Location.at(getWorld().getName(), getX() << 4, super.getMin().getY(), getZ() << 4);
     }
 
     public @NonNull GenChunk clone() {
-        GenChunk toReturn = new GenChunk();
+        GenChunk toReturn = new GenChunk(getMin().getY(), getMax().getY());
         if (this.result != null) {
             for (int i = 0; i < this.result.length; i++) {
                 BlockState[] matrix = this.result[i];

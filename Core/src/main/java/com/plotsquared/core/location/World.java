@@ -58,6 +58,21 @@ public interface World<T> {
      */
     @NonNull String getName();
 
+    /**
+     * Get the min world height. Inclusive.
+     *
+     * @since TODO
+     */
+    int getMinHeight();
+
+
+    /**
+     * Get the max world height. Exclusive.
+     *
+     * @since TODO
+     */
+    int getMaxHeight();
+
     class NullWorld<T> implements World<T> {
 
         private NullWorld() {
@@ -72,6 +87,16 @@ public interface World<T> {
         @Override
         public @NonNull String getName() {
             return "";
+        }
+
+        @Override
+        public int getMinHeight() {
+            return 0;
+        }
+
+        @Override
+        public int getMaxHeight() {
+            return 0;
         }
 
         @Override
