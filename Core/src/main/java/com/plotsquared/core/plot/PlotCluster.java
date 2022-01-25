@@ -165,7 +165,7 @@ public class PlotCluster {
         Consumer<Location> locationConsumer = toReturn ->
                 PlotSquared.platform().worldUtil().getHighestBlock(this.area.getWorldName(), toReturn.getX(), toReturn.getZ(),
                         highest -> {
-                            if (highest == 0) {
+                            if (highest <= area.getMinBuildHeight()) {
                                 highest = 63;
                             }
                             if (highest > toReturn.getY()) {
@@ -175,12 +175,12 @@ public class PlotCluster {
                             }
                         }
                 );
-        if (home.getY() == 0) {
+        if (home.getY() == Integer.MIN_VALUE) {
             // default pos
             Plot center = getCenterPlot();
             center.getHome(location -> {
                 Location toReturn = location;
-                if (toReturn.getY() == 0) {
+                if (toReturn.getY() <= area.getMinBuildHeight()) {
                     PlotManager manager = this.area.getPlotManager();
                     Location locationSign = manager.getSignLoc(center);
                     toReturn = toReturn.withY(locationSign.getY());

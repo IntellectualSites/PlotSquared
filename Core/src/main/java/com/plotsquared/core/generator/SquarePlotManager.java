@@ -96,7 +96,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
                 .floor(squarePlotWorld.ROAD_WIDTH / 2) - 1;
         int z = (squarePlotWorld.ROAD_OFFSET_Z + (pz * (squarePlotWorld.ROAD_WIDTH + squarePlotWorld.PLOT_WIDTH))) - (int) Math
                 .floor(squarePlotWorld.ROAD_WIDTH / 2) - 1;
-        return Location.at(squarePlotWorld.getWorldName(), x, Math.min(getWorldHeight(), 255), z);
+        return Location.at(squarePlotWorld.getWorldName(), x, squarePlotWorld.getMaxGenHeight(), z);
     }
 
     @Override
@@ -260,7 +260,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
                 - (int) Math.floor(squarePlotWorld.ROAD_WIDTH / 2);
         int z = (squarePlotWorld.ROAD_OFFSET_Z + (pz * (squarePlotWorld.ROAD_WIDTH + squarePlotWorld.PLOT_WIDTH))) - squarePlotWorld.PLOT_WIDTH
                 - (int) Math.floor(squarePlotWorld.ROAD_WIDTH / 2);
-        return Location.at(squarePlotWorld.getWorldName(), x, squarePlotWorld.getMinBuildHeight(), z);
+        return Location.at(squarePlotWorld.getWorldName(), x, squarePlotWorld.getMinGenHeight(), z);
     }
 
 }

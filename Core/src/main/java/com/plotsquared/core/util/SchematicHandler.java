@@ -305,12 +305,13 @@ public abstract class SchematicHandler {
             final int WIDTH = dimension.getX();
             final int LENGTH = dimension.getZ();
             final int HEIGHT = dimension.getY();
+            final int worldHeight = plot.getArea().getMaxGenHeight() - plot.getArea().getMinGenHeight() + 1;
             // Validate dimensions
             CuboidRegion region = plot.getLargestRegion();
             boolean sizeMismatch =
                     ((region.getMaximumPoint().getX() - region.getMinimumPoint().getX() + xOffset + 1) < WIDTH) || (
                             (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ() + zOffset + 1) < LENGTH) || (HEIGHT
-                            > 256);
+                            > worldHeight);
             if (!Settings.Schematics.PASTE_MISMATCHES && sizeMismatch) {
                 actor.sendMessage(TranslatableCaption.of("schematics.schematic_size_mismatch"));
                 TaskManager.runTask(whenDone);
@@ -321,7 +322,7 @@ public abstract class SchematicHandler {
             // Calculate the optimal height to paste the schematic at
             final int y_offset_actual;
             if (autoHeight) {
-                if (HEIGHT >= 256) {
+                if (HEIGHT >= worldHeight) {
                     y_offset_actual = yOffset;
                 } else {
                     PlotArea pw = plot.getArea();
@@ -360,9 +361,9 @@ public abstract class SchematicHandler {
             // Paste schematic here
             final QueueCoordinator queue = plot.getArea().getQueue();
 
-            for (int ry = 0; ry < Math.min(256, HEIGHT); ry++) {
+            for (int ry = 0; ry < Math.min(worldHeight, HEIGHT); ry++) {
                 int yy = y_offset_actual + ry;
-                if (yy > 255 || yy < 0) {
+                if (yy > plot.getArea().getMaxGenHeight() || yy < plot.getArea().getMinGenHeight()) {
                     continue;
                 }
                 for (int rz = 0; rz < blockArrayClipboard.getDimensions().getZ(); rz++) {
@@ -379,10 +380,8 @@ public abstract class SchematicHandler {
                         BlockVector3 loc = BlockVector3.at(rx, ry, rz);
                         BaseBlock id = blockArrayClipboard.getFullBlock(loc);
                         queue.setBlock(xx, yy, zz, id);
-                        if (ry == 0) {
-                            BiomeType biome = blockArrayClipboard.getBiome(loc);
-                            queue.setBiome(xx, yy, zz, biome);
-                        }
+                        BiomeType biome = blockArrayClipboard.getBiome(loc);
+                        queue.setBiome(xx, yy, zz, biome);
                     }
                 }
             }

@@ -122,7 +122,7 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
  */
 public class Plot {
 
-
+    @Deprecated(forRemoval = true, since = "TODO")
     public static final int MAX_HEIGHT = 256;
 
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Plot.class.getSimpleName());
@@ -1371,7 +1371,7 @@ public class Plot {
         int z = largest.getMinimumPoint().getZ() - 1;
         PlotManager manager = getManager();
         int y = isLoaded() ? this.worldUtil.getHighestBlockSynchronous(getWorldName(), x, z) : 62;
-        if (area.allowSigns() && (y <= 0 || y >= 255)) {
+        if (area.allowSigns() && (y <= area.getMinGenHeight() || y >= area.getMaxGenHeight())) {
             y = Math.max(y, manager.getSignLoc(this).getY() - 1);
         }
         return Location.at(getWorldName(), x, y + 1, z);
@@ -1387,7 +1387,7 @@ public class Plot {
         if (isLoaded()) {
             this.worldUtil.getHighestBlock(getWorldName(), x, z, y -> {
                 int height = y;
-                if (area.allowSigns() && (y <= 0 || y >= 255)) {
+                if (area.allowSigns() && (y <= area.getMinGenHeight() || y >= area.getMaxGenHeight())) {
                     height = Math.max(y, manager.getSignLoc(this).getY() - 1);
                 }
                 result.accept(Location.at(getWorldName(), x, height + 1, z));
@@ -1619,8 +1619,9 @@ public class Plot {
     public double getVolume() {
         double count = 0;
         for (CuboidRegion region : getRegions()) {
-            count += (region.getMaximumPoint().getX() - (double) region.getMinimumPoint().getX() + 1) * (
-                    region.getMaximumPoint().getZ() - (double) region.getMinimumPoint().getZ() + 1) * MAX_HEIGHT;
+            count += (region.getMaximumPoint().getX() - (double) region.getMinimumPoint().getX() + 1) *
+                    (region.getMaximumPoint().getZ() - (double) region.getMinimumPoint().getZ() + 1) *
+                    (area.getMaxGenHeight() - area.getMinGenHeight() + 1);
         }
         return count;
     }

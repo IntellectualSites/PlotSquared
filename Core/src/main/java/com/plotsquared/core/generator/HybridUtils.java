@@ -145,6 +145,8 @@ public class HybridUtils {
             final int ctz = tz >> 4;
             final int width = tx - bx + 1;
             final int length = tz - bz + 1;
+            final int height = area.getMaxGenHeight() - area.getMinGenHeight();
+            final int minHeight = area.getMinGenHeight();
 
             final PlotArea area = this.plotAreaManager.getPlotArea(world, null);
 
@@ -157,7 +159,7 @@ public class HybridUtils {
 
             final BlockState airBlock = BlockTypes.AIR.getDefaultState();
             final BlockState[][][] oldBlocks = chunk.getBlocks();
-            final BlockState[][][] newBlocks = new BlockState[256][width][length];
+            final BlockState[][][] newBlocks = new BlockState[height][width][length];
             for (final BlockState[][] newBlock : newBlocks) {
                 for (final BlockState[] blockStates : newBlock) {
                     Arrays.fill(blockStates, airBlock);
@@ -211,11 +213,12 @@ public class HybridUtils {
                     int xx = chunkBlockX + x;
                     for (int z = minZ; z <= maxZ; z++) {
                         int zz = chunkBlockZ + z;
-                        for (int y = 0; y < 256; y++) {
+                        for (int yIndex = 0; yIndex < minHeight; yIndex++) {
+                            int y = yIndex - minHeight;
                             BlockState block = queue.getBlock(xx, y, zz);
                             int xr = xb + x;
                             int zr = zb + z;
-                            newBlocks[y][xr][zr] = block;
+                            newBlocks[yIndex][xr][zr] = block;
                         }
                     }
                 }
@@ -232,10 +235,10 @@ public class HybridUtils {
                 for (int x = 0; x < width; x++) {
                     for (int z = 0; z < length; z++) {
                         Set<BlockType> types = new HashSet<>();
-                        for (int y = 0; y < 256; y++) {
-                            BlockState old = oldBlocks[y][x][z];
+                        for (int yIndex = 0; yIndex < height; yIndex++) {
+                            BlockState old = oldBlocks[yIndex][x][z];
                             try {
-                                BlockState now = newBlocks[y][x][z];
+                                BlockState now = newBlocks[yIndex][x][z];
                                 if (!old.equals(now)) {
                                     changes[i]++;
                                 }
@@ -244,23 +247,23 @@ public class HybridUtils {
                                 } else {
                                     // check vertices
                                     // modifications_adjacent
-                                    if (x > 0 && z > 0 && y > 0 && x < width - 1 && z < length - 1 && y < 255) {
-                                        if (newBlocks[y - 1][x][z].getBlockType().getMaterial().isAir()) {
+                                    if (x > 0 && z > 0 && yIndex > 0 && x < width - 1 && z < length - 1 && yIndex < (height - 1)) {
+                                        if (newBlocks[yIndex - 1][x][z].getBlockType().getMaterial().isAir()) {
                                             faces[i]++;
                                         }
-                                        if (newBlocks[y][x - 1][z].getBlockType().getMaterial().isAir()) {
+                                        if (newBlocks[yIndex][x - 1][z].getBlockType().getMaterial().isAir()) {
                                             faces[i]++;
                                         }
-                                        if (newBlocks[y][x][z - 1].getBlockType().getMaterial().isAir()) {
+                                        if (newBlocks[yIndex][x][z - 1].getBlockType().getMaterial().isAir()) {
                                             faces[i]++;
                                         }
-                                        if (newBlocks[y + 1][x][z].getBlockType().getMaterial().isAir()) {
+                                        if (newBlocks[yIndex + 1][x][z].getBlockType().getMaterial().isAir()) {
                                             faces[i]++;
                                         }
-                                        if (newBlocks[y][x + 1][z].getBlockType().getMaterial().isAir()) {
+                                        if (newBlocks[yIndex][x + 1][z].getBlockType().getMaterial().isAir()) {
                                             faces[i]++;
                                         }
-                                        if (newBlocks[y][x][z + 1].getBlockType().getMaterial().isAir()) {
+                                        if (newBlocks[yIndex][x][z + 1].getBlockType().getMaterial().isAir()) {
                                             faces[i]++;
                                         }
                                     }
@@ -514,7 +517,6 @@ public class HybridUtils {
         Location bot = plot.getBottomAbs().subtract(1, 0, 1);
         Location top = plot.getTopAbs();
         final HybridPlotWorld plotworld = (HybridPlotWorld) plot.getArea();
-        PlotManager plotManager = plotworld.getPlotManager();
         // Do not use plotworld#schematicStartHeight() here as we want to restore the pre 6.1.4 way of doing it if
         //  USE_WALL_IN_ROAD_SCHEM_HEIGHT is false
         int schemY = Settings.Schematics.USE_WALL_IN_ROAD_SCHEM_HEIGHT ?
@@ -524,10 +526,10 @@ public class HybridUtils {
         int sy = Settings.Schematics.PASTE_ROAD_ON_TOP ? schemY : plot.getArea().getMinBuildHeight();
         int ex = bot.getX();
         int ez = top.getZ();
-        int ey = get_ey(plotManager, queue, sx, ex, sz, ez, sy);
+        int ey = get_ey(plotworld, queue, sx, ex, sz, ez, sy);
         int bz = sz - plotworld.ROAD_WIDTH;
         int tz = sz - 1;
-        int ty = get_ey(plotManager, queue, sx, ex, bz, tz, sy);
+        int ty = get_ey(plotworld, queue, sx, ex, bz, tz, sy);
 
         final Set<CuboidRegion> sideRoad = Collections.singleton(RegionUtil.createRegion(sx, ex, sy, ey, sz, ez));
         final Set<CuboidRegion> intersection = Collections.singleton(RegionUtil.createRegion(sx, ex, sy, ty, bz, tz));
@@ -553,11 +555,11 @@ public class HybridUtils {
         return true;
     }
 
-    public int get_ey(final PlotManager pm, QueueCoordinator queue, int sx, int ex, int sz, int ez, int sy) {
+    private int get_ey(final HybridPlotWorld hpw, QueueCoordinator queue, int sx, int ex, int sz, int ez, int sy) {
         int ey = sy;
         for (int x = sx; x <= ex; x++) {
             for (int z = sz; z <= ez; z++) {
-                for (int y = sy; y <= pm.getWorldHeight(); y++) {
+                for (int y = sy; y <= hpw.getMaxGenHeight(); y++) {
                     if (y > ey) {
                         BlockState block = queue.getBlock(x, y, z);
                         if (!block.getBlockType().getMaterial().isAir()) {
@@ -638,29 +640,29 @@ public class HybridUtils {
                         }
                         if (condition) {
                             BaseBlock[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
-                            int minY = Settings.Schematics.PASTE_ROAD_ON_TOP ? plotWorld.SCHEM_Y : 1;
-                            int maxY = Math.max(extend, blocks.length);
-                            for (int y = 0; y < maxY; y++) {
-                                if (y > blocks.length - 1) {
+                            int minY = Settings.Schematics.PASTE_ROAD_ON_TOP ? plotWorld.SCHEM_Y : area.getMinBuildHeight();
+                            int maxDy = Math.max(extend, blocks.length);
+                            for (int dy = 0; dy < maxDy; dy++) {
+                                if (dy > blocks.length - 1) {
                                     queue.setBlock(
                                             finalX + X + plotWorld.ROAD_OFFSET_X,
-                                            minY + y,
+                                            minY + dy,
                                             finalZ + Z + plotWorld.ROAD_OFFSET_Z,
                                             WEExtent.AIRBASE
                                     );
                                 } else {
-                                    BaseBlock block = blocks[y];
+                                    BaseBlock block = blocks[dy];
                                     if (block != null) {
                                         queue.setBlock(
                                                 finalX + X + plotWorld.ROAD_OFFSET_X,
-                                                minY + y,
+                                                minY + dy,
                                                 finalZ + Z + plotWorld.ROAD_OFFSET_Z,
                                                 block
                                         );
                                     } else {
                                         queue.setBlock(
                                                 finalX + X + plotWorld.ROAD_OFFSET_X,
-                                                minY + y,
+                                                minY + dy,
                                                 finalZ + Z + plotWorld.ROAD_OFFSET_Z,
                                                 WEExtent.AIRBASE
                                         );

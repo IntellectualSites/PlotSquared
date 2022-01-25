@@ -132,7 +132,7 @@ public class AugmentedUtils {
                         int worldZ = z + blockZ;
                         boolean can = manager.getPlotId(worldX, 0, worldZ) == null;
                         if (can) {
-                            for (int y = 1; y < 128; y++) {
+                            for (int y = area.getMinBuildHeight(); y <= area.getMaxGenHeight(); y++) {
                                 queue.setBlock(worldX, y, worldZ, air);
                             }
                             canPlace[x][z] = true;
@@ -149,7 +149,7 @@ public class AugmentedUtils {
                 secondaryMask = primaryMask;
                 for (int x = relativeBottomX; x <= relativeTopX; x++) {
                     for (int z = relativeBottomZ; z <= relativeTopZ; z++) {
-                        for (int y = 1; y < 128; y++) {
+                        for (int y = area.getMinBuildHeight(); y <= area.getMaxGenHeight(); y++) {
                             queue.setBlock(blockX + x, y, blockZ + z, air);
                         }
                     }
@@ -166,8 +166,8 @@ public class AugmentedUtils {
             ScopedQueueCoordinator scoped =
                     new ScopedQueueCoordinator(
                             secondaryMask,
-                            Location.at(world, blockX, 0, blockZ),
-                            Location.at(world, blockX + 15, 255, blockZ + 15)
+                            Location.at(world, blockX, area.getMinGenHeight(), blockZ),
+                            Location.at(world, blockX + 15, area.getMaxGenHeight(), blockZ + 15)
                     );
             generator.generateChunk(scoped, area);
             generator.populateChunk(scoped, area);

@@ -65,7 +65,10 @@ final class BlockStatePopulator extends BlockPopulator {
             return;
         }
         final ChunkWrapper wrap = new ChunkWrapper(area.getWorldName(), source.getX(), source.getZ());
-        final ScopedQueueCoordinator chunk = this.queue.getForChunk(wrap.x, wrap.z);
+        final ScopedQueueCoordinator chunk = this.queue.getForChunk(wrap.x, wrap.z,
+                com.plotsquared.bukkit.util.BukkitWorld.getMinWorldHeight(world),
+                com.plotsquared.bukkit.util.BukkitWorld.getMaxWorldHeight(world)
+        );
         if (this.plotGenerator.populateChunk(chunk, area)) {
             this.queue.enqueue();
         }

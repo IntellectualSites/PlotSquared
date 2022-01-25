@@ -54,12 +54,12 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
             @NonNull BlockVector3 top,
             boolean biomes
     ) {
-        super(null, Location.at("", 0, 0, 0), Location.at("", 15, 255, 15));
+        super(null, Location.at("", 0, weWorld.getMinY(), 0), Location.at("", 15, weWorld.getMaxY(), 15));
         this.weWorld = weWorld;
         this.width = top.getX() - bot.getX() + 1;
         this.length = top.getZ() - bot.getZ() + 1;
-        this.result = new BlockState[256][width][length];
-        this.biomeResult = biomes ? new BiomeType[256][width][length] : null;
+        this.result = new BlockState[weWorld.getMaxY() - weWorld.getMinY() + 1][width][length];
+        this.biomeResult = biomes ? new BiomeType[weWorld.getMaxY() - weWorld.getMinY() + 1][width][length] : null;
         this.bot = bot;
         this.top = top;
     }
@@ -71,7 +71,7 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
     @Override
     public boolean setBiome(int x, int z, @NonNull BiomeType biomeType) {
         if (this.biomeResult != null) {
-            for (int y = 0; y < 256; y++) {
+            for (int y = weWorld.getMinY(); y <= weWorld.getMaxY(); y++) {
                 this.storeCacheBiome(x, y, z, biomeType);
             }
             return true;
@@ -101,9 +101,10 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
     }
 
     private void storeCache(final int x, final int y, final int z, final @NonNull BlockState id) {
-        BlockState[][] resultY = result[y];
+        int yIndex = y - weWorld.getMinY();
+        BlockState[][] resultY = result[yIndex];
         if (resultY == null) {
-            result[y] = resultY = new BlockState[length][];
+            result[yIndex] = resultY = new BlockState[length][];
         }
         BlockState[] resultYZ = resultY[z];
         if (resultYZ == null) {
@@ -113,9 +114,10 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
     }
 
     private void storeCacheBiome(final int x, final int y, final int z, final @NonNull BiomeType id) {
-        BiomeType[][] resultY = biomeResult[y];
+        int yIndex = y - weWorld.getMinY();
+        BiomeType[][] resultY = biomeResult[yIndex];
         if (resultY == null) {
-            biomeResult[y] = resultY = new BiomeType[length][];
+            biomeResult[yIndex] = resultY = new BiomeType[length][];
         }
         BiomeType[] resultYZ = resultY[z];
         if (resultYZ == null) {
@@ -132,7 +134,7 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
 
     @Override
     public @Nullable BlockState getBlock(int x, int y, int z) {
-        BlockState[][] blocksY = result[y];
+        BlockState[][] blocksY = result[y - weWorld.getMinY()];
         if (blocksY != null) {
             BlockState[] blocksYZ = blocksY[z];
             if (blocksYZ != null) {

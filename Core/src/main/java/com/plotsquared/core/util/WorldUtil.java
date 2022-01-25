@@ -30,6 +30,7 @@ import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.IntTag;
@@ -81,9 +82,26 @@ public abstract class WorldUtil {
      */
     public static void setBiome(String world, int p1x, int p1z, int p2x, int p2z, BiomeType biome) {
         BlockVector3 pos1 = BlockVector2.at(p1x, p1z).toBlockVector3();
-        BlockVector3 pos2 = BlockVector2.at(p2x, p2z).toBlockVector3(Plot.MAX_HEIGHT - 1);
+        BlockVector3 pos2 = BlockVector2.at(p2x, p2z).toBlockVector3(255);
         CuboidRegion region = new CuboidRegion(pos1, pos2);
         PlotSquared.platform().worldUtil().setBiomes(world, region, biome);
+    }
+
+    /**
+     * Set the biome in a region
+     *
+     * @param area  Plot area
+     * @param p1x   Min X
+     * @param p1z   Min Z
+     * @param p2x   Max X
+     * @param p2z   Max Z
+     * @param biome Biome
+     */
+    public static void setBiome(PlotArea area, int p1x, int p1z, int p2x, int p2z, BiomeType biome) {
+        BlockVector3 pos1 = BlockVector2.at(p1x, p1z).toBlockVector3(area.getMinGenHeight());
+        BlockVector3 pos2 = BlockVector2.at(p2x, p2z).toBlockVector3(area.getMaxGenHeight());
+        CuboidRegion region = new CuboidRegion(pos1, pos2);
+        PlotSquared.platform().worldUtil().setBiomes(area.getWorldName(), region, biome);
     }
 
     /**

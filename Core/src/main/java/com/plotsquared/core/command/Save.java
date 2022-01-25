@@ -104,8 +104,8 @@ public class Save extends SubCommand {
                     TaskManager.runTaskAsync(() -> {
                         String time = (System.currentTimeMillis() / 1000) + "";
                         Location[] corners = plot.getCorners();
-                        corners[0] = corners[0].withY(0);
-                        corners[1] = corners[1].withY(255);
+                        corners[0] = corners[0].withY(plot.getArea().getMinGenHeight());
+                        corners[1] = corners[1].withY(plot.getArea().getMaxGenHeight());
                         int size = (corners[1].getX() - corners[0].getX()) + 1;
                         PlotId id = plot.getId();
                         String world1 = plot.getArea().toString().replaceAll(";", "-")

@@ -127,16 +127,16 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     public void loadConfiguration(ConfigurationSection config) {
         super.loadConfiguration(config);
         this.PLOT_BEDROCK = config.getBoolean("plot.bedrock");
-        this.PLOT_HEIGHT = Math.min(255, config.getInt("plot.height"));
+        this.PLOT_HEIGHT = Math.min(getMaxGenHeight(), config.getInt("plot.height"));
         this.MAIN_BLOCK = new BlockBucket(config.getString("plot.filling"));
         this.TOP_BLOCK = new BlockBucket(config.getString("plot.floor"));
         this.WALL_BLOCK = new BlockBucket(config.getString("wall.block"));
-        this.ROAD_HEIGHT = Math.min(255, config.getInt("road.height"));
+        this.ROAD_HEIGHT = Math.min(getMaxGenHeight(), config.getInt("road.height"));
         this.ROAD_BLOCK = new BlockBucket(config.getString("road.block"));
         this.WALL_FILLING = new BlockBucket(config.getString("wall.filling"));
-        this.WALL_HEIGHT = Math.min(254, config.getInt("wall.height"));
-        this.CLAIMED_WALL_BLOCK = new BlockBucket(config.getString("wall.block_claimed"));
         this.PLACE_TOP_BLOCK = config.getBoolean("wall.place_top_block");
+        this.WALL_HEIGHT = Math.min(getMaxGenHeight() - (PLACE_TOP_BLOCK ? 1 : 0), config.getInt("wall.height"));
+        this.CLAIMED_WALL_BLOCK = new BlockBucket(config.getString("wall.block_claimed"));
     }
 
     int schematicStartHeight() {

@@ -69,8 +69,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import static com.plotsquared.core.plot.Plot.MAX_HEIGHT;
-
 /**
  * Manager that handles {@link Plot} modifications
  */
@@ -311,7 +309,7 @@ public final class PlotModificationManager {
                     return;
                 }
                 CuboidRegion region = regions.poll();
-                PlotSquared.platform().regionManager().setBiome(region, extendBiome, biome, plot.getWorldName(), this);
+                PlotSquared.platform().regionManager().setBiome(region, extendBiome, biome, plot.getArea(), this);
             }
         };
         run.run();
@@ -541,8 +539,8 @@ public final class PlotModificationManager {
             Plot other = this.plot.getRelative(Direction.SOUTH);
             Location bot = other.getBottomAbs();
             Location top = this.plot.getTopAbs();
-            Location pos1 = Location.at(this.plot.getWorldName(), bot.getX(), 0, top.getZ());
-            Location pos2 = Location.at(this.plot.getWorldName(), top.getX(), MAX_HEIGHT, bot.getZ());
+            Location pos1 = Location.at(this.plot.getWorldName(), bot.getX(), plot.getArea().getMinGenHeight(), top.getZ());
+            Location pos2 = Location.at(this.plot.getWorldName(), top.getX(), plot.getArea().getMaxGenHeight() + 1, bot.getZ());
             PlotSquared.platform().regionManager().regenerateRegion(pos1, pos2, true, null);
         } else if (this.plot.getArea().getTerrain() != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.plot.getManager().removeRoadSouth(this.plot, queue);
@@ -929,8 +927,8 @@ public final class PlotModificationManager {
             Plot other = this.plot.getRelative(Direction.EAST);
             Location bot = other.getBottomAbs();
             Location top = this.plot.getTopAbs();
-            Location pos1 = Location.at(this.plot.getWorldName(), top.getX(), 0, bot.getZ());
-            Location pos2 = Location.at(this.plot.getWorldName(), bot.getX(), MAX_HEIGHT, top.getZ());
+            Location pos1 = Location.at(this.plot.getWorldName(), top.getX(), plot.getArea().getMinGenHeight(), bot.getZ());
+            Location pos2 = Location.at(this.plot.getWorldName(), bot.getX(), plot.getArea().getMaxGenHeight() + 1, top.getZ());
             PlotSquared.platform().regionManager().regenerateRegion(pos1, pos2, true, null);
         } else if (this.plot.getArea().getTerrain() != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.plot.getArea().getPlotManager().removeRoadEast(this.plot, queue);
@@ -948,8 +946,8 @@ public final class PlotModificationManager {
                 .getArea()
                 .getTerrain() == PlotAreaTerrainType.ROAD) {
             Plot other = this.plot.getRelative(1, 1);
-            Location pos1 = this.plot.getTopAbs().add(1, 0, 1).withY(0);
-            Location pos2 = other.getBottomAbs().subtract(1, 0, 1).withY(MAX_HEIGHT);
+            Location pos1 = this.plot.getTopAbs().add(1, 0, 1);
+            Location pos2 = other.getBottomAbs().subtract(1, 0, 1);
             PlotSquared.platform().regionManager().regenerateRegion(pos1, pos2, true, null);
         } else if (this.plot.getArea().getTerrain() != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.plot.getArea().getPlotManager().removeRoadSouthEast(this.plot, queue);

@@ -101,7 +101,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
 
     @Override
     public boolean setBlock(int x, int y, int z, @NonNull BaseBlock id) {
-        if ((y > 255) || (y < 0)) {
+        if ((y > world.getMaxY()) || (y < world.getMinY())) {
             return false;
         }
         LocalChunk chunk = getChunk(x >> 4, z >> 4);
@@ -121,7 +121,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     @Override
     public boolean setBiome(int x, int z, @NonNull BiomeType biomeType) {
         LocalChunk chunk = getChunk(x >> 4, z >> 4);
-        for (int y = 0; y < 256; y++) {
+        for (int y = world.getMinY(); y <= world.getMaxY(); y++) {
             chunk.setBiome(x & 15, y, z & 15, biomeType);
         }
         settingBiomes = true;

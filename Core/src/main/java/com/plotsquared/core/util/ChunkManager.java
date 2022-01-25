@@ -31,6 +31,7 @@ import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.world.World;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -47,18 +48,16 @@ public abstract class ChunkManager {
             String world,
             BlockVector2 loc
     ) {
-        QueueCoordinator queue = PlotSquared.platform().globalBlockQueue().getNewQueue(PlotSquared
-                .platform()
-                .worldUtil()
-                .getWeWorld(world));
+        World weWorld = PlotSquared.platform().worldUtil().getWeWorld(world);
+        QueueCoordinator queue = PlotSquared.platform().globalBlockQueue().getNewQueue(weWorld);
         if (PlotSquared.get().getPlotAreaManager().isAugmented(world) && PlotSquared.get().isNonStandardGeneration(world, loc)) {
             int blockX = loc.getX() << 4;
             int blockZ = loc.getZ() << 4;
             ScopedQueueCoordinator scoped =
                     new ScopedQueueCoordinator(
                             queue,
-                            Location.at(world, blockX, 0, blockZ),
-                            Location.at(world, blockX + 15, 255, blockZ + 15)
+                            Location.at(world, blockX, weWorld.getMinY(), blockZ),
+                            Location.at(world, blockX + 15, weWorld.getMaxY(), blockZ + 15)
                     );
             if (force != null) {
                 force.run(scoped);

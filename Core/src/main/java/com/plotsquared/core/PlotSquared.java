@@ -1020,8 +1020,8 @@ public class PlotSquared {
             // save configuration
 
             final List<String> validArguments = Arrays
-                    .asList("s=", "size=", "g=", "gap=", "h=", "height=", "f=", "floor=", "m=", "main=",
-                            "w=", "wall=", "b=", "border="
+                    .asList("s=", "size=", "g=", "gap=", "h=", "height=", "minh=", "minheight=", "maxh=", "maxheight=",
+                            "f=", "floor=", "m=", "main=", "w=", "wall=", "b=", "border="
                     );
 
             // Calculate the number of expected arguments
@@ -1097,6 +1097,18 @@ public class PlotSquared {
                             );
                             this.worldConfiguration.set(
                                     base + "wall.height",
+                                    ConfigurationUtil.INTEGER.parseString(value).shortValue()
+                            );
+                        }
+                        case "minh", "minheight" -> {
+                            this.worldConfiguration.set(
+                                    base + "world.min_gen_height",
+                                    ConfigurationUtil.INTEGER.parseString(value).shortValue()
+                            );
+                        }
+                        case "maxh", "maxheight" -> {
+                            this.worldConfiguration.set(
+                                    base + "world.max_gen_height",
                                     ConfigurationUtil.INTEGER.parseString(value).shortValue()
                             );
                         }
