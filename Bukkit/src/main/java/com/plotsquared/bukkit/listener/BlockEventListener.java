@@ -166,7 +166,7 @@ public class BlockEventListener implements Listener {
         }
         if (Settings.Redstone.DISABLE_OFFLINE) {
             boolean disable = false;
-            if (!plot.getOwner().equals(DBFunc.SERVER)) {
+            if (!DBFunc.SERVER.equals(plot.getOwner())) {
                 if (plot.isMerged()) {
                     disable = true;
                     for (UUID owner : plot.getOwners()) {
