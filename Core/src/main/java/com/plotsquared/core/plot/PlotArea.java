@@ -142,10 +142,10 @@ public abstract class PlotArea {
     private boolean homeAllowNonmember = false;
     private BlockLoc nonmemberHome;
     private BlockLoc defaultHome;
-    private int maxBuildHeight = 255;
-    private int minBuildHeight = 1;
-    private int maxGenHeight = 255;
-    private int minGenHeight = 0;
+    private int maxBuildHeight = PlotSquared.platform().versionMaxHeight();
+    private int minBuildHeight = PlotSquared.platform().versionMinHeight() + 1;
+    private int maxGenHeight = PlotSquared.platform().versionMaxHeight();
+    private int minGenHeight = PlotSquared.platform().versionMinHeight();
     private GameMode gameMode = GameModes.CREATIVE;
     private Map<String, PlotExpression> prices = new HashMap<>();
     private List<String> schematics = new ArrayList<>();
