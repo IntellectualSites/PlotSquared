@@ -65,6 +65,7 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.File;
 import java.util.ArrayDeque;
@@ -434,26 +435,29 @@ public class HybridUtils {
         HybridUtils.area = area;
         HybridUtils.height = extend;
         HybridUtils.chunks = chunks;
+        final int initial = 1024 * regions.size() + chunks.size();
         final AtomicInteger count = new AtomicInteger(0);
         TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 if (!UPDATE) {
                     Iterator<BlockVector2> iter = chunks.iterator();
+                    QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(area.getWorldName()));
                     while (iter.hasNext()) {
                         BlockVector2 chunk = iter.next();
                         iter.remove();
-                        boolean regenedRoad = regenerateRoad(area, chunk, extend);
+                        boolean regenedRoad = regenerateRoad(area, chunk, extend, queue);
                         if (!regenedRoad) {
-                            LOGGER.info("Failed to regenerate roads");
+                            LOGGER.info(String.format("Failed to regenerate roads in chunk %s", chunk));
                         }
                     }
+                    queue.enqueue();
                     LOGGER.info("Cancelled road task");
                     return;
                 }
                 count.incrementAndGet();
-                if (count.intValue() % 20 == 0) {
-                    LOGGER.info("Progress: {}%", 100 * (2048 - chunks.size()) / 2048);
+                if (count.intValue() % 10 == 0) {
+                    LOGGER.info("Progress: {}%", 100 * (initial - (chunks.size() + 1024 * regions.size())) / initial);
                 }
                 if (HybridUtils.regions.isEmpty() && chunks.isEmpty()) {
                     regeneratePlotWalls(area);
@@ -465,7 +469,7 @@ public class HybridUtils {
                     final Runnable task = this;
                     TaskManager.runTaskAsync(() -> {
                         try {
-                            if (chunks.size() < 1024) {
+                            if (chunks.size() < 64) {
                                 if (!HybridUtils.regions.isEmpty()) {
                                     Iterator<BlockVector2> iterator = HybridUtils.regions.iterator();
                                     BlockVector2 loc = iterator.next();
@@ -478,18 +482,35 @@ public class HybridUtils {
                             }
                             if (!chunks.isEmpty()) {
                                 TaskManager.getPlatformImplementation().sync(() -> {
-                                    long start = System.currentTimeMillis();
                                     Iterator<BlockVector2> iterator = chunks.iterator();
-                                    while (System.currentTimeMillis() - start < 20 && !chunks.isEmpty()) {
+                                    if (chunks.size() >= 32) {
+                                        QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(area.getWorldName()));
+                                        for (int i = 0; i < 32; i++) {
+                                            final BlockVector2 chunk = iterator.next();
+                                            iterator.remove();
+                                            boolean regenedRoads = regenerateRoad(area, chunk, extend, queue);
+                                            if (!regenedRoads) {
+                                                LOGGER.info(String.format("Failed to regenerate road in chunk %s", chunk));
+                                            }
+                                        }
+                                        queue.setCompleteTask(task);
+                                        queue.enqueue();
+                                        return null;
+                                    }
+                                    QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(area.getWorldName()));
+                                    while (!chunks.isEmpty()) {
                                         final BlockVector2 chunk = iterator.next();
                                         iterator.remove();
-                                        boolean regenedRoads = regenerateRoad(area, chunk, extend);
+                                        boolean regenedRoads = regenerateRoad(area, chunk, extend, queue);
                                         if (!regenedRoads) {
-                                            LOGGER.info("Failed to regenerate road");
+                                            LOGGER.info(String.format("Failed to regenerate road in chunk %s", chunk));
                                         }
                                     }
+                                    queue.setCompleteTask(task);
+                                    queue.enqueue();
                                     return null;
                                 });
+                                return;
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -572,7 +593,35 @@ public class HybridUtils {
         return ey;
     }
 
+    /**
+     * Regenerate the road in a chunk in a plot area.
+     *
+     * @param area   Plot area to regenerate road for
+     * @param chunk  Chunk location to regenerate
+     * @param extend How far to extend setting air above the road
+     * @return if successful
+     * @deprecated use {@link HybridUtils#regenerateRoad(PlotArea, BlockVector2, int, QueueCoordinator)}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public boolean regenerateRoad(final PlotArea area, final BlockVector2 chunk, int extend) {
+        return regenerateRoad(area, chunk, extend, null);
+    }
+
+    /**
+     * Regenerate the road in a chunk in a plot area.
+     *
+     * @param area             Plot area to regenerate road for
+     * @param chunk            Chunk location to regenerate
+     * @param extend           How far to extend setting air above the road
+     * @param queueCoordinator {@link QueueCoordinator} to use to set the blocks. Null if one should be created and enqueued
+     * @return if successful
+     */
+    public boolean regenerateRoad(
+            final PlotArea area,
+            final BlockVector2 chunk,
+            int extend,
+            @Nullable QueueCoordinator queueCoordinator
+    ) {
         int x = chunk.getX() << 4;
         int z = chunk.getZ() << 4;
         int ex = x + 15;
@@ -598,92 +647,100 @@ public class HybridUtils {
         z -= plotWorld.ROAD_OFFSET_Z;
         final int finalX = x;
         final int finalZ = z;
-        QueueCoordinator queue = this.blockQueue.getNewQueue(worldUtil.getWeWorld(plotWorld.getWorldName()));
+        final boolean enqueue;
+        final QueueCoordinator queue;
+        if (queueCoordinator == null) {
+            queue = this.blockQueue.getNewQueue(worldUtil.getWeWorld(plotWorld.getWorldName()));
+            enqueue = true;
+        } else {
+            queue = queueCoordinator;
+            enqueue = false;
+        }
         if (id1 == null || id2 == null || id1 != id2) {
-            this.chunkManager.loadChunk(area.getWorldName(), chunk, false).thenRun(() -> {
-                if (id1 != null) {
-                    Plot p1 = area.getPlotAbs(id1);
-                    if (p1 != null && p1.hasOwner() && p1.isMerged()) {
-                        toCheck.set(true);
-                    }
+            if (id1 != null) {
+                Plot p1 = area.getPlotAbs(id1);
+                if (p1 != null && p1.hasOwner() && p1.isMerged()) {
+                    toCheck.set(true);
                 }
-                if (id2 != null && !toCheck.get()) {
-                    Plot p2 = area.getPlotAbs(id2);
-                    if (p2 != null && p2.hasOwner() && p2.isMerged()) {
-                        toCheck.set(true);
-                    }
+            }
+            if (id2 != null && !toCheck.get()) {
+                Plot p2 = area.getPlotAbs(id2);
+                if (p2 != null && p2.hasOwner() && p2.isMerged()) {
+                    toCheck.set(true);
                 }
-                int size = plotWorld.SIZE;
-                for (int X = 0; X < 16; X++) {
-                    short absX = (short) ((finalX + X) % size);
-                    for (int Z = 0; Z < 16; Z++) {
-                        short absZ = (short) ((finalZ + Z) % size);
-                        if (absX < 0) {
-                            absX += size;
-                        }
-                        if (absZ < 0) {
-                            absZ += size;
-                        }
-                        boolean condition;
-                        if (toCheck.get()) {
-                            condition = manager.getPlotId(
-                                    finalX + X + plotWorld.ROAD_OFFSET_X,
-                                    1,
-                                    finalZ + Z + plotWorld.ROAD_OFFSET_Z
-                            ) == null;
-                        } else {
-                            boolean gx = absX > plotWorld.PATH_WIDTH_LOWER;
-                            boolean gz = absZ > plotWorld.PATH_WIDTH_LOWER;
-                            boolean lx = absX < plotWorld.PATH_WIDTH_UPPER;
-                            boolean lz = absZ < plotWorld.PATH_WIDTH_UPPER;
-                            condition = !gx || !gz || !lx || !lz;
-                        }
-                        if (condition) {
-                            BaseBlock[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
-                            int minY = Settings.Schematics.PASTE_ROAD_ON_TOP ? plotWorld.SCHEM_Y : area.getMinBuildHeight();
-                            int maxDy = Math.max(extend, blocks.length);
-                            for (int dy = 0; dy < maxDy; dy++) {
-                                if (dy > blocks.length - 1) {
+            }
+            int size = plotWorld.SIZE;
+            for (int X = 0; X < 16; X++) {
+                short absX = (short) ((finalX + X) % size);
+                for (int Z = 0; Z < 16; Z++) {
+                    short absZ = (short) ((finalZ + Z) % size);
+                    if (absX < 0) {
+                        absX += size;
+                    }
+                    if (absZ < 0) {
+                        absZ += size;
+                    }
+                    boolean condition;
+                    if (toCheck.get()) {
+                        condition = manager.getPlotId(
+                                finalX + X + plotWorld.ROAD_OFFSET_X,
+                                1,
+                                finalZ + Z + plotWorld.ROAD_OFFSET_Z
+                        ) == null;
+                    } else {
+                        boolean gx = absX > plotWorld.PATH_WIDTH_LOWER;
+                        boolean gz = absZ > plotWorld.PATH_WIDTH_LOWER;
+                        boolean lx = absX < plotWorld.PATH_WIDTH_UPPER;
+                        boolean lz = absZ < plotWorld.PATH_WIDTH_UPPER;
+                        condition = !gx || !gz || !lx || !lz;
+                    }
+                    if (condition) {
+                        BaseBlock[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
+                        int minY = Settings.Schematics.PASTE_ROAD_ON_TOP ? plotWorld.SCHEM_Y : area.getMinBuildHeight();
+                        int maxDy = Math.max(extend, blocks.length);
+                        for (int dy = 0; dy < maxDy; dy++) {
+                            if (dy > blocks.length - 1) {
+                                queue.setBlock(
+                                        finalX + X + plotWorld.ROAD_OFFSET_X,
+                                        minY + dy,
+                                        finalZ + Z + plotWorld.ROAD_OFFSET_Z,
+                                        WEExtent.AIRBASE
+                                );
+                            } else {
+                                BaseBlock block = blocks[dy];
+                                if (block != null) {
+                                    queue.setBlock(
+                                            finalX + X + plotWorld.ROAD_OFFSET_X,
+                                            minY + dy,
+                                            finalZ + Z + plotWorld.ROAD_OFFSET_Z,
+                                            block
+                                    );
+                                } else {
                                     queue.setBlock(
                                             finalX + X + plotWorld.ROAD_OFFSET_X,
                                             minY + dy,
                                             finalZ + Z + plotWorld.ROAD_OFFSET_Z,
                                             WEExtent.AIRBASE
                                     );
-                                } else {
-                                    BaseBlock block = blocks[dy];
-                                    if (block != null) {
-                                        queue.setBlock(
-                                                finalX + X + plotWorld.ROAD_OFFSET_X,
-                                                minY + dy,
-                                                finalZ + Z + plotWorld.ROAD_OFFSET_Z,
-                                                block
-                                        );
-                                    } else {
-                                        queue.setBlock(
-                                                finalX + X + plotWorld.ROAD_OFFSET_X,
-                                                minY + dy,
-                                                finalZ + Z + plotWorld.ROAD_OFFSET_Z,
-                                                WEExtent.AIRBASE
-                                        );
-                                    }
                                 }
                             }
-                            BiomeType biome = plotWorld.G_SCH_B.get(MathMan.pair(absX, absZ));
-                            if (biome != null) {
-                                queue.setBiome(finalX + X + plotWorld.ROAD_OFFSET_X, finalZ + Z + plotWorld.ROAD_OFFSET_Z, biome);
-                            } else {
-                                queue.setBiome(
-                                        finalX + X + plotWorld.ROAD_OFFSET_X,
-                                        finalZ + Z + plotWorld.ROAD_OFFSET_Z,
-                                        plotWorld.getPlotBiome()
-                                );
-                            }
+                        }
+                        BiomeType biome = plotWorld.G_SCH_B.get(MathMan.pair(absX, absZ));
+                        if (biome != null) {
+                            queue.setBiome(finalX + X + plotWorld.ROAD_OFFSET_X, finalZ + Z + plotWorld.ROAD_OFFSET_Z, biome);
+                        } else {
+                            queue.setBiome(
+                                    finalX + X + plotWorld.ROAD_OFFSET_X,
+                                    finalZ + Z + plotWorld.ROAD_OFFSET_Z,
+                                    plotWorld.getPlotBiome()
+                            );
                         }
                     }
                 }
+            }
+            if (enqueue) {
                 queue.enqueue();
-            });
+            }
             return true;
         }
         return false;

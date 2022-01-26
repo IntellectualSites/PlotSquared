@@ -150,6 +150,13 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
 
         Chunk chunk = this.availableChunks.poll();
         if (chunk == null) {
+            if (this.availableChunks.size() == 0) {
+                if (this.requestedChunks.size() == 0) {
+                    finish();
+                } else {
+                    requestBatch();
+                }
+            }
             return;
         }
         long[] iterationTime = new long[2];
