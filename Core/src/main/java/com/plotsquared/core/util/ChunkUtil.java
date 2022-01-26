@@ -47,17 +47,14 @@ public class ChunkUtil {
         x_loc = new short[4096];
         y_loc = new short[4096];
         z_loc = new short[4096];
-        for (int i = 0; i < 16; i++) {
-            int i4 = i << 4;
-            for (int j = 0; j < 4096; j++) {
-                int y = i4 + (j >> 8);
-                int a = j - ((y & 0xF) << 8);
-                int z1 = a >> 4;
-                int x1 = a - (z1 << 4);
-                x_loc[j] = (short) x1;
-                y_loc[j] = (short) y;
-                z_loc[j] = (short) z1;
-            }
+        for (int j = 0; j < 4096; j++) {
+            int y = j >> 8;
+            int a = j - ((y & 0xF) << 8);
+            int z1 = a >> 4;
+            int x1 = a - (z1 << 4);
+            x_loc[j] = (short) x1;
+            y_loc[j] = (short) y;
+            z_loc[j] = (short) z1;
         }
         CACHE_J = new short[16][16][16];
         for (int x = 0; x < 16; x++) {

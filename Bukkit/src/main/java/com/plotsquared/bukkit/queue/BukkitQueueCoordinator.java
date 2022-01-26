@@ -179,7 +179,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                         }
                     }
                 }
-                for (int layer = 0; layer < localChunk.getBaseblocks().length; layer++) {
+                for (int layer = 0; layer < localChunk.getBiomes().length; layer++) {
                     BiomeType[] biomesLayer = localChunk.getBiomes()[layer];
                     if (biomesLayer == null) {
                         continue;

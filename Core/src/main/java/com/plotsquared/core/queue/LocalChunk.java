@@ -54,7 +54,7 @@ public class LocalChunk {
         this.x = x;
         this.z = z;
         this.minSection = parent.getWorld() != null ? (parent.getWorld().getMinY() >> 4) : 0;
-        int sections = parent.getWorld() != null ? (parent.getWorld().getMaxY() >> 4) - minSection : 16;
+        int sections = parent.getWorld() != null ? (parent.getWorld().getMaxY() >> 4) - minSection + 1 : 16;
         baseblocks = new BaseBlock[sections][];
         biomes = new BiomeType[sections][];
     }
