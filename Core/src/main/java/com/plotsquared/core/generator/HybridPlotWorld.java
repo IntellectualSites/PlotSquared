@@ -79,6 +79,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public int SCHEM_Y;
     private Location SIGN_LOCATION;
     private File root = null;
+    private int lastOverlayHeightError = Integer.MIN_VALUE;
 
     @Inject
     private SchematicHandler schematicHandler;
@@ -262,9 +263,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
         if (schematic3 != null) {
             if (schematic3.getClipboard().getDimensions().getY() == worldHeight) {
-                SCHEM_Y = plotY = getMinGenHeight();
+                SCHEM_Y = plotY = 0;
             } else if (!Settings.Schematics.PASTE_ON_TOP) {
-                SCHEM_Y = plotY = getMinBuildHeight();
+                SCHEM_Y = plotY = getMinBuildHeight() - getMinGenHeight();
             }
         }
 
@@ -430,7 +431,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         int pair = MathMan.pair(x, z);
         BaseBlock[] existing = this.G_SCH.computeIfAbsent(pair, k -> new BaseBlock[height]);
         if (y >= height) {
-            LOGGER.error("Error adding overlay block. `y > height`");
+            if (y != lastOverlayHeightError) {
+                lastOverlayHeightError = y;
+                LOGGER.error(String.format("Error adding overlay block. `y > height`. y=%s, height=%s", y, height));
+            }
             return;
         }
         existing[y] = id;

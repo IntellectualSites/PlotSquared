@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.generator;
 
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
@@ -46,7 +47,7 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     public int ROAD_HEIGHT = 62;
     public int PLOT_HEIGHT = 62;
     public int WALL_HEIGHT = 62;
-    public int MIN_GEN_HEIGHT = 0;
+    public int MIN_GEN_HEIGHT = PlotSquared.platform().versionMinHeight();
     public BlockBucket MAIN_BLOCK = new BlockBucket(BlockTypes.STONE);
     public BlockBucket TOP_BLOCK = new BlockBucket(BlockTypes.GRASS_BLOCK);
     public BlockBucket WALL_BLOCK = new BlockBucket(BlockTypes.STONE_SLAB);

@@ -245,7 +245,6 @@ public class ClassicPlotManager extends SquarePlotManager {
         int x = MathMan.average(corners[0].getX(), corners[1].getX());
         int z = MathMan.average(corners[0].getZ(), corners[1].getZ());
         queue.setBlock(x, classicPlotWorld.PLOT_HEIGHT, z, blocks);
-        System.out.println(classicPlotWorld.PLOT_HEIGHT);
         return !enqueue || queue.enqueue();
     }
 
