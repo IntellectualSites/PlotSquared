@@ -262,7 +262,9 @@ public final class PlotModificationManager {
                     if (queue.size() > 0) {
                         queue.setCompleteTask(run);
                         queue.enqueue();
+                        return;
                     }
+                    run.run();
                     return;
                 }
                 Plot current = queue.poll();
