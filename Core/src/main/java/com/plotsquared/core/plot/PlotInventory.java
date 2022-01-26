@@ -103,6 +103,14 @@ public class PlotInventory {
         this.open = false;
     }
 
+    /**
+     * Put an item into this inventory
+     *
+     * @param index the index (= slot) where to place the item
+     * @param item  the item to place
+     * @return {@code true} if the item could be placed, otherwise {@code false}
+     * @see InventoryUtil#setItem(PlotInventory, int, PlotItemStack)
+     */
     public boolean setItem(int index, PlotItemStack item) {
         if (!this.inventoryUtil.setItem(this, index, item)) {
             return false;
