@@ -106,6 +106,11 @@ public class HybridPlotManager extends ClassicPlotManager {
 
     @Override
     public boolean createRoadEast(final @NonNull Plot plot, @Nullable QueueCoordinator queue) {
+        boolean enqueue = false;
+        if (queue == null) {
+            queue = hybridPlotWorld.getQueue();
+            enqueue = true;
+        }
         super.createRoadEast(plot, queue);
         PlotId id = plot.getId();
         PlotId id2 = PlotId.of(id.getX() + 1, id.getY());
@@ -126,11 +131,6 @@ public class HybridPlotManager extends ClassicPlotManager {
         this.resetBiome(hybridPlotWorld, pos1, pos2);
         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
             return true;
-        }
-        boolean enqueue = false;
-        if (queue == null) {
-            queue = hybridPlotWorld.getQueue();
-            enqueue = true;
         }
         createSchemAbs(queue, pos1, pos2, true);
         return !enqueue || queue.enqueue();
@@ -200,6 +200,11 @@ public class HybridPlotManager extends ClassicPlotManager {
 
     @Override
     public boolean createRoadSouth(final @NonNull Plot plot, @Nullable QueueCoordinator queue) {
+        boolean enqueue = false;
+        if (queue == null) {
+            enqueue = true;
+            queue = hybridPlotWorld.getQueue();
+        }
         super.createRoadSouth(plot, queue);
         PlotId id = plot.getId();
         PlotId id2 = PlotId.of(id.getX(), id.getY() + 1);
@@ -211,27 +216,22 @@ public class HybridPlotManager extends ClassicPlotManager {
         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
             return true;
         }
-        boolean enqueue = false;
-        if (queue == null) {
-            enqueue = true;
-            queue = hybridPlotWorld.getQueue();
-        }
         createSchemAbs(queue, pos1, pos2, true);
         return !enqueue || queue.enqueue();
     }
 
     @Override
     public boolean createRoadSouthEast(final @NonNull Plot plot, @Nullable QueueCoordinator queue) {
-        super.createRoadSouthEast(plot, queue);
-        PlotId id = plot.getId();
-        PlotId id2 = PlotId.of(id.getX() + 1, id.getY() + 1);
-        Location pos1 = getPlotTopLocAbs(id).add(1, 0, 1);
-        Location pos2 = getPlotBottomLocAbs(id2);
         boolean enqueue = false;
         if (queue == null) {
             enqueue = true;
             queue = hybridPlotWorld.getQueue();
         }
+        super.createRoadSouthEast(plot, queue);
+        PlotId id = plot.getId();
+        PlotId id2 = PlotId.of(id.getX() + 1, id.getY() + 1);
+        Location pos1 = getPlotTopLocAbs(id).add(1, 0, 1);
+        Location pos2 = getPlotBottomLocAbs(id2);
         createSchemAbs(queue, pos1, pos2, true);
         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
             createSchemAbs(queue, pos1, pos2, true);
