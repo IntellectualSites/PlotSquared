@@ -103,9 +103,12 @@ public class PlotInventory {
         this.open = false;
     }
 
-    public void setItem(int index, PlotItemStack item) {
+    public boolean setItem(int index, PlotItemStack item) {
+        if (!this.inventoryUtil.setItem(this, index, item)) {
+            return false;
+        }
         this.items[index] = item;
-        this.inventoryUtil.setItem(this, index, item);
+        return true;
     }
 
     public PlotItemStack getItem(int index) {

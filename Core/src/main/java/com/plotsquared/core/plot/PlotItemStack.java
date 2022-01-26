@@ -46,7 +46,20 @@ public class PlotItemStack {
             final String id, final int amount, final String name,
             final String... lore
     ) {
-        this.type = ItemTypes.get(id);
+        this(ItemTypes.get(id), amount, name, lore);
+    }
+
+    /**
+     * @param type   The item type
+     * @param amount Amount of items in the stack
+     * @param name   The display name of the item stack
+     * @param lore   The item stack lore
+     */
+    public PlotItemStack(
+            final ItemType type, final int amount, final String name,
+            final String... lore
+    ) {
+        this.type = type;
         this.amount = amount;
         this.name = name;
         this.lore = lore;

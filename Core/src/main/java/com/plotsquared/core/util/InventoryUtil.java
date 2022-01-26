@@ -38,7 +38,7 @@ public abstract class InventoryUtil {
 
     public abstract void close(final PlotInventory inv);
 
-    public abstract void setItem(
+    public abstract boolean setItem(
             final PlotInventory plotInventory, final int index,
             final PlotItemStack item
     );
