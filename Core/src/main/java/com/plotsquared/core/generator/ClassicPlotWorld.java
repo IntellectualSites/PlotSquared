@@ -46,6 +46,7 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     public int ROAD_HEIGHT = 62;
     public int PLOT_HEIGHT = 62;
     public int WALL_HEIGHT = 62;
+    public int MIN_GEN_HEIGHT = 0;
     public BlockBucket MAIN_BLOCK = new BlockBucket(BlockTypes.STONE);
     public BlockBucket TOP_BLOCK = new BlockBucket(BlockTypes.GRASS_BLOCK);
     public BlockBucket WALL_BLOCK = new BlockBucket(BlockTypes.STONE_SLAB);
@@ -114,6 +115,9 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
                 new ConfigurationNode("wall.height", this.WALL_HEIGHT, TranslatableCaption.of("setup.wall_height"),
                         ConfigurationUtil.INTEGER
                 ),
+                new ConfigurationNode("world.min_gen_height", this.MIN_GEN_HEIGHT, TranslatableCaption.of("setup.min_gen_height"),
+                        ConfigurationUtil.INTEGER
+                ),
                 new ConfigurationNode("plot.bedrock", this.PLOT_BEDROCK, TranslatableCaption.of("setup.bedrock_boolean"),
                         ConfigurationUtil.BOOLEAN
                 )};
@@ -127,6 +131,7 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     public void loadConfiguration(ConfigurationSection config) {
         super.loadConfiguration(config);
         this.PLOT_BEDROCK = config.getBoolean("plot.bedrock");
+        this.MIN_GEN_HEIGHT = Math.max(getMinGenHeight(), config.getInt("world.min_gen_height"));
         this.PLOT_HEIGHT = Math.min(getMaxGenHeight(), config.getInt("plot.height"));
         this.MAIN_BLOCK = new BlockBucket(config.getString("plot.filling"));
         this.TOP_BLOCK = new BlockBucket(config.getString("plot.floor"));
