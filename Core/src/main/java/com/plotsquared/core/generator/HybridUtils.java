@@ -65,7 +65,6 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.File;
 import java.util.ArrayDeque;
@@ -444,9 +443,8 @@ public class HybridUtils {
                     while (iter.hasNext()) {
                         BlockVector2 chunk = iter.next();
                         iter.remove();
-                        QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(area.getWorldName()));
-                        boolean regenedRoad = regenerateRoad(area, chunk, extend, queue);
-                        if (!regenedRoad || !queue.enqueue()) {
+                        boolean regenedRoad = regenerateRoad(area, chunk, extend);
+                        if (!regenedRoad) {
                             LOGGER.info("Failed to regenerate roads");
                         }
                     }
@@ -482,12 +480,11 @@ public class HybridUtils {
                                 TaskManager.getPlatformImplementation().sync(() -> {
                                     long start = System.currentTimeMillis();
                                     Iterator<BlockVector2> iterator = chunks.iterator();
-                                    QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(area.getWorldName()));
                                     while (System.currentTimeMillis() - start < 20 && !chunks.isEmpty()) {
                                         final BlockVector2 chunk = iterator.next();
                                         iterator.remove();
-                                        boolean regenedRoads = regenerateRoad(area, chunk, extend, queue);
-                                        if (!regenedRoads || !queue.enqueue()) {
+                                        boolean regenedRoads = regenerateRoad(area, chunk, extend);
+                                        if (!regenedRoads) {
                                             LOGGER.info("Failed to regenerate road");
                                         }
                                     }
@@ -575,35 +572,7 @@ public class HybridUtils {
         return ey;
     }
 
-    /**
-     * Regenerate the road in a chunk in a plot area.
-     *
-     * @param area   Plot area to regenerate road for
-     * @param chunk  Chunk location to regenerate
-     * @param extend How far to extend setting air above the road
-     * @return if successful
-     * @deprecated use {@link HybridUtils#regenerateRoad(PlotArea, BlockVector2, int, QueueCoordinator)}
-     */
-    @Deprecated(forRemoval = true, since = "TODO")
     public boolean regenerateRoad(final PlotArea area, final BlockVector2 chunk, int extend) {
-        return regenerateRoad(area, chunk, extend, null);
-    }
-
-    /**
-     * Regenerate the road in a chunk in a plot area.
-     *
-     * @param area             Plot area to regenerate road for
-     * @param chunk            Chunk location to regenerate
-     * @param extend           How far to extend setting air above the road
-     * @param queueCoordinator {@link QueueCoordinator} to use to set the blocks. Null if one should be created and enqueued
-     * @return if successful
-     */
-    public boolean regenerateRoad(
-            final PlotArea area,
-            final BlockVector2 chunk,
-            int extend,
-            @Nullable QueueCoordinator queueCoordinator
-    ) {
         int x = chunk.getX() << 4;
         int z = chunk.getZ() << 4;
         int ex = x + 15;
@@ -629,15 +598,7 @@ public class HybridUtils {
         z -= plotWorld.ROAD_OFFSET_Z;
         final int finalX = x;
         final int finalZ = z;
-        final boolean enqueue;
-        final QueueCoordinator queue;
-        if (queueCoordinator == null) {
-            queue = this.blockQueue.getNewQueue(worldUtil.getWeWorld(plotWorld.getWorldName()));
-            enqueue = true;
-        } else {
-            queue = queueCoordinator;
-            enqueue = false;
-        }
+        QueueCoordinator queue = this.blockQueue.getNewQueue(worldUtil.getWeWorld(plotWorld.getWorldName()));
         if (id1 == null || id2 == null || id1 != id2) {
             this.chunkManager.loadChunk(area.getWorldName(), chunk, false).thenRun(() -> {
                 if (id1 != null) {
@@ -721,9 +682,7 @@ public class HybridUtils {
                         }
                     }
                 }
-                if (enqueue) {
-                    queue.enqueue();
-                }
+                queue.enqueue();
             });
             return true;
         }

@@ -178,10 +178,9 @@ public class HybridPlotManager extends ClassicPlotManager {
                 }
                 BaseBlock[] blocks = hybridPlotWorld.G_SCH.get(MathMan.pair(absX, absZ));
                 if (blocks != null) {
-                    for (int yIndex = 0; yIndex < blocks.length; yIndex++) {
-                        int y = yIndex - hybridPlotWorld.getMinGenHeight();
-                        if (blocks[yIndex] != null) {
-                            queue.setBlock(x, minY + y, z, blocks[yIndex]);
+                    for (int y = 0; y < blocks.length; y++) {
+                        if (blocks[y] != null) {
+                            queue.setBlock(x, minY + y, z, blocks[y]);
                         } else {
                             // This is necessary, otherwise any blocks not specified in the schematic will remain after a clear
                             queue.setBlock(x, minY + y, z, airBlock);
