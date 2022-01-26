@@ -38,6 +38,13 @@ public abstract class InventoryUtil {
 
     public abstract void close(final PlotInventory inv);
 
+    /**
+     * Attempts to set an item into a {@link PlotInventory}
+     * @param plotInventory The inventory where the item should be placed
+     * @param index The index where to place the item
+     * @param item The item to place into the inventory
+     * @return {@code true} if the item could be placed, {@code false} otherwise (e.g. item not available in current version)
+     */
     public abstract boolean setItem(
             final PlotInventory plotInventory, final int index,
             final PlotItemStack item

@@ -42,6 +42,7 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,7 @@ import java.util.stream.IntStream;
 @Singleton
 public class BukkitInventoryUtil extends InventoryUtil {
 
-    private static ItemStack getItem(PlotItemStack item) {
+    private static @Nullable ItemStack getItem(PlotItemStack item) {
         if (item == null) {
             return null;
         }
