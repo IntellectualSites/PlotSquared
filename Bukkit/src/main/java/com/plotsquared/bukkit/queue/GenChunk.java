@@ -31,6 +31,7 @@ import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.location.ChunkWrapper;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.queue.ScopedQueueCoordinator;
+import com.plotsquared.core.util.AnnotationHelper;
 import com.plotsquared.core.util.ChunkUtil;
 import com.plotsquared.core.util.PatternUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -50,6 +51,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Arrays;
 
+@AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
 public class GenChunk extends ScopedQueueCoordinator {
 
     public final Biome[] biomes;
@@ -61,21 +63,7 @@ public class GenChunk extends ScopedQueueCoordinator {
     public int chunkZ;
     private ChunkData chunkData = null;
 
-
     /**
-     * Not API. Used as a bridge between P2 and Bukkit {@link Chunk}.
-     *
-     * @deprecated Use {@link GenChunk#regenChunk(int, int)} for extended world heights
-     * @since TODO
-     */
-    @Deprecated(forRemoval = true, since = "TODO")
-    public GenChunk() {
-        this(0, 255);
-    }
-
-    /**
-     * Not API. Used as a bridge between P2 and Bukkit {@link Chunk}.
-     *
      * @param minY minimum world Y, inclusive
      * @param maxY maximum world Y, inclusive
      *

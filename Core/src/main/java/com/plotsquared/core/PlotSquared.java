@@ -1100,18 +1100,14 @@ public class PlotSquared {
                                     ConfigurationUtil.INTEGER.parseString(value).shortValue()
                             );
                         }
-                        case "minh", "minheight" -> {
-                            this.worldConfiguration.set(
-                                    base + "world.min_gen_height",
-                                    ConfigurationUtil.INTEGER.parseString(value).shortValue()
-                            );
-                        }
-                        case "maxh", "maxheight" -> {
-                            this.worldConfiguration.set(
-                                    base + "world.max_gen_height",
-                                    ConfigurationUtil.INTEGER.parseString(value).shortValue()
-                            );
-                        }
+                        case "minh", "minheight" -> this.worldConfiguration.set(
+                                base + "world.min_gen_height",
+                                ConfigurationUtil.INTEGER.parseString(value).shortValue()
+                        );
+                        case "maxh", "maxheight" -> this.worldConfiguration.set(
+                                base + "world.max_gen_height",
+                                ConfigurationUtil.INTEGER.parseString(value).shortValue()
+                        );
                         case "f", "floor" -> this.worldConfiguration.set(
                                 base + "plot.floor",
                                 ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString()

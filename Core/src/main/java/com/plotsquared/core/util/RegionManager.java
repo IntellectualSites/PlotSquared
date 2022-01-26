@@ -390,6 +390,16 @@ public abstract class RegionManager {
         setBiome(region, extendBiome, biome, PlotSquared.get().getPlotAreaManager().getPlotAreas(world, region)[0], whenDone);
     }
 
+    /**
+     * Set a region to a biome type.
+     *
+     * @param region      region to set
+     * @param extendBiome how far outside the region to extent setting the biome too account for 3D biomes being 4x4
+     * @param biome       biome to set
+     * @param area        {@link PlotArea} in which the biome is being set
+     * @param whenDone    task to run when complete
+     * @since TODO
+     */
     public void setBiome(
             final CuboidRegion region,
             final int extendBiome,
