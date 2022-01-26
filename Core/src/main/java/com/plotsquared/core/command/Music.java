@@ -150,8 +150,8 @@ public class Music extends SubCommand {
                 continue;
             }
             final PlotItemStack item = new PlotItemStack(type, 1, name, lore);
-            if (!inv.setItem(index++, item)) {
-                index--;
+            if (inv.setItem(index, item)) {
+                index++;
             }
         }
 
