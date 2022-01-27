@@ -107,12 +107,24 @@ public class PlotInventory {
      * Put an item into this inventory
      *
      * @param index the index (= slot) where to place the item
+     * @param item the item to place
+     * @see #setItemChecked(int, PlotItemStack)
+     */
+    public void setItem(int index, PlotItemStack item) {
+        setItemChecked(index, item);
+    }
+
+    /**
+     * Put an item into this inventory, while also checking the existence of the material in the current version
+     *
+     * @param index the index (= slot) where to place the item
      * @param item  the item to place
      * @return {@code true} if the item could be placed, otherwise {@code false}
-     * @see InventoryUtil#setItem(PlotInventory, int, PlotItemStack)
+     * @see InventoryUtil#setItemChecked(PlotInventory, int, PlotItemStack)
+     * @since TODO
      */
-    public boolean setItem(int index, PlotItemStack item) {
-        if (!this.inventoryUtil.setItem(this, index, item)) {
+    public boolean setItemChecked(int index, PlotItemStack item) {
+        if (!this.inventoryUtil.setItemChecked(this, index, item)) {
             return false;
         }
         this.items[index] = item;

@@ -109,7 +109,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
     }
 
     @Override
-    public boolean setItem(PlotInventory inv, int index, PlotItemStack item) {
+    public boolean setItemChecked(PlotInventory inv, int index, PlotItemStack item) {
         BukkitPlayer bp = (BukkitPlayer) inv.getPlayer();
         InventoryView opened = bp.player.getOpenInventory();
         ItemStack stack = getItem(item);
