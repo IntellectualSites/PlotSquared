@@ -451,7 +451,7 @@ public class ExpireManager {
         plot.getPlotModificationManager().deletePlot(null, whenDone);
     }
 
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.4.0")
     public long getAge(UUID uuid) {
         return getAge(uuid, false);
     }
@@ -462,7 +462,7 @@ public class ExpireManager {
      * @param uuid                     the uuid of the owner to check against
      * @param shouldDeleteUnknownOwner {@code true} if an unknown player should be counted as never online
      * @return the millis since the player was last online, or {@link Long#MAX_VALUE} if player was never online
-     * @since TODO
+     * @since 6.4.0
      */
     public long getAge(UUID uuid, final boolean shouldDeleteUnknownOwner) {
         if (PlotSquared.platform().playerManager().getPlayerIfExists(uuid) != null) {
