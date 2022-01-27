@@ -114,7 +114,7 @@ public final class FlagCommand extends Command {
                             TranslatableCaption.of("permission.no_permission"),
                             Template.of(
                                     "node",
-                                    perm
+                                    perm + "." + numeric
                             )
                     );
                 }
