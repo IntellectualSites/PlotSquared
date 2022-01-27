@@ -74,6 +74,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -86,7 +87,7 @@ public class HybridUtils {
     public static HybridUtils manager;
     public static Set<BlockVector2> regions;
     public static int height;
-    public static Set<BlockVector2> chunks = new HashSet<>();
+    public static Set<BlockVector2> chunks = new LinkedHashSet<>();
     public static PlotArea area;
     public static boolean UPDATE = false;
 
@@ -412,7 +413,7 @@ public class HybridUtils {
         }
         HybridUtils.UPDATE = true;
         Set<BlockVector2> regions = this.worldUtil.getChunkChunks(area.getWorldName());
-        return scheduleRoadUpdate(area, regions, extend, new HashSet<>());
+        return scheduleRoadUpdate(area, regions, extend, new LinkedHashSet<>());
     }
 
     public boolean scheduleSingleRegionRoadUpdate(Plot plot, int extend) {
@@ -422,7 +423,7 @@ public class HybridUtils {
         HybridUtils.UPDATE = true;
         Set<BlockVector2> regions = new HashSet<>();
         regions.add(RegionManager.getRegion(plot.getCenterSynchronous()));
-        return scheduleRoadUpdate(plot.getArea(), regions, extend, new HashSet<>());
+        return scheduleRoadUpdate(plot.getArea(), regions, extend, new LinkedHashSet<>());
     }
 
     public boolean scheduleRoadUpdate(
