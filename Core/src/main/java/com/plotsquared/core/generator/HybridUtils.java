@@ -449,7 +449,7 @@ public class HybridUtils {
                         iter.remove();
                         boolean regenedRoad = regenerateRoad(area, chunk, extend, queue);
                         if (!regenedRoad) {
-                            LOGGER.info(String.format("Failed to regenerate roads in chunk %s", chunk));
+                            LOGGER.info("Failed to regenerate roads in chunk {}", chunk);
                         }
                     }
                     queue.enqueue();
@@ -491,7 +491,7 @@ public class HybridUtils {
                                             iterator.remove();
                                             boolean regenedRoads = regenerateRoad(area, chunk, extend, queue);
                                             if (!regenedRoads) {
-                                                LOGGER.info(String.format("Failed to regenerate road in chunk %s", chunk));
+                                                LOGGER.info("Failed to regenerate the road in chunk {}", chunk);
                                             }
                                         }
                                         queue.setCompleteTask(task);
@@ -504,7 +504,7 @@ public class HybridUtils {
                                         iterator.remove();
                                         boolean regenedRoads = regenerateRoad(area, chunk, extend, queue);
                                         if (!regenedRoads) {
-                                            LOGGER.info(String.format("Failed to regenerate road in chunk %s", chunk));
+                                            LOGGER.info("Failed to regenerate road in chunk {}", chunk);
                                         }
                                     }
                                     queue.setCompleteTask(task);
@@ -616,6 +616,7 @@ public class HybridUtils {
      * @param extend           How far to extend setting air above the road
      * @param queueCoordinator {@link QueueCoordinator} to use to set the blocks. Null if one should be created and enqueued
      * @return if successful
+     * @since TODO
      */
     public boolean regenerateRoad(
             final PlotArea area,
