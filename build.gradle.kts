@@ -26,6 +26,7 @@ allprojects {
 
     repositories {
         mavenCentral()
+        mavenLocal()
 
         maven {
             name = "Sonatype OSS"
