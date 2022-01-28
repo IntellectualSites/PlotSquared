@@ -51,7 +51,7 @@ public class PluginCmd extends SubCommand {
             player.sendMessage(StaticCaption.of(
                     "<gray>>> </gray><gold><bold>Authors<reset><gray>: </gray><gold>Citymonstret </gold><gray>& </gray><gold>Empire92 </gold><gray>& </gray><gold>MattBDev </gold><gray>& </gray><gold>dordsor21 </gold><gray>& </gray><gold>NotMyFault </gold><gray>& </gray><gold>SirYwell</gold>"));
             player.sendMessage(StaticCaption.of(
-                    "<gray>>> </gray><gold><bold>Wiki<reset><gray>: </gray><gold><click:open_url:https://github.com/IntellectualSites/PlotSquared-Documentation/wiki>https://github.com/IntellectualSites/PlotSquared-Documentation/wiki</gold>"));
+                    "<gray>>> </gray><gold><bold>Wiki<reset><gray>: </gray><gold><click:open_url:https://intellectualsites.github.io/plotsquared-documentation/>https://intellectualsites.github.io/plotsquared-documentation/</gold>"));
             player.sendMessage(StaticCaption.of(
                     "<gray>>> </gray><gold><bold>Discord<reset><gray>: </gray><gold><click:open_url:https://discord.gg/intellectualsites>https://discord.gg/intellectualsites</gold>"));
             player.sendMessage(
