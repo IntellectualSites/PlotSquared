@@ -329,7 +329,7 @@ public abstract class SchematicHandler {
                     if (pw instanceof ClassicPlotWorld) {
                         y_offset_actual = yOffset + pw.getMinBuildHeight() + ((ClassicPlotWorld) pw).PLOT_HEIGHT;
                     } else {
-                        y_offset_actual = yOffset + 1 + this.worldUtil
+                        y_offset_actual = yOffset + pw.getMinBuildHeight() + this.worldUtil
                                 .getHighestBlockSynchronous(plot.getWorldName(), region.getMinimumPoint().getX() + 1,
                                         region.getMinimumPoint().getZ() + 1
                                 );
@@ -388,8 +388,10 @@ public abstract class SchematicHandler {
             if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
                 queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
             }
-            whenDone.value = true;
-            queue.setCompleteTask(whenDone);
+            if (whenDone != null) {
+                whenDone.value = true;
+                queue.setCompleteTask(whenDone);
+            }
             queue.enqueue();
         } catch (Exception e) {
             e.printStackTrace();
