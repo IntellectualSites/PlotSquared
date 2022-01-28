@@ -160,8 +160,8 @@ public class BukkitPlotGenerator extends ChunkGenerator
             @NonNull BiomeGrid biome
     ) {
 
-        int minY =  BukkitWorld.getMinWorldHeight(world);
-        int maxY =  BukkitWorld.getMaxWorldHeight(world);
+        int minY = BukkitWorld.getMinWorldHeight(world);
+        int maxY = BukkitWorld.getMaxWorldHeight(world);
         GenChunk result = new GenChunk(minY, maxY);
         if (this.getPlotGenerator() instanceof SingleWorldGenerator) {
             if (result.getChunkData() != null) {
