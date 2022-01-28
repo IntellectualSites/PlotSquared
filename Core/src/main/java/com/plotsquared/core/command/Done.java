@@ -126,7 +126,7 @@ public class Done extends SubCommand {
         long flagValue = System.currentTimeMillis() / 1000;
         PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(DoneFlag.class)
                 .createFlagInstance(Long.toString(flagValue));
-        PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
+        PlotFlagAddEvent event = eventDispatcher.callFlagAdd(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(TranslatableCaption.of("events.event_denied"));
             return;

@@ -359,7 +359,7 @@ public class ExpireManager {
                                                 .getFlag(AnalysisFlag.class)
                                                 .createFlagInstance(changed.asList());
                                         PlotFlagAddEvent event =
-                                                new PlotFlagAddEvent(plotFlag, newPlot);
+                                                eventDispatcher.callFlagAdd(plotFlag, plot);
                                         if (event.getEventResult() == Result.DENY) {
                                             return;
                                         }

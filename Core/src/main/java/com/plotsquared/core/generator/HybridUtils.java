@@ -45,6 +45,7 @@ import com.plotsquared.core.queue.ChunkQueueCoordinator;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.RegionUtil;
@@ -93,6 +94,7 @@ public class HybridUtils {
     private final GlobalBlockQueue blockQueue;
     private final WorldUtil worldUtil;
     private final SchematicHandler schematicHandler;
+    private final EventDispatcher eventDispatcher;
 
     @Inject
     public HybridUtils(
@@ -100,13 +102,15 @@ public class HybridUtils {
             final @NonNull ChunkManager chunkManager,
             final @NonNull GlobalBlockQueue blockQueue,
             final @NonNull WorldUtil worldUtil,
-            final @NonNull SchematicHandler schematicHandler
+            final @NonNull SchematicHandler schematicHandler,
+            final @NonNull EventDispatcher eventDispatcher
     ) {
         this.plotAreaManager = plotAreaManager;
         this.chunkManager = chunkManager;
         this.blockQueue = blockQueue;
         this.worldUtil = worldUtil;
         this.schematicHandler = schematicHandler;
+        this.eventDispatcher = eventDispatcher;
     }
 
     public void regeneratePlotWalls(final PlotArea area) {
@@ -348,7 +352,7 @@ public class HybridUtils {
                     result.add(whenDone.value.variety_sd);
                     PlotFlag<?, ?> plotFlag = GlobalFlagContainer.getInstance().getFlag(AnalysisFlag.class).createFlagInstance(
                             result);
-                    PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, origin);
+                    PlotFlagAddEvent event = eventDispatcher.callFlagAdd(plotFlag, origin);
                     if (event.getEventResult() == Result.DENY) {
                         return;
                     }
