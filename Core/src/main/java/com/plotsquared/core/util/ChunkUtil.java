@@ -94,7 +94,7 @@ public class ChunkUtil {
     }
 
     /**
-     * Gets the y coordinate for specific I and J values for a Chunk 16x16x16x16 layerxyz Array[N][4096].
+     * Gets the y coordinate for specific I and J values for a Chunk Nx16x16x16 layerxyz Array[N][4096].
      *
      * @param i Relative layer of the position in the layerxyz Array[16][4096]. May be negative.
      * @param j Position in the xyz Array[4096].
