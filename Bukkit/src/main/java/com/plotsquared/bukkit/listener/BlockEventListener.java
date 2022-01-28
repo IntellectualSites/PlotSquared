@@ -354,7 +354,8 @@ public class BlockEventListener implements Listener {
         Plot plot = area.getPlot(location);
         if (plot != null) {
             BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
-            if (event.getBlock().getY() == area.getMinBuildHeight()) {
+            // == rather than <= as we only care about the "ground level" not being destroyed
+            if (event.getBlock().getY() == area.getMinGenHeight()) {
                 if (!Permissions
                         .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL)) {
                     plotPlayer.sendMessage(
@@ -649,7 +650,8 @@ public class BlockEventListener implements Listener {
                     event.getBlock().breakNaturally();
                 }
             }
-            if (location.getY() == area.getMinBuildHeight()) {
+            // == rather than <= as we only care about the "ground level" not being destroyed
+            if (location.getY() == area.getMinGenHeight()) {
                 event.setCancelled(true);
                 return;
             }
