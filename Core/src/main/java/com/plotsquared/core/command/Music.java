@@ -38,10 +38,12 @@ import com.plotsquared.core.plot.PlotInventory;
 import com.plotsquared.core.plot.PlotItemStack;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.MusicFlag;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.InventoryUtil;
 import com.plotsquared.core.util.Permissions;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -63,10 +65,12 @@ public class Music extends SubCommand {
             );
 
     private final InventoryUtil inventoryUtil;
+    private final EventDispatcher eventDispatcher;
 
     @Inject
-    public Music(final @Nullable InventoryUtil inventoryUtil) {
+    public Music(final @Nullable InventoryUtil inventoryUtil, final @NonNull EventDispatcher eventDispatcher) {
         this.inventoryUtil = inventoryUtil;
+        this.eventDispatcher = eventDispatcher;
     }
 
     @Override
@@ -104,7 +108,7 @@ public class Music extends SubCommand {
                 if (item.getType() == ItemTypes.BEDROCK) {
                     PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(MusicFlag.class)
                             .createFlagInstance(item.getType());
-                    PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(plotFlag, plot);
+                    PlotFlagRemoveEvent event = eventDispatcher.callFlagRemove(plotFlag, plot);
                     if (event.getEventResult() == Result.DENY) {
                         getPlayer().sendMessage(
                                 TranslatableCaption.of("events.event_denied"),
@@ -121,7 +125,7 @@ public class Music extends SubCommand {
                 } else if (item.getName().toLowerCase(Locale.ENGLISH).contains("disc")) {
                     PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(MusicFlag.class)
                             .createFlagInstance(item.getType());
-                    PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
+                    PlotFlagAddEvent event = eventDispatcher.callFlagAdd(plotFlag, plot);
                     if (event.getEventResult() == Result.DENY) {
                         getPlayer().sendMessage(
                                 TranslatableCaption.of("events.event_denied"),

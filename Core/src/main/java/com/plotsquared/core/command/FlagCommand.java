@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
@@ -44,6 +45,7 @@ import com.plotsquared.core.plot.flag.InternalFlag;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.types.IntegerFlag;
 import com.plotsquared.core.plot.flag.types.ListFlag;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringComparison;
@@ -79,8 +81,12 @@ import java.util.stream.Stream;
 @SuppressWarnings("unused")
 public final class FlagCommand extends Command {
 
-    public FlagCommand() {
+    private final EventDispatcher eventDispatcher;
+
+    @Inject
+    public FlagCommand(final @NonNull EventDispatcher eventDispatcher) {
         super(MainCommand.getInstance(), true);
+        this.eventDispatcher = eventDispatcher;
     }
 
     private static boolean sendMessage(PlotPlayer<?> player) {
@@ -335,7 +341,7 @@ public final class FlagCommand extends Command {
             return;
         }
         Plot plot = player.getLocation().getPlotAbs();
-        PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
+        PlotFlagAddEvent event = eventDispatcher.callFlagAdd(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
@@ -394,7 +400,7 @@ public final class FlagCommand extends Command {
             return;
         }
         Plot plot = player.getLocation().getPlotAbs();
-        PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
+        PlotFlagAddEvent event = eventDispatcher.callFlagAdd(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
@@ -463,7 +469,7 @@ public final class FlagCommand extends Command {
             return;
         }
         final Plot plot = player.getLocation().getPlotAbs();
-        PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(flag, plot);
+        PlotFlagRemoveEvent event = eventDispatcher.callFlagRemove(flag, plot);
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
@@ -516,7 +522,7 @@ public final class FlagCommand extends Command {
                     }
                 } else {
                     PlotFlag<?, ?> plotFlag = parsedFlag.createFlagInstance(list);
-                    PlotFlagAddEvent addEvent = new PlotFlagAddEvent(plotFlag, plot);
+                    PlotFlagAddEvent addEvent = eventDispatcher.callFlagAdd(plotFlag, plot);
                     if (addEvent.getEventResult() == Result.DENY) {
                         player.sendMessage(
                                 TranslatableCaption.of("events.event_denied"),
