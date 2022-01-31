@@ -134,17 +134,28 @@ public final class GlobalFlagContainer extends FlagContainer {
         stringClassMap = new HashMap<>();
 
         // Register all default flags here
+        // Block type list flags
+        this.addFlag(BreakFlag.BREAK_NONE);
+        this.addFlag(UseFlag.USE_NONE);
+        this.addFlag(PlaceFlag.PLACE_NONE);
+
         // Boolean flags
-        this.addFlag(ExplosionFlag.EXPLOSION_FALSE);
-        this.addFlag(UntrustedVisitFlag.UNTRUSTED_VISIT_FLAG_TRUE);
-        this.addFlag(DenyExitFlag.DENY_EXIT_FLAG_FALSE);
         this.addFlag(AnimalAttackFlag.ANIMAL_ATTACK_FALSE);
         this.addFlag(AnimalInteractFlag.ANIMAL_INTERACT_FALSE);
         this.addFlag(BlockBurnFlag.BLOCK_BURN_FALSE);
         this.addFlag(BlockIgnitionFlag.BLOCK_IGNITION_TRUE);
+        this.addFlag(ChatFlag.CHAT_FLAG_TRUE);
+        this.addFlag(CopperOxideFlag.COPPER_OXIDE_FALSE);
+        this.addFlag(CoralDryFlag.CORAL_DRY_FALSE);
+        this.addFlag(CropGrowFlag.CROP_GROW_TRUE);
+        this.addFlag(DenyExitFlag.DENY_EXIT_FLAG_FALSE);
+        this.addFlag(DenyPortalsFlag.DENY_PORTALS_FALSE);
+        this.addFlag(DenyPortalTravelFlag.DENY_PORTAL_TRAVEL_FALSE);
         this.addFlag(DeviceInteractFlag.DEVICE_INTERACT_FALSE);
         this.addFlag(DisablePhysicsFlag.DISABLE_PHYSICS_FALSE);
         this.addFlag(DropProtectionFlag.DROP_PROTECTION_FALSE);
+        this.addFlag(EntityChangeBlockFlag.ENTITY_CHANGE_BLOCK_FALSE);
+        this.addFlag(ExplosionFlag.EXPLOSION_FALSE);
         this.addFlag(ForcefieldFlag.FORCEFIELD_FALSE);
         this.addFlag(GrassGrowFlag.GRASS_GROW_TRUE);
         this.addFlag(HangingBreakFlag.HANGING_BREAK_FALSE);
@@ -154,52 +165,53 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(HostileInteractFlag.HOSTILE_INTERACT_FALSE);
         this.addFlag(IceFormFlag.ICE_FORM_FALSE);
         this.addFlag(IceMeltFlag.ICE_MELT_FALSE);
+        this.addFlag(InstabreakFlag.INSTABREAK_FALSE);
+        this.addFlag(InvincibleFlag.INVINCIBLE_FALSE);
+        this.addFlag(ItemDropFlag.ITEM_DROP_TRUE);
+        this.addFlag(KeepInventoryFlag.KEEP_INVENTORY_FALSE);
         this.addFlag(KelpGrowFlag.KELP_GROW_TRUE);
-        this.addFlag(RedstoneFlag.REDSTONE_TRUE);
-        this.addFlag(ServerPlotFlag.SERVER_PLOT_FALSE);
+        this.addFlag(LeafDecayFlag.LEAF_DECAY_TRUE);
+        this.addFlag(LecternReadBookFlag.LECTERN_READ_BOOK_FALSE);
         this.addFlag(MiscBreakFlag.MISC_BREAK_FALSE);
         this.addFlag(MobBreakFlag.MOB_BREAK_FALSE);
         this.addFlag(MobPlaceFlag.MOB_PLACE_FALSE);
+        this.addFlag(MiscInteractFlag.MISC_INTERACT_FALSE);
+        this.addFlag(MiscPlaceFlag.MISC_PLACE_FALSE);
         this.addFlag(MycelGrowFlag.MYCEL_GROW_TRUE);
         this.addFlag(NotifyEnterFlag.NOTIFY_ENTER_FALSE);
         this.addFlag(NotifyLeaveFlag.NOTIFY_LEAVE_FALSE);
         this.addFlag(NoWorldeditFlag.NO_WORLDEDIT_FALSE);
         this.addFlag(PlayerInteractFlag.PLAYER_INTERACT_FALSE);
+        this.addFlag(PreventCreativeCopyFlag.PREVENT_CREATIVE_COPY_FALSE);
         this.addFlag(PveFlag.PVE_FALSE);
         this.addFlag(PvpFlag.PVP_FALSE);
+        this.addFlag(RedstoneFlag.REDSTONE_TRUE);
+        this.addFlag(ServerPlotFlag.SERVER_PLOT_FALSE);
         this.addFlag(SnowFormFlag.SNOW_FORM_FALSE);
         this.addFlag(SnowMeltFlag.SNOW_MELT_TRUE);
         this.addFlag(SoilDryFlag.SOIL_DRY_FALSE);
-        this.addFlag(CoralDryFlag.CORAL_DRY_FALSE);
         this.addFlag(TamedAttackFlag.TAMED_ATTACK_FALSE);
         this.addFlag(TamedInteractFlag.TAMED_INTERACT_FALSE);
+        this.addFlag(UntrustedVisitFlag.UNTRUSTED_VISIT_FLAG_TRUE);
         this.addFlag(VehicleBreakFlag.VEHICLE_BREAK_FALSE);
         this.addFlag(VehiclePlaceFlag.VEHICLE_PLACE_FALSE);
         this.addFlag(VehicleUseFlag.VEHICLE_USE_FALSE);
         this.addFlag(VillagerInteractFlag.VILLAGER_INTERACT_FALSE);
         this.addFlag(VineGrowFlag.VINE_GROW_TRUE);
-        this.addFlag(ItemDropFlag.ITEM_DROP_TRUE);
-        this.addFlag(InstabreakFlag.INSTABREAK_FALSE);
-        this.addFlag(InvincibleFlag.INVINCIBLE_FALSE);
-        this.addFlag(ChatFlag.CHAT_FLAG_TRUE);
-        this.addFlag(MiscPlaceFlag.MISC_PLACE_FALSE);
-        this.addFlag(MiscInteractFlag.MISC_INTERACT_FALSE);
-        this.addFlag(KeepInventoryFlag.KEEP_INVENTORY_FALSE);
-        this.addFlag(PreventCreativeCopyFlag.PREVENT_CREATIVE_COPY_FALSE);
-        this.addFlag(LeafDecayFlag.LEAF_DECAY_TRUE);
-        this.addFlag(CropGrowFlag.CROP_GROW_TRUE);
-        this.addFlag(DenyPortalTravelFlag.DENY_PORTAL_TRAVEL_FALSE);
-        this.addFlag(DenyPortalsFlag.DENY_PORTALS_FALSE);
-        this.addFlag(LecternReadBookFlag.LECTERN_READ_BOOK_FALSE);
-        this.addFlag(EntityChangeBlockFlag.ENTITY_CHANGE_BLOCK_FALSE);
-        this.addFlag(CopperOxideFlag.COPPER_OXIDE_FALSE);
+
+        // Double flags
+        this.addFlag(PriceFlag.PRICE_NOT_BUYABLE);
 
         // Enum Flags
-        this.addFlag(WeatherFlag.PLOT_WEATHER_FLAG_OFF);
         this.addFlag(DenyTeleportFlag.DENY_TELEPORT_FLAG_NONE);
-        this.addFlag(TitlesFlag.TITLES_NONE);
         this.addFlag(FlyFlag.FLIGHT_FLAG_DEFAULT);
         this.addFlag(LiquidFlowFlag.LIQUID_FLOW_DEFAULT);
+        this.addFlag(TitlesFlag.TITLES_NONE);
+        this.addFlag(WeatherFlag.PLOT_WEATHER_FLAG_OFF);
+
+        // Internal flags
+        this.addFlag(new AnalysisFlag(Collections.emptyList()));
+        this.addFlag(new DoneFlag(""));
 
         // Integer flags
         this.addFlag(AnimalCapFlag.ANIMAL_CAP_UNLIMITED);
@@ -210,22 +222,10 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(TimeFlag.TIME_DISABLED);
         this.addFlag(VehicleCapFlag.VEHICLE_CAP_UNLIMITED);
 
-        // Timed flags
-        this.addFlag(FeedFlag.FEED_NOTHING);
-        this.addFlag(HealFlag.HEAL_NOTHING);
-
-        // Double flags
-        this.addFlag(PriceFlag.PRICE_NOT_BUYABLE);
-
-        // Block type list flags
-        this.addFlag(BreakFlag.BREAK_NONE);
-        this.addFlag(PlaceFlag.PLACE_NONE);
-        this.addFlag(UseFlag.USE_NONE);
-
         // Misc
+        this.addFlag(BlockedCmdsFlag.BLOCKED_CMDS_FLAG_NONE);
         this.addFlag(GamemodeFlag.GAMEMODE_FLAG_DEFAULT);
         this.addFlag(GuestGamemodeFlag.GUEST_GAMEMODE_FLAG_DEFAULT);
-        this.addFlag(BlockedCmdsFlag.BLOCKED_CMDS_FLAG_NONE);
         this.addFlag(KeepFlag.KEEP_FLAG_FALSE);
         this.addFlag(MusicFlag.MUSIC_FLAG_NONE);
 
@@ -235,9 +235,9 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(FarewellFlag.FAREWELL_FLAG_EMPTY);
         this.addFlag(PlotTitleFlag.TITLE_FLAG_DEFAULT);
 
-        // Internal flags
-        this.addFlag(new AnalysisFlag(Collections.emptyList()));
-        this.addFlag(new DoneFlag(""));
+        // Timed flags
+        this.addFlag(FeedFlag.FEED_NOTHING);
+        this.addFlag(HealFlag.HEAL_NOTHING);
     }
 
     public static void setup() {

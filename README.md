@@ -33,9 +33,9 @@ is to provide a lag-free and smooth experience.
 * [Contributing](https://github.com/IntellectualSites/.github/blob/main/CONTRIBUTING.md)
 
 ### Developer Resources
-* [API Documentation](https://intellectualsites.github.io/plotsquared-documentation/api/API-Documentation)
-* [Event API](https://intellectualsites.github.io/plotsquared-documentation/api/Event-API)
-* [Flag API](https://intellectualsites.github.io/plotsquared-documentation/api/API-Flag)
+* [API Documentation](https://intellectualsites.github.io/plotsquared-documentation/api/api-documentation)
+* [Event API](https://intellectualsites.github.io/plotsquared-documentation/api/event-api)
+* [Flag API](https://intellectualsites.github.io/plotsquared-documentation/api/flag-api)
 
 # Official Addons
 * [Plot2Dynmap](http://www.spigotmc.org/resources/plot2dynmap.1292/)
