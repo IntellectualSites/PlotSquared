@@ -1,6 +1,6 @@
 [versions]
 # Minecraft expectations
-gson = "2.8.9" # Version set by Minecraft
+gson = "2.8.8" # Version set by Minecraft
 log4j-api = "2.17.1" # Version set by Minecraft
 guava = "31.0.1-jre" # Version set by Minecraft
 
@@ -17,7 +17,7 @@ adventure-text-minimessage = "4.1.0-SNAPSHOT"
 adventure-platform-bukkit = "4.0.1"
 
 # Plugins
-worldedit = "7.2.8"
+worldedit = "7.2.9"
 fawe = "2.0.1"
 vault = "1.7.1"
 placeholderapi = "2.11.1"
