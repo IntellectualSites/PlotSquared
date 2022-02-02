@@ -18,7 +18,7 @@ plugins {
     idea
 }
 
-version = "6.3.1-SNAPSHOT"
+version = "6.4.1-SNAPSHOT"
 
 allprojects {
     group = "com.plotsquared"
@@ -77,7 +77,7 @@ allprojects {
     }
 
     tasks.compileJava.configure {
-        options.release.set(16)
+        options.release.set(17)
     }
 
     configurations.all {

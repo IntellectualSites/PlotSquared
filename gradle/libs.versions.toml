@@ -1,13 +1,13 @@
 [versions]
 # Minecraft expectations
-gson = "2.8.9" # Version set by Minecraft
+gson = "2.8.8" # Version set by Minecraft
 log4j-api = "2.17.1" # Version set by Minecraft
 guava = "31.0.1-jre" # Version set by Minecraft
 
 # Platform expectations
 paper = "1.18.1-R0.1-SNAPSHOT"
 checker-qual = "3.21.1"
-guice = "5.0.1"
+guice = "5.1.0"
 findbugs = "3.0.1"
 snakeyaml = "1.30" # Version set by Bukkit
 
@@ -17,8 +17,8 @@ adventure-text-minimessage = "4.1.0-SNAPSHOT"
 adventure-platform-bukkit = "4.0.1"
 
 # Plugins
-worldedit = "7.2.8"
-fawe = "2.0.0"
+worldedit = "7.2.9"
+fawe = "2.0.1"
 vault = "1.7.1"
 placeholderapi = "2.11.1"
 luckperms = "5.3"
@@ -30,8 +30,8 @@ prtree = "2.0.0"
 aopalliance = "1.0"
 cloud-services = "1.6.1"
 arkitektonika = "2.1.1"
-paster = "1.1.3"
-bstats = "2.2.1"
+paster = "1.1.4"
+bstats = "3.0.0"
 paperlib = "1.0.7"
 squirrelid = "0.3.0"
 serverlib = "2.3.1"

@@ -328,7 +328,7 @@ public class StringMan {
     /**
      * @param message an input string
      * @return a list of strings
-     * @since TODO
+     * @since 6.4.0
      *
      *         <table border="1">
      *         <caption>Converts multiple quoted and single strings into a list of strings</caption>

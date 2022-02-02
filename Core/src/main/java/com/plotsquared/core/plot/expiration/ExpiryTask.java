@@ -160,7 +160,7 @@ public class ExpiryTask {
     /**
      * Returns {@code true} if this task respects unknown owners
      * @return {@code true} if unknown owners should be counted as never online
-     * @since TODO
+     * @since 6.4.0
      */
     public boolean shouldDeleteForUnknownOwner() {
         return settings.DELETE_IF_OWNER_IS_UNKNOWN;

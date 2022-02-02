@@ -166,7 +166,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @return The player's name, None, Everyone or Unknown
      * @deprecated Use {@link #resolveName(UUID)}
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.4.0")
     public static @NonNull String getName(final @Nullable UUID owner) {
         return getName(owner, true);
     }
@@ -179,7 +179,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @return The player's name, None, Everyone or Unknown
      * @deprecated Use {@link #resolveName(UUID, boolean)}
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.4.0")
     public static @NonNull String getName(final @Nullable UUID owner, final boolean blocking) {
         if (owner == null) {
             TranslatableCaption.of("info.none");
@@ -217,7 +217,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param owner The UUID of the owner
      * @return A caption containing either the name, {@code None}, {@code Everyone} or {@code Unknown}
      * @see #resolveName(UUID, boolean)
-     * @since TODO
+     * @since 6.4.0
      */
     public static @NonNull Caption resolveName(final @Nullable UUID owner) {
         return resolveName(owner, true);
@@ -229,7 +229,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param owner    The UUID of the owner
      * @param blocking If the operation should block the current thread for {@link Settings.UUID#BLOCKING_TIMEOUT} milliseconds
      * @return A caption containing either the name, {@code None}, {@code Everyone} or {@code Unknown}
-     * @since TODO
+     * @since 6.4.0
      */
     public static @NonNull Caption resolveName(final @Nullable UUID owner, final boolean blocking) {
         if (owner == null) {
