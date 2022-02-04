@@ -42,6 +42,7 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,11 +51,15 @@ import java.util.stream.IntStream;
 @Singleton
 public class BukkitInventoryUtil extends InventoryUtil {
 
-    private static ItemStack getItem(PlotItemStack item) {
+    private static @Nullable ItemStack getItem(PlotItemStack item) {
         if (item == null) {
             return null;
         }
-        ItemStack stack = new ItemStack(BukkitAdapter.adapt(item.getType()), item.getAmount());
+        Material material = BukkitAdapter.adapt(item.getType());
+        if (material == null) {
+            return null;
+        }
+        ItemStack stack = new ItemStack(material, item.getAmount());
         ItemMeta meta = null;
         if (item.getName() != null) {
             meta = stack.getItemMeta();
@@ -104,14 +109,19 @@ public class BukkitInventoryUtil extends InventoryUtil {
     }
 
     @Override
-    public void setItem(PlotInventory inv, int index, PlotItemStack item) {
+    public boolean setItemChecked(PlotInventory inv, int index, PlotItemStack item) {
         BukkitPlayer bp = (BukkitPlayer) inv.getPlayer();
         InventoryView opened = bp.player.getOpenInventory();
-        if (!inv.isOpen()) {
-            return;
+        ItemStack stack = getItem(item);
+        if (stack == null) {
+            return false;
         }
-        opened.setItem(index, getItem(item));
+        if (!inv.isOpen()) {
+            return true;
+        }
+        opened.setItem(index, stack);
         bp.player.updateInventory();
+        return true;
     }
 
     @SuppressWarnings("deprecation") // Paper deprecation

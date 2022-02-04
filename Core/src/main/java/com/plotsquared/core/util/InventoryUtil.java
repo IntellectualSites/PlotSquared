@@ -38,10 +38,32 @@ public abstract class InventoryUtil {
 
     public abstract void close(final PlotInventory inv);
 
-    public abstract void setItem(
+    /**
+     * Attempts to set an item into a {@link PlotInventory} while also checking the existence of the material
+     *
+     * @param plotInventory The inventory where the item should be placed
+     * @param index The index where to place the item
+     * @param item The item to place into the inventory
+     * @return {@code true} if the item could be placed, {@code false} otherwise (e.g. item not available in current version)
+     * @since TODO
+     */
+    public abstract boolean setItemChecked(
             final PlotInventory plotInventory, final int index,
             final PlotItemStack item
     );
+
+    /**
+     * Attempts to set an item into a {@link PlotInventory}
+     *
+     * @param plotInventory The inventory where the item should be placed
+     * @param index The index where to place the item
+     * @param item The item to place into the inventory
+     * @see #setItemChecked(PlotInventory, int, PlotItemStack)
+     */
+    public void setItem(final PlotInventory plotInventory, final int index,
+                        final PlotItemStack item) {
+        setItemChecked(plotInventory, index, item);
+    }
 
     public abstract PlotItemStack[] getItems(final PlotPlayer<?> player);
 

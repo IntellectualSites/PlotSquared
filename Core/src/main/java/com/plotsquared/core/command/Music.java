@@ -41,6 +41,7 @@ import com.plotsquared.core.plot.flag.implementations.MusicFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.InventoryUtil;
 import com.plotsquared.core.util.Permissions;
+import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -148,8 +149,14 @@ public class Music extends SubCommand {
         for (final String disc : DISCS) {
             final String name = String.format("<gold>%s</gold>", disc);
             final String[] lore = {TranslatableCaption.of("plotjukebox.click_to_play").getComponent(player)};
-            final PlotItemStack item = new PlotItemStack(disc, 1, name, lore);
-            inv.setItem(index++, item);
+            ItemType type = ItemTypes.get(disc);
+            if (type == null) {
+                continue;
+            }
+            final PlotItemStack item = new PlotItemStack(type, 1, name, lore);
+            if (inv.setItemChecked(index, item)) {
+                index++;
+            }
         }
 
         // Always add the cancel button
