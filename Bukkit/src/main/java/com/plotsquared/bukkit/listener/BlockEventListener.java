@@ -75,6 +75,8 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Bed;
+import org.bukkit.block.data.type.Door;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
@@ -322,6 +324,30 @@ public class BlockEventListener implements Listener {
                     );
                     event.setCancelled(true);
                     return;
+                }
+            }
+            // The other block part can be placed outside the plot (#3483)
+            if (event.getBlock().getBlockData() instanceof Bed bed) {
+                org.bukkit.Location other = event.getBlock().getLocation().add(bed.getFacing().getDirection());
+                if (!(Objects.equals(BukkitUtil.adapt(other).getPlot(), plot))) {
+                    pp.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
+                    );
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+            // Same goes for doors, which may exceed the area height limit
+            if (event.getBlock().getBlockData() instanceof Door door) {
+                if (location.getY() + 1 > area.getMaxBuildHeight() &&
+                        !Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
+                    pp.sendMessage(
+                            TranslatableCaption.of("height.height_limit"),
+                            Template.of("minHeight", String.valueOf(area.getMinBuildHeight())),
+                            Template.of("maxHeight", String.valueOf(area.getMaxBuildHeight()))
+                    );
+                    event.setCancelled(true);
                 }
             }
             if (plot.getFlag(DisablePhysicsFlag.class)) {
