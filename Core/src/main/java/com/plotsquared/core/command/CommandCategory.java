@@ -28,6 +28,8 @@ package com.plotsquared.core.command;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.permissions.PermissionHolder;
+import com.plotsquared.core.player.PlotPlayer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -95,4 +97,16 @@ public enum CommandCategory implements Caption {
     public String getComponent(@NonNull LocaleHolder localeHolder) {
         return this.caption.getComponent(localeHolder);
     }
+
+    /**
+     * Checks if a player has access to this command category
+     *
+     * @param player The player to check against
+     * @return {@code true} if at least one command of this category can be executed by the player, {@code false} otherwise
+     * @since TODO
+     */
+    public boolean hasPermission(PlotPlayer<?> player) {
+        return !MainCommand.getInstance().getCommands(this, player).isEmpty();
+    }
+
 }

@@ -119,6 +119,9 @@ public class Help extends Command {
                 TextComponent.Builder builder = Component.text();
                 builder.append(MINI_MESSAGE.parse(TranslatableCaption.of("help.help_header").getComponent(player)));
                 for (CommandCategory c : CommandCategory.values()) {
+                    if (!c.hasPermission(player)) {
+                        continue;
+                    }
                     builder.append(Component.newline()).append(MINI_MESSAGE
                             .parse(
                                     TranslatableCaption.of("help.help_info_item").getComponent(player),
