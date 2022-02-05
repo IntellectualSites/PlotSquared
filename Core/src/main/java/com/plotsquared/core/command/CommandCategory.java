@@ -28,7 +28,6 @@ package com.plotsquared.core.command;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.permissions.PermissionHolder;
 import com.plotsquared.core.player.PlotPlayer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
