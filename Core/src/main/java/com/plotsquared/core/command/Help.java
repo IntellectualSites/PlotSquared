@@ -119,7 +119,7 @@ public class Help extends Command {
                 TextComponent.Builder builder = Component.text();
                 builder.append(MINI_MESSAGE.parse(TranslatableCaption.of("help.help_header").getComponent(player)));
                 for (CommandCategory c : CommandCategory.values()) {
-                    if (!c.hasPermission(player)) {
+                    if (!c.canAccess(player)) {
                         continue;
                     }
                     builder.append(Component.newline()).append(MINI_MESSAGE
@@ -159,7 +159,7 @@ public class Help extends Command {
         List<Command> result = new ArrayList<>();
 
         for (final CommandCategory category : CommandCategory.values()) {
-            if (!category.hasPermission(player)) {
+            if (!category.canAccess(player)) {
                 continue;
             }
             String name = category.name().toLowerCase();
