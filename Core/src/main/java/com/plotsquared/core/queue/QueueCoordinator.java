@@ -79,7 +79,10 @@ public abstract class QueueCoordinator {
      */
     @Deprecated(forRemoval = true, since = "TODO")
     public ScopedQueueCoordinator getForChunk(int x, int z) {
-        return getForChunk(x, z, 0, 255);
+        if (getWorld() == null) {
+            return getForChunk(x, z, 0, 255);
+        }
+        return getForChunk(x, z, getWorld().getMinY(), getWorld().getMaxY());
     }
 
     /**
