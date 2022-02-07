@@ -74,9 +74,8 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.type.Bed;
-import org.bukkit.block.data.type.Door;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
@@ -94,6 +93,7 @@ import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockGrowEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
@@ -324,30 +324,6 @@ public class BlockEventListener implements Listener {
                     );
                     event.setCancelled(true);
                     return;
-                }
-            }
-            // The other block part can be placed outside the plot (#3483)
-            if (event.getBlock().getBlockData() instanceof Bed bed) {
-                org.bukkit.Location other = event.getBlock().getLocation().add(bed.getFacing().getDirection());
-                if (!(Objects.equals(BukkitUtil.adapt(other).getPlot(), plot))) {
-                    pp.sendMessage(
-                            TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
-                    );
-                    event.setCancelled(true);
-                    return;
-                }
-            }
-            // Same goes for doors, which may exceed the area height limit
-            if (event.getBlock().getBlockData() instanceof Door door) {
-                if (location.getY() + 1 > area.getMaxBuildHeight() &&
-                        !Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
-                    pp.sendMessage(
-                            TranslatableCaption.of("height.height_limit"),
-                            Template.of("minHeight", String.valueOf(area.getMinBuildHeight())),
-                            Template.of("maxHeight", String.valueOf(area.getMaxBuildHeight()))
-                    );
-                    event.setCancelled(true);
                 }
             }
             if (plot.getFlag(DisablePhysicsFlag.class)) {
@@ -1231,6 +1207,53 @@ public class BlockEventListener implements Listener {
             // Cancel event so the sponge block doesn't turn into a wet sponge
             // if no water is being absorbed
             event.setCancelled(true);
+        }
+    }
+
+    /*
+     * BlockMultiPlaceEvent is called unrelated to the BlockPlaceEvent itself and therefor doesn't respect the cancellation.
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onBlockMultiPlace(BlockMultiPlaceEvent event) {
+        // Check if the generic block place event would be cancelled
+        blockCreate(event);
+        if (event.isCancelled()) {
+            return;
+        }
+
+        BukkitPlayer pp = BukkitUtil.adapt(event.getPlayer());
+        Location placedLocation = BukkitUtil.adapt(event.getBlockReplacedState().getLocation());
+        PlotArea area = placedLocation.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = placedLocation.getPlot();
+
+        for (final BlockState state : event.getReplacedBlockStates()) {
+            Location currentLocation = BukkitUtil.adapt(state.getLocation());
+            if (!Permissions.hasPermission(
+                    pp,
+                    Permission.PERMISSION_ADMIN_BUILD_ROAD
+            ) && !(Objects.equals(currentLocation.getPlot(), plot))) {
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
+                );
+                event.setCancelled(true);
+                break;
+            }
+            if (Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
+                continue;
+            }
+            if (currentLocation.getY() > area.getMaxBuildHeight() || currentLocation.getY() < area.getMinBuildHeight()) {
+                pp.sendMessage(
+                        TranslatableCaption.of("height.height_limit"),
+                        Template.of("minHeight", String.valueOf(area.getMinBuildHeight())),
+                        Template.of("maxHeight", String.valueOf(area.getMaxBuildHeight()))
+                );
+                event.setCancelled(true);
+                break;
+            }
         }
     }
 
