@@ -30,7 +30,6 @@ import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.IntTag;
@@ -40,6 +39,7 @@ import com.sk89q.jnbt.Tag;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
@@ -79,12 +79,13 @@ public abstract class WorldUtil {
      * @param p2x   Max X
      * @param p2z   Max Z
      * @param biome Biome
-     * @deprecated use {@link WorldUtil#setBiome(PlotArea, int, int, int, int, BiomeType)}
+     * @deprecated use {@link WorldUtil#setBiome(String, CuboidRegion, BiomeType)}
      */
     @Deprecated(forRemoval = true)
     public static void setBiome(String world, int p1x, int p1z, int p2x, int p2z, BiomeType biome) {
-        BlockVector3 pos1 = BlockVector2.at(p1x, p1z).toBlockVector3();
-        BlockVector3 pos2 = BlockVector2.at(p2x, p2z).toBlockVector3(255);
+        World weWorld = PlotSquared.platform().worldUtil().getWeWorld(world);
+        BlockVector3 pos1 = BlockVector2.at(p1x, p1z).toBlockVector3(weWorld.getMinY());
+        BlockVector3 pos2 = BlockVector2.at(p2x, p2z).toBlockVector3(weWorld.getMaxY());
         CuboidRegion region = new CuboidRegion(pos1, pos2);
         PlotSquared.platform().worldUtil().setBiomes(world, region, biome);
     }
@@ -92,19 +93,13 @@ public abstract class WorldUtil {
     /**
      * Set the biome in a region
      *
-     * @param area  Plot area
-     * @param p1x   Min X
-     * @param p1z   Min Z
-     * @param p2x   Max X
-     * @param p2z   Max Z
-     * @param biome Biome
+     * @param world  World name
+     * @param region Region
+     * @param biome  Biome
      * @since TODO
      */
-    public static void setBiome(PlotArea area, int p1x, int p1z, int p2x, int p2z, BiomeType biome) {
-        BlockVector3 pos1 = BlockVector2.at(p1x, p1z).toBlockVector3(area.getMinGenHeight());
-        BlockVector3 pos2 = BlockVector2.at(p2x, p2z).toBlockVector3(area.getMaxGenHeight());
-        CuboidRegion region = new CuboidRegion(pos1, pos2);
-        PlotSquared.platform().worldUtil().setBiomes(area.getWorldName(), region, biome);
+    public static void setBiome(String world, final CuboidRegion region, BiomeType biome) {
+        PlotSquared.platform().worldUtil().setBiomes(world, region, biome);
     }
 
     /**
@@ -238,11 +233,14 @@ public abstract class WorldUtil {
     /**
      * Set the biome in a region
      *
-     * @param world  World name
-     * @param region Region
-     * @param biome  New biome
+     * @param worldName World name
+     * @param region    Region
+     * @param biome     New biome
      */
-    public abstract void setBiomes(@NonNull String world, @NonNull CuboidRegion region, @NonNull BiomeType biome);
+    public void setBiomes(@NonNull String worldName, @NonNull CuboidRegion region, @NonNull BiomeType biome) {
+        final World world = getWeWorld(worldName);
+        region.iterator().forEachRemaining(bv -> world.setBiome(bv, biome));
+    }
 
     /**
      * Get the WorldEdit {@link com.sk89q.worldedit.world.World} corresponding to a world name

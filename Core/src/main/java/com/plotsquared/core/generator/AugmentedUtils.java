@@ -70,7 +70,7 @@ public class AugmentedUtils {
         final int blockZ = chunkZ << 4;
         // Create a region that contains the
         // entire chunk
-        CuboidRegion region = RegionUtil.createRegion(blockX, blockX + 15, blockZ, blockZ + 15);
+        CuboidRegion region = RegionUtil.createRegion(blockX, blockX + 15, 0, 0, blockZ, blockZ + 15);
         // Query for plot areas in the chunk
         final Set<PlotArea> areas = PlotSquared.get().getPlotAreaManager().getPlotAreasSet(world, region);
         if (areas.isEmpty()) {

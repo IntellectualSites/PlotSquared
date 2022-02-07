@@ -40,7 +40,6 @@ import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.RegionManager;
-import com.plotsquared.core.util.RegionUtil;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.task.RunnableVal;
@@ -261,7 +260,7 @@ public class BukkitRegionManager extends RegionManager {
             if (checkX2 && checkZ2) {
                 map.saveRegion(world, xxt2, xxt, zzt2, zzt); //
             }
-            CuboidRegion currentPlotClear = RegionUtil.createRegion(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
+            CuboidRegion currentPlotClear = new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3());
             map.saveEntitiesOut(Bukkit.getWorld(world.getName()).getChunkAt(x, z), currentPlotClear);
             AugmentedUtils.bypass(
                     ignoreAugment,
@@ -300,7 +299,7 @@ public class BukkitRegionManager extends RegionManager {
                     }, world.getName(), chunk)
             );
             //map.restoreBlocks(worldObj, 0, 0);
-            map.restoreEntities(Bukkit.getWorld(world.getName()), 0, 0);
+            map.restoreEntities(Bukkit.getWorld(world.getName()));
         });
         regenQueue.setCompleteTask(whenDone);
         queue.setCompleteTask(regenQueue::enqueue);

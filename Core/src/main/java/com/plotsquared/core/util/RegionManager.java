@@ -407,36 +407,12 @@ public abstract class RegionManager {
             final PlotArea area,
             final Runnable whenDone
     ) {
-        Location pos1 = Location
-                .at(
-                        area.getWorldName(),
-                        region.getMinimumPoint().getX() - extendBiome,
-                        region.getMinimumPoint().getY(),
-                        region.getMinimumPoint().getZ() - extendBiome
-                );
-        Location pos2 = Location
-                .at(
-                        area.getWorldName(),
-                        region.getMaximumPoint().getX() + extendBiome,
-                        region.getMaximumPoint().getY(),
-                        region.getMaximumPoint().getZ() + extendBiome
-                );
         final QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(area.getWorldName()));
-
-        final int minX = pos1.getX();
-        final int minZ = pos1.getZ();
-        final int maxX = pos2.getX();
-        final int maxZ = pos2.getZ();
         queue.addReadChunks(region.getChunks());
         queue.setChunkConsumer(blockVector2 -> {
-            final int cx = blockVector2.getX() << 4;
-            final int cz = blockVector2.getZ() << 4;
             WorldUtil.setBiome(
-                    area,
-                    Math.max(minX, cx),
-                    Math.max(minZ, cz),
-                    Math.min(maxX, cx + 15),
-                    Math.min(maxZ, cz + 15),
+                    area.getWorldName(),
+                    region,
                     biome
             );
             worldUtil.refreshChunk(blockVector2.getBlockX(), blockVector2.getBlockZ(), area.getWorldName());

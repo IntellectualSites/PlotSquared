@@ -371,7 +371,8 @@ public class Area extends SubCommand {
                                 int lower = (area.ROAD_WIDTH & 1) == 0 ? area.ROAD_WIDTH / 2 - 1 : area.ROAD_WIDTH / 2;
                                 final int offsetX = bx - (area.ROAD_WIDTH == 0 ? 0 : lower);
                                 final int offsetZ = bz - (area.ROAD_WIDTH == 0 ? 0 : lower);
-                                final CuboidRegion region = RegionUtil.createRegion(bx, tx, bz, tz);
+                                // Height doesn't matter for this region
+                                final CuboidRegion region = RegionUtil.createRegion(bx, tx, 0, 0, bz, tz);
                                 final Set<PlotArea> areas = this.plotAreaManager.getPlotAreasSet(area.getWorldName(), region);
                                 if (!areas.isEmpty()) {
                                     player.sendMessage(

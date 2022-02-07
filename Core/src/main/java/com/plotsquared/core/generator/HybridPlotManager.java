@@ -148,7 +148,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                         (pos1.getX() + pos2.getX()) / 2,
                         (pos1.getZ() + pos2.getZ()) / 2
                 ), biome)) {
-            WorldUtil.setBiome(hybridPlotWorld, pos1.getX(), pos1.getZ(), pos2.getX(), pos2.getZ(), biome);
+            WorldUtil.setBiome(hybridPlotWorld.getWorldName(), new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()), biome);
         }
     }
 

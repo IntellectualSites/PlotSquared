@@ -44,7 +44,6 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.math.BlockVector2;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockCategories;
 import com.sk89q.worldedit.world.block.BlockState;
@@ -61,7 +60,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -384,27 +382,6 @@ public class BukkitUtil extends WorldUtil {
     public @NonNull StringComparison<BlockState>.ComparisonResult getClosestBlock(@NonNull String name) {
         BlockState state = BlockUtil.get(name);
         return new StringComparison<BlockState>().new ComparisonResult(1, state);
-    }
-
-    @Override
-    public void setBiomes(
-            final @NonNull String worldName,
-            final @NonNull CuboidRegion region,
-            final @NonNull BiomeType biomeType
-    ) {
-        final World world = getWorld(worldName);
-        if (world == null) {
-            LOGGER.warn("An error occurred while setting the biome because the world was null", new RuntimeException());
-            return;
-        }
-        final Biome biome = BukkitAdapter.adapt(biomeType);
-        for (int x = region.getMinimumPoint().getX(); x <= region.getMaximumPoint().getX(); x++) {
-            for (int z = region.getMinimumPoint().getZ(); z <= region.getMaximumPoint().getZ(); z++) {
-                if (world.getBiome(x, z) != biome) {
-                    world.setBiome(x, z, biome);
-                }
-            }
-        }
     }
 
     @Override

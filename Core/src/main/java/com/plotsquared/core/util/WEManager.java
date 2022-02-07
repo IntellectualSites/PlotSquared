@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.util;
 
+import com.fastasyncworldedit.core.regions.RegionWrapper;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
@@ -91,10 +92,7 @@ public class WEManager {
         Location location = player.getLocation();
         String world = location.getWorldName();
         if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
-            regions.add(RegionUtil
-                    .createRegion(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,
-                            Integer.MAX_VALUE
-                    ));
+            regions.add(RegionWrapper.GLOBAL());
             return regions;
         }
         PlotArea area = player.getApplicablePlotArea();

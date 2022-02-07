@@ -89,11 +89,15 @@ public class PlotCluster {
     }
 
     private void setRegion() {
-        this.region = RegionUtil.createRegion(this.pos1.getX(), this.pos2.getX(),
+        this.region = RegionUtil.createRegion(this.pos1.getX(), this.pos2.getX(), 0, 0,
                 this.pos1.getY(), this.pos2.getY()
         );
     }
 
+    /**
+     * Returns a region of PlotIDs
+     */
+    @Deprecated
     public CuboidRegion getRegion() {
         return this.region;
     }
