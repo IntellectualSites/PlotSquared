@@ -67,7 +67,7 @@ public interface World<T> {
 
 
     /**
-     * Get the max world height. Exclusive.
+     * Get the max world height. Inclusive.
      *
      * @since TODO
      */

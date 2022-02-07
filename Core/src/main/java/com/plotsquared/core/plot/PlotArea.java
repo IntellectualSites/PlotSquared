@@ -141,10 +141,10 @@ public abstract class PlotArea {
     private boolean homeAllowNonmember = false;
     private BlockLoc nonmemberHome;
     private BlockLoc defaultHome;
-    private int maxBuildHeight = PlotSquared.platform().versionMaxHeight();
-    private int minBuildHeight = PlotSquared.platform().versionMinHeight() + 1;
-    private int maxGenHeight = PlotSquared.platform().versionMaxHeight();
-    private int minGenHeight = PlotSquared.platform().versionMinHeight();
+    private int maxBuildHeight = PlotSquared.platform().versionMaxHeight() + 1; // Exclusive
+    private int minBuildHeight = PlotSquared.platform().versionMinHeight() + 1; // Inclusive
+    private int maxGenHeight = PlotSquared.platform().versionMaxHeight(); // Inclusive
+    private int minGenHeight = PlotSquared.platform().versionMinHeight(); // Inclusive
     private GameMode gameMode = GameModes.CREATIVE;
     private Map<String, PlotExpression> prices = new HashMap<>();
     private List<String> schematics = new ArrayList<>();
@@ -1365,7 +1365,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * Get the maximum height players may build in. Inclusive.
+     * Get the maximum height players may build in. Exclusive.
      */
     public int getMaxBuildHeight() {
         return this.maxBuildHeight;

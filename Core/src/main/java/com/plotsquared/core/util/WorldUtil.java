@@ -79,7 +79,9 @@ public abstract class WorldUtil {
      * @param p2x   Max X
      * @param p2z   Max Z
      * @param biome Biome
+     * @deprecated use {@link WorldUtil#setBiome(PlotArea, int, int, int, int, BiomeType)}
      */
+    @Deprecated(forRemoval = true)
     public static void setBiome(String world, int p1x, int p1z, int p2x, int p2z, BiomeType biome) {
         BlockVector3 pos1 = BlockVector2.at(p1x, p1z).toBlockVector3();
         BlockVector3 pos2 = BlockVector2.at(p2x, p2z).toBlockVector3(255);

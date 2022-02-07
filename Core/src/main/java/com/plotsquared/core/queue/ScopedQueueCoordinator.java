@@ -53,6 +53,9 @@ public class ScopedQueueCoordinator extends DelegateQueueCoordinator {
     private final int dy;
     private final int dz;
 
+    /**
+     * Create a new ScopedQueueCoordinator instance that delegates to a given QueueCoordinator. Locations are inclusive.
+     */
     public ScopedQueueCoordinator(@Nullable QueueCoordinator parent, @NonNull Location min, @NonNull Location max) {
         super(parent);
         this.min = min;
