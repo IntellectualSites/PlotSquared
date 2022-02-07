@@ -135,7 +135,7 @@ public class ContentMap {
     }
 
     private void saveBlocks(BukkitWorld world, int x, int z, int offsetX, int offsetZ) {
-        BaseBlock[] ids = new BaseBlock[world.getMaxY() - world.getMinY()];
+        BaseBlock[] ids = new BaseBlock[world.getMaxY() - world.getMinY() + 1];
         for (short yIndex = 0; yIndex <= world.getMaxY() - world.getMinY(); yIndex++) {
             BaseBlock block = world.getFullBlock(BlockVector3.at(x, yIndex + world.getMinY(), z));
             ids[yIndex] = block;

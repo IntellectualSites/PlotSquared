@@ -172,7 +172,7 @@ public class GenChunk extends ScopedQueueCoordinator {
      */
     public boolean setBiome(int x, int z, @NonNull Biome biome) {
         if (this.biomeGrid != null) {
-            for (int y = getMin().getY(); y < getMax().getY(); y++) {
+            for (int y = getMin().getY(); y <= getMax().getY(); y++) {
                 this.setBiome(x, y, z, biome);
             }
             return true;

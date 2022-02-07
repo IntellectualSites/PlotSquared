@@ -120,7 +120,7 @@ public class BukkitWorld implements World<org.bukkit.World> {
 
     @Override
     public int getMaxHeight() {
-        return getMaxWorldHeight(world);
+        return getMaxWorldHeight(world) - 1;
     }
 
     @Override

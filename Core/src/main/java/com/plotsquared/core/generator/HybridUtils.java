@@ -215,8 +215,8 @@ public class HybridUtils {
                     int xx = chunkBlockX + x;
                     for (int z = minZ; z <= maxZ; z++) {
                         int zz = chunkBlockZ + z;
-                        for (int yIndex = 0; yIndex < minHeight; yIndex++) {
-                            int y = yIndex - minHeight;
+                        for (int yIndex = 0; yIndex < height; yIndex++) {
+                            int y = yIndex + minHeight;
                             BlockState block = queue.getBlock(xx, y, zz);
                             int xr = xb + x;
                             int zr = zb + z;

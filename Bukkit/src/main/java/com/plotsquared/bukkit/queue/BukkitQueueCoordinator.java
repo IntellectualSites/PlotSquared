@@ -134,7 +134,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                 int sx = blockVector2.getX() << 4;
                 int sz = blockVector2.getZ() << 4;
                 if (isRegenChunk) {
-                    for (int layer = (getWorld().getMinY() >> 4); layer < (getWorld().getMaxY() >> 4); layer++) {
+                    for (int layer = (getWorld().getMinY() >> 4); layer <= (getWorld().getMaxY() >> 4); layer++) {
                         for (int y = 0; y < 16; y++) {
                             for (int x = 0; x < 16; x++) {
                                 for (int z = 0; z < 16; z++) {
