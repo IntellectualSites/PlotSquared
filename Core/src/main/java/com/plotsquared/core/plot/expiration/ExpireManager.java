@@ -136,18 +136,18 @@ public class ExpireManager {
     }
 
     public void confirmExpiry(final PlotPlayer<?> pp) {
-        try (final MetaDataAccess<Boolean> metaDataAccess = pp.accessTemporaryMetaData(
-                PlayerMetaDataKeys.TEMPORARY_IGNORE_EXPIRE_TASK)) {
-            if (metaDataAccess.isPresent()) {
-                return;
-            }
-            if (plotsToDelete != null && !plotsToDelete.isEmpty() && pp.hasPermission("plots.admin.command.autoclear")) {
-                final int num = plotsToDelete.size();
-                while (!plotsToDelete.isEmpty()) {
-                    Iterator<Plot> iter = plotsToDelete.iterator();
-                    final Plot current = iter.next();
-                    if (!isExpired(new ArrayDeque<>(tasks), current).isEmpty()) {
-                        TaskManager.runTask(() -> {
+        TaskManager.runTask(() -> {
+            try (final MetaDataAccess<Boolean> metaDataAccess = pp.accessTemporaryMetaData(
+                    PlayerMetaDataKeys.TEMPORARY_IGNORE_EXPIRE_TASK)) {
+                if (metaDataAccess.isPresent()) {
+                    return;
+                }
+                if (plotsToDelete != null && !plotsToDelete.isEmpty() && pp.hasPermission("plots.admin.command.autoclear")) {
+                    final int num = plotsToDelete.size();
+                    while (!plotsToDelete.isEmpty()) {
+                        Iterator<Plot> iter = plotsToDelete.iterator();
+                        final Plot current = iter.next();
+                        if (!isExpired(new ArrayDeque<>(tasks), current).isEmpty()) {
                             metaDataAccess.set(true);
                             current.getCenter(pp::teleport);
                             metaDataAccess.remove();
@@ -171,15 +171,15 @@ public class ExpireManager {
                                     cmd_keep,
                                     cmd_no_show_expir
                             );
-                        });
-                        return;
-                    } else {
-                        iter.remove();
+                            return;
+                        } else {
+                            iter.remove();
+                        }
                     }
+                    plotsToDelete.clear();
                 }
-                plotsToDelete.clear();
             }
-        }
+        });
     }
 
 
@@ -307,6 +307,7 @@ public class ExpireManager {
         this.running = 2;
         TaskManager.runTaskAsync(new Runnable() {
             private ConcurrentLinkedDeque<Plot> plots = null;
+
             @Override
             public void run() {
                 final Runnable task = this;
