@@ -37,11 +37,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.Template;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @CommandDeclaration(command = "help",
         aliases = "?",
@@ -119,6 +119,9 @@ public class Help extends Command {
                 TextComponent.Builder builder = Component.text();
                 builder.append(MINI_MESSAGE.parse(TranslatableCaption.of("help.help_header").getComponent(player)));
                 for (CommandCategory c : CommandCategory.values()) {
+                    if (!c.canAccess(player)) {
+                        continue;
+                    }
                     builder.append(Component.newline()).append(MINI_MESSAGE
                             .parse(
                                     TranslatableCaption.of("help.help_info_item").getComponent(player),
@@ -152,12 +155,26 @@ public class Help extends Command {
 
     @Override
     public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
-        return Stream.of("claiming", "teleport", "settings", "chat", "schematic", "appearance", "info", "debug",
-                        "administration", "all"
-                )
-                .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
-                .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
-                }).collect(Collectors.toList());
+        final String argument = args[0].toLowerCase(Locale.ENGLISH);
+        List<Command> result = new ArrayList<>();
+
+        for (final CommandCategory category : CommandCategory.values()) {
+            if (!category.canAccess(player)) {
+                continue;
+            }
+            String name = category.name().toLowerCase();
+            if (!name.startsWith(argument)) {
+                continue;
+            }
+            result.add(new Command(null, false, name, "", RequiredType.NONE, null) {
+            });
+        }
+        // add the category "all"
+        if ("all".startsWith(argument)) {
+            result.add(new Command(null, false, "all", "", RequiredType.NONE, null) {
+            });
+        }
+        return result;
     }
 
 }
