@@ -1211,7 +1211,7 @@ public class BlockEventListener implements Listener {
     }
 
     /*
-     * BlockMultiPlaceEvent is called unrelated to the BlockPlaceEvent itself and therefor doesn't respect the cancellation.
+     * BlockMultiPlaceEvent is called unrelated to the BlockPlaceEvent itself and therefore doesn't respect the cancellation.
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onBlockMultiPlace(BlockMultiPlaceEvent event) {
