@@ -463,6 +463,7 @@
   "preset.preset_lore_cost": "<prefix><gray>Cost: </gray><gold><cost></gold>",
   "preset.preset_lore_component": "<gray>Component: </gray><gold><component></gold>",
   "preset.title": "Plot Components",
+  "preset.empty": "<prefix><red>No plot component presets available.</red>",
   "generic.generic_other": "<gray>other</gray>",
   "generic.generic_merged": "<gray>merged</gray>",
   "generic.generic_unowned": "<gray>unowned</gray>",
