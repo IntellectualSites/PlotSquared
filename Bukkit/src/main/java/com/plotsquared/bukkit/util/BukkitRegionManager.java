@@ -276,20 +276,13 @@ public class BukkitRegionManager extends RegionManager {
                                     BaseBlock[] ids = map.allBlocks.get(plotLoc);
                                     if (ids != null) {
                                         int minY = value.getMin().getY();
-                                        for (int yIndex = 0; yIndex < Math.min(128 - minY, ids.length); yIndex++) {
+                                        for (int yIndex = 0; yIndex < ids.length; yIndex++) {
                                             int y = yIndex + minY;
                                             BaseBlock id = ids[y];
                                             if (id != null) {
                                                 value.setBlock(x1, y, z1, id);
                                             } else {
                                                 value.setBlock(x1, y, z1, BlockTypes.AIR.getDefaultState());
-                                            }
-                                        }
-                                        for (int yIndex = Math.min(128 - minY, ids.length); yIndex < ids.length; yIndex++) {
-                                            int y = yIndex + minY;
-                                            BaseBlock id = ids[y];
-                                            if (id != null) {
-                                                value.setBlock(x1, y, z1, id);
                                             }
                                         }
                                     }
