@@ -138,7 +138,7 @@ public class GenChunk extends ScopedQueueCoordinator {
     public void setCuboid(@NonNull Location pos1, @NonNull Location pos2, @NonNull BlockState block) {
         if (result != null && pos1.getX() == 0 && pos1.getZ() == 0 && pos2.getX() == 15 && pos2.getZ() == 15) {
             for (int y = pos1.getY(); y <= pos2.getY(); y++) {
-                int layer = (y - getMin().getY()) >> 4;
+                int layer = getLayerIndex(y);
                 BlockState[] data = result[layer];
                 if (data == null) {
                     result[layer] = data = new BlockState[4096];
@@ -205,7 +205,7 @@ public class GenChunk extends ScopedQueueCoordinator {
     }
 
     private void storeCache(final int x, final int y, final int z, final @NonNull BlockState id) {
-        int i = (y - getMin().getY()) >> 4;
+        int i = getLayerIndex(y);
         BlockState[] v = this.result[i];
         if (v == null) {
             this.result[i] = v = new BlockState[4096];
@@ -227,7 +227,7 @@ public class GenChunk extends ScopedQueueCoordinator {
 
     @Override
     public @Nullable BlockState getBlock(int x, int y, int z) {
-        int i = (y - getMin().getY()) >> 4;
+        int i = getLayerIndex(y);
         if (result == null) {
             return BukkitBlockUtil.get(chunkData.getType(x, y, z));
         }
@@ -275,6 +275,10 @@ public class GenChunk extends ScopedQueueCoordinator {
         }
         toReturn.chunkData = this.chunkData;
         return toReturn;
+    }
+
+    private int getLayerIndex(int y) {
+        return (y - getMin().getY()) >> 4;
     }
 
 }
