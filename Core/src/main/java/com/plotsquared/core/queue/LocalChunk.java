@@ -93,7 +93,7 @@ public class LocalChunk {
     }
 
     public void setBiome(final int x, final int y, final int z, final @NonNull BiomeType biomeType) {
-        final int i = (y >> 4) - minSection;
+        final int i = getLayerIndex(y);
         final int j = ChunkUtil.getJ(x, y, z);
         BiomeType[] array = this.biomes[i];
         if (array == null) {
@@ -108,7 +108,7 @@ public class LocalChunk {
     }
 
     public void setBlock(final int x, final int y, final int z, final @NonNull BaseBlock baseBlock) {
-        final int i = (y >> 4) - minSection;
+        final int i = getLayerIndex(y);
         final int j = ChunkUtil.getJ(x, y, z);
         BaseBlock[] array = baseblocks[i];
         if (array == null) {
@@ -127,6 +127,10 @@ public class LocalChunk {
 
     public @NonNull HashMap<Location, BaseEntity> getEntities() {
         return this.entities;
+    }
+
+    private int getLayerIndex(final int y) {
+        return (y >> 4) - minSection;
     }
 
 }
