@@ -261,6 +261,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
         int worldHeight = getMaxGenHeight() - getMinGenHeight() + 1;
 
+        // SCHEM_Y should be normalised to the plot "start" height
         if (schematic3 != null) {
             if (schematic3.getClipboard().getDimensions().getY() == worldHeight) {
                 SCHEM_Y = plotY = 0;
