@@ -1619,9 +1619,8 @@ public class Plot {
     public double getVolume() {
         double count = 0;
         for (CuboidRegion region : getRegions()) {
-            count += (region.getMaximumPoint().getX() - (double) region.getMinimumPoint().getX() + 1) *
-                    (region.getMaximumPoint().getZ() - (double) region.getMinimumPoint().getZ() + 1) *
-                    (area.getMaxGenHeight() - area.getMinGenHeight() + 1);
+            // CuboidRegion#getArea is deprecated and we want to ensure use of correct height
+            count += region.getLength() * region.getWidth() * (area.getMaxGenHeight() - area.getMinGenHeight() + 1);
         }
         return count;
     }
