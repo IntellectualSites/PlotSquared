@@ -481,4 +481,32 @@ public abstract class QueueCoordinator {
         }
     }
 
+    /**
+     * Get the min Y limit associated with the queue
+     */
+    protected int getMinY() {
+        return getWorld() != null ? getWorld().getMinY() : PlotSquared.platform().versionMinHeight();
+    }
+
+    /**
+     * Get the max Y limit associated with the queue
+     */
+    protected int getMaxY() {
+        return getWorld() != null ? getWorld().getMinY() : PlotSquared.platform().versionMaxHeight();
+    }
+
+    /**
+     * Get the min chunk layer associated with the queue. Usually 0 or -4;
+     */
+    protected int getMinLayer() {
+        return (getWorld() != null ? getWorld().getMinY() : PlotSquared.platform().versionMinHeight()) >> 4;
+    }
+
+    /**
+     * Get the max chunk layer associated with the queue. Usually 15 or 19
+     */
+    protected int getMaxLayer() {
+        return (getWorld() != null ? getWorld().getMinY() : PlotSquared.platform().versionMaxHeight()) >> 4;
+    }
+
 }
