@@ -147,7 +147,7 @@ public class HybridUtils {
             final int ctz = tz >> 4;
             final int width = tx - bx + 1;
             final int length = tz - bz + 1;
-            final int height = area.getMaxGenHeight() - area.getMinGenHeight();
+            final int height = area.getMaxGenHeight() - area.getMinGenHeight() + 1;
             final int minHeight = area.getMinGenHeight();
 
             final PlotArea area = this.plotAreaManager.getPlotArea(world, null);
@@ -698,7 +698,7 @@ public class HybridUtils {
                     }
                     if (condition) {
                         BaseBlock[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
-                        int minY = Settings.Schematics.PASTE_ROAD_ON_TOP ? plotWorld.SCHEM_Y : area.getMinBuildHeight();
+                        int minY = Settings.Schematics.PASTE_ROAD_ON_TOP ? plotWorld.SCHEM_Y : area.getMinGenHeight() + 1;
                         int maxDy = Math.max(extend, blocks.length);
                         for (int dy = 0; dy < maxDy; dy++) {
                             if (dy > blocks.length - 1) {
