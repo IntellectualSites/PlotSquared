@@ -101,7 +101,7 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
     }
 
     private void storeCache(final int x, final int y, final int z, final @NonNull BlockState id) {
-        int yIndex = y - weWorld.getMinY();
+        int yIndex = getYIndex(y);
         BlockState[][] resultY = result[yIndex];
         if (resultY == null) {
             result[yIndex] = resultY = new BlockState[length][];
@@ -114,7 +114,7 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
     }
 
     private void storeCacheBiome(final int x, final int y, final int z, final @NonNull BiomeType id) {
-        int yIndex = y - weWorld.getMinY();
+        int yIndex = getYIndex(y);
         BiomeType[][] resultY = biomeResult[yIndex];
         if (resultY == null) {
             biomeResult[yIndex] = resultY = new BiomeType[length][];
@@ -134,7 +134,7 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
 
     @Override
     public @Nullable BlockState getBlock(int x, int y, int z) {
-        BlockState[][] blocksY = result[y - weWorld.getMinY()];
+        BlockState[][] blocksY = result[getYIndex(y)];
         if (blocksY != null) {
             BlockState[] blocksYZ = blocksY[z];
             if (blocksYZ != null) {
@@ -157,6 +157,10 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
     @Override
     public @NonNull Location getMin() {
         return Location.at(getWorld().getName(), bot.getX(), bot.getY(), bot.getZ());
+    }
+
+    private int getYIndex(int y) {
+        return y - weWorld.getMinY();
     }
 
 }
