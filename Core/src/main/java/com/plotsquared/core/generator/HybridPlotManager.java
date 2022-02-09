@@ -283,7 +283,7 @@ public class HybridPlotManager extends ClassicPlotManager {
             queue.setCuboid(
                     pos1.withY(hybridPlotWorld.getMinGenHeight()),
                     pos2.withY(hybridPlotWorld.getMinGenHeight()),
-                    bedrock
+                    hybridPlotWorld.PLOT_BEDROCK ? bedrock : filling
             );
             // Each component has a different layer
             queue.setCuboid(

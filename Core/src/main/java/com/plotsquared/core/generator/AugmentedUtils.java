@@ -122,6 +122,7 @@ public class AugmentedUtils {
             }
             QueueCoordinator secondaryMask;
             BlockState air = BlockTypes.AIR.getDefaultState();
+            int startYOffset = !(area instanceof ClassicPlotWorld) || ((ClassicPlotWorld) area).PLOT_BEDROCK ? 1 : 0;
             if (area.getTerrain() == PlotAreaTerrainType.ROAD) {
                 PlotManager manager = area.getPlotManager();
                 final boolean[][] canPlace = new boolean[16][16];
@@ -132,7 +133,7 @@ public class AugmentedUtils {
                         int worldZ = z + blockZ;
                         boolean can = manager.getPlotId(worldX, 0, worldZ) == null;
                         if (can) {
-                            for (int y = area.getMinGenHeight() + 1; y <= area.getMaxGenHeight(); y++) {
+                            for (int y = area.getMinGenHeight() + startYOffset; y <= area.getMaxGenHeight(); y++) {
                                 queue.setBlock(worldX, y, worldZ, air);
                             }
                             canPlace[x][z] = true;
@@ -149,7 +150,7 @@ public class AugmentedUtils {
                 secondaryMask = primaryMask;
                 for (int x = relativeBottomX; x <= relativeTopX; x++) {
                     for (int z = relativeBottomZ; z <= relativeTopZ; z++) {
-                        for (int y = area.getMinGenHeight() + 1; y <= area.getMaxGenHeight(); y++) {
+                        for (int y = area.getMinGenHeight() + startYOffset; y <= area.getMaxGenHeight(); y++) {
                             queue.setBlock(blockX + x, y, blockZ + z, air);
                         }
                     }
