@@ -526,28 +526,6 @@ public final class PlotModificationManager {
     }
 
     /**
-     * Remove the south road section of a plot<br>
-     * - Used when a plot is merged<br>
-     *
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
-     */
-    public void removeRoadSouth(final @Nullable QueueCoordinator queue) {
-        if (this.plot.getArea().getType() != PlotAreaType.NORMAL && this.plot
-                .getArea()
-                .getTerrain() == PlotAreaTerrainType.ROAD) {
-            Plot other = this.plot.getRelative(Direction.SOUTH);
-            Location bot = other.getBottomAbs();
-            Location top = this.plot.getTopAbs();
-            Location pos1 = Location.at(this.plot.getWorldName(), bot.getX(), plot.getArea().getMinGenHeight(), top.getZ());
-            Location pos2 = Location.at(this.plot.getWorldName(), top.getX(), plot.getArea().getMaxGenHeight() + 1, bot.getZ());
-            PlotSquared.platform().regionManager().regenerateRegion(pos1, pos2, true, null);
-        } else if (this.plot.getArea().getTerrain() != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
-            this.plot.getManager().removeRoadSouth(this.plot, queue);
-        }
-    }
-
-    /**
      * Auto merge a plot in a specific direction.
      *
      * @param dir         the direction to merge
@@ -914,6 +892,28 @@ public final class PlotModificationManager {
     }
 
     /**
+     * Remove the south road section of a plot<br>
+     * - Used when a plot is merged<br>
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
+     */
+    public void removeRoadSouth(final @Nullable QueueCoordinator queue) {
+        if (this.plot.getArea().getType() != PlotAreaType.NORMAL && this.plot
+                .getArea()
+                .getTerrain() == PlotAreaTerrainType.ROAD) {
+            Plot other = this.plot.getRelative(Direction.SOUTH);
+            Location bot = other.getBottomAbs();
+            Location top = this.plot.getTopAbs();
+            Location pos1 = Location.at(this.plot.getWorldName(), bot.getX(), plot.getArea().getMinGenHeight(), top.getZ());
+            Location pos2 = Location.at(this.plot.getWorldName(), top.getX(), plot.getArea().getMaxGenHeight(), bot.getZ());
+            PlotSquared.platform().regionManager().regenerateRegion(pos1, pos2, true, null);
+        } else if (this.plot.getArea().getTerrain() != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
+            this.plot.getManager().removeRoadSouth(this.plot, queue);
+        }
+    }
+
+    /**
      * Remove the east road section of a plot<br>
      * - Used when a plot is merged<br>
      *
@@ -928,7 +928,7 @@ public final class PlotModificationManager {
             Location bot = other.getBottomAbs();
             Location top = this.plot.getTopAbs();
             Location pos1 = Location.at(this.plot.getWorldName(), top.getX(), plot.getArea().getMinGenHeight(), bot.getZ());
-            Location pos2 = Location.at(this.plot.getWorldName(), bot.getX(), plot.getArea().getMaxGenHeight() + 1, top.getZ());
+            Location pos2 = Location.at(this.plot.getWorldName(), bot.getX(), plot.getArea().getMaxGenHeight(), top.getZ());
             PlotSquared.platform().regionManager().regenerateRegion(pos1, pos2, true, null);
         } else if (this.plot.getArea().getTerrain() != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.plot.getArea().getPlotManager().removeRoadEast(this.plot, queue);
