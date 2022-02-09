@@ -80,7 +80,7 @@ public abstract class QueueCoordinator {
     @Deprecated(forRemoval = true, since = "TODO")
     public ScopedQueueCoordinator getForChunk(int x, int z) {
         if (getWorld() == null) {
-            return getForChunk(x, z, 0, 255);
+            return getForChunk(x, z, PlotSquared.platform().versionMinHeight(), PlotSquared.platform().versionMaxHeight());
         }
         return getForChunk(x, z, getWorld().getMinY(), getWorld().getMaxY());
     }
