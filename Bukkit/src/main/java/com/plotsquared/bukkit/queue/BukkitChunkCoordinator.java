@@ -74,12 +74,13 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
     private final Consumer<Throwable> throwableConsumer;
     private final boolean unloadAfter;
     private final int totalSize;
-
     private final AtomicInteger expectedSize;
+
     private int batchSize;
     private PlotSquaredTask task;
     private boolean shouldCancel;
     private boolean finished;
+    private int loadingChunks = 0;
 
     @Inject
     private BukkitChunkCoordinator(
@@ -151,7 +152,7 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
         Chunk chunk = this.availableChunks.poll();
         if (chunk == null) {
             if (this.availableChunks.isEmpty()) {
-                if (this.requestedChunks.isEmpty()) {
+                if (this.requestedChunks.isEmpty() && loadingChunks == 0) {
                     finish();
                 } else {
                     requestBatch();
@@ -204,9 +205,11 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
         BlockVector2 chunk;
         for (int i = 0; i < this.batchSize && (chunk = this.requestedChunks.poll()) != null; i++) {
             // This required PaperLib to be bumped to version 1.0.4 to mark the request as urgent
+            loadingChunks++;
             PaperLib
                     .getChunkAtAsync(this.bukkitWorld, chunk.getX(), chunk.getZ(), true, true)
                     .whenComplete((chunkObject, throwable) -> {
+                        loadingChunks--;
                         if (throwable != null) {
                             throwable.printStackTrace();
                             // We want one less because this couldn't be processed
