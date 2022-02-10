@@ -45,7 +45,7 @@ public abstract class InventoryUtil {
      * @param index The index where to place the item
      * @param item The item to place into the inventory
      * @return {@code true} if the item could be placed, {@code false} otherwise (e.g. item not available in current version)
-     * @since TODO
+     * @since 6.5.0
      */
     public abstract boolean setItemChecked(
             final PlotInventory plotInventory, final int index,

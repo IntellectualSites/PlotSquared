@@ -102,7 +102,7 @@ public enum CommandCategory implements Caption {
      *
      * @param player The player to check against
      * @return {@code true} if at least one command of this category can be executed by the player, {@code false} otherwise
-     * @since TODO
+     * @since 6.5.0
      */
     boolean canAccess(PlotPlayer<?> player) {
         return !MainCommand.getInstance().getCommands(this, player).isEmpty();

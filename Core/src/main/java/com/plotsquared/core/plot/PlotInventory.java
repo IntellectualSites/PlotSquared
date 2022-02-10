@@ -121,7 +121,7 @@ public class PlotInventory {
      * @param item  the item to place
      * @return {@code true} if the item could be placed, otherwise {@code false}
      * @see InventoryUtil#setItemChecked(PlotInventory, int, PlotItemStack)
-     * @since TODO
+     * @since 6.5.0
      */
     public boolean setItemChecked(int index, PlotItemStack item) {
         if (!this.inventoryUtil.setItemChecked(this, index, item)) {

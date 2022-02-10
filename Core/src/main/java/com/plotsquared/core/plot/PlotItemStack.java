@@ -54,7 +54,7 @@ public class PlotItemStack {
      * @param amount Amount of items in the stack
      * @param name   The display name of the item stack
      * @param lore   The item stack lore
-     * @since TODO
+     * @since 6.5.0
      */
     public PlotItemStack(
             final ItemType type, final int amount, final String name,
