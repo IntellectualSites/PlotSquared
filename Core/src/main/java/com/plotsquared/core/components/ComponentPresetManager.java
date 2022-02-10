@@ -181,6 +181,10 @@ public class ComponentPresetManager {
             }
             allowedPresets.add(componentPreset);
         }
+        if (allowedPresets.isEmpty()) {
+            player.sendMessage(TranslatableCaption.of("preset.empty"));
+            return null;
+        }
         final int size = (int) Math.ceil((double) allowedPresets.size() / 9.0D);
         final PlotInventory plotInventory = new PlotInventory(this.inventoryUtil, player, size,
                 TranslatableCaption.of("preset.title").getComponent(player)) {

@@ -464,6 +464,7 @@
   "preset.preset_lore_economy_disabled": "<gray>Cost: </gray><red>Economy is disabled</red>",
   "preset.preset_lore_component": "<gray>Component: </gray><gold><component></gold>",
   "preset.title": "Plot Components",
+  "preset.empty": "<prefix><red>No plot component presets available.</red>",
   "preset.economy_disabled": "<prefix><red>The component preset '<preset>' has a price set but economy is disabled.</red>",
   "generic.generic_other": "<gray>other</gray>",
   "generic.generic_merged": "<gray>merged</gray>",
