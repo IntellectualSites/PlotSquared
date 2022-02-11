@@ -506,7 +506,7 @@ public abstract class QueueCoordinator {
      * Get the max chunk layer associated with the queue. Usually 15 or 19
      */
     protected int getMaxLayer() {
-        return (getWorld() != null ? getWorld().getMinY() : PlotSquared.platform().versionMaxHeight()) >> 4;
+        return (getWorld() != null ? getWorld().getMaxY() : PlotSquared.platform().versionMaxHeight()) >> 4;
     }
 
 }
