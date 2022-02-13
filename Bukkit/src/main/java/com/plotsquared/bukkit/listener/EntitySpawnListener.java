@@ -198,20 +198,20 @@ public class EntitySpawnListener implements Listener {
         final Location fromLocLocation = BukkitUtil.adapt(fromLocation.getLocation());
         final PlotArea fromArea = fromLocLocation.getPlotArea();
         Location toLocLocation = BukkitUtil.adapt(toLocation.getLocation());
-        PlotArea area = toLocLocation.getPlotArea();
+        PlotArea toArea = toLocLocation.getPlotArea();
 
-        if (area == null) {
+        if (toArea == null) {
             if (fromLocation.getType() == EntityType.SHULKER && fromArea != null) {
                 event.setCancelled(true);
             }
             return;
         }
-        Plot plot = area.getOwnedPlot(toLocLocation);
+        Plot toPlot = toArea.getOwnedPlot(toLocLocation);
         if (fromLocation.getType() == EntityType.SHULKER && fromArea != null) {
             final Plot fromPlot = fromArea.getOwnedPlot(fromLocLocation);
 
-            if (fromPlot != null || plot != null) {
-                if ((fromPlot == null || !fromPlot.equals(plot)) && (plot == null || !plot.equals(fromPlot))) {
+            if (fromPlot != null || toPlot != null) {
+                if ((fromPlot == null || !fromPlot.equals(toPlot)) && (toPlot == null || !toPlot.equals(fromPlot))) {
                     event.setCancelled(true);
                     return;
                 }
