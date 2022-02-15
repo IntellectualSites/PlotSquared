@@ -676,6 +676,7 @@ public abstract class SchematicHandler {
                 final int minX = minimum.getX();
                 final int minZ = minimum.getZ();
                 final int minY = minimum.getY();
+                System.out.println(minY);
 
                 final int maxX = maximum.getX();
                 final int maxZ = maximum.getZ();
