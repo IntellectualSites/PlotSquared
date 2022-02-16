@@ -36,6 +36,7 @@ import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Chunk;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -191,8 +192,32 @@ public class EntitySpawnListener implements Listener {
 
     @EventHandler
     public void onTeleport(EntityTeleportEvent event) {
-        Entity ent = event.getEntity();
-        if (ent instanceof Vehicle || ent instanceof ArmorStand) {
+        Entity entity = event.getEntity();
+        Entity fromLocation = event.getEntity();
+        Block toLocation = event.getTo().getBlock();
+        final Location fromLocLocation = BukkitUtil.adapt(fromLocation.getLocation());
+        final PlotArea fromArea = fromLocLocation.getPlotArea();
+        Location toLocLocation = BukkitUtil.adapt(toLocation.getLocation());
+        PlotArea toArea = toLocLocation.getPlotArea();
+
+        if (toArea == null) {
+            if (fromLocation.getType() == EntityType.SHULKER && fromArea != null) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+        Plot toPlot = toArea.getOwnedPlot(toLocLocation);
+        if (fromLocation.getType() == EntityType.SHULKER && fromArea != null) {
+            final Plot fromPlot = fromArea.getOwnedPlot(fromLocLocation);
+
+            if (fromPlot != null || toPlot != null) {
+                if ((fromPlot == null || !fromPlot.equals(toPlot)) && (toPlot == null || !toPlot.equals(fromPlot))) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
+        if (entity instanceof Vehicle || entity instanceof ArmorStand) {
             testNether(event.getEntity());
         }
     }
