@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
+import org.ajoberstar.grgit.gradle.GrgitPlugin
 import org.cadixdev.gradle.licenser.LicenseExtension
 import org.cadixdev.gradle.licenser.Licenser
 import java.net.URI
@@ -57,6 +58,7 @@ subprojects {
         plugin<ShadowPlugin>()
         plugin<Licenser>()
         plugin<SigningPlugin>()
+        plugin<GrgitPlugin>()
 
         plugin<EclipsePlugin>()
         plugin<IdeaPlugin>()
