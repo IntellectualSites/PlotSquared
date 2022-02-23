@@ -96,6 +96,8 @@ public class PlotCluster {
 
     /**
      * Returns a region of PlotIDs
+     *
+     * @deprecated - returns region of IDs, not of actual blocks.
      */
     @Deprecated
     public CuboidRegion getRegion() {

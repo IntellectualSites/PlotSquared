@@ -239,7 +239,7 @@ public abstract class WorldUtil {
      */
     public void setBiomes(@NonNull String worldName, @NonNull CuboidRegion region, @NonNull BiomeType biome) {
         final World world = getWeWorld(worldName);
-        region.iterator().forEachRemaining(bv -> world.setBiome(bv, biome));
+        region.forEach(bv -> world.setBiome(bv, biome));
     }
 
     /**

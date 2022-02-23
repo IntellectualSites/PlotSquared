@@ -87,6 +87,8 @@ public class HybridUtils {
     public static HybridUtils manager;
     public static Set<BlockVector2> regions;
     public static int height;
+    // Use ordered for reasonable chunk loading order to reduce paper unloading neighbour chunks and then us attempting to load
+    // them again, causing errors
     public static Set<BlockVector2> chunks = new LinkedHashSet<>();
     public static PlotArea area;
     public static boolean UPDATE = false;
