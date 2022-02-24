@@ -51,38 +51,29 @@ public class UUIDMapping {
         return this.uuid;
     }
 
+    @Override
     public boolean equals(final Object o) {
-        if (o == this) {
+        if (this == o) {
             return true;
         }
-        if (!(o instanceof final UUIDMapping other)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (!other.canEqual(this)) {
-            return false;
-        }
-        final Object this$uuid = this.getUuid();
-        final Object other$uuid = other.getUuid();
-        if (!Objects.equals(this$uuid, other$uuid)) {
-            return false;
-        }
-        final Object this$username = this.getUsername();
-        final Object other$username = other.getUsername();
-        return Objects.equals(this$username, other$username);
+        final UUIDMapping that = (UUIDMapping) o;
+        return uuid.equals(that.uuid) && username.equals(that.username);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid, username);
+    }
+
+    /**
+     * @deprecated This method is not meant to be invoked or overridden, with no replacement.
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     protected boolean canEqual(final Object other) {
         return other instanceof UUIDMapping;
-    }
-
-    public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $uuid = this.getUuid();
-        result = result * PRIME + $uuid.hashCode();
-        final Object $username = this.getUsername();
-        result = result * PRIME + $username.hashCode();
-        return result;
     }
 
 }

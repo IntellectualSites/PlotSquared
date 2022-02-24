@@ -105,31 +105,29 @@ public abstract class PlotWorld {
         return this.world;
     }
 
+    @Override
     public boolean equals(final Object o) {
-        if (o == this) {
+        if (this == o) {
             return true;
         }
-        if (!(o instanceof final PlotWorld other)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (!other.canEqual(this)) {
-            return false;
-        }
-        final Object this$world = this.getWorld();
-        final Object other$world = other.getWorld();
-        return Objects.equals(this$world, other$world);
+        final PlotWorld plotWorld = (PlotWorld) o;
+        return world.equals(plotWorld.world);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(world);
+    }
+
+    /**
+     * @deprecated This method is not meant to be invoked or overridden, with no replacement.
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     protected boolean canEqual(final Object other) {
         return other instanceof PlotWorld;
-    }
-
-    public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $world = this.getWorld();
-        result = result * PRIME + ($world == null ? 43 : $world.hashCode());
-        return result;
     }
 
 }

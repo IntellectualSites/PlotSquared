@@ -371,31 +371,29 @@ public class FlagContainer {
         }
     }
 
+    @Override
     public boolean equals(final Object o) {
-        if (o == this) {
+        if (this == o) {
             return true;
         }
-        if (!(o instanceof final FlagContainer other)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (!other.canEqual(this)) {
-            return false;
-        }
-        final Object this$flagMap = this.getFlagMap();
-        final Object other$flagMap = other.getFlagMap();
-        return Objects.equals(this$flagMap, other$flagMap);
+        final FlagContainer that = (FlagContainer) o;
+        return flagMap.equals(that.flagMap);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(flagMap);
+    }
+
+    /**
+     * @deprecated This method is not meant to be invoked or overridden, with no replacement.
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     protected boolean canEqual(final Object other) {
         return other instanceof FlagContainer;
-    }
-
-    public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $flagMap = this.getFlagMap();
-        result = result * PRIME + ($flagMap == null ? 43 : $flagMap.hashCode());
-        return result;
     }
 
     /**
