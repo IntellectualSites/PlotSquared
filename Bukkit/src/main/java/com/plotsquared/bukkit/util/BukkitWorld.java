@@ -97,7 +97,7 @@ public class BukkitWorld implements World<org.bukkit.World> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(world);
+        return world.hashCode();
     }
 
     /**

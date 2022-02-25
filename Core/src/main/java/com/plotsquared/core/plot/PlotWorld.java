@@ -119,7 +119,7 @@ public abstract class PlotWorld {
 
     @Override
     public int hashCode() {
-        return Objects.hash(world);
+        return world.hashCode();
     }
 
     /**

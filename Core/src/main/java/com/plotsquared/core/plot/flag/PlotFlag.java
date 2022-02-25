@@ -215,7 +215,7 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return value.hashCode();
     }
 
     /**
