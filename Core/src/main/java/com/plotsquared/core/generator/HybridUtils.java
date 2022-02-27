@@ -673,7 +673,7 @@ public class HybridUtils {
                     toCheck.set(true);
                 }
             }
-            int size = plotWorld.SIZE;
+            short size = plotWorld.SIZE;
             for (int X = 0; X < 16; X++) {
                 short absX = (short) ((finalX + X) % size);
                 for (int Z = 0; Z < 16; Z++) {
