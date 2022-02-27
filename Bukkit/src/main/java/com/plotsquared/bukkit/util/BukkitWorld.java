@@ -83,32 +83,29 @@ public class BukkitWorld implements World<org.bukkit.World> {
         return this.world.getName();
     }
 
+    @Override
     public boolean equals(final Object o) {
-        if (o == this) {
+        if (this == o) {
             return true;
         }
-        if (!(o instanceof final BukkitWorld other)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (!other.canEqual(this)) {
-            return false;
-        }
-        if (!Objects.equals(this.world, other.world)) {
-            return false;
-        }
-        return true;
+        final BukkitWorld that = (BukkitWorld) o;
+        return world.equals(that.world);
     }
 
+    @Override
+    public int hashCode() {
+        return world.hashCode();
+    }
+
+    /**
+     * @deprecated This method is not meant to be invoked or overridden, with no replacement.
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     protected boolean canEqual(final Object other) {
         return other instanceof BukkitWorld;
-    }
-
-    public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $world = this.world;
-        result = result * PRIME + ($world == null ? 43 : $world.hashCode());
-        return result;
     }
 
     public String toString() {
