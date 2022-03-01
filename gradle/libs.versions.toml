@@ -28,7 +28,7 @@ mvdwapi = "3.1.1"
 # Third party
 prtree = "2.0.0"
 aopalliance = "1.0"
-cloud-services = "1.6.1"
+cloud-services = "1.6.2"
 arkitektonika = "2.1.1"
 paster = "1.1.4"
 bstats = "3.0.0"
