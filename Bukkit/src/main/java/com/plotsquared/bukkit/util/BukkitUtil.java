@@ -347,13 +347,15 @@ public class BukkitUtil extends WorldUtil {
             final Block block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
             final Material type = block.getType();
             if (type != Material.LEGACY_SIGN && type != Material.LEGACY_WALL_SIGN) {
-                BlockFace facing = BlockFace.EAST;
-                if (world.getBlockAt(location.getX(), location.getY(), location.getZ() + 1).getType().isSolid()) {
-                    facing = BlockFace.NORTH;
-                } else if (world.getBlockAt(location.getX() + 1, location.getY(), location.getZ()).getType().isSolid()) {
-                    facing = BlockFace.WEST;
-                } else if (world.getBlockAt(location.getX(), location.getY(), location.getZ() - 1).getType().isSolid()) {
-                    facing = BlockFace.SOUTH;
+                BlockFace facing = BlockFace.NORTH;
+                if (!world.getBlockAt(location.getX(), location.getY(), location.getZ() + 1).getType().isSolid()) {
+                    if (world.getBlockAt(location.getX() - 1, location.getY(), location.getZ()).getType().isSolid()) {
+                        facing = BlockFace.EAST;
+                    } else if (world.getBlockAt(location.getX() + 1, location.getY(), location.getZ()).getType().isSolid()) {
+                        facing = BlockFace.WEST;
+                    } else if (world.getBlockAt(location.getX(), location.getY(), location.getZ() - 1).getType().isSolid()) {
+                        facing = BlockFace.SOUTH;
+                    }
                 }
                 if (PlotSquared.platform().serverVersion()[1] == 13) {
                     block.setType(Material.valueOf(area.legacySignMaterial()), false);
