@@ -1738,7 +1738,6 @@ public class Plot {
             area.addPlot(this);
             updateWorldBorder();
         }
-        this.getPlotModificationManager().setSign(player.getName());
         player.sendMessage(TranslatableCaption.of("working.claimed"), Template.of("plot", this.getId().toString()));
         if (teleport) {
             if (!auto && Settings.Teleport.ON_CLAIM) {
@@ -1786,6 +1785,7 @@ public class Plot {
             );
         }
         plotworld.getPlotManager().claimPlot(this, null);
+        this.getPlotModificationManager().setSign(player.getName());
         return true;
     }
 

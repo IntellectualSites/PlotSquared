@@ -373,7 +373,7 @@ public class BukkitUtil extends WorldUtil {
                     sign.setLine(i, LEGACY_COMPONENT_SERIALIZER
                             .serialize(MINI_MESSAGE.parse(lines[i].getComponent(LocaleHolder.console()), replacements)));
                 }
-                sign.update(true);
+                sign.update(true, false);
             }
         });
     }
