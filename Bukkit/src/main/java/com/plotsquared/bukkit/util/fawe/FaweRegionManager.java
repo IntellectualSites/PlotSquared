@@ -111,6 +111,11 @@ public class FaweRegionManager extends BukkitRegionManager {
     }
 
     @Override
+    public void setBiome(CuboidRegion region, int extendBiome, BiomeType biome, PlotArea area, Runnable whenDone) {
+        delegate.setBiome(region, extendBiome, biome, area.getWorldName(), whenDone);
+    }
+
+    @Override
     public boolean copyRegion(
             final @NonNull Location pos1,
             final @NonNull Location pos2,

@@ -91,7 +91,7 @@ public class HybridGen extends IndependentPlotGenerator {
         if (hybridPlotWorld.PLOT_BEDROCK) {
             for (short x = 0; x < 16; x++) {
                 for (short z = 0; z < 16; z++) {
-                    result.setBlock(x, 0, z, BlockTypes.BEDROCK.getDefaultState());
+                    result.setBlock(x, hybridPlotWorld.getMinGenHeight(), z, BlockTypes.BEDROCK.getDefaultState());
                 }
             }
         }
@@ -156,7 +156,7 @@ public class HybridGen extends IndependentPlotGenerator {
             }
         }
         // generation
-        int startY = hybridPlotWorld.PLOT_BEDROCK ? 1 : 0;
+        int startY = hybridPlotWorld.getMinGenHeight() + (hybridPlotWorld.PLOT_BEDROCK ? 1: 0);
         for (short x = 0; x < 16; x++) {
             if (insideRoadX[x]) {
                 for (short z = 0; z < 16; z++) {

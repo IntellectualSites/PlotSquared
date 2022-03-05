@@ -42,6 +42,7 @@ public class LocalChunk {
     private final QueueCoordinator parent;
     private final int x;
     private final int z;
+    private final int minSection;
 
     private final BaseBlock[][] baseblocks;
     private final BiomeType[][] biomes;
@@ -52,8 +53,10 @@ public class LocalChunk {
         this.parent = parent;
         this.x = x;
         this.z = z;
-        baseblocks = new BaseBlock[16][];
-        biomes = new BiomeType[16][];
+        this.minSection = parent.getMinLayer();
+        int sections = parent.getMaxLayer() - parent.getMinLayer() + 1;
+        baseblocks = new BaseBlock[sections][];
+        biomes = new BiomeType[sections][];
     }
 
     public @NonNull QueueCoordinator getParent() {
@@ -66,6 +69,15 @@ public class LocalChunk {
 
     public int getZ() {
         return this.z;
+    }
+
+    /**
+     * Get the minimum layer position stored (usually -4 or 0).
+     *
+     * @since TODO
+     */
+    public int getMinSection() {
+        return this.minSection;
     }
 
     public @NonNull BaseBlock[][] getBaseblocks() {
@@ -81,7 +93,7 @@ public class LocalChunk {
     }
 
     public void setBiome(final int x, final int y, final int z, final @NonNull BiomeType biomeType) {
-        final int i = y >> 4;
+        final int i = getLayerIndex(y);
         final int j = ChunkUtil.getJ(x, y, z);
         BiomeType[] array = this.biomes[i];
         if (array == null) {
@@ -96,7 +108,7 @@ public class LocalChunk {
     }
 
     public void setBlock(final int x, final int y, final int z, final @NonNull BaseBlock baseBlock) {
-        final int i = y >> 4;
+        final int i = getLayerIndex(y);
         final int j = ChunkUtil.getJ(x, y, z);
         BaseBlock[] array = baseblocks[i];
         if (array == null) {
@@ -115,6 +127,10 @@ public class LocalChunk {
 
     public @NonNull HashMap<Location, BaseEntity> getEntities() {
         return this.entities;
+    }
+
+    private int getLayerIndex(final int y) {
+        return (y >> 4) - minSection;
     }
 
 }

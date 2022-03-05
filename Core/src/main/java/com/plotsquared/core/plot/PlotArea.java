@@ -34,8 +34,6 @@ import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.configuration.caption.CaptionUtility;
-import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.generator.GridPlotWorld;
@@ -54,7 +52,6 @@ import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
-import com.plotsquared.core.plot.flag.types.DoubleFlag;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.MathMan;
@@ -144,8 +141,10 @@ public abstract class PlotArea {
     private boolean homeAllowNonmember = false;
     private BlockLoc nonmemberHome;
     private BlockLoc defaultHome;
-    private int maxBuildHeight = 256;
-    private int minBuildHeight = 1;
+    private int maxBuildHeight = PlotSquared.platform().versionMaxHeight() + 1; // Exclusive
+    private int minBuildHeight = PlotSquared.platform().versionMinHeight() + 1; // Inclusive
+    private int maxGenHeight = PlotSquared.platform().versionMaxHeight(); // Inclusive
+    private int minGenHeight = PlotSquared.platform().versionMinHeight(); // Inclusive
     private GameMode gameMode = GameModes.CREATIVE;
     private Map<String, PlotExpression> prices = new HashMap<>();
     private List<String> schematics = new ArrayList<>();
@@ -361,6 +360,8 @@ public abstract class PlotArea {
         this.worldBorder = config.getBoolean("world.border");
         this.maxBuildHeight = config.getInt("world.max_height");
         this.minBuildHeight = config.getInt("world.min_height");
+        this.minGenHeight = config.getInt("world.min_gen_height");
+        this.maxGenHeight = config.getInt("world.max_gen_height");
 
         switch (config.getString("world.gamemode").toLowerCase()) {
             case "creative", "c", "1" -> this.gameMode = GameModes.CREATIVE;
@@ -484,6 +485,8 @@ public abstract class PlotArea {
         options.put("home.nonmembers", position);
         options.put("world.max_height", this.getMaxBuildHeight());
         options.put("world.min_height", this.getMinBuildHeight());
+        options.put("world.min_gen_height", this.getMinGenHeight());
+        options.put("world.max_gen_height", this.getMaxGenHeight());
         options.put("world.gamemode", this.getGameMode().getName().toLowerCase());
         options.put("road.flags.default", null);
 
@@ -1078,8 +1081,8 @@ public abstract class PlotArea {
                     BlockVector2 pos1 = BlockVector2.at(value.getP1().getX(), value.getP1().getY());
                     BlockVector2 pos2 = BlockVector2.at(value.getP2().getX(), value.getP2().getY());
                     return new CuboidRegion(
-                            pos1.toBlockVector3(),
-                            pos2.toBlockVector3(Plot.MAX_HEIGHT - 1)
+                            pos1.toBlockVector3(getMinGenHeight()),
+                            pos2.toBlockVector3(getMaxGenHeight())
                     );
                 }
             };
@@ -1361,12 +1364,36 @@ public abstract class PlotArea {
         this.defaultHome = defaultHome;
     }
 
+    /**
+     * Get the maximum height players may build in. Exclusive.
+     */
     public int getMaxBuildHeight() {
         return this.maxBuildHeight;
     }
 
+    /**
+     * Get the minimum height players may build in. Inclusive.
+     */
     public int getMinBuildHeight() {
         return this.minBuildHeight;
+    }
+
+    /**
+     * Get the min height from which P2 will generate blocks. Inclusive.
+     *
+     * @since TODO
+     */
+    public int getMinGenHeight() {
+        return this.minGenHeight;
+    }
+
+    /**
+     * Get the max height to which P2 will generate blocks. Inclusive.
+     *
+     * @since TODO
+     */
+    public int getMaxGenHeight() {
+        return this.maxGenHeight;
     }
 
     public GameMode getGameMode() {

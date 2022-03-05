@@ -37,15 +37,21 @@ public class MainUtil {
      * Cache of mapping x,y,z coordinates to the chunk array<br>
      * - Used for efficient world generation<br>
      */
+    @Deprecated(forRemoval = true, since = "6.0.0")
     public static short[][] x_loc;
+    @Deprecated(forRemoval = true, since = "6.0.0")
     public static short[][] y_loc;
+    @Deprecated(forRemoval = true, since = "6.0.0")
     public static short[][] z_loc;
+    @Deprecated(forRemoval = true, since = "6.0.0")
     public static short[][][] CACHE_I = null;
+    @Deprecated(forRemoval = true, since = "6.0.0")
     public static short[][][] CACHE_J = null;
 
     /**
      * This cache is used for world generation and just saves a bit of calculation time when checking if something is in the plot area.
      */
+    @Deprecated(forRemoval = true, since = "6.0.0")
     public static void initCache() {
         if (x_loc == null) {
             x_loc = new short[16][4096];

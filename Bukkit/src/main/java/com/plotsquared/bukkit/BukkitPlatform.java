@@ -239,6 +239,16 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     }
 
     @Override
+    public int versionMinHeight() {
+        return serverVersion()[1] >= 18 ? -64 : 0;
+    }
+
+    @Override
+    public int versionMaxHeight() {
+        return serverVersion()[1] >= 18 ? 319 : 255;
+    }
+
+    @Override
     public @NonNull String serverImplementation() {
         return Bukkit.getVersion();
     }

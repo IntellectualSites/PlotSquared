@@ -49,6 +49,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -207,7 +208,7 @@ public class DebugExec extends SubCommand {
                     }
                     boolean result;
                     if (HybridUtils.regions != null) {
-                        result = this.hybridUtils.scheduleRoadUpdate(area, HybridUtils.regions, 0, new HashSet<>());
+                        result = this.hybridUtils.scheduleRoadUpdate(area, HybridUtils.regions, 0, new LinkedHashSet<>());
                     } else {
                         result = this.hybridUtils.scheduleRoadUpdate(area, 0);
                     }

@@ -79,6 +79,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public int SCHEM_Y;
     private Location SIGN_LOCATION;
     private File root = null;
+    private int lastOverlayHeightError = Integer.MIN_VALUE;
 
     @Inject
     private SchematicHandler schematicHandler;
@@ -171,9 +172,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public void loadConfiguration(ConfigurationSection config) {
         super.loadConfiguration(config);
         if ((this.ROAD_WIDTH & 1) == 0) {
-            this.PATH_WIDTH_LOWER = (short) (Math.floor(this.ROAD_WIDTH / 2) - 1);
+            this.PATH_WIDTH_LOWER = (short) (Math.floor(this.ROAD_WIDTH / 2f) - 1);
         } else {
-            this.PATH_WIDTH_LOWER = (short) Math.floor(this.ROAD_WIDTH / 2);
+            this.PATH_WIDTH_LOWER = (short) Math.floor(this.ROAD_WIDTH / 2f);
         }
         if (this.ROAD_WIDTH == 0) {
             this.PATH_WIDTH_UPPER = (short) (this.SIZE + 1);
@@ -251,31 +252,34 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         Schematic schematic2 = this.schematicHandler.getSchematic(schematic2File);
         Schematic schematic3 = this.schematicHandler.getSchematic(schematic3File);
         int shift = this.ROAD_WIDTH / 2;
-        int oddshift = (this.ROAD_WIDTH & 1) == 0 ? 0 : 1;
+        int oddshift = (this.ROAD_WIDTH & 1);
 
         SCHEM_Y = schematicStartHeight();
         int plotY = PLOT_HEIGHT - SCHEM_Y;
         int minRoadWall = Settings.Schematics.USE_WALL_IN_ROAD_SCHEM_HEIGHT ? Math.min(ROAD_HEIGHT, WALL_HEIGHT) : ROAD_HEIGHT;
         int roadY = minRoadWall - SCHEM_Y;
 
+        int worldHeight = getMaxGenHeight() - getMinGenHeight() + 1;
+
+        // SCHEM_Y should be normalised to the plot "start" height
         if (schematic3 != null) {
-            if (schematic3.getClipboard().getDimensions().getY() == 256) {
+            if (schematic3.getClipboard().getDimensions().getY() == worldHeight) {
                 SCHEM_Y = plotY = 0;
             } else if (!Settings.Schematics.PASTE_ON_TOP) {
-                SCHEM_Y = plotY = getMinBuildHeight();
+                SCHEM_Y = plotY = getMinBuildHeight() - getMinGenHeight();
             }
         }
 
         if (schematic1 != null) {
-            if (schematic1.getClipboard().getDimensions().getY() == 256) {
-                SCHEM_Y = roadY = 0;
-                if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() != 256
+            if (schematic1.getClipboard().getDimensions().getY() == worldHeight) {
+                SCHEM_Y = roadY = getMinGenHeight();
+                if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() != worldHeight
                         && !Settings.Schematics.PASTE_ON_TOP) {
                     plotY = PLOT_HEIGHT;
                 }
             } else if (!Settings.Schematics.PASTE_ROAD_ON_TOP) {
                 SCHEM_Y = roadY = getMinBuildHeight();
-                if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() != 256
+                if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() != worldHeight
                         && !Settings.Schematics.PASTE_ON_TOP) {
                     plotY = PLOT_HEIGHT;
                 }
@@ -428,7 +432,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         int pair = MathMan.pair(x, z);
         BaseBlock[] existing = this.G_SCH.computeIfAbsent(pair, k -> new BaseBlock[height]);
         if (y >= height) {
-            LOGGER.error("Error adding overlay block. `y > height`");
+            if (y != lastOverlayHeightError) {
+                lastOverlayHeightError = y;
+                LOGGER.error(String.format("Error adding overlay block. `y > height`. y=%s, height=%s", y, height));
+            }
             return;
         }
         existing[y] = id;
