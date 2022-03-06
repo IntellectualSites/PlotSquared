@@ -33,20 +33,32 @@ import com.plotsquared.core.inject.factory.HybridPlotWorldFactory;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.queue.LightingMode;
 import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.plotsquared.core.util.MathMan;
+import com.sk89q.worldedit.WorldEditException;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.util.SideEffect;
+import com.sk89q.worldedit.util.SideEffectSet;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class HybridGen extends IndependentPlotGenerator {
 
     private final HybridPlotWorldFactory hybridPlotWorldFactory;
+    private final Map<Long, Set<BlockVector3>> pendingLightChunks;
 
     @Inject
     public HybridGen(final @NonNull HybridPlotWorldFactory hybridPlotWorldFactory) {
         this.hybridPlotWorldFactory = hybridPlotWorldFactory;
+        this.pendingLightChunks = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -68,7 +80,12 @@ public class HybridGen extends IndependentPlotGenerator {
         BaseBlock[] blocks = world.G_SCH.get(MathMan.pair(relativeX, relativeZ));
         if (blocks != null) {
             for (int y = 0; y < blocks.length; y++) {
-                if (blocks[y] != null) {
+                BaseBlock block = blocks[y];
+                if (block != null) {
+                    if (block.getBlockType().getMaterial().getLightValue() > 0) {
+                        pendingLightChunks.get(MathMan.pairInt(result.getMin().getX(), result.getMin().getZ()))
+                                .add(BlockVector3.at(result.getMin().getX() + x, minY + y, result.getMin().getZ() + z));
+                    }
                     result.setBlock(x, minY + y, z, blocks[y]);
                 }
             }
@@ -84,6 +101,9 @@ public class HybridGen extends IndependentPlotGenerator {
         Preconditions.checkNotNull(result, "result cannot be null");
         Preconditions.checkNotNull(settings, "settings cannot be null");
 
+        if (result.getLightingMode() != LightingMode.NONE) {
+            pendingLightChunks.put(MathMan.pairInt(result.getMin().getX(), result.getMin().getZ()), new HashSet<>());
+        }
         HybridPlotWorld hybridPlotWorld = (HybridPlotWorld) settings;
         // Biome
         result.fillBiome(hybridPlotWorld.getPlotBiome());
@@ -243,6 +263,30 @@ public class HybridGen extends IndependentPlotGenerator {
                 }
             }
         }
+    }
+
+    /**
+     * Post-process light updates
+     */
+    @Override
+    public boolean populateChunk(final ScopedQueueCoordinator result, final PlotArea setting) {
+        if (result.getLightingMode() == LightingMode.NONE) {
+            return super.populateChunk(result, setting);
+        }
+        Set<BlockVector3> pending = pendingLightChunks.remove(MathMan.pairInt(result.getMin().getX(), result.getMin().getZ()));
+        pending.forEach(blockVector3 -> {
+            try {
+                result.getWorld().applySideEffects(
+                        blockVector3,
+                        BlockTypes.AIR.getDefaultState(),
+                        SideEffectSet.none()
+                                .with(SideEffect.LIGHTING, SideEffect.State.ON)
+                );
+            } catch (WorldEditException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return super.populateChunk(result, setting);
     }
 
     @Override
