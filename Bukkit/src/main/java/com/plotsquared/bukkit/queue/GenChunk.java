@@ -67,7 +67,7 @@ public class GenChunk extends ScopedQueueCoordinator {
      * @param minY minimum world Y, inclusive
      * @param maxY maximum world Y, inclusive
      *
-     * @since TODO
+     * @since 6.6.0
      */
     public GenChunk(int minY, int maxY) {
         super(null, Location.at("", 0, minY, 0), Location.at("", 15, maxY, 15));

@@ -74,7 +74,7 @@ public class LocalChunk {
     /**
      * Get the minimum layer position stored (usually -4 or 0).
      *
-     * @since TODO
+     * @since 6.6.0
      */
     public int getMinSection() {
         return this.minSection;

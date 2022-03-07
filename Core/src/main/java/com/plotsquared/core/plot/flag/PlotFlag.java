@@ -221,7 +221,7 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
     /**
      * @deprecated This method is not meant to be invoked or overridden, with no replacement.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.6.0")
     protected boolean canEqual(final Object other) {
         return other instanceof PlotFlag;
     }

@@ -76,7 +76,7 @@ public class RegionUtil {
         return new CuboidRegion(min, max);
     }
 
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.6.0")
     public static CuboidRegion createRegion(int pos1x, int pos2x, int pos1z, int pos2z) {
         return createRegion(pos1x, pos2x, 0, 255, pos1z, pos2z);
     }

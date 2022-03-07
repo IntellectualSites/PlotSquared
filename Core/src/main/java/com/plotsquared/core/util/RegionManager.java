@@ -379,7 +379,7 @@ public abstract class RegionManager {
         });
     }
 
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.6.0")
     public void setBiome(
             final CuboidRegion region,
             final int extendBiome,
@@ -398,7 +398,7 @@ public abstract class RegionManager {
      * @param biome       biome to set
      * @param area        {@link PlotArea} in which the biome is being set
      * @param whenDone    task to run when complete
-     * @since TODO
+     * @since 6.6.0
      */
     public void setBiome(
             final CuboidRegion region,

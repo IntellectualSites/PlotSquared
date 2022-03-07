@@ -102,7 +102,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * Gets the default minimum world height for the version of Minecraft that the server is running.
      *
      * @return minimum world height
-     * @since TODO
+     * @since 6.6.0
      */
     int versionMinHeight();
 
@@ -110,7 +110,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * Gets the default maximum world height for the version of Minecraft that the server is running.
      *
      * @return maximum world height (inclusive)
-     * @since TODO
+     * @since 6.6.0
      */
     int versionMaxHeight();
 

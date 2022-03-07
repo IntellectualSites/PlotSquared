@@ -96,7 +96,7 @@ public abstract class WorldUtil {
      * @param world  World name
      * @param region Region
      * @param biome  Biome
-     * @since TODO
+     * @since 6.6.0
      */
     public static void setBiome(String world, final CuboidRegion region, BiomeType biome) {
         PlotSquared.platform().worldUtil().setBiomes(world, region, biome);

@@ -122,7 +122,7 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
  */
 public class Plot {
 
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.6.0")
     public static final int MAX_HEIGHT = 256;
 
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Plot.class.getSimpleName());

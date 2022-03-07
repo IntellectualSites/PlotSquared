@@ -605,7 +605,7 @@ public class HybridUtils {
      * @return if successful
      * @deprecated use {@link HybridUtils#regenerateRoad(PlotArea, BlockVector2, int, QueueCoordinator)}
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.6.0")
     public boolean regenerateRoad(final PlotArea area, final BlockVector2 chunk, int extend) {
         return regenerateRoad(area, chunk, extend, null);
     }
@@ -618,7 +618,7 @@ public class HybridUtils {
      * @param extend           How far to extend setting air above the road
      * @param queueCoordinator {@link QueueCoordinator} to use to set the blocks. Null if one should be created and enqueued
      * @return if successful
-     * @since TODO
+     * @since 6.6.0
      */
     public boolean regenerateRoad(
             final PlotArea area,

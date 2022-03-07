@@ -1381,7 +1381,7 @@ public abstract class PlotArea {
     /**
      * Get the min height from which P2 will generate blocks. Inclusive.
      *
-     * @since TODO
+     * @since 6.6.0
      */
     public int getMinGenHeight() {
         return this.minGenHeight;
@@ -1390,7 +1390,7 @@ public abstract class PlotArea {
     /**
      * Get the max height to which P2 will generate blocks. Inclusive.
      *
-     * @since TODO
+     * @since 6.6.0
      */
     public int getMaxGenHeight() {
         return this.maxGenHeight;

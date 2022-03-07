@@ -61,7 +61,7 @@ public interface World<T> {
     /**
      * Get the min world height. Inclusive.
      *
-     * @since TODO
+     * @since 6.6.0
      */
     int getMinHeight();
 
@@ -69,7 +69,7 @@ public interface World<T> {
     /**
      * Get the max world height. Inclusive.
      *
-     * @since TODO
+     * @since 6.6.0
      */
     int getMaxHeight();
 

@@ -88,7 +88,7 @@ public class BukkitWorld implements World<org.bukkit.World> {
     /**
      * Get the min world height from a Bukkit {@link org.bukkit.World}. Inclusive
      *
-     * @since TODO
+     * @since 6.6.0
      */
     public static int getMinWorldHeight(org.bukkit.World world) {
         return HAS_MIN_Y ? world.getMinHeight() : 0;
@@ -97,7 +97,7 @@ public class BukkitWorld implements World<org.bukkit.World> {
     /**
      * Get the max world height from a Bukkit {@link org.bukkit.World}. Exclusive
      *
-     * @since TODO
+     * @since 6.6.0
      */
     public static int getMaxWorldHeight(org.bukkit.World world) {
         return HAS_MIN_Y ? world.getMaxHeight() : 256;
@@ -143,7 +143,7 @@ public class BukkitWorld implements World<org.bukkit.World> {
     /**
      * @deprecated This method is not meant to be invoked or overridden, with no replacement.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.6.0")
     protected boolean canEqual(final Object other) {
         return other instanceof BukkitWorld;
     }

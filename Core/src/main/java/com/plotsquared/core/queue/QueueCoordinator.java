@@ -77,7 +77,7 @@ public abstract class QueueCoordinator {
      * @return a new {@link ScopedQueueCoordinator}
      * @deprecated Use {@link ScopedQueueCoordinator#getForChunk(int, int, int, int)}
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.6.0")
     public ScopedQueueCoordinator getForChunk(int x, int z) {
         if (getWorld() == null) {
             return getForChunk(x, z, PlotSquared.platform().versionMinHeight(), PlotSquared.platform().versionMaxHeight());
@@ -91,7 +91,7 @@ public abstract class QueueCoordinator {
      * @param x chunk x coordinate
      * @param z chunk z coordinate
      * @return a new {@link ScopedQueueCoordinator}
-     * @since TODO
+     * @since 6.6.0
      */
     public ScopedQueueCoordinator getForChunk(int x, int z, int minY, int maxY) {
         int bx = x << 4;
