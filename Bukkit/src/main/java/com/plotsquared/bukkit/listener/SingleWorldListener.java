@@ -46,7 +46,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 public class SingleWorldListener implements Listener {
 
     private final Method methodGetHandleChunk;
-    private Field shouldSave;
+    private Field shouldSave = null;
 
     public SingleWorldListener() throws Exception {
         ReflectionUtils.RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
@@ -59,9 +59,12 @@ public class SingleWorldListener implements Listener {
                 } else {
                     this.shouldSave = classChunk.getField("s").getRealField();
                 }
-            } else {
+            } else if (PlotSquared.platform().serverVersion()[1] == 17) {
                 ReflectionUtils.RefClass classChunk = getRefClass("net.minecraft.world.level.chunk.Chunk");
                 this.shouldSave = classChunk.getField("r").getRealField();
+            } else if (PlotSquared.platform().serverVersion()[1] == 18) {
+                ReflectionUtils.RefClass classChunk = getRefClass("net.minecraft.world.level.chunk.IChunkAccess");
+                this.shouldSave = classChunk.getField("b").getRealField();
             }
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
