@@ -8,7 +8,8 @@
     "com.google.guava:guava",
     "com.google.code.gson:gson",
     "gson",
-    "snakeyaml"
+    "snakeyaml",
+    "net.kyori"
   ],
   "timezone": "Europe/Berlin",
   "schedule": [
