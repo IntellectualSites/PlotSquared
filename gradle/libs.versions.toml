@@ -12,9 +12,9 @@ findbugs = "3.0.1"
 snakeyaml = "1.30" # Version set by Bukkit
 
 # Adventure & MiniMessage
-adventure-api = "4.9.3"
-adventure-text-minimessage = "4.1.0-SNAPSHOT"
-adventure-platform-bukkit = "4.0.1"
+adventure-api = "4.10.1"
+adventure-text-minimessage = "4.10.1"
+adventure-platform-bukkit = "4.1.0"
 
 # Plugins
 worldedit = "7.2.9"
