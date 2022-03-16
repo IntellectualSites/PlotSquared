@@ -18,11 +18,11 @@ adventure-platform-bukkit = "4.0.1"
 
 # Plugins
 worldedit = "7.2.9"
-fawe = "2.0.1"
+fawe = "2.1.0"
 vault = "1.7.1"
 placeholderapi = "2.11.1"
 luckperms = "5.4"
-essentialsx = "2.19.3"
+essentialsx = "2.19.4"
 mvdwapi = "3.1.1"
 
 # Third party

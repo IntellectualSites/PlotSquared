@@ -67,7 +67,7 @@ public class FaweSchematicHandler extends SchematicHandler {
             final PlotPlayer<?> actor,
             final RunnableVal<Boolean> whenDone
     ) {
-        delegate.paste(schematic, plot, xOffset, yOffset, zOffset, autoHeight, whenDone);
+        delegate.paste(schematic, plot, xOffset, yOffset, zOffset, autoHeight, actor, whenDone);
     }
 
     @Override
