@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+@Deprecated(since = "TODO", forRemoval = true)
 public class RegExUtil {
 
     public static Map<String, Pattern> compiledPatterns;
