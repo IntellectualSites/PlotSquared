@@ -44,27 +44,27 @@ public final class TimeUtil {
         StringBuilder toReturn = new StringBuilder();
         if (time >= 33868800) {
             int years = (int) (time / 33868800);
-            time -= years * 33868800;
+            time -= years * 33868800L;
             toReturn.append(years).append("y ");
         }
         if (time >= 604800) {
             int weeks = (int) (time / 604800);
-            time -= weeks * 604800;
+            time -= weeks * 604800L;
             toReturn.append(weeks).append("w ");
         }
         if (time >= 86400) {
             int days = (int) (time / 86400);
-            time -= days * 86400;
+            time -= days * 86400L;
             toReturn.append(days).append("d ");
         }
         if (time >= 3600) {
             int hours = (int) (time / 3600);
-            time -= hours * 3600;
+            time -= hours * 3600L;
             toReturn.append(hours).append("h ");
         }
         if (time >= 60) {
             int minutes = (int) (time / 60);
-            time -= minutes * 60;
+            time -= minutes * 60L;
             toReturn.append(minutes).append("m ");
         }
         if (toReturn.length() == 0 || time > 0) {
