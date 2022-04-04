@@ -227,7 +227,7 @@ public class Load extends SubCommand {
     /**
      * @deprecated Use {@link TimeUtil#secToTime(long)}
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.6.2")
     public String secToTime(long time) {
         StringBuilder toreturn = new StringBuilder();
         if (time >= 33868800) {
