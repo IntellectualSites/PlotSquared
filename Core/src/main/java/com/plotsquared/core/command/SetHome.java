@@ -57,8 +57,12 @@ public class SetHome extends SetCommand {
                 Plot base = plot.getBasePlot(false);
                 Location bottom = base.getBottomAbs();
                 Location location = player.getLocationFull();
-                BlockLoc rel = new BlockLoc(location.getX() - bottom.getX(), location.getY(),
-                        location.getZ() - bottom.getZ(), location.getYaw(), location.getPitch()
+                BlockLoc rel = new BlockLoc(
+                        location.getX() - bottom.getX(),
+                        location.getY(), // y is absolute
+                        location.getZ() - bottom.getZ(),
+                        location.getYaw(),
+                        location.getPitch()
                 );
                 base.setHome(rel);
                 player.sendMessage(TranslatableCaption.of("position.position_set"));
