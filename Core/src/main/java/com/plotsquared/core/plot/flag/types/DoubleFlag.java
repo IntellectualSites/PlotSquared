@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,43 +21,56 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.types;
 
-import com.plotsquared.core.configuration.Caption;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.Caption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class DoubleFlag<F extends NumberFlag<Double, F>> extends NumberFlag<Double, F> {
 
-    protected DoubleFlag(@NotNull Double value, Double minimum, Double maximum,
-        @NotNull Caption flagDescription) {
-        super(value, minimum, maximum, Captions.FLAG_CATEGORY_DOUBLES, flagDescription);
+    protected DoubleFlag(
+            @NonNull Double value, Double minimum, Double maximum,
+            @NonNull Caption flagDescription
+    ) {
+        super(value, minimum, maximum, TranslatableCaption.of("flags.flag_category_doubles"), flagDescription);
     }
 
-    protected DoubleFlag(@NotNull Double value, @NotNull Caption flagDescription) {
+    protected DoubleFlag(@NonNull Double value, @NonNull Caption flagDescription) {
         this(value, Double.MIN_VALUE, Double.MAX_VALUE, flagDescription);
     }
 
-    @Override public F merge(@NotNull Double newValue) {
+    @Override
+    public F merge(@NonNull Double newValue) {
         return flagOf(getValue() + newValue);
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "12.175";
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return getValue().toString();
     }
 
-    @NotNull @Override protected Double parseNumber(String input) throws FlagParseException {
+    @NonNull
+    @Override
+    protected Double parseNumber(String input) throws FlagParseException {
         try {
             return Double.parseDouble(input);
         } catch (Throwable throwable) {
-            throw new FlagParseException(this, input, Captions.FLAG_ERROR_DOUBLE);
+            throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_double"));
         }
     }
+
+    @Override
+    public boolean isValuedPermission() {
+        return false;
+    }
+
 }

@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,11 +21,13 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.backup;
 
-import org.jetbrains.annotations.NotNull;
+import com.plotsquared.core.player.PlotPlayer;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -39,22 +41,27 @@ import java.util.concurrent.CompletableFuture;
  */
 public class NullBackupProfile implements BackupProfile {
 
-    @Override @NotNull public CompletableFuture<List<Backup>> listBackups() {
+    @Override
+    public @NonNull CompletableFuture<List<Backup>> listBackups() {
         return CompletableFuture.completedFuture(Collections.emptyList());
     }
 
-    @Override public void destroy(){
+    @Override
+    public void destroy() {
     }
 
-    @Override @NotNull public Path getBackupDirectory() {
+    @Override
+    public @NonNull Path getBackupDirectory() {
         return new File(".").toPath();
     }
 
-    @Override @NotNull public CompletableFuture<Backup> createBackup() {
+    @Override
+    public @NonNull CompletableFuture<Backup> createBackup() {
         throw new UnsupportedOperationException("Cannot create backup of an unowned plot");
     }
 
-    @Override @NotNull public CompletableFuture<Void> restoreBackup(@NotNull final Backup backup) {
+    @Override
+    public @NonNull CompletableFuture<Void> restoreBackup(final @NonNull Backup backup, @Nullable PlotPlayer<?> player) {
         return CompletableFuture.completedFuture(null);
     }
 

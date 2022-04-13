@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
@@ -34,19 +34,39 @@ import com.plotsquared.core.plot.PlotItemStack;
  */
 public abstract class InventoryUtil {
 
-    /**
-     * This class is only used by internal functions, for most cases use the PlotInventory class
-     */
-    public static InventoryUtil manager = null;
-
     public abstract void open(final PlotInventory inv);
 
     public abstract void close(final PlotInventory inv);
 
-    public abstract void setItem(final PlotInventory plotInventory, final int index,
-        final PlotItemStack item);
+    /**
+     * Attempts to set an item into a {@link PlotInventory} while also checking the existence of the material
+     *
+     * @param plotInventory The inventory where the item should be placed
+     * @param index The index where to place the item
+     * @param item The item to place into the inventory
+     * @return {@code true} if the item could be placed, {@code false} otherwise (e.g. item not available in current version)
+     * @since 6.5.0
+     */
+    public abstract boolean setItemChecked(
+            final PlotInventory plotInventory, final int index,
+            final PlotItemStack item
+    );
 
-    public abstract PlotItemStack[] getItems(final PlotPlayer player);
+    /**
+     * Attempts to set an item into a {@link PlotInventory}
+     *
+     * @param plotInventory The inventory where the item should be placed
+     * @param index The index where to place the item
+     * @param item The item to place into the inventory
+     * @see #setItemChecked(PlotInventory, int, PlotItemStack)
+     */
+    public void setItem(final PlotInventory plotInventory, final int index,
+                        final PlotItemStack item) {
+        setItemChecked(plotInventory, index, item);
+    }
+
+    public abstract PlotItemStack[] getItems(final PlotPlayer<?> player);
 
     public abstract boolean isOpen(final PlotInventory plotInventory);
+
 }

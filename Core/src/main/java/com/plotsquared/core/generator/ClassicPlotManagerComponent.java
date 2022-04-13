@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,11 +21,11 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
 
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Optional;
 
@@ -51,7 +51,7 @@ public enum ClassicPlotManagerComponent {
         return stringValues;
     }
 
-    public static Optional<ClassicPlotManagerComponent> fromString(@NotNull final String string) {
+    public static Optional<ClassicPlotManagerComponent> fromString(final @NonNull String string) {
         for (final ClassicPlotManagerComponent classicPlotManagerComponent : values()) {
             if (classicPlotManagerComponent.name().equalsIgnoreCase(string)) {
                 return Optional.of(classicPlotManagerComponent);

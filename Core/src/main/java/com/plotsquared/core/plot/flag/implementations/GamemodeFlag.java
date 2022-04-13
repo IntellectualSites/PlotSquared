@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,25 +21,28 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 public class GamemodeFlag extends PlotFlag<GameMode, GamemodeFlag> {
 
     public static final GameMode DEFAULT = new GameMode("default");
     public static final GamemodeFlag GAMEMODE_FLAG_CREATIVE = new GamemodeFlag(GameModes.CREATIVE);
     public static final GamemodeFlag GAMEMODE_FLAG_ADVENTURE =
-        new GamemodeFlag(GameModes.ADVENTURE);
+            new GamemodeFlag(GameModes.ADVENTURE);
     public static final GamemodeFlag GAMEMODE_FLAG_SPECTATOR =
-        new GamemodeFlag(GameModes.SPECTATOR);
+            new GamemodeFlag(GameModes.SPECTATOR);
     public static final GamemodeFlag GAMEMODE_FLAG_SURVIVAL = new GamemodeFlag(GameModes.SURVIVAL);
     public static final GamemodeFlag GAMEMODE_FLAG_DEFAULT = new GamemodeFlag(DEFAULT);
 
@@ -52,58 +55,54 @@ public class GamemodeFlag extends PlotFlag<GameMode, GamemodeFlag> {
      *
      * @param value Flag value
      */
-    protected GamemodeFlag(@NotNull GameMode value) {
-        super(value, Captions.FLAG_CATEGORY_GAMEMODE, Captions.FLAG_DESCRIPTION_GAMEMODE);
+    protected GamemodeFlag(@NonNull GameMode value) {
+        super(
+                value,
+                TranslatableCaption.of("flags.flag_category_gamemode"),
+                TranslatableCaption.of("flags.flag_description_gamemode")
+        );
     }
 
-    @Override public GamemodeFlag parse(@NotNull String input) throws FlagParseException {
-        switch (input) {
-            case "creative":
-            case "c":
-            case "1":
-                return flagOf(GameModes.CREATIVE);
-            case "adventure":
-            case "a":
-            case "2":
-                return flagOf(GameModes.ADVENTURE);
-            case "spectator":
-            case "sp":
-            case "3":
-                return flagOf(GameModes.SPECTATOR);
-            case "survival":
-            case "s":
-            case "0":
-                return flagOf(GameModes.SURVIVAL);
-            default:
-                return flagOf(DEFAULT);
-        }
+    @Override
+    public GamemodeFlag parse(@NonNull String input) throws FlagParseException {
+        return switch (input) {
+            case "creative", "c", "1" -> flagOf(GameModes.CREATIVE);
+            case "adventure", "a", "2" -> flagOf(GameModes.ADVENTURE);
+            case "spectator", "sp", "3" -> flagOf(GameModes.SPECTATOR);
+            case "survival", "s", "0" -> flagOf(GameModes.SURVIVAL);
+            default -> flagOf(DEFAULT);
+        };
     }
 
-    @Override public GamemodeFlag merge(@NotNull GameMode newValue) {
+    @Override
+    public GamemodeFlag merge(@NonNull GameMode newValue) {
         return flagOf(newValue);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return getValue().getId();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "survival";
     }
 
-    @Override protected GamemodeFlag flagOf(@NotNull GameMode value) {
-        switch (value.getId()) {
-            case "creative":
-                return GAMEMODE_FLAG_CREATIVE;
-            case "adventure":
-                return GAMEMODE_FLAG_ADVENTURE;
-            case "spectator":
-                return GAMEMODE_FLAG_SPECTATOR;
-            case "survival":
-                return GAMEMODE_FLAG_SURVIVAL;
-            default:
-                return GAMEMODE_FLAG_DEFAULT;
-        }
+    @Override
+    protected GamemodeFlag flagOf(@NonNull GameMode value) {
+        return switch (value.getId()) {
+            case "creative" -> GAMEMODE_FLAG_CREATIVE;
+            case "adventure" -> GAMEMODE_FLAG_ADVENTURE;
+            case "spectator" -> GAMEMODE_FLAG_SPECTATOR;
+            case "survival" -> GAMEMODE_FLAG_SURVIVAL;
+            default -> GAMEMODE_FLAG_DEFAULT;
+        };
+    }
+
+    @Override
+    public Collection<String> getTabCompletions() {
+        return Arrays.asList("survival", "creative", "adventure", "spectator");
     }
 
 }

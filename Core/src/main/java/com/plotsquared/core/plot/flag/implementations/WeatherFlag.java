@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,14 +21,14 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,58 +45,53 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
      *
      * @param value Flag value
      */
-    protected WeatherFlag(@NotNull PlotWeather value) {
-        super(value, Captions.FLAG_CATEGORY_WEATHER, Captions.FLAG_DESCRIPTION_WEATHER);
+    protected WeatherFlag(@NonNull PlotWeather value) {
+        super(
+                value,
+                TranslatableCaption.of("flags.flag_category_weather"),
+                TranslatableCaption.of("flags.flag_description_weather")
+        );
     }
 
-    @Override public WeatherFlag parse(@NotNull String input) {
-        switch (input.toLowerCase()) {
-            case "rain":
-            case "storm":
-            case "on":
-            case "lightning":
-            case "thunder":
-                return flagOf(PlotWeather.RAIN);
-            case "clear":
-            case "off":
-            case "sun":
-                return flagOf(PlotWeather.CLEAR);
-            case "reset":
-            case "world":
-                return flagOf(PlotWeather.WORLD);
-            default:
-                return flagOf(PlotWeather.OFF);
-        }
+    @Override
+    public WeatherFlag parse(@NonNull String input) {
+        return switch (input.toLowerCase()) {
+            case "rain" -> flagOf(PlotWeather.RAIN);
+            case "clear" -> flagOf(PlotWeather.CLEAR);
+            case "reset" -> flagOf(PlotWeather.WORLD);
+            default -> flagOf(PlotWeather.OFF);
+        };
     }
 
-    @Override public WeatherFlag merge(@NotNull PlotWeather newValue) {
+    @Override
+    public WeatherFlag merge(@NonNull PlotWeather newValue) {
         return flagOf(newValue);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return getValue().toString();
     }
 
-    @Override public String getExample() {
-        return "storm";
+    @Override
+    public String getExample() {
+        return "rain";
     }
 
-    @Override protected WeatherFlag flagOf(@NotNull PlotWeather value) {
-        switch (value) {
-            case RAIN:
-                return PLOT_WEATHER_FLAG_RAIN;
-            case CLEAR:
-                return PLOT_WEATHER_FLAG_CLEAR;
-            case WORLD:
-                return PLOT_WEATHER_FLAG_WORLD;
-            default:
-                return PLOT_WEATHER_FLAG_OFF;
-        }
+    @Override
+    protected WeatherFlag flagOf(@NonNull PlotWeather value) {
+        return switch (value) {
+            case RAIN -> PLOT_WEATHER_FLAG_RAIN;
+            case CLEAR -> PLOT_WEATHER_FLAG_CLEAR;
+            case WORLD -> PLOT_WEATHER_FLAG_WORLD;
+            default -> PLOT_WEATHER_FLAG_OFF;
+        };
     }
 
-    @Override public Collection<String> getTabCompletions() {
+    @Override
+    public Collection<String> getTabCompletions() {
         return Arrays
-            .asList("rain", "storm", "on", "lightning", "thunder", "clear", "off", "sun", "reset", "world");
+                .asList("clear", "rain");
     }
 
 }

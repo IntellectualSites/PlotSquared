@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,18 +21,17 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag;
 
 import com.google.common.base.Preconditions;
-import com.plotsquared.core.configuration.Caption;
-import com.plotsquared.core.configuration.Captions;
-import lombok.EqualsAndHashCode;
-import org.jetbrains.annotations.NotNull;
+import com.plotsquared.core.configuration.caption.Caption;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 
 /**
  * A plot flag is any property that can be assigned
@@ -41,7 +40,7 @@ import java.util.Collections;
  *
  * @param <T> Value contained in the flag.
  */
-@EqualsAndHashCode(of = "value") public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
+public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
 
     private final T value;
     private final Caption flagCategory;
@@ -55,16 +54,31 @@ import java.util.Collections;
      * @param flagCategory    The flag category
      * @param flagDescription A caption describing the flag functionality
      */
-    protected PlotFlag(@NotNull final T value, @NotNull final Caption flagCategory,
-        @NotNull final Caption flagDescription) {
+    protected PlotFlag(
+            final @NonNull T value, final @NonNull Caption flagCategory,
+            final @NonNull Caption flagDescription
+    ) {
         this.value = Preconditions.checkNotNull(value, "flag value may not be null");
         this.flagCategory =
-            Preconditions.checkNotNull(flagCategory, "flag category may not be null");
+                Preconditions.checkNotNull(flagCategory, "flag category may not be null");
         this.flagDescription =
-            Preconditions.checkNotNull(flagDescription, "flag description may not be null");
+                Preconditions.checkNotNull(flagDescription, "flag description may not be null");
         // Parse flag name
+        // noinspection unchecked
+        this.flagName = getFlagName(this.getClass());
+    }
+
+    /**
+     * Return the name of the flag.
+     *
+     * @param flagClass Flag class
+     * @param <T>       Value type
+     * @param <F>       Flag type
+     * @return The name of the flag implemented by the given class
+     */
+    public static <T, F extends PlotFlag<T, F>> String getFlagName(Class<F> flagClass) {
         final StringBuilder flagName = new StringBuilder();
-        final char[] chars = this.getClass().getSimpleName().replace("Flag", "").toCharArray();
+        final char[] chars = flagClass.getSimpleName().replace("Flag", "").toCharArray();
         for (int i = 0; i < chars.length; i++) {
             if (i == 0) {
                 flagName.append(Character.toLowerCase(chars[i]));
@@ -74,7 +88,7 @@ import java.util.Collections;
                 flagName.append(chars[i]);
             }
         }
-        this.flagName = flagName.toString();
+        return flagName.toString();
     }
 
     /**
@@ -82,7 +96,8 @@ import java.util.Collections;
      *
      * @return Non-nullable flag value
      */
-    @NotNull public final T getValue() {
+    public @NonNull
+    final T getValue() {
         return this.value;
     }
 
@@ -95,7 +110,7 @@ import java.util.Collections;
      * @return Parsed value, if valid.
      * @throws FlagParseException If the value could not be parsed.
      */
-    public abstract F parse(@NotNull final String input) throws FlagParseException;
+    public abstract F parse(final @NonNull String input) throws FlagParseException;
 
     /**
      * Merge this flag's value with another value and return an instance
@@ -104,7 +119,7 @@ import java.util.Collections;
      * @param newValue New flag value.
      * @return Flag containing parsed flag value.
      */
-    public abstract F merge(@NotNull final T newValue);
+    public abstract F merge(final @NonNull T newValue);
 
     /**
      * Returns a string representation of the flag instance, that when
@@ -134,8 +149,7 @@ import java.util.Collections;
     }
 
     /**
-     * Get the category this flag belongs to. Usually a caption from
-     * {@link Captions}
+     * Get the category this flag belongs to. Usually a caption from {@link com.plotsquared.core.configuration.caption.TranslatableCaption}
      * <p>
      * These categories are used to categorize the flags when outputting
      * flag lists to players.
@@ -147,6 +161,16 @@ import java.util.Collections;
     }
 
     /**
+     * Get if the flag's permission should check for values. E.g. plots.flag.set.music.VALUE
+     *
+     * @return if valued permission
+     * @since 6.0.10
+     */
+    public boolean isValuedPermission() {
+        return true;
+    }
+
+    /**
      * An example of a string that would parse into a valid
      * flag value.
      *
@@ -154,7 +178,7 @@ import java.util.Collections;
      */
     public abstract String getExample();
 
-    protected abstract F flagOf(@NotNull T value);
+    protected abstract F flagOf(@NonNull T value);
 
     /**
      * Create a new instance of the flag using a provided
@@ -163,7 +187,7 @@ import java.util.Collections;
      * @param value The flag value
      * @return The created flag instance
      */
-    public final F createFlagInstance(@NotNull final T value) {
+    public final F createFlagInstance(final @NonNull T value) {
         return flagOf(Preconditions.checkNotNull(value));
     }
 
@@ -176,5 +200,31 @@ import java.util.Collections;
     public Collection<String> getTabCompletions() {
         return Collections.emptyList();
     }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final PlotFlag<?, ?> plotFlag = (PlotFlag<?, ?>) o;
+        return value.equals(plotFlag.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
+    }
+
+    /**
+     * @deprecated This method is not meant to be invoked or overridden, with no replacement.
+     */
+    @Deprecated(forRemoval = true, since = "6.6.0")
+    protected boolean canEqual(final Object other) {
+        return other instanceof PlotFlag;
+    }
+
 
 }

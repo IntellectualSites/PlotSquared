@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,46 +21,69 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.task;
 
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.command.Auto;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.Templates;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Direction;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-import lombok.RequiredArgsConstructor;
+import com.plotsquared.core.util.EventDispatcher;
 
-import static com.plotsquared.core.util.MainUtil.sendMessage;
+import java.util.concurrent.Callable;
 
-@RequiredArgsConstructor
-public final class AutoClaimFinishTask extends RunnableVal<Object> {
+public final class AutoClaimFinishTask implements Callable<Boolean> {
 
-    private final PlotPlayer player;
+    private final PlotPlayer<?> player;
     private final Plot plot;
     private final PlotArea area;
     private final String schematic;
+    private final EventDispatcher eventDispatcher;
 
-    @Override public void run(Object value) {
-        player.deleteMeta(Auto.class.getName());
-        if (plot == null) {
-            sendMessage(player, Captions.NO_FREE_PLOTS);
-            return;
+    public AutoClaimFinishTask(
+            final PlotPlayer<?> player, final Plot plot, final PlotArea area,
+            final String schematic, final EventDispatcher eventDispatcher
+    ) {
+        this.player = player;
+        this.plot = plot;
+        this.area = area;
+        this.schematic = schematic;
+        this.eventDispatcher = eventDispatcher;
+    }
+
+    @Override
+    public Boolean call() {
+        try (final MetaDataAccess<Boolean> autoAccess
+                     = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_AUTO)) {
+            autoAccess.remove();
         }
-        plot.claim(player, true, schematic, false);
+        if (plot == null) {
+            player.sendMessage(TranslatableCaption.of("errors.no_free_plots"));
+            return false;
+        }
+        plot.claim(player, true, schematic, false, true);
+        eventDispatcher.callPostAuto(player, plot);
         if (area.isAutoMerge()) {
-            PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
-                .callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
+            PlotMergeEvent event = this.eventDispatcher.callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
             if (event.getEventResult() == Result.DENY) {
-                sendMessage(player, Captions.EVENT_DENIED, "Auto merge");
+                player.sendMessage(
+                        TranslatableCaption.of("events.event_denied"),
+                        Templates.of("value", "Auto Merge")
+                );
             } else {
-                plot.autoMerge(event.getDir(), event.getMax(), player.getUUID(), true);
+                if (plot.getPlotModificationManager().autoMerge(event.getDir(), event.getMax(), player.getUUID(), player, true)) {
+                    eventDispatcher.callPostMerge(player, plot);
+                }
             }
         }
+        return true;
     }
+
 }

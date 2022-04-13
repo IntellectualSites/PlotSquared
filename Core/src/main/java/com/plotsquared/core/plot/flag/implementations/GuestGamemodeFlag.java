@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,87 +21,78 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class GuestGamemodeFlag extends PlotFlag<GameMode, GuestGamemodeFlag> {
 
     public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_CREATIVE =
-        new GuestGamemodeFlag(GameModes.CREATIVE);
+            new GuestGamemodeFlag(GameModes.CREATIVE);
     public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_ADVENTURE =
-        new GuestGamemodeFlag(GameModes.ADVENTURE);
+            new GuestGamemodeFlag(GameModes.ADVENTURE);
     public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_SPECTATOR =
-        new GuestGamemodeFlag(GameModes.SPECTATOR);
+            new GuestGamemodeFlag(GameModes.SPECTATOR);
     public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_SURVIVAL =
-        new GuestGamemodeFlag(GameModes.SURVIVAL);
+            new GuestGamemodeFlag(GameModes.SURVIVAL);
     public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_DEFAULT =
-        new GuestGamemodeFlag(GamemodeFlag.DEFAULT);
+            new GuestGamemodeFlag(GamemodeFlag.DEFAULT);
 
     /**
      * Construct a new flag instance.
      *
      * @param value Flag value
      */
-    protected GuestGamemodeFlag(@NotNull GameMode value) {
-        super(value, Captions.FLAG_CATEGORY_GAMEMODE, Captions.FLAG_DESCRIPTION_GUEST_GAMEMODE);
+    protected GuestGamemodeFlag(@NonNull GameMode value) {
+        super(
+                value,
+                TranslatableCaption.of("flags.flag_category_gamemode"),
+                TranslatableCaption.of("flags.flag_description_guest_gamemode")
+        );
     }
 
-    @Override public GuestGamemodeFlag parse(@NotNull String input) throws FlagParseException {
-        switch (input) {
-            case "creative":
-            case "c":
-            case "1":
-                return flagOf(GameModes.CREATIVE);
-            case "adventure":
-            case "a":
-            case "2":
-                return flagOf(GameModes.ADVENTURE);
-            case "spectator":
-            case "sp":
-            case "3":
-                return flagOf(GameModes.SPECTATOR);
-            case "survival":
-            case "s":
-            case "0":
-                return flagOf(GameModes.SURVIVAL);
-            default:
-                return flagOf(GamemodeFlag.DEFAULT);
-        }
+    @Override
+    public GuestGamemodeFlag parse(@NonNull String input) throws FlagParseException {
+        return switch (input) {
+            case "creative", "c", "1" -> flagOf(GameModes.CREATIVE);
+            case "adventure", "a", "2" -> flagOf(GameModes.ADVENTURE);
+            case "spectator", "sp", "3" -> flagOf(GameModes.SPECTATOR);
+            case "survival", "s", "0" -> flagOf(GameModes.SURVIVAL);
+            default -> flagOf(GamemodeFlag.DEFAULT);
+        };
     }
 
-    @Override public GuestGamemodeFlag merge(@NotNull GameMode newValue) {
+    @Override
+    public GuestGamemodeFlag merge(@NonNull GameMode newValue) {
         return flagOf(newValue);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return getValue().getId();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "survival";
     }
 
-    @Override protected GuestGamemodeFlag flagOf(@NotNull GameMode value) {
-        switch (value.getId()) {
-            case "creative":
-                return GUEST_GAMEMODE_FLAG_CREATIVE;
-            case "adventure":
-                return GUEST_GAMEMODE_FLAG_ADVENTURE;
-            case "spectator":
-                return GUEST_GAMEMODE_FLAG_SPECTATOR;
-            case "survival":
-                return GUEST_GAMEMODE_FLAG_SURVIVAL;
-            default:
-                return GUEST_GAMEMODE_FLAG_DEFAULT;
-        }
+    @Override
+    protected GuestGamemodeFlag flagOf(@NonNull GameMode value) {
+        return switch (value.getId()) {
+            case "creative" -> GUEST_GAMEMODE_FLAG_CREATIVE;
+            case "adventure" -> GUEST_GAMEMODE_FLAG_ADVENTURE;
+            case "spectator" -> GUEST_GAMEMODE_FLAG_SPECTATOR;
+            case "survival" -> GUEST_GAMEMODE_FLAG_SURVIVAL;
+            default -> GUEST_GAMEMODE_FLAG_DEFAULT;
+        };
     }
 
 }

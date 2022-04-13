@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,13 +21,15 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -41,6 +43,9 @@ import java.util.Set;
 import java.util.UUID;
 
 public class WEManager {
+
+    private static final BlockVector3 MIN = BlockVector3.at(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
+    private static final BlockVector3 MAX = BlockVector3.at(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
 
     public static boolean maskContains(Set<CuboidRegion> mask, int x, int y, int z) {
         for (CuboidRegion region : mask) {
@@ -87,11 +92,9 @@ public class WEManager {
         HashSet<CuboidRegion> regions = new HashSet<>();
         UUID uuid = player.getUUID();
         Location location = player.getLocation();
-        String world = location.getWorld();
-        if (!PlotSquared.get().hasPlotArea(world)) {
-            regions.add(RegionUtil
-                .createRegion(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,
-                    Integer.MAX_VALUE));
+        String world = location.getWorldName();
+        if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
+            regions.add(new CuboidRegion(MIN, MAX));
             return regions;
         }
         PlotArea area = player.getApplicablePlotArea();
@@ -100,19 +103,22 @@ public class WEManager {
         }
         boolean allowMember = player.hasPermission("plots.worldedit.member");
         Plot plot = player.getCurrentPlot();
-        if (plot == null) {
-            plot = player.getMeta("WorldEditRegionPlot");
-        }
-        if (plot != null && (!Settings.Done.RESTRICT_BUILDING || !DoneFlag.isDone(plot)) && (
-            (allowMember && plot.isAdded(uuid)) || (!allowMember && (plot.isOwner(uuid)) || plot
-                .getTrusted().contains(uuid))) && !plot.getFlag(NoWorldeditFlag.class)) {
-            for (CuboidRegion region : plot.getRegions()) {
-                BlockVector3 pos1 = region.getMinimumPoint().withY(area.getMinBuildHeight());
-                BlockVector3 pos2 = region.getMaximumPoint().withY(area.getMaxBuildHeight());
-                CuboidRegion copy = new CuboidRegion(pos1, pos2);
-                regions.add(copy);
+        try (final MetaDataAccess<Plot> metaDataAccess =
+                     player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_WORLD_EDIT_REGION_PLOT)) {
+            if (plot == null) {
+                plot = metaDataAccess.get().orElse(null);
             }
-            player.setMeta("WorldEditRegionPlot", plot);
+            if (plot != null && (!Settings.Done.RESTRICT_BUILDING || !DoneFlag.isDone(plot)) && (
+                    (allowMember && plot.isAdded(uuid)) || (!allowMember && plot.isOwner(uuid) || plot
+                            .getTrusted().contains(uuid))) && !plot.getFlag(NoWorldeditFlag.class)) {
+                for (CuboidRegion region : plot.getRegions()) {
+                    BlockVector3 pos1 = region.getMinimumPoint().withY(area.getMinBuildHeight());
+                    BlockVector3 pos2 = region.getMaximumPoint().withY(area.getMaxBuildHeight());
+                    CuboidRegion copy = new CuboidRegion(pos1, pos2);
+                    regions.add(copy);
+                }
+                metaDataAccess.set(plot);
+            }
         }
         return regions;
     }
@@ -129,4 +135,5 @@ public class WEManager {
         }
         return false;
     }
+
 }

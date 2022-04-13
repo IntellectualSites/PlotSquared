@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,42 +21,46 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.StaticCaption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.comment.CommentInbox;
 import com.plotsquared.core.plot.comment.CommentManager;
 import com.plotsquared.core.plot.comment.PlotComment;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.StringMan;
+import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.Arrays;
 import java.util.Locale;
 
 @CommandDeclaration(command = "comment",
-    aliases = {"msg"},
-    description = "Comment on a plot",
-    category = CommandCategory.CHAT,
-    requiredType = RequiredType.PLAYER,
-    permission = "plots.comment")
+        aliases = {"msg"},
+        category = CommandCategory.CHAT,
+        requiredType = RequiredType.PLAYER,
+        permission = "plots.comment")
 public class Comment extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length < 2) {
-            sendMessage(player, Captions.COMMENT_SYNTAX,
-                StringMan.join(CommentManager.inboxes.keySet(), "|"));
+            player.sendMessage(
+                    TranslatableCaption.of("comment.comment_syntax"),
+                    Template.of("command", "/plot comment [X;Z]"),
+                    Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
+            );
             return false;
         }
 
         // Attempt to extract a plot out of the first argument
         Plot plot = null;
         if (!CommentManager.inboxes.containsKey(args[0].toLowerCase(Locale.ENGLISH))) {
-            plot = MainUtil.getPlotFromString(player, args[0], false);
+            plot = Plot.getPlotFromString(player, args[0], false);
         }
 
         int index;
@@ -65,8 +69,11 @@ public class Comment extends SubCommand {
             plot = player.getLocation().getPlotAbs();
         } else {
             if (args.length < 3) {
-                sendMessage(player, Captions.COMMENT_SYNTAX,
-                    StringMan.join(CommentManager.inboxes.keySet(), "|"));
+                player.sendMessage(
+                        TranslatableCaption.of("comment.comment_syntax"),
+                        Template.of("command", "/plot comment [X;Z]"),
+                        Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
+                );
                 return false;
             }
             index = 2;
@@ -74,35 +81,43 @@ public class Comment extends SubCommand {
 
         CommentInbox inbox = CommentManager.inboxes.get(args[index - 1].toLowerCase());
         if (inbox == null) {
-            sendMessage(player, Captions.COMMENT_SYNTAX,
-                StringMan.join(CommentManager.inboxes.keySet(), "|"));
+            player.sendMessage(
+                    TranslatableCaption.of("comment.comment_syntax"),
+                    Template.of("command", "/plot comment [X;Z]"),
+                    Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
+            );
             return false;
         }
 
         if (!inbox.canWrite(plot, player)) {
-            sendMessage(player, Captions.NO_PERM_INBOX, "");
+            player.sendMessage(TranslatableCaption.of("comment.no_perm_inbox"));
             return false;
         }
 
         String message = StringMan.join(Arrays.copyOfRange(args, index, args.length), " ");
         PlotComment comment =
-            new PlotComment(player.getLocation().getWorld(), plot.getId(), message,
-                player.getName(), inbox.toString(), System.currentTimeMillis());
+                new PlotComment(player.getLocation().getWorldName(), plot.getId(), message,
+                        player.getName(), inbox.toString(), System.currentTimeMillis()
+                );
         boolean result = inbox.addComment(plot, comment);
         if (!result) {
-            sendMessage(player, Captions.NO_PLOT_INBOX, "");
-            sendMessage(player, Captions.COMMENT_SYNTAX,
-                StringMan.join(CommentManager.inboxes.keySet(), "|"));
+            player.sendMessage(TranslatableCaption.of("comment.no_plot_inbox"));
+            player.sendMessage(
+                    TranslatableCaption.of("comment.comment_syntax"),
+                    Template.of("command", "/plot comment [X;Z]"),
+                    Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
+            );
             return false;
         }
 
-        for (final PlotPlayer pp : PlotSquared.imp().getPlayerManager().getPlayers()) {
+        for (final PlotPlayer<?> pp : PlotSquared.platform().playerManager().getPlayers()) {
             if (pp.getAttribute("chatspy")) {
-                MainUtil.sendMessage(pp, "/plot comment " + StringMan.join(args, " "));
+                pp.sendMessage(StaticCaption.of("/plot comment " + StringMan.join(args, " ")));
             }
         }
 
-        sendMessage(player, Captions.COMMENT_ADDED);
+        player.sendMessage(TranslatableCaption.of("comment.comment_added"));
         return true;
     }
+
 }

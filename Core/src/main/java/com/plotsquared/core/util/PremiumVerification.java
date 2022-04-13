@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,11 +21,12 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
 public class PremiumVerification {
+
     private static Boolean usingPremium;
 
     /**
@@ -51,7 +52,7 @@ public class PremiumVerification {
 
     /**
      * @param userID Spigot user ID
-     * @return true if userID does not contain __USER__
+     * @return {@code true} if userID does not contain __USER__
      */
     private static Boolean isPremium(String userID) {
         return !userID.contains("__USER__");
@@ -59,6 +60,8 @@ public class PremiumVerification {
 
     /**
      * Returns true if this plugin is premium
+     *
+     * @return {@code true} if is premium
      */
     public static Boolean isPremium() {
         return usingPremium == null ? (usingPremium = isPremium(getUserID())) : usingPremium;

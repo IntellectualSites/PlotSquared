@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,34 +21,59 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.uuid;
 
-import lombok.EqualsAndHashCode;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
  * A pair consisting of a UUID and a username
  */
-@EqualsAndHashCode public class UUIDMapping {
+public class UUIDMapping {
 
     private final UUID uuid;
     private final String username;
 
-    public UUIDMapping(@NotNull final UUID uuid, final String username) {
+    public UUIDMapping(final @NonNull UUID uuid, final @NonNull String username) {
         this.uuid = uuid;
         this.username = username;
     }
 
-    @NotNull public String getUsername() {
+    public @NonNull String getUsername() {
         return this.username;
     }
 
-    @NotNull public UUID getUuid() {
+    public @NonNull UUID getUuid() {
         return this.uuid;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final UUIDMapping that = (UUIDMapping) o;
+        return uuid.equals(that.uuid) && username.equals(that.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid, username);
+    }
+
+    /**
+     * @deprecated This method is not meant to be invoked or overridden, with no replacement.
+     */
+    @Deprecated(forRemoval = true, since = "6.6.0")
+    protected boolean canEqual(final Object other) {
+        return other instanceof UUIDMapping;
     }
 
 }

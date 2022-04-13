@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,13 +21,13 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.command.Command;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.entity.Player;
@@ -41,24 +41,25 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
-import org.jetbrains.annotations.NotNull;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PatternUtil {
 
-    public static BaseBlock apply(@NotNull Pattern pattern, int x, int y, int z) {
+    public static BaseBlock apply(@NonNull Pattern pattern, int x, int y, int z) {
         Preconditions.checkNotNull(pattern, "Pattern may not be null");
         if (pattern instanceof BlockPattern || pattern instanceof RandomPattern
-            || pattern instanceof BlockState || pattern instanceof BlockType
-            || pattern instanceof BaseBlock) {
-            return pattern.apply(BlockVector3.ZERO);
+                || pattern instanceof BlockState || pattern instanceof BlockType
+                || pattern instanceof BaseBlock) {
+            return pattern.applyBlock(BlockVector3.ZERO);
         }
-        return pattern.apply(BlockVector3.at(x, y, z));
+        return pattern.applyBlock(BlockVector3.at(x, y, z));
     }
 
-    public static Pattern parse(PlotPlayer plotPlayer, String input) {
+    public static Pattern parse(PlotPlayer<?> plotPlayer, String input) {
         return parse(plotPlayer, input, true);
     }
 
@@ -70,7 +71,7 @@ public class PatternUtil {
         return new ArrayList<>();
     }
 
-    public static Pattern parse(PlotPlayer plotPlayer, String input, boolean allowLegacy) {
+    public static Pattern parse(PlotPlayer<?> plotPlayer, String input, boolean allowLegacy) {
         ParserContext context = new ParserContext();
         if (plotPlayer != null) {
             Actor actor = plotPlayer.toActor();
@@ -88,7 +89,10 @@ public class PatternUtil {
         try {
             return WorldEdit.getInstance().getPatternFactory().parseFromInput(input, context);
         } catch (InputParseException e) {
-            throw new Command.CommandException(Captions.NOT_VALID_BLOCK, e.getMessage());
+            throw new Command.CommandException(
+                    TranslatableCaption.of("invalid.not_valid_block"),
+                    Template.of("value", e.getMessage())
+            );
         }
     }
 
@@ -107,4 +111,5 @@ public class PatternUtil {
         }
         return false;
     }
+
 }

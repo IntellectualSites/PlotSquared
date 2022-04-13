@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,31 +21,34 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.query.PlotQuery;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @CommandDeclaration(command = "debugsavetest",
-    permission = "plots.debugsavetest",
-    category = CommandCategory.DEBUG,
-    requiredType = RequiredType.CONSOLE,
-    usage = "/plot debugsavetest",
-    description = "This command will force the recreation of all plots in the DB")
+        permission = "plots.debugsavetest",
+        category = CommandCategory.DEBUG,
+        requiredType = RequiredType.CONSOLE,
+        usage = "/plot debugsavetest")
 public class DebugSaveTest extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
-        ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getPlots());
-        MainUtil.sendMessage(player, "&6Starting `DEBUGSAVETEST`");
-        DBFunc.createPlotsAndData(plots,
-            () -> MainUtil.sendMessage(player, "&6Database sync finished!"));
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+        final List<Plot> plots = PlotQuery.newQuery().allPlots().asList();
+        player.sendMessage(TranslatableCaption.of("debugsavetest.starting"));
+        DBFunc.createPlotsAndData(
+                plots,
+                () -> player.sendMessage(TranslatableCaption.of("debugsavetest.done"))
+        );
         return true;
     }
+
 }

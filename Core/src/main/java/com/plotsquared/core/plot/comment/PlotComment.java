@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,13 +21,14 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.comment;
 
 import com.plotsquared.core.plot.PlotId;
 
 public class PlotComment {
+
     public final String comment;
     public final String inbox;
     public final String senderName;
@@ -35,8 +36,10 @@ public class PlotComment {
     public final String world;
     public final long timestamp;
 
-    public PlotComment(String world, PlotId id, String comment, String senderName, String inbox,
-        long timestamp) {
+    public PlotComment(
+            String world, PlotId id, String comment, String senderName, String inbox,
+            long timestamp
+    ) {
         this.world = world;
         this.id = id;
         this.comment = comment;
@@ -44,4 +47,5 @@ public class PlotComment {
         this.inbox = inbox;
         this.timestamp = timestamp;
     }
+
 }

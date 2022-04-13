@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
 
@@ -45,11 +45,14 @@ public class PlotFlagRemoveEvent extends PlotFlagEvent implements CancellablePlo
         super(plot, flag);
     }
 
-    @Override public Result getEventResult() {
+    @Override
+    public Result getEventResult() {
         return eventResult;
     }
 
-    @Override public void setEventResult(Result e) {
+    @Override
+    public void setEventResult(Result e) {
         this.eventResult = e;
     }
+
 }

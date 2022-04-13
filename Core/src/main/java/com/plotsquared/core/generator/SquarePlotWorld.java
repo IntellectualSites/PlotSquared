@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,30 +21,49 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationSection;
+import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.file.YamlConfiguration;
+import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.plot.PlotId;
-import org.jetbrains.annotations.NotNull;
+import com.plotsquared.core.queue.GlobalBlockQueue;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class SquarePlotWorld extends GridPlotWorld {
+
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + SquarePlotWorld.class.getSimpleName());
 
     public int PLOT_WIDTH = 42;
     public int ROAD_WIDTH = 7;
     public int ROAD_OFFSET_X = 0;
     public int ROAD_OFFSET_Z = 0;
 
-    public SquarePlotWorld(String worldName, String id, @NotNull IndependentPlotGenerator generator,
-        PlotId min, PlotId max) {
-        super(worldName, id, generator, min, max);
+    public SquarePlotWorld(
+            final String worldName,
+            final @Nullable String id,
+            final @NonNull IndependentPlotGenerator generator,
+            final @Nullable PlotId min,
+            final @Nullable PlotId max,
+            @WorldConfig final @NonNull YamlConfiguration worldConfiguration,
+            final @NonNull GlobalBlockQueue blockQueue
+    ) {
+        super(worldName, id, generator, min, max, worldConfiguration, blockQueue);
     }
 
-    @Override public void loadConfiguration(ConfigurationSection config) {
+    @Override
+    public void loadConfiguration(ConfigurationSection config) {
         if (!config.contains("plot.height")) {
-            PlotSquared.debug(" - &cConfiguration is null? (" + config.getCurrentPath() + ')');
+            if (Settings.DEBUG) {
+                LOGGER.info("- Configuration is null? ({})", config.getCurrentPath());
+            }
+
         }
         this.PLOT_WIDTH = config.getInt("plot.size");
         this.ROAD_WIDTH = config.getInt("road.width");
@@ -52,4 +71,5 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
         this.ROAD_OFFSET_Z = config.getInt("road.offset.z");
         this.SIZE = (short) (this.PLOT_WIDTH + this.ROAD_WIDTH);
     }
+
 }

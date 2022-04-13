@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,24 +21,26 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.placeholders;
 
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * A {@link Placeholder placeholder} that requires a {@link com.plotsquared.core.plot.Plot plot}
  */
 public abstract class PlotSpecificPlaceholder extends Placeholder {
 
-    public PlotSpecificPlaceholder(@NotNull final String key) {
+    public PlotSpecificPlaceholder(final @NonNull String key) {
         super(key);
     }
 
-    @Override @NotNull public final String getValue(@NotNull final PlotPlayer<?> player) {
+    @Override
+    public @NonNull
+    final String getValue(final @NonNull PlotPlayer<?> player) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
             return "";
@@ -53,7 +55,10 @@ public abstract class PlotSpecificPlaceholder extends Placeholder {
      * @param plot   Plot that the player is in
      * @return Placeholder value, or {@code ""} if the placeholder does not apply
      */
-    @NotNull public abstract String getValue(@NotNull final PlotPlayer<?> player,
-        @NotNull final Plot plot);
+    public @NonNull
+    abstract String getValue(
+            final @NonNull PlotPlayer<?> player,
+            final @NonNull Plot plot
+    );
 
 }

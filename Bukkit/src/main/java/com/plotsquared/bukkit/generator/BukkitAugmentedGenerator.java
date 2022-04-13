@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.generator;
 
@@ -29,7 +29,7 @@ import com.plotsquared.core.generator.AugmentedUtils;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Random;
 
@@ -51,7 +51,8 @@ public class BukkitAugmentedGenerator extends BlockPopulator {
     }
 
     @Override
-    public void populate(@NotNull World world, @NotNull Random random, @NotNull Chunk source) {
+    public void populate(@NonNull World world, @NonNull Random random, @NonNull Chunk source) {
         AugmentedUtils.generate(source, world.getName(), source.getX(), source.getZ(), null);
     }
+
 }

@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.expiration;
 
@@ -31,8 +31,11 @@ import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Array;
 import java.util.ArrayDeque;
@@ -43,6 +46,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PlotAnalysis {
+
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotAnalysis.class.getSimpleName());
+
     public static boolean running = false;
     public int changes;
     public int faces;
@@ -79,56 +85,51 @@ public class PlotAnalysis {
     }
 
     public static void analyzePlot(Plot plot, RunnableVal<PlotAnalysis> whenDone) {
-        HybridUtils.manager.analyzePlot(plot, whenDone);
+        PlotSquared.platform().injector().getInstance(HybridUtils.class).analyzePlot(plot, whenDone);
     }
 
     /**
      * This will set the optimal modifiers for the plot analysis based on the current plot ratings<br>
      * - Will be used to calibrate the threshold for plot clearing
      *
-     * @param whenDone
-     * @param threshold
+     * @param whenDone  task to run when done
+     * @param threshold threshold
      */
     public static void calcOptimalModifiers(final Runnable whenDone, final double threshold) {
         if (running) {
-            PlotSquared.debug("Calibration task already in progress!");
+            LOGGER.info("Calibration task already in progress!");
             return;
         }
         if (threshold <= 0 || threshold >= 1) {
-            PlotSquared.debug(
-                "Invalid threshold provided! (Cannot be 0 or 100 as then there's no point calibrating)");
+            LOGGER.info("Invalid threshold provided! (Cannot be 0 or 100 as then there's no point in calibrating)");
             return;
         }
         running = true;
-        PlotSquared.debug(" - Fetching all plots");
-        final ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getPlots());
+        final List<Plot> plots = PlotQuery.newQuery().allPlots().asList();
         TaskManager.runTaskAsync(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 Iterator<Plot> iterator = plots.iterator();
-                PlotSquared.debug(
-                    " - $1Reducing " + plots.size() + " plots to those with sufficient data");
+                LOGGER.info("- Reducing {} plots to those with sufficient data", plots.size());
                 while (iterator.hasNext()) {
                     Plot plot = iterator.next();
                     if (plot.getSettings().getRatings() == null || plot.getSettings().getRatings()
-                        .isEmpty()) {
+                            .isEmpty()) {
                         iterator.remove();
                     } else {
                         plot.addRunning();
                     }
                 }
-                PlotSquared.debug(" - | Reduced to " + plots.size() + " plots");
 
                 if (plots.size() < 3) {
-                    PlotSquared.debug(
-                        "Calibration cancelled due to insufficient comparison data, please try again later");
+                    LOGGER.info("Calibration cancelled due to insufficient comparison data, please try again later");
                     running = false;
                     for (Plot plot : plots) {
                         plot.removeRunning();
                     }
                     return;
                 }
-
-                PlotSquared.debug(" - $1Analyzing plot contents (this may take a while)");
+                LOGGER.info("- Analyzing plot contents (this may take a while)");
 
                 int[] changes = new int[plots.size()];
                 int[] faces = new int[plots.size()];
@@ -146,16 +147,15 @@ public class PlotAnalysis {
 
                 final AtomicInteger mi = new AtomicInteger(0);
 
-                Thread ratingAnalysis = new Thread(new Runnable() {
-                    @Override public void run() {
-                        for (; mi.intValue() < plots.size(); mi.incrementAndGet()) {
-                            int i = mi.intValue();
-                            Plot plot = plots.get(i);
-                            ratings[i] = (int) (
+                Thread ratingAnalysis = new Thread(() -> {
+                    for (; mi.intValue() < plots.size(); mi.incrementAndGet()) {
+                        int i = mi.intValue();
+                        Plot plot = plots.get(i);
+                        ratings[i] = (int) (
                                 (plot.getAverageRating() + plot.getSettings().getRatings().size())
-                                    * 100);
-                            PlotSquared.debug(" | " + plot + " (rating) " + ratings[i]);
-                        }
+                                        * 100);
+                        LOGGER.info(" | {} (rating) {}", plot, ratings[i]);
+
                     }
                 });
                 ratingAnalysis.start();
@@ -166,12 +166,15 @@ public class PlotAnalysis {
                     if (queuePlot == null) {
                         break;
                     }
-                    PlotSquared.debug(" | " + queuePlot);
+                    LOGGER.info(" | {}", queuePlot);
+
                     final Object lock = new Object();
                     TaskManager.runTask(new Runnable() {
-                        @Override public void run() {
-                            analyzePlot(queuePlot, new RunnableVal<PlotAnalysis>() {
-                                @Override public void run(PlotAnalysis value) {
+                        @Override
+                        public void run() {
+                            analyzePlot(queuePlot, new RunnableVal<>() {
+                                @Override
+                                public void run(PlotAnalysis value) {
                                     try {
                                         synchronized (this) {
                                             wait(10000);
@@ -196,20 +199,20 @@ public class PlotAnalysis {
                     }
                 }
 
-                PlotSquared.debug(
-                    " - $1Waiting on plot rating thread: " + mi.intValue() * 100 / plots.size()
-                        + "%");
+                LOGGER.info("- Waiting on plot rating thread: {}%", mi.intValue() * 100 / plots.size());
+
                 try {
                     ratingAnalysis.join();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
-                PlotSquared
-                    .debug(" - $1Processing and grouping single plot analysis for bulk processing");
+                LOGGER.info("- Processing and grouping single plot analysis for bulk processing");
+
                 for (int i = 0; i < plots.size(); i++) {
                     Plot plot = plots.get(i);
-                    PlotSquared.debug(" | " + plot);
+                    LOGGER.info("| {}", plot);
+
                     PlotAnalysis analysis = plot.getComplexity(null);
 
                     changes[i] = analysis.changes;
@@ -225,18 +228,18 @@ public class PlotAnalysis {
                     variety_sd[i] = analysis.variety_sd;
                 }
 
-                PlotSquared.debug(" - $1Calculating rankings");
+                LOGGER.info("- Calculating rankings");
 
                 int[] rankRatings = rank(ratings);
                 int n = rankRatings.length;
 
                 int optimalIndex = (int) Math.round((1 - threshold) * (n - 1));
 
-                PlotSquared.debug(" - $1Calculating rank correlation: ");
-                PlotSquared.debug(
-                    " - The analyzed plots which were processed and put into bulk data will be compared and correlated to the plot ranking");
-                PlotSquared.debug(
-                    " - The calculated correlation constant will then be used to calibrate the threshold for auto plot clearing");
+                LOGGER.info("- Calculating rank correlation: ");
+                LOGGER.info(
+                        "- The analyzed plots which were processed and put into bulk data will be compared and correlated to the plot ranking");
+                LOGGER.info(
+                        "- The calculated correlation constant will then be used to calibrate the threshold for auto plot clearing");
 
                 Settings.Auto_Clear settings = new Settings.Auto_Clear();
 
@@ -246,9 +249,10 @@ public class PlotAnalysis {
                 int sumChanges = sum(varianceChanges);
                 double factorChanges = getCC(n, sumChanges);
                 settings.CALIBRATION.CHANGES = factorChanges == 1 ?
-                    0 :
-                    (int) (factorChanges * 1000 / MathMan.getMean(changes));
-                PlotSquared.debug(" - | changes " + factorChanges);
+                        0 :
+                        (int) (factorChanges * 1000 / MathMan.getMean(changes));
+
+                LOGGER.info("- | changes {}", factorChanges);
 
                 int[] rankFaces = rank(faces);
                 int[] sdFaces = getSD(rankFaces, rankRatings);
@@ -256,8 +260,9 @@ public class PlotAnalysis {
                 int sumFaces = sum(varianceFaces);
                 double factorFaces = getCC(n, sumFaces);
                 settings.CALIBRATION.FACES =
-                    factorFaces == 1 ? 0 : (int) (factorFaces * 1000 / MathMan.getMean(faces));
-                PlotSquared.debug(" - | faces " + factorFaces);
+                        factorFaces == 1 ? 0 : (int) (factorFaces * 1000 / MathMan.getMean(faces));
+
+                LOGGER.info("- | faces {}", factorFaces);
 
                 int[] rankData = rank(data);
                 int[] sdData = getSD(rankData, rankRatings);
@@ -265,8 +270,9 @@ public class PlotAnalysis {
                 int sum_data = sum(variance_data);
                 double factor_data = getCC(n, sum_data);
                 settings.CALIBRATION.DATA =
-                    factor_data == 1 ? 0 : (int) (factor_data * 1000 / MathMan.getMean(data));
-                PlotSquared.debug(" - | data " + factor_data);
+                        factor_data == 1 ? 0 : (int) (factor_data * 1000 / MathMan.getMean(data));
+
+                LOGGER.info("- | data {}", factor_data);
 
                 int[] rank_air = rank(air);
                 int[] sd_air = getSD(rank_air, rankRatings);
@@ -274,8 +280,10 @@ public class PlotAnalysis {
                 int sum_air = sum(variance_air);
                 double factor_air = getCC(n, sum_air);
                 settings.CALIBRATION.AIR =
-                    factor_air == 1 ? 0 : (int) (factor_air * 1000 / MathMan.getMean(air));
-                PlotSquared.debug(" - | air " + factor_air);
+                        factor_air == 1 ? 0 : (int) (factor_air * 1000 / MathMan.getMean(air));
+
+                LOGGER.info("- | air {}", factor_air);
+
 
                 int[] rank_variety = rank(variety);
                 int[] sd_variety = getSD(rank_variety, rankRatings);
@@ -283,9 +291,10 @@ public class PlotAnalysis {
                 int sum_variety = sum(variance_variety);
                 double factor_variety = getCC(n, sum_variety);
                 settings.CALIBRATION.VARIETY = factor_variety == 1 ?
-                    0 :
-                    (int) (factor_variety * 1000 / MathMan.getMean(variety));
-                PlotSquared.debug(" - | variety " + factor_variety);
+                        0 :
+                        (int) (factor_variety * 1000 / MathMan.getMean(variety));
+
+                LOGGER.info("- | variety {}", factor_variety);
 
                 int[] rank_changes_sd = rank(changes_sd);
                 int[] sd_changes_sd = getSD(rank_changes_sd, rankRatings);
@@ -293,9 +302,10 @@ public class PlotAnalysis {
                 int sum_changes_sd = sum(variance_changes_sd);
                 double factor_changes_sd = getCC(n, sum_changes_sd);
                 settings.CALIBRATION.CHANGES_SD = factor_changes_sd == 1 ?
-                    0 :
-                    (int) (factor_changes_sd * 1000 / MathMan.getMean(changes_sd));
-                PlotSquared.debug(" - | changes_sd " + factor_changes_sd);
+                        0 :
+                        (int) (factor_changes_sd * 1000 / MathMan.getMean(changes_sd));
+
+                LOGGER.info("- | changed_sd {}", factor_changes_sd);
 
                 int[] rank_faces_sd = rank(faces_sd);
                 int[] sd_faces_sd = getSD(rank_faces_sd, rankRatings);
@@ -303,9 +313,10 @@ public class PlotAnalysis {
                 int sum_faces_sd = sum(variance_faces_sd);
                 double factor_faces_sd = getCC(n, sum_faces_sd);
                 settings.CALIBRATION.FACES_SD = factor_faces_sd == 1 ?
-                    0 :
-                    (int) (factor_faces_sd * 1000 / MathMan.getMean(faces_sd));
-                PlotSquared.debug(" - | faces_sd " + factor_faces_sd);
+                        0 :
+                        (int) (factor_faces_sd * 1000 / MathMan.getMean(faces_sd));
+
+                LOGGER.info("- | faced_sd {}", factor_faces_sd);
 
                 int[] rank_data_sd = rank(data_sd);
                 int[] sd_data_sd = getSD(rank_data_sd, rankRatings);
@@ -313,9 +324,10 @@ public class PlotAnalysis {
                 int sum_data_sd = sum(variance_data_sd);
                 double factor_data_sd = getCC(n, sum_data_sd);
                 settings.CALIBRATION.DATA_SD = factor_data_sd == 1 ?
-                    0 :
-                    (int) (factor_data_sd * 1000 / MathMan.getMean(data_sd));
-                PlotSquared.debug(" - | data_sd " + factor_data_sd);
+                        0 :
+                        (int) (factor_data_sd * 1000 / MathMan.getMean(data_sd));
+
+                LOGGER.info("- | data_sd {}", factor_data_sd);
 
                 int[] rank_air_sd = rank(air_sd);
                 int[] sd_air_sd = getSD(rank_air_sd, rankRatings);
@@ -323,8 +335,9 @@ public class PlotAnalysis {
                 int sum_air_sd = sum(variance_air_sd);
                 double factor_air_sd = getCC(n, sum_air_sd);
                 settings.CALIBRATION.AIR_SD =
-                    factor_air_sd == 1 ? 0 : (int) (factor_air_sd * 1000 / MathMan.getMean(air_sd));
-                PlotSquared.debug(" - | air_sd " + factor_air_sd);
+                        factor_air_sd == 1 ? 0 : (int) (factor_air_sd * 1000 / MathMan.getMean(air_sd));
+
+                LOGGER.info("- | air_sd {}", factor_air_sd);
 
                 int[] rank_variety_sd = rank(variety_sd);
                 int[] sd_variety_sd = getSD(rank_variety_sd, rankRatings);
@@ -332,13 +345,15 @@ public class PlotAnalysis {
                 int sum_variety_sd = sum(variance_variety_sd);
                 double factor_variety_sd = getCC(n, sum_variety_sd);
                 settings.CALIBRATION.VARIETY_SD = factor_variety_sd == 1 ?
-                    0 :
-                    (int) (factor_variety_sd * 1000 / MathMan.getMean(variety_sd));
-                PlotSquared.debug(" - | variety_sd " + factor_variety_sd);
+                        0 :
+                        (int) (factor_variety_sd * 1000 / MathMan.getMean(variety_sd));
+
+                LOGGER.info("- | variety_sd {}", factor_variety_sd);
 
                 int[] complexity = new int[n];
 
-                PlotSquared.debug(" $1Calculating threshold");
+                LOGGER.info("Calculating threshold");
+
                 int max = 0;
                 int min = 0;
                 for (int i = 0; i < n; i++) {
@@ -367,9 +382,9 @@ public class PlotAnalysis {
                     logln("Correlation: ");
                     logln(getCC(n, sum(square(getSD(rankComplexity, rankRatings)))));
                     if (optimalComplexity == Integer.MAX_VALUE) {
-                        PlotSquared.debug(
-                            "Insufficient data to determine correlation! " + optimalIndex + " | "
-                                + n);
+                        LOGGER.info("Insufficient data to determine correlation! {} | {}",
+                                optimalIndex, n
+                        );
                         running = false;
                         for (Plot plot : plots) {
                             plot.removeRunning();
@@ -379,7 +394,6 @@ public class PlotAnalysis {
                 } else { // Use the fast radix sort algorithm
                     int[] sorted = complexity.clone();
                     sort(sorted);
-                    optimalComplexity = sorted[optimalIndex];
                     logln("Complexity: ");
                     logln(complexity);
                     logln("Ratings: ");
@@ -387,37 +401,37 @@ public class PlotAnalysis {
                 }
 
                 // Save calibration
-                PlotSquared.debug(" $1Saving calibration");
+                LOGGER.info("Saving calibration");
                 Settings.AUTO_CLEAR.put("auto-calibrated", settings);
-                Settings.save(PlotSquared.get().worldsFile);
-                PlotSquared.debug("$1Done!");
+                Settings.save(PlotSquared.get().getWorldsFile());
                 running = false;
                 for (Plot plot : plots) {
                     plot.removeRunning();
                 }
+                LOGGER.info("Done!");
                 whenDone.run();
             }
         });
     }
 
     public static void logln(Object obj) {
-        PlotSquared.debug(log(obj));
+        LOGGER.info("" + log(obj));
     }
 
     public static String log(Object obj) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         if (obj.getClass().isArray()) {
             String prefix = "";
 
             for (int i = 0; i < Array.getLength(obj); i++) {
-                result += prefix + log(Array.get(obj, i));
+                result.append(prefix).append(log(Array.get(obj, i)));
                 prefix = ",";
             }
             return "( " + result + " )";
         } else if (obj instanceof List<?>) {
             String prefix = "";
             for (Object element : (List<?>) obj) {
-                result += prefix + log(element);
+                result.append(prefix).append(log(element));
                 prefix = ",";
             }
             return "[ " + result + " ]";
@@ -429,7 +443,9 @@ public class PlotAnalysis {
     /**
      * Get correlation coefficient.
      *
-     * @return
+     * @param n   n
+     * @param sum sum
+     * @return result
      */
     public static double getCC(int n, int sum) {
         return 1 - 6 * (double) sum / (n * (n * n - 1));
@@ -437,6 +453,9 @@ public class PlotAnalysis {
 
     /**
      * Calls {@code Arrays.stream(array).sum()}
+     *
+     * @param array array
+     * @return sum
      */
     public static int sum(int[] array) {
         return Arrays.stream(array).sum();
@@ -446,8 +465,8 @@ public class PlotAnalysis {
      * A simple array squaring algorithm.
      * - Used for calculating the variance
      *
-     * @param array
-     * @return
+     * @param array array
+     * @return result
      */
     public static int[] square(int[] array) {
         array = array.clone();
@@ -460,8 +479,8 @@ public class PlotAnalysis {
     /**
      * An optimized lossy standard deviation algorithm.
      *
-     * @param ranks
-     * @return
+     * @param ranks ranks
+     * @return result
      */
     public static int[] getSD(int[]... ranks) {
         if (ranks.length == 0) {
@@ -489,9 +508,8 @@ public class PlotAnalysis {
      * - Input is an array of int with a max size of 102400<br>
      * - A reduced sample space allows for sorting (and ranking in this case) in linear time
      *
-     * @param input
-     * @param input
-     * @return
+     * @param input input
+     * @return result
      */
     public static int[] rank(int[] input) {
         return rank(input, 102400);
@@ -500,8 +518,9 @@ public class PlotAnalysis {
     /**
      * An optimized algorithm for ranking a very specific set of inputs
      *
-     * @param input
-     * @return
+     * @param input input
+     * @param size  size
+     * @return result
      */
     public static int[] rank(int[] input, int size) {
         int[] cache = new int[size];
@@ -539,6 +558,7 @@ public class PlotAnalysis {
         return ranks;
     }
 
+    @SuppressWarnings("unchecked")
     public static void sort(int[] input) {
         int SIZE = 10;
         List<Integer>[] bucket = new ArrayList[SIZE];
@@ -569,8 +589,9 @@ public class PlotAnalysis {
 
     public List<Integer> asList() {
         return Arrays
-            .asList(this.changes, this.faces, this.data, this.air, this.variety, this.changes_sd,
-                this.faces_sd, this.data_sd, this.air_sd, this.variety_sd);
+                .asList(this.changes, this.faces, this.data, this.air, this.variety, this.changes_sd,
+                        this.faces_sd, this.data_sd, this.air_sd, this.variety_sd
+                );
     }
 
     public int getComplexity(Settings.Auto_Clear settings) {
@@ -579,10 +600,11 @@ public class PlotAnalysis {
             return this.complexity;
         }
         this.complexity = this.changes * modifiers.CHANGES + this.faces * modifiers.FACES
-            + this.data * modifiers.DATA + this.air * modifiers.AIR
-            + this.variety * modifiers.VARIETY + this.changes_sd * modifiers.CHANGES_SD
-            + this.faces_sd * modifiers.FACES_SD + this.data_sd * modifiers.DATA_SD
-            + this.air_sd * modifiers.AIR_SD + this.variety_sd * modifiers.VARIETY_SD;
+                + this.data * modifiers.DATA + this.air * modifiers.AIR
+                + this.variety * modifiers.VARIETY + this.changes_sd * modifiers.CHANGES_SD
+                + this.faces_sd * modifiers.FACES_SD + this.data_sd * modifiers.DATA_SD
+                + this.air_sd * modifiers.AIR_SD + this.variety_sd * modifiers.VARIETY_SD;
         return this.complexity;
     }
+
 }

@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,14 +21,14 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BlockTypeListFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,10 +38,11 @@ public class PlaceFlag extends BlockTypeListFlag<PlaceFlag> {
     public static final PlaceFlag PLACE_NONE = new PlaceFlag(Collections.emptyList());
 
     protected PlaceFlag(List<BlockTypeWrapper> blockTypeList) {
-        super(blockTypeList, Captions.FLAG_DESCRIPTION_PLACE);
+        super(blockTypeList, TranslatableCaption.of("flags.flag_description_place"));
     }
 
-    @Override protected PlaceFlag flagOf(@NotNull List<BlockTypeWrapper> value) {
+    @Override
+    protected PlaceFlag flagOf(@NonNull List<BlockTypeWrapper> value) {
         return new PlaceFlag(value);
     }
 

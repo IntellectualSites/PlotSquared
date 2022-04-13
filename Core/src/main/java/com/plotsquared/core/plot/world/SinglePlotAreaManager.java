@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,42 +21,62 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.world;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.plotsquared.core.collection.ArrayUtil;
+import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.generator.SingleWorldGenerator;
+import com.plotsquared.core.inject.annotations.WorldConfig;
+import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.queue.GlobalBlockQueue;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.SetupUtils;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
+@Singleton
 public class SinglePlotAreaManager extends DefaultPlotAreaManager {
+
     private final SinglePlotArea[] array;
     private SinglePlotArea area;
     private PlotArea[] all;
 
-    public SinglePlotAreaManager() {
-        this.area = new SinglePlotArea();
-        this.array = new SinglePlotArea[] {area};
-        this.all = new PlotArea[] {area};
-        SetupUtils.generators.put("PlotSquared:single",
-            new SingleWorldGenerator().specify("CheckingPlotSquaredGenerator"));
+    @Inject
+    public SinglePlotAreaManager(
+            final @NonNull EventDispatcher eventDispatcher,
+            final @NonNull PlotListener plotListener,
+            @WorldConfig final @NonNull YamlConfiguration worldConfiguration,
+            final @NonNull GlobalBlockQueue blockQueue
+    ) {
+        this.area = new SinglePlotArea(this, eventDispatcher, plotListener,
+                worldConfiguration, blockQueue
+        );
+        this.array = new SinglePlotArea[]{area};
+        this.all = new PlotArea[]{area};
+        SetupUtils.generators.put(
+                "PlotSquared:single",
+                new SingleWorldGenerator(this).specify("CheckingPlotSquaredGenerator")
+        );
     }
 
     public SinglePlotArea getArea() {
         return area;
     }
 
-    public void setArea(SinglePlotArea area) {
+    public void setArea(final @NonNull SinglePlotArea area) {
         this.area = area;
         array[0] = area;
         all = ArrayUtil.concatAll(super.getAllPlotAreas(), array);
     }
 
-    public boolean isWorld(String id) {
+    public boolean isWorld(final @NonNull String id) {
         char[] chars = id.toCharArray();
         if (chars.length == 1 && chars[0] == '*') {
             return true;
@@ -71,7 +91,7 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
                     }
                 case 1:
                     if ((c <= '/') || (c >= ':')) {
-                        if (c == '.') {
+                        if (c == '_') {
                             mode = 2;
                             continue;
                         }
@@ -88,20 +108,24 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
                     if ((c <= '/') || (c >= ':')) {
                         return false;
                     }
-                    continue;
             }
         }
         return mode == 3;
     }
 
-    @Override public PlotArea getApplicablePlotArea(Location location) {
-        String world = location.getWorld();
+    @Override
+    public @Nullable PlotArea getApplicablePlotArea(final @Nullable Location location) {
+        if (location == null) {
+            return null;
+        }
+        String world = location.getWorldName();
         return isWorld(world) || world.equals("*") || super.getAllPlotAreas().length == 0 ?
-            area :
-            super.getApplicablePlotArea(location);
+                area :
+                super.getApplicablePlotArea(location);
     }
 
-    @Override public PlotArea getPlotArea(String world, String id) {
+    @Override
+    public @Nullable PlotArea getPlotArea(final @NonNull String world, final @NonNull String id) {
         PlotArea found = super.getPlotArea(world, id);
         if (found != null) {
             return found;
@@ -109,33 +133,36 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
         return isWorld(world) || world.equals("*") ? area : super.getPlotArea(world, id);
     }
 
-    @Override public PlotArea getPlotArea(@NotNull Location location) {
+    @Override
+    public @Nullable PlotArea getPlotArea(final @NonNull Location location) {
         PlotArea found = super.getPlotArea(location);
         if (found != null) {
             return found;
         }
-        return isWorld(location.getWorld()) || location.getWorld().equals("*") ? area : null;
+        return isWorld(location.getWorldName()) || location.getWorldName().equals("*") ? area : null;
     }
 
-    @Override public PlotArea[] getPlotAreas(String world, CuboidRegion region) {
+    @Override
+    public @NonNull PlotArea[] getPlotAreas(final @NonNull String world, final @NonNull CuboidRegion region) {
         PlotArea[] found = super.getPlotAreas(world, region);
         if (found != null && found.length != 0) {
             return found;
         }
-        return isWorld(world) || world.equals("*") ?
-            array :
-            all.length == 0 ? noPlotAreas : super.getPlotAreas(world, region);
+        return isWorld(world) || world.equals("*") ? array : all.length == 0 ? noPlotAreas : found;
     }
 
-    @Override public PlotArea[] getAllPlotAreas() {
+    @Override
+    public @NonNull PlotArea[] getAllPlotAreas() {
         return all;
     }
 
-    @Override public String[] getAllWorlds() {
+    @Override
+    public @NonNull String[] getAllWorlds() {
         return super.getAllWorlds();
     }
 
-    @Override public void addPlotArea(PlotArea area) {
+    @Override
+    public void addPlotArea(final @NonNull PlotArea area) {
         if (area == this.area) {
             return;
         }
@@ -143,18 +170,22 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
         all = ArrayUtil.concatAll(super.getAllPlotAreas(), array);
     }
 
-    @Override public void removePlotArea(PlotArea area) {
+    @Override
+    public void removePlotArea(final @NonNull PlotArea area) {
         if (area == this.area) {
             throw new UnsupportedOperationException("Cannot remove base area!");
         }
         super.removePlotArea(area);
     }
 
-    @Override public void addWorld(String worldName) {
+    @Override
+    public void addWorld(final @NonNull String worldName) {
         super.addWorld(worldName);
     }
 
-    @Override public void removeWorld(String worldName) {
+    @Override
+    public void removeWorld(final @NonNull String worldName) {
         super.removeWorld(worldName);
     }
+
 }

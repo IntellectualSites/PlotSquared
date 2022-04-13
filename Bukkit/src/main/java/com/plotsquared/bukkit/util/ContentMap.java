@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,19 +21,20 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.util;
 
 import com.plotsquared.bukkit.entity.EntityWrapper;
 import com.plotsquared.bukkit.entity.ReplicatingEntityWrapper;
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.location.PlotLoc;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -45,6 +46,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class ContentMap {
+
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + ContentMap.class.getSimpleName());
 
     final Set<EntityWrapper> entities;
     final Map<PlotLoc, BaseBlock[]> allBlocks;
@@ -67,14 +70,14 @@ public class ContentMap {
         }
         for (int x = x1; x <= x2; x++) {
             for (int z = z1; z <= z2; z++) {
-                saveBlocks(world, 256, x, z, 0, 0);
+                saveBlocks(world, x, z);
             }
         }
     }
 
     void saveEntitiesOut(Chunk chunk, CuboidRegion region) {
         for (Entity entity : chunk.getEntities()) {
-            Location location = BukkitUtil.getLocation(entity);
+            Location location = BukkitUtil.adapt(entity.getLocation());
             int x = location.getX();
             int z = location.getZ();
             if (BukkitChunkManager.isIn(region, x, z)) {
@@ -89,14 +92,9 @@ public class ContentMap {
         }
     }
 
-    void saveEntitiesIn(Chunk chunk, CuboidRegion region) {
-        saveEntitiesIn(chunk, region, 0, 0, false);
-    }
-
-    void saveEntitiesIn(Chunk chunk, CuboidRegion region, int offsetX, int offsetZ,
-        boolean delete) {
+    void saveEntitiesIn(Chunk chunk, CuboidRegion region, boolean delete) {
         for (Entity entity : chunk.getEntities()) {
-            Location location = BukkitUtil.getLocation(entity);
+            Location location = BukkitUtil.adapt(entity.getLocation());
             int x = location.getX();
             int z = location.getZ();
             if (!BukkitChunkManager.isIn(region, x, z)) {
@@ -106,8 +104,6 @@ public class ContentMap {
                 continue;
             }
             EntityWrapper wrap = new ReplicatingEntityWrapper(entity, (short) 2);
-            wrap.x += offsetX;
-            wrap.z += offsetZ;
             wrap.saveEntity();
             this.entities.add(wrap);
             if (delete) {
@@ -118,27 +114,25 @@ public class ContentMap {
         }
     }
 
-    void restoreEntities(World world, int xOffset, int zOffset) {
+    void restoreEntities(World world) {
         for (EntityWrapper entity : this.entities) {
             try {
-                entity.spawn(world, xOffset, zOffset);
+                entity.spawn(world, 0, 0);
             } catch (Exception e) {
-                PlotSquared.debug("Failed to restore entity (e): " + e.toString());
-                e.printStackTrace();
+                LOGGER.error("Failed to restore entity", e);
             }
         }
         this.entities.clear();
     }
 
-    //todo optimize maxY
-    void saveBlocks(BukkitWorld world, int maxY, int x, int z, int offsetX, int offsetZ) {
-        maxY = Math.min(255, maxY);
-        BaseBlock[] ids = new BaseBlock[maxY + 1];
-        for (short y = 0; y <= maxY; y++) {
-            BaseBlock block = world.getFullBlock(BlockVector3.at(x, y, z));
-            ids[y] = block;
+    private void saveBlocks(BukkitWorld world, int x, int z) {
+        BaseBlock[] ids = new BaseBlock[world.getMaxY() - world.getMinY() + 1];
+        for (short yIndex = 0; yIndex <= world.getMaxY() - world.getMinY(); yIndex++) {
+            BaseBlock block = world.getFullBlock(BlockVector3.at(x, yIndex + world.getMinY(), z));
+            ids[yIndex] = block;
         }
-        PlotLoc loc = new PlotLoc(x + offsetX, z + offsetZ);
+        PlotLoc loc = new PlotLoc(x, z);
         this.allBlocks.put(loc, ids);
     }
+
 }

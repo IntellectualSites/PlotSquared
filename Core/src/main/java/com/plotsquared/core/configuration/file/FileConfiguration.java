@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.file;
 
@@ -86,8 +86,10 @@ public abstract class FileConfiguration extends MemoryConfiguration {
 
         String data = saveToString();
 
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file),
-            StandardCharsets.UTF_8)) {
+        try (Writer writer = new OutputStreamWriter(
+                new FileOutputStream(file),
+                StandardCharsets.UTF_8
+        )) {
             writer.write(data);
         }
     }
@@ -141,8 +143,8 @@ public abstract class FileConfiguration extends MemoryConfiguration {
         String builder;
 
         try (BufferedReader input = reader instanceof BufferedReader ?
-            (BufferedReader) reader :
-            new BufferedReader(reader)) {
+                (BufferedReader) reader :
+                new BufferedReader(reader)) {
 
             builder = input.lines().map(line -> line + '\n').collect(Collectors.joining());
         }
@@ -178,11 +180,13 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      */
     protected abstract String buildHeader();
 
-    @Override public FileConfigurationOptions options() {
+    @Override
+    public FileConfigurationOptions options() {
         if (this.options == null) {
             this.options = new FileConfigurationOptions(this);
         }
 
         return (FileConfigurationOptions) this.options;
     }
+
 }

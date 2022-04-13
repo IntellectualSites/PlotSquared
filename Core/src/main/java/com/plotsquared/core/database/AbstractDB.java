@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.database;
 
@@ -32,7 +32,7 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.comment.PlotComment;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.task.RunnableVal;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -127,7 +127,7 @@ public interface AbstractDB {
      * Gets the table entry ID.
      *
      * @param plot the plot
-     * @return {@code Integer} = Plot Entry Id
+     * @return {@link Integer} = Plot Entry Id
      */
     int getId(Plot plot);
 
@@ -215,7 +215,7 @@ public interface AbstractDB {
      * Purges a whole world.
      *
      * @param area    World in which the plots should be purged
-     * @param plotIds the {@code PlotId}s of {@code Plot}s to purge
+     * @param plotIds the {@link PlotId}s of {@link Plot}s to purge
      */
     void purge(PlotArea area, Set<PlotId> plotIds);
 
@@ -345,7 +345,7 @@ public interface AbstractDB {
      *
      * @param plot The Plot to get comments from
      */
-    void getComments(@NotNull Plot plot, String inbox, RunnableVal<List<PlotComment>> whenDone);
+    void getComments(@NonNull Plot plot, String inbox, RunnableVal<List<PlotComment>> whenDone);
 
     void createPlotAndSettings(Plot plot, Runnable whenDone);
 
@@ -371,7 +371,7 @@ public interface AbstractDB {
     /**
      * Don't use this method unless you want to ruin someone's server.
      *
-     * @return true if the tables were deleted, false when an error is encountered
+     * @return {@code true} if the tables were deleted, {@code false} when an error is encountered
      */
     boolean deleteTables();
 
@@ -383,4 +383,5 @@ public interface AbstractDB {
     void replaceWorld(String oldWorld, String newWorld, PlotId min, PlotId max);
 
     void updateTables(int[] oldVersion);
+
 }

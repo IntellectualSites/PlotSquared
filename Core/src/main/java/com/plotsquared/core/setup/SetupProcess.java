@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.setup;
 
@@ -34,12 +34,13 @@ import java.util.Stack;
  * It holds the history and the current setup state.
  */
 public class SetupProcess {
+
     private final PlotAreaBuilder builder;
     private final Stack<SetupStep> history;
     private SetupStep current;
 
     public SetupProcess() {
-        this.builder = new PlotAreaBuilder();
+        this.builder = PlotAreaBuilder.newBuilder();
         this.history = new Stack<>();
         this.current = CommonSetupSteps.CHOOSE_GENERATOR;
     }
@@ -63,4 +64,5 @@ public class SetupProcess {
             this.current = this.history.pop();
         }
     }
+
 }

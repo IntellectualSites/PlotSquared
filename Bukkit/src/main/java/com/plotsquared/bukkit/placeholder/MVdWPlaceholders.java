@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.placeholder;
 
@@ -34,7 +34,7 @@ import com.plotsquared.core.util.placeholders.Placeholder;
 import com.plotsquared.core.util.placeholders.PlaceholderRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Placeholder support for MVdWPlaceholderAPI
@@ -45,8 +45,10 @@ public class MVdWPlaceholders {
     private final Plugin plugin;
     private final PlaceholderRegistry registry;
 
-    public MVdWPlaceholders(@NotNull final Plugin plugin,
-                            @NotNull final PlaceholderRegistry registry) {
+    public MVdWPlaceholders(
+            final @NonNull Plugin plugin,
+            final @NonNull PlaceholderRegistry registry
+    ) {
         this.plugin = plugin;
         this.registry = registry;
         for (final Placeholder placeholder : registry.getPlaceholders()) {
@@ -55,24 +57,24 @@ public class MVdWPlaceholders {
         PlotSquared.get().getEventDispatcher().registerListener(this);
     }
 
-    @Subscribe public void onNewPlaceholder(@NotNull final
-        PlaceholderRegistry.PlaceholderAddedEvent event) {
+    @Subscribe
+    public void onNewPlaceholder(final PlaceholderRegistry.@NonNull PlaceholderAddedEvent event) {
         this.addPlaceholder(event.getPlaceholder());
     }
 
-    private void addPlaceholder(@NotNull final Placeholder placeholder) {
-        PlaceholderAPI.registerPlaceholder(plugin, PREFIX + String.format("%s", placeholder.getKey()),
-            placeholderReplaceEvent -> {
-                if (!placeholderReplaceEvent.isOnline() || placeholderReplaceEvent.getPlayer() == null) {
-                    return "";
+    private void addPlaceholder(final @NonNull Placeholder placeholder) {
+        PlaceholderAPI.registerPlaceholder(
+                plugin,
+                PREFIX + String.format("%s", placeholder.getKey()),
+                placeholderReplaceEvent -> {
+                    if (!placeholderReplaceEvent.isOnline() || placeholderReplaceEvent.getPlayer() == null) {
+                        return "";
+                    }
+                    final PlotPlayer<Player> player = BukkitUtil.adapt(placeholderReplaceEvent.getPlayer());
+                    String key = placeholderReplaceEvent.getPlaceholder().substring(PREFIX.length());
+                    return registry.getPlaceholderValue(key, player);
                 }
-                final PlotPlayer<Player> player = BukkitUtil.getPlayer(placeholderReplaceEvent.getPlayer());
-                if (player == null) {
-                    return "";
-                }
-                String key = placeholderReplaceEvent.getPlaceholder().substring(PREFIX.length());
-                return registry.getPlaceholderValue(key, player);
-            });
+        );
     }
 
 }

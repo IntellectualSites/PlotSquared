@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
 
@@ -38,9 +38,11 @@ import java.util.Map;
  */
 public enum Result {
 
-    DENY(0), ACCEPT(1), FORCE(2);
+    DENY(0),
+    ACCEPT(1),
+    FORCE(2);
 
-    private static Map<Integer, Result> map = new HashMap<>();
+    private static final Map<Integer, Result> map = new HashMap<>();
 
     static {
         for (Result eventResult : Result.values()) {
@@ -48,7 +50,7 @@ public enum Result {
         }
     }
 
-    private int value;
+    private final int value;
 
     Result(int value) {
         this.value = value;

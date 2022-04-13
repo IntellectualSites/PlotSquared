@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,22 +21,23 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.query;
 
 import com.plotsquared.core.plot.Plot;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 class AliasFilter implements PlotFilter {
 
     private final String alias;
 
-    AliasFilter(@NotNull final String alias) {
+    AliasFilter(final @NonNull String alias) {
         this.alias = alias;
     }
 
-    @Override public boolean accepts(@NotNull final Plot plot) {
+    @Override
+    public boolean accepts(final @NonNull Plot plot) {
         return this.alias.equalsIgnoreCase(plot.getAlias());
     }
 

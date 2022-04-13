@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,16 +21,15 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
 import com.google.common.eventbus.EventBus;
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.CaptionUtility;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlayerAutoPlotEvent;
+import com.plotsquared.core.events.PlayerAutoPlotsChosenEvent;
 import com.plotsquared.core.events.PlayerClaimPlotEvent;
 import com.plotsquared.core.events.PlayerEnterPlotEvent;
 import com.plotsquared.core.events.PlayerLeavePlotEvent;
@@ -40,6 +39,7 @@ import com.plotsquared.core.events.PlayerPlotTrustedEvent;
 import com.plotsquared.core.events.PlayerTeleportToPlotEvent;
 import com.plotsquared.core.events.PlotAutoMergeEvent;
 import com.plotsquared.core.events.PlotChangeOwnerEvent;
+import com.plotsquared.core.events.PlotClaimedNotifyEvent;
 import com.plotsquared.core.events.PlotClearEvent;
 import com.plotsquared.core.events.PlotComponentSetEvent;
 import com.plotsquared.core.events.PlotDeleteEvent;
@@ -50,9 +50,16 @@ import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.PlotRateEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
+import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.events.post.PostPlayerAutoPlotEvent;
+import com.plotsquared.core.events.post.PostPlotChangeOwnerEvent;
+import com.plotsquared.core.events.post.PostPlotDeleteEvent;
+import com.plotsquared.core.events.post.PostPlotMergeEvent;
+import com.plotsquared.core.events.post.PostPlotUnlinkEvent;
 import com.plotsquared.core.listener.PlayerBlockEventType;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -69,20 +76,29 @@ import com.plotsquared.core.plot.flag.implementations.VehiclePlaceFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.util.task.TaskManager;
+import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import org.jetbrains.annotations.NotNull;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@AnnotationHelper.ApiDescription(info = "This is an internal class used by PlotSquared to dispatch events." +
+        "This is in no form part of the API and is subject to change at any time.")
 public class EventDispatcher {
 
     private final EventBus eventBus = new EventBus("PlotSquaredEvents");
-
     private final List<Object> listeners = new ArrayList<>();
+    private final WorldEdit worldEdit;
+
+    public EventDispatcher(final @Nullable WorldEdit worldEdit) {
+        this.worldEdit = worldEdit;
+    }
 
     public void registerListener(Object listener) {
         eventBus.register(listener);
@@ -100,30 +116,53 @@ public class EventDispatcher {
         }
     }
 
-    public void callGenericEvent(@NotNull final Object event) {
+    public void callGenericEvent(final @NonNull Object event) {
         eventBus.post(event);
     }
 
-    public void callEvent(@NotNull final PlotEvent event) {
+    public void callEvent(final @NonNull PlotEvent event) {
         eventBus.post(event);
     }
 
-    public PlayerClaimPlotEvent callClaim(PlotPlayer player, Plot plot, String schematic) {
+    public PlayerClaimPlotEvent callClaim(PlotPlayer<?> player, Plot plot, String schematic) {
         PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, schematic);
         callEvent(event);
         return event;
     }
 
-    public PlayerAutoPlotEvent callAuto(PlotPlayer player, PlotArea area, String schematic,
-        int size_x, int size_z) {
+    public PlayerAutoPlotEvent callAuto(
+            PlotPlayer<?> player, PlotArea area, String schematic,
+            int size_x, int size_z
+    ) {
         PlayerAutoPlotEvent event =
-            new PlayerAutoPlotEvent(player, area, schematic, size_x, size_z);
+                new PlayerAutoPlotEvent(player, area, schematic, size_x, size_z);
         callEvent(event);
         return event;
     }
 
-    public PlayerTeleportToPlotEvent callTeleport(PlotPlayer player, Location from, Plot plot) {
-        PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, plot);
+    public PostPlayerAutoPlotEvent callPostAuto(PlotPlayer<?> player, Plot plot) {
+        PostPlayerAutoPlotEvent event = new PostPlayerAutoPlotEvent(player, plot);
+        callEvent(event);
+        return event;
+    }
+
+    public PlayerAutoPlotsChosenEvent callAutoPlotsChosen(
+            PlotPlayer<?> player, List<Plot> plots
+    ) {
+        PlayerAutoPlotsChosenEvent event =
+                new PlayerAutoPlotsChosenEvent(player, plots);
+        callEvent(event);
+        return event;
+    }
+
+    public PlotClaimedNotifyEvent callPlotClaimedNotify(Plot plot, boolean auto) {
+        PlotClaimedNotifyEvent event = new PlotClaimedNotifyEvent(plot, auto);
+        callEvent(event);
+        return event;
+    }
+
+    public PlayerTeleportToPlotEvent callTeleport(PlotPlayer<?> player, Location from, Plot plot, TeleportCause cause) {
+        PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, plot, cause);
         callEvent(event);
         return event;
     }
@@ -146,6 +185,12 @@ public class EventDispatcher {
         return event;
     }
 
+    public PostPlotDeleteEvent callPostDelete(Plot plot) {
+        PostPlotDeleteEvent event = new PostPlotDeleteEvent(plot);
+        callEvent(event);
+        return event;
+    }
+
     public PlotFlagAddEvent callFlagAdd(PlotFlag<?, ?> flag, Plot plot) {
         PlotFlagAddEvent event = new PlotFlagAddEvent(flag, plot);
         callEvent(event);
@@ -158,8 +203,14 @@ public class EventDispatcher {
         return event;
     }
 
-    public PlotMergeEvent callMerge(Plot plot, Direction dir, int max, PlotPlayer player) {
+    public PlotMergeEvent callMerge(Plot plot, Direction dir, int max, PlotPlayer<?> player) {
         PlotMergeEvent event = new PlotMergeEvent(plot.getWorldName(), plot, dir, max, player);
+        callEvent(event);
+        return event;
+    }
+
+    public PostPlotMergeEvent callPostMerge(PlotPlayer<?> player, Plot plot) {
+        PostPlotMergeEvent event = new PostPlotMergeEvent(player, plot);
         callEvent(event);
         return event;
     }
@@ -170,55 +221,77 @@ public class EventDispatcher {
         return event;
     }
 
-    public PlotUnlinkEvent callUnlink(PlotArea area, Plot plot, boolean createRoad,
-        boolean createSign, PlotUnlinkEvent.REASON reason) {
+    public PlotUnlinkEvent callUnlink(
+            PlotArea area, Plot plot, boolean createRoad,
+            boolean createSign, PlotUnlinkEvent.REASON reason
+    ) {
         PlotUnlinkEvent event = new PlotUnlinkEvent(area, plot, createRoad, createSign, reason);
         callEvent(event);
         return event;
     }
 
-    public PlayerEnterPlotEvent callEntry(PlotPlayer player, Plot plot) {
+    public PostPlotUnlinkEvent callPostUnlink(Plot plot, PlotUnlinkEvent.REASON reason) {
+        PostPlotUnlinkEvent event = new PostPlotUnlinkEvent(plot, reason);
+        callEvent(event);
+        return event;
+    }
+
+    public PlayerEnterPlotEvent callEntry(PlotPlayer<?> player, Plot plot) {
         PlayerEnterPlotEvent event = new PlayerEnterPlotEvent(player, plot);
         callEvent(event);
         return event;
     }
 
-    public PlayerLeavePlotEvent callLeave(PlotPlayer player, Plot plot) {
+    public PlayerLeavePlotEvent callLeave(PlotPlayer<?> player, Plot plot) {
         PlayerLeavePlotEvent event = new PlayerLeavePlotEvent(player, plot);
         callEvent(event);
         return event;
     }
 
-    public PlayerPlotDeniedEvent callDenied(PlotPlayer initiator, Plot plot, UUID player,
-        boolean added) {
+    public PlayerPlotDeniedEvent callDenied(
+            PlotPlayer<?> initiator, Plot plot, UUID player,
+            boolean added
+    ) {
         PlayerPlotDeniedEvent event = new PlayerPlotDeniedEvent(initiator, plot, player, added);
         callEvent(event);
         return event;
     }
 
-    public PlayerPlotTrustedEvent callTrusted(PlotPlayer initiator, Plot plot, UUID player,
-        boolean added) {
+    public PlayerPlotTrustedEvent callTrusted(
+            PlotPlayer<?> initiator, Plot plot, UUID player,
+            boolean added
+    ) {
         PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(initiator, plot, player, added);
         callEvent(event);
         return event;
     }
 
-    public PlayerPlotHelperEvent callMember(PlotPlayer initiator, Plot plot, UUID player,
-        boolean added) {
+    public PlayerPlotHelperEvent callMember(
+            PlotPlayer<?> initiator, Plot plot, UUID player,
+            boolean added
+    ) {
         PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(initiator, plot, player, added);
         callEvent(event);
         return event;
     }
 
-    public PlotChangeOwnerEvent callOwnerChange(PlotPlayer initiator, Plot plot, UUID oldOwner,
-        UUID newOwner, boolean hasOldOwner) {
+    public PlotChangeOwnerEvent callOwnerChange(
+            PlotPlayer<?> initiator, Plot plot, UUID oldOwner,
+            UUID newOwner, boolean hasOldOwner
+    ) {
         PlotChangeOwnerEvent event =
-            new PlotChangeOwnerEvent(initiator, plot, oldOwner, newOwner, hasOldOwner);
+                new PlotChangeOwnerEvent(initiator, plot, oldOwner, newOwner, hasOldOwner);
         callEvent(event);
         return event;
     }
 
-    public PlotRateEvent callRating(PlotPlayer player, Plot plot, Rating rating) {
+    public PostPlotChangeOwnerEvent callPostOwnerChange(PlotPlayer<?> player, Plot plot, @Nullable UUID oldOwner) {
+        PostPlotChangeOwnerEvent event = new PostPlotChangeOwnerEvent(player, plot, oldOwner);
+        callEvent(event);
+        return event;
+    }
+
+    public PlotRateEvent callRating(PlotPlayer<?> player, Plot plot, Rating rating) {
         PlotRateEvent event = new PlotRateEvent(player, rating, plot);
         eventBus.post(event);
         return event;
@@ -230,40 +303,40 @@ public class EventDispatcher {
         return event;
     }
 
-    public void doJoinTask(final PlotPlayer player) {
+    public void doJoinTask(final PlotPlayer<?> player) {
         if (player == null) {
             return; //possible future warning message to figure out where we are retrieving null
         }
         if (ExpireManager.IMP != null) {
             ExpireManager.IMP.handleJoin(player);
         }
-        if (PlotSquared.get().worldedit != null) {
+        if (this.worldEdit != null) {
             if (player.getAttribute("worldedit")) {
-                MainUtil.sendMessage(player, Captions.WORLDEDIT_BYPASSED);
+                player.sendMessage(TranslatableCaption.of("worldedit.worldedit_bypassed"));
             }
         }
         final Plot plot = player.getCurrentPlot();
         if (Settings.Teleport.ON_LOGIN && plot != null && !(plot
-            .getArea() instanceof SinglePlotArea)) {
-            TaskManager.runTask(() -> plot.teleportPlayer(player, result -> {
+                .getArea() instanceof SinglePlotArea)) {
+            TaskManager.runTask(() -> plot.teleportPlayer(player, TeleportCause.LOGIN, result -> {
             }));
-            MainUtil.sendMessage(player,
-                CaptionUtility.format(player, Captions.TELEPORTED_TO_ROAD.getTranslated())
-                    + " (on-login) " + "(" + plot.getId().x + ";" + plot.getId().y + ")");
+            player.sendMessage(TranslatableCaption.of("teleport.teleported_to_road"));
         }
     }
 
-    public void doRespawnTask(final PlotPlayer player) {
+    public void doRespawnTask(final PlotPlayer<?> player) {
         final Plot plot = player.getCurrentPlot();
         if (Settings.Teleport.ON_DEATH && plot != null) {
-            TaskManager.runTask(() -> plot.teleportPlayer(player, result -> {
+            TaskManager.runTask(() -> plot.teleportPlayer(player, TeleportCause.DEATH, result -> {
             }));
-            MainUtil.sendMessage(player, Captions.TELEPORTED_TO_ROAD);
+            player.sendMessage(TranslatableCaption.of("teleport.teleported_to_road"));
         }
     }
 
-    public boolean checkPlayerBlockEvent(PlotPlayer player, @NotNull PlayerBlockEventType type,
-        Location location, BlockType blockType, boolean notifyPerms) {
+    public boolean checkPlayerBlockEvent(
+            PlotPlayer<?> player, @NonNull PlayerBlockEventType type,
+            Location location, BlockType blockType, boolean notifyPerms
+    ) {
         PlotArea area = location.getPlotArea();
         assert area != null;
         Plot plot = area.getPlot(location);
@@ -280,45 +353,54 @@ public class EventDispatcher {
             case INTERACT_BLOCK: {
                 if (plot == null) {
                     final List<BlockTypeWrapper> use = area.getRoadFlag(UseFlag.class);
-                    for(final BlockTypeWrapper blockTypeWrapper : use) {
+                    for (final BlockTypeWrapper blockTypeWrapper : use) {
                         if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper.accepts(blockType)) {
                             return true;
                         }
                     }
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_ROAD.getTranslated(), notifyPerms);
+                            Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms
+                    );
                 }
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.getTranslated(), notifyPerms);
+                            Permission.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms
+                    );
                 }
                 final List<BlockTypeWrapper> use = plot.getFlag(UseFlag.class);
                 for (final BlockTypeWrapper blockTypeWrapper : use) {
                     if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper
-                        .accepts(blockType)) {
+                            .accepts(blockType)) {
                         return true;
                     }
                 }
-                return Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
-                        false) || !(!notifyPerms || MainUtil
-                    .sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
-                        Captions.FLAG_USE.getTranslated()));
+                if (Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString(), false)) {
+                    return true;
+                }
+                if (notifyPerms) {
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.flag_tutorial_usage"),
+                            Template.of("flag", PlaceFlag.getFlagName(UseFlag.class))
+                    );
+                }
+                return false;
             }
             case TRIGGER_PHYSICAL: {
                 if (plot == null) {
                     final List<BlockTypeWrapper> use = area.getRoadFlag(UseFlag.class);
-                    for(final BlockTypeWrapper blockTypeWrapper : use) {
+                    for (final BlockTypeWrapper blockTypeWrapper : use) {
                         if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper.accepts(blockType)) {
                             return true;
                         }
                     }
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_ROAD.getTranslated(), false);
+                            Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), false
+                    );
                 }
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.getTranslated(), false);
+                            Permission.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), false
+                    );
                 }
                 if (plot.getFlag(DeviceInteractFlag.class)) {
                     return true;
@@ -326,22 +408,25 @@ public class EventDispatcher {
                 List<BlockTypeWrapper> use = plot.getFlag(UseFlag.class);
                 for (final BlockTypeWrapper blockTypeWrapper : use) {
                     if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper
-                        .accepts(blockType)) {
+                            .accepts(blockType)) {
                         return true;
                     }
                 }
                 return Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
-                        false);
+                        .hasPermission(player, Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
+                                false
+                        );
             }
             case SPAWN_MOB: {
                 if (plot == null) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_ROAD.getTranslated(), notifyPerms);
+                            Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms
+                    );
                 }
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.getTranslated(), notifyPerms);
+                            Permission.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms
+                    );
                 }
                 if (plot.getFlag(MobPlaceFlag.class)) {
                     return true;
@@ -349,27 +434,35 @@ public class EventDispatcher {
                 List<BlockTypeWrapper> place = plot.getFlag(PlaceFlag.class);
                 for (final BlockTypeWrapper blockTypeWrapper : place) {
                     if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper
-                        .accepts(blockType)) {
+                            .accepts(blockType)) {
                         return true;
                     }
                 }
                 if (Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
-                        false)) {
+                        .hasPermission(player, Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
+                                false
+                        )) {
                     return true;
                 }
-                return !(!notifyPerms || MainUtil.sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
-                    Captions.FLAG_MOB_PLACE.getTranslated() + '/' + Captions.FLAG_PLACE
-                        .getTranslated()));
+                if (notifyPerms) {
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.flag_tutorial_usage"),
+                            Template.of("flag", PlotFlag.getFlagName(MobPlaceFlag.class)
+                                    + '/' + PlotFlag.getFlagName(PlaceFlag.class))
+                    );
+                }
+                return false;
             }
             case PLACE_MISC: {
                 if (plot == null) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_ROAD.getTranslated(), notifyPerms);
+                            Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms
+                    );
                 }
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.getTranslated(), notifyPerms);
+                            Permission.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms
+                    );
                 }
                 if (plot.getFlag(MiscPlaceFlag.class)) {
                     return true;
@@ -377,27 +470,35 @@ public class EventDispatcher {
                 List<BlockTypeWrapper> place = plot.getFlag(PlaceFlag.class);
                 for (final BlockTypeWrapper blockTypeWrapper : place) {
                     if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper
-                        .accepts(blockType)) {
+                            .accepts(blockType)) {
                         return true;
                     }
                 }
                 if (Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
-                        false)) {
+                        .hasPermission(player, Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
+                                false
+                        )) {
                     return true;
                 }
-                return !(!notifyPerms || MainUtil.sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
-                    Captions.FLAG_MISC_PLACE.getTranslated() + '/' + Captions.FLAG_PLACE
-                        .getTranslated()));
+                if (notifyPerms) {
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.flag_tutorial_usage"),
+                            Template.of("flag", PlotFlag.getFlagName(MiscPlaceFlag.class)
+                                    + '/' + PlotFlag.getFlagName(PlaceFlag.class))
+                    );
+                }
+                return false;
             }
             case PLACE_VEHICLE:
                 if (plot == null) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_ROAD.getTranslated(), notifyPerms);
+                            Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms
+                    );
                 }
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.getTranslated(), notifyPerms);
+                            Permission.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms
+                    );
                 }
                 return plot.getFlag(VehiclePlaceFlag.class);
             default:
@@ -405,4 +506,5 @@ public class EventDispatcher {
         }
         return true;
     }
+
 }

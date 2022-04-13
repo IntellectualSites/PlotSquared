@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.uuid;
 
@@ -29,7 +29,7 @@ import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,11 +47,13 @@ public class EssentialsUUIDService implements UUIDService {
         this.essentials = Essentials.getPlugin(Essentials.class);
     }
 
-    @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
+    @Override
+    public @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids) {
         return Collections.emptyList();
     }
 
-    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull final List<String> usernames) {
+    @Override
+    public @NonNull List<UUIDMapping> getUUIDs(final @NonNull List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
         for (final String username : usernames) {
             try {
@@ -62,7 +64,8 @@ public class EssentialsUUIDService implements UUIDService {
                         mappings.add(new UUIDMapping(uuid, username));
                     }
                 }
-            } catch (final Exception ignored){}
+            } catch (final Exception ignored) {
+            }
         }
         return mappings;
     }

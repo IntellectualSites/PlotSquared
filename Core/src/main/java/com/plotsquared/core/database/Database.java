@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.database;
 
@@ -52,7 +52,7 @@ public abstract class Database {
     /**
      * Checks if a connection is open with the database.
      *
-     * @return true if the connection is open
+     * @return {@code true} if the connection is open
      * @throws SQLException if the connection cannot be checked
      */
     public abstract boolean checkConnection() throws SQLException;
@@ -67,7 +67,7 @@ public abstract class Database {
     /**
      * Closes the connection with the database.
      *
-     * @return true if successful
+     * @return {@code true} if successful
      * @throws SQLException if the connection cannot be closed
      */
     public abstract boolean closeConnection() throws SQLException;
@@ -94,4 +94,5 @@ public abstract class Database {
      * @throws ClassNotFoundException If the driver cannot be found; see {@link #openConnection()}
      */
     public abstract int updateSQL(String query) throws SQLException, ClassNotFoundException;
+
 }

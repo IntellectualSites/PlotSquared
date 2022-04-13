@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,32 +21,44 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
+import com.google.inject.Injector;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.ConsolePlayer;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.util.EconHandler;
-import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
  * PlotSquared command class.
  */
 @CommandDeclaration(command = "plot",
-    aliases = {"plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap"})
+        aliases = {"plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap"})
 public class MainCommand extends Command {
+
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + MainCommand.class.getSimpleName());
 
     private static MainCommand instance;
     public Help help;
@@ -60,93 +72,102 @@ public class MainCommand extends Command {
     public static MainCommand getInstance() {
         if (instance == null) {
             instance = new MainCommand();
-            new Caps();
-            new Buy();
-            new Save();
-            new Load();
-            new Confirm();
-            new Template();
-            new Download();
-            new Template();
-            new Setup();
-            new Area();
-            new DebugSaveTest();
-            new DebugLoadTest();
-            new CreateRoadSchematic();
-            new DebugAllowUnsafe();
-            new RegenAllRoads();
-            new Claim();
-            new Auto();
-            new HomeCommand();
-            new Visit();
-            new Set();
-            new Clear();
-            new Delete();
-            new Trust();
-            new Add();
-            new Leave();
-            new Deny();
-            new Remove();
-            new Info();
-            new Near();
-            new ListCmd();
-            new Debug();
-            new SchematicCmd();
-            new PluginCmd();
-            new Purge();
-            new Reload();
-            new Relight();
-            new Merge();
-            new DebugPaste();
-            new Unlink();
-            new Kick();
-            new Inbox();
-            new Comment();
-            new DatabaseCommand();
-            new Swap();
-            new Music();
-            new DebugRoadRegen();
-            new Trust();
-            new FlagCommand();
-            new Target();
-            new Move();
-            new Condense();
-            new Copy();
-            new Chat();
-            new Trim();
-            new Done();
-            new Continue();
-            new Middle();
-            new Grant();
-            // Set commands
-            new Owner();
-            new Desc();
-            new Biome();
-            new Alias();
-            new SetHome();
-            new Cluster();
-            new DebugImportWorlds();
-            new Backup();
+
+            final Injector injector = PlotSquared.platform().injector();
+            final List<Class<? extends Command>> commands = new LinkedList<>();
+            commands.add(Caps.class);
+            commands.add(Buy.class);
+            if (Settings.Web.LEGACY_WEBINTERFACE) {
+                LOGGER.warn("Legacy webinterface is used. Please note that it will be removed in future.");
+                commands.add(Save.class);
+            }
+            commands.add(Load.class);
+            commands.add(Confirm.class);
+            commands.add(Template.class);
+            commands.add(Download.class);
+            commands.add(Setup.class);
+            commands.add(Area.class);
+            commands.add(DebugSaveTest.class);
+            commands.add(DebugLoadTest.class);
+            commands.add(CreateRoadSchematic.class);
+            commands.add(DebugAllowUnsafe.class);
+            commands.add(RegenAllRoads.class);
+            commands.add(Claim.class);
+            commands.add(Auto.class);
+            commands.add(HomeCommand.class);
+            commands.add(Visit.class);
+            commands.add(Set.class);
+            commands.add(Clear.class);
+            commands.add(Delete.class);
+            commands.add(Trust.class);
+            commands.add(Add.class);
+            commands.add(Leave.class);
+            commands.add(Deny.class);
+            commands.add(Remove.class);
+            commands.add(Info.class);
+            commands.add(Near.class);
+            commands.add(ListCmd.class);
+            commands.add(Debug.class);
+            commands.add(SchematicCmd.class);
+            commands.add(PluginCmd.class);
+            commands.add(Purge.class);
+            commands.add(Reload.class);
+            commands.add(Merge.class);
+            commands.add(DebugPaste.class);
+            commands.add(Unlink.class);
+            commands.add(Kick.class);
+            commands.add(Inbox.class);
+            commands.add(Comment.class);
+            commands.add(DatabaseCommand.class);
+            commands.add(Swap.class);
+            commands.add(Music.class);
+            commands.add(DebugRoadRegen.class);
+            commands.add(DebugExec.class);
+            commands.add(FlagCommand.class);
+            commands.add(Target.class);
+            commands.add(Move.class);
+            commands.add(Condense.class);
+            commands.add(Copy.class);
+            commands.add(Chat.class);
+            commands.add(Trim.class);
+            commands.add(Done.class);
+            commands.add(Continue.class);
+            commands.add(Middle.class);
+            commands.add(Grant.class);
+            commands.add(Owner.class);
+            commands.add(Desc.class);
+            commands.add(Biome.class);
+            commands.add(Alias.class);
+            commands.add(SetHome.class);
+            commands.add(Cluster.class);
+            commands.add(DebugImportWorlds.class);
+            commands.add(Backup.class);
 
             if (Settings.Ratings.USE_LIKES) {
-                new Like();
-                new Dislike();
+                commands.add(Like.class);
+                commands.add(Dislike.class);
             } else {
-                new Rate();
+                commands.add(Rate.class);
+            }
+
+            for (final Class<? extends Command> command : commands) {
+                try {
+                    injector.getInstance(command);
+                } catch (final Exception e) {
+                    LOGGER.error("Failed to register command {}", command.getCanonicalName());
+                    e.printStackTrace();
+                }
             }
 
             // Referenced commands
-            instance.toggle = new Toggle();
+            instance.toggle = injector.getInstance(Toggle.class);
             instance.help = new Help(instance);
-
-            if (!Settings.Enabled_Components.DISABLE_NASHORN_SCRIPT_ENGINE) {
-                new DebugExec();
-            }
         }
         return instance;
     }
 
-    public static boolean onCommand(final PlotPlayer player, String... args) {
+    public static boolean onCommand(final PlotPlayer<?> player, String... args) {
+        final EconHandler econHandler = PlotSquared.platform().econHandler();
         if (args.length >= 1 && args[0].contains(":")) {
             String[] split2 = args[0].split(":");
             if (split2.length == 2) {
@@ -163,24 +184,21 @@ public class MainCommand extends Command {
             }
         }
         try {
-            getInstance().execute(player, args, new RunnableVal3<Command, Runnable, Runnable>() {
+            getInstance().execute(player, args, new RunnableVal3<>() {
                 @Override
                 public void run(final Command cmd, final Runnable success, final Runnable failure) {
                     if (cmd.hasConfirmation(player)) {
                         CmdConfirm.addPending(player, cmd.getUsage(), () -> {
-                            if (EconHandler.getEconHandler() != null) {
-                                PlotArea area = player.getApplicablePlotArea();
-                                if (area != null) {
-                                    Expression<Double> priceEval =
+                            PlotArea area = player.getApplicablePlotArea();
+                            if (area != null && econHandler.isEnabled(area)) {
+                                PlotExpression priceEval =
                                         area.getPrices().get(cmd.getFullId());
-                                    Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
-                                    if (price != null
-                                        && EconHandler.getEconHandler().getMoney(player) < price) {
-                                        if (failure != null) {
-                                            failure.run();
-                                        }
-                                        return;
+                                double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
+                                if (econHandler.getMoney(player) < price) {
+                                    if (failure != null) {
+                                        failure.run();
                                     }
+                                    return;
                                 }
                             }
                             if (success != null) {
@@ -189,25 +207,24 @@ public class MainCommand extends Command {
                         });
                         return;
                     }
-                    if (EconHandler.getEconHandler() != null) {
-                        PlotArea area = player.getApplicablePlotArea();
-                        if (area != null) {
-                            Expression<Double> priceEval = area.getPrices().get(cmd.getFullId());
-                            Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
-                            if (price != 0d && EconHandler.getEconHandler().getMoney(player) < price) {
-                                if (failure != null) {
-                                    failure.run();
-                                }
-                                return;
+                    PlotArea area = player.getApplicablePlotArea();
+                    if (area != null && econHandler.isEnabled(area)) {
+                        PlotExpression priceEval = area.getPrices().get(cmd.getFullId());
+                        double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
+                        if (price != 0d && econHandler.getMoney(player) < price) {
+                            if (failure != null) {
+                                failure.run();
                             }
+                            return;
                         }
                     }
                     if (success != null) {
                         success.run();
                     }
                 }
-            }, new RunnableVal2<Command, CommandResult>() {
-                @Override public void run(Command cmd, CommandResult result) {
+            }, new RunnableVal2<>() {
+                @Override
+                public void run(Command cmd, CommandResult result) {
                     // Post command stuff!?
                 }
             }).thenAccept(result -> {
@@ -221,11 +238,11 @@ public class MainCommand extends Command {
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(final PlotPlayer<?> player, String[] args,
-        RunnableVal3<Command, Runnable, Runnable> confirm,
-        RunnableVal2<Command, CommandResult> whenDone) {
-        // Clear perm caching //
-        player.deleteMeta("perm");
+    public CompletableFuture<Boolean> execute(
+            final PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone
+    ) {
         // Optional command scope //
         Location location = null;
         Plot plot = null;
@@ -234,41 +251,49 @@ public class MainCommand extends Command {
             PlotArea area = player.getApplicablePlotArea();
             Plot newPlot = Plot.fromString(area, args[0]);
             if (newPlot != null && (player instanceof ConsolePlayer || newPlot.getArea()
-                .equals(area) || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN)
-                || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_SUDO_AREA))
-                && !newPlot.isDenied(player.getUUID())) {
-                Location newLoc = newPlot.getCenterSynchronous();
+                    .equals(area) || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN)
+                    || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_AREA_SUDO))
+                    && !newPlot.isDenied(player.getUUID())) {
+                final Location newLoc;
+                if (newPlot.getArea() instanceof SinglePlotArea) {
+                    newLoc = newPlot.isLoaded() ? newPlot.getCenterSynchronous() : Location.at("", 0, 0, 0);
+                } else {
+                    newLoc = newPlot.getCenterSynchronous();
+                }
                 if (player.canTeleport(newLoc)) {
                     // Save meta
-                    location = player.getMeta(PlotPlayer.META_LOCATION);
-                    plot = player.getMeta(PlotPlayer.META_LAST_PLOT);
+                    try (final MetaDataAccess<Location> locationMetaDataAccess
+                                 = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
+                        location = locationMetaDataAccess.get().orElse(null);
+                        locationMetaDataAccess.set(newLoc);
+                    }
+                    try (final MetaDataAccess<Plot> plotMetaDataAccess
+                                 = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+                        plot = plotMetaDataAccess.get().orElse(null);
+                        plotMetaDataAccess.set(newPlot);
+                    }
                     tp = true;
-                    // Set loc
-                    player.setMeta(PlotPlayer.META_LOCATION, newLoc);
-                    player.setMeta(PlotPlayer.META_LAST_PLOT, newPlot);
                 } else {
-                    Captions.BORDER.send(player);
+                    player.sendMessage(TranslatableCaption.of("border.denied"));
                 }
                 // Trim command
                 args = Arrays.copyOfRange(args, 1, args.length);
             }
             if (args.length >= 2 && !args[0].isEmpty() && args[0].charAt(0) == '-') {
                 if ("f".equals(args[0].substring(1))) {
-                    confirm = new RunnableVal3<Command, Runnable, Runnable>() {
-                        @Override public void run(Command cmd, Runnable success, Runnable failure) {
-                            if (EconHandler.getEconHandler() != null) {
-                                PlotArea area = player.getApplicablePlotArea();
-                                if (area != null) {
-                                    Expression<Double> priceEval =
+                    confirm = new RunnableVal3<>() {
+                        @Override
+                        public void run(Command cmd, Runnable success, Runnable failure) {
+                            if (area != null && PlotSquared.platform().econHandler().isEnabled(area)) {
+                                PlotExpression priceEval =
                                         area.getPrices().get(cmd.getFullId());
-                                    Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
-                                    if (price != 0d
-                                        && EconHandler.getEconHandler().getMoney(player) < price) {
-                                        if (failure != null) {
-                                            failure.run();
-                                        }
-                                        return;
+                                double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
+                                if (price != 0d
+                                        && PlotSquared.platform().econHandler().getMoney(player) < price) {
+                                    if (failure != null) {
+                                        failure.run();
                                     }
+                                    return;
                                 }
                             }
                             if (success != null) {
@@ -278,7 +303,7 @@ public class MainCommand extends Command {
                     };
                     args = Arrays.copyOfRange(args, 1, args.length);
                 } else {
-                    Captions.INVALID_COMMAND_FLAG.send(player);
+                    player.sendMessage(TranslatableCaption.of("errors.invalid_command_flag"));
                     return CompletableFuture.completedFuture(false);
                 }
             }
@@ -289,30 +314,42 @@ public class MainCommand extends Command {
             throw e;
         } catch (Throwable e) {
             e.printStackTrace();
-            String message = e.getLocalizedMessage();
+            String message = e.getMessage();
             if (message != null) {
-                Captions.ERROR.send(player, message);
+                player.sendMessage(
+                        TranslatableCaption.of("errors.error"),
+                        net.kyori.adventure.text.minimessage.Template.of("value", message)
+                );
             } else {
-                Captions.ERROR.send(player);
+                player.sendMessage(
+                        TranslatableCaption.of("errors.error_console"));
             }
         }
         // Reset command scope //
         if (tp && !(player instanceof ConsolePlayer)) {
-            if (location == null) {
-                player.deleteMeta(PlotPlayer.META_LOCATION);
-            } else {
-                player.setMeta(PlotPlayer.META_LOCATION, location);
+            try (final MetaDataAccess<Location> locationMetaDataAccess
+                         = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
+                if (location == null) {
+                    locationMetaDataAccess.remove();
+                } else {
+                    locationMetaDataAccess.set(location);
+                }
             }
-            if (plot == null) {
-                player.deleteMeta(PlotPlayer.META_LAST_PLOT);
-            } else {
-                player.setMeta(PlotPlayer.META_LAST_PLOT, plot);
+            try (final MetaDataAccess<Plot> plotMetaDataAccess
+                         = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+                if (plot == null) {
+                    plotMetaDataAccess.remove();
+                } else {
+                    plotMetaDataAccess.set(plot);
+                }
             }
         }
         return CompletableFuture.completedFuture(true);
     }
 
-    @Override public boolean canExecute(PlotPlayer player, boolean message) {
+    @Override
+    public boolean canExecute(PlotPlayer<?> player, boolean message) {
         return true;
     }
+
 }

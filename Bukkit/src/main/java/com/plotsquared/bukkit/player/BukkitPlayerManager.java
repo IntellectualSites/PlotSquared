@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,48 +21,78 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.player;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.plotsquared.core.permissions.PermissionHandler;
+import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.UUID;
 
 /**
  * Player manager providing {@link BukkitPlayer Bukkit players}
  */
+@Singleton
 public class BukkitPlayerManager extends PlayerManager<BukkitPlayer, Player> {
 
-    @NotNull @Override public BukkitPlayer getPlayer(@NotNull final Player object) {
-        try {
-            return getPlayer(object.getUniqueId());
-        } catch (final NoSuchPlayerException exception) {
-            return new BukkitPlayer(object, object.isOnline(), false);
-        }
+    private final PlotAreaManager plotAreaManager;
+    private final EventDispatcher eventDispatcher;
+    private final PermissionHandler permissionHandler;
+
+    @Inject
+    public BukkitPlayerManager(
+            final @NonNull PlotAreaManager plotAreaManager,
+            final @NonNull EventDispatcher eventDispatcher,
+            final @NonNull PermissionHandler permissionHandler
+    ) {
+        this.plotAreaManager = plotAreaManager;
+        this.eventDispatcher = eventDispatcher;
+        this.permissionHandler = permissionHandler;
     }
 
-    @Override @NotNull public BukkitPlayer createPlayer(@NotNull final UUID uuid) {
+    @NonNull
+    @Override
+    public BukkitPlayer getPlayer(final @NonNull Player object) {
+        if (object.getUniqueId().version() == 2) { // not a real player
+            return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, object, false, this.permissionHandler);
+        }
+        if (!object.isOnline()) {
+            throw new NoSuchPlayerException(object.getUniqueId());
+        }
+        return getPlayer(object.getUniqueId());
+    }
+
+    @Override
+    public @NonNull BukkitPlayer createPlayer(final @NonNull UUID uuid) {
         final Player player = Bukkit.getPlayer(uuid);
         if (player == null || !player.isOnline()) {
             throw new NoSuchPlayerException(uuid);
         }
-        return new BukkitPlayer(player);
+        return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, player, this.permissionHandler);
     }
 
-    @Nullable @Override public BukkitOfflinePlayer getOfflinePlayer(@Nullable final UUID uuid) {
+    @Nullable
+    @Override
+    public BukkitOfflinePlayer getOfflinePlayer(final @Nullable UUID uuid) {
         if (uuid == null) {
             return null;
         }
-        return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(uuid));
+        return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(uuid), this.permissionHandler);
     }
 
-    @NotNull @Override public BukkitOfflinePlayer getOfflinePlayer(@NotNull final String username) {
-        return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(username));
+    @NonNull
+    @Override
+    public BukkitOfflinePlayer getOfflinePlayer(final @NonNull String username) {
+        return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(username), this.permissionHandler);
     }
 
 }

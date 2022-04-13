@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,11 +21,12 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
+import com.google.inject.Inject;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.generator.HybridPlotManager;
 import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.location.Location;
@@ -33,22 +34,48 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.queue.QueueCoordinator;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @CommandDeclaration(command = "debugroadregen",
-    usage = DebugRoadRegen.USAGE,
-    requiredType = RequiredType.NONE,
-    description = "Regenerate roads in the plot or region the user is, based on the road schematic",
-    category = CommandCategory.DEBUG,
-    permission = "plots.debugroadregen")
+        usage = DebugRoadRegen.USAGE,
+        requiredType = RequiredType.NONE,
+        category = CommandCategory.DEBUG,
+        permission = "plots.debugroadregen")
 public class DebugRoadRegen extends SubCommand {
-    public static final String USAGE = "/plot debugroadregen <plot|region [height]>";
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    public static final String USAGE = "/plot debugroadregen <plot | region [height]>";
+
+    private final HybridUtils hybridUtils;
+
+    @Inject
+    public DebugRoadRegen(final @NonNull HybridUtils hybridUtils) {
+        this.hybridUtils = hybridUtils;
+    }
+
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
+        Location location = player.getLocation();
+        Plot plot = location.getPlotAbs();
         if (args.length < 1) {
-            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, DebugRoadRegen.USAGE);
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", DebugRoadRegen.USAGE)
+            );
+            return false;
+        }
+
+        PlotArea area = player.getPlotAreaAbs();
+        check(area, TranslatableCaption.of("errors.not_in_plot_world"));
+        if (plot.getVolume() > Integer.MAX_VALUE) {
+            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
             return false;
         }
         String kind = args[0].toLowerCase();
@@ -58,71 +85,103 @@ public class DebugRoadRegen extends SubCommand {
             case "region":
                 return regenRegion(player, Arrays.copyOfRange(args, 1, args.length));
             default:
-                MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, DebugRoadRegen.USAGE);
+                player.sendMessage(
+                        TranslatableCaption.of("commandconfig.command_syntax"),
+                        Template.of("value", DebugRoadRegen.USAGE)
+                );
                 return false;
         }
     }
 
-    public boolean regenPlot(PlotPlayer player) {
+    public boolean regenPlot(PlotPlayer<?> player) {
         Location location = player.getLocation();
         PlotArea area = location.getPlotArea();
         if (area == null) {
-            return sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
         }
         Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            Captions.NOT_IN_PLOT.send(player);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
         } else if (plot.isMerged()) {
-            Captions.REQUIRES_UNMERGED.send(player);
+            player.sendMessage(TranslatableCaption.of("debug.requires_unmerged"));
         } else {
             PlotManager manager = area.getPlotManager();
-            manager.createRoadEast(plot);
-            manager.createRoadSouth(plot);
-            manager.createRoadSouthEast(plot);
-            MainUtil.sendMessage(player, "&6Regenerating plot south/east roads: " + plot.getId()
-                + "\n&6 - Result: &aSuccess");
-            MainUtil.sendMessage(player, "&cTo regenerate all roads: /plot regenallroads");
+            QueueCoordinator queue = area.getQueue();
+            queue.setCompleteTask(() -> {
+                player.sendMessage(
+                        TranslatableCaption.of("debugroadregen.regen_done"),
+                        Template.of("value", plot.getId().toString())
+                );
+                player.sendMessage(
+                        TranslatableCaption.of("debugroadregen.regen_all"),
+                        Template.of("value", "/plot regenallroads")
+                );
+            });
+            manager.createRoadEast(plot, queue);
+            manager.createRoadSouth(plot, queue);
+            manager.createRoadSouthEast(plot, queue);
+            queue.enqueue();
         }
         return true;
     }
 
-    public boolean regenRegion(PlotPlayer player, String[] args) {
+    public boolean regenRegion(PlotPlayer<?> player, String[] args) {
         int height = 0;
         if (args.length == 1) {
             try {
                 height = Integer.parseInt(args[0]);
             } catch (NumberFormatException ignored) {
-                MainUtil.sendMessage(player, Captions.NOT_VALID_NUMBER, "(0, 256)");
-                MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, DebugRoadRegen.USAGE);
+                player.sendMessage(
+                        TranslatableCaption.of("invalid.not_valid_number"),
+                        Template.of("value", "0, 256")
+                );
+                player.sendMessage(
+                        TranslatableCaption.of("commandconfig.command_syntax"),
+                        Template.of("value", DebugRoadRegen.USAGE)
+                );
                 return false;
             }
         } else if (args.length != 0) {
-            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, DebugRoadRegen.USAGE);
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", DebugRoadRegen.USAGE)
+            );
             return false;
         }
 
         Location location = player.getLocation();
         PlotArea area = location.getPlotArea();
         if (area == null) {
-            return sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
         }
         Plot plot = player.getCurrentPlot();
         PlotManager manager = area.getPlotManager();
         if (!(manager instanceof HybridPlotManager)) {
-            MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_WORLD);
+            player.sendMessage(TranslatableCaption.of("errors.invalid_plot_world"));
             return true;
         }
-        MainUtil
-            .sendMessage(player, "&cIf no schematic is set, the following will not do anything");
-        MainUtil.sendMessage(player,
-            "&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
-        MainUtil.sendMessage(player, "&cTo regenerate all roads: /plot regenallroads");
-        boolean result = HybridUtils.manager.scheduleSingleRegionRoadUpdate(plot, height);
+        player.sendMessage(
+                TranslatableCaption.of("debugroadregen.schematic"),
+                Template.of("command", "/plot createroadschematic")
+        );
+        player.sendMessage(
+                TranslatableCaption.of("debugroadregen.regenallroads"),
+                Template.of("command", "/plot regenallroads")
+        );
+        boolean result = this.hybridUtils.scheduleSingleRegionRoadUpdate(plot, height);
         if (!result) {
-            MainUtil.sendMessage(player,
-                "&cCannot schedule mass schematic update! (Is one already in progress?)");
+            player.sendMessage(TranslatableCaption.of("debugexec.mass_schematic_update_in_progress"));
             return false;
         }
         return true;
     }
+
+    @Override
+    public Collection<Command> tab(final PlotPlayer<?> player, String[] args, boolean space) {
+        return Stream.of("plot", "region")
+                .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
+                .map(value -> new Command(null, false, value, "plots.debugroadregen", RequiredType.NONE, null) {
+                }).collect(Collectors.toList());
+    }
+
 }

@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.collection;
 
@@ -43,8 +43,9 @@ public class SimpleRandomCollection<E> extends RandomCollection<E> {
     }
 
     public void add(double weight, E result) {
-        if (weight <= 0)
+        if (weight <= 0) {
             return;
+        }
         total += weight;
         map.put(total, result);
     }
@@ -52,4 +53,5 @@ public class SimpleRandomCollection<E> extends RandomCollection<E> {
     public E next() {
         return map.ceilingEntry(random.nextDouble()).getValue();
     }
+
 }

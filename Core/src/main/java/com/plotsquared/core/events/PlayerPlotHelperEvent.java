@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
 
@@ -35,7 +35,7 @@ import java.util.UUID;
  */
 public class PlayerPlotHelperEvent extends PlotEvent {
 
-    private final PlotPlayer initiator;
+    private final PlotPlayer<?> initiator;
     private final boolean added;
     private final UUID player;
 
@@ -45,9 +45,9 @@ public class PlayerPlotHelperEvent extends PlotEvent {
      * @param initiator Player that initiated the event
      * @param plot      Plot in which the event occurred
      * @param player    Player that was added/removed from the helper list
-     * @param added     true of the player was added, false if the player was removed
+     * @param added     {@code true} if the player was added, {@code false} if the player was removed
      */
-    public PlayerPlotHelperEvent(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
+    public PlayerPlotHelperEvent(PlotPlayer<?> initiator, Plot plot, UUID player, boolean added) {
         super(plot);
         this.initiator = initiator;
         this.added = added;
@@ -77,7 +77,7 @@ public class PlayerPlotHelperEvent extends PlotEvent {
      *
      * @return PlotPlayer
      */
-    public PlotPlayer getInitiator() {
+    public PlotPlayer<?> getInitiator() {
         return this.initiator;
     }
 

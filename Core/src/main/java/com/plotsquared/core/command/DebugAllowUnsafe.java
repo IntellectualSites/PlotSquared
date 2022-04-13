@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,11 +21,11 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 
 import java.util.ArrayList;
@@ -33,23 +33,23 @@ import java.util.List;
 import java.util.UUID;
 
 @CommandDeclaration(command = "debugallowunsafe",
-    description = "Allow unsafe actions until toggled off",
-    usage = "/plot debugallowunsafe",
-    category = CommandCategory.DEBUG,
-    requiredType = RequiredType.NONE,
-    permission = "plots.debugallowunsafe")
+        usage = "/plot debugallowunsafe",
+        category = CommandCategory.DEBUG,
+        requiredType = RequiredType.NONE,
+        permission = "plots.debugallowunsafe")
 public class DebugAllowUnsafe extends SubCommand {
 
     public static final List<UUID> unsafeAllowed = new ArrayList<>();
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
 
         if (unsafeAllowed.contains(player.getUUID())) {
             unsafeAllowed.remove(player.getUUID());
-            sendMessage(player, Captions.DEBUGALLOWUNSAFE_OFF);
+            player.sendMessage(TranslatableCaption.of("unsafe.debugallowunsafe_off"));
         } else {
             unsafeAllowed.add(player.getUUID());
-            sendMessage(player, Captions.DEBUGALLOWUNSAFE_ON);
+            player.sendMessage(TranslatableCaption.of("unsafe.debugallowunsafe_on"));
         }
         return true;
     }

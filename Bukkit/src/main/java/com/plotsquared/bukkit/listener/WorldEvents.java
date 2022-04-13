@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,10 +21,11 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
 
+import com.google.inject.Inject;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.generator.GeneratorWrapper;
@@ -36,17 +37,23 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.generator.ChunkGenerator;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 @SuppressWarnings("unused")
 public class WorldEvents implements Listener {
+
+    private final PlotAreaManager plotAreaManager;
+
+    @Inject
+    public WorldEvents(final @NonNull PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onWorldInit(WorldInitEvent event) {
         World world = event.getWorld();
         String name = world.getName();
-        PlotAreaManager manager = PlotSquared.get().getPlotAreaManager();
-        if (manager instanceof SinglePlotAreaManager) {
-            SinglePlotAreaManager single = (SinglePlotAreaManager) manager;
+        if (this.plotAreaManager instanceof final SinglePlotAreaManager single) {
             if (single.isWorld(name)) {
                 world.setKeepSpawnInMemory(false);
                 return;
@@ -56,7 +63,8 @@ public class WorldEvents implements Listener {
         if (gen instanceof GeneratorWrapper) {
             PlotSquared.get().loadWorld(name, (GeneratorWrapper<?>) gen);
         } else {
-            PlotSquared.get().loadWorld(name, new BukkitPlotGenerator(name, gen));
+            PlotSquared.get().loadWorld(name, new BukkitPlotGenerator(name, gen, this.plotAreaManager));
         }
     }
+
 }

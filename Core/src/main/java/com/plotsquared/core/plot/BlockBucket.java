@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
 
@@ -36,44 +36,42 @@ import com.sk89q.worldedit.function.pattern.BlockPattern;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 
 /**
  * A block bucket is a container of block types, where each block
  * has a specified chance of being randomly picked
  */
-@EqualsAndHashCode(of = {"input"})
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class BlockBucket implements ConfigurationSerializable {
-    private static java.util.regex.Pattern regex = java.util.regex.Pattern.compile(
-        "((?<namespace>[A-Za-z_]+):)?(?<block>([A-Za-z_]+(\\[?[\\S\\s]+\\])?))(:(?<chance>[0-9]{1,3}))?");
+
+    private static final java.util.regex.Pattern regex = java.util.regex.Pattern.compile(
+            "((?<namespace>[A-Za-z_]+):)?(?<block>([A-Za-z_]+(\\[?[\\S\\s]+\\])?))(:(?<chance>[0-9]{1,3}))?");
+    private final StringBuilder input;
     private boolean compiled;
-    private StringBuilder input;
     private BlockState single;
     private Pattern pattern;
 
-    public BlockBucket(BlockType type) {
+    public BlockBucket(final @NonNull BlockType type) {
         this(type.getId());
         this.single = type.getDefaultState();
         this.pattern = new BlockPattern(this.single);
         this.compiled = true;
     }
 
-    public BlockBucket(BlockState state) {
+    public BlockBucket(final @NonNull BlockState state) {
         this(state.getAsString());
         this.single = state;
         this.pattern = new BlockPattern(this.single);
         this.compiled = true;
     }
 
-    public BlockBucket(String input) {
+    public BlockBucket(final @NonNull String input) {
         this.input = new StringBuilder(input);
     }
 
@@ -81,32 +79,33 @@ public final class BlockBucket implements ConfigurationSerializable {
         this.input = new StringBuilder();
     }
 
-    public static BlockBucket withSingle(@NonNull final BlockState block) {
+    public static BlockBucket withSingle(final @NonNull BlockState block) {
         final BlockBucket blockBucket = new BlockBucket();
         blockBucket.addBlock(block, 100);
         return blockBucket;
     }
 
-    public static BlockBucket deserialize(@NonNull final Map<String, Object> map) {
+    public static BlockBucket deserialize(final @NonNull Map<String, Object> map) {
         if (!map.containsKey("blocks")) {
             return null;
         }
         return ConfigurationUtil.BLOCK_BUCKET.parseString(map.get("blocks").toString());
     }
 
-    public void addBlock(@NonNull final BlockState block) {
+    public void addBlock(final @NonNull BlockState block) {
         this.addBlock(block, -1);
     }
 
-    public void addBlock(@NonNull final BlockState block, final int chance) {
+    public void addBlock(final @NonNull BlockState block, final int chance) {
         addBlock(block, (double) chance);
     }
 
-    private void addBlock(@NonNull final BlockState block, double chance) {
-        if (chance == -1)
+    private void addBlock(final @NonNull BlockState block, double chance) {
+        if (chance == -1) {
             chance = 1;
+        }
         String prefix = input.length() == 0 ? "" : ",";
-        input.append(prefix).append(block.toString()).append(":").append(chance);
+        input.append(prefix).append(block).append(":").append(chance);
         this.compiled = false;
     }
 
@@ -136,7 +135,7 @@ public final class BlockBucket implements ConfigurationSerializable {
                     String block = matcher.group("block");
                     //noinspection PointlessNullCheck
                     if (chanceStr != null && block != null && !MathMan.isInteger(block) && MathMan
-                        .isInteger(chanceStr)) {
+                            .isInteger(chanceStr)) {
                         String namespace = matcher.group("namespace");
                         string = (namespace == null ? "" : namespace + ":") + block;
                     }
@@ -177,7 +176,8 @@ public final class BlockBucket implements ConfigurationSerializable {
         return this.pattern;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return input.toString();
     }
 
@@ -186,21 +186,45 @@ public final class BlockBucket implements ConfigurationSerializable {
         return isEmpty() || (single != null && single.getBlockType().getMaterial().isAir());
     }
 
-    @Override public Map<String, Object> serialize() {
+    @Override
+    public Map<String, Object> serialize() {
         if (!isCompiled()) {
             compile();
         }
         return ImmutableMap.of("blocks", this.toString());
     }
 
-    @Getter
-    @EqualsAndHashCode
-    @RequiredArgsConstructor
+    public boolean equals(final Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof final BlockBucket other)) {
+            return false;
+        }
+        final Object this$input = this.input;
+        final Object other$input = other.input;
+        return Objects.equals(this$input, other$input);
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $input = this.input;
+        result = result * PRIME + ($input == null ? 43 : $input.hashCode());
+        return result;
+    }
+
     private static final class Range {
 
         private final int min;
         private final int max;
-        @Getter private final boolean automatic;
+        private final boolean automatic;
+
+        public Range(int min, int max, boolean automatic) {
+            this.min = min;
+            this.max = max;
+            this.automatic = automatic;
+        }
 
         public int getWeight() {
             return max - min;
@@ -209,5 +233,47 @@ public final class BlockBucket implements ConfigurationSerializable {
         public boolean isInRange(final int num) {
             return num <= max && num >= min;
         }
+
+        public int getMin() {
+            return this.min;
+        }
+
+        public int getMax() {
+            return this.max;
+        }
+
+        public boolean equals(final Object o) {
+            if (o == this) {
+                return true;
+            }
+            if (!(o instanceof final Range other)) {
+                return false;
+            }
+            if (this.getMin() != other.getMin()) {
+                return false;
+            }
+            if (this.getMax() != other.getMax()) {
+                return false;
+            }
+            if (this.isAutomatic() != other.isAutomatic()) {
+                return false;
+            }
+            return true;
+        }
+
+        public int hashCode() {
+            final int PRIME = 59;
+            int result = 1;
+            result = result * PRIME + this.getMin();
+            result = result * PRIME + this.getMax();
+            result = result * PRIME + (this.isAutomatic() ? 79 : 97);
+            return result;
+        }
+
+        public boolean isAutomatic() {
+            return this.automatic;
+        }
+
     }
+
 }

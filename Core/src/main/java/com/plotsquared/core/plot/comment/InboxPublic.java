@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.comment;
 
@@ -36,18 +36,19 @@ public class InboxPublic extends CommentInbox {
 
     @Override
     public boolean getComments(final Plot plot, final RunnableVal<List<PlotComment>> whenDone) {
-        List<PlotComment> comments = plot.getComments(toString());
+        List<PlotComment> comments = plot.getPlotCommentContainer().getComments(toString());
         if (!comments.isEmpty()) {
             whenDone.value = comments;
             TaskManager.runTask(whenDone);
             return true;
         }
-        DBFunc.getComments(plot, toString(), new RunnableVal<List<PlotComment>>() {
-            @Override public void run(List<PlotComment> value) {
+        DBFunc.getComments(plot, toString(), new RunnableVal<>() {
+            @Override
+            public void run(List<PlotComment> value) {
                 whenDone.value = value;
                 if (value != null) {
                     for (PlotComment comment : value) {
-                        plot.addComment(comment);
+                        plot.getPlotCommentContainer().addComment(comment);
                     }
                 }
                 TaskManager.runTask(whenDone);
@@ -56,13 +57,15 @@ public class InboxPublic extends CommentInbox {
         return true;
     }
 
-    @Override public boolean addComment(Plot plot, PlotComment comment) {
-        plot.addComment(comment);
+    @Override
+    public boolean addComment(Plot plot, PlotComment comment) {
+        plot.getPlotCommentContainer().addComment(comment);
         DBFunc.setComment(plot, comment);
         return true;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "public";
     }
 

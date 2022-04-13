@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,19 +21,20 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.types;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Settings;
 import com.sk89q.worldedit.world.block.BlockCategory;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.block.BlockType;
-import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,27 +45,31 @@ import java.util.Map;
  */
 public class BlockTypeWrapper {
 
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + BlockTypeWrapper.class.getSimpleName());
+
     private static final Map<BlockType, BlockTypeWrapper> blockTypes = new HashMap<>();
     private static final Map<String, BlockTypeWrapper> blockCategories = new HashMap<>();
     private static final String minecraftNamespace = "minecraft";
+    @Nullable
+    private final BlockType blockType;
+    @Nullable
+    private final String blockCategoryId;
+    @Nullable
+    private BlockCategory blockCategory;
 
-    @Nullable @Getter private final BlockType blockType;
-    @Nullable private final String blockCategoryId;
-    @Nullable private BlockCategory blockCategory;
-
-    private BlockTypeWrapper(@NotNull final BlockType blockType) {
+    private BlockTypeWrapper(final @NonNull BlockType blockType) {
         this.blockType = Preconditions.checkNotNull(blockType);
         this.blockCategory = null;
         this.blockCategoryId = null;
     }
 
-    private BlockTypeWrapper(@NotNull final BlockCategory blockCategory) {
+    private BlockTypeWrapper(final @NonNull BlockCategory blockCategory) {
         this.blockType = null;
         this.blockCategory = Preconditions.checkNotNull(blockCategory);
         this.blockCategoryId = blockCategory.getId(); // used in toString()/equals()/hashCode()
     }
 
-    private BlockTypeWrapper(@NotNull final String blockCategoryId) {
+    private BlockTypeWrapper(final @NonNull String blockCategoryId) {
         this.blockType = null;
         this.blockCategory = null;
         this.blockCategoryId = Preconditions.checkNotNull(blockCategoryId);
@@ -76,7 +81,7 @@ public class BlockTypeWrapper {
 
     public static BlockTypeWrapper get(final BlockCategory blockCategory) {
         return blockCategories
-            .computeIfAbsent(blockCategory.getId(), id -> new BlockTypeWrapper(blockCategory));
+                .computeIfAbsent(blockCategory.getId(), id -> new BlockTypeWrapper(blockCategory));
     }
 
     public static BlockTypeWrapper get(final String blockCategoryId) {
@@ -90,7 +95,8 @@ public class BlockTypeWrapper {
         return blockCategories.computeIfAbsent(id, BlockTypeWrapper::new);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         if (this.blockType != null) {
             final String key = this.blockType.toString();
             if (key.startsWith("minecraft:")) {
@@ -133,30 +139,40 @@ public class BlockTypeWrapper {
      *
      * @return the block category represented by this wrapper.
      */
-    @Nullable public BlockCategory getBlockCategory() {
+    public @Nullable BlockCategory getBlockCategory() {
         if (this.blockCategory == null
-            && this.blockCategoryId != null) { // only if name is available
+                && this.blockCategoryId != null) { // only if name is available
             this.blockCategory = BlockCategory.REGISTRY.get(this.blockCategoryId);
             if (this.blockCategory == null && !BlockCategory.REGISTRY.values().isEmpty()) {
-                PlotSquared.debug("- Block category #" + this.blockCategoryId + " does not exist");
+                if (Settings.DEBUG) {
+                    LOGGER.info("- Block category #{} does not exist", this.blockCategoryId);
+                }
                 this.blockCategory = new NullBlockCategory(this.blockCategoryId);
             }
         }
         return this.blockCategory;
     }
 
-    @Override public boolean equals(final Object o) {
-        if (this == o)
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
         BlockTypeWrapper that = (BlockTypeWrapper) o;
         return Objects.equal(this.blockType, that.blockType) && Objects
-            .equal(this.blockCategoryId, that.blockCategoryId);
+                .equal(this.blockCategoryId, that.blockCategoryId);
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return Objects.hashCode(this.blockType, this.blockCategoryId);
+    }
+
+    public @Nullable BlockType getBlockType() {
+        return this.blockType;
     }
 
 
@@ -169,9 +185,11 @@ public class BlockTypeWrapper {
             super(id);
         }
 
-        @Override public <B extends BlockStateHolder<B>> boolean contains(B blockStateHolder) {
+        @Override
+        public <B extends BlockStateHolder<B>> boolean contains(B blockStateHolder) {
             return false;
         }
+
     }
 
 }

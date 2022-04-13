@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration;
 
@@ -73,8 +73,8 @@ public interface ConfigurationSection {
      * has been specified, this will return true.
      *
      * @param path Path to check for existence.
-     * @return True if this section contains the requested path, either via
-     * default or being set.
+     * @return {@code true} if this section contains the requested path, either via
+     *         default or being set.
      * @throws IllegalArgumentException Thrown when path is {@code null}.
      */
     boolean contains(String path);
@@ -87,8 +87,8 @@ public interface ConfigurationSection {
      * has been specified, this will still return false.
      *
      * @param path Path to check for existence.
-     * @return True if this section contains the requested path, regardless of
-     * having a default.
+     * @return {@code true} if this section contains the requested path, regardless of
+     *         having a default.
      * @throws IllegalArgumentException Thrown when path is {@code null}.
      */
     boolean isSet(String path);
@@ -255,7 +255,7 @@ public interface ConfigurationSection {
      * <p>If the path exists but is not a String, this will return false. If
      * the path does not exist, this will return false. If the path does not
      * exist but a default value has been specified, this will check if that
-     * defaultvalue is a String and return appropriately.
+     * default value is a String and return appropriately.
      *
      * @param path Path of the String to check.
      * @return Whether or not the specified path is a String.
@@ -670,4 +670,5 @@ public interface ConfigurationSection {
      * @throws IllegalArgumentException Thrown if path is {@code null}
      */
     void addDefault(String path, Object value);
+
 }

@@ -1,0 +1,4 @@
+jdkVersion = "17"
+build = "gradle clean build -x test"
+tools = ["findsecbugs", "ErrorProne", "Semgrep", "Detekt", "Infer"]
+ignoreRules = ["CatchAndPrintStackTrace", "ReferenceEquality", "FallThrough", "FutureReturnValueIgnored", "MixedMutabilityReturnType", "EmptyCatch", "MissingCasesInEnumSwitch", "OperatorPrecedence", "StaticAssignmentInConstructor", "ReferenceEquality", "EqualsHashCode", "EqualsGetClass", "TypeParameterUnusedInFormals", "StringSplitter", "InlineMeSuggester", "NULL_DEREFERENCE"]

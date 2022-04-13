@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,14 +21,13 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
 
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotId;
-import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +39,7 @@ import java.util.List;
 public final class PlotAutoMergeEvent extends PlotEvent implements CancellablePlotEvent {
 
     private final List<PlotId> plots;
-    @Getter private final String world;
+    private final String world;
     private Result eventResult;
 
     /**
@@ -50,8 +49,10 @@ public final class PlotAutoMergeEvent extends PlotEvent implements CancellablePl
      * @param plot  Plot that was merged
      * @param plots A list of plots involved in the event
      */
-    public PlotAutoMergeEvent(@NotNull final String world, @NotNull final Plot plot,
-        @NotNull final List<PlotId> plots) {
+    public PlotAutoMergeEvent(
+            final @NonNull String world, final @NonNull Plot plot,
+            final @NonNull List<PlotId> plots
+    ) {
         super(plot);
         this.world = world;
         this.plots = plots;
@@ -66,11 +67,18 @@ public final class PlotAutoMergeEvent extends PlotEvent implements CancellablePl
         return Collections.unmodifiableList(this.plots);
     }
 
-    @Override public Result getEventResult() {
+    @Override
+    public Result getEventResult() {
         return eventResult;
     }
 
-    @Override public void setEventResult(Result e) {
+    @Override
+    public void setEventResult(Result e) {
         this.eventResult = e;
     }
+
+    public String getWorld() {
+        return this.world;
+    }
+
 }

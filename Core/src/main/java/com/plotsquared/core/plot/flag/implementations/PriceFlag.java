@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,22 +21,25 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.DoubleFlag;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class PriceFlag extends DoubleFlag<PriceFlag> {
+
     public static final PriceFlag PRICE_NOT_BUYABLE = new PriceFlag(0D);
 
-    protected PriceFlag(@NotNull Double value) {
-        super(value, Double.MIN_NORMAL, Double.MAX_VALUE, Captions.FLAG_DESCRIPTION_PRICE);
+    protected PriceFlag(@NonNull Double value) {
+        super(value, Double.MIN_NORMAL, Double.MAX_VALUE, TranslatableCaption.of("flags.flag_description_price"));
     }
 
-    @Override protected PriceFlag flagOf(@NotNull Double value) {
+    @Override
+    protected PriceFlag flagOf(@NonNull Double value) {
         return new PriceFlag(value);
     }
+
 }

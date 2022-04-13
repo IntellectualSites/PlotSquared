@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,67 +21,78 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.StringMan;
 import com.sk89q.worldedit.command.util.SuggestionHelper;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
+import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.Collection;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "setbiome",
-    permission = "plots.set.biome",
-    description = "Set the plot biome",
-    usage = "/plot biome [biome]",
-    aliases = {"biome", "sb", "setb", "b"},
-    category = CommandCategory.APPEARANCE,
-    requiredType = RequiredType.NONE)
+        permission = "plots.set.biome",
+        usage = "/plot biome [biome]",
+        aliases = {"biome", "sb", "setb", "b"},
+        category = CommandCategory.APPEARANCE,
+        requiredType = RequiredType.NONE)
 public class Biome extends SetCommand {
 
-    @Override public boolean set(final PlotPlayer player, final Plot plot, final String value) {
+    @Override
+    public boolean set(final PlotPlayer<?> player, final Plot plot, final String value) {
         BiomeType biome = null;
         try {
             biome = BiomeTypes.get(value.toLowerCase());
         } catch (final Exception ignore) {
         }
         if (biome == null) {
-            String biomes = StringMan
-                .join(BiomeType.REGISTRY.values(), Captions.BLOCK_LIST_SEPARATOR.getTranslated());
-            Captions.NEED_BIOME.send(player);
-            MainUtil.sendMessage(player,
-                Captions.SUBCOMMAND_SET_OPTIONS_HEADER.getTranslated() + biomes);
+            String biomes = StringMan.join(
+                    BiomeType.REGISTRY.values(),
+                    MINI_MESSAGE.serialize(MINI_MESSAGE.parse(TranslatableCaption
+                            .of("blocklist.block_list_separator")
+                            .getComponent(player)))
+            );
+            player.sendMessage(TranslatableCaption.of("biome.need_biome"));
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.subcommand_set_options_header"),
+                    Template.of("values", biomes)
+            );
             return false;
         }
         if (plot.getRunning() > 0) {
-            MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
+            player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
+            return false;
+        }
+        if (plot.getVolume() > Integer.MAX_VALUE) {
+            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
             return false;
         }
         plot.addRunning();
-        plot.setBiome(biome, () -> {
+        plot.getPlotModificationManager().setBiome(biome, () -> {
             plot.removeRunning();
-            MainUtil
-                .sendMessage(player, Captions.BIOME_SET_TO.getTranslated() + value.toLowerCase());
+            player.sendMessage(
+                    TranslatableCaption.of("biome.biome_set_to"),
+                    Template.of("value", value.toLowerCase())
+            );
         });
         return true;
     }
 
     @Override
-    public Collection<Command> tab(final PlotPlayer player, final String[] args,
-        final boolean space) {
+    public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         return SuggestionHelper.getNamespacedRegistrySuggestions(BiomeType.REGISTRY, args[0])
-            .map(value -> value.toLowerCase(Locale.ENGLISH).replace("minecraft:", ""))
-            .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
-            .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
-            }).collect(Collectors.toList());
+                .map(value -> value.toLowerCase(Locale.ENGLISH).replace("minecraft:", ""))
+                .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
+                .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
+                }).collect(Collectors.toList());
     }
 
 }

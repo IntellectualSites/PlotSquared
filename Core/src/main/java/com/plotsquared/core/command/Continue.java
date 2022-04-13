@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,63 +21,83 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(command = "continue",
-    description = "Continue a plot that was previously marked as done",
-    permission = "plots.continue",
-    category = CommandCategory.SETTINGS,
-    requiredType = RequiredType.PLAYER)
+        permission = "plots.continue",
+        category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.PLAYER)
 public class Continue extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    private final EventDispatcher eventDispatcher;
+
+    @Inject
+    public Continue(final @NonNull EventDispatcher eventDispatcher) {
+        this.eventDispatcher = eventDispatcher;
+    }
+
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Plot plot = player.getCurrentPlot();
         if ((plot == null) || !plot.hasOwner()) {
-            return !sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_CONTINUE)) {
-            MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_CONTINUE)) {
+            player.sendMessage(
+                    TranslatableCaption.of("permission.no_permission"),
+                    Template.of("node", TranslatableCaption.of("permission.no_plot_perms").getComponent(player))
+            );
             return false;
         }
         if (!DoneFlag.isDone(plot)) {
-            MainUtil.sendMessage(player, Captions.DONE_NOT_DONE);
+            player.sendMessage(TranslatableCaption.of("done.done_not_done"));
             return false;
         }
         int size = plot.getConnectedPlots().size();
         if (Settings.Done.COUNTS_TOWARDS_LIMIT && (player.getAllowedPlots()
-            < player.getPlotCount() + size)) {
-            MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                Captions.PERMISSION_ADMIN_COMMAND_CONTINUE);
+                < player.getPlotCount() + size)) {
+            player.sendMessage(
+                    TranslatableCaption.of("permission.cant_claim_more_plots"),
+                    Template.of("amount", String.valueOf(player.getAllowedPlots()))
+            );
             return false;
         }
         if (plot.getRunning() > 0) {
-            MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
+            player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
             return false;
         }
         PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(DoneFlag.class);
         PlotFlagRemoveEvent event =
-            PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
+                this.eventDispatcher.callFlagRemove(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {
-            sendMessage(player, Captions.EVENT_DENIED, "Done flag removal");
+            player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Done flag removal")
+            );
             return true;
         }
         plot.removeFlag(event.getFlag());
-        MainUtil.sendMessage(player, Captions.DONE_REMOVED);
+        player.sendMessage(TranslatableCaption.of("done.done_removed"));
         return true;
     }
+
 }

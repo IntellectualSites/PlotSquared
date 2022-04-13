@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,17 +21,18 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,18 +40,22 @@ import java.util.Collection;
 public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, DenyTeleportFlag> {
 
     public static final DenyTeleportFlag DENY_TELEPORT_FLAG_NONE =
-        new DenyTeleportFlag(DeniedGroup.NONE);
+            new DenyTeleportFlag(DeniedGroup.NONE);
 
     /**
      * Construct a new flag instance.
      *
      * @param value Flag value
      */
-    protected DenyTeleportFlag(@NotNull DeniedGroup value) {
-        super(value, Captions.FLAG_CATEGORY_ENUM, Captions.FLAG_DESCRIPTION_DENY_TELEPORT);
+    protected DenyTeleportFlag(@NonNull DeniedGroup value) {
+        super(
+                value,
+                TranslatableCaption.of("flags.flag_category_enum"),
+                TranslatableCaption.of("flags.flag_description_deny_teleport")
+        );
     }
 
-    public static boolean allowsTeleport(PlotPlayer player, Plot plot) {
+    public static boolean allowsTeleport(PlotPlayer<?> player, Plot plot) {
         final DeniedGroup value = plot.getFlag(DenyTeleportFlag.class);
         if (value == DeniedGroup.NONE) {
             return true;
@@ -68,7 +73,7 @@ public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, Den
                 break;
             case NONTRUSTED:
                 result =
-                    plot.getTrusted().contains(player.getUUID()) || plot.isOwner(player.getUUID());
+                        plot.getTrusted().contains(player.getUUID()) || plot.isOwner(player.getUUID());
                 break;
             case NONOWNERS:
                 result = plot.isOwner(player.getUUID());
@@ -79,42 +84,54 @@ public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, Den
         return result || player.hasPermission("plots.admin.entry.denied");
     }
 
-    @Override public DenyTeleportFlag parse(@NotNull String input) throws FlagParseException {
+    @Override
+    public DenyTeleportFlag parse(@NonNull String input) throws FlagParseException {
         final DeniedGroup group = DeniedGroup.fromString(input);
         if (group == null) {
-            throw new FlagParseException(this, input, Captions.FLAG_ERROR_ENUM,
-                "members, nonmembers, trusted, nontrusted, nonowners");
+            throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_enum"),
+                    Template.of("list", "members, nonmembers, trusted, nontrusted, nonowners")
+            );
         }
         return flagOf(group);
     }
 
-    @Override public DenyTeleportFlag merge(@NotNull DeniedGroup newValue) {
+    @Override
+    public DenyTeleportFlag merge(@NonNull DeniedGroup newValue) {
         if (getValue().ordinal() < newValue.ordinal()) {
             return flagOf(newValue);
         }
         return this;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return this.getValue().name();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "trusted";
     }
 
-    @Override protected DenyTeleportFlag flagOf(@NotNull DeniedGroup value) {
+    @Override
+    protected DenyTeleportFlag flagOf(@NonNull DeniedGroup value) {
         return new DenyTeleportFlag(value);
     }
 
-    @Override public Collection<String> getTabCompletions() {
+    @Override
+    public Collection<String> getTabCompletions() {
         return Arrays.asList("none", "members", "trusted", "nonmembers", "nontrusted", "nonowners");
     }
 
     public enum DeniedGroup {
-        NONE, MEMBERS, TRUSTED, NONMEMBERS, NONTRUSTED, NONOWNERS;
+        NONE,
+        MEMBERS,
+        TRUSTED,
+        NONMEMBERS,
+        NONTRUSTED,
+        NONOWNERS;
 
-        @Nullable public static DeniedGroup fromString(@NotNull final String string) {
+        public static @Nullable DeniedGroup fromString(final @NonNull String string) {
             for (final DeniedGroup group : values()) {
                 if (group.name().equalsIgnoreCase(string)) {
                     return group;

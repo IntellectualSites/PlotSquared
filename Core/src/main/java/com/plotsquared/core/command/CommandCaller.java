@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,27 +21,41 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
+import com.plotsquared.core.configuration.caption.Caption;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
+/**
+ * Any entity that is able to execute commands, receive messages &amp; and have
+ * permission nodes
+ */
 public interface CommandCaller {
 
     /**
-     * Send the player a message.
+     * Send a message to the command caller
      *
-     * @param message the message to send
+     * @param caption      Caption to send
+     * @param replacements Variable replacements
      */
-    void sendMessage(String message);
+    void sendMessage(@NonNull Caption caption, @NonNull Template... replacements);
 
     /**
      * Check the player's permissions. <i>Will be cached if permission caching is enabled.</i>
      *
      * @param permission the name of the permission
+     * @return if permission is had
      */
-    boolean hasPermission(String permission);
+    boolean hasPermission(@NonNull String permission);
 
-    boolean isPermissionSet(String permission);
-
+    /**
+     * Get the type of the caller
+     *
+     * @return Caller type
+     */
     RequiredType getSuperCaller();
+
 }

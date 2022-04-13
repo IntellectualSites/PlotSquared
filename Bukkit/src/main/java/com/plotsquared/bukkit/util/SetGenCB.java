@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.util;
 
@@ -38,7 +38,7 @@ import java.util.ArrayList;
 public class SetGenCB {
 
     public static void setGenerator(World world) throws Exception {
-        SetupUtils.manager.updateGenerators();
+        PlotSquared.platform().setupUtils().updateGenerators(false);
         PlotSquared.get().removePlotAreas(world.getName());
         ChunkGenerator gen = world.getGenerator();
         if (gen == null) {
@@ -69,9 +69,10 @@ public class SetGenCB {
         }
         if (!set) {
             world.getPopulators()
-                .removeIf(blockPopulator -> blockPopulator instanceof BukkitAugmentedGenerator);
+                    .removeIf(blockPopulator -> blockPopulator instanceof BukkitAugmentedGenerator);
         }
         PlotSquared.get()
-            .loadWorld(world.getName(), PlotSquared.get().IMP.getGenerator(world.getName(), null));
+                .loadWorld(world.getName(), PlotSquared.platform().getGenerator(world.getName(), null));
     }
+
 }

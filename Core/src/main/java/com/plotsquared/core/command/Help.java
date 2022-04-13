@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,40 +21,50 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.StaticCaption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.helpmenu.HelpMenu;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.Template;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "help",
-    description = "Get this help menu",
-    aliases = "?",
-    category = CommandCategory.INFO,
-    usage = "help [category|#]",
-    permission = "plots.use")
+        aliases = "?",
+        category = CommandCategory.INFO,
+        usage = "help [category | #]",
+        permission = "plots.use")
 public class Help extends Command {
+
     public Help(Command parent) {
         super(parent, true);
     }
 
-    @Override public boolean canExecute(PlotPlayer player, boolean message) {
+    @Override
+    public boolean canExecute(PlotPlayer<?> player, boolean message) {
         return true;
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
-        RunnableVal3<Command, Runnable, Runnable> confirm,
-        RunnableVal2<Command, CommandResult> whenDone) {
+    public CompletableFuture<Boolean> execute(
+            PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone
+    ) {
         switch (args.length) {
             case 0:
                 return displayHelp(player, null, 0);
@@ -78,13 +88,15 @@ public class Help extends Command {
                 }
                 return CompletableFuture.completedFuture(false);
             default:
-                Captions.COMMAND_SYNTAX.send(player, getUsage());
+                sendUsage(player);
         }
         return CompletableFuture.completedFuture(true);
     }
 
-    public CompletableFuture<Boolean> displayHelp(final PlotPlayer player, final String catRaw,
-        final int page) {
+    public CompletableFuture<Boolean> displayHelp(
+            final PlotPlayer<?> player, final String catRaw,
+            final int page
+    ) {
         return CompletableFuture.supplyAsync(() -> {
             String cat = catRaw;
 
@@ -104,23 +116,65 @@ public class Help extends Command {
                 }
             }
             if (cat == null && page == 0) {
-                StringBuilder builder = new StringBuilder();
-                builder.append(Captions.HELP_HEADER.getTranslated());
+                TextComponent.Builder builder = Component.text();
+                builder.append(MINI_MESSAGE.parse(TranslatableCaption.of("help.help_header").getComponent(player)));
                 for (CommandCategory c : CommandCategory.values()) {
-                    builder.append("\n").append(StringMan
-                        .replaceAll(Captions.HELP_INFO_ITEM.getTranslated(), "%category%",
-                            c.toString().toLowerCase(), "%category_desc%", c.toString()));
+                    if (!c.canAccess(player)) {
+                        continue;
+                    }
+                    builder.append(Component.newline()).append(MINI_MESSAGE
+                            .parse(
+                                    TranslatableCaption.of("help.help_info_item").getComponent(player),
+                                    Template.of("command", "/plot help"),
+                                    Template.of("category", c.name().toLowerCase()),
+                                    Template.of("category_desc", c.getComponent(player))
+                            ));
                 }
-                builder.append("\n").append(
-                    Captions.HELP_INFO_ITEM.getTranslated().replaceAll("%category%", "all")
-                        .replaceAll("%category_desc%", "Display all commands"));
-                builder.append("\n").append(Captions.HELP_FOOTER.getTranslated());
-                MainUtil.sendMessage(player, builder.toString(), false);
+                builder.append(Component.newline()).append(MINI_MESSAGE
+                        .parse(
+                                TranslatableCaption.of("help.help_info_item").getComponent(player),
+                                Template.of("command", "/plot help"),
+                                Template.of("category", "all"),
+                                Template.of("category_desc", "Display all commands")
+                        ));
+                builder.append(Component.newline()).append(MINI_MESSAGE.parse(TranslatableCaption
+                        .of("help.help_footer")
+                        .getComponent(player)));
+                player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(builder.asComponent())));
                 return true;
             }
-            new HelpMenu(player).setCategory(catEnum).getCommands().generateMaxPages()
-                .generatePage(page - 1, getParent().toString()).render();
+            new HelpMenu(player).setCategory(catEnum).getCommands().generateMaxPages().generatePage(
+                            page - 1,
+                            getParent().toString(),
+                            player
+                    )
+                    .render();
             return true;
         });
     }
+
+    @Override
+    public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
+        final String argument = args[0].toLowerCase(Locale.ENGLISH);
+        List<Command> result = new ArrayList<>();
+
+        for (final CommandCategory category : CommandCategory.values()) {
+            if (!category.canAccess(player)) {
+                continue;
+            }
+            String name = category.name().toLowerCase();
+            if (!name.startsWith(argument)) {
+                continue;
+            }
+            result.add(new Command(null, false, name, "", RequiredType.NONE, null) {
+            });
+        }
+        // add the category "all"
+        if ("all".startsWith(argument)) {
+            result.add(new Command(null, false, "all", "", RequiredType.NONE, null) {
+            });
+        }
+        return result;
+    }
+
 }

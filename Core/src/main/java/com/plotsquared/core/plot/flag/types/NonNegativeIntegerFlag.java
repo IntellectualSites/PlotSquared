@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,20 +21,21 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.types;
 
-import com.plotsquared.core.configuration.Caption;
-import org.jetbrains.annotations.NotNull;
+import com.plotsquared.core.configuration.caption.Caption;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class NonNegativeIntegerFlag<F extends IntegerFlag<F>> extends IntegerFlag<F> {
 
-    protected NonNegativeIntegerFlag(int value, @NotNull Caption flagDescription) {
+    protected NonNegativeIntegerFlag(int value, @NonNull Caption flagDescription) {
         super(value, 0, Integer.MAX_VALUE, flagDescription);
     }
 
-    public NonNegativeIntegerFlag(int value, int maximum, @NotNull Caption flagDescription) {
+    public NonNegativeIntegerFlag(int value, int maximum, @NonNull Caption flagDescription) {
         super(value, 0, maximum, flagDescription);
     }
+
 }

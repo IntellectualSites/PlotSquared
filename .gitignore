@@ -2,11 +2,7 @@
 *.cmd
 *.sh
 *.prefs
-Sponge/build
 Core/build
-Bukkit/build
-Nukkit/build
-buildSrc/
 
 ### Maven ###
 /mvn
@@ -134,12 +130,8 @@ local.properties
 # STS (Spring Tool Suite)
 .springBeans
 /target/
-Nukkit/build/classes/
-Nukkit/build/dependency-cache/
 checkstyle.xml
 classes/
-p2error.txt
 *.bat
-Nukkit/build/resources/main/plugin.yml
 docs/
 build/

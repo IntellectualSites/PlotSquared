@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,39 +21,20 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
 
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
-import com.sk89q.worldedit.world.registry.LegacyMapper;
-import lombok.Getter;
 
 public class PlotItemStack {
 
-    public final int amount;
-    public final String name;
-    public final String[] lore;
-    @Getter private final ItemType type;
-
-    /**
-     * @param id     Legacy numerical item ID
-     * @param data   Legacy numerical item data
-     * @param amount Amount of items in the stack
-     * @param name   The display name of the item stack
-     * @param lore   The item stack lore
-     * @deprecated Use {@link PlotItemStack(String, int, String, String...)}
-     */
-    @Deprecated public PlotItemStack(final int id, final short data, final int amount,
-        final String name, final String... lore) {
-
-        this.amount = amount;
-        this.name = name;
-        this.lore = lore;
-        this.type = LegacyMapper.getInstance().getItemFromLegacy(id, data);
-    }
+    private final int amount;
+    private final String name;
+    private final String[] lore;
+    private final ItemType type;
 
     /**
      * @param id     String ID
@@ -61,15 +42,48 @@ public class PlotItemStack {
      * @param name   The display name of the item stack
      * @param lore   The item stack lore
      */
-    public PlotItemStack(final String id, final int amount, final String name,
-        final String... lore) {
-        this.type = ItemTypes.get(id);
+    public PlotItemStack(
+            final String id, final int amount, final String name,
+            final String... lore
+    ) {
+        this(ItemTypes.get(id), amount, name, lore);
+    }
+
+    /**
+     * @param type   The item type
+     * @param amount Amount of items in the stack
+     * @param name   The display name of the item stack
+     * @param lore   The item stack lore
+     * @since 6.5.0
+     */
+    public PlotItemStack(
+            final ItemType type, final int amount, final String name,
+            final String... lore
+    ) {
+        this.type = type;
         this.amount = amount;
         this.name = name;
         this.lore = lore;
     }
 
     public BlockState getBlockState() {
-        return type.getBlockType().getDefaultState();
+        return getType().getBlockType().getDefaultState();
     }
+
+    public ItemType getType() {
+        return this.type;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String[] getLore() {
+        return lore;
+    }
+
 }

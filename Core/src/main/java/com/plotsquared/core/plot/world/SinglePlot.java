@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.world;
 
@@ -33,7 +33,7 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -43,47 +43,51 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 public class SinglePlot extends Plot {
-    private Set<CuboidRegion> regions = Collections.singleton(
-        new CuboidRegion(BlockVector3.at(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE),
-            BlockVector3.at(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE)));
 
-    public SinglePlot(PlotArea area, PlotId id, UUID owner) {
-        super(area, id, owner);
-    }
+    private final Set<CuboidRegion> regions = Collections.singleton(
+            new CuboidRegion(
+                    BlockVector3.at(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE),
+                    BlockVector3.at(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE)
+            ));
 
-    public SinglePlot(PlotArea area, PlotId id) {
+    public SinglePlot(final @NonNull PlotArea area, final @NonNull PlotId id) {
         super(area, id);
     }
 
-    public SinglePlot(PlotArea area, PlotId id, UUID owner, int temp) {
-        super(area, id, owner, temp);
-    }
-
-    public SinglePlot(PlotId id, UUID owner, HashSet<UUID> trusted, HashSet<UUID> members,
-        HashSet<UUID> denied, String alias, BlockLoc position, Collection<PlotFlag<?, ?>> flags,
-        PlotArea area, boolean[] merged, long timestamp, int temp) {
+    public SinglePlot(
+            PlotId id, UUID owner, HashSet<UUID> trusted, HashSet<UUID> members,
+            HashSet<UUID> denied, String alias, BlockLoc position, Collection<PlotFlag<?, ?>> flags,
+            PlotArea area, boolean[] merged, long timestamp, int temp
+    ) {
         super(id, owner, trusted, members, denied, alias, position, flags, area, merged, timestamp,
-            temp);
+                temp
+        );
     }
 
-    @Override public String getWorldName() {
-        return getId().getX() + "." + getId().getY();
+    @Override
+    public String getWorldName() {
+        return getId().toUnderscoreSeparatedString();
     }
 
-    @Override public SinglePlotArea getArea() {
+    @Override
+    public SinglePlotArea getArea() {
         return (SinglePlotArea) super.getArea();
     }
 
-    @Override public void getSide(Consumer<Location> result) {
+    @Override
+    public void getSide(Consumer<Location> result) {
         getCenter(result);
     }
 
-    @Override public boolean isLoaded() {
+    @Override
+    public boolean isLoaded() {
         getArea().loadWorld(getId());
         return super.isLoaded();
     }
 
-    @NotNull @Override public Set<CuboidRegion> getRegions() {
+    @NonNull
+    @Override
+    public Set<CuboidRegion> getRegions() {
         return regions;
     }
 

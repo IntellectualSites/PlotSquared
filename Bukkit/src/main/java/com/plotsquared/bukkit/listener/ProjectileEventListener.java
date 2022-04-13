@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,20 +21,23 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
 
+import com.google.inject.Inject;
 import com.plotsquared.bukkit.util.BukkitEntityUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotHandler;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.Permissions;
+import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -49,27 +52,30 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 @SuppressWarnings("unused")
 public class ProjectileEventListener implements Listener {
 
+    private final PlotAreaManager plotAreaManager;
+
+    @Inject
+    public ProjectileEventListener(final @NonNull PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onPotionSplash(LingeringPotionSplashEvent event) {
-        Projectile entity = event.getEntity();
-        Location location = BukkitUtil.getLocation(entity);
-        if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
-            return;
-        }
-        if (!this.onProjectileHit(event)) {
-            event.setCancelled(true);
-        }
+    public void onLingeringPotionSplash(LingeringPotionSplashEvent event) {
+        // Cancelling projectile hit events still results in area effect clouds.
+        // We need to cancel the splash events to get rid of those.
+        onProjectileHit(event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPotionSplash(PotionSplashEvent event) {
         ThrownPotion damager = event.getPotion();
-        Location location = BukkitUtil.getLocation(damager);
-        if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
+        Location location = BukkitUtil.adapt(damager.getLocation());
+        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
             return;
         }
         int count = 0;
@@ -79,78 +85,110 @@ public class ProjectileEventListener implements Listener {
                 count++;
             }
         }
-        if ((count > 0 && count == event.getAffectedEntities().size()) || !onProjectileHit(event)) {
+        if (count > 0 && count == event.getAffectedEntities().size()) {
             event.setCancelled(true);
+        } else {
+            // Cancelling projectile hit events still results in potions
+            // splashing in the world. We need to cancel the splash events to
+            // avoid that.
+            onProjectileHit(event);
         }
     }
 
-    @EventHandler public void onProjectileLaunch(ProjectileLaunchEvent event) {
+    @EventHandler
+    public void onProjectileLaunch(ProjectileLaunchEvent event) {
         Projectile entity = event.getEntity();
-        if (!(entity instanceof ThrownPotion)) {
-            return;
-        }
         ProjectileSource shooter = entity.getShooter();
         if (!(shooter instanceof Player)) {
             return;
         }
-        Location location = BukkitUtil.getLocation(entity);
-        if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
+        Location location = BukkitUtil.adapt(entity.getLocation());
+        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
             return;
         }
-        PlotPlayer<Player> pp = BukkitUtil.getPlayer((Player) shooter);
+        PlotPlayer<Player> pp = BukkitUtil.adapt((Player) shooter);
         Plot plot = location.getOwnedPlot();
-        if (plot != null && !plot.isAdded(pp.getUUID())) {
-            entity.remove();
-            event.setCancelled(true);
+
+        if (plot == null) {
+            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_ROAD)) {
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_ROAD))
+                );
+                entity.remove();
+                event.setCancelled(true);
+            }
+        } else if (!plot.hasOwner()) {
+            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED))
+                );
+                entity.remove();
+                event.setCancelled(true);
+            }
+        } else if (!plot.isAdded(pp.getUUID())) {
+            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER))
+                );
+                entity.remove();
+                event.setCancelled(true);
+            }
         }
     }
 
-    @SuppressWarnings({"BooleanMethodIsAlwaysInverted", "cos it's not... dum IntelliJ"}) @EventHandler
-    public boolean onProjectileHit(ProjectileHitEvent event) {
+    @EventHandler
+    public void onProjectileHit(ProjectileHitEvent event) {
         Projectile entity = event.getEntity();
-        Location location = BukkitUtil.getLocation(entity);
-        if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
-            return true;
+        Location location = BukkitUtil.adapt(entity.getLocation());
+        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
+            return;
         }
         PlotArea area = location.getPlotArea();
         if (area == null) {
-            return true;
+            return;
         }
         Plot plot = area.getPlot(location);
         ProjectileSource shooter = entity.getShooter();
         if (shooter instanceof Player) {
-            PlotPlayer<?> pp = BukkitUtil.getPlayer((Player) shooter);
+            PlotPlayer<?> pp = BukkitUtil.adapt((Player) shooter);
             if (plot == null) {
-                if (!Permissions.hasPermission(pp, Captions.PERMISSION_PROJECTILE_UNOWNED)) {
+                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
                     entity.remove();
-                    return false;
+                    event.setCancelled(true);
                 }
-                return true;
+                return;
             }
             if (plot.isAdded(pp.getUUID()) || Permissions
-                .hasPermission(pp, Captions.PERMISSION_PROJECTILE_OTHER)) {
-                return true;
+                    .hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
+                return;
             }
             entity.remove();
-            return false;
+            event.setCancelled(true);
+            return;
         }
         if (!(shooter instanceof Entity) && shooter != null) {
             if (plot == null) {
                 entity.remove();
-                return false;
+                event.setCancelled(true);
+                return;
             }
             Location sLoc =
-                BukkitUtil.getLocation(((BlockProjectileSource) shooter).getBlock().getLocation());
+                    BukkitUtil.adapt(((BlockProjectileSource) shooter).getBlock().getLocation());
             if (!area.contains(sLoc.getX(), sLoc.getZ())) {
                 entity.remove();
-                return false;
+                event.setCancelled(true);
+                return;
             }
             Plot sPlot = area.getOwnedPlotAbs(sLoc);
             if (sPlot == null || !PlotHandler.sameOwners(plot, sPlot)) {
                 entity.remove();
-                return false;
+                event.setCancelled(true);
+                return;
             }
         }
-        return true;
     }
+
 }

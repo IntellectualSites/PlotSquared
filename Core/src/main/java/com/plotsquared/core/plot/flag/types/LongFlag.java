@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,43 +21,60 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.types;
 
-import com.plotsquared.core.configuration.Caption;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.Caption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class LongFlag<F extends NumberFlag<Long, F>> extends NumberFlag<Long, F> {
 
-    protected LongFlag(@NotNull Long value, Long minimum, Long maximum,
-        @NotNull Caption flagDescription) {
-        super(value, minimum, maximum, Captions.FLAG_CATEGORY_INTEGERS, flagDescription);
+    protected LongFlag(
+            @NonNull Long value, Long minimum, Long maximum,
+            @NonNull Caption flagDescription
+    ) {
+        super(value, minimum, maximum, TranslatableCaption.of("flags.flag_category_integers"), flagDescription);
     }
 
-    protected LongFlag(@NotNull Long value, @NotNull Caption flagDescription) {
+    protected LongFlag(@NonNull Long value, @NonNull Caption flagDescription) {
         this(value, Long.MIN_VALUE, Long.MAX_VALUE, flagDescription);
     }
 
-    @Override public F merge(@NotNull Long newValue) {
+    @Override
+    public F merge(@NonNull Long newValue) {
         return flagOf(getValue() + newValue);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return getValue().toString();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "123456789";
     }
 
-    @NotNull @Override protected Long parseNumber(String input) throws FlagParseException {
+    @NonNull
+    @Override
+    protected Long parseNumber(String input) throws FlagParseException {
         try {
             return Long.parseLong(input);
         } catch (Throwable throwable) {
-            throw new FlagParseException(this, input, Captions.NOT_A_NUMBER, input);
+            throw new FlagParseException(
+                    this,
+                    input,
+                    TranslatableCaption.of("flags.flag_error_long")
+            );
         }
     }
+
+    @Override
+    public boolean isValuedPermission() {
+        return false;
+    }
+
 }

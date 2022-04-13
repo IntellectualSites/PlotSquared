@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,43 +21,51 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.types;
 
-import com.plotsquared.core.configuration.Caption;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.Caption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class IntegerFlag<F extends NumberFlag<Integer, F>> extends NumberFlag<Integer, F> {
 
-    protected IntegerFlag(final int value, int minimum, int maximum,
-        @NotNull Caption flagDescription) {
-        super(value, minimum, maximum, Captions.FLAG_CATEGORY_INTEGERS, flagDescription);
+    protected IntegerFlag(
+            final int value, int minimum, int maximum,
+            @NonNull Caption flagDescription
+    ) {
+        super(value, minimum, maximum, TranslatableCaption.of("flags.flag_category_integers"), flagDescription);
     }
 
-    protected IntegerFlag(@NotNull Caption flagDescription) {
+    protected IntegerFlag(@NonNull Caption flagDescription) {
         this(0, Integer.MIN_VALUE, Integer.MAX_VALUE, flagDescription);
     }
 
-    @Override public F merge(@NotNull Integer newValue) {
+    @Override
+    public F merge(@NonNull Integer newValue) {
         return flagOf(getValue() + newValue);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return this.getValue().toString();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "10";
     }
 
-    @NotNull @Override protected Integer parseNumber(String input) throws FlagParseException {
+    @NonNull
+    @Override
+    protected Integer parseNumber(String input) throws FlagParseException {
         try {
             return Integer.parseInt(input);
         } catch (Throwable throwable) {
-            throw new FlagParseException(this, input, Captions.FLAG_ERROR_INTEGER);
+            throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_integer"));
         }
     }
+
 }

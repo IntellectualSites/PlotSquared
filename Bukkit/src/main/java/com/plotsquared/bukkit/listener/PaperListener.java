@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
 
@@ -32,17 +32,21 @@ import com.destroystokyo.paper.event.entity.PreSpawnerSpawnEvent;
 import com.destroystokyo.paper.event.entity.SlimePathfindEvent;
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
 import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
+import com.google.inject.Inject;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.Command;
 import com.plotsquared.core.command.MainCommand;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
+import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.util.Permissions;
+import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
@@ -51,13 +55,13 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Slime;
-import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.projectiles.ProjectileSource;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -71,14 +75,21 @@ import java.util.regex.Pattern;
 @SuppressWarnings("unused")
 public class PaperListener implements Listener {
 
+    private final PlotAreaManager plotAreaManager;
     private Chunk lastChunk;
 
-    @EventHandler public void onEntityPathfind(EntityPathfindEvent event) {
+    @Inject
+    public PaperListener(final @NonNull PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
+
+    @EventHandler
+    public void onEntityPathfind(EntityPathfindEvent event) {
         if (!Settings.Paper_Components.ENTITY_PATHING) {
             return;
         }
-        Location toLoc = BukkitUtil.getLocation(event.getLoc());
-        Location fromLoc = BukkitUtil.getLocation(event.getEntity().getLocation());
+        Location toLoc = BukkitUtil.adapt(event.getLoc());
+        Location fromLoc = BukkitUtil.adapt(event.getEntity().getLocation());
         PlotArea tarea = toLoc.getPlotArea();
         if (tarea == null) {
             return;
@@ -106,7 +117,8 @@ public class PaperListener implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler public void onEntityPathfind(SlimePathfindEvent event) {
+    @EventHandler
+    public void onEntityPathfind(SlimePathfindEvent event) {
         if (!Settings.Paper_Components.ENTITY_PATHING) {
             return;
         }
@@ -117,8 +129,8 @@ public class PaperListener implements Listener {
             return;
         }
 
-        Location toLoc = BukkitUtil.getLocation(b.getLocation());
-        Location fromLoc = BukkitUtil.getLocation(event.getEntity().getLocation());
+        Location toLoc = BukkitUtil.adapt(b.getLocation());
+        Location fromLoc = BukkitUtil.adapt(event.getEntity().getLocation());
         PlotArea tarea = toLoc.getPlotArea();
         if (tarea == null) {
             return;
@@ -147,11 +159,12 @@ public class PaperListener implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler public void onPreCreatureSpawnEvent(PreCreatureSpawnEvent event) {
+    @EventHandler
+    public void onPreCreatureSpawnEvent(PreCreatureSpawnEvent event) {
         if (!Settings.Paper_Components.CREATURE_SPAWN) {
             return;
         }
-        Location location = BukkitUtil.getLocation(event.getSpawnLocation());
+        Location location = BukkitUtil.adapt(event.getSpawnLocation());
         PlotArea area = location.getPlotArea();
         if (!location.isPlotArea()) {
             return;
@@ -181,7 +194,6 @@ public class PaperListener implements Listener {
             case "PATROL":
             case "RAID":
             case "SHEARED":
-            case "SHOULDER_ENTITY":
             case "SILVERFISH_BLOCK":
             case "TRAP":
             case "VILLAGE_DEFENSE":
@@ -253,7 +265,7 @@ public class PaperListener implements Listener {
     @EventHandler
     public void onPlayerNaturallySpawnCreaturesEvent(PlayerNaturallySpawnCreaturesEvent event) {
         if (Settings.Paper_Components.CANCEL_CHUNK_SPAWN) {
-            Location location = BukkitUtil.getLocation(event.getPlayer().getLocation());
+            Location location = BukkitUtil.adapt(event.getPlayer().getLocation());
             PlotArea area = location.getPlotArea();
             if (area != null && !area.isMobSpawning()) {
                 event.setCancelled(true);
@@ -261,9 +273,10 @@ public class PaperListener implements Listener {
         }
     }
 
-    @EventHandler public void onPreSpawnerSpawnEvent(PreSpawnerSpawnEvent event) {
+    @EventHandler
+    public void onPreSpawnerSpawnEvent(PreSpawnerSpawnEvent event) {
         if (Settings.Paper_Components.SPAWNER_SPAWN) {
-            Location location = BukkitUtil.getLocation(event.getSpawnerLocation());
+            Location location = BukkitUtil.adapt(event.getSpawnerLocation());
             PlotArea area = location.getPlotArea();
             if (area != null && !area.isMobSpawnerSpawning()) {
                 event.setCancelled(true);
@@ -272,22 +285,26 @@ public class PaperListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) public void onBlockPlace(BlockPlaceEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockPlace(BlockPlaceEvent event) {
         if (!Settings.Paper_Components.TILE_ENTITY_CHECK || !Settings.Enabled_Components.CHUNK_PROCESSOR) {
             return;
         }
         if (!(event.getBlock().getState(false) instanceof TileState)) {
             return;
         }
-        final Location location = BukkitUtil.getLocation(event.getBlock().getLocation());
+        final Location location = BukkitUtil.adapt(event.getBlock().getLocation());
         final PlotArea plotArea = location.getPlotArea();
         if (plotArea == null) {
             return;
         }
         final int tileEntityCount = event.getBlock().getChunk().getTileEntities(false).length;
         if (tileEntityCount >= Settings.Chunk_Processor.MAX_TILES) {
-            final PlotPlayer<?> plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
-            Captions.TILE_ENTITY_CAP_REACHED.send(plotPlayer, Settings.Chunk_Processor.MAX_TILES);
+            final PlotPlayer<?> plotPlayer = BukkitUtil.adapt(event.getPlayer());
+            plotPlayer.sendMessage(
+                    TranslatableCaption.of("errors.tile_entity_cap_reached"),
+                    Template.of("amount", String.valueOf(Settings.Chunk_Processor.MAX_TILES))
+            );
             event.setCancelled(true);
             event.setBuild(false);
         }
@@ -299,31 +316,55 @@ public class PaperListener implements Listener {
      *
      * @param event Paper's PlayerLaunchProjectileEvent
      */
-    @EventHandler public void onProjectileLaunch(PlayerLaunchProjectileEvent event) {
+    @EventHandler
+    public void onProjectileLaunch(PlayerLaunchProjectileEvent event) {
         if (!Settings.Paper_Components.PLAYER_PROJECTILE) {
             return;
         }
         Projectile entity = event.getProjectile();
-        if (!(entity instanceof ThrownPotion)) {
-            return;
-        }
         ProjectileSource shooter = entity.getShooter();
         if (!(shooter instanceof Player)) {
             return;
         }
-        Location location = BukkitUtil.getLocation(entity);
-        if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
+        Location location = BukkitUtil.adapt(entity.getLocation());
+        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
             return;
         }
-        PlotPlayer<?> pp = BukkitUtil.getPlayer((Player) shooter);
+        PlotPlayer<Player> pp = BukkitUtil.adapt((Player) shooter);
         Plot plot = location.getOwnedPlot();
-        if (plot != null && !plot.isAdded(pp.getUUID())) {
-            entity.remove();
-            event.setCancelled(true);
+
+        if (plot == null) {
+            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_ROAD)) {
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_ROAD))
+                );
+                entity.remove();
+                event.setCancelled(true);
+            }
+        } else if (!plot.hasOwner()) {
+            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED))
+                );
+                entity.remove();
+                event.setCancelled(true);
+            }
+        } else if (!plot.isAdded(pp.getUUID())) {
+            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER))
+                );
+                entity.remove();
+                event.setCancelled(true);
+            }
         }
     }
 
-    @EventHandler public void onAsyncTabCompletion(final AsyncTabCompleteEvent event) {
+    @EventHandler
+    public void onAsyncTabCompletion(final AsyncTabCompleteEvent event) {
         if (!Settings.Paper_Components.ASYNC_TAB_COMPLETION) {
             return;
         }
@@ -341,13 +382,13 @@ public class PaperListener implements Listener {
         if (unprocessedArgs.length == 1) {
             return; // We don't do anything in this case
         } else if (!Settings.Enabled_Components.TAB_COMPLETED_ALIASES
-            .contains(unprocessedArgs[0].toLowerCase(Locale.ENGLISH))) {
+                .contains(unprocessedArgs[0].toLowerCase(Locale.ENGLISH))) {
             return;
         }
         final String[] args = new String[unprocessedArgs.length - 1];
         System.arraycopy(unprocessedArgs, 1, args, 0, args.length);
         try {
-            final PlotPlayer<?> player = BukkitUtil.getPlayer((Player) event.getSender());
+            final PlotPlayer<?> player = BukkitUtil.adapt((Player) event.getSender());
             final Collection<Command> objects = MainCommand.getInstance().tab(player, args, buffer.endsWith(" "));
             if (objects == null) {
                 return;
@@ -358,7 +399,8 @@ public class PaperListener implements Listener {
             }
             event.setCompletions(result);
             event.setHandled(true);
-        } catch (final Exception ignored) {}
+        } catch (final Exception ignored) {
+        }
     }
 
 }

@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,14 +21,14 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration;
 
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.util.StringMan;
 import com.sk89q.worldedit.world.block.BlockState;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,20 +40,24 @@ import java.util.List;
  */
 public class ConfigurationNode {
 
-    @Getter private final String constant;
+    private final String constant;
     private final Object defaultValue;
-    @Getter private final String description;
-    private final ConfigurationUtil.SettingValue type;
-    @Getter private final Collection<String> suggestions;
+    private final Caption description;
+    private final ConfigurationUtil.SettingValue<?> type;
+    private final Collection<String> suggestions;
     private Object value;
 
-    public ConfigurationNode(String constant, Object defaultValue, String description,
-        ConfigurationUtil.SettingValue type) {
+    public ConfigurationNode(
+            String constant, Object defaultValue, Caption description,
+            ConfigurationUtil.SettingValue<?> type
+    ) {
         this(constant, defaultValue, description, type, new ArrayList<>());
     }
 
-    public ConfigurationNode(String constant, Object defaultValue, String description,
-                             ConfigurationUtil.SettingValue type, Collection<String> suggestions) {
+    public ConfigurationNode(
+            String constant, Object defaultValue, Caption description,
+            ConfigurationUtil.SettingValue<?> type, Collection<String> suggestions
+    ) {
         this.constant = constant;
         this.defaultValue = defaultValue;
         this.description = description;
@@ -62,7 +66,7 @@ public class ConfigurationNode {
         this.suggestions = suggestions;
     }
 
-    public ConfigurationUtil.SettingValue getType() {
+    public ConfigurationUtil.SettingValue<?> getType() {
         return this.type;
     }
 
@@ -112,4 +116,17 @@ public class ConfigurationNode {
         }
         return this.defaultValue;
     }
+
+    public String getConstant() {
+        return this.constant;
+    }
+
+    public Caption getDescription() {
+        return this.description;
+    }
+
+    public Collection<String> getSuggestions() {
+        return this.suggestions;
+    }
+
 }

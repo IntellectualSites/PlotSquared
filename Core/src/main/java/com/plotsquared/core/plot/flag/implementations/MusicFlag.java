@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,17 +21,17 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.ItemUtil;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
 
@@ -43,23 +43,25 @@ public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
      * @param value Flag value
      */
     protected MusicFlag(ItemType value) {
-        super(value, Captions.FLAG_CATEGORY_MUSIC, Captions.FLAG_DESCRIPTION_MUSIC);
+        super(value, TranslatableCaption.of("flags.flag_category_music"), TranslatableCaption.of("flags.flag_description_music"));
     }
 
-    @Override public MusicFlag parse(@NotNull String input) throws FlagParseException {
+    @Override
+    public MusicFlag parse(@NonNull String input) throws FlagParseException {
         if (!input.isEmpty() && !input.contains("music_disc_")) {
             input = "music_disc_" + input;
         }
         final ItemType itemType = ItemUtil.get(input);
         if (itemType != null && itemType.getId() != null && (itemType == ItemTypes.AIR || itemType
-            .getId().contains("music_disc_"))) {
+                .getId().contains("music_disc_"))) {
             return new MusicFlag(ItemUtil.get(input));
         } else {
-            throw new FlagParseException(this, input, Captions.FLAG_ERROR_MUSIC);
+            throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_music"));
         }
     }
 
-    @Override public MusicFlag merge(@NotNull ItemType newValue) {
+    @Override
+    public MusicFlag merge(@NonNull ItemType newValue) {
         if (getValue().equals(ItemTypes.AIR)) {
             return new MusicFlag(newValue);
         } else if (newValue.equals(ItemTypes.AIR)) {
@@ -69,15 +71,18 @@ public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
         }
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return getValue().getId();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "ward";
     }
 
-    @Override protected MusicFlag flagOf(@NotNull ItemType value) {
+    @Override
+    protected MusicFlag flagOf(@NonNull ItemType value) {
         return new MusicFlag(value);
     }
 

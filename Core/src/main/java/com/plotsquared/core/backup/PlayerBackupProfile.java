@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,18 +21,23 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.backup;
 
-import com.plotsquared.core.configuration.Captions;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.player.ConsolePlayer;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -51,22 +56,51 @@ import java.util.concurrent.CompletableFuture;
  * plot, which is used to store and retrieve plot backups
  * {@inheritDoc}
  */
-@RequiredArgsConstructor
 public class PlayerBackupProfile implements BackupProfile {
+
+    static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
     private final UUID owner;
     private final Plot plot;
     private final BackupManager backupManager;
-
-    private volatile List<Backup> backupCache;
+    private final SchematicHandler schematicHandler;
     private final Object backupLock = new Object();
+    private volatile List<Backup> backupCache;
 
-    private static boolean isValidFile(@NotNull final Path path) {
+    @Inject
+    public PlayerBackupProfile(
+            @Assisted final @NonNull UUID owner, @Assisted final @NonNull Plot plot,
+            final @NonNull BackupManager backupManager, final @NonNull SchematicHandler schematicHandler
+    ) {
+        this.owner = owner;
+        this.plot = plot;
+        this.backupManager = backupManager;
+        this.schematicHandler = schematicHandler;
+    }
+
+    private static boolean isValidFile(final @NonNull Path path) {
         final String name = path.getFileName().toString();
         return name.endsWith(".schem") || name.endsWith(".schematic");
     }
 
-    @Override @NotNull public CompletableFuture<List<Backup>> listBackups() {
+    private static Path resolve(final @NonNull Path parent, final String child) {
+        Path path = parent;
+        try {
+            if (!Files.exists(parent)) {
+                Files.createDirectory(parent);
+            }
+            path = parent.resolve(child);
+            if (!Files.exists(path)) {
+                Files.createDirectory(path);
+            }
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+        return path;
+    }
+
+    @Override
+    public @NonNull CompletableFuture<List<Backup>> listBackups() {
         synchronized (this.backupLock) {
             if (this.backupCache != null) {
                 return CompletableFuture.completedFuture(backupCache);
@@ -86,9 +120,9 @@ public class PlayerBackupProfile implements BackupProfile {
                     Files.walk(path).filter(PlayerBackupProfile::isValidFile).forEach(file -> {
                         try {
                             final BasicFileAttributes basicFileAttributes =
-                                Files.readAttributes(file, BasicFileAttributes.class);
+                                    Files.readAttributes(file, BasicFileAttributes.class);
                             backups.add(
-                                new Backup(this, basicFileAttributes.creationTime().toMillis(), file));
+                                    new Backup(this, basicFileAttributes.creationTime().toMillis(), file));
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -102,38 +136,26 @@ public class PlayerBackupProfile implements BackupProfile {
         }
     }
 
-    @Override public void destroy() {
+    @Override
+    public void destroy() {
         this.listBackups().whenCompleteAsync((backups, error) -> {
-           if (error != null) {
-               error.printStackTrace();
-           }
-           backups.forEach(Backup::delete);
-           this.backupCache = null;
+            if (error != null) {
+                error.printStackTrace();
+            }
+            backups.forEach(Backup::delete);
+            this.backupCache = null;
         });
     }
 
-    @NotNull public Path getBackupDirectory() {
-        return resolve(resolve(resolve(backupManager.getBackupPath(), Objects.requireNonNull(plot.getArea().toString(), "plot area id")),
-            Objects.requireNonNull(plot.getId().toDashSeparatedString(), "plot id")), Objects.requireNonNull(owner.toString(), "owner"));
+    public @NonNull Path getBackupDirectory() {
+        return resolve(resolve(
+                resolve(backupManager.getBackupPath(), Objects.requireNonNull(plot.getArea().toString(), "plot area id")),
+                Objects.requireNonNull(plot.getId().toDashSeparatedString(), "plot id")
+        ), Objects.requireNonNull(owner.toString(), "owner"));
     }
 
-    private static Path resolve(@NotNull final Path parent, final String child) {
-        Path path = parent;
-        try {
-            if (!Files.exists(parent)) {
-                Files.createDirectory(parent);
-            }
-            path = parent.resolve(child);
-            if (!Files.exists(path)) {
-                Files.createDirectory(path);
-            }
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
-        return path;
-    }
-
-    @Override @NotNull public CompletableFuture<Backup> createBackup() {
+    @Override
+    public @NonNull CompletableFuture<Backup> createBackup() {
         final CompletableFuture<Backup> future = new CompletableFuture<>();
         this.listBackups().thenAcceptAsync(backups -> {
             synchronized (this.backupLock) {
@@ -141,9 +163,10 @@ public class PlayerBackupProfile implements BackupProfile {
                     backups.get(backups.size() - 1).delete();
                 }
                 final List<Plot> plots = Collections.singletonList(plot);
-                final boolean result = SchematicHandler.manager.exportAll(plots, getBackupDirectory().toFile(),
-                    "%world%-%id%-" + System.currentTimeMillis(), () ->
-                    future.complete(new Backup(this, System.currentTimeMillis(), null)));
+                final boolean result = this.schematicHandler.exportAll(plots, getBackupDirectory().toFile(),
+                        "%world%-%id%-" + System.currentTimeMillis(), () ->
+                                future.complete(new Backup(this, System.currentTimeMillis(), null))
+                );
                 if (!result) {
                     future.completeExceptionally(new RuntimeException("Failed to complete the backup"));
                 }
@@ -153,7 +176,8 @@ public class PlayerBackupProfile implements BackupProfile {
         return future;
     }
 
-    @Override @NotNull public CompletableFuture<Void> restoreBackup(@NotNull final Backup backup) {
+    @Override
+    public @NonNull CompletableFuture<Void> restoreBackup(final @NonNull Backup backup, @Nullable PlotPlayer<?> player) {
         final CompletableFuture<Void> future = new CompletableFuture<>();
         if (backup.getFile() == null || !Files.exists(backup.getFile())) {
             future.completeExceptionally(new IllegalArgumentException("The specific backup does not exist"));
@@ -161,22 +185,36 @@ public class PlayerBackupProfile implements BackupProfile {
             TaskManager.runTaskAsync(() -> {
                 Schematic schematic = null;
                 try {
-                    schematic = SchematicHandler.manager.getSchematic(backup.getFile().toFile());
+                    schematic = this.schematicHandler.getSchematic(backup.getFile().toFile());
                 } catch (SchematicHandler.UnsupportedFormatException e) {
                     e.printStackTrace();
                 }
                 if (schematic == null) {
-                    future.completeExceptionally(new IllegalArgumentException("The backup is non-existent or not in the correct format"));
+                    future.completeExceptionally(new IllegalArgumentException(
+                            "The backup is non-existent or not in the correct format"));
                 } else {
-                    SchematicHandler.manager.paste(schematic, plot, 0, 1, 0, false, new RunnableVal<Boolean>() {
-                        @Override public void run(Boolean value) {
-                            if (value) {
-                                future.complete(null);
-                            } else {
-                                future.completeExceptionally(new RuntimeException(Captions.SCHEMATIC_PASTE_FAILED.toString()));
+                    this.schematicHandler.paste(
+                            schematic,
+                            plot,
+                            0,
+                            plot.getArea().getMinBuildHeight(),
+                            0,
+                            false,
+                            player,
+                            new RunnableVal<>() {
+                                @Override
+                                public void run(Boolean value) {
+                                    if (value) {
+                                        future.complete(null);
+                                    } else {
+                                        future.completeExceptionally(new RuntimeException(MINI_MESSAGE.stripTokens(
+                                                TranslatableCaption
+                                                        .of("schematics.schematic_paste_failed")
+                                                        .getComponent(ConsolePlayer.getConsole()))));
+                                    }
+                                }
                             }
-                        }
-                    });
+                    );
                 }
             });
         }

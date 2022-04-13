@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.serialization;
 
@@ -43,7 +43,7 @@ public class ConfigurationSerialization {
 
     public static final String SERIALIZED_TYPE_KEY = "==";
     private static final Map<String, Class<? extends ConfigurationSerializable>> aliases =
-        new HashMap<>();
+            new HashMap<>();
     private final Class<? extends ConfigurationSerializable> clazz;
 
     protected ConfigurationSerialization(Class<? extends ConfigurationSerializable> clazz) {
@@ -53,11 +53,9 @@ public class ConfigurationSerialization {
     /**
      * Attempts to deserialize the given arguments into a new instance of the
      * given class.
-     * <p>
      * <p>The class must implement {@link ConfigurationSerializable}, including
      * the extra methods as specified in the javadoc of
      * ConfigurationSerializable.</p>
-     * <p>
      * <p>If a new instance could not be made, an example being the class not
      * fully implementing the interface, null will be returned.</p>
      *
@@ -65,22 +63,21 @@ public class ConfigurationSerialization {
      * @param clazz Class to deserialize into
      * @return New instance of the specified class
      */
-    public static ConfigurationSerializable deserializeObject(Map<String, ?> args,
-        Class<? extends ConfigurationSerializable> clazz) {
+    public static ConfigurationSerializable deserializeObject(
+            Map<String, ?> args,
+            Class<? extends ConfigurationSerializable> clazz
+    ) {
         return new ConfigurationSerialization(clazz).deserialize(args);
     }
 
     /**
      * Attempts to deserialize the given arguments into a new instance of the
-     * <p>
      * given class.
-     * <p>
-     * The class must implement {@link ConfigurationSerializable}, including
+     *
+     * <p>The class must implement {@link ConfigurationSerializable}, including
      * the extra methods as specified in the javadoc of
      * ConfigurationSerializable.</p>
-     * <p>
-     * <p>
-     * If a new instance could not be made, an example being the class not
+     * <p>If a new instance could not be made, an example being the class not
      * fully implementing the interface, null will be returned.</p>
      *
      * @param args Arguments for deserialization
@@ -99,7 +96,7 @@ public class ConfigurationSerialization {
                 clazz = getClassByAlias(alias);
                 if (clazz == null) {
                     throw new IllegalArgumentException(
-                        "Specified class does not exist ('" + alias + "')");
+                            "Specified class does not exist ('" + alias + "')");
                 }
             } catch (ClassCastException ex) {
                 ex.fillInStackTrace();
@@ -107,7 +104,7 @@ public class ConfigurationSerialization {
             }
         } else {
             throw new IllegalArgumentException(
-                "Args doesn't contain type key ('" + SERIALIZED_TYPE_KEY + "')");
+                    "Args doesn't contain type key ('" + SERIALIZED_TYPE_KEY + "')");
         }
 
         return new ConfigurationSerialization(clazz).deserialize(args);
@@ -136,8 +133,10 @@ public class ConfigurationSerialization {
      * @param alias Alias to register as
      * @see SerializableAs
      */
-    public static void registerClass(Class<? extends ConfigurationSerializable> clazz,
-        String alias) {
+    public static void registerClass(
+            Class<? extends ConfigurationSerializable> clazz,
+            String alias
+    ) {
         aliases.put(alias, clazz);
     }
 
@@ -227,24 +226,28 @@ public class ConfigurationSerialization {
     protected ConfigurationSerializable deserializeViaMethod(Method method, Map<String, ?> args) {
         try {
             ConfigurationSerializable result =
-                (ConfigurationSerializable) method.invoke(null, args);
+                    (ConfigurationSerializable) method.invoke(null, args);
 
             if (result == null) {
-                Logger.getLogger(ConfigurationSerialization.class.getName()).log(Level.SEVERE,
-                    "Could not call method '" + method.toString() + "' of " + this.clazz
-                        + " for deserialization: method returned null");
+                Logger.getLogger(ConfigurationSerialization.class.getName()).log(
+                        Level.SEVERE,
+                        "Could not call method '" + method + "' of " + this.clazz
+                                + " for deserialization: method returned null"
+                );
             } else {
                 return result;
             }
         } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException ex) {
             if (ex instanceof InvocationTargetException) {
                 Logger.getLogger(ConfigurationSerialization.class.getName()).log(Level.SEVERE,
-                    "Could not call method '" + method.toString() + "' of " + this.clazz
-                        + " for deserialization", ex.getCause());
+                        "Could not call method '" + method + "' of " + this.clazz
+                                + " for deserialization", ex.getCause()
+                );
             } else {
                 Logger.getLogger(ConfigurationSerialization.class.getName()).log(Level.SEVERE,
-                    "Could not call method '" + method.toString() + "' of " + this.clazz
-                        + " for deserialization", ex);
+                        "Could not call method '" + method + "' of " + this.clazz
+                                + " for deserialization", ex
+                );
             }
         }
 
@@ -252,18 +255,21 @@ public class ConfigurationSerialization {
     }
 
     protected ConfigurationSerializable deserializeViaCtor(
-        Constructor<? extends ConfigurationSerializable> ctor, Map<String, ?> args) {
+            Constructor<? extends ConfigurationSerializable> ctor, Map<String, ?> args
+    ) {
         try {
             return ctor.newInstance(args);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException ex) {
             if (ex instanceof InvocationTargetException) {
                 Logger.getLogger(ConfigurationSerialization.class.getName()).log(Level.SEVERE,
-                    "Could not call constructor '" + ctor.toString() + "' of " + this.clazz
-                        + " for deserialization", ex.getCause());
+                        "Could not call constructor '" + ctor + "' of " + this.clazz
+                                + " for deserialization", ex.getCause()
+                );
             } else {
                 Logger.getLogger(ConfigurationSerialization.class.getName()).log(Level.SEVERE,
-                    "Could not call constructor '" + ctor.toString() + "' of " + this.clazz
-                        + " for deserialization", ex);
+                        "Could not call constructor '" + ctor + "' of " + this.clazz
+                                + " for deserialization", ex
+                );
             }
         }
 
@@ -294,4 +300,5 @@ public class ConfigurationSerialization {
 
         return result;
     }
+
 }

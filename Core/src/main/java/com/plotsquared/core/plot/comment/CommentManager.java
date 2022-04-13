@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,28 +21,33 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.comment;
 
-import com.google.common.annotations.Beta;
-import com.plotsquared.core.configuration.Captions;
+import com.google.inject.TypeLiteral;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.StaticCaption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.MetaDataKey;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
+import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Beta public class CommentManager {
+public class CommentManager {
 
     public static final HashMap<String, CommentInbox> inboxes = new HashMap<>();
 
-    public static void sendTitle(final PlotPlayer player, final Plot plot) {
+    public static void sendTitle(final PlotPlayer<?> player, final Plot plot) {
         if (!Settings.Enabled_Components.COMMENT_NOTIFIER || !plot.isOwner(player.getUUID())) {
             return;
         }
@@ -51,8 +56,9 @@ import java.util.concurrent.atomic.AtomicInteger;
             final AtomicInteger count = new AtomicInteger(0);
             final AtomicInteger size = new AtomicInteger(boxes.size());
             for (final CommentInbox inbox : inboxes.values()) {
-                inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
-                    @Override public void run(List<PlotComment> value) {
+                inbox.getComments(plot, new RunnableVal<>() {
+                    @Override
+                    public void run(List<PlotComment> value) {
                         int total;
                         if (value != null) {
                             int num = 0;
@@ -66,19 +72,35 @@ import java.util.concurrent.atomic.AtomicInteger;
                             total = count.get();
                         }
                         if ((size.decrementAndGet() == 0) && (total > 0)) {
-                            player.sendTitle("", Captions.INBOX_NOTIFICATION.getTranslated()
-                                .replaceAll("%s", "" + total));
+                            player.sendTitle(
+                                    StaticCaption.of(""),
+                                    TranslatableCaption.of("comment.inbox_notification"),
+                                    Template.of("amount", Integer.toString(total)),
+                                    Template.of("command", "/plot inbox")
+                            );
                         }
                     }
                 });
             }
-        }, 20);
+        }, TaskTime.seconds(1L));
     }
 
+    /**
+     * @param player The player the inbox belongs to
+     * @param inbox  the inbox
+     * @return the time in milliseconds when the player was last seen online
+     */
     public static long getTimestamp(PlotPlayer<?> player, String inbox) {
-        return player.getMeta("inbox:" + inbox, player.getLastPlayed());
+        final MetaDataKey<Long> inboxKey = MetaDataKey.of(String.format("inbox:%s", inbox), new TypeLiteral<>() {
+        });
+        try (final MetaDataAccess<Long> inboxAccess = player.accessTemporaryMetaData(inboxKey)) {
+            return inboxAccess.get().orElse(player.getLastPlayed());
+        }
     }
 
+    /**
+     * @param inbox the inbox to add
+     */
     public static void addInbox(CommentInbox inbox) {
         inboxes.put(inbox.toString().toLowerCase(), inbox);
     }
@@ -88,4 +110,5 @@ import java.util.concurrent.atomic.AtomicInteger;
         addInbox(new InboxPublic());
         addInbox(new InboxOwner());
     }
+
 }

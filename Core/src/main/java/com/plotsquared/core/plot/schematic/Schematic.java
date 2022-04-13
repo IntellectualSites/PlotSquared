@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.schematic;
 
@@ -32,7 +32,6 @@ import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.SpongeSchematicWriter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BaseBlock;
-import lombok.Getter;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -41,16 +40,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Schematic {
+
     // Lossy but fast
-    @Getter private final Clipboard clipboard;
-    @Getter private Map<String, Tag> flags = new HashMap<>();
+    private final Clipboard clipboard;
+    private Map<String, Tag> flags = new HashMap<>();
 
-    public Schematic(Clipboard clip) {
+    public Schematic(final Clipboard clip) {
         this.clipboard = clip;
-    }
-
-    public void setFlags(Map<String, Tag> flags) {
-        this.flags = flags == null ? new HashMap<>() : flags;
     }
 
     public boolean setBlock(BlockVector3 position, BaseBlock block) throws WorldEditException {
@@ -65,8 +61,21 @@ public class Schematic {
 
     public void save(File file) throws IOException {
         try (SpongeSchematicWriter schematicWriter = new SpongeSchematicWriter(
-            new NBTOutputStream(new FileOutputStream(file)))) {
+                new NBTOutputStream(new FileOutputStream(file)))) {
             schematicWriter.write(clipboard);
         }
     }
+
+    public Clipboard getClipboard() {
+        return this.clipboard;
+    }
+
+    public Map<String, Tag> getFlags() {
+        return this.flags;
+    }
+
+    public void setFlags(Map<String, Tag> flags) {
+        this.flags = flags == null ? new HashMap<>() : flags;
+    }
+
 }

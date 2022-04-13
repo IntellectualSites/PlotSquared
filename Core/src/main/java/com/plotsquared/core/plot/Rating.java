@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
 
@@ -109,11 +109,12 @@ public class Rating {
         }
         if (Settings.Ratings.CATEGORIES != null && Settings.Ratings.CATEGORIES.size() > 1) {
             return IntStream.range(0, Settings.Ratings.CATEGORIES.size()).map(
-                i -> (int) ((i + 1) * Math
-                    .pow(10, this.ratingMap.get(Settings.Ratings.CATEGORIES.get(i))))).sum();
+                    i -> (int) ((i + 1) * Math
+                            .pow(10, this.ratingMap.get(Settings.Ratings.CATEGORIES.get(i))))).sum();
         } else {
             return this.ratingMap.get(null);
         }
 
     }
+
 }

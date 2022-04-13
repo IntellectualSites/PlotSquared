@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,19 +21,21 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Function;
 
 /**
  * String comparison library.
  */
 public class StringComparison<T> {
 
+    private final Function<T, String> toString;
     private T bestMatch;
     private double match = Integer.MAX_VALUE;
     private T bestMatchObject;
@@ -45,17 +47,28 @@ public class StringComparison<T> {
      * @param objects Objects to compare
      */
     public StringComparison(String input, T[] objects) {
+        this(input, objects, Object::toString);
+    }
+
+    public StringComparison(String input, T[] objects, Function<T, String> toString) {
+        this.toString = toString;
         init(input, objects);
     }
 
     public StringComparison(String input, Collection<T> objects) {
-        init(input, (T[]) objects.toArray());
+        this(input, objects, Object::toString);
+    }
+
+    @SuppressWarnings("unchecked")
+    public StringComparison(String input, Collection<T> objects, Function<T, String> toString) {
+        this(input, (T[]) objects.toArray(), toString);
     }
 
     /**
      * You should call init(...) when you are ready to get a String comparison value.
      */
     public StringComparison() {
+        this.toString = Object::toString;
     }
 
     /**
@@ -122,10 +135,7 @@ public class StringComparison<T> {
     }
 
     public String getString(T o) {
-        if (o instanceof StringComparable) {
-            return ((StringComparable) o).getComparableString();
-        }
-        return o.toString();
+        return this.toString.apply(o);
     }
 
     /**
@@ -155,10 +165,6 @@ public class StringComparison<T> {
         return new ComparisonResult(this.match, this.bestMatch);
     }
 
-    public interface StringComparable {
-        String getComparableString();
-    }
-
 
     /**
      * The comparison result
@@ -178,5 +184,7 @@ public class StringComparison<T> {
             this.match = match;
             this.best = best;
         }
+
     }
+
 }

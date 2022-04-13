@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,14 +21,18 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
 import com.plotsquared.core.PlotSquared;
-import lombok.experimental.UtilityClass;
 
-@UtilityClass public class ThreadUtils {
+public final class ThreadUtils {
+
+    private ThreadUtils() {
+        throw new UnsupportedOperationException(
+                "This is a utility class and cannot be instantiated");
+    }
 
     /**
      * Throws {@link IllegalStateException} if the method
@@ -36,7 +40,7 @@ import lombok.experimental.UtilityClass;
      *
      * @param message Message describing the issue
      */
-    public void catchSync(final String message) {
+    public static void catchSync(final String message) {
         if (PlotSquared.get().isMainThread(Thread.currentThread())) {
             throw new IllegalStateException(message);
         }
@@ -48,7 +52,7 @@ import lombok.experimental.UtilityClass;
      *
      * @param message Message describing the issue
      */
-    public void catchAsync(final String message) {
+    public static void catchAsync(final String message) {
         if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
             throw new IllegalStateException(message);
         }

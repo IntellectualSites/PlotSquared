@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
@@ -35,13 +35,18 @@ import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldedit.world.block.FuzzyBlockState;
 import com.sk89q.worldedit.world.registry.LegacyMapper;
-import lombok.NonNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Map;
 
+/**
+ * {@link BlockState} related utility methods
+ */
 public final class BlockUtil {
-    private static ParserContext PARSER_CONTEXT = new ParserContext();
-    private static InputParser<BaseBlock> PARSER;
+
+    private static final ParserContext PARSER_CONTEXT = new ParserContext();
+    private static final InputParser<BaseBlock> PARSER;
 
     static {
         PARSER_CONTEXT.setRestricted(false);
@@ -53,25 +58,46 @@ public final class BlockUtil {
     private BlockUtil() {
     }
 
-    public static BlockState get(int id) {
+    /**
+     * Get a {@link BlockState} from a legacy id
+     *
+     * @param id Legacy ID
+     * @return Block state, or {@code null}
+     */
+    public static @Nullable BlockState get(final int id) {
         return LegacyMapper.getInstance().getBlockFromLegacy(id);
     }
 
-    public static BlockState get(int id, int data) {
+    /**
+     * Get a {@link BlockState} from a legacy id-data pair
+     *
+     * @param id   Legacy ID
+     * @param data Legacy data
+     * @return Block state, or {@code null}
+     */
+    public static @Nullable BlockState get(final int id, final int data) {
         return LegacyMapper.getInstance().getBlockFromLegacy(id, data);
     }
 
-    public static BlockState get(String id) {
+    /**
+     * Get a {@link BlockState} from its ID
+     *
+     * @param id String or integer ID
+     * @return Parsed block state, or {@code null} if none
+     *         could be parsed
+     */
+    public static @Nullable BlockState get(final @NonNull String id) {
         if (id.length() == 1 && id.charAt(0) == '*') {
             return FuzzyBlockState.builder().type(BlockTypes.AIR).build();
         }
-        id = id.toLowerCase();
-        BlockType type = BlockTypes.get(id);
+        String mutableId;
+        mutableId = id.toLowerCase();
+        BlockType type = BlockTypes.get(mutableId);
         if (type != null) {
             return type.getDefaultState();
         }
-        if (Character.isDigit(id.charAt(0))) {
-            String[] split = id.split(":");
+        if (Character.isDigit(mutableId.charAt(0))) {
+            String[] split = mutableId.split(":");
             if (MathMan.isInteger(split[0])) {
                 if (split.length == 2) {
                     if (MathMan.isInteger(split[1])) {
@@ -83,23 +109,36 @@ public final class BlockUtil {
             }
         }
         try {
-            BaseBlock block = PARSER.parseFromInput(id, PARSER_CONTEXT);
+            BaseBlock block = PARSER.parseFromInput(mutableId, PARSER_CONTEXT);
             return block.toImmutableState();
         } catch (InputParseException e) {
             return null;
         }
     }
 
-    public static BlockState[] parse(String commaDelimited) {
-        String[] split = commaDelimited.split(",(?![^\\(\\[]*[\\]\\)])");
-        BlockState[] result = new BlockState[split.length];
+    /**
+     * Parse a comma delimited list of block states
+     *
+     * @param commaDelimited List of block states
+     * @return Parsed block states
+     */
+    public static @NonNull BlockState[] parse(final @NonNull String commaDelimited) {
+        final String[] split = commaDelimited.split(",(?![^\\(\\[]*[\\]\\)])");
+        final BlockState[] result = new BlockState[split.length];
         for (int i = 0; i < split.length; i++) {
             result[i] = get(split[i]);
         }
         return result;
     }
 
-    public static BlockState deserialize(@NonNull final Map<String, Object> map) {
+    /**
+     * Deserialize a serialized {@link BlockState}
+     *
+     * @param map Serialized block state
+     * @return Deserialized block state, or {@code null} if the map is
+     *         not a properly serialized block state
+     */
+    public static @Nullable BlockState deserialize(final @NonNull Map<String, Object> map) {
         if (map.containsKey("material")) {
             final Object object = map.get("material");
             return get(object.toString());

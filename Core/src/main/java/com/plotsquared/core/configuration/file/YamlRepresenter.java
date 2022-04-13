@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.file;
 
@@ -39,27 +39,33 @@ class YamlRepresenter extends Representer {
     YamlRepresenter() {
         this.multiRepresenters.put(ConfigurationSection.class, new RepresentConfigurationSection());
         this.multiRepresenters
-            .put(ConfigurationSerializable.class, new RepresentConfigurationSerializable());
+                .put(ConfigurationSerializable.class, new RepresentConfigurationSerializable());
     }
 
     private class RepresentConfigurationSection extends RepresentMap {
 
-        @Override public Node representData(Object data) {
+        @Override
+        public Node representData(Object data) {
             return super.representData(((ConfigurationSection) data).getValues(false));
         }
-    }
 
+    }
 
     private class RepresentConfigurationSerializable extends RepresentMap {
 
-        @Override public Node representData(Object data) {
+        @Override
+        public Node representData(Object data) {
             ConfigurationSerializable serializable = (ConfigurationSerializable) data;
             Map<String, Object> values = new LinkedHashMap<>();
-            values.put(ConfigurationSerialization.SERIALIZED_TYPE_KEY,
-                ConfigurationSerialization.getAlias(serializable.getClass()));
+            values.put(
+                    ConfigurationSerialization.SERIALIZED_TYPE_KEY,
+                    ConfigurationSerialization.getAlias(serializable.getClass())
+            );
             values.putAll(serializable.serialize());
 
             return super.representData(values);
         }
+
     }
+
 }

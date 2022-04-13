@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,10 +21,56 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
 
+import com.google.common.collect.Sets;
+
+import java.util.EnumSet;
+import java.util.Set;
+
+/**
+ * The reason for an internal player teleport.
+ */
 public enum TeleportCause {
-    COMMAND, PLUGIN, UNKNOWN
+
+    COMMAND,
+    COMMAND_AREA_CREATE,
+    COMMAND_AREA_TELEPORT,
+    COMMAND_AUTO,
+    COMMAND_CLAIM,
+    COMMAND_CLEAR,
+    COMMAND_CLUSTER_TELEPORT,
+    COMMAND_DELETE,
+    COMMAND_HOME,
+    COMMAND_LIKE,
+    COMMAND_MIDDLE,
+    COMMAND_RATE,
+    COMMAND_SETUP,
+    COMMAND_TEMPLATE,
+    COMMAND_VISIT,
+    DEATH,
+    DENIED,
+    KICK,
+    LOGIN,
+    PLUGIN,
+    UNKNOWN;
+
+    /**
+     * @since 6.1.0
+     */
+    public static final class CauseSets {
+
+        public static final Set<TeleportCause> COMMAND = Sets.immutableEnumSet(EnumSet.range(
+                TeleportCause.COMMAND,
+                TeleportCause.COMMAND_VISIT
+        ));
+        @SuppressWarnings("unused")
+        public static final Set<TeleportCause> PLUGIN = Sets.immutableEnumSet(EnumSet.range(
+                TeleportCause.DEATH,
+                TeleportCause.PLUGIN
+        ));
+
+    }
 }

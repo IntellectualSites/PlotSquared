@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,15 +21,14 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
 
 import com.plotsquared.core.command.Claim;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class PlayerClaimPlotEvent extends PlotPlayerEvent implements CancellablePlotEvent {
 
@@ -43,7 +42,7 @@ public class PlayerClaimPlotEvent extends PlotPlayerEvent implements Cancellable
      * @param plot      Plot that was claimed
      * @param schematic The schematic defined or null
      */
-    public PlayerClaimPlotEvent(PlotPlayer player, Plot plot, @Nullable String schematic) {
+    public PlayerClaimPlotEvent(PlotPlayer<?> player, Plot plot, @Nullable String schematic) {
         super(player, plot);
         this.schematic = schematic;
     }
@@ -53,22 +52,27 @@ public class PlayerClaimPlotEvent extends PlotPlayerEvent implements Cancellable
      *
      * @return schematic string
      */
-    @Nullable public String getSchematic() {
+    public @Nullable String getSchematic() {
         return this.schematic;
     }
 
     /**
      * Set the schematic string used in the claim.
+     *
+     * @param schematic the schematic name
      */
     public void setSchematic(String schematic) {
         this.schematic = schematic;
     }
 
-    @Override public Result getEventResult() {
+    @Override
+    public Result getEventResult() {
         return eventResult;
     }
 
-    @Override public void setEventResult(Result e) {
+    @Override
+    public void setEventResult(Result e) {
         this.eventResult = e;
     }
+
 }

@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.location;
 
@@ -40,11 +40,13 @@ public class ChunkWrapper {
         this.z = z;
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return MathMan.pair((short) x, (short) z);
     }
 
-    @Override public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -59,10 +61,12 @@ public class ChunkWrapper {
         }
         ChunkWrapper other = (ChunkWrapper) obj;
         return (this.x == other.x) && (this.z == other.z) && StringMan
-            .isEqual(this.world, other.world);
+                .isEqual(this.world, other.world);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return this.world + ":" + this.x + "," + this.z;
     }
+
 }

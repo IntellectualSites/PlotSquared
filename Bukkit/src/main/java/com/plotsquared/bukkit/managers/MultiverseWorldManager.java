@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,28 +21,34 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.managers;
 
+import com.google.inject.Singleton;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Multiverse specific manager that informs Multiverse of
  * world creation by executing a console command
+ *
+ * @deprecated Deprecated and scheduled for removal without replacement
+ *         in favor of the build in setup wizard.
  */
+@Deprecated(forRemoval = true, since = "6.0.0")
+@Singleton
 public class MultiverseWorldManager extends BukkitWorldManager {
 
-    @Override @Nullable
-    public World handleWorldCreation(@NotNull final String worldName, @Nullable final String generator) {
+    @Override
+    public @Nullable World handleWorldCreation(final @NonNull String worldName, final @Nullable String generator) {
         // First let Bukkit register the world
         this.setGenerator(worldName, generator);
         // Then we send the console command
         final StringBuilder commandBuilder = new StringBuilder("mv create ")
-            .append(worldName).append(" normal");
+                .append(worldName).append(" normal");
         if (generator != null) {
             commandBuilder.append(" -g ").append(generator);
         }
@@ -50,7 +56,8 @@ public class MultiverseWorldManager extends BukkitWorldManager {
         return Bukkit.getWorld(worldName);
     }
 
-    @Override public String getName() {
+    @Override
+    public String getName() {
         return "bukkit-multiverse";
     }
 

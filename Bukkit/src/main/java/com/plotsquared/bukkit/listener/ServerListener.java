@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,32 +21,37 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
 
-import com.plotsquared.bukkit.BukkitMain;
+import com.google.inject.Inject;
+import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.placeholder.MVdWPlaceholders;
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.player.ConsolePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class ServerListener implements Listener {
 
-    private final BukkitMain plugin;
+    private final BukkitPlatform plugin;
 
-    public ServerListener(BukkitMain plugin) {
+    @Inject
+    public ServerListener(final @NonNull BukkitPlatform plugin) {
         this.plugin = plugin;
     }
 
-    @EventHandler public void onServerLoad(ServerLoadEvent event) {
+    @EventHandler
+    public void onServerLoad(ServerLoadEvent event) {
         if (Bukkit.getPluginManager().getPlugin("MVdWPlaceholderAPI") != null && Settings.Enabled_Components.USE_MVDWAPI) {
-            new MVdWPlaceholders(this.plugin, PlotSquared.get().getPlaceholderRegistry());
-            PlotSquared.log(Captions.PREFIX + "&6PlotSquared hooked into MVdWPlaceholderAPI");
+            new MVdWPlaceholders(this.plugin, this.plugin.placeholderRegistry());
+            ConsolePlayer.getConsole().sendMessage(TranslatableCaption.of("placeholder.hooked"));
         }
     }
+
 }

@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,117 +21,162 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.StaticCaption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.MainUtil;
-import com.plotsquared.core.util.RegionManager;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.entity.EntityCategory;
+import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.sk89q.worldedit.world.entity.EntityType;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @CommandDeclaration(command = "debug",
-    category = CommandCategory.DEBUG,
-    description = "Show debug information",
-    usage = "/plot debug [msg]",
-    permission = "plots.admin")
+        category = CommandCategory.DEBUG,
+        usage = "/plot debug",
+        permission = "plots.admin")
 public class Debug extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    private final PlotAreaManager plotAreaManager;
+    private final WorldUtil worldUtil;
+
+    @Inject
+    public Debug(
+            final @NonNull PlotAreaManager plotAreaManager,
+            final @NonNull WorldUtil worldUtil
+    ) {
+        this.plotAreaManager = plotAreaManager;
+        this.worldUtil = worldUtil;
+    }
+
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
+        if (args.length == 0) {
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "/plot debug <loadedchunks | player | debug-players | entitytypes | msg>")
+            );
+        }
         if (args.length > 0) {
             if ("player".equalsIgnoreCase(args[0])) {
                 for (Map.Entry<String, Object> meta : player.getMeta().entrySet()) {
-                    MainUtil.sendMessage(player,
-                        "Key: " + meta.getKey() + " Value: " + meta.getValue().toString() + " , ");
+                    player.sendMessage(StaticCaption.of("Key: " + meta.getKey() + " Value: " + meta
+                            .getValue()
+                            .toString() + " , "));
                 }
+                return true;
             }
         }
         if (args.length > 0 && "loadedchunks".equalsIgnoreCase(args[0])) {
             final long start = System.currentTimeMillis();
-            MainUtil.sendMessage(player, "Fetching loaded chunks...");
-            TaskManager.runTaskAsync(() -> MainUtil.sendMessage(player,
-                "Loaded chunks: " + RegionManager.manager
-                    .getChunkChunks(player.getLocation().getWorld()).size() + "(" + (
-                    System.currentTimeMillis() - start) + "ms) using thread: " + Thread
-                    .currentThread().getName()));
+            player.sendMessage(TranslatableCaption.of("debug.fetching_loaded_chunks"));
+            TaskManager.runTaskAsync(() -> player.sendMessage(StaticCaption
+                    .of("Loaded chunks: " + this.worldUtil
+                            .getChunkChunks(player.getLocation().getWorldName())
+                            .size() + " (" + (System.currentTimeMillis()
+                            - start) + "ms) using thread: " + Thread.currentThread().getName())));
             return true;
         }
         if (args.length > 0 && "uuids".equalsIgnoreCase(args[0])) {
             final Collection<UUIDMapping> mappings = PlotSquared.get().getImpromptuUUIDPipeline().getAllImmediately();
-            MainUtil.sendMessage(player, String.format("There are %d cached UUIDs", mappings.size()));
+            player.sendMessage(
+                    TranslatableCaption.of("debug.cached_uuids"),
+                    Template.of("value", String.valueOf(mappings.size()))
+            );
             return true;
         }
         if (args.length > 0 && "debug-players".equalsIgnoreCase(args[0])) {
-            MainUtil.sendMessage(player, "Player in debug mode: " );
+            player.sendMessage(TranslatableCaption.of("debug.player_in_debugmode"));
             for (final PlotPlayer<?> pp : PlotPlayer.getDebugModePlayers()) {
-                MainUtil.sendMessage(player, "- " + pp.getName());
+                player.sendMessage(
+                        TranslatableCaption.of("debug.player_in_debugmode_list"),
+                        Template.of("value", pp.getName())
+                );
             }
             return true;
         }
         if (args.length > 0 && "entitytypes".equalsIgnoreCase(args[0])) {
             EntityCategories.init();
-            player.sendMessage(Captions.PREFIX.getTranslated() + "§cEntity Categories: ");
+            player.sendMessage(TranslatableCaption.of("debug.entity_categories"));
             EntityCategory.REGISTRY.forEach(category -> {
                 final StringBuilder builder =
-                    new StringBuilder("§7- §6").append(category.getId()).append("§7: §6");
+                        new StringBuilder("§7- §6").append(category.getId()).append("§7: §6");
                 for (final EntityType entityType : category.getAll()) {
                     builder.append(entityType.getId()).append(" ");
                 }
-                player.sendMessage(Captions.PREFIX.getTranslated() + builder.toString());
+                player.sendMessage(StaticCaption.of("<prefix>" + builder));
             });
             EntityType.REGISTRY.values().stream().sorted(Comparator.comparing(EntityType::getId))
-                .forEach(entityType -> {
-                    long categoryCount = EntityCategory.REGISTRY.values().stream()
-                        .filter(category -> category.contains(entityType)).count();
-                    if (categoryCount > 0) {
-                        return;
-                    }
-                    player.sendMessage(
-                        Captions.PREFIX.getTranslated() + entityType.getName() + " is in "
-                            + categoryCount + " categories");
-                });
+                    .forEach(entityType -> {
+                        long categoryCount = EntityCategory.REGISTRY.values().stream()
+                                .filter(category -> category.contains(entityType)).count();
+                        if (categoryCount > 0) {
+                            return;
+                        }
+                        player.sendMessage(StaticCaption.of("<prefix>" + entityType.getName() + " is in "
+                                + categoryCount + " categories"));
+                    });
             return true;
         }
-        if ((args.length > 0) && args[0].equalsIgnoreCase("msg")) {
-            StringBuilder msg = new StringBuilder();
-            for (Captions caption : Captions.values()) {
-                msg.append(caption.getTranslated()).append("\n");
-            }
-            MainUtil.sendMessage(player, msg.toString());
-            return true;
-        }
-        StringBuilder information = new StringBuilder();
-        String header = Captions.DEBUG_HEADER.getTranslated();
-        String line = Captions.DEBUG_LINE.getTranslated();
-        String section = Captions.DEBUG_SECTION.getTranslated();
+        Set<TranslatableCaption> captions = PlotSquared
+                .get()
+                .getCaptionMap(TranslatableCaption.DEFAULT_NAMESPACE)
+                .getCaptions();
+        TextComponent.Builder information = Component.text();
+        Component header = MINI_MESSAGE.parse(TranslatableCaption.of("debug.debug_header").getComponent(player) + "\n");
+        String line = TranslatableCaption.of("debug.debug_line").getComponent(player) + "\n";
+        String section = TranslatableCaption.of("debug.debug_section").getComponent(player) + "\n";
         information.append(header);
-        information.append(getSection(section, "PlotArea"));
+        information.append(MINI_MESSAGE.parse(section, Template.of("val", "PlotArea")));
+        information.append(MINI_MESSAGE
+                .parse(
+                        line,
+                        Template.of("var", "Plot Worlds"),
+                        Template.of("val", StringMan.join(this.plotAreaManager.getAllPlotAreas(), ", "))
+                ));
         information.append(
-            getLine(line, "Plot Worlds", StringMan.join(PlotSquared.get().getPlotAreas(), ", ")));
-        information.append(getLine(line, "Owned Plots", PlotSquared.get().getPlots().size()));
-        information.append(getSection(section, "Messages"));
-        information.append(getLine(line, "Total Messages", Captions.values().length));
-        information.append(getLine(line, "View all captions", "/plot debug msg"));
-        MainUtil.sendMessage(player, information.toString());
+                MINI_MESSAGE.parse(
+                        line,
+                        Template.of("var", "Owned Plots"),
+                        Template.of("val", String.valueOf(PlotQuery.newQuery().allPlots().count()))
+                ));
+        information.append(MINI_MESSAGE.parse(section, Template.of("val", "Messages")));
+        information.append(MINI_MESSAGE.parse(
+                line,
+                Template.of("var", "Total Messages"),
+                Template.of("val", String.valueOf(captions.size()))
+        ));
+        player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(information.build())));
         return true;
     }
 
-    private String getSection(String line, String val) {
-        return line.replaceAll("%val%", val) + "\n";
+    @Override
+    public Collection<Command> tab(final PlotPlayer<?> player, String[] args, boolean space) {
+        return Stream.of("loadedchunks", "debug-players", "entitytypes")
+                .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
+                .map(value -> new Command(null, false, value, "plots.admin", RequiredType.NONE, null) {
+                }).collect(Collectors.toList());
     }
 
-    private String getLine(String line, String var, Object val) {
-        return line.replaceAll("%var%", var).replaceAll("%val%", "" + val) + "\n";
-    }
 }

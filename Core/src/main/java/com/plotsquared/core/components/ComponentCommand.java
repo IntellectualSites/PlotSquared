@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.components;
 
@@ -33,11 +33,11 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotInventory;
 
 @CommandDeclaration(command = "components",
-permission = "plots.components",
-description = "Open the component preset GUI",
-usage = "/plot components",
-category = CommandCategory.APPEARANCE,
-requiredType = RequiredType.PLAYER)
+        permission = "plots.components",
+        description = "Open the component preset GUI",
+        usage = "/plot components",
+        category = CommandCategory.APPEARANCE,
+        requiredType = RequiredType.PLAYER)
 public class ComponentCommand extends SubCommand {
 
     private final ComponentPresetManager componentPresetManager;
@@ -46,7 +46,8 @@ public class ComponentCommand extends SubCommand {
         this.componentPresetManager = componentPresetManager;
     }
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
         final PlotInventory inventory = componentPresetManager.buildInventory(player);
         if (inventory != null) {
             inventory.openInventory();

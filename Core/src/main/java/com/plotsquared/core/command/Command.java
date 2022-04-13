@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,22 +21,25 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.Caption;
+import com.plotsquared.core.configuration.caption.CaptionHolder;
+import com.plotsquared.core.configuration.caption.StaticCaption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.permissions.PermissionHolder;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.plot.message.PlotMessage;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringComparison;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import lombok.SneakyThrows;
-import org.jetbrains.annotations.NotNull;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -53,6 +56,8 @@ import java.util.concurrent.CompletableFuture;
 
 public abstract class Command {
 
+    static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
+
     // May be none
     private final ArrayList<Command> allCommands = new ArrayList<>();
     private final ArrayList<Command> dynamicCommands = new ArrayList<>();
@@ -66,21 +71,23 @@ public abstract class Command {
     private List<String> aliases;
     private RequiredType required;
     private String usage;
-    private String description;
+    private Caption description;
     private String permission;
     private boolean confirmation;
     private CommandCategory category;
-    private Argument[] arguments;
+    private Argument<?>[] arguments;
 
-    public Command(Command parent, boolean isStatic, String id, String permission,
-        RequiredType required, CommandCategory category) {
+    public Command(
+            Command parent, boolean isStatic, String id, String permission,
+            RequiredType required, CommandCategory category
+    ) {
         this.parent = parent;
         this.isStatic = isStatic;
         this.id = id;
         this.permission = permission;
         this.required = required;
         this.category = category;
-        this.aliases = Arrays.asList(id);
+        this.aliases = Collections.singletonList(id);
         if (this.parent != null) {
             this.parent.register(this);
         }
@@ -96,16 +103,18 @@ public abstract class Command {
         for (final Method method : getClass().getDeclaredMethods()) {
             if (method.isAnnotationPresent(CommandDeclaration.class)) {
                 Class<?>[] types = method.getParameterTypes();
-                // final PlotPlayer player, String[] args, RunnableVal3<Command,Runnable,Runnable> confirm, RunnableVal2<Command, CommandResult>
+                // final PlotPlayer<?> player, String[] args, RunnableVal3<Command,Runnable,Runnable> confirm, RunnableVal2<Command, CommandResult>
                 // whenDone
                 if (types.length == 5 && types[0] == Command.class && types[1] == PlotPlayer.class
-                    && types[2] == String[].class && types[3] == RunnableVal3.class
-                    && types[4] == RunnableVal2.class) {
+                        && types[2] == String[].class && types[3] == RunnableVal3.class
+                        && types[4] == RunnableVal2.class) {
                     Command tmp = new Command(this, true) {
                         @Override
-                        public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
-                            RunnableVal3<Command, Runnable, Runnable> confirm,
-                            RunnableVal2<Command, CommandResult> whenDone) {
+                        public CompletableFuture<Boolean> execute(
+                                PlotPlayer<?> player, String[] args,
+                                RunnableVal3<Command, Runnable, Runnable> confirm,
+                                RunnableVal2<Command, CommandResult> whenDone
+                        ) {
                             try {
                                 method.invoke(Command.this, this, player, args, confirm, whenDone);
                                 return CompletableFuture.completedFuture(true);
@@ -136,7 +145,7 @@ public abstract class Command {
         return this.id;
     }
 
-    public List<Command> getCommands(PlotPlayer player) {
+    public List<Command> getCommands(PlotPlayer<?> player) {
         List<Command> commands = new ArrayList<>();
         for (Command cmd : this.allCommands) {
             if (cmd.canExecute(player, false)) {
@@ -146,7 +155,7 @@ public abstract class Command {
         return commands;
     }
 
-    public List<Command> getCommands(CommandCategory category, PlotPlayer player) {
+    public List<Command> getCommands(CommandCategory category, PlotPlayer<?> player) {
         List<Command> commands = getCommands(player);
         if (category != null) {
             commands.removeIf(command -> command.category != category);
@@ -158,7 +167,7 @@ public abstract class Command {
         return this.allCommands;
     }
 
-    public boolean hasConfirmation(CommandCaller player) {
+    public boolean hasConfirmation(PermissionHolder player) {
         return this.confirmation && !player.hasPermission(getPermission() + ".confirm.bypass");
     }
 
@@ -166,7 +175,7 @@ public abstract class Command {
         return this.aliases;
     }
 
-    public String getDescription() {
+    public Caption getDescription() {
         return this.description;
     }
 
@@ -174,11 +183,11 @@ public abstract class Command {
         return this.required;
     }
 
-    public Argument[] getRequiredArguments() {
+    public Argument<?>[] getRequiredArguments() {
         return this.arguments;
     }
 
-    public void setRequiredArguments(Argument[] arguments) {
+    public void setRequiredArguments(Argument<?>[] arguments) {
         this.arguments = arguments;
     }
 
@@ -193,7 +202,21 @@ public abstract class Command {
         aliasOptions.addAll(Arrays.asList(declaration.aliases()));
 
         this.aliases = aliasOptions;
-        this.description = declaration.description();
+        if (declaration.description().isEmpty()) {
+            Command parent = getParent();
+            // we're collecting the "path" of the command
+            List<String> path = new ArrayList<>();
+            path.add(this.id);
+            while (parent != null && !parent.equals(MainCommand.getInstance())) {
+                path.add(parent.getId());
+                parent = parent.getParent();
+            }
+            Collections.reverse(path);
+            String descriptionKey = String.join(".", path);
+            this.description = TranslatableCaption.of(String.format("commands.description.%s", descriptionKey));
+        } else {
+            this.description = StaticCaption.of(declaration.description());
+        }
         this.usage = declaration.usage();
         this.confirmation = declaration.confirmation();
 
@@ -223,13 +246,15 @@ public abstract class Command {
         return "plots." + getFullId();
     }
 
-    public <T> void paginate(PlotPlayer player, List<T> c, int size, int page,
-        RunnableVal3<Integer, T, PlotMessage> add, String baseCommand, String header) {
+    public <T> void paginate(
+            PlotPlayer<?> player, List<T> c, int size, int page,
+            RunnableVal3<Integer, T, CaptionHolder> add, String baseCommand, Caption header
+    ) {
         // Calculate pages & index
         if (page < 0) {
             page = 0;
         }
-        int totalPages = (int) Math.ceil(c.size() / size);
+        int totalPages = (int) Math.floor((double) c.size() / size);
         if (page > totalPages) {
             page = totalPages;
         }
@@ -238,65 +263,56 @@ public abstract class Command {
             max = c.size();
         }
         // Send the header
-        header = header.replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "")
-            .replaceAll("%amount%", c.size() + "").replaceAll("%word%", "all");
-        MainUtil.sendMessage(player, header);
+        Template curTemplate = Template.of("cur", String.valueOf(page + 1));
+        Template maxTemplate = Template.of("max", String.valueOf(totalPages + 1));
+        Template amountTemplate = Template.of("amount", String.valueOf(c.size()));
+        player.sendMessage(header, curTemplate, maxTemplate, amountTemplate);
         // Send the page content
         List<T> subList = c.subList(page * size, max);
         int i = page * size;
         for (T obj : subList) {
             i++;
-            PlotMessage msg = new PlotMessage();
+            final CaptionHolder msg = new CaptionHolder();
             add.run(i, obj, msg);
-            msg.send(player);
+            player.sendMessage(msg.get(), msg.getTemplates());
         }
         // Send the footer
-        if (page < totalPages && page > 0) { // Back | Next
-            new PlotMessage().text("<-").color("$1").command(baseCommand + " " + page).text(" | ")
-                .color("$3").text("->").color("$1").command(baseCommand + " " + (page + 2))
-                .text(Captions.CLICKABLE.getTranslated()).color("$2").send(player);
-            return;
-        }
-        if (page == 0 && totalPages != 0) { // Next
-            new PlotMessage().text("<-").color("$3").text(" | ").color("$3").text("->").color("$1")
-                .command(baseCommand + " " + 2).text(Captions.CLICKABLE.getTranslated()).color("$2")
-                .send(player);
-            return;
-        }
-        if (totalPages != 0) { // Back
-            new PlotMessage().text("<-").color("$1").command(baseCommand + " " + page).text(" | ")
-                .color("$3").text("->").color("$3").text(Captions.CLICKABLE.getTranslated())
-                .color("$2").send(player);
-        }
+        Template command1 = Template.of("command1", baseCommand + " " + page);
+        Template command2 = Template.of("command2", baseCommand + " " + (page + 2));
+        Template clickable = Template.of("clickable", TranslatableCaption.of("list.clickable").getComponent(player));
+        player.sendMessage(TranslatableCaption.of("list.page_turn"), command1, command2, clickable);
     }
 
     /**
-     * @param player  Caller
-     * @param args    Arguments
-     * @param confirm Instance, Success, Failure
-     * @return CompletableFuture true if the command executed fully, false in
-     * any other case
+     * @param player   Caller
+     * @param args     Arguments
+     * @param confirm  Instance, Success, Failure
+     * @param whenDone task to run when done
+     * @return CompletableFuture {@code true} if the command executed fully, {@code false} in
+     *         any other case
      */
-    public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
-        RunnableVal3<Command, Runnable, Runnable> confirm,
-        RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
+    public CompletableFuture<Boolean> execute(
+            PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone
+    ) throws CommandException {
         if (args.length == 0 || args[0] == null) {
             if (this.parent == null) {
                 MainCommand.getInstance().help.displayHelp(player, null, 0);
             } else {
-                Captions.COMMAND_SYNTAX.send(player, getUsage());
+                sendUsage(player);
             }
             return CompletableFuture.completedFuture(false);
         }
         if (this.allCommands.isEmpty()) {
             player.sendMessage(
-                "Not Implemented: https://github.com/IntellectualSites/PlotSquared/issues/new");
+                    StaticCaption.of("Not Implemented: https://github.com/IntellectualSites/PlotSquared/issues"));
             return CompletableFuture.completedFuture(false);
         }
         Command cmd = getCommand(args[0]);
         if (cmd == null) {
             if (this.parent != null) {
-                Captions.COMMAND_SYNTAX.send(player, getUsage());
+                sendUsage(player);
                 return CompletableFuture.completedFuture(false);
             }
             // Help command
@@ -311,11 +327,13 @@ public abstract class Command {
             } catch (IllegalArgumentException ignored) {
             }
             // Command recommendation
-            MainUtil.sendMessage(player, Captions.NOT_VALID_SUBCOMMAND);
+            player.sendMessage(TranslatableCaption.of("commandconfig.not_valid_subcommand"));
             List<Command> commands = getCommands(player);
             if (commands.isEmpty()) {
-                MainUtil.sendMessage(player, Captions.DID_YOU_MEAN,
-                    MainCommand.getInstance().help.getUsage());
+                player.sendMessage(
+                        TranslatableCaption.of("commandconfig.did_you_mean"),
+                        Template.of("value", MainCommand.getInstance().help.getUsage())
+                );
                 return CompletableFuture.completedFuture(false);
             }
             HashSet<String> setArgs = new HashSet<>(args.length);
@@ -325,7 +343,7 @@ public abstract class Command {
             String[] allArgs = setArgs.toArray(new String[0]);
             int best = 0;
             for (Command current : commands) {
-                int match = getMatch(allArgs, current);
+                int match = getMatch(allArgs, current, player);
                 if (match > best) {
                     cmd = current;
                 }
@@ -333,7 +351,10 @@ public abstract class Command {
             if (cmd == null) {
                 cmd = new StringComparison<>(args[0], this.allCommands).getMatchObject();
             }
-            MainUtil.sendMessage(player, Captions.DID_YOU_MEAN, cmd.getUsage());
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.did_you_mean"),
+                    Template.of("value", cmd.getUsage())
+            );
             return CompletableFuture.completedFuture(false);
         }
         String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
@@ -348,13 +369,12 @@ public abstract class Command {
         return CompletableFuture.completedFuture(true);
     }
 
-    public boolean checkArgs(PlotPlayer player, String[] args) {
+    public boolean checkArgs(PlotPlayer<?> player, String[] args) {
         Argument<?>[] reqArgs = getRequiredArguments();
         if (reqArgs != null && reqArgs.length > 0) {
             boolean failed = args.length < reqArgs.length;
             String[] baseSplit = getCommandString().split(" ");
             String[] fullSplit = getUsage().split(" ");
-            String base = getCommandString();
             if (fullSplit.length - baseSplit.length < reqArgs.length) {
                 String[] tmp = new String[baseSplit.length + reqArgs.length];
                 System.arraycopy(fullSplit, 0, tmp, 0, fullSplit.length);
@@ -365,19 +385,23 @@ public abstract class Command {
                 failed = failed || reqArgs[i].parse(args[i]) == null;
             }
             if (failed) {
-                Captions.COMMAND_SYNTAX.send(player, StringMan.join(fullSplit, " "));
+                // TODO improve or remove the Argument system
+                player.sendMessage(
+                        TranslatableCaption.of("commandconfig.command_syntax"),
+                        Template.of("value", StringMan.join(fullSplit, " "))
+                );
                 return false;
             }
         }
         return true;
     }
 
-    public int getMatch(String[] args, Command cmd) {
+    public int getMatch(String[] args, Command cmd, PlotPlayer<?> player) {
         String perm = cmd.getPermission();
-        HashSet<String> desc = new HashSet<>();
         int count = cmd.getAliases().stream().filter(alias -> alias.startsWith(args[0]))
-            .mapToInt(alias -> 5).sum();
-        Collections.addAll(desc, cmd.getDescription().split(" "));
+                .mapToInt(alias -> 5).sum();
+        HashSet<String> desc = new HashSet<>();
+        Collections.addAll(desc, cmd.getDescription().getComponent(player).split(" "));
         for (String arg : args) {
             if (perm.startsWith(arg)) {
                 count++;
@@ -419,7 +443,7 @@ public abstract class Command {
         return cmd;
     }
 
-    public Command getCommand(Class clazz) {
+    public Command getCommand(Class<?> clazz) {
         for (Command cmd : this.allCommands) {
             if (cmd.getClass() == clazz) {
                 return cmd;
@@ -441,19 +465,20 @@ public abstract class Command {
         return null;
     }
 
-    public boolean canExecute(PlotPlayer player, boolean message) {
+    public boolean canExecute(PlotPlayer<?> player, boolean message) {
         if (player == null) {
             return true;
         }
         if (!this.required.allows(player)) {
             if (message) {
-                MainUtil.sendMessage(player, this.required == RequiredType.PLAYER ?
-                    Captions.IS_CONSOLE :
-                    Captions.NOT_CONSOLE);
+                player.sendMessage(this.required.getErrorMessage());
             }
         } else if (!Permissions.hasPermission(player, getPermission())) {
             if (message) {
-                Captions.NO_PERMISSION.send(player, getPermission());
+                player.sendMessage(
+                        TranslatableCaption.of("permission.no_permission"),
+                        Template.of("node", getPermission())
+                );
             }
         } else {
             return true;
@@ -472,6 +497,13 @@ public abstract class Command {
         } else {
             return this.parent.getCommandString() + " " + toString();
         }
+    }
+
+    public void sendUsage(PlotPlayer<?> player) {
+        player.sendMessage(
+                TranslatableCaption.of("commandconfig.command_syntax"),
+                Template.of("value", getUsage())
+        );
     }
 
     public String getUsage() {
@@ -493,8 +525,10 @@ public abstract class Command {
         return getCommandString() + " " + args + "]";
     }
 
-    public Collection<Command> tabOf(PlotPlayer player, String[] input, boolean space,
-        String... args) {
+    public Collection<Command> tabOf(
+            PlotPlayer<?> player, String[] input, boolean space,
+            String... args
+    ) {
         if (!space) {
             return null;
         }
@@ -514,7 +548,7 @@ public abstract class Command {
         return result;
     }
 
-    public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
+    public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         switch (args.length) {
             case 0:
                 return this.allCommands;
@@ -528,10 +562,10 @@ public abstract class Command {
                         return null;
                     }
                 } else {
-                    Set<Command> commands = new HashSet<Command>();
+                    Set<Command> commands = new HashSet<>();
                     for (Map.Entry<String, Command> entry : this.staticCommands.entrySet()) {
                         if (entry.getKey().startsWith(arg) && entry.getValue()
-                            .canExecute(player, false)) {
+                                .canExecute(player, false)) {
                             commands.add(entry.getValue());
                         }
                     }
@@ -547,11 +581,13 @@ public abstract class Command {
         }
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return !this.aliases.isEmpty() ? this.aliases.get(0) : this.id;
     }
 
-    @Override public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -565,45 +601,47 @@ public abstract class Command {
         return this.getFullId().equals(other.getFullId());
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return this.getFullId().hashCode();
     }
 
-    public void checkTrue(boolean mustBeTrue, Captions message, Object... args) {
+    public void checkTrue(boolean mustBeTrue, Caption message, Template... args) {
         if (!mustBeTrue) {
             throw new CommandException(message, args);
         }
     }
 
-    public <T extends Object> T check(T object, Captions message, Object... args) {
+    public <T> T check(T object, Caption message, Template... args) {
         if (object == null) {
             throw new CommandException(message, args);
         }
         return object;
     }
 
-    @SneakyThrows protected static void sneakyThrow(@NotNull final Throwable throwable) {
-        throw throwable;
-    }
 
     public enum CommandResult {
-        FAILURE, SUCCESS
+        FAILURE,
+        SUCCESS
     }
 
 
     public static class CommandException extends RuntimeException {
-        private final Object[] args;
-        private final Captions message;
 
-        public CommandException(Captions message, Object... args) {
+        private final Template[] args;
+        private final Caption message;
+
+        public CommandException(final @Nullable Caption message, final Template... args) {
             this.message = message;
             this.args = args;
         }
 
-        public void perform(PlotPlayer player) {
+        public void perform(final @Nullable PlotPlayer<?> player) {
             if (player != null && message != null) {
-                message.send(player, args);
+                player.sendMessage(message, args);
             }
         }
+
     }
+
 }

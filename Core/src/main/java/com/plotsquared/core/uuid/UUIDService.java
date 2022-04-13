@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,12 +21,12 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.uuid;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -45,7 +45,7 @@ public interface UUIDService {
      * @param uuids Requests
      * @return Completed requests
      */
-    @NotNull List<UUIDMapping> getNames(@NotNull final List<UUID> uuids);
+    @NonNull List<@NonNull UUIDMapping> getNames(final @NonNull List<@NonNull UUID> uuids);
 
     /**
      * Attempt to complete the given requests. Returns the mappings
@@ -54,7 +54,7 @@ public interface UUIDService {
      * @param usernames Requests
      * @return Completed requests
      */
-    @NotNull List<UUIDMapping> getUUIDs(@NotNull final List<String> usernames);
+    @NonNull List<@NonNull UUIDMapping> getUUIDs(final @NonNull List<@NonNull String> usernames);
 
     /**
      * Get as many UUID mappings as possible under the condition
@@ -62,7 +62,7 @@ public interface UUIDService {
      *
      * @return All mappings that could be provided immediately
      */
-    default @NotNull Collection<UUIDMapping> getImmediately() {
+    default @NonNull Collection<@NonNull UUIDMapping> getImmediately() {
         return Collections.emptyList();
     }
 
@@ -70,7 +70,7 @@ public interface UUIDService {
      * Check whether or not this service can be safely used synchronously
      * without blocking the server for an extended amount of time.
      *
-     * @return True if the service can be used synchronously
+     * @return {@code true} if the service can be used synchronously
      */
     default boolean canBeSynchronous() {
         return false;
@@ -82,7 +82,7 @@ public interface UUIDService {
      * @param object Username ({@link String}) or {@link UUID}
      * @return Mapping, if it could be found immediately
      */
-    default @Nullable UUIDMapping getImmediately(@NotNull final Object object) {
+    default @Nullable UUIDMapping getImmediately(final @NonNull Object object) {
         return null;
     }
 

@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,19 +21,20 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.uuid;
 
 import com.google.common.util.concurrent.RateLimiter;
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
-import com.sk89q.squirrelid.Profile;
-import com.sk89q.squirrelid.resolver.HttpRepositoryService;
-import com.sk89q.squirrelid.resolver.ProfileService;
-import org.jetbrains.annotations.NotNull;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.enginehub.squirrelid.Profile;
+import org.enginehub.squirrelid.resolver.HttpRepositoryService;
+import org.enginehub.squirrelid.resolver.ProfileService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,6 +47,8 @@ import java.util.UUID;
  */
 @SuppressWarnings("UnstableApiUsage")
 public class SquirrelIdUUIDService implements UUIDService {
+
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + SquirrelIdUUIDService.class.getSimpleName());
 
     private final ProfileService profileService;
     private final RateLimiter rateLimiter;
@@ -64,12 +67,13 @@ public class SquirrelIdUUIDService implements UUIDService {
         this.rateLimiter = RateLimiter.create(rateLimit / 600.0D);
     }
 
-    @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
+    @Override
+    public @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids) {
         final List<UUIDMapping> results = new ArrayList<>(uuids.size());
         this.rateLimiter.acquire(uuids.size());
         try {
             try {
-                for (final Profile profile : this.profileService.findAllById(uuids)) {
+                for (final Profile profile : this.profileService.findAllByUuid(uuids)) {
                     results.add(new UUIDMapping(profile.getUniqueId(), profile.getName()));
                 }
             } catch (final IllegalArgumentException illegalArgumentException) {
@@ -78,7 +82,9 @@ public class SquirrelIdUUIDService implements UUIDService {
                 // go through them one by one
                 //
                 if (uuids.size() >= 2) {
-                    PlotSquared.debug(Captions.PREFIX + "(UUID) Found invalid UUID in batch. Will try each UUID individually.");
+                    if (Settings.DEBUG) {
+                        LOGGER.info("(UUID) Found invalid UUID in batch. Will try each UUID individually.");
+                    }
                     for (final UUID uuid : uuids) {
                         final List<UUIDMapping> result = this.getNames(Collections.singletonList(uuid));
                         if (result.isEmpty()) {
@@ -86,8 +92,8 @@ public class SquirrelIdUUIDService implements UUIDService {
                         }
                         results.add(result.get(0));
                     }
-                } else if (uuids.size() == 1) {
-                    PlotSquared.debug(Captions.PREFIX + "(UUID) Found invalid UUID: " + uuids.get(0));
+                } else if (uuids.size() == 1 && Settings.DEBUG) {
+                    LOGGER.info("(UUID) Found invalid UUID: {}", uuids.get(0));
                 }
             }
         } catch (IOException | InterruptedException e) {
@@ -96,7 +102,8 @@ public class SquirrelIdUUIDService implements UUIDService {
         return results;
     }
 
-    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull final List<String> usernames) {
+    @Override
+    public @NonNull List<UUIDMapping> getUUIDs(final @NonNull List<String> usernames) {
         final List<UUIDMapping> results = new ArrayList<>(usernames.size());
         this.rateLimiter.acquire(usernames.size());
         try {

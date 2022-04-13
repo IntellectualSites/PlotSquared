@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
@@ -35,21 +35,21 @@ public class MathMan {
     private static final float INV_ATAN2_DIM_MINUS_1 = 1.0f / (ATAN2_DIM - 1);
     private static final float[] atan2 = new float[ATAN2_COUNT];
     private static final int[] table =
-        {0, 16, 22, 27, 32, 35, 39, 42, 45, 48, 50, 53, 55, 57, 59, 61, 64, 65, 67, 69, 71, 73, 75,
-            76, 78, 80, 81, 83, 84, 86, 87, 89, 90, 91, 93, 94, 96, 97, 98, 99, 101, 102, 103, 104,
-            106, 107, 108, 109, 110, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123,
-            124, 125, 126, 128, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140,
-            141, 142, 143, 144, 144, 145, 146, 147, 148, 149, 150, 150, 151, 152, 153, 154, 155,
-            155, 156, 157, 158, 159, 160, 160, 161, 162, 163, 163, 164, 165, 166, 167, 167, 168,
-            169, 170, 170, 171, 172, 173, 173, 174, 175, 176, 176, 177, 178, 178, 179, 180, 181,
-            181, 182, 183, 183, 184, 185, 185, 186, 187, 187, 188, 189, 189, 190, 191, 192, 192,
-            193, 193, 194, 195, 195, 196, 197, 197, 198, 199, 199, 200, 201, 201, 202, 203, 203,
-            204, 204, 205, 206, 206, 207, 208, 208, 209, 209, 210, 211, 211, 212, 212, 213, 214,
-            214, 215, 215, 216, 217, 217, 218, 218, 219, 219, 220, 221, 221, 222, 222, 223, 224,
-            224, 225, 225, 226, 226, 227, 227, 228, 229, 229, 230, 230, 231, 231, 232, 232, 233,
-            234, 234, 235, 235, 236, 236, 237, 237, 238, 238, 239, 240, 240, 241, 241, 242, 242,
-            243, 243, 244, 244, 245, 245, 246, 246, 247, 247, 248, 248, 249, 249, 250, 250, 251,
-            251, 252, 252, 253, 253, 254, 254, 255};
+            {0, 16, 22, 27, 32, 35, 39, 42, 45, 48, 50, 53, 55, 57, 59, 61, 64, 65, 67, 69, 71, 73, 75,
+                    76, 78, 80, 81, 83, 84, 86, 87, 89, 90, 91, 93, 94, 96, 97, 98, 99, 101, 102, 103, 104,
+                    106, 107, 108, 109, 110, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123,
+                    124, 125, 126, 128, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140,
+                    141, 142, 143, 144, 144, 145, 146, 147, 148, 149, 150, 150, 151, 152, 153, 154, 155,
+                    155, 156, 157, 158, 159, 160, 160, 161, 162, 163, 163, 164, 165, 166, 167, 167, 168,
+                    169, 170, 170, 171, 172, 173, 173, 174, 175, 176, 176, 177, 178, 178, 179, 180, 181,
+                    181, 182, 183, 183, 184, 185, 185, 186, 187, 187, 188, 189, 189, 190, 191, 192, 192,
+                    193, 193, 194, 195, 195, 196, 197, 197, 198, 199, 199, 200, 201, 201, 202, 203, 203,
+                    204, 204, 205, 206, 206, 207, 208, 208, 209, 209, 210, 211, 211, 212, 212, 213, 214,
+                    214, 215, 215, 216, 217, 217, 218, 218, 219, 219, 220, 221, 221, 222, 222, 223, 224,
+                    224, 225, 225, 226, 226, 227, 227, 228, 229, 229, 230, 230, 231, 231, 232, 232, 233,
+                    234, 234, 235, 235, 236, 236, 237, 237, 238, 238, 239, 240, 240, 241, 241, 242, 242,
+                    243, 243, 244, 244, 245, 245, 246, 246, 247, 247, 248, 248, 249, 249, 250, 250, 251,
+                    251, 252, 252, 253, 253, 254, 254, 255};
 
     static {
         for (int i = 0; i < ATAN2_DIM; i++) {
@@ -207,16 +207,16 @@ public class MathMan {
     }
 
     /**
-     * Returns [x, y, z]
+     * get the x,y,z unit vector from pitch and yaw specified
      *
-     * @param yaw
-     * @param pitch
-     * @return
+     * @param yaw   yaw
+     * @param pitch pitch
+     * @return x, y, z unit vector
      */
     public static float[] getDirection(float yaw, float pitch) {
         double pitch_sin = Math.sin(pitch);
-        return new float[] {(float) (pitch_sin * Math.cos(yaw)),
-            (float) (pitch_sin * Math.sin(yaw)), (float) Math.cos(pitch)};
+        return new float[]{(float) (pitch_sin * Math.cos(yaw)),
+                (float) (pitch_sin * Math.sin(yaw)), (float) Math.cos(pitch)};
     }
 
     public static int floorMod(int x, int y) {
@@ -234,14 +234,14 @@ public class MathMan {
     /**
      * Returns [ pitch, yaw ]
      *
-     * @param x
-     * @param y
-     * @param z
-     * @return
+     * @param x x
+     * @param y y
+     * @param z z
+     * @return pitch and yaw of x,y,z from 0,0,0
      */
     public static float[] getPitchAndYaw(float x, float y, float z) {
         float distance = sqrtApprox((z * z) + (x * x));
-        return new float[] {atan2(y, distance), atan2(x, z)};
+        return new float[]{atan2(y, distance), atan2(x, z)};
     }
 
     public static final float atan2(float y, float x) {
@@ -285,7 +285,7 @@ public class MathMan {
 
     public static double sqrtApprox(double d) {
         return Double
-            .longBitsToDouble(((Double.doubleToLongBits(d) - (1L << 52)) >> 1) + (1L << 61));
+                .longBitsToDouble(((Double.doubleToLongBits(d) - (1L << 52)) >> 1) + (1L << 61));
     }
 
     public static float invSqrt(float x) {
@@ -361,4 +361,5 @@ public class MathMan {
     public static boolean isPowerOfTwo(int number) {
         return (number & (number - 1)) == 0;
     }
+
 }

@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,47 +21,57 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.util.MainUtil;
+import net.kyori.adventure.text.minimessage.Template;
 
 @CommandDeclaration(command = "sethome",
-    permission = "plots.set.home",
-    description = "Set the plot home to your current position",
-    usage = "/plot sethome [none]",
-    aliases = {"sh", "seth"},
-    category = CommandCategory.SETTINGS,
-    requiredType = RequiredType.PLAYER)
+        permission = "plots.set.home",
+        usage = "/plot sethome [none]",
+        aliases = {"sh", "seth"},
+        category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.PLAYER)
 public class SetHome extends SetCommand {
 
-    @Override public boolean set(PlotPlayer player, Plot plot, String value) {
+    @Override
+    public boolean set(PlotPlayer<?> player, Plot plot, String value) {
+        if (!plot.hasOwner()) {
+            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
+            return false;
+        }
         switch (value.toLowerCase()) {
-            case "unset":
-            case "reset":
-            case "remove":
-            case "none": {
+            case "unset", "reset", "remove", "none" -> {
                 Plot base = plot.getBasePlot(false);
                 base.setHome(null);
-                return MainUtil.sendMessage(player, Captions.POSITION_UNSET);
+                player.sendMessage(TranslatableCaption.of("position.position_unset"));
+                return true;
             }
-            case "":
+            case "" -> {
                 Plot base = plot.getBasePlot(false);
                 Location bottom = base.getBottomAbs();
                 Location location = player.getLocationFull();
                 BlockLoc rel = new BlockLoc(location.getX() - bottom.getX(), location.getY(),
-                    location.getZ() - bottom.getZ(), location.getYaw(), location.getPitch());
+                        location.getZ() - bottom.getZ(), location.getYaw(), location.getPitch()
+                );
                 base.setHome(rel);
-                return MainUtil.sendMessage(player, Captions.POSITION_SET);
-            default:
-                MainUtil.sendMessage(player, Captions.HOME_ARGUMENT);
+                player.sendMessage(TranslatableCaption.of("position.position_set"));
+                return true;
+            }
+            default -> {
+                player.sendMessage(
+                        TranslatableCaption.of("commandconfig.command_syntax"),
+                        Template.of("value", "Use /plot set home [none]")
+                );
                 return false;
+            }
         }
     }
+
 }

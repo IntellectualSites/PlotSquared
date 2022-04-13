@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.uuid;
 
@@ -31,7 +31,7 @@ import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +43,8 @@ import java.util.UUID;
  */
 public class OfflinePlayerUUIDService implements UUIDService {
 
-    @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
+    @Override
+    public @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids) {
         if (Settings.UUID.FORCE_LOWERCASE || Bukkit.getWorlds().isEmpty()) {
             return Collections.emptyList(); // This is useless now
         }
@@ -54,14 +55,16 @@ public class OfflinePlayerUUIDService implements UUIDService {
                 if (offlinePlayer.hasPlayedBefore()) {
                     wrappers.add(new UUIDMapping(uuid, offlinePlayer.getName()));
                 }
-            } catch (final Exception ignored) {} /* This can be safely ignored. If this happens, it is
+            } catch (final Exception ignored) {
+            } /* This can be safely ignored. If this happens, it is
                                                     probably because it's called before the worlds have
                                                     been loaded. This is bad, but does not break anything */
         }
         return wrappers;
     }
 
-    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull final List<String> usernames) {
+    @Override
+    public @NonNull List<UUIDMapping> getUUIDs(final @NonNull List<String> usernames) {
         final List<UUIDMapping> wrappers = new ArrayList<>(usernames.size());
         for (final String username : usernames) {
             if (Settings.UUID.OFFLINE) {

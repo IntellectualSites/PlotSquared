@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
@@ -35,11 +35,13 @@ public class PlotAreaConverter implements MBRConverter<PlotArea> {
     public static final int AXIS_Y = 1;
     public static final int AXIS_Z = 2;
 
-    @Override public int getDimensions() {
+    @Override
+    public int getDimensions() {
         return 3;
     }
 
-    @Override public double getMin(final int axis, final PlotArea area) {
+    @Override
+    public double getMin(final int axis, final PlotArea area) {
         final CuboidRegion region = area.getRegion();
         if (axis == AXIS_X) {
             return region.getMinimumPoint().getX();
@@ -52,7 +54,8 @@ public class PlotAreaConverter implements MBRConverter<PlotArea> {
         }
     }
 
-    @Override public double getMax(final int axis, final PlotArea area) {
+    @Override
+    public double getMax(final int axis, final PlotArea area) {
         final CuboidRegion region = area.getRegion();
         if (axis == AXIS_X) {
             return region.getMaximumPoint().getX();

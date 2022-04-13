@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,28 +21,30 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.player;
 
 import com.google.common.base.Charsets;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
+import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotWeather;
-import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
-import com.plotsquared.core.util.StringMan;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import io.papermc.lib.PaperLib;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.WeatherType;
@@ -52,7 +54,8 @@ import org.bukkit.event.EventException;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.RegisteredListener;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -68,63 +71,72 @@ public class BukkitPlayer extends PlotPlayer<Player> {
 
     private static boolean CHECK_EFFECTIVE = true;
     public final Player player;
-    private boolean offline;
     private String name;
 
     /**
      * <p>Please do not use this method. Instead use
      * BukkitUtil.getPlayer(Player), as it caches player objects.</p>
      *
-     * @param player Bukkit player instance
+     * @param plotAreaManager   PlotAreaManager instance
+     * @param eventDispatcher   EventDispatcher instance
+     * @param player            Bukkit player instance
+     * @param permissionHandler PermissionHandler instance
      */
-    public BukkitPlayer(@NotNull final Player player) {
-        this(player, false);
+    public BukkitPlayer(
+            final @NonNull PlotAreaManager plotAreaManager, final @NonNull EventDispatcher eventDispatcher,
+            final @NonNull Player player, final @NonNull PermissionHandler permissionHandler
+    ) {
+        this(plotAreaManager, eventDispatcher, player, false, permissionHandler);
     }
 
-    public BukkitPlayer(@NotNull final Player player, final boolean offline) {
-        this(player, offline, true);
-    }
-
-    public BukkitPlayer(@NotNull final Player player, final boolean offline, final boolean realPlayer) {
+    public BukkitPlayer(
+            final @NonNull PlotAreaManager plotAreaManager, final @NonNull
+            EventDispatcher eventDispatcher, final @NonNull Player player,
+            final boolean realPlayer,
+            final @NonNull PermissionHandler permissionHandler
+    ) {
+        super(plotAreaManager, eventDispatcher, permissionHandler);
         this.player = player;
-        this.offline = offline;
+        this.setupPermissionProfile();
         if (realPlayer) {
             super.populatePersistentMetaMap();
         }
     }
 
-    @Override public Actor toActor() {
+    @Override
+    public Actor toActor() {
         return BukkitAdapter.adapt(player);
     }
 
-    @Override public Player getPlatformPlayer() {
+    @Override
+    public Player getPlatformPlayer() {
         return this.player;
     }
 
-    @NotNull @Override public Location getLocation() {
-        final Location location = super.getLocation();
-        return location == null ? BukkitUtil.getLocation(this.player) : location;
-    }
-
-    @NotNull @Override public UUID getUUID() {
+    @NonNull
+    @Override
+    public UUID getUUID() {
         if (Settings.UUID.OFFLINE) {
             if (Settings.UUID.FORCE_LOWERCASE) {
                 return UUID.nameUUIDFromBytes(("OfflinePlayer:" +
-                    getName().toLowerCase()).getBytes(Charsets.UTF_8));
+                        getName().toLowerCase()).getBytes(Charsets.UTF_8));
             } else {
                 return UUID.nameUUIDFromBytes(("OfflinePlayer:" +
-                    getName()).getBytes(Charsets.UTF_8));
+                        getName()).getBytes(Charsets.UTF_8));
             }
         }
         return player.getUniqueId();
     }
 
-    @Override public long getLastPlayed() {
-        return this.player.getLastPlayed();
+    @Override
+    @NonNegative
+    public long getLastPlayed() {
+        return this.player.getLastSeen();
     }
 
-    @Override public boolean canTeleport(@NotNull final Location location) {
-        final org.bukkit.Location to = BukkitUtil.getLocation(location);
+    @Override
+    public boolean canTeleport(final @NonNull Location location) {
+        final org.bukkit.Location to = BukkitUtil.adapt(location);
         final org.bukkit.Location from = player.getLocation();
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to);
         callEvent(event);
@@ -136,15 +148,10 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         return true;
     }
 
-    @Override
-    public void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
-        player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
-    }
-
-    private void callEvent(@NotNull final Event event) {
+    private void callEvent(final @NonNull Event event) {
         final RegisteredListener[] listeners = event.getHandlers().getRegisteredListeners();
         for (final RegisteredListener listener : listeners) {
-            if (listener.getPlugin().getName().equals(PlotSquared.imp().getPluginName())) {
+            if (listener.getPlugin().getName().equals(PlotSquared.platform().pluginName())) {
                 continue;
             }
             try {
@@ -155,23 +162,22 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
     }
 
-    @Override public boolean hasPermission(final String permission) {
-        if (this.offline && EconHandler.getEconHandler() != null) {
-            return EconHandler.getEconHandler().hasPermission(getName(), permission);
-        }
-        return this.player.hasPermission(permission);
-    }
-
-    @Override public int hasPermissionRange(final String stub, final int range) {
-        if (hasPermission(Captions.PERMISSION_ADMIN.getTranslated())) {
+    @SuppressWarnings("StringSplitter")
+    @Override
+    @NonNegative
+    public int hasPermissionRange(
+            final @NonNull String stub,
+            @NonNegative final int range
+    ) {
+        if (hasPermission(Permission.PERMISSION_ADMIN.toString())) {
             return Integer.MAX_VALUE;
         }
         final String[] nodes = stub.split("\\.");
         final StringBuilder n = new StringBuilder();
         for (int i = 0; i < (nodes.length - 1); i++) {
             n.append(nodes[i]).append(".");
-            if (!stub.equals(n + Captions.PERMISSION_STAR.getTranslated())) {
-                if (hasPermission(n + Captions.PERMISSION_STAR.getTranslated())) {
+            if (!stub.equals(n + Permission.PERMISSION_STAR.toString())) {
+                if (hasPermission(n + Permission.PERMISSION_STAR.toString())) {
                     return Integer.MAX_VALUE;
                 }
             }
@@ -222,85 +228,63 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         return max;
     }
 
-    @Override public boolean isPermissionSet(final String permission) {
-        return this.player.isPermissionSet(permission);
-    }
-
-    @Override public void sendMessage(String message) {
-        message = message.replace('\u2010', '%').replace('\u2021', '&').replace('\u2030', '&');
-        if (!StringMan.isEqual(this.getMeta("lastMessage"), message) || (
-            System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
-            setMeta("lastMessage", message);
-            setMeta("lastMessageTime", System.currentTimeMillis());
-            this.player.sendMessage(message);
-        }
-    }
-
     @Override
-    public void teleport(@NotNull final Location location, @NotNull final TeleportCause cause) {
+    public void teleport(final @NonNull Location location, final @NonNull TeleportCause cause) {
         if (Math.abs(location.getX()) >= 30000000 || Math.abs(location.getZ()) >= 30000000) {
             return;
         }
         final org.bukkit.Location bukkitLocation =
-            new org.bukkit.Location(BukkitUtil.getWorld(location.getWorld()), location.getX() + 0.5,
-                location.getY(), location.getZ() + 0.5, location.getYaw(), location.getPitch());
+                new org.bukkit.Location(BukkitUtil.getWorld(location.getWorldName()), location.getX() + 0.5,
+                        location.getY(), location.getZ() + 0.5, location.getYaw(), location.getPitch()
+                );
         PaperLib.teleportAsync(player, bukkitLocation, getTeleportCause(cause));
     }
 
-    @Override public String getName() {
+    @Override
+    public String getName() {
         if (this.name == null) {
             this.name = this.player.getName();
         }
         return this.name;
     }
 
-    @Override public boolean isOnline() {
-        return !this.offline && this.player.isOnline();
-    }
-
-    @Override public void setCompassTarget(Location location) {
+    @Override
+    public void setCompassTarget(Location location) {
         this.player.setCompassTarget(
-            new org.bukkit.Location(BukkitUtil.getWorld(location.getWorld()), location.getX(),
-                location.getY(), location.getZ()));
+                new org.bukkit.Location(BukkitUtil.getWorld(location.getWorldName()), location.getX(),
+                        location.getY(), location.getZ()
+                ));
     }
 
-    @Override public Location getLocationFull() {
-        return BukkitUtil.getLocationFull(this.player);
+    @Override
+    public Location getLocationFull() {
+        return BukkitUtil.adaptComplete(this.player.getLocation());
     }
 
-    @Override public void setWeather(@NotNull final PlotWeather weather) {
+    @Override
+    public void setWeather(final @NonNull PlotWeather weather) {
         switch (weather) {
-            case CLEAR:
-                this.player.setPlayerWeather(WeatherType.CLEAR);
-                break;
-            case RAIN:
-                this.player.setPlayerWeather(WeatherType.DOWNFALL);
-                break;
-            case WORLD:
-                this.player.resetPlayerWeather();
-                break;
-            default:
+            case CLEAR -> this.player.setPlayerWeather(WeatherType.CLEAR);
+            case RAIN -> this.player.setPlayerWeather(WeatherType.DOWNFALL);
+            case WORLD -> this.player.resetPlayerWeather();
+            default -> {
                 //do nothing as this is PlotWeather.OFF
-                break;
-        }
-    }
-
-    @NotNull @Override public com.sk89q.worldedit.world.gamemode.GameMode getGameMode() {
-        switch (this.player.getGameMode()) {
-            case ADVENTURE:
-                return ADVENTURE;
-            case CREATIVE:
-                return CREATIVE;
-            case SPECTATOR:
-                return SPECTATOR;
-            case SURVIVAL:
-            default:
-                return SURVIVAL;
+            }
         }
     }
 
     @Override
-    public void setGameMode(@NotNull final com.sk89q.worldedit.world.gamemode.GameMode gameMode) {
+    public com.sk89q.worldedit.world.gamemode.GameMode getGameMode() {
+        return switch (this.player.getGameMode()) {
+            case ADVENTURE -> ADVENTURE;
+            case CREATIVE -> CREATIVE;
+            case SPECTATOR -> SPECTATOR;
+            default -> SURVIVAL;
+        };
+    }
+
+    @Override
+    public void setGameMode(final com.sk89q.worldedit.world.gamemode.GameMode gameMode) {
         if (ADVENTURE.equals(gameMode)) {
             this.player.setGameMode(GameMode.ADVENTURE);
         } else if (CREATIVE.equals(gameMode)) {
@@ -312,7 +296,8 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
     }
 
-    @Override public void setTime(final long time) {
+    @Override
+    public void setTime(final long time) {
         if (time != Long.MAX_VALUE) {
             this.player.setPlayerTime(time, false);
         } else {
@@ -320,44 +305,58 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
     }
 
-    @Override public boolean getFlight() {
+    @Override
+    public boolean getFlight() {
         return player.getAllowFlight();
     }
 
-    @Override public void setFlight(boolean fly) {
+    @Override
+    public void setFlight(boolean fly) {
         this.player.setAllowFlight(fly);
     }
 
-    @Override public void playMusic(@NotNull final Location location, @NotNull final ItemType id) {
+    @Override
+    public void playMusic(final @NonNull Location location, final @NonNull ItemType id) {
         if (id == ItemTypes.AIR) {
             // Let's just stop all the discs because why not?
             for (final Sound sound : Arrays.stream(Sound.values())
-                .filter(sound -> sound.name().contains("DISC")).collect(Collectors.toList())) {
+                    .filter(sound -> sound.name().contains("DISC")).toList()) {
                 player.stopSound(sound);
             }
             // this.player.playEffect(BukkitUtil.getLocation(location), Effect.RECORD_PLAY, Material.AIR);
         } else {
             // this.player.playEffect(BukkitUtil.getLocation(location), Effect.RECORD_PLAY, id.to(Material.class));
-            this.player.playSound(BukkitUtil.getLocation(location),
-                Sound.valueOf(BukkitAdapter.adapt(id).name()), Float.MAX_VALUE, 1f);
+            this.player.playSound(BukkitUtil.adapt(location),
+                    Sound.valueOf(BukkitAdapter.adapt(id).name()), Float.MAX_VALUE, 1f
+            );
         }
     }
 
-    @Override public void kick(final String message) {
+    @SuppressWarnings("deprecation") // Needed for Spigot compatibility
+    @Override
+    public void kick(final String message) {
         this.player.kickPlayer(message);
     }
 
-    @Override public void stopSpectating() {
+    @Override
+    public void stopSpectating() {
         if (getGameMode() == SPECTATOR) {
             this.player.setSpectatorTarget(null);
         }
     }
 
-    @Override public boolean isBanned() {
+    @Override
+    public boolean isBanned() {
         return this.player.isBanned();
     }
 
-    @Override public boolean canSee(final PlotPlayer<?> other) {
+    @Override
+    public @NonNull Audience getAudience() {
+        return BukkitUtil.BUKKIT_AUDIENCES.player(this.player);
+    }
+
+    @Override
+    public boolean canSee(final PlotPlayer<?> other) {
         if (other instanceof ConsolePlayer) {
             return true;
         } else {
@@ -365,14 +364,19 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
     }
 
-    public PlayerTeleportEvent.TeleportCause getTeleportCause(@NotNull final TeleportCause cause) {
-        switch (cause) {
-            case COMMAND:
-                return PlayerTeleportEvent.TeleportCause.COMMAND;
-            case PLUGIN:
-                return PlayerTeleportEvent.TeleportCause.PLUGIN;
-            default:
-                return PlayerTeleportEvent.TeleportCause.UNKNOWN;
+    /**
+     * Convert from PlotSquared's {@link TeleportCause} to Bukkit's {@link PlayerTeleportEvent.TeleportCause}
+     *
+     * @param cause PlotSquared teleport cause to convert
+     * @return Bukkit's equivalent teleport cause
+     */
+    public PlayerTeleportEvent.TeleportCause getTeleportCause(final @NonNull TeleportCause cause) {
+        if (TeleportCause.CauseSets.COMMAND.contains(cause)) {
+            return PlayerTeleportEvent.TeleportCause.COMMAND;
+        } else if (cause == TeleportCause.UNKNOWN) {
+            return PlayerTeleportEvent.TeleportCause.UNKNOWN;
         }
+        return PlayerTeleportEvent.TeleportCause.PLUGIN;
     }
+
 }

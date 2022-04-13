@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
@@ -32,6 +32,7 @@ import com.sk89q.worldedit.world.registry.LegacyMapper;
 import java.util.Locale;
 
 public final class ItemUtil {
+
     private ItemUtil() {
     }
 
@@ -46,16 +47,19 @@ public final class ItemUtil {
                 if (split.length == 2) {
                     if (MathMan.isInteger(split[1])) {
                         return LegacyMapper.getInstance()
-                            .getItemFromLegacy(Integer.parseInt(split[0]),
-                                Integer.parseInt(split[1]));
+                                .getItemFromLegacy(
+                                        Integer.parseInt(split[0]),
+                                        Integer.parseInt(split[1])
+                                );
                     }
                 } else {
                     return LegacyMapper.getInstance().getItemFromLegacy(Integer.parseInt(split[0]));
                 }
             }
         }
-        if (!input.split("\\[", 2)[0].contains(":"))
+        if (!input.split("\\[", 2)[0].contains(":")) {
             input = "minecraft:" + input;
+        }
         return ItemTypes.get(input);
     }
 
@@ -67,4 +71,5 @@ public final class ItemUtil {
         }
         return result;
     }
+
 }

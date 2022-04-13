@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,15 +21,13 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
 
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-import lombok.Getter;
-import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Event called when several merged plots are unlinked
@@ -37,10 +35,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class PlotUnlinkEvent extends PlotEvent implements CancellablePlotEvent {
 
-    @Getter private final PlotArea area;
-    @Getter @Setter boolean createRoad;
-    @Getter @Setter boolean createSign;
-    @Getter REASON reason;
+    private final PlotArea area;
+    boolean createRoad;
+    boolean createSign;
+    REASON reason;
     private Result eventResult = Result.ACCEPT;
 
     /**
@@ -52,8 +50,10 @@ public final class PlotUnlinkEvent extends PlotEvent implements CancellablePlotE
      * @param createSign Whether to regenerate signs
      * @param reason     The {@link REASON} for the unlink
      */
-    public PlotUnlinkEvent(@NotNull final PlotArea area, Plot plot, boolean createRoad,
-        boolean createSign, REASON reason) {
+    public PlotUnlinkEvent(
+            final @NonNull PlotArea area, Plot plot, boolean createRoad,
+            boolean createSign, REASON reason
+    ) {
         super(plot);
         this.area = area;
         this.createRoad = createRoad;
@@ -61,15 +61,46 @@ public final class PlotUnlinkEvent extends PlotEvent implements CancellablePlotE
         this.reason = reason;
     }
 
-    @Override public Result getEventResult() {
+    @Override
+    public Result getEventResult() {
         return eventResult;
     }
 
-    @Override public void setEventResult(Result e) {
+    @Override
+    public void setEventResult(Result e) {
         this.eventResult = e;
     }
 
-    public enum REASON {
-        NEW_OWNER, PLAYER_COMMAND, CLEAR, DELETE, EXPIRE_DELETE
+    public PlotArea getArea() {
+        return this.area;
     }
+
+    public boolean isCreateRoad() {
+        return this.createRoad;
+    }
+
+    public void setCreateRoad(boolean createRoad) {
+        this.createRoad = createRoad;
+    }
+
+    public boolean isCreateSign() {
+        return this.createSign;
+    }
+
+    public void setCreateSign(boolean createSign) {
+        this.createSign = createSign;
+    }
+
+    public REASON getReason() {
+        return this.reason;
+    }
+
+    public enum REASON {
+        NEW_OWNER,
+        PLAYER_COMMAND,
+        CLEAR,
+        DELETE,
+        EXPIRE_DELETE
+    }
+
 }

@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2021 IntellectualSites
+ *               Copyright (C) 2014 - 2022 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,14 +21,14 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.uuid;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,34 +57,40 @@ public class CacheUUIDService implements UUIDService, Consumer<List<UUIDMapping>
         this.uuidCache = CacheBuilder.newBuilder().maximumSize(size).build();
     }
 
-    @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
+    @Override
+    public @NonNull List<UUIDMapping> getNames(final @NonNull List<@NonNull UUID> uuids) {
         final List<UUIDMapping> mappings = new ArrayList<>(uuids.size());
         mappings.addAll(this.uuidCache.getAllPresent(uuids).values());
         return mappings;
     }
 
-    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull final List<String> usernames) {
+    @Override
+    public @NonNull List<UUIDMapping> getUUIDs(final @NonNull List<@NonNull String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
         mappings.addAll(this.usernameCache.getAllPresent(usernames).values());
         return mappings;
     }
 
-    @Override public void accept(final List<UUIDMapping> uuidMappings) {
+    @Override
+    public void accept(final @NonNull List<@NonNull UUIDMapping> uuidMappings) {
         for (final UUIDMapping mapping : uuidMappings) {
             this.uuidCache.put(mapping.getUuid(), mapping);
             this.usernameCache.put(mapping.getUsername(), mapping);
         }
     }
 
-    @Override @NotNull public Collection<UUIDMapping> getImmediately() {
+    @Override
+    public @NonNull Collection<@NonNull UUIDMapping> getImmediately() {
         return this.usernameCache.asMap().values();
     }
 
-    @Override public boolean canBeSynchronous() {
+    @Override
+    public boolean canBeSynchronous() {
         return true;
     }
 
-    @Override @Nullable public UUIDMapping getImmediately(@NotNull final Object object) {
+    @Override
+    public @Nullable UUIDMapping getImmediately(final @NonNull Object object) {
         final List<UUIDMapping> list;
         if (object instanceof String) {
             list = getUUIDs(Collections.singletonList((String) object));
