@@ -389,7 +389,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         if (!plot.isMerged(Direction.NORTH)) {
             int z = bot.getZ();
             for (int x = bot.getX(); x < top.getX(); x++) {
-                for (int y = classicPlotWorld.getMaxBuildHeight(); y <= classicPlotWorld.WALL_HEIGHT; y++) {
+                for (int y = classicPlotWorld.getMinBuildHeight(); y <= classicPlotWorld.WALL_HEIGHT; y++) {
                     queue.setBlock(x, y, z, blocks);
                 }
             }
