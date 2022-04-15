@@ -333,10 +333,9 @@ public final class PlotModificationManager {
             ids.add(current.getId());
         }
         this.plot.clearRatings();
-        QueueCoordinator queue = null;
+        QueueCoordinator queue = this.plot.getArea().getQueue();
         if (createSign) {
             this.removeSign();
-            queue = this.plot.getArea().getQueue();
         }
         PlotManager manager = this.plot.getArea().getPlotManager();
         if (createRoad) {
