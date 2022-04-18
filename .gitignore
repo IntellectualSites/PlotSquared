@@ -41,7 +41,8 @@ hs_err_pid*
 *.iml
 
 ## Directory-based project format:
-.idea/
+/.idea/*
+!/.idea/icon.svg
 # if you remove the above rule, at least ignore the following:
 
 # User-specific stuff:
@@ -73,9 +74,6 @@ hs_err_pid*
 
 # IntelliJ
 /out/
-
-# mpeltonen/sbt-idea plugin
-.idea_modules/
 
 # JIRA plugin
 atlassian-ide-plugin.xml
