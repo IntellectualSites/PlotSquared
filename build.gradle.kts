@@ -40,6 +40,9 @@ allprojects {
         maven {
             name = "Jitpack"
             url = uri("https://jitpack.io")
+            content {
+                includeModule("com.github.MilkBowl", "VaultAPI")
+            }
         }
 
         maven {

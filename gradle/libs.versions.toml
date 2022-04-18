@@ -33,7 +33,7 @@ arkitektonika = "2.1.1"
 paster = "1.1.4"
 bstats = "3.0.0"
 paperlib = "1.0.7"
-squirrelid = "0.3.0"
+squirrelid = "0.3.1"
 serverlib = "2.3.1"
 http4j = "1.3"
 
@@ -78,7 +78,7 @@ prtree = { group = "com.intellectualsites.prtree", name = "PRTree", version.ref 
 aopalliance = { group = "aopalliance", name = "aopalliance", version.ref = "aopalliance" }
 cloudServices = { group = "cloud.commandframework", name = "cloud-services", version.ref = "cloud-services" }
 mvdwapi = { group = "com.intellectualsites.mvdwplaceholderapi", name = "MVdWPlaceholderAPI", version.ref = "mvdwapi" }
-squirrelid = { group = "com.github.EngineHub", name = "SquirrelID", version.ref = "squirrelid" }
+squirrelid = { group = "org.enginehub", name = "squirrelid", version.ref = "squirrelid" }
 serverlib = { group = "dev.notmyfault.serverlib", name = "ServerLib", version.ref = "serverlib" }
 bstats = { group = "org.bstats", name = "bstats-bukkit", version.ref = "bstats" }
 paperlib = { group = "io.papermc", name = "paperlib", version.ref = "paperlib" }
