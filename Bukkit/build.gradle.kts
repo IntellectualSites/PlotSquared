@@ -83,7 +83,7 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("org.jetbrains", "com.plotsquared.core.annotations")
     relocate("org.intellij.lang", "com.plotsquared.core.intellij.annotations")
     relocate("javax.annotation", "com.plotsquared.core.annotation")
-    relocate("com.google.code.findbugs", "com.plotsquared.core.findbugs")
+    relocate("com.github.spotbugs", "com.plotsquared.core.spotbugs")
     relocate("javax.inject", "com.plotsquared.core.annotation.inject")
 
     // Get rid of all the libs which are 100% unused.
