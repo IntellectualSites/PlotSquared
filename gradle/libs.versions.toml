@@ -8,7 +8,7 @@ guava = "31.0.1-jre" # Version set by Minecraft
 paper = "1.18.1-R0.1-SNAPSHOT"
 checker-qual = "3.21.4"
 guice = "5.1.0"
-findbugs = "3.0.1"
+spotbugs = "4.6.0"
 snakeyaml = "1.30" # Version set by Bukkit
 
 # Adventure & MiniMessage
@@ -56,7 +56,7 @@ log4j = { group = "org.apache.logging.log4j", name = "log4j-api", version.ref = 
 snakeyaml = { group = "org.yaml", name = "snakeyaml", version.ref = "snakeyaml" }
 guice = { group = "com.google.inject", name = "guice", version.ref = "guice" }
 guiceassistedinject = { group = "com.google.inject.extensions", name = "guice-assistedinject", version.ref = "guice" }
-findbugs = { group = "com.google.code.findbugs", name = "annotations", version.ref = "findbugs" }
+spotbugs = { group = "com.github.spotbugs", name = "spotbugs-annotations", version.ref = "spotbugs" }
 
 # Adventure & MiniMessage
 adventure = { group = "net.kyori", name = "adventure-api", version.ref = "adventure-api" }
