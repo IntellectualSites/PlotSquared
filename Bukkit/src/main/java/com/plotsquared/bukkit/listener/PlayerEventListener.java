@@ -76,7 +76,6 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PremiumVerification;
-import com.plotsquared.core.util.RegExUtil;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
@@ -223,10 +222,9 @@ public class PlayerEventListener extends PlotListener implements Listener {
         }
     }
 
-    @SuppressWarnings("StringSplitter")
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void playerCommand(PlayerCommandPreprocessEvent event) {
-        String msg = event.getMessage().toLowerCase().replaceAll("/", "").trim();
+        String msg = event.getMessage().replace("/", "").toLowerCase(Locale.ROOT).trim();
         if (msg.isEmpty()) {
             return;
         }
@@ -240,11 +238,9 @@ public class PlayerEventListener extends PlotListener implements Listener {
         String[] parts = msg.split(" ");
         Plot plot = plotPlayer.getCurrentPlot();
         // Check WorldEdit
-        switch (parts[0].toLowerCase()) {
+        switch (parts[0]) {
             case "up":
-            case "/up":
             case "worldedit:up":
-            case "worldedit:/up":
                 if (plot == null || (!plot.isAdded(plotPlayer.getUUID()) && !Permissions
                         .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_OTHER, true))) {
                     event.setCancelled(true);
@@ -258,63 +254,67 @@ public class PlayerEventListener extends PlotListener implements Listener {
         List<String> blockedCommands = plot != null ?
                 plot.getFlag(BlockedCmdsFlag.class) :
                 area.getFlag(BlockedCmdsFlag.class);
-        if (!blockedCommands.isEmpty() && !Permissions
-                .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS)) {
-            String part = parts[0];
-            if (parts[0].contains(":")) {
-                part = parts[0].split(":")[1];
-                msg = msg.replace(parts[0].split(":")[0] + ':', "");
-            }
-            String s1 = part;
-            List<String> aliases = new ArrayList<>();
-            for (HelpTopic cmdLabel : Bukkit.getServer().getHelpMap().getHelpTopics()) {
-                if (part.equals(cmdLabel.getName())) {
-                    break;
-                }
-                String label = cmdLabel.getName().replaceFirst("/", "");
-                if (aliases.contains(label)) {
-                    continue;
-                }
-                PluginCommand p;
-                if ((p = Bukkit.getPluginCommand(label)) != null) {
-                    for (String a : p.getAliases()) {
-                        if (aliases.contains(a)) {
-                            continue;
-                        }
-                        aliases.add(a);
-                        a = a.replaceFirst("/", "");
-                        if (!a.equals(label) && a.equals(part)) {
-                            part = label;
-                            break;
-                        }
-                    }
-                }
-            }
-            if (!s1.equals(part)) {
-                msg = msg.replace(s1, part);
-            }
-            for (String s : blockedCommands) {
-                Pattern pattern;
-                if (!RegExUtil.compiledPatterns.containsKey(s)) {
-                    RegExUtil.compiledPatterns.put(s, pattern = Pattern.compile(s));
+        if (blockedCommands.isEmpty()) {
+            return;
+        }
+        if (Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS)) {
+            return;
+        }
+        // When using namespaced commands, we're not interested in the namespace
+        String part = parts[0];
+        if (part.contains(":")) {
+            String[] namespaced = part.split(":");
+            part = namespaced[1];
+            msg = msg.substring(namespaced[0].length() + 1);
+        }
+        msg = replaceAliases(msg, part);
+        for (String blocked : blockedCommands) {
+            if (blocked.equalsIgnoreCase(msg)) {
+                String perm;
+                if (plot != null && plot.isAdded(plotPlayer.getUUID())) {
+                    perm = "plots.admin.command.blocked-cmds.shared";
                 } else {
-                    pattern = RegExUtil.compiledPatterns.get(s);
+                    perm = "plots.admin.command.blocked-cmds.road";
                 }
-                if (pattern.matcher(msg).matches()) {
-                    String perm;
-                    if (plot != null && plot.isAdded(plotPlayer.getUUID())) {
-                        perm = "plots.admin.command.blocked-cmds.shared";
-                    } else {
-                        perm = "plots.admin.command.blocked-cmds.road";
+                if (!Permissions.hasPermission(plotPlayer, perm)) {
+                    plotPlayer.sendMessage(TranslatableCaption.of("blockedcmds.command_blocked"));
+                    event.setCancelled(true);
+                }
+                return;
+            }
+        }
+    }
+
+    private String replaceAliases(String msg, String part) {
+        String s1 = part;
+        Set<String> aliases = new HashSet<>();
+        for (HelpTopic cmdLabel : Bukkit.getServer().getHelpMap().getHelpTopics()) {
+            if (part.equals(cmdLabel.getName())) {
+                break;
+            }
+            String label = cmdLabel.getName().replaceFirst("/", "");
+            if (aliases.contains(label)) {
+                continue;
+            }
+            PluginCommand p = Bukkit.getPluginCommand(label);
+            if (p != null) {
+                for (String a : p.getAliases()) {
+                    if (aliases.contains(a)) {
+                        continue;
                     }
-                    if (!Permissions.hasPermission(plotPlayer, perm)) {
-                        plotPlayer.sendMessage(TranslatableCaption.of("blockedcmds.command_blocked"));
-                        event.setCancelled(true);
+                    aliases.add(a);
+                    a = a.replaceFirst("/", "");
+                    if (!a.equals(label) && a.equals(part)) {
+                        part = label;
+                        break;
                     }
-                    return;
                 }
             }
         }
+        if (!s1.equals(part)) {
+            msg = msg.replace(s1, part);
+        }
+        return msg;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

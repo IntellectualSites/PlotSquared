@@ -22,7 +22,7 @@ dependencies {
     api(libs.guiceassistedinject) {
         exclude("com.google.inject", "guice")
     }
-    api(libs.findbugs)
+    api(libs.spotbugs)
 
     // Plugins
     compileOnly(libs.worldeditCore) {

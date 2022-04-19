@@ -83,7 +83,7 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("org.jetbrains", "com.plotsquared.core.annotations.jetbrains.annotation")
     relocate("org.intellij.lang", "com.plotsquared.core.annotations.intellij.annotations")
     relocate("javax.annotation", "com.plotsquared.core.annotations.javax.annotation")
-    relocate("com.google.code.findbugs", "com.plotsquared.core.annotations.jsr305")
+    relocate("com.github.spotbugs", "com.plotsquared.core.spotbugs")
     relocate("javax.inject", "com.plotsquared.core.annotations.javax.inject")
     relocate("net.jcip", "com.plotsquared.core.annotations.jcip")
     relocate("edu.umd.cs.findbugs", "com.plotsquared.core.annotations.findbugs")

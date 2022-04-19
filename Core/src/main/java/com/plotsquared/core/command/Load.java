@@ -40,6 +40,7 @@ import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SchematicHandler;
+import com.plotsquared.core.util.TimeUtil;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
@@ -205,7 +206,7 @@ public class Load extends SubCommand {
                     if (split.length < 5) {
                         continue;
                     }
-                    String time = secToTime((System.currentTimeMillis() / 1000) - Long.parseLong(split[0]));
+                    String time = TimeUtil.secToTime((System.currentTimeMillis() / 1000) - Long.parseLong(split[0]));
                     String world = split[1];
                     PlotId id = PlotId.fromString(split[2] + ';' + split[3]);
                     String size = split[4];
@@ -223,6 +224,10 @@ public class Load extends SubCommand {
         }
     }
 
+    /**
+     * @deprecated Use {@link TimeUtil#secToTime(long)}
+     */
+    @Deprecated(forRemoval = true, since = "6.6.2")
     public String secToTime(long time) {
         StringBuilder toreturn = new StringBuilder();
         if (time >= 33868800) {

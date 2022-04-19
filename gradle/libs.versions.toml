@@ -6,9 +6,9 @@ guava = "31.0.1-jre" # Version set by Minecraft
 
 # Platform expectations
 paper = "1.18.1-R0.1-SNAPSHOT"
-checker-qual = "3.21.3"
+checker-qual = "3.21.4"
 guice = "5.1.0"
-findbugs = "3.0.1"
+spotbugs = "4.6.0"
 snakeyaml = "1.30" # Version set by Bukkit
 
 # Adventure & MiniMessage
@@ -17,8 +17,8 @@ adventure-text-minimessage = "4.1.0-SNAPSHOT"
 adventure-platform-bukkit = "4.0.1"
 
 # Plugins
-worldedit = "7.2.9"
-fawe = "2.1.0"
+worldedit = "7.2.10"
+fawe = "2.1.1"
 vault = "1.7.1"
 placeholderapi = "2.11.1"
 luckperms = "5.4"
@@ -33,7 +33,7 @@ arkitektonika = "2.1.1"
 paster = "1.1.4"
 bstats = "3.0.0"
 paperlib = "1.0.7"
-squirrelid = "0.3.0"
+squirrelid = "0.3.1"
 serverlib = "2.3.1"
 http4j = "1.3"
 
@@ -56,7 +56,7 @@ log4j = { group = "org.apache.logging.log4j", name = "log4j-api", version.ref = 
 snakeyaml = { group = "org.yaml", name = "snakeyaml", version.ref = "snakeyaml" }
 guice = { group = "com.google.inject", name = "guice", version.ref = "guice" }
 guiceassistedinject = { group = "com.google.inject.extensions", name = "guice-assistedinject", version.ref = "guice" }
-findbugs = { group = "com.google.code.findbugs", name = "annotations", version.ref = "findbugs" }
+spotbugs = { group = "com.github.spotbugs", name = "spotbugs-annotations", version.ref = "spotbugs" }
 
 # Adventure & MiniMessage
 adventure = { group = "net.kyori", name = "adventure-api", version.ref = "adventure-api" }
@@ -78,7 +78,7 @@ prtree = { group = "com.intellectualsites.prtree", name = "PRTree", version.ref 
 aopalliance = { group = "aopalliance", name = "aopalliance", version.ref = "aopalliance" }
 cloudServices = { group = "cloud.commandframework", name = "cloud-services", version.ref = "cloud-services" }
 mvdwapi = { group = "com.intellectualsites.mvdwplaceholderapi", name = "MVdWPlaceholderAPI", version.ref = "mvdwapi" }
-squirrelid = { group = "com.github.EngineHub", name = "SquirrelID", version.ref = "squirrelid" }
+squirrelid = { group = "org.enginehub", name = "squirrelid", version.ref = "squirrelid" }
 serverlib = { group = "dev.notmyfault.serverlib", name = "ServerLib", version.ref = "serverlib" }
 bstats = { group = "org.bstats", name = "bstats-bukkit", version.ref = "bstats" }
 paperlib = { group = "io.papermc", name = "paperlib", version.ref = "paperlib" }

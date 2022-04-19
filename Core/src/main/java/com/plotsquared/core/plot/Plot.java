@@ -1465,7 +1465,7 @@ public class Plot {
                     .at(
                             bottom.getWorldName(),
                             bottom.getX() + home.getX(),
-                            bottom.getY() + home.getY(),
+                            home.getY(), // y is absolute
                             bottom.getZ() + home.getZ(),
                             home.getYaw(),
                             home.getPitch()

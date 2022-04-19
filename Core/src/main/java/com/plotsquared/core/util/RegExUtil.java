@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+@Deprecated(since = "6.6.2", forRemoval = true)
 public class RegExUtil {
 
     public static Map<String, Pattern> compiledPatterns;
