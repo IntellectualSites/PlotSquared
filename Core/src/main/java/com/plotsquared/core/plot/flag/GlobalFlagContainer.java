@@ -93,6 +93,7 @@ import com.plotsquared.core.plot.flag.implementations.PlayerInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.PlotTitleFlag;
 import com.plotsquared.core.plot.flag.implementations.PreventCreativeCopyFlag;
 import com.plotsquared.core.plot.flag.implementations.PriceFlag;
+import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
 import com.plotsquared.core.plot.flag.implementations.PveFlag;
 import com.plotsquared.core.plot.flag.implementations.PvpFlag;
 import com.plotsquared.core.plot.flag.implementations.RedstoneFlag;
@@ -198,6 +199,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(VehicleUseFlag.VEHICLE_USE_FALSE);
         this.addFlag(VillagerInteractFlag.VILLAGER_INTERACT_FALSE);
         this.addFlag(VineGrowFlag.VINE_GROW_TRUE);
+        this.addFlag(ProjectilesFlag.PROJECTILES_FALSE);
 
         // Double flags
         this.addFlag(PriceFlag.PRICE_NOT_BUYABLE);
