@@ -249,6 +249,8 @@ public class Settings extends Config {
         public static int UUID_CACHE_SIZE = 100000;
         @Comment("Rate limit (per 10 minutes) for background UUID fetching from the Mojang API")
         public static int BACKGROUND_LIMIT = 200;
+        @Comment("Whether the Mojang API service is enabled for inpromto (requires restart)")
+        public static boolean IMPROMPTU_SERVICE_MOJANG_API = true;
         @Comment("Rate limit (per 10 minutes) for random UUID fetching from the Mojang API")
         public static int IMPROMPTU_LIMIT = 300;
         @Comment("Timeout (in milliseconds) for non-blocking UUID requests (mostly commands)")
