@@ -420,7 +420,7 @@ public class ListCmd extends SubCommand {
                 Caption color;
                 if (plot.getOwner() == null) {
                     color = TranslatableCaption.of("info.plot_list_no_owner");
-                } else if (plot.isOwner(player.getUUID())) {
+                } else if (plot.isOwner(player.getUUID()) || plot.getOwner().equals(DBFunc.EVERYONE)) {
                     color = TranslatableCaption.of("info.plot_list_owned_by");
                 } else if (plot.isAdded(player.getUUID())) {
                     color = TranslatableCaption.of("info.plot_list_added_to");
