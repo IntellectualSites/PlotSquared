@@ -32,6 +32,7 @@ import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.CaptionHolder;
 import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -39,6 +40,7 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.PriceFlag;
+import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.MathMan;
@@ -456,6 +458,9 @@ public class ListCmd extends SubCommand {
                 String prefix = "";
                 String online = TranslatableCaption.of("info.plot_list_player_online").getComponent(player);
                 String offline = TranslatableCaption.of("info.plot_list_player_offline").getComponent(player);
+                String unknown = TranslatableCaption.of("info.plot_list_player_unknown").getComponent(player);
+                String server = TranslatableCaption.of("info.plot_list_player_server").getComponent(player);
+                String everyone = TranslatableCaption.of("info.plot_list_player_everyone").getComponent(player);
                 TextComponent.Builder builder = Component.text();
                 try {
                     final List<UUIDMapping> names = PlotSquared.get().getImpromptuUUIDPipeline().getNames(plot.getOwners())
@@ -466,6 +471,24 @@ public class ListCmd extends SubCommand {
                         Template playerTemplate = Template.of("player", uuidMapping.getUsername());
                         if (pp != null) {
                             builder.append(MINI_MESSAGE.parse(online, prefixTemplate, playerTemplate));
+                        } else if (plot.getFlag(ServerPlotFlag.class)) {
+                            Template serverTemplate = Template.of(
+                                    "player",
+                                    TranslatableCaption.of("info.server").getComponent(player)
+                            );
+                            builder.append(MINI_MESSAGE.parse(server, serverTemplate));
+                        } else if (uuidMapping.getUsername().equalsIgnoreCase("unknown")) {
+                            Template unknownTemplate = Template.of(
+                                    "player",
+                                    TranslatableCaption.of("info.unknown").getComponent(player)
+                            );
+                            builder.append(MINI_MESSAGE.parse(unknown, unknownTemplate));
+                        } else if (uuidMapping.getUuid().equals(DBFunc.EVERYONE)) {
+                            Template everyoneTemplate = Template.of(
+                                    "player",
+                                    TranslatableCaption.of("info.everyone").getComponent(player)
+                            );
+                            builder.append(MINI_MESSAGE.parse(everyone, everyoneTemplate));
                         } else {
                             builder.append(MINI_MESSAGE.parse(offline, prefixTemplate, playerTemplate));
                         }
