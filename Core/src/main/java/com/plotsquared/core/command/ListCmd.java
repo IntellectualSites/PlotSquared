@@ -462,54 +462,62 @@ public class ListCmd extends SubCommand {
                 String server = TranslatableCaption.of("info.plot_list_player_server").getComponent(player);
                 String everyone = TranslatableCaption.of("info.plot_list_player_everyone").getComponent(player);
                 TextComponent.Builder builder = Component.text();
-                try {
-                    final List<UUIDMapping> names = PlotSquared.get().getImpromptuUUIDPipeline().getNames(plot.getOwners())
-                            .get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS);
-                    for (final UUIDMapping uuidMapping : names) {
-                        PlotPlayer<?> pp = PlotSquared.platform().playerManager().getPlayerIfExists(uuidMapping.getUuid());
-                        Template prefixTemplate = Template.of("prefix", prefix);
-                        Template playerTemplate = Template.of("player", uuidMapping.getUsername());
-                        if (pp != null) {
-                            builder.append(MINI_MESSAGE.parse(online, prefixTemplate, playerTemplate));
-                        } else if (plot.getFlag(ServerPlotFlag.class)) {
-                            Template serverTemplate = Template.of(
-                                    "player",
-                                    TranslatableCaption.of("info.server").getComponent(player)
-                            );
-                            builder.append(MINI_MESSAGE.parse(server, serverTemplate));
-                        } else if (uuidMapping.getUsername().equalsIgnoreCase("unknown")) {
-                            Template unknownTemplate = Template.of(
-                                    "player",
-                                    TranslatableCaption.of("info.unknown").getComponent(player)
-                            );
-                            builder.append(MINI_MESSAGE.parse(unknown, unknownTemplate));
-                        } else if (uuidMapping.getUuid().equals(DBFunc.EVERYONE)) {
-                            Template everyoneTemplate = Template.of(
-                                    "player",
-                                    TranslatableCaption.of("info.everyone").getComponent(player)
-                            );
-                            builder.append(MINI_MESSAGE.parse(everyone, everyoneTemplate));
-                        } else {
-                            builder.append(MINI_MESSAGE.parse(offline, prefixTemplate, playerTemplate));
-                        }
-                        prefix = ", ";
-                    }
-                } catch (InterruptedException | ExecutionException e) {
-                    final StringBuilder playerBuilder = new StringBuilder();
-                    final Iterator<UUID> uuidIterator = plot.getOwners().iterator();
-                    while (uuidIterator.hasNext()) {
-                        final UUID uuid = uuidIterator.next();
-                        playerBuilder.append(uuid);
-                        if (uuidIterator.hasNext()) {
-                            playerBuilder.append(", ");
-                        }
-                    }
-                    player.sendMessage(
-                            TranslatableCaption.of("errors.invalid_player"),
-                            Templates.of("value", playerBuilder.toString())
+                if (plot.getFlag(ServerPlotFlag.class)) {
+                    Template serverTemplate = Template.of(
+                            "player",
+                            TranslatableCaption.of("info.server").getComponent(player)
                     );
-                } catch (TimeoutException e) {
-                    player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
+                    builder.append(MINI_MESSAGE.parse(server, serverTemplate));
+                } else {
+                    try {
+                        final List<UUIDMapping> names = PlotSquared.get().getImpromptuUUIDPipeline().getNames(plot.getOwners())
+                                .get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS);
+                        for (final UUIDMapping uuidMapping : names) {
+                            PlotPlayer<?> pp = PlotSquared.platform().playerManager().getPlayerIfExists(uuidMapping.getUuid());
+                            Template prefixTemplate = Template.of("prefix", prefix);
+                            Template playerTemplate = Template.of("player", uuidMapping.getUsername());
+                            if (pp != null) {
+                                builder.append(MINI_MESSAGE.parse(online, prefixTemplate, playerTemplate));
+                            } else if (plot.getFlag(ServerPlotFlag.class)) {
+                                Template serverTemplate = Template.of(
+                                        "player",
+                                        TranslatableCaption.of("info.server").getComponent(player)
+                                );
+                                builder.append(MINI_MESSAGE.parse(server, serverTemplate));
+                            } else if (uuidMapping.getUsername().equalsIgnoreCase("unknown")) {
+                                Template unknownTemplate = Template.of(
+                                        "player",
+                                        TranslatableCaption.of("info.unknown").getComponent(player)
+                                );
+                                builder.append(MINI_MESSAGE.parse(unknown, unknownTemplate));
+                            } else if (uuidMapping.getUuid().equals(DBFunc.EVERYONE)) {
+                                Template everyoneTemplate = Template.of(
+                                        "player",
+                                        TranslatableCaption.of("info.everyone").getComponent(player)
+                                );
+                                builder.append(MINI_MESSAGE.parse(everyone, everyoneTemplate));
+                            } else {
+                                builder.append(MINI_MESSAGE.parse(offline, prefixTemplate, playerTemplate));
+                            }
+                            prefix = ", ";
+                        }
+                    } catch (InterruptedException | ExecutionException e) {
+                        final StringBuilder playerBuilder = new StringBuilder();
+                        final Iterator<UUID> uuidIterator = plot.getOwners().iterator();
+                        while (uuidIterator.hasNext()) {
+                            final UUID uuid = uuidIterator.next();
+                            playerBuilder.append(uuid);
+                            if (uuidIterator.hasNext()) {
+                                playerBuilder.append(", ");
+                            }
+                        }
+                        player.sendMessage(
+                                TranslatableCaption.of("errors.invalid_player"),
+                                Templates.of("value", playerBuilder.toString())
+                        );
+                    } catch (TimeoutException e) {
+                        player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
+                    }
                 }
                 Template players = Template.of("players", builder.asComponent());
                 caption.set(TranslatableCaption.of("info.plot_list_item"));
