@@ -409,10 +409,23 @@ public abstract class RegionManager {
     ) {
         final QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(area.getWorldName()));
         queue.addReadChunks(region.getChunks());
+        final BlockVector3 regionMin = region.getMinimumPoint();
+        final BlockVector3 regionMax = region.getMaximumPoint();
         queue.setChunkConsumer(blockVector2 -> {
+            BlockVector3 chunkMin = BlockVector3.at(
+                    Math.max(blockVector2.getX() << 4, regionMin.getBlockX()),
+                    regionMin.getBlockY(),
+                    Math.max(blockVector2.getZ() << 4, regionMin.getBlockZ())
+            );
+            BlockVector3 chunkMax = BlockVector3.at(
+                    Math.min((blockVector2.getX() << 4) + 15, regionMax.getBlockX()),
+                    regionMax.getBlockY(),
+                    Math.min((blockVector2.getZ() << 4) + 15, regionMax.getBlockZ())
+            );
+            CuboidRegion chunkRegion = new CuboidRegion(region.getWorld(), chunkMin, chunkMax);
             WorldUtil.setBiome(
                     area.getWorldName(),
-                    region,
+                    chunkRegion,
                     biome
             );
             worldUtil.refreshChunk(blockVector2.getBlockX(), blockVector2.getBlockZ(), area.getWorldName());
