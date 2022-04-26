@@ -411,16 +411,16 @@ public abstract class RegionManager {
         queue.addReadChunks(region.getChunks());
         final BlockVector3 regionMin = region.getMinimumPoint();
         final BlockVector3 regionMax = region.getMaximumPoint();
-        queue.setChunkConsumer(blockVector2 -> {
+        queue.setChunkConsumer(chunkPos -> {
             BlockVector3 chunkMin = BlockVector3.at(
-                    Math.max(blockVector2.getX() << 4, regionMin.getBlockX()),
+                    Math.max(chunkPos.getX() << 4, regionMin.getBlockX()),
                     regionMin.getBlockY(),
-                    Math.max(blockVector2.getZ() << 4, regionMin.getBlockZ())
+                    Math.max(chunkPos.getZ() << 4, regionMin.getBlockZ())
             );
             BlockVector3 chunkMax = BlockVector3.at(
-                    Math.min((blockVector2.getX() << 4) + 15, regionMax.getBlockX()),
+                    Math.min((chunkPos.getX() << 4) + 15, regionMax.getBlockX()),
                     regionMax.getBlockY(),
-                    Math.min((blockVector2.getZ() << 4) + 15, regionMax.getBlockZ())
+                    Math.min((chunkPos.getZ() << 4) + 15, regionMax.getBlockZ())
             );
             CuboidRegion chunkRegion = new CuboidRegion(region.getWorld(), chunkMin, chunkMax);
             WorldUtil.setBiome(
@@ -428,7 +428,7 @@ public abstract class RegionManager {
                     chunkRegion,
                     biome
             );
-            worldUtil.refreshChunk(blockVector2.getBlockX(), blockVector2.getBlockZ(), area.getWorldName());
+            worldUtil.refreshChunk(chunkPos.getBlockX(), chunkPos.getBlockZ(), area.getWorldName());
         });
         queue.setCompleteTask(whenDone);
         queue.enqueue();
