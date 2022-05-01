@@ -464,7 +464,7 @@ public class ListCmd extends SubCommand {
                 TextComponent.Builder builder = Component.text();
                 if (plot.getFlag(ServerPlotFlag.class)) {
                     Template serverTemplate = Template.of(
-                            "player",
+                            "info.server",
                             TranslatableCaption.of("info.server").getComponent(player)
                     );
                     builder.append(MINI_MESSAGE.parse(server, serverTemplate));
@@ -480,13 +480,13 @@ public class ListCmd extends SubCommand {
                                 builder.append(MINI_MESSAGE.parse(online, prefixTemplate, playerTemplate));
                             } else if (uuidMapping.getUsername().equalsIgnoreCase("unknown")) {
                                 Template unknownTemplate = Template.of(
-                                        "player",
+                                        "info.unknown",
                                         TranslatableCaption.of("info.unknown").getComponent(player)
                                 );
                                 builder.append(MINI_MESSAGE.parse(unknown, unknownTemplate));
                             } else if (uuidMapping.getUuid().equals(DBFunc.EVERYONE)) {
                                 Template everyoneTemplate = Template.of(
-                                        "player",
+                                        "info.everyone",
                                         TranslatableCaption.of("info.everyone").getComponent(player)
                                 );
                                 builder.append(MINI_MESSAGE.parse(everyone, everyoneTemplate));
