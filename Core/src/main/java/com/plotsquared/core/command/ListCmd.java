@@ -478,12 +478,6 @@ public class ListCmd extends SubCommand {
                             Template playerTemplate = Template.of("player", uuidMapping.getUsername());
                             if (pp != null) {
                                 builder.append(MINI_MESSAGE.parse(online, prefixTemplate, playerTemplate));
-                            } else if (plot.getFlag(ServerPlotFlag.class)) {
-                                Template serverTemplate = Template.of(
-                                        "player",
-                                        TranslatableCaption.of("info.server").getComponent(player)
-                                );
-                                builder.append(MINI_MESSAGE.parse(server, serverTemplate));
                             } else if (uuidMapping.getUsername().equalsIgnoreCase("unknown")) {
                                 Template unknownTemplate = Template.of(
                                         "player",
