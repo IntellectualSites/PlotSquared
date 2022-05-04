@@ -35,6 +35,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotHandler;
+import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.Permissions;
 import net.kyori.adventure.text.minimessage.Template;
@@ -128,13 +129,15 @@ public class ProjectileEventListener implements Listener {
                 event.setCancelled(true);
             }
         } else if (!plot.isAdded(pp.getUUID())) {
-            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
-                pp.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER))
-                );
-                entity.remove();
-                event.setCancelled(true);
+            if (!plot.getFlag(ProjectilesFlag.class)) {
+                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
+                    pp.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER))
+                    );
+                    entity.remove();
+                    event.setCancelled(true);
+                }
             }
         }
     }
@@ -162,7 +165,7 @@ public class ProjectileEventListener implements Listener {
                 return;
             }
             if (plot.isAdded(pp.getUUID()) || Permissions
-                    .hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
+                    .hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_OTHER) || plot.getFlag(ProjectilesFlag.class)) {
                 return;
             }
             entity.remove();
