@@ -18,7 +18,7 @@ plugins {
     idea
 }
 
-version = "6.6.4-SNAPSHOT"
+version = "6.7.1-SNAPSHOT"
 
 allprojects {
     group = "com.plotsquared"
@@ -140,7 +140,7 @@ allprojects {
                         }
                         developer {
                             id.set("NotMyFault")
-                            name.set("NotMyFault")
+                            name.set("Alexander Brandes")
                             organization.set("IntellectualSites")
                             email.set("contact@notmyfault.dev")
                         }
