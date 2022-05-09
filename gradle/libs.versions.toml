@@ -36,6 +36,7 @@ paperlib = "1.0.7"
 squirrelid = "0.3.1"
 serverlib = "2.3.1"
 http4j = "1.3"
+record-builder-processor = "33"
 
 # Gradle plugins
 shadow = "7.1.2"
@@ -86,6 +87,7 @@ arkitektonika = { group = "com.intellectualsites.arkitektonika", name = "Arkitek
 http4j = { group = "com.intellectualsites.http", name = "HTTP4J", version.ref = "http4j" }
 paster = { group = "com.intellectualsites.paster", name = "Paster", version.ref = "paster" }
 guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
+recordBuilderProcessor = { group = "io.soabase.record-builder", name = "record-builder-processor", version.ref = "record-builder-processor" }
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }

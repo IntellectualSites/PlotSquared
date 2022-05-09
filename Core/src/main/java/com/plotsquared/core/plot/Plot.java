@@ -290,14 +290,14 @@ public class Plot {
      * @param area      the plot's PlotArea
      * @param merged    an array giving merged plots
      * @param timestamp when the plot was created
-     * @param temp      value representing whatever DBManager needs to to. Do not touch tbh.
+     * @param temp      value representing whatever DBManager needs it to. Do not touch tbh.
      */
     public Plot(
             @NonNull PlotId id,
             UUID owner,
-            HashSet<UUID> trusted,
-            HashSet<UUID> members,
-            HashSet<UUID> denied,
+            Set<UUID> trusted,
+            Set<UUID> members,
+            Set<UUID> denied,
             String alias,
             BlockLoc position,
             Collection<PlotFlag<?, ?>> flags,
@@ -310,9 +310,9 @@ public class Plot {
         this.area = area;
         this.owner = owner;
         this.settings = new PlotSettings();
-        this.members = members;
-        this.trusted = trusted;
-        this.denied = denied;
+        this.members = new HashSet<>(members);
+        this.trusted = new HashSet<>(trusted);
+        this.denied = new HashSet<>(denied);
         this.settings.setAlias(alias);
         this.settings.setPosition(position);
         this.settings.setMerged(merged);
@@ -321,9 +321,7 @@ public class Plot {
         if (area != null) {
             this.flagContainer.setParentContainer(area.getFlagContainer());
             if (flags != null) {
-                for (PlotFlag<?, ?> flag : flags) {
-                    this.flagContainer.addFlag(flag);
-                }
+                flags.forEach(this.flagContainer::addFlag);
             }
         }
         PlotSquared.platform().injector().injectMembers(this);
