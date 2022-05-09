@@ -8,7 +8,7 @@ guava = "31.0.1-jre" # Version set by Minecraft
 paper = "1.18.1-R0.1-SNAPSHOT"
 checker-qual = "3.22.0"
 guice = "5.1.0"
-spotbugs = "4.6.0"
+spotbugs = "4.7.0"
 snakeyaml = "1.30" # Version set by Bukkit
 
 # Adventure & MiniMessage
