@@ -47,7 +47,9 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockCategory;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -130,7 +132,7 @@ public class Set extends SubCommand {
                             }
                             player.sendMessage(
                                     TranslatableCaption.of("invalid.component_illegal_block"),
-                                    Template.of("value", forbiddenType)
+                                    TagResolver.resolver("value", Tag.inserting(Component.text(forbiddenType)))
                             );
                             return true;
                         }
@@ -142,7 +144,10 @@ public class Set extends SubCommand {
                         if (!Permissions.hasPermission(player, Permission.PERMISSION_SET_COMPONENT.format(component))) {
                             player.sendMessage(
                                     TranslatableCaption.of("permission.no_permission"),
-                                    Template.of("node", Permission.PERMISSION_SET_COMPONENT.format(component))
+                                    TagResolver.resolver(
+                                            "node",
+                                            Tag.inserting(Component.text(Permission.PERMISSION_SET_COMPONENT.format(component)))
+                                    )
                             );
                             return false;
                         }
@@ -165,7 +170,7 @@ public class Set extends SubCommand {
                                 plot.removeRunning();
                                 player.sendMessage(
                                         TranslatableCaption.of("working.component_complete"),
-                                        Template.of("plot", plot.getId().toString())
+                                        TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
                                 );
                             });
                             if (Settings.QUEUE.NOTIFY_PROGRESS) {

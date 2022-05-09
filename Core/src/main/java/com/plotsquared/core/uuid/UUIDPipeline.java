@@ -352,7 +352,7 @@ public class UUIDPipeline {
                 for (final UUID uuid : remainingRequests) {
                     mappings.add(new UUIDMapping(
                             uuid,
-                            MINI_MESSAGE.stripTokens(TranslatableCaption
+                            MINI_MESSAGE.escapeTags(TranslatableCaption
                                     .of("info.unknown")
                                     .getComponent(ConsolePlayer.getConsole()))
                     ));

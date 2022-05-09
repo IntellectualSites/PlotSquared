@@ -28,7 +28,6 @@ package com.plotsquared.core.command;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.permissions.Permission;
@@ -45,7 +44,9 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -107,8 +108,10 @@ public class Visit extends Command {
         } else if (plots.size() < page || page < 1) {
             player.sendMessage(
                     TranslatableCaption.of("invalid.number_not_in_range"),
-                    Template.of("min", "1"),
-                    Template.of("max", String.valueOf(plots.size()))
+                    TagResolver.builder()
+                            .tag("min", Tag.inserting(Component.text(1)))
+                            .tag("max", Tag.inserting(Component.text(plots.size())))
+                            .build()
             );
             return;
         }
@@ -118,7 +121,7 @@ public class Visit extends Command {
             if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_UNOWNED)) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Templates.of("node", "plots.visit.unowned")
+                        TagResolver.resolver("node", Tag.inserting(Component.text("plots.visit.unowned")))
                 );
                 return;
             }
@@ -127,7 +130,7 @@ public class Visit extends Command {
                     .hasPermission(player, Permission.PERMISSION_HOME)) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Templates.of("node", "plots.visit.owned")
+                        TagResolver.resolver("node", Tag.inserting(Component.text("plots.visit.owned")))
                 );
                 return;
             }
@@ -135,7 +138,7 @@ public class Visit extends Command {
             if (!Permissions.hasPermission(player, Permission.PERMISSION_SHARED)) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Templates.of("node", "plots.visit.shared")
+                        TagResolver.resolver("node", Tag.inserting(Component.text("plots.visit.shared")))
                 );
                 return;
             }
@@ -143,10 +146,10 @@ public class Visit extends Command {
             // allow visit, if UntrustedVisit flag is set, or if the player has either the plot.visit.other or
             // plot.admin.visit.untrusted permission
             if (!plot.getFlag(UntrustedVisitFlag.class) && !Permissions.hasPermission(player, Permission.PERMISSION_VISIT_OTHER)
-                && !Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
+                    && !Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Templates.of("node", "plots.visit.other")
+                        TagResolver.resolver("node", Tag.inserting(Component.text("plots.visit.other")))
                 );
                 return;
             }
@@ -154,7 +157,10 @@ public class Visit extends Command {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_DENIED)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_VISIT_DENIED))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_VISIT_DENIED)
+                            )
                     );
                     return;
                 }
@@ -196,11 +202,11 @@ public class Visit extends Command {
                 if (!MathMan.isInteger(args[2])) {
                     player.sendMessage(
                             TranslatableCaption.of("invalid.not_valid_number"),
-                            Templates.of("value", "(1, ∞)")
+                            TagResolver.resolver("value", Tag.inserting(Component.text("(1, ∞)")))
                     );
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Templates.of("value", getUsage())
+                            TagResolver.resolver("value", Tag.inserting(Component.text(getUsage())))
                     );
                     return CompletableFuture.completedFuture(false);
                 }
@@ -213,11 +219,11 @@ public class Visit extends Command {
                     if (sortByArea == null) {
                         player.sendMessage(
                                 TranslatableCaption.of("invalid.not_valid_number"),
-                                Templates.of("value", "(1, ∞)")
+                                TagResolver.resolver("value", Tag.inserting(Component.text("(1, ∞)")))
                         );
                         player.sendMessage(
                                 TranslatableCaption.of("commandconfig.command_syntax"),
-                                Templates.of("value", getUsage())
+                                TagResolver.resolver("value", Tag.inserting(Component.text(getUsage())))
                         );
                         return CompletableFuture.completedFuture(false);
                     }
@@ -230,7 +236,7 @@ public class Visit extends Command {
                         } else if (throwable != null || uuids.size() != 1) {
                             player.sendMessage(
                                     TranslatableCaption.of("commandconfig.command_syntax"),
-                                    Templates.of("value", getUsage())
+                                    TagResolver.resolver("value", Tag.inserting(Component.text(getUsage())))
                             );
                         } else {
                             final UUID uuid = uuids.toArray(new UUID[0])[0];
@@ -257,7 +263,7 @@ public class Visit extends Command {
                 } catch (NumberFormatException ignored) {
                     player.sendMessage(
                             TranslatableCaption.of("invalid.not_a_number"),
-                            Template.of("value", args[1])
+                            TagResolver.resolver("value", Tag.inserting(Component.text(args[1])))
                     );
                     return CompletableFuture.completedFuture(false);
                 }
@@ -292,7 +298,7 @@ public class Visit extends Command {
                             } else {
                                 player.sendMessage(
                                         TranslatableCaption.of("errors.invalid_player"),
-                                        Template.of("value", finalArgs[0])
+                                        TagResolver.resolver("value", Tag.inserting(Component.text(finalArgs[0])))
                                 );
                             }
                         } else {
@@ -320,7 +326,7 @@ public class Visit extends Command {
                 // /p v is invalid
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
-                        Templates.of("value", getUsage())
+                        TagResolver.resolver("value", Tag.inserting(Component.text(getUsage())))
                 );
                 return CompletableFuture.completedFuture(false);
             default:

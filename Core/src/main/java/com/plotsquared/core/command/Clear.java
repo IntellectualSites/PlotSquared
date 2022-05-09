@@ -43,7 +43,9 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -86,7 +88,7 @@ public class Clear extends Command {
         if (eventResult == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Clear")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("Clear")))
             );
             return CompletableFuture.completedFuture(true);
         }
@@ -137,8 +139,10 @@ public class Clear extends Command {
                         }
                         player.sendMessage(
                                 TranslatableCaption.of("working.clearing_done"),
-                                Template.of("amount", String.valueOf(System.currentTimeMillis() - start)),
-                                Template.of("plot", plot.getId().toString())
+                                TagResolver.builder()
+                                        .tag("amount", Tag.inserting(Component.text(System.currentTimeMillis() - start)))
+                                        .tag("plot", Tag.inserting(Component.text(plot.getId().toString())))
+                                        .build()
                         );
                     });
                 });

@@ -39,7 +39,9 @@ import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Set;
@@ -91,7 +93,7 @@ public class Buy extends Command {
         checkTrue(
                 player.getPlotCount() + plots.size() <= player.getAllowedPlots(),
                 TranslatableCaption.of("permission.cant_claim_more_plots"),
-                Template.of("amount", String.valueOf(player.getAllowedPlots()))
+                TagResolver.resolver("amount", Tag.inserting(Component.text(player.getAllowedPlots())))
         );
         double price = plot.getFlag(PriceFlag.class);
         if (price <= 0) {
@@ -104,8 +106,10 @@ public class Buy extends Command {
         checkTrue(
                 this.econHandler.getMoney(player) >= price,
                 TranslatableCaption.of("economy.cannot_afford_plot"),
-                Template.of("money", this.econHandler.format(price)),
-                Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))
+                TagResolver.builder()
+                        .tag("money", Tag.inserting(Component.text(this.econHandler.format(price))))
+                        .tag("balance", Tag.inserting(Component.text(this.econHandler.format(this.econHandler.getMoney(player)))))
+                        .build()
         );
         this.econHandler.withdrawMoney(player, price);
         // Failure
@@ -113,7 +117,7 @@ public class Buy extends Command {
         confirm.run(this, () -> {
             player.sendMessage(
                     TranslatableCaption.of("economy.removed_balance"),
-                    Template.of("money", this.econHandler.format(price))
+                    TagResolver.resolver("money", Tag.inserting(Component.text(this.econHandler.format(price))))
             );
 
             this.econHandler.depositMoney(PlotSquared.platform().playerManager().getOfflinePlayer(plot.getOwnerAbs()), price);
@@ -122,9 +126,11 @@ public class Buy extends Command {
             if (owner != null) {
                 owner.sendMessage(
                         TranslatableCaption.of("economy.plot_sold"),
-                        Template.of("plot", plot.getId().toString()),
-                        Template.of("player", player.getName()),
-                        Template.of("price", this.econHandler.format(price))
+                        TagResolver.builder()
+                                .tag("plot", Tag.inserting(Component.text(plot.getId().toString())))
+                                .tag("player", Tag.inserting(Component.text(player.getName())))
+                                .tag("price", Tag.inserting(Component.text(this.econHandler.format(price))))
+                                .build()
                 );
             }
             PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(PriceFlag.class);
@@ -135,7 +141,7 @@ public class Buy extends Command {
             plot.setOwner(player.getUUID());
             player.sendMessage(
                     TranslatableCaption.of("working.claimed"),
-                    Template.of("plot", plot.getId().toString())
+                    TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
             );
             whenDone.run(Buy.this, CommandResult.SUCCESS);
         }, () -> {

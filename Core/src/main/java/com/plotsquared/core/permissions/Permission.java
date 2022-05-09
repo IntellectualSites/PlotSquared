@@ -25,12 +25,15 @@
  */
 package com.plotsquared.core.permissions;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Permission class.
  */
-public enum Permission {
+public enum Permission implements ComponentLike {
 
     //@formatter:off
     //<editor-fold desc="Static Permission">
@@ -223,6 +226,11 @@ public enum Permission {
 
     public String format(Object... replacements) {
         return String.format(this.toString(), replacements);
+    }
+
+    @Override
+    public @NotNull Component asComponent() {
+        return Component.text(text);
     }
 
 }

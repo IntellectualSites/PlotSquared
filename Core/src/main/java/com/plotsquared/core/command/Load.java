@@ -43,7 +43,9 @@ import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.TimeUtil;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.net.MalformedURLException;
@@ -106,7 +108,7 @@ public class Load extends SubCommand {
                         // No schematics found:
                         player.sendMessage(
                                 TranslatableCaption.of("web.load_null"),
-                                Template.of("command", "/plot load")
+                                TagResolver.resolver("command", Tag.inserting(Component.text("/plot load")))
                         );
                         return false;
                     }
@@ -117,7 +119,7 @@ public class Load extends SubCommand {
                         // use /plot load <index>
                         player.sendMessage(
                                 TranslatableCaption.of("invalid.not_valid_number"),
-                                Template.of("value", "(1, " + schematics.size() + ')')
+                                TagResolver.resolver("value", Tag.inserting(Component.text("(1, " + schematics.size() + ')')))
                         );
                         return false;
                     }
@@ -137,7 +139,10 @@ public class Load extends SubCommand {
                             plot.removeRunning();
                             player.sendMessage(
                                     TranslatableCaption.of("schematics.schematic_invalid"),
-                                    Template.of("reason", "non-existent or not in gzip format")
+                                    TagResolver.resolver(
+                                            "reason",
+                                            Tag.inserting(Component.text("non-existent or not in gzip format"))
+                                    )
                             );
                             return;
                         }
@@ -168,7 +173,7 @@ public class Load extends SubCommand {
                 plot.removeRunning();
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.of("value", "/plot load <index>")
+                        TagResolver.resolver("value", Tag.inserting(Component.text("/plot load <index>")))
                 );
                 return false;
             }
@@ -219,7 +224,7 @@ public class Load extends SubCommand {
             }
             player.sendMessage(
                     TranslatableCaption.of("web.load_list"),
-                    Template.of("command", "/plot load #")
+                    TagResolver.resolver("command", Tag.inserting(Component.text("/plot load #")))
             );
         }
     }

@@ -23,29 +23,33 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.configuration.caption;
+package com.plotsquared.core.util;
 
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.TextComponent;
 
-public class CaptionHolder {
+import java.util.Collection;
 
-    private Caption caption = StaticCaption.of("");
-    private TagResolver[] tagResolvers = new TagResolver[0];
+public class ComponentMan {
 
-    public void set(Caption caption) {
-        this.caption = caption;
+    public static ComponentLike join(Collection<? extends ComponentLike> components, Component delimiter) {
+        return join(components.toArray(ComponentLike[]::new), delimiter);
     }
 
-    public Caption get() {
-        return this.caption;
+    public static Component join(Component[] components, Component delimiter) {
+        return join(components, delimiter);
     }
 
-    public TagResolver[] getTagResolvers() {
-        return this.tagResolvers;
-    }
-
-    public void setTagResolvers(TagResolver... tagResolvers) {
-        this.tagResolvers = tagResolvers;
+    public static Component join(ComponentLike[] components, Component delimiter) {
+        TextComponent.Builder builder = Component.text();
+        for (int i = 0, j = components.length; i < j; i++) {
+            if (i > 0) {
+                builder.append(delimiter);
+            }
+            builder.append(components[i]);
+        }
+        return builder.build();
     }
 
 }

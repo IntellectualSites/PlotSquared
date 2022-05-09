@@ -40,7 +40,9 @@ import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDMapping;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -105,7 +107,7 @@ public class Purge extends SubCommand {
                     if (area == null) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.not_valid_plot_world"),
-                                Template.of("value", split[1])
+                                TagResolver.resolver("value", Tag.inserting(Component.text(split[1])))
                         );
                         return false;
                     }
@@ -117,7 +119,7 @@ public class Purge extends SubCommand {
                     } catch (IllegalArgumentException ignored) {
                         player.sendMessage(
                                 TranslatableCaption.of("invalid.not_valid_plot_id"),
-                                Template.of("value", split[1])
+                                TagResolver.resolver("value", Tag.inserting(Component.text(split[1])))
                         );
                         return false;
                     }
@@ -128,7 +130,7 @@ public class Purge extends SubCommand {
                     if (ownerMapping == null) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
-                                Template.of("value", split[1])
+                                TagResolver.resolver("value", Tag.inserting(Component.text(split[1])))
                         );
                         return false;
                     }
@@ -140,7 +142,7 @@ public class Purge extends SubCommand {
                     if (addedMapping == null) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
-                                Template.of("value", split[1])
+                                TagResolver.resolver("value", Tag.inserting(Component.text(split[1])))
                         );
                         return false;
                     }
@@ -265,7 +267,10 @@ public class Purge extends SubCommand {
                             DBFunc.purgeIds(ids);
                             player.sendMessage(
                                     TranslatableCaption.of("purge.purge_success"),
-                                    Template.of("amount", ids.size() + "/" + toDelete.size())
+                                    TagResolver.resolver(
+                                            "amount",
+                                            Tag.inserting(Component.text(ids.size() + "/" + toDelete.size()))
+                                    )
                             );
                         });
                     }

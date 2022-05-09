@@ -84,7 +84,8 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
 import io.papermc.lib.PaperLib;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.FluidCollisionMode;
@@ -152,13 +153,11 @@ import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 /**
  * Player Events involving plots.
@@ -363,11 +362,15 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 && PremiumVerification.isPremium() && UpdateUtility.hasUpdate) {
             Caption boundary = TranslatableCaption.of("update.update_boundary");
             Caption updateNotification = TranslatableCaption.of("update.update_notification");
-            Template internalVersion = Template.of("p2version", UpdateUtility.internalVersion.versionString());
-            Template spigotVersion = Template.of("spigotversion", UpdateUtility.spigotVersion);
-            Template downloadUrl = Template.of("downloadurl", "https://www.spigotmc.org/resources/77506/updates");
             pp.sendMessage(boundary);
-            pp.sendMessage(updateNotification, internalVersion, spigotVersion, downloadUrl);
+            pp.sendMessage(
+                    updateNotification,
+                    TagResolver.builder()
+                            .tag("p2version", Tag.inserting(Component.text(UpdateUtility.internalVersion.versionString())))
+                            .tag("spigotversion", Tag.inserting(Component.text(UpdateUtility.spigotVersion)))
+                            .tag("downloadurl", Tag.preProcessParsed("https://www.spigotmc.org/resources/77506/updates"))
+                            .build()
+            );
             pp.sendMessage(boundary);
         }
     }
@@ -419,7 +422,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                             .equals(BukkitUtil.adaptComplete(to)))) {
                         pp.sendMessage(
                                 TranslatableCaption.of("deny.no_enter"),
-                                Template.of("plot", plot.toString())
+                                TagResolver.resolver("plot", Tag.inserting(Component.text(plot.toString())))
                         );
                         event.setCancelled(true);
                     }
@@ -535,7 +538,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(false)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
-                                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_EXIT_DENIED))
+                                TagResolver.resolver(
+                                        "node",
+                                        Tag.inserting(Permission.PERMISSION_ADMIN_EXIT_DENIED)
+                                )
                         );
                         this.tmpTeleport = false;
                         if (lastPlot.equals(BukkitUtil.adapt(from).getPlot())) {
@@ -553,7 +559,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             } else if (!plotEntry(pp, now) && this.tmpTeleport) {
                 pp.sendMessage(
                         TranslatableCaption.of("deny.no_enter"),
-                        Template.of("plot", now.toString())
+                        TagResolver.resolver("plot", Tag.inserting(Component.text(now.toString())))
                 );
                 this.tmpTeleport = false;
                 to.setX(from.getBlockX());
@@ -625,7 +631,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(false)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
-                                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_EXIT_DENIED))
+                                TagResolver.resolver(
+                                        "node",
+                                        Tag.inserting(Permission.PERMISSION_ADMIN_EXIT_DENIED)
+                                )
                         );
                         this.tmpTeleport = false;
                         if (lastPlot.equals(BukkitUtil.adapt(from).getPlot())) {
@@ -643,7 +652,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             } else if (!plotEntry(pp, plot) && this.tmpTeleport) {
                 pp.sendMessage(
                         TranslatableCaption.of("deny.no_enter"),
-                        Template.of("plot", plot.toString())
+                        TagResolver.resolver("plot", Tag.inserting(Component.text(plot.toString())))
                 );
                 this.tmpTeleport = false;
                 player.teleport(from);
@@ -728,46 +737,39 @@ public class PlayerEventListener extends PlotListener implements Listener {
         PlotId id = plot.getId();
         String worldName = plot.getWorldName();
         Caption msg = TranslatableCaption.of("chat.plot_chat_format");
-        Template msgTemplate;
-        Template worldNameTemplate = Template.of("world", worldName);
-        Template plotTemplate = Template.of("plot_id", id.toString());
-        Template senderTemplate = Template.of("sender", sender);
+        TagResolver.Builder builder = TagResolver.builder();
+        builder.tag("world", Tag.inserting(Component.text(worldName)));
+        builder.tag("plot_id", Tag.inserting(Component.text(id.toString())));
+        builder.tag("sender", Tag.inserting(Component.text(sender)));
         // If we do/don't want colour, we need to be careful about how to go about it, as players could attempt either <gold></gold> or &6 etc.
         // In both cases, we want to use a Component Template to ensure that the player cannot use any placeholders in their message on purpose
         //  or accidentally, as component templates are done at the end. We also need to deserialize from legacy color codes to a Component if
         //  allowing colour.
         if (plotPlayer.hasPermission("plots.chat.color")) {
-            msgTemplate = Template
-                    .of(
-                            "msg",
-                            BukkitUtil.LEGACY_COMPONENT_SERIALIZER.deserialize(ChatColor.translateAlternateColorCodes(
-                                    '&',
-                                    message
-                            ))
-                    );
+            builder.tag(
+                    "msg",
+                    Tag.inserting(BukkitUtil.LEGACY_COMPONENT_SERIALIZER.deserialize(ChatColor.translateAlternateColorCodes(
+                            '&',
+                            message
+                    )))
+            );
         } else {
-            msgTemplate = Template.of("msg", BukkitUtil.MINI_MESSAGE.deserialize(
-                    ChatColor.stripColor(BukkitUtil.LEGACY_COMPONENT_SERIALIZER.serialize(Component.text(message)))));
+            builder.tag("msg", Tag.inserting(Component.text(message)));
         }
         for (PlotPlayer<?> receiver : plotRecipients) {
-            receiver.sendMessage(msg, worldNameTemplate, msgTemplate, plotTemplate, senderTemplate);
+            receiver.sendMessage(msg, builder.build());
         }
         if (!spies.isEmpty()) {
             Caption spymsg = TranslatableCaption.of("chat.plot_chat_spy_format");
-            Template plotidTemplate = Template.of("plot_id", id.getX() + ";" + id.getY());
-            Template spysenderTemplate = Template.of("sender", sender);
-            Template spymessageTemplate = Template.of("msg", Component.text(message));
             for (PlotPlayer<?> player : spies) {
-                player.sendMessage(spymsg, worldNameTemplate, plotidTemplate, spysenderTemplate, spymessageTemplate);
+                player.sendMessage(spymsg, builder.tag("message", Tag.inserting(Component.text(message))).build());
             }
         }
         if (Settings.Chat.LOG_PLOTCHAT_TO_CONSOLE) {
             Caption spymsg = TranslatableCaption.of("chat.plot_chat_spy_format");
-            Template plotidTemplate = Template.of("plot_id", id.getX() + ";" + id.getY());
-            Template spysenderTemplate = Template.of("sender", sender);
-            Template spymessageTemplate = Template.of("msg", Component.text(message));
-            ConsolePlayer.getConsole().sendMessage(spymsg, worldNameTemplate, plotidTemplate, spysenderTemplate,
-                    spymessageTemplate
+            ConsolePlayer.getConsole().sendMessage(
+                    spymsg,
+                    builder.tag("message", Tag.inserting(Component.text(message))).build()
             );
         }
     }
@@ -921,7 +923,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_INTERACT_ROAD)) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_ROAD))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_INTERACT_ROAD)
+                        )
                 );
                 cancelled = true;
             }
@@ -929,7 +934,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_INTERACT_UNOWNED)) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_UNOWNED))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_INTERACT_UNOWNED)
+                        )
                 );
                 cancelled = true;
             }
@@ -939,7 +947,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_INTERACT_OTHER)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_OTHER))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_INTERACT_OTHER)
+                            )
                     );
                     cancelled = true;
                 }
@@ -977,7 +988,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     .hasPermission(pp, Permission.PERMISSION_ADMIN_INTERACT_ROAD)) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_ROAD))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_INTERACT_ROAD)
+                        )
                 );
                 e.setCancelled(true);
             }
@@ -995,7 +1009,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_UNOWNED))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_INTERACT_UNOWNED)
+                            )
                     );
                     e.setCancelled(true);
                 }
@@ -1010,7 +1027,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_INTERACT_OTHER)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_OTHER))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_INTERACT_OTHER)
+                            )
                     );
                     e.setCancelled(true);
                     plot.debug(pp.getName() + " could not interact with " + entity.getType()
@@ -1134,7 +1154,8 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     return;
                 }
                 switch (type) {
-                    case ACACIA_BOAT, BIRCH_BOAT, CHEST_MINECART, COMMAND_BLOCK_MINECART, DARK_OAK_BOAT, FURNACE_MINECART, HOPPER_MINECART, JUNGLE_BOAT, MINECART, OAK_BOAT, SPRUCE_BOAT, TNT_MINECART -> eventType = PlayerBlockEventType.PLACE_VEHICLE;
+                    case ACACIA_BOAT, BIRCH_BOAT, CHEST_MINECART, COMMAND_BLOCK_MINECART, DARK_OAK_BOAT, FURNACE_MINECART, HOPPER_MINECART, JUNGLE_BOAT, MINECART, OAK_BOAT, SPRUCE_BOAT, TNT_MINECART ->
+                            eventType = PlayerBlockEventType.PLACE_VEHICLE;
                     case FIREWORK_ROCKET, FIREWORK_STAR -> eventType = PlayerBlockEventType.SPAWN_MOB;
                     case BOOK, KNOWLEDGE_BOOK, WRITABLE_BOOK, WRITTEN_BOOK -> eventType = PlayerBlockEventType.READ;
                     case ARMOR_STAND -> {
@@ -1230,7 +1251,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             }
             pp.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
+                    TagResolver.resolver("node", Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_ROAD))
             );
             event.setCancelled(true);
         } else if (!plot.hasOwner()) {
@@ -1239,7 +1260,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
             }
             pp.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_UNOWNED))
+                    TagResolver.resolver(
+                            "node",
+                            Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_UNOWNED)
+                    )
             );
             event.setCancelled(true);
         } else if (!plot.isAdded(pp.getUUID())) {
@@ -1248,7 +1272,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
             }
             pp.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
+                    TagResolver.resolver(
+                            "node",
+                            Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_OTHER)
+                    )
             );
             event.setCancelled(true);
         } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
@@ -1295,7 +1322,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             }
             plotPlayer.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
+                    TagResolver.resolver("node", Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_ROAD))
             );
             event.setCancelled(true);
         } else if (!plot.hasOwner()) {
@@ -1304,7 +1331,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
             }
             plotPlayer.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_UNOWNED))
+                    TagResolver.resolver(
+                            "node",
+                            Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_UNOWNED)
+                    )
             );
             event.setCancelled(true);
         } else if (!plot.isAdded(plotPlayer.getUUID())) {
@@ -1313,7 +1343,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
             }
             plotPlayer.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
+                    TagResolver.resolver(
+                            "node",
+                            Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_OTHER)
+                    )
             );
             event.setCancelled(true);
         } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
@@ -1345,7 +1378,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_ROAD)) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_ROAD)
+                        )
                 );
                 event.setCancelled(true);
             }
@@ -1354,7 +1390,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_UNOWNED)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_UNOWNED))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_UNOWNED)
+                            )
                     );
                     event.setCancelled(true);
                 }
@@ -1365,7 +1404,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
-                                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
+                                TagResolver.resolver(
+                                        "node",
+                                        Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_OTHER)
+                                )
                         );
                         event.setCancelled(true);
                     }
@@ -1394,7 +1436,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_DESTROY_ROAD)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_ROAD))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_ROAD)
+                            )
                     );
                     event.setCancelled(true);
                 }
@@ -1402,7 +1447,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_UNOWNED))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_UNOWNED)
+                            )
                     );
                     event.setCancelled(true);
                 }
@@ -1413,7 +1461,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_DESTROY_OTHER)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_OTHER))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_OTHER)
+                            )
                     );
                     event.setCancelled(true);
                     plot.debug(p.getName()
@@ -1435,7 +1486,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
                                 .hasPermission(player, Permission.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
                             player.sendMessage(
                                     TranslatableCaption.of("permission.no_permission_event"),
-                                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_UNOWNED))
+                                    TagResolver.resolver(
+                                            "node",
+                                            Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_UNOWNED)
+                                    )
                             );
                             event.setCancelled(true);
                         }
@@ -1445,7 +1499,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
                                     .hasPermission(player, Permission.PERMISSION_ADMIN_DESTROY_OTHER)) {
                                 player.sendMessage(
                                         TranslatableCaption.of("permission.no_permission_event"),
-                                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_OTHER))
+                                        TagResolver.resolver(
+                                                "node",
+                                                Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_OTHER)
+                                        )
                                 );
                                 event.setCancelled(true);
                                 plot.debug(player.getName()
@@ -1477,7 +1534,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_INTERACT_ROAD)) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_ROAD))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_INTERACT_ROAD)
+                        )
                 );
                 event.setCancelled(true);
             }
@@ -1485,7 +1545,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_INTERACT_UNOWNED)) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_UNOWNED))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_INTERACT_UNOWNED)
+                        )
                 );
                 event.setCancelled(true);
             }
@@ -1543,7 +1606,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_INTERACT_OTHER)) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_OTHER))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_INTERACT_OTHER)
+                        )
                 );
                 event.setCancelled(true);
             }
@@ -1565,7 +1631,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_ROAD)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_ROAD))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_ROAD)
+                            )
                     );
                     event.setCancelled(true);
                 }
@@ -1574,7 +1643,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_UNOWNED)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
-                                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_UNOWNED))
+                                TagResolver.resolver(
+                                        "node",
+                                        Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_UNOWNED)
+                                )
                         );
                         event.setCancelled(true);
                         return;
@@ -1588,7 +1660,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_OTHER)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
-                                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_OTHER))
+                                TagResolver.resolver(
+                                        "node",
+                                        Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_OTHER)
+                                )
                         );
                         event.setCancelled(true);
                         plot.debug(pp.getName()

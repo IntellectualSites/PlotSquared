@@ -27,6 +27,8 @@ package com.plotsquared.core.configuration.caption;
 
 import com.google.common.base.Objects;
 import com.plotsquared.core.PlotSquared;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Locale;
@@ -94,6 +96,11 @@ public final class TranslatableCaption implements NamespacedCaption {
     @Override
     public @NonNull String getComponent(final @NonNull LocaleHolder localeHolder) {
         return PlotSquared.get().getCaptionMap(this.namespace).getMessage(this, localeHolder);
+    }
+
+    @Override
+    public @NonNull ComponentLike toComponent(@NonNull final LocaleHolder localeHolder) {
+        return MiniMessage.miniMessage().deserialize(getComponent(localeHolder));
     }
 
     @Override

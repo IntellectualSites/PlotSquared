@@ -41,7 +41,8 @@ import com.plotsquared.core.uuid.UUIDMapping;
 import com.sk89q.worldedit.world.entity.EntityType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
@@ -75,7 +76,10 @@ public class Debug extends SubCommand {
         if (args.length == 0) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot debug <loadedchunks | player | debug-players | entitytypes | msg>")
+                    TagResolver.resolver(
+                            "value",
+                            Tag.inserting(Component.text("/plot debug <loadedchunks | player | debug-players | entitytypes | msg>"))
+                    )
             );
         }
         if (args.length > 0) {
@@ -102,7 +106,7 @@ public class Debug extends SubCommand {
             final Collection<UUIDMapping> mappings = PlotSquared.get().getImpromptuUUIDPipeline().getAllImmediately();
             player.sendMessage(
                     TranslatableCaption.of("debug.cached_uuids"),
-                    Template.of("value", String.valueOf(mappings.size()))
+                    TagResolver.resolver("value", Tag.inserting(Component.text(mappings.size())))
             );
             return true;
         }
@@ -111,7 +115,7 @@ public class Debug extends SubCommand {
             for (final PlotPlayer<?> pp : PlotPlayer.getDebugModePlayers()) {
                 player.sendMessage(
                         TranslatableCaption.of("debug.player_in_debugmode_list"),
-                        Template.of("value", pp.getName())
+                        TagResolver.resolver("value", Tag.inserting(Component.text(pp.getName())))
                 );
             }
             return true;
@@ -144,28 +148,52 @@ public class Debug extends SubCommand {
                 .getCaptionMap(TranslatableCaption.DEFAULT_NAMESPACE)
                 .getCaptions();
         TextComponent.Builder information = Component.text();
-        Component header = MINI_MESSAGE.parse(TranslatableCaption.of("debug.debug_header").getComponent(player) + "\n");
+        Component header = MINI_MESSAGE.deserialize(TranslatableCaption.of("debug.debug_header").getComponent(player) + "\n");
         String line = TranslatableCaption.of("debug.debug_line").getComponent(player) + "\n";
         String section = TranslatableCaption.of("debug.debug_section").getComponent(player) + "\n";
         information.append(header);
-        information.append(MINI_MESSAGE.parse(section, Template.of("val", "PlotArea")));
+        information.append(MINI_MESSAGE.deserialize(
+                section,
+                TagResolver.resolver("val", Tag.inserting(Component.text("PlotArea")))
+        ));
         information.append(MINI_MESSAGE
-                .parse(
+                .deserialize(
                         line,
-                        Template.of("var", "Plot Worlds"),
-                        Template.of("val", StringMan.join(this.plotAreaManager.getAllPlotAreas(), ", "))
+                        TagResolver.builder()
+                                .tag("var", Tag.inserting(Component.text("Plot Worlds")))
+                                .tag(
+                                        "val",
+                                        Tag.inserting(Component.text(StringMan.join(
+                                                this.plotAreaManager.getAllPlotAreas(),
+                                                ", "
+                                        )))
+                                )
+                                .build()
                 ));
         information.append(
-                MINI_MESSAGE.parse(
+                MINI_MESSAGE.deserialize(
                         line,
-                        Template.of("var", "Owned Plots"),
-                        Template.of("val", String.valueOf(PlotQuery.newQuery().allPlots().count()))
+                        TagResolver.builder()
+                                .tag("var", Tag.inserting(Component.text("Owned Plots")))
+                                .tag(
+                                        "val",
+                                        Tag.inserting(Component.text(PlotQuery.newQuery().allPlots().count()))
+                                )
+                                .build()
                 ));
-        information.append(MINI_MESSAGE.parse(section, Template.of("val", "Messages")));
-        information.append(MINI_MESSAGE.parse(
+        information.append(MINI_MESSAGE.deserialize(
+                section,
+                TagResolver.resolver("val", Tag.inserting(Component.text("Messages")))
+        ));
+        information.append(MINI_MESSAGE.deserialize(
                 line,
-                Template.of("var", "Total Messages"),
-                Template.of("val", String.valueOf(captions.size()))
+                TagResolver.builder()
+                        .tag("var", Tag.inserting(Component.text("Total Messages")))
+                        .tag(
+                                "val",
+                                Tag.inserting(Component.text(captions.size()))
+                        )
+                        .build()
         ));
         player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(information.build())));
         return true;

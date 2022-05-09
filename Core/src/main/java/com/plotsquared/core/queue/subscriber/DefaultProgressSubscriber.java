@@ -37,7 +37,9 @@ import com.plotsquared.core.queue.ChunkCoordinator;
 import com.plotsquared.core.util.task.PlotSquaredTask;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nullable;
@@ -120,7 +122,10 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
                         }
                         actor.sendMessage(
                                 caption,
-                                Template.of("progress", String.format("%.2f", this.progress.doubleValue() * 100))
+                                TagResolver.resolver(
+                                        "progress",
+                                        Tag.inserting(Component.text(String.format("%.2f", this.progress.doubleValue() * 100)))
+                                )
                         );
                     }, interval), wait);
         }

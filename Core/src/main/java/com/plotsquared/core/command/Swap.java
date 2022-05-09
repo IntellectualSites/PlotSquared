@@ -33,7 +33,9 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -91,8 +93,10 @@ public class Swap extends SubCommand {
             if (result) {
                 player.sendMessage(
                         TranslatableCaption.of("swap.swap_success"),
-                        Template.of("origin", p1),
-                        Template.of("target", p2)
+                        TagResolver.builder()
+                                .tag("origin", Tag.inserting(Component.text(p1)))
+                                .tag("target", Tag.inserting(Component.text(p2)))
+                                .build()
                 );
                 return true;
             } else {

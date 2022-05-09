@@ -43,6 +43,9 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -318,7 +321,7 @@ public class MainCommand extends Command {
             if (message != null) {
                 player.sendMessage(
                         TranslatableCaption.of("errors.error"),
-                        net.kyori.adventure.text.minimessage.Template.of("value", message)
+                        TagResolver.resolver("value", Tag.inserting(Component.text(message)))
                 );
             } else {
                 player.sendMessage(

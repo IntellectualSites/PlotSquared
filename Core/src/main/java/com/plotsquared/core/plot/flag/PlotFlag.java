@@ -27,11 +27,11 @@ package com.plotsquared.core.plot.flag;
 
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.configuration.caption.Caption;
+import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Objects;
 
 /**
  * A plot flag is any property that can be assigned
@@ -89,6 +89,10 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
             }
         }
         return flagName.toString();
+    }
+
+    public static <T, F extends PlotFlag<T, F>> Component getFlagNameComponent(Class<F> flagClass) {
+        return Component.text(getFlagName(flagClass));
     }
 
     /**

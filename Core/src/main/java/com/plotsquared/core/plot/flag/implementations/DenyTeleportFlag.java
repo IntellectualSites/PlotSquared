@@ -30,7 +30,9 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -89,7 +91,10 @@ public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, Den
         final DeniedGroup group = DeniedGroup.fromString(input);
         if (group == null) {
             throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_enum"),
-                    Template.of("list", "members, nonmembers, trusted, nontrusted, nonowners")
+                    TagResolver.resolver(
+                            "list",
+                            Tag.inserting(Component.text("members, nonmembers, trusted, nontrusted, nonowners"))
+                    )
             );
         }
         return flagOf(group);

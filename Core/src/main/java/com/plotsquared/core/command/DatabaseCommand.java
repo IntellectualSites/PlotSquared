@@ -47,7 +47,9 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
@@ -108,7 +110,10 @@ public class DatabaseCommand extends SubCommand {
         if (args.length < 1) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot database [area] <sqlite | mysql | import>")
+                    TagResolver.resolver(
+                            "value",
+                            Tag.inserting(Component.text("/plot database [area] <sqlite | mysql | import>"))
+                    )
             );
             return false;
         }
@@ -123,7 +128,7 @@ public class DatabaseCommand extends SubCommand {
         if (args.length < 1) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot database [area] <sqlite|mysql|import>")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("/plot database [area] <sqlite|mysql|import>")))
             );
             player.sendMessage(TranslatableCaption.of("database.arg"));
             return false;
@@ -136,7 +141,10 @@ public class DatabaseCommand extends SubCommand {
                     if (args.length < 2) {
                         player.sendMessage(
                                 TranslatableCaption.of("commandconfig.command_syntax"),
-                                Template.of("value", "/plot database import <sqlite file> [prefix]")
+                                TagResolver.resolver(
+                                        "value",
+                                        Tag.inserting(Component.text("/plot database import <sqlite file> [prefix]"))
+                                )
                         );
                         return false;
                     }
@@ -147,7 +155,7 @@ public class DatabaseCommand extends SubCommand {
                     if (!file.exists()) {
                         player.sendMessage(
                                 TranslatableCaption.of("database.does_not_exist"),
-                                Template.of("value", String.valueOf(file))
+                                TagResolver.resolver("value", Tag.inserting(Component.text(file.toString())))
                         );
                         return false;
                     }
@@ -191,8 +199,10 @@ public class DatabaseCommand extends SubCommand {
                                     }
                                     player.sendMessage(
                                             TranslatableCaption.of("database.skipping_duplicated_plot"),
-                                            Template.of("plot", String.valueOf(plot)),
-                                            Template.of("id", String.valueOf(plot.temp))
+                                            TagResolver.builder()
+                                                    .tag("plot", Tag.inserting(Component.text(plot.toString())))
+                                                    .tag("id", Tag.inserting(Component.text(plot.temp)))
+                                                    .build()
                                     );
                                     continue;
                                 }

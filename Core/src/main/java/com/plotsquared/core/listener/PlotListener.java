@@ -72,8 +72,11 @@ import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.HashMap;
@@ -85,7 +88,7 @@ import java.util.function.Consumer;
 
 public class PlotListener {
 
-    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     private final HashMap<UUID, Interval> feedRunnable = new HashMap<>();
     private final HashMap<UUID, Interval> healRunnable = new HashMap<>();
@@ -146,7 +149,7 @@ public class PlotListener {
                 .hasPermission(player, "plots.admin.entry.denied")) {
             player.sendMessage(
                     TranslatableCaption.of("deny.no_enter"),
-                    Template.of("plot", plot.toString())
+                    TagResolver.resolver("plot", Tag.inserting(Component.text(plot.toString())))
             );
             return false;
         }
@@ -214,8 +217,10 @@ public class PlotListener {
                     } else {
                         player.sendMessage(
                                 TranslatableCaption.of("gamemode.gamemode_was_bypassed"),
-                                Template.of("gamemode", String.valueOf(gameMode)),
-                                Template.of("plot", plot.getId().toString())
+                                TagResolver.builder()
+                                        .tag("gamemode", Tag.inserting(Component.text(gameMode.toString())))
+                                        .tag("plot", Tag.inserting(Component.text(plot.getId().toString())))
+                                        .build()
                         );
                     }
                 }
@@ -229,8 +234,10 @@ public class PlotListener {
                     } else {
                         player.sendMessage(
                                 TranslatableCaption.of("gamemode.gamemode_was_bypassed"),
-                                Template.of("gamemode", String.valueOf(guestGameMode)),
-                                Template.of("plot", plot.getId().toString())
+                                TagResolver.builder()
+                                        .tag("gamemode", Tag.inserting(Component.text(guestGameMode.toString())))
+                                        .tag("plot", Tag.inserting(Component.text(plot.getId().toString())))
+                                        .build()
                         );
                     }
                 }
@@ -309,39 +316,21 @@ public class PlotListener {
                         }
                         if ((lastPlot != null) && plot.getId().equals(lastPlot.getId()) && plot.hasOwner()) {
                             final UUID plotOwner = plot.getOwnerAbs();
-                            String owner = PlayerManager.resolveName(plotOwner, true).getComponent(player);
+                            ComponentLike owner = PlayerManager.resolveName(plotOwner, true).toComponent(player);
                             Caption header = fromFlag ? StaticCaption.of(title) : TranslatableCaption.of("titles" +
                                     ".title_entered_plot");
                             Caption subHeader = fromFlag ? StaticCaption.of(subtitle) : TranslatableCaption.of("titles" +
                                     ".title_entered_plot_sub");
-                            Template plotTemplate = Template.of("plot", lastPlot.getId().toString());
-                            Template worldTemplate = Template.of("world", player.getLocation().getWorldName());
-                            Template ownerTemplate = Template.of("owner", owner);
-                            Template aliasTemplate = Template.of("alias", plot.getAlias());
-
-                            final Consumer<String> userConsumer = user -> {
-                                if (Settings.Titles.TITLES_AS_ACTIONBAR) {
-                                    player.sendActionBar(header, aliasTemplate, plotTemplate, worldTemplate, ownerTemplate);
-                                } else {
-                                    player.sendTitle(header, subHeader, aliasTemplate, plotTemplate, worldTemplate, ownerTemplate);
-                                }
-                            };
-
-                            UUID uuid = plot.getOwner();
-                            if (uuid == null) {
-                                userConsumer.accept("Unknown");
-                            } else if (uuid.equals(DBFunc.SERVER)) {
-                                userConsumer.accept(MINI_MESSAGE.stripTokens(TranslatableCaption
-                                        .of("info.server")
-                                        .getComponent(player)));
+                            TagResolver resolver = TagResolver.builder()
+                                    .tag("plot", Tag.inserting(Component.text(lastPlot.getId().toString())))
+                                    .tag("world", Tag.inserting(Component.text(player.getLocation().getWorldName())))
+                                    .tag("owner", Tag.inserting(owner))
+                                    .tag("alias", Tag.inserting(Component.text(plot.getAlias())))
+                                    .build();
+                            if (Settings.Titles.TITLES_AS_ACTIONBAR) {
+                                player.sendActionBar(header, resolver);
                             } else {
-                                PlotSquared.get().getImpromptuUUIDPipeline().getSingle(plot.getOwner(), (user, throwable) -> {
-                                    if (throwable != null) {
-                                        userConsumer.accept("Unknown");
-                                    } else {
-                                        userConsumer.accept(user);
-                                    }
-                                });
+                                player.sendTitle(header, subHeader, resolver);
                             }
                         }
                     }, TaskTime.seconds(1L));
@@ -391,8 +380,10 @@ public class PlotListener {
                         } else {
                             player.sendMessage(
                                     TranslatableCaption.of("gamemode.gamemode_was_bypassed"),
-                                    Template.of("gamemode", pw.getGameMode().getName().toLowerCase()),
-                                    Template.of("plot", plot.toString())
+                                    TagResolver.builder()
+                                            .tag("gamemode", Tag.inserting(Component.text(pw.getGameMode().toString())))
+                                            .tag("plot", Tag.inserting(Component.text(plot.toString())))
+                                            .build()
                             );
                         }
                     }
@@ -462,13 +453,15 @@ public class PlotListener {
     }
 
     private void notifyPlotOwner(final PlotPlayer<?> player, final Plot plot, final PlotPlayer<?> owner, final Caption caption) {
-        Template playerTemplate = Template.of("player", player.getName());
-        Template plotTemplate = Template.of("plot", plot.getId().toString());
-        Template areaTemplate = Template.of("area", plot.getArea().toString());
+        TagResolver resolver = TagResolver.builder()
+                .tag("player", Tag.inserting(Component.text(player.getName())))
+                .tag("plot", Tag.inserting(Component.text(plot.getId().toString())))
+                .tag("area", Tag.inserting(Component.text(String.valueOf(plot.getArea()))))
+                .build();
         if (!Settings.Chat.NOTIFICATION_AS_ACTIONBAR) {
-            owner.sendMessage(caption, playerTemplate, plotTemplate, areaTemplate);
+            owner.sendMessage(caption, resolver);
         } else {
-            owner.sendActionBar(caption, playerTemplate, plotTemplate, areaTemplate);
+            owner.sendActionBar(caption, resolver);
         }
     }
 
