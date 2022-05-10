@@ -282,7 +282,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                 CompoundTag tag = block.getNbtData();
                 StateWrapper sw = new StateWrapper(tag);
 
-                sw.restoreTag(getWorld().getName(), existing.getX(), existing.getY(), existing.getZ());
+                sw.restoreTag(existing);
             }
         }
     }
