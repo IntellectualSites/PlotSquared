@@ -36,8 +36,12 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * Queue that is limited to a single chunk
+ * Queue that is limited to a single chunk. It does not allow a delegate queue and should be treated as a cache for changes to
+ * be set to. Does not support tile entities or entities.
+ *
+ * @deprecated This class is poorly designed and will no longer be used in P2
  */
+@Deprecated(forRemoval = true)
 public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
 
     public final BiomeType[][][] biomeResult;
