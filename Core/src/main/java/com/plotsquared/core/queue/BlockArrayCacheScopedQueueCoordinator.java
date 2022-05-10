@@ -62,6 +62,7 @@ public class BlockArrayCacheScopedQueueCoordinator extends ScopedQueueCoordinato
      * @param minY        Minimum applicable y value. Used to account for negative world heights (e.g. -64). Inclusive
      * @param min         Inclusive location of the minimum point to limit the scope to.
      * @param max         Exclusive location of the maximum point to limit the scope to.
+     * @since TODO
      */
     public BlockArrayCacheScopedQueueCoordinator(@NonNull BlockState[][][] blockStates, int minY, Location min, Location max) {
         super(null, min, max);
