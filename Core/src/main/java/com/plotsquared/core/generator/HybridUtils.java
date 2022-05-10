@@ -41,7 +41,7 @@ import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.queue.ChunkQueueCoordinator;
+import com.plotsquared.core.queue.BlockArrayCacheScopedQueueCoordinator;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
@@ -136,6 +136,11 @@ public class HybridUtils {
          *
          */
         TaskManager.runTaskAsync(() -> {
+            final PlotArea area = this.plotAreaManager.getPlotArea(world, null);
+            if (!(area instanceof HybridPlotWorld hpw)) {
+                return;
+            }
+
             final BlockVector3 bot = region.getMinimumPoint();
             final BlockVector3 top = region.getMaximumPoint();
 
@@ -152,17 +157,8 @@ public class HybridUtils {
             final int height = area.getMaxGenHeight() - area.getMinGenHeight() + 1;
             final int minHeight = area.getMinGenHeight();
 
-            final PlotArea area = this.plotAreaManager.getPlotArea(world, null);
-
-            if (!(area instanceof HybridPlotWorld hpw)) {
-                return;
-            }
-
-            ChunkQueueCoordinator chunk = new ChunkQueueCoordinator(worldUtil.getWeWorld(world), bot, top, false);
-            hpw.getGenerator().generateChunk(chunk, hpw);
-
             final BlockState airBlock = BlockTypes.AIR.getDefaultState();
-            final BlockState[][][] oldBlocks = chunk.getBlocks();
+            final BlockState[][][] oldBlocks = new BlockState[height][width][length];
             final BlockState[][][] newBlocks = new BlockState[height][width][length];
             for (final BlockState[][] newBlock : newBlocks) {
                 for (final BlockState[] blockStates : newBlock) {
@@ -175,8 +171,20 @@ public class HybridUtils {
                 }
             }
 
-            System.gc();
-            System.gc();
+            BlockArrayCacheScopedQueueCoordinator oldBlockQueue = new BlockArrayCacheScopedQueueCoordinator(
+                    oldBlocks,
+                    area.getMinGenHeight(),
+                    Location.at("", region.getMinimumPoint()),
+                    Location.at("", region.getMaximumPoint())
+            );
+
+            region.getChunks().forEach(blockVector2 -> {
+                int relChunkX = blockVector2.getX() - cbx;
+                int relChunkZ = blockVector2.getZ() - cbz;
+                oldBlockQueue.setOffsetX(relChunkX << 4);
+                oldBlockQueue.setOffsetZ(relChunkZ << 4);
+                hpw.getGenerator().generateChunk(oldBlockQueue, hpw);
+            });
 
             QueueCoordinator queue = area.getQueue();
             queue.addReadChunks(region.getChunks());
@@ -301,8 +309,6 @@ public class HybridUtils {
                 analysis.data_sd = (int) (MathMan.getSD(data, analysis.data) * 100);
                 analysis.air_sd = (int) (MathMan.getSD(air, analysis.air) * 100);
                 analysis.variety_sd = (int) (MathMan.getSD(variety, analysis.variety) * 100);
-                System.gc();
-                System.gc();
                 whenDone.value = analysis;
                 whenDone.run();
             });
