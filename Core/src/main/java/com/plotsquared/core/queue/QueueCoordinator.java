@@ -252,6 +252,7 @@ public abstract class QueueCoordinator {
      * If the queue should accept biome placement
      *
      * @param enabled If biomes should be enabled
+     * @since TODO
      */
     public abstract void setBiomesEnabled(boolean enabled);
 
@@ -420,9 +421,19 @@ public abstract class QueueCoordinator {
      */
     public abstract void setLightingMode(@Nullable LightingMode mode);
 
-    public abstract SideEffectSet getSideEffectSet();
+    /**
+     * Get the overriding {@link SideEffectSet} to be used by the queue if it exists, else null
+     *
+     * @return Overriding {@link SideEffectSet} or null
+     */
+    public abstract @Nullable SideEffectSet getSideEffectSet();
 
-    public abstract void setSideEffectSet(SideEffectSet sideEffectSet);
+    /**
+     * Set the overriding {@link SideEffectSet} to be used by the queue. Null to use default side effects.
+     *
+     * @param sideEffectSet side effects to override with, or null to use default
+     */
+    public abstract void setSideEffectSet(@Nullable SideEffectSet sideEffectSet);
 
     /**
      * Fill a cuboid between two positions with a BlockState

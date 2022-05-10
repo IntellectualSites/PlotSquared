@@ -64,6 +64,7 @@ public class AugmentedUtils {
      * @param chunkZ Chunk Z position
      * @param queue  Queue to write to, if desired.
      * @return true if generation occurred.
+     * @since TODO
      */
     public static boolean generateChunk(
             final @NonNull String world,
@@ -186,7 +187,7 @@ public class AugmentedUtils {
      * @deprecated Use {@link AugmentedUtils#generateChunk(String, int, int, QueueCoordinator)} as chunkObject is not required
      * in the above method
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "TODO")
     public static boolean generate(
             @Nullable Object chunkObject,
             final @NonNull String world,
