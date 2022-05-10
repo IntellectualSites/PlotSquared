@@ -25,7 +25,11 @@
  */
 package com.plotsquared.bukkit.generator;
 
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.generator.AugmentedUtils;
+import com.plotsquared.core.queue.QueueCoordinator;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.util.SideEffectSet;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
@@ -52,7 +56,14 @@ public class BukkitAugmentedGenerator extends BlockPopulator {
 
     @Override
     public void populate(@NonNull World world, @NonNull Random random, @NonNull Chunk source) {
-        AugmentedUtils.generate(source, world.getName(), source.getX(), source.getZ(), null);
+        QueueCoordinator queue = PlotSquared.platform().globalBlockQueue().getNewQueue(BukkitAdapter.adapt(world));
+        // The chunk is already loaded and we do not want to load the chunk in "fully" by using any PaperLib methods.
+        queue.setForceSync(true);
+        queue.setSideEffectSet(SideEffectSet.none());
+        queue.setBiomesEnabled(false);
+        queue.setChunkObject(source);
+        AugmentedUtils.generateChunk(world.getName(), source.getX(), source.getZ(), queue);
+        queue.enqueue();
     }
 
 }

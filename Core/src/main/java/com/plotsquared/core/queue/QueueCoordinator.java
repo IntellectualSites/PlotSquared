@@ -35,6 +35,7 @@ import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.util.SideEffectSet;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
@@ -248,6 +249,13 @@ public abstract class QueueCoordinator {
     public abstract boolean isSettingBiomes();
 
     /**
+     * If the queue should accept biome placement
+     *
+     * @param enabled If biomes should be enabled
+     */
+    public abstract void setBiomesEnabled(boolean enabled);
+
+    /**
      * Add entities to be created
      *
      * @param entities list of entities to add to queue
@@ -411,6 +419,10 @@ public abstract class QueueCoordinator {
      * @param mode lighting mode. Null to use default.
      */
     public abstract void setLightingMode(@Nullable LightingMode mode);
+
+    public abstract SideEffectSet getSideEffectSet();
+
+    public abstract void setSideEffectSet(SideEffectSet sideEffectSet);
 
     /**
      * Fill a cuboid between two positions with a BlockState
