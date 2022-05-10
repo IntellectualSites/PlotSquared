@@ -80,7 +80,8 @@ final class DelegatePlotGenerator extends IndependentPlotGenerator {
                     result.setBiome(x, z, BukkitAdapter.adapt(biome));
                 }
 
-                //do not annotate with Override until we discontinue support for 1.4.4
+                //do not annotate with Override until we discontinue support for 1.4.4 (we no longer support 1.4.4)
+                @Override
                 public void setBiome(int x, int y, int z, @NonNull Biome biome) {
                     result.setBiome(x, z, BukkitAdapter.adapt(biome));
 
