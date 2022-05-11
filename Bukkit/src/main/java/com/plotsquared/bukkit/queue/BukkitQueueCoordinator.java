@@ -51,6 +51,7 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
@@ -266,7 +267,13 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
         } catch (WorldEditException ignored) {
             // Fallback to not so nice method
             BlockData blockData = BukkitAdapter.adapt(block);
-            Block existing = getBukkitWorld().getBlockAt(x, y, z);
+            Block existing;
+            // Assume a chunk object has been given only when it should have been.
+            if (getChunkObject() instanceof Chunk chunkObject) {
+                existing = chunkObject.getBlock(x & 15, y, z & 15);
+            } else {
+                 existing = getBukkitWorld().getBlockAt(x, y, z);
+            }
             final BlockState existingBaseBlock = BukkitAdapter.adapt(existing.getBlockData());
             if (BukkitBlockUtil.get(existing).equals(existingBaseBlock) && existing.getBlockData().matches(blockData)) {
                 return;
