@@ -44,6 +44,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -166,14 +167,32 @@ public class StateWrapper {
         return str;
     }
 
-    @SuppressWarnings("deprecation") // #setLine is needed for Spigot compatibility
+    /**
+     * Restore the TileEntity data to the given world at the given coordinates.
+     *
+     * @param worldName World name
+     * @param x         x position
+     * @param y         y position
+     * @param z         z position
+     * @return true if successful
+     */
     public boolean restoreTag(String worldName, int x, int y, int z) {
-        if (this.tag == null) {
+        World world = BukkitUtil.getWorld(worldName);
+        if (world == null) {
             return false;
         }
-        World world = BukkitUtil.getWorld(worldName);
-        Block block = world.getBlockAt(x, y, z);
-        if (block == null) {
+        return restoreTag(world.getBlockAt(x, y, z));
+    }
+
+    /**
+     * Restore the TileEntity data to the given block
+     *
+     * @param block Block to restore to
+     * @return true if successful
+     */
+    @SuppressWarnings("deprecation") // #setLine is needed for Spigot compatibility
+    public boolean restoreTag(@NonNull Block block) {
+        if (this.tag == null) {
             return false;
         }
         org.bukkit.block.BlockState state = block.getState();
