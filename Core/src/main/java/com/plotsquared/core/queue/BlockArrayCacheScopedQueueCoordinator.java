@@ -37,7 +37,11 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * {@link QueueCoordinator} that caches all blocks set to it in a given array of form BlockState[][][]. An offset can be
- * applied to blocks set to it, and the scope limited.
+ * applied to blocks set to it, and the scope limited. This should have blocks set to it one chunk at a time, based on the
+ * result of {@link BlockArrayCacheScopedQueueCoordinator#getMin()} and {@link BlockArrayCacheScopedQueueCoordinator#getMax()}.
+ * The min and max points of this queue are offset according to the minimum point given in the constructor, and the offsets set
+ * in {@link BlockArrayCacheScopedQueueCoordinator#setOffsetX(int)} and
+ * {@link BlockArrayCacheScopedQueueCoordinator#setOffsetZ(int)}
  */
 public class BlockArrayCacheScopedQueueCoordinator extends ScopedQueueCoordinator {
 
@@ -51,39 +55,39 @@ public class BlockArrayCacheScopedQueueCoordinator extends ScopedQueueCoordinato
     private final int scopeMinZ;
     private final int scopeMaxX;
     private final int scopeMaxZ;
-
     private int offsetX = 0;
     private int offsetZ = 0;
-
     /**
      * Construct a new instance
      *
-     * @param blockStates Array of form BlockState[y][x][z]. Must be fully initialised.
-     * @param minY        Minimum applicable y value. Used to account for negative world heights (e.g. -64). Inclusive
-     * @param min         Inclusive location of the minimum point to limit the scope to.
-     * @param max         Exclusive location of the maximum point to limit the scope to.
+     * @param min Inclusive location of the minimum point to limit the scope to.
+     * @param max Inclusive location of the maximum point to limit the scope to.
      * @since TODO
      */
-    public BlockArrayCacheScopedQueueCoordinator(@NonNull BlockState[][][] blockStates, int minY, Location min, Location max) {
+    public BlockArrayCacheScopedQueueCoordinator(Location min, Location max) {
         super(null, min, max);
-        this.blockStates = blockStates;
-        this.height = blockStates.length;
-        this.width = blockStates[0].length;
-        this.length = blockStates[0][0].length;
-        this.minY = minY;
-        this.maxY = height + minY; // exclusive
+        this.width = max.getX() - min.getX() + 1;
+        this.length = max.getZ() - min.getZ() + 1;
+        this.minY = min.getY();
+        this.maxY = max.getY();
+        this.height = maxY - minY + 1;
 
         this.scopeMinX = min.getX() & 15;
         this.scopeMinZ = min.getZ() & 15;
         this.scopeMaxX = scopeMinX + width;
         this.scopeMaxZ = scopeMinZ + length;
+        this.blockStates = new BlockState[height][width][length];
+    }
+
+    public BlockState[][][] getBlockStates() {
+        return blockStates;
     }
 
     @Override
     public boolean setBlock(int x, final int y, int z, final @NonNull BlockState id) {
         x += offsetX;
         z += offsetZ;
-        if (x >= scopeMinX && x < scopeMaxX && y >= minY && y < maxY && z >= scopeMinZ && z < scopeMaxZ) {
+        if (x >= scopeMinX && x < scopeMaxX && y >= minY && y <= maxY && z >= scopeMinZ && z < scopeMaxZ) {
             blockStates[y - minY][x - scopeMinX][z - scopeMinZ] = id;
         }
         return false;
@@ -93,7 +97,7 @@ public class BlockArrayCacheScopedQueueCoordinator extends ScopedQueueCoordinato
     public boolean setBlock(final int x, final int y, final int z, @NonNull final Pattern pattern) {
         int rx = x + offsetX;
         int rz = z + offsetZ;
-        if (rx >= scopeMinX && rx < scopeMaxX && y >= minY && y < maxY && rz >= scopeMinZ && rz < scopeMaxZ) {
+        if (rx >= scopeMinX && rx < scopeMaxX && y >= minY && y <= maxY && rz >= scopeMinZ && rz < scopeMaxZ) {
             BlockState state = pattern
                     .applyBlock(super.getMin().getBlockVector3().add(BlockVector3.at(x, y, z)))
                     .toImmutableState();
@@ -116,7 +120,7 @@ public class BlockArrayCacheScopedQueueCoordinator extends ScopedQueueCoordinato
     public boolean setBlock(int x, int y, int z, final @NonNull BaseBlock id) {
         x += offsetX;
         z += offsetZ;
-        if (x >= scopeMinX && x < scopeMaxX && y >= minY && y < maxY && z >= scopeMinZ && z < scopeMaxZ) {
+        if (x >= scopeMinX && x < scopeMaxX && y >= minY && y <= maxY && z >= scopeMinZ && z < scopeMaxZ) {
             blockStates[y - minY][x][z] = id.toImmutableState();
         }
         return false;
@@ -124,7 +128,7 @@ public class BlockArrayCacheScopedQueueCoordinator extends ScopedQueueCoordinato
 
     @Override
     public @Nullable BlockState getBlock(final int x, final int y, final int z) {
-        if (x >= 0 && x < width && y >= minY && y < maxY && z >= 0 && z < length) {
+        if (x >= 0 && x < width && y >= minY && y <= maxY && z >= 0 && z < length) {
             return blockStates[y - minY][x][z];
         }
         return null;

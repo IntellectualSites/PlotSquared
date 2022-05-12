@@ -83,6 +83,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class HybridUtils {
 
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + HybridUtils.class.getSimpleName());
+    private static final BlockState AIR = BlockTypes.AIR.getDefaultState();
 
     public static HybridUtils manager;
     public static Set<BlockVector2> regions;
@@ -157,40 +158,28 @@ public class HybridUtils {
             final int height = area.getMaxGenHeight() - area.getMinGenHeight() + 1;
             final int minHeight = area.getMinGenHeight();
 
-            final BlockState airBlock = BlockTypes.AIR.getDefaultState();
-            final BlockState[][][] oldBlocks = new BlockState[height][width][length];
             final BlockState[][][] newBlocks = new BlockState[height][width][length];
-            for (final BlockState[][] newBlock : newBlocks) {
-                for (final BlockState[] blockStates : newBlock) {
-                    Arrays.fill(blockStates, airBlock);
-                }
-            }
-            for (final BlockState[][] oldBlock : oldBlocks) {
-                for (final BlockState[] blockStates : oldBlock) {
-                    Arrays.fill(blockStates, airBlock);
-                }
-            }
 
             BlockArrayCacheScopedQueueCoordinator oldBlockQueue = new BlockArrayCacheScopedQueueCoordinator(
-                    oldBlocks,
-                    area.getMinGenHeight(),
-                    Location.at("", region.getMinimumPoint()),
-                    Location.at("", region.getMaximumPoint())
+                    Location.at("", region.getMinimumPoint().withY(hpw.getMinGenHeight())),
+                    Location.at("", region.getMaximumPoint().withY(hpw.getMaxGenHeight()))
             );
 
-            region.getChunks().forEach(blockVector2 -> {
-                int relChunkX = blockVector2.getX() - cbx;
-                int relChunkZ = blockVector2.getZ() - cbz;
+            region.getChunks().forEach(chunkPos -> {
+                int relChunkX = chunkPos.getX() - cbx;
+                int relChunkZ = chunkPos.getZ() - cbz;
                 oldBlockQueue.setOffsetX(relChunkX << 4);
                 oldBlockQueue.setOffsetZ(relChunkZ << 4);
                 hpw.getGenerator().generateChunk(oldBlockQueue, hpw);
             });
 
+            final BlockState[][][] oldBlocks = oldBlockQueue.getBlockStates();
+
             QueueCoordinator queue = area.getQueue();
             queue.addReadChunks(region.getChunks());
-            queue.setChunkConsumer(blockVector2 -> {
-                int X = blockVector2.getX();
-                int Z = blockVector2.getZ();
+            queue.setChunkConsumer(chunkPos -> {
+                int X = chunkPos.getX();
+                int Z = chunkPos.getZ();
                 int minX;
                 if (X == cbx) {
                     minX = bx & 15;
@@ -228,6 +217,9 @@ public class HybridUtils {
                         for (int yIndex = 0; yIndex < height; yIndex++) {
                             int y = yIndex + minHeight;
                             BlockState block = queue.getBlock(xx, y, zz);
+                            if (block == null) {
+                                block = AIR;
+                            }
                             int xr = xb + x;
                             int zr = zb + z;
                             newBlocks[yIndex][xr][zr] = block;
@@ -248,10 +240,10 @@ public class HybridUtils {
                     for (int z = 0; z < length; z++) {
                         Set<BlockType> types = new HashSet<>();
                         for (int yIndex = 0; yIndex < height; yIndex++) {
-                            BlockState old = oldBlocks[yIndex][x][z];
+                            BlockState old = oldBlocks[yIndex][x][z]; // Nullable
                             try {
-                                BlockState now = newBlocks[yIndex][x][z];
-                                if (!old.equals(now)) {
+                                BlockState now = newBlocks[yIndex][x][z]; // Not null
+                                if (!now.equals(old) && !(old == null && now.getBlockType().equals(BlockTypes.AIR))) {
                                     changes[i]++;
                                 }
                                 if (now.getBlockType().getMaterial().isAir()) {
