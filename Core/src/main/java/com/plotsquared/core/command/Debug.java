@@ -41,6 +41,8 @@ import com.plotsquared.core.uuid.UUIDMapping;
 import com.sk89q.worldedit.world.entity.EntityType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -125,10 +127,11 @@ public class Debug extends SubCommand {
             player.sendMessage(TranslatableCaption.of("debug.entity_categories"));
             EntityCategory.REGISTRY.forEach(category -> {
                 final StringBuilder builder =
-                        new StringBuilder("§7- §6").append(category.getId()).append("§7: §6");
+                        new StringBuilder("<gray>-</gray> <gold>").append(category.getId()).append("</gold><gray>: <gold>");
                 for (final EntityType entityType : category.getAll()) {
                     builder.append(entityType.getId()).append(" ");
                 }
+                builder.append("</gold>");
                 player.sendMessage(StaticCaption.of("<prefix>" + builder));
             });
             EntityType.REGISTRY.values().stream().sorted(Comparator.comparing(EntityType::getId))
@@ -148,7 +151,8 @@ public class Debug extends SubCommand {
                 .getCaptionMap(TranslatableCaption.DEFAULT_NAMESPACE)
                 .getCaptions();
         TextComponent.Builder information = Component.text();
-        Component header = MINI_MESSAGE.deserialize(TranslatableCaption.of("debug.debug_header").getComponent(player) + "\n");
+        Component header = TranslatableCaption.of("debug.debug_header").toComponent(player)
+                .append(Component.newline());
         String line = TranslatableCaption.of("debug.debug_line").getComponent(player) + "\n";
         String section = TranslatableCaption.of("debug.debug_section").getComponent(player) + "\n";
         information.append(header);

@@ -271,7 +271,7 @@ public class Inbox extends SubCommand {
                     if (!comments.isEmpty()) {
                         player.sendMessage(
                                 TranslatableCaption.of("comment.comment_removed_success"),
-                                TagResolver.resolver("value", Tag.inserting(Component.text(String.valueOf(comments))))
+                                TagResolver.resolver("value", Tag.inserting(Component.text("*")))
                         );
                         plot.getPlotCommentContainer().removeComments(comments);
                     }

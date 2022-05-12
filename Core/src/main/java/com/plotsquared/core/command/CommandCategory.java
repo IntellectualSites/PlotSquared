@@ -29,6 +29,7 @@ import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -100,7 +101,7 @@ public enum CommandCategory implements Caption {
     }
 
     @Override
-    public @NonNull ComponentLike toComponent(@NonNull final LocaleHolder localeHolder) {
+    public @NonNull Component toComponent(@NonNull final LocaleHolder localeHolder) {
         return MiniMessage.miniMessage().deserialize(getComponent(localeHolder));
     }
 

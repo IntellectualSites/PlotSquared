@@ -25,9 +25,11 @@
  */
 package com.plotsquared.core.command;
 
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.util.StringMan;
 import com.sk89q.worldedit.command.util.SuggestionHelper;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
@@ -56,22 +58,13 @@ public class Biome extends SetCommand {
         } catch (final Exception ignore) {
         }
         if (biome == null) {
-            Component separator = MINI_MESSAGE.deserialize(
-                    TranslatableCaption.of("blocklist.block_list_separator").getComponent(player)
-            );
-            TextComponent.Builder biomes = Component.text();
-            final Collection<BiomeType> biomeTypes = BiomeType.REGISTRY.values();
-            int counter = 0;
-            for (final BiomeType biomeType : biomeTypes) {
-                if (counter++ > 0) {
-                    biomes.append(separator);
-                }
-                biomes.append(Component.text(biomeType.toString()));
-            }
+            String separator = TranslatableCaption.of("blocklist.block_list_separator").getComponent(player);
             player.sendMessage(TranslatableCaption.of("biome.need_biome"));
             player.sendMessage(
-                    TranslatableCaption.of("commandconfig.subcommand_set_options_header"),
-                    TagResolver.resolver("values", Tag.inserting(biomes))
+                    StaticCaption.of(
+                            TranslatableCaption.of("commandconfig.subcommand_set_options_header_only").getComponent(player)
+                                    + StringMan.join(BiomeType.REGISTRY.values(), separator)
+                    )
             );
             return false;
         }

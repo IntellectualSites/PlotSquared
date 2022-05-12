@@ -39,7 +39,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotCluster;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.util.ComponentMan;
+import com.plotsquared.core.util.ComponentHelper;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
@@ -79,7 +79,7 @@ public class Cluster extends SubCommand {
             // return arguments
             player.sendMessage(
                     TranslatableCaption.of("cluster.cluster_available_args"),
-                    TagResolver.resolver("list", Tag.inserting(ComponentMan.join(AVAILABLE_ARGS, SEPARATOR)))
+                    TagResolver.resolver("list", Tag.inserting(ComponentHelper.join(AVAILABLE_ARGS, SEPARATOR)))
             );
             return false;
         }
@@ -917,7 +917,7 @@ public class Cluster extends SubCommand {
         }
         player.sendMessage(
                 TranslatableCaption.of("cluster.cluster_available_args"),
-                TagResolver.resolver("list", Tag.inserting(ComponentMan.join(AVAILABLE_ARGS, SEPARATOR)))
+                TagResolver.resolver("list", Tag.inserting(ComponentHelper.join(AVAILABLE_ARGS, SEPARATOR)))
         );
         return false;
     }

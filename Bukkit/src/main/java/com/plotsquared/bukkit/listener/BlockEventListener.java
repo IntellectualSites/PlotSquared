@@ -288,8 +288,8 @@ public class BlockEventListener implements Listener {
                 pp.sendMessage(
                         TranslatableCaption.of("height.height_limit"),
                         TagResolver.builder()
-                                .tag("minHeight", Tag.inserting(Component.text(area.getMinBuildHeight())))
-                                .tag("maxHeight", Tag.inserting(Component.text(area.getMaxBuildHeight())))
+                                .tag("minheight", Tag.inserting(Component.text(area.getMinBuildHeight())))
+                                .tag("maxheight", Tag.inserting(Component.text(area.getMaxBuildHeight())))
                                 .build()
                 );
             }
@@ -388,8 +388,8 @@ public class BlockEventListener implements Listener {
                 plotPlayer.sendMessage(
                         TranslatableCaption.of("height.height_limit"),
                         TagResolver.builder()
-                                .tag("minHeight", Tag.inserting(Component.text(area.getMinBuildHeight())))
-                                .tag("maxHeight", Tag.inserting(Component.text(area.getMaxBuildHeight())))
+                                .tag("minheight", Tag.inserting(Component.text(area.getMinBuildHeight())))
+                                .tag("maxheight", Tag.inserting(Component.text(area.getMaxBuildHeight())))
                                 .build()
                 );
             }
@@ -1284,8 +1284,8 @@ public class BlockEventListener implements Listener {
                 pp.sendMessage(
                         TranslatableCaption.of("height.height_limit"),
                         TagResolver.builder()
-                                .tag("minHeight", Tag.inserting(Component.text(area.getMinBuildHeight())))
-                                .tag("maxHeight", Tag.inserting(Component.text(area.getMaxBuildHeight())))
+                                .tag("minheight", Tag.inserting(Component.text(area.getMinBuildHeight())))
+                                .tag("maxheight", Tag.inserting(Component.text(area.getMaxBuildHeight())))
                                 .build()
                 );
                 event.setCancelled(true);

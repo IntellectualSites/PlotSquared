@@ -54,6 +54,7 @@ import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -607,23 +608,22 @@ public final class FlagCommand extends Command {
             return;
         }
 
-        final Map<String, ArrayList<String>> flags = new HashMap<>();
+        final Map<Component, ArrayList<String>> flags = new HashMap<>();
         for (PlotFlag<?, ?> plotFlag : GlobalFlagContainer.getInstance().getRecognizedPlotFlags()) {
             if (plotFlag instanceof InternalFlag) {
                 continue;
             }
-            final String category = MINI_MESSAGE.escapeTags(plotFlag.getFlagCategory().getComponent(player));
-            final Collection<String> flagList =
-                    flags.computeIfAbsent(category, k -> new ArrayList<>());
+            final Component category = plotFlag.getFlagCategory().toComponent(player);
+            final Collection<String> flagList = flags.computeIfAbsent(category, k -> new ArrayList<>());
             flagList.add(plotFlag.getName());
         }
 
-        for (final Map.Entry<String, ArrayList<String>> entry : flags.entrySet()) {
+        for (final Map.Entry<Component, ArrayList<String>> entry : flags.entrySet()) {
             Collections.sort(entry.getValue());
             Component category =
                     MINI_MESSAGE.deserialize(
                             TranslatableCaption.of("flag.flag_list_categories").getComponent(player),
-                            TagResolver.resolver("category", Tag.inserting(Component.text(entry.getKey())))
+                            TagResolver.resolver("category", Tag.inserting(entry.getKey().style(Style.empty())))
                     );
             TextComponent.Builder builder = Component.text().append(category);
             final Iterator<String> flagIterator = entry.getValue().iterator();

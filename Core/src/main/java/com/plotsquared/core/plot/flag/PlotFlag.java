@@ -91,6 +91,12 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
         return flagName.toString();
     }
 
+    /**
+     * Gets the flag name as a Kyori {@link Component}
+     *
+     * @see #getFlagName(Class)
+     * @since TODO
+     */
     public static <T, F extends PlotFlag<T, F>> Component getFlagNameComponent(Class<F> flagClass) {
         return Component.text(getFlagName(flagClass));
     }

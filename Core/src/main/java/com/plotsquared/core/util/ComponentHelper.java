@@ -31,16 +31,33 @@ import net.kyori.adventure.text.TextComponent;
 
 import java.util.Collection;
 
-public class ComponentMan {
+/**
+ * A utility class for modifying components.
+ *
+ * @since TODO
+ */
+public class ComponentHelper {
 
+    /**
+     * Joins multiple {@link Component}s into one final {@link ComponentLike}
+     *
+     * @param components The components to join
+     * @param delimiter  The delimiter to use between the components
+     * @return The joined components
+     * @since TODO
+     */
     public static ComponentLike join(Collection<? extends ComponentLike> components, Component delimiter) {
         return join(components.toArray(ComponentLike[]::new), delimiter);
     }
 
-    public static Component join(Component[] components, Component delimiter) {
-        return join(components, delimiter);
-    }
-
+    /**
+     * Joins multiple {@link ComponentLike}s into one final {@link ComponentLike}
+     *
+     * @param components The components to join
+     * @param delimiter  The delimiter to use between the components
+     * @return The joined components
+     * @since TODO
+     */
     public static Component join(ComponentLike[] components, Component delimiter) {
         TextComponent.Builder builder = Component.text();
         for (int i = 0, j = components.length; i < j; i++) {

@@ -84,8 +84,10 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
 import io.papermc.lib.PaperLib;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.FluidCollisionMode;
@@ -741,18 +743,13 @@ public class PlayerEventListener extends PlotListener implements Listener {
         builder.tag("world", Tag.inserting(Component.text(worldName)));
         builder.tag("plot_id", Tag.inserting(Component.text(id.toString())));
         builder.tag("sender", Tag.inserting(Component.text(sender)));
-        // If we do/don't want colour, we need to be careful about how to go about it, as players could attempt either <gold></gold> or &6 etc.
-        // In both cases, we want to use a Component Template to ensure that the player cannot use any placeholders in their message on purpose
-        //  or accidentally, as component templates are done at the end. We also need to deserialize from legacy color codes to a Component if
-        //  allowing colour.
         if (plotPlayer.hasPermission("plots.chat.color")) {
-            builder.tag(
-                    "msg",
-                    Tag.inserting(BukkitUtil.LEGACY_COMPONENT_SERIALIZER.deserialize(ChatColor.translateAlternateColorCodes(
-                            '&',
-                            message
-                    )))
-            );
+            builder.tag("msg", Tag.inserting(MiniMessage.miniMessage().deserialize(
+                    message,
+                    TagResolver.resolver(StandardTags.color(), StandardTags.gradient(),
+                            StandardTags.rainbow(), StandardTags.decorations()
+                    )
+            )));
         } else {
             builder.tag("msg", Tag.inserting(Component.text(message)));
         }

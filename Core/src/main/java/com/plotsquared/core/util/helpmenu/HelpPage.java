@@ -29,7 +29,7 @@ import com.plotsquared.core.command.CommandCategory;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.ComponentMan;
+import com.plotsquared.core.util.ComponentHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -63,7 +63,7 @@ public class HelpPage {
                             TranslatableCaption.of("help.help_page_header").getComponent(player),
                             pageHeaderResolver
                     )))
-                    .tag("help_objects", Tag.inserting(ComponentMan.join(this.helpObjects, Component.text("\n"))))
+                    .tag("help_objects", Tag.inserting(ComponentHelper.join(this.helpObjects, Component.text("\n"))))
                     .tag("footer", Tag.inserting(TranslatableCaption.of("help.help_footer").toComponent(player)))
                     .build();
             player.sendMessage(

@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.configuration.caption;
 
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -46,7 +47,8 @@ public interface Caption {
      *
      * @param localeHolder Locale holder
      * @return ComponentLike
+     * @since TODO
      */
-    @NonNull ComponentLike toComponent(@NonNull LocaleHolder localeHolder);
+    @NonNull Component toComponent(@NonNull LocaleHolder localeHolder);
 
 }
