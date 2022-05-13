@@ -1420,15 +1420,7 @@ public class Plot {
                         0
                 );
             }
-            Location location = Location
-                    .at(
-                            bottom.getWorldName(),
-                            bottom.getX() + home.getX(),
-                            bottom.getY() + home.getY(),
-                            bottom.getZ() + home.getZ(),
-                            home.getYaw(),
-                            home.getPitch()
-                    );
+            Location location = toHomeLocation(bottom, home);
             if (!this.worldUtil.getBlockSynchronous(location).getBlockType().getMaterial().isAir()) {
                 location = location.withY(
                         Math.max(1 + this.worldUtil.getHighestBlockSynchronous(
@@ -1461,15 +1453,7 @@ public class Plot {
                 return;
             }
             Location bottom = this.getBottomAbs();
-            Location location = Location
-                    .at(
-                            bottom.getWorldName(),
-                            bottom.getX() + home.getX(),
-                            home.getY(), // y is absolute
-                            bottom.getZ() + home.getZ(),
-                            home.getYaw(),
-                            home.getPitch()
-                    );
+            Location location = toHomeLocation(bottom, home);
             this.worldUtil.getBlock(location, block -> {
                 if (!block.getBlockType().getMaterial().isAir()) {
                     this.worldUtil.getHighestBlock(this.getWorldName(), location.getX(), location.getZ(),
@@ -1480,6 +1464,17 @@ public class Plot {
                 }
             });
         }
+    }
+
+    private Location toHomeLocation(Location bottom, BlockLoc relativeHome) {
+        return Location.at(
+                bottom.getWorldName(),
+                bottom.getX() + relativeHome.getX(),
+                relativeHome.getY(), // y is absolute
+                bottom.getZ() + relativeHome.getZ(),
+                relativeHome.getYaw(),
+                relativeHome.getPitch()
+        );
     }
 
     /**
