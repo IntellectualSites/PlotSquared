@@ -45,7 +45,9 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -89,7 +91,7 @@ public class Claim extends SubCommand {
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Claim")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("Claim")))
             );
             return true;
         }
@@ -108,14 +110,14 @@ public class Claim extends SubCommand {
                     if (grants <= 0) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.cant_claim_more_plots"),
-                                Template.of("amount", String.valueOf(grants))
+                                TagResolver.resolver("amount", Tag.inserting(Component.text(grants)))
                         );
                         metaDataAccess.remove();
                     }
                 } else {
                     player.sendMessage(
                             TranslatableCaption.of("permission.cant_claim_more_plots"),
-                            Template.of("amount", String.valueOf(player.getAllowedPlots()))
+                            TagResolver.resolver("amount", Tag.inserting(Component.text(player.getAllowedPlots())))
                     );
                     return false;
                 }
@@ -130,8 +132,10 @@ public class Claim extends SubCommand {
                     if (!area.hasSchematic(schematic)) {
                         player.sendMessage(
                                 TranslatableCaption.of("schematics.schematic_invalid_named"),
-                                Template.of("schemname", schematic),
-                                Template.of("reason", "non-existent")
+                                TagResolver.builder()
+                                        .tag("schemname", Tag.inserting(Component.text(schematic)))
+                                        .tag("reason", Tag.inserting(Component.text("non-existent")))
+                                        .build()
                         );
                     }
                     if (!Permissions.hasPermission(player, Permission.PERMISSION_CLAIM_SCHEMATIC
@@ -141,7 +145,7 @@ public class Claim extends SubCommand {
                     ) && !force) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_schematic_permission"),
-                                Template.of("value", schematic)
+                                TagResolver.resolver("value", Tag.inserting(Component.text(schematic)))
                         );
                     }
                 }
@@ -157,16 +161,28 @@ public class Claim extends SubCommand {
                     if (this.econHandler.getMoney(player) < cost) {
                         player.sendMessage(
                                 TranslatableCaption.of("economy.cannot_afford_plot"),
-                                Template.of("money", this.econHandler.format(cost)),
-                                Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))
+                                TagResolver.builder()
+                                        .tag("money", Tag.inserting(Component.text(this.econHandler.format(cost))))
+                                        .tag(
+                                                "balance",
+                                                Tag.inserting(Component.text(this.econHandler.format(this.econHandler.getMoney(
+                                                        player))))
+                                        )
+                                        .build()
                         );
                         return false;
                     }
                     this.econHandler.withdrawMoney(player, cost);
                     player.sendMessage(
                             TranslatableCaption.of("economy.removed_balance"),
-                            Template.of("money", this.econHandler.format(cost)),
-                            Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))
+                            TagResolver.builder()
+                                    .tag("money", Tag.inserting(Component.text(this.econHandler.format(cost))))
+                                    .tag(
+                                            "balance",
+                                            Tag.inserting(Component.text(this.econHandler.format(this.econHandler.getMoney(
+                                                    player))))
+                                    )
+                                    .build()
                     );
                 }
             }
@@ -178,8 +194,10 @@ public class Claim extends SubCommand {
                 }
                 player.sendMessage(
                         TranslatableCaption.of("economy.removed_granted_plot"),
-                        Template.of("usedGrants", String.valueOf((grants - 1))),
-                        Template.of("remainingGrants", String.valueOf(grants))
+                        TagResolver.builder()
+                                .tag("usedGrants", Tag.inserting(Component.text(grants - 1)))
+                                .tag("remainingGrants", Tag.inserting(Component.text(grants)))
+                                .build()
                 );
             }
         }
@@ -205,7 +223,7 @@ public class Claim extends SubCommand {
                         if (mergeEvent.getEventResult() == Result.DENY) {
                             player.sendMessage(
                                     TranslatableCaption.of("events.event_denied"),
-                                    Template.of("value", "Auto merge on claim")
+                                    TagResolver.resolver("value", Tag.inserting(Component.text("Auto merge on claim")))
                             );
                         } else {
                             if (plot.getPlotModificationManager().autoMerge(

@@ -38,7 +38,9 @@ import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
@@ -138,8 +140,10 @@ public class DebugPaste extends SubCommand {
                 } catch (IOException ignored) {
                     player.sendMessage(
                             TranslatableCaption.of("debugpaste.latest_log"),
-                            Template.of("file", "latest.log"),
-                            Template.of("size", "14MB")
+                            TagResolver.builder()
+                                    .tag("file", Tag.inserting(Component.text("latest.log")))
+                                    .tag("size", Tag.inserting(Component.text("14MB")))
+                                    .build()
                     );
                 }
 
@@ -148,7 +152,7 @@ public class DebugPaste extends SubCommand {
                 } catch (final IllegalArgumentException ignored) {
                     player.sendMessage(
                             TranslatableCaption.of("debugpaste.empty_file"),
-                            Template.of("file", "settings.yml")
+                            TagResolver.resolver("file", Tag.inserting(Component.text("settings.yml")))
                     );
                 }
                 try {
@@ -156,7 +160,7 @@ public class DebugPaste extends SubCommand {
                 } catch (final IllegalArgumentException ignored) {
                     player.sendMessage(
                             TranslatableCaption.of("debugpaste.empty_file"),
-                            Template.of("file", "worlds.yml")
+                            TagResolver.resolver("file", Tag.inserting(Component.text("worlds.yml")))
                     );
                 }
 
@@ -169,7 +173,7 @@ public class DebugPaste extends SubCommand {
                 } catch (final IOException ignored) {
                     player.sendMessage(
                             TranslatableCaption.of("debugpaste.skip_multiverse"),
-                            Template.of("file", "worlds.yml")
+                            TagResolver.resolver("file", Tag.inserting(Component.text("worlds.yml")))
                     );
                 }
 
@@ -184,20 +188,20 @@ public class DebugPaste extends SubCommand {
                                 String.format("https://athion.net/ISPaster/paste/view/%s", pasteId);
                         player.sendMessage(
                                 TranslatableCaption.of("debugpaste.debug_report_created"),
-                                Template.of("url", link)
+                                TagResolver.resolver("url", Tag.preProcessParsed(link))
                         );
                     } else {
                         final String responseMessage = jsonObject.get("response").getAsString();
                         player.sendMessage(
                                 TranslatableCaption.of("debugpaste.creation_failed"),
-                                Template.of("value", responseMessage)
+                                TagResolver.resolver("value", Tag.inserting(Component.text(responseMessage)))
                         );
                     }
                 } catch (final Throwable throwable) {
                     throwable.printStackTrace();
                     player.sendMessage(
                             TranslatableCaption.of("debugpaste.creation_failed"),
-                            Template.of("value", throwable.getMessage())
+                            TagResolver.resolver("value", Tag.inserting(Component.text(throwable.getMessage())))
                     );
                 }
             } catch (IOException e) {

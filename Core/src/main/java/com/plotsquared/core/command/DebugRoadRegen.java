@@ -35,7 +35,9 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.queue.QueueCoordinator;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
@@ -67,7 +69,7 @@ public class DebugRoadRegen extends SubCommand {
         if (args.length < 1) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", DebugRoadRegen.USAGE)
+                    TagResolver.resolver("value", Tag.inserting(Component.text(DebugRoadRegen.USAGE)))
             );
             return false;
         }
@@ -87,7 +89,7 @@ public class DebugRoadRegen extends SubCommand {
             default:
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.of("value", DebugRoadRegen.USAGE)
+                        TagResolver.resolver("value", Tag.inserting(Component.text(DebugRoadRegen.USAGE)))
                 );
                 return false;
         }
@@ -110,11 +112,11 @@ public class DebugRoadRegen extends SubCommand {
             queue.setCompleteTask(() -> {
                 player.sendMessage(
                         TranslatableCaption.of("debugroadregen.regen_done"),
-                        Template.of("value", plot.getId().toString())
+                        TagResolver.resolver("value", Tag.inserting(Component.text(plot.getId().toString())))
                 );
                 player.sendMessage(
                         TranslatableCaption.of("debugroadregen.regen_all"),
-                        Template.of("value", "/plot regenallroads")
+                        TagResolver.resolver("value", Tag.inserting(Component.text("/plot regenallroads")))
                 );
             });
             manager.createRoadEast(plot, queue);
@@ -133,18 +135,18 @@ public class DebugRoadRegen extends SubCommand {
             } catch (NumberFormatException ignored) {
                 player.sendMessage(
                         TranslatableCaption.of("invalid.not_valid_number"),
-                        Template.of("value", "0, 256")
+                        TagResolver.resolver("value", Tag.inserting(Component.text("0, 256")))
                 );
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.of("value", DebugRoadRegen.USAGE)
+                        TagResolver.resolver("value", Tag.inserting(Component.text(DebugRoadRegen.USAGE)))
                 );
                 return false;
             }
         } else if (args.length != 0) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", DebugRoadRegen.USAGE)
+                    TagResolver.resolver("value", Tag.inserting(Component.text(DebugRoadRegen.USAGE)))
             );
             return false;
         }
@@ -162,11 +164,11 @@ public class DebugRoadRegen extends SubCommand {
         }
         player.sendMessage(
                 TranslatableCaption.of("debugroadregen.schematic"),
-                Template.of("command", "/plot createroadschematic")
+                TagResolver.resolver("command", Tag.inserting(Component.text("/plot createroadschematic")))
         );
         player.sendMessage(
                 TranslatableCaption.of("debugroadregen.regenallroads"),
-                Template.of("command", "/plot regenallroads")
+                TagResolver.resolver("command", Tag.inserting(Component.text("/plot regenallroads")))
         );
         boolean result = this.hybridUtils.scheduleSingleRegionRoadUpdate(plot, height);
         if (!result) {

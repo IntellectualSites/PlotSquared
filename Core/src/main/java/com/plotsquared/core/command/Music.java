@@ -43,7 +43,9 @@ import com.plotsquared.core.util.InventoryUtil;
 import com.plotsquared.core.util.Permissions;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nullable;
@@ -90,7 +92,10 @@ public class Music extends SubCommand {
                 .hasPermission(player, Permission.PERMISSION_ADMIN_MUSIC_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_MUSIC_OTHER))
+                    TagResolver.resolver(
+                            "node",
+                            Tag.inserting(Permission.PERMISSION_ADMIN_MUSIC_OTHER)
+                    )
             );
             return true;
         }
@@ -113,15 +118,17 @@ public class Music extends SubCommand {
                     if (event.getEventResult() == Result.DENY) {
                         getPlayer().sendMessage(
                                 TranslatableCaption.of("events.event_denied"),
-                                Template.of("value", "Music removal")
+                                TagResolver.resolver("value", Tag.inserting(Component.text("Music removal")))
                         );
                         return true;
                     }
                     plot.removeFlag(event.getFlag());
                     getPlayer().sendMessage(
                             TranslatableCaption.of("flag.flag_removed"),
-                            Template.of("flag", "music"),
-                            Template.of("value", "music_disc")
+                            TagResolver.builder()
+                                    .tag("flag", Tag.inserting(Component.text("music")))
+                                    .tag("value", Tag.inserting(Component.text("music_disc")))
+                                    .build()
                     );
                 } else if (item.getName().toLowerCase(Locale.ENGLISH).contains("disc")) {
                     PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(MusicFlag.class)
@@ -130,13 +137,17 @@ public class Music extends SubCommand {
                     if (event.getEventResult() == Result.DENY) {
                         getPlayer().sendMessage(
                                 TranslatableCaption.of("events.event_denied"),
-                                Template.of("value", "Music addition")
+                                TagResolver.resolver("value", Tag.inserting(Component.text("Music addition")))
                         );
                         return true;
                     }
                     plot.setFlag(event.getFlag());
-                    getPlayer().sendMessage(TranslatableCaption.of("flag.flag_added"), Template.of("flag", "music"),
-                            Template.of("value", String.valueOf(event.getFlag().getValue()))
+                    getPlayer().sendMessage(
+                            TranslatableCaption.of("flag.flag_added"),
+                            TagResolver.builder()
+                                    .tag("flag", Tag.inserting(Component.text("music")))
+                                    .tag("value", Tag.inserting(Component.text(event.getFlag().getValue().toString())))
+                                    .build()
                     );
                 } else {
                     getPlayer().sendMessage(TranslatableCaption.of("flag.flag_not_added"));

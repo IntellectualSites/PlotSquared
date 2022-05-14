@@ -28,7 +28,9 @@ package com.plotsquared.core.command;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 /**
  * @deprecated In favor of "/plot toggle chat" and
@@ -48,7 +50,7 @@ public class Chat extends SubCommand {
         check(area, TranslatableCaption.of("errors.not_in_plot_world"));
         player.sendMessage(
                 TranslatableCaption.of("errors.deprecated_commands"),
-                Template.of("replacement", "/plot toggle chat")
+                TagResolver.resolver("replacement", Tag.inserting(Component.text("/plot toggle chat")))
         );
         if (player.getPlotAreaAbs().isForcingPlotChat()) {
             player.sendMessage(TranslatableCaption.of("chat.plot_chat_forced"));

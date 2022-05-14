@@ -65,8 +65,9 @@ import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.item.ItemType;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.title.Title;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -844,7 +845,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      */
     public void sendTitle(
             final @NonNull Caption title, final @NonNull Caption subtitle,
-            final @NonNull Template... replacements
+            final @NonNull TagResolver... replacements
     ) {
         sendTitle(
                 title,
@@ -869,11 +870,11 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     public void sendTitle(
             final @NonNull Caption title, final @NonNull Caption subtitle,
             final int fadeIn, final int stay, final int fadeOut,
-            final @NonNull Template... replacements
+            final @NonNull TagResolver... replacements
     ) {
-        final Component titleComponent = MiniMessage.get().parse(title.getComponent(this), replacements);
+        final Component titleComponent = MiniMessage.miniMessage().deserialize(title.getComponent(this), replacements);
         final Component subtitleComponent =
-                MiniMessage.get().parse(subtitle.getComponent(this), replacements);
+                MiniMessage.miniMessage().deserialize(subtitle.getComponent(this), replacements);
         final Title.Times times = Title.Times.of(
                 Duration.of(Settings.Titles.TITLES_FADE_IN * 50L, ChronoUnit.MILLIS),
                 Duration.of(Settings.Titles.TITLES_STAY * 50L, ChronoUnit.MILLIS),
@@ -891,7 +892,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      */
     public void sendActionBar(
             final @NonNull Caption caption,
-            final @NonNull Template... replacements
+            final @NonNull TagResolver... replacements
     ) {
         String message;
         try {
@@ -911,14 +912,14 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                 .replace("<prefix>", TranslatableCaption.of("core.prefix").getComponent(this));
 
 
-        final Component component = MiniMessage.get().parse(message, replacements);
+        final Component component = MiniMessage.miniMessage().deserialize(message, replacements);
         getAudience().sendActionBar(component);
     }
 
     @Override
     public void sendMessage(
             final @NonNull Caption caption,
-            final @NonNull Template... replacements
+            final @NonNull TagResolver... replacements
     ) {
         String message;
         try {
@@ -937,7 +938,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                 .replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&')
                 .replace("<prefix>", TranslatableCaption.of("core.prefix").getComponent(this));
         // Parse the message
-        final Component component = MiniMessage.get().parse(message, replacements);
+        final Component component = MiniMessage.miniMessage().deserialize(message, replacements);
         if (!Objects.equal(component, this.getMeta("lastMessage"))
                 || System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000) {
             setMeta("lastMessage", component);

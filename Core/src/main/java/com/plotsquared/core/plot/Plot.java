@@ -77,9 +77,11 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -464,7 +466,7 @@ public class Plot {
      * that could alter the de facto owner of the plot.
      *
      * @return The plot owner of this particular (sub-)plot
-     * as stored in the database, if one exists. Else, null.
+     *         as stored in the database, if one exists. Else, null.
      */
     public @Nullable UUID getOwnerAbs() {
         return this.owner;
@@ -1733,7 +1735,10 @@ public class Plot {
             area.addPlot(this);
             updateWorldBorder();
         }
-        player.sendMessage(TranslatableCaption.of("working.claimed"), Template.of("plot", this.getId().toString()));
+        player.sendMessage(
+                TranslatableCaption.of("working.claimed"),
+                TagResolver.resolver("plot", Tag.inserting(Component.text(this.getId().toString())))
+        );
         if (teleport) {
             if (!auto && Settings.Teleport.ON_CLAIM) {
                 teleportPlayer(player, TeleportCause.COMMAND_CLAIM, result -> {
@@ -2602,11 +2607,13 @@ public class Plot {
                 return;
             }
             Caption caption = TranslatableCaption.of("debug.plot_debug");
-            Template plotTemplate = Template.of("plot", this.toString());
-            Template messageTemplate = Template.of("message", message);
+            TagResolver resolver = TagResolver.builder()
+                    .tag("plot", Tag.inserting(Component.text(toString())))
+                    .tag("message", Tag.inserting(Component.text(message)))
+                    .build();
             for (final PlotPlayer<?> player : players) {
                 if (isOwner(player.getUUID()) || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_DEBUG_OTHER)) {
-                    player.sendMessage(caption, plotTemplate, messageTemplate);
+                    player.sendMessage(caption, resolver);
                 }
             }
         } catch (final Exception ignored) {
@@ -2636,7 +2643,7 @@ public class Plot {
         if (result == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Teleport")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("Teleport")))
             );
             resultConsumer.accept(false);
             return;
@@ -2651,7 +2658,7 @@ public class Plot {
             }
             player.sendMessage(
                     TranslatableCaption.of("teleport.teleport_in_seconds"),
-                    Template.of("amount", String.valueOf(Settings.Teleport.DELAY))
+                    TagResolver.resolver("amount", Tag.inserting(Component.text(Settings.Teleport.DELAY)))
             );
             final String name = player.getName();
             TaskManager.addToTeleportQueue(name);
@@ -2827,41 +2834,44 @@ public class Plot {
     public CompletableFuture<Caption> format(final Caption iInfo, PlotPlayer<?> player, final boolean full) {
         final CompletableFuture<Caption> future = new CompletableFuture<>();
         int num = this.getConnectedPlots().size();
-        String alias = !this.getAlias().isEmpty() ? this.getAlias() : TranslatableCaption.of("info.none").getComponent(player);
+        ComponentLike alias = !this.getAlias().isEmpty() ?
+                Component.text(this.getAlias()) :
+                TranslatableCaption.of("info.none").toComponent(player);
         Location bot = this.getCorners()[0];
         PlotSquared.platform().worldUtil().getBiome(
                 Objects.requireNonNull(this.getWorldName()),
                 bot.getX(),
                 bot.getZ(),
                 biome -> {
-                    Component trusted = PlayerManager.getPlayerList(this.getTrusted(), player);
-                    Component members = PlayerManager.getPlayerList(this.getMembers(), player);
-                    Component denied = PlayerManager.getPlayerList(this.getDenied(), player);
-                    String seen;
+                    ComponentLike trusted = PlayerManager.getPlayerList(this.getTrusted(), player);
+                    ComponentLike members = PlayerManager.getPlayerList(this.getMembers(), player);
+                    ComponentLike denied = PlayerManager.getPlayerList(this.getDenied(), player);
+                    ComponentLike seen;
                     if (Settings.Enabled_Components.PLOT_EXPIRY && ExpireManager.IMP != null) {
                         if (this.isOnline()) {
-                            seen = TranslatableCaption.of("info.now").getComponent(player);
+                            seen = TranslatableCaption.of("info.now").toComponent(player);
                         } else {
                             int time = (int) (ExpireManager.IMP.getAge(this, false) / 1000);
                             if (time != 0) {
-                                seen = TimeUtil.secToTime(time);
+                                seen = Component.text(TimeUtil.secToTime(time));
                             } else {
-                                seen = TranslatableCaption.of("info.unknown").getComponent(player);
+                                seen = TranslatableCaption.of("info.unknown").toComponent(player);
                             }
                         }
                     } else {
-                        seen = TranslatableCaption.of("info.never").getComponent(player);
+                        seen = TranslatableCaption.of("info.never").toComponent(player);
                     }
 
-                    String description = this.getFlag(DescriptionFlag.class);
-                    if (description.isEmpty()) {
-                        description = TranslatableCaption.of("info.plot_no_description").getComponent(player);
+                    ComponentLike description = TranslatableCaption.of("info.plot_no_description").toComponent(player);
+                    String descriptionValue = this.getFlag(DescriptionFlag.class);
+                    if (!descriptionValue.isEmpty()) {
+                        description = Component.text(descriptionValue);
                     }
 
-                    Component flags;
+                    ComponentLike flags;
                     Collection<PlotFlag<?, ?>> flagCollection = this.getApplicableFlags(true);
                     if (flagCollection.isEmpty()) {
-                        flags = MINI_MESSAGE.parse(TranslatableCaption.of("info.none").getComponent(player));
+                        flags = TranslatableCaption.of("info.none").toComponent(player);
                     } else {
                         TextComponent.Builder flagBuilder = Component.text();
                         String prefix = "";
@@ -2872,13 +2882,18 @@ public class Plot {
                             } else {
                                 value = flag.toString();
                             }
-                            Component snip = MINI_MESSAGE.parse(
+                            Component snip = MINI_MESSAGE.deserialize(
                                     prefix + CaptionUtility.format(
                                             player,
                                             TranslatableCaption.of("info.plot_flag_list").getComponent(player)
                                     ),
-                                    Template.of("flag", flag.getName()),
-                                    Template.of("value", CaptionUtility.formatRaw(player, value.toString()))
+                                    TagResolver.builder()
+                                            .tag("flag", Tag.inserting(Component.text(flag.getName())))
+                                            .tag("value", Tag.inserting(Component.text(CaptionUtility.formatRaw(
+                                                    player,
+                                                    value.toString()
+                                            ))))
+                                            .build()
                             );
                             flagBuilder.append(snip);
                             prefix = ", ";
@@ -2890,67 +2905,57 @@ public class Plot {
                     if (this.getOwner() == null) {
                         owner = Component.text("unowned");
                     } else if (this.getOwner().equals(DBFunc.SERVER)) {
-                        owner = Component.text(MINI_MESSAGE.stripTokens(TranslatableCaption
+                        owner = Component.text(MINI_MESSAGE.stripTags(TranslatableCaption
                                 .of("info.server")
                                 .getComponent(player)));
                     } else {
                         owner = PlayerManager.getPlayerList(this.getOwners(), player);
                     }
-                    Template headerTemplate = Template.of(
-                            "header",
-                            TranslatableCaption.of("info.plot_info_header").getComponent(player)
-                    );
-                    Template footerTemplate = Template.of(
-                            "footer",
-                            TranslatableCaption.of("info.plot_info_footer").getComponent(player)
-                    );
-                    Template areaTemplate;
+                    TagResolver.Builder tagBuilder = TagResolver.builder();
+                    tagBuilder.tag("header", Tag.inserting(TranslatableCaption.of("info.plot_info_header").toComponent(player)));
+                    tagBuilder.tag("footer", Tag.inserting(TranslatableCaption.of("info.plot_info_footer").toComponent(player)));
+                    TextComponent.Builder areaComponent = Component.text();
                     if (this.getArea() != null) {
-                        areaTemplate =
-                                Template.of(
-                                        "area",
-                                        this.getArea().getWorldName() + (this.getArea().getId() == null
-                                                ? ""
-                                                : "(" + this.getArea().getId() + ")")
-                                );
+                        areaComponent.append(Component.text(getArea().getWorldName()));
+                        if (getArea().getId() != null) {
+                            areaComponent.append(Component.text("("))
+                                    .append(Component.text(getArea().getId()))
+                                    .append(Component.text(")"));
+                        }
                     } else {
-                        areaTemplate = Template.of("area", TranslatableCaption.of("info.none").getComponent(player));
+                        areaComponent.append(TranslatableCaption.of("info.none").toComponent(player));
                     }
+                    tagBuilder.tag("area", Tag.inserting(areaComponent));
                     long creationDate = Long.parseLong(String.valueOf(timestamp));
                     SimpleDateFormat sdf = new SimpleDateFormat(Settings.Timeformat.DATE_FORMAT);
                     sdf.setTimeZone(TimeZone.getTimeZone(Settings.Timeformat.TIME_ZONE));
                     String newDate = sdf.format(creationDate);
 
-                    Template idTemplate = Template.of("id", this.getId().toString());
-                    Template aliasTemplate = Template.of("alias", alias);
-                    Template numTemplate = Template.of("num", String.valueOf(num));
-                    Template descTemplate = Template.of("desc", description);
-                    Template biomeTemplate = Template.of("biome", biome.toString().toLowerCase());
-                    Template ownerTemplate = Template.of("owner", owner);
-                    Template membersTemplate = Template.of("members", members);
-                    Template playerTemplate = Template.of("player", player.getName());
-                    Template trustedTemplate = Template.of("trusted", trusted);
-                    Template helpersTemplate = Template.of("helpers", members);
-                    Template deniedTemplate = Template.of("denied", denied);
-                    Template seenTemplate = Template.of("seen", seen);
-                    Template flagsTemplate = Template.of("flags", flags);
-                    Template creationTemplate = Template.of("creationdate", newDate);
-                    Template buildTemplate = Template.of("build", String.valueOf(build));
-                    Template sizeTemplate = Template.of("size", String.valueOf(getConnectedPlots().size()));
+                    tagBuilder.tag("id", Tag.inserting(Component.text(getId().toString())));
+                    tagBuilder.tag("alias", Tag.inserting(alias));
+                    tagBuilder.tag("num", Tag.inserting(Component.text(num)));
+                    tagBuilder.tag("desc", Tag.inserting(description));
+                    tagBuilder.tag("biome", Tag.inserting(Component.text(biome.toString().toLowerCase())));
+                    tagBuilder.tag("owner", Tag.inserting(owner));
+                    tagBuilder.tag("members", Tag.inserting(members));
+                    tagBuilder.tag("player", Tag.inserting(Component.text(player.getName())));
+                    tagBuilder.tag("trusted", Tag.inserting(trusted));
+                    tagBuilder.tag("denied", Tag.inserting(denied));
+                    tagBuilder.tag("seen", Tag.inserting(seen));
+                    tagBuilder.tag("flags", Tag.inserting(flags));
+                    tagBuilder.tag("creationdate", Tag.inserting(Component.text(newDate)));
+                    tagBuilder.tag("build", Tag.inserting(Component.text(build)));
+                    tagBuilder.tag("size", Tag.inserting(Component.text(getConnectedPlots().size())));
                     String component = iInfo.getComponent(player);
                     if (component.contains("<rating>") || component.contains("<likes>")) {
                         TaskManager.runTaskAsync(() -> {
-                            Template ratingTemplate;
-                            Template likesTemplate;
                             if (Settings.Ratings.USE_LIKES) {
-                                ratingTemplate = Template.of(
-                                        "rating",
+                                tagBuilder.tag("rating", Tag.inserting(Component.text(
                                         String.format("%.0f%%", Like.getLikesPercentage(this) * 100D)
-                                );
-                                likesTemplate = Template.of(
-                                        "likes",
+                                )));
+                                tagBuilder.tag("likes", Tag.inserting(Component.text(
                                         String.format("%.0f%%", Like.getLikesPercentage(this) * 100D)
-                                );
+                                )));
                             } else {
                                 int max = 10;
                                 if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES.isEmpty()) {
@@ -2965,70 +2970,34 @@ public class Plot {
                                                 .append(String.format("%.1f", ratings[i]));
                                         prefix = ",";
                                     }
-                                    ratingTemplate = Template.of("rating", rating.toString());
+                                    tagBuilder.tag("rating", Tag.inserting(Component.text(rating.toString())));
                                 } else {
                                     double rating = this.getAverageRating();
                                     if (Double.isFinite(rating)) {
-                                        ratingTemplate = Template.of("rating", String.format("%.1f", rating) + '/' + max);
-                                    } else {
-                                        ratingTemplate = Template.of(
+                                        tagBuilder.tag(
                                                 "rating",
-                                                TranslatableCaption.of("info.none").getComponent(player)
+                                                Tag.inserting(Component.text(String.format("%.1f", rating) + '/' + max))
+                                        );
+                                    } else {
+                                        tagBuilder.tag(
+                                                "rating", Tag.inserting(TranslatableCaption.of("info.none").toComponent(player))
                                         );
                                     }
                                 }
-                                likesTemplate = Template.of("likes", "N/A");
+                                tagBuilder.tag("likes", Tag.inserting(Component.text("N/A")));
                             }
                             future.complete(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
-                                    .parse(
+                                    .deserialize(
                                             iInfo.getComponent(player),
-                                            headerTemplate,
-                                            areaTemplate,
-                                            idTemplate,
-                                            aliasTemplate,
-                                            numTemplate,
-                                            descTemplate,
-                                            biomeTemplate,
-                                            ownerTemplate,
-                                            membersTemplate,
-                                            playerTemplate,
-                                            trustedTemplate,
-                                            helpersTemplate,
-                                            deniedTemplate,
-                                            seenTemplate,
-                                            flagsTemplate,
-                                            buildTemplate,
-                                            ratingTemplate,
-                                            creationTemplate,
-                                            sizeTemplate,
-                                            likesTemplate,
-                                            footerTemplate
+                                            tagBuilder.build()
                                     ))));
                         });
                         return;
                     }
                     future.complete(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
-                            .parse(
+                            .deserialize(
                                     iInfo.getComponent(player),
-                                    headerTemplate,
-                                    areaTemplate,
-                                    idTemplate,
-                                    aliasTemplate,
-                                    numTemplate,
-                                    descTemplate,
-                                    biomeTemplate,
-                                    ownerTemplate,
-                                    membersTemplate,
-                                    playerTemplate,
-                                    trustedTemplate,
-                                    helpersTemplate,
-                                    deniedTemplate,
-                                    seenTemplate,
-                                    flagsTemplate,
-                                    buildTemplate,
-                                    creationTemplate,
-                                    sizeTemplate,
-                                    footerTemplate
+                                    tagBuilder.build()
                             ))));
                 }
         );

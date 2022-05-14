@@ -37,7 +37,7 @@ import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.query.PlotQuery;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -152,7 +152,7 @@ public class PlotAPI {
      */
     public void sendConsoleMessage(
             final @NonNull String message,
-            final @NonNull Template @NonNull ... replacements
+            final @NonNull TagResolver @NonNull ... replacements
     ) {
         ConsolePlayer.getConsole().sendMessage(StaticCaption.of(message), replacements);
     }
@@ -165,7 +165,7 @@ public class PlotAPI {
      */
     public void sendConsoleMessage(
             final @NonNull Caption caption,
-            final @NonNull Template @NonNull ... replacements
+            final @NonNull TagResolver @NonNull ... replacements
     ) {
         ConsolePlayer.getConsole().sendMessage(caption, replacements);
     }

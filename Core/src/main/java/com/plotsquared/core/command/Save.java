@@ -39,7 +39,9 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.net.URL;
@@ -123,7 +125,7 @@ public class Save extends SubCommand {
                                 player.sendMessage(TranslatableCaption.of("web.save_success"));
                                 player.sendMessage(
                                         TranslatableCaption.of("errors.deprecated_commands"),
-                                        Template.of("replacement", "/plot download")
+                                        TagResolver.resolver("replacement", Tag.inserting(Component.text("/plot download")))
                                 );
                                 try (final MetaDataAccess<List<String>> schematicAccess =
                                              player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SCHEMATICS)) {

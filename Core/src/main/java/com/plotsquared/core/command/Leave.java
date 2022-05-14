@@ -32,7 +32,9 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.UUID;
@@ -74,7 +76,7 @@ public class Leave extends Command {
                 }
                 player.sendMessage(
                         TranslatableCaption.of("member.plot_left"),
-                        Template.of("player", player.getName())
+                        TagResolver.resolver("player", Tag.inserting(Component.text(player.getName())))
                 );
             } else {
                 player.sendMessage(

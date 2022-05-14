@@ -27,7 +27,6 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.permissions.Permission;
@@ -39,7 +38,9 @@ import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
@@ -82,7 +83,7 @@ public class Trust extends Command {
         );
 
         checkTrue(args.length == 1, TranslatableCaption.of("commandconfig.command_syntax"),
-                Templates.of("value", getUsage())
+                TagResolver.resolver("value", Tag.inserting(Component.text(getUsage())))
         );
 
         final CompletableFuture<Boolean> future = new CompletableFuture<>();
@@ -93,14 +94,14 @@ public class Trust extends Command {
                 } else {
                     player.sendMessage(
                             TranslatableCaption.of("errors.invalid_player"),
-                            Template.of("value", args[0])
+                            TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))
                     );
                 }
                 future.completeExceptionally(throwable);
                 return;
             } else {
                 checkTrue(!uuids.isEmpty(), TranslatableCaption.of("errors.invalid_player"),
-                        Templates.of("value", args[0])
+                        TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))
                 );
 
                 Iterator<UUID> iterator = uuids.iterator();
@@ -112,7 +113,10 @@ public class Trust extends Command {
                                     .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST))) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
-                                Template.of("value", PlayerManager.resolveName(uuid).getComponent(player))
+                                TagResolver.resolver(
+                                        "value",
+                                        Tag.inserting(PlayerManager.resolveName(uuid).toComponent(player))
+                                )
                         );
                         iterator.remove();
                         continue;
@@ -120,7 +124,10 @@ public class Trust extends Command {
                     if (currentPlot.isOwner(uuid)) {
                         player.sendMessage(
                                 TranslatableCaption.of("member.already_added"),
-                                Template.of("value", PlayerManager.resolveName(uuid).getComponent(player))
+                                TagResolver.resolver(
+                                        "value",
+                                        Tag.inserting(PlayerManager.resolveName(uuid).toComponent(player))
+                                )
                         );
                         iterator.remove();
                         continue;
@@ -128,7 +135,10 @@ public class Trust extends Command {
                     if (currentPlot.getTrusted().contains(uuid)) {
                         player.sendMessage(
                                 TranslatableCaption.of("member.already_added"),
-                                Template.of("value", PlayerManager.resolveName(uuid).getComponent(player))
+                                TagResolver.resolver(
+                                        "value",
+                                        Tag.inserting(PlayerManager.resolveName(uuid).toComponent(player))
+                                )
                         );
                         iterator.remove();
                         continue;
@@ -141,7 +151,7 @@ public class Trust extends Command {
                 if (localTrustSize >= maxTrustSize) {
                     player.sendMessage(
                             TranslatableCaption.of("members.plot_max_members_trusted"),
-                            Template.of("amount", String.valueOf(localTrustSize))
+                            TagResolver.resolver("amount", Tag.inserting(Component.text(localTrustSize)))
                     );
                     return;
                 }

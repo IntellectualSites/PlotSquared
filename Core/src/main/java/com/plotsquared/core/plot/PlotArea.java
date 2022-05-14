@@ -66,12 +66,15 @@ import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -91,7 +94,7 @@ import java.util.function.Consumer;
 /**
  * @author Jesse Boyd, Alexander Söderberg
  */
-public abstract class PlotArea {
+public abstract class PlotArea implements ComponentLike {
 
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotArea.class.getSimpleName());
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
@@ -412,7 +415,7 @@ public abstract class PlotArea {
         this.getFlagContainer().addAll(parseFlags(flags));
         ConsolePlayer.getConsole().sendMessage(
                 TranslatableCaption.of("flags.area_flags"),
-                Template.of("flags", flags.toString())
+                TagResolver.resolver("flags", Tag.inserting(Component.text(flags.toString())))
         );
 
         this.spawnEggs = config.getBoolean("event.spawn.egg");
@@ -434,7 +437,7 @@ public abstract class PlotArea {
         this.getRoadFlagContainer().addAll(parseFlags(roadflags));
         ConsolePlayer.getConsole().sendMessage(
                 TranslatableCaption.of("flags.road_flags"),
-                Template.of("flags", roadflags.toString())
+                TagResolver.resolver("flags", Tag.inserting(Component.text(roadflags.toString())))
         );
 
         loadConfiguration(config);
@@ -525,6 +528,11 @@ public abstract class PlotArea {
         } else {
             return this.getWorldName() + ";" + this.getId();
         }
+    }
+
+    @Override
+    public @NotNull Component asComponent() {
+        return Component.text(toString());
     }
 
     @Override

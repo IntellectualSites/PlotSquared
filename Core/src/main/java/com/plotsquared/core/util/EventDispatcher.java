@@ -80,7 +80,9 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -380,7 +382,7 @@ public class EventDispatcher {
                 if (notifyPerms) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.flag_tutorial_usage"),
-                            Template.of("flag", PlaceFlag.getFlagName(UseFlag.class))
+                            TagResolver.resolver("flag", Tag.inserting(PlaceFlag.getFlagNameComponent(UseFlag.class)))
                     );
                 }
                 return false;
@@ -447,8 +449,14 @@ public class EventDispatcher {
                 if (notifyPerms) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.flag_tutorial_usage"),
-                            Template.of("flag", PlotFlag.getFlagName(MobPlaceFlag.class)
-                                    + '/' + PlotFlag.getFlagName(PlaceFlag.class))
+                            TagResolver.resolver(
+                                    "flag",
+                                    Tag.inserting(
+                                            PlotFlag.getFlagNameComponent(MobPlaceFlag.class)
+                                                    .append(Component.text("/"))
+                                                    .append(PlotFlag.getFlagNameComponent(PlaceFlag.class))
+                                    )
+                            )
                     );
                 }
                 return false;
@@ -483,8 +491,14 @@ public class EventDispatcher {
                 if (notifyPerms) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.flag_tutorial_usage"),
-                            Template.of("flag", PlotFlag.getFlagName(MiscPlaceFlag.class)
-                                    + '/' + PlotFlag.getFlagName(PlaceFlag.class))
+                            TagResolver.resolver(
+                                    "flag",
+                                    Tag.inserting(
+                                            PlotFlag.getFlagNameComponent(MiscPlaceFlag.class)
+                                                    .append(Component.text("/"))
+                                                    .append(PlotFlag.getFlagNameComponent(PlaceFlag.class))
+                                    )
+                            )
                     );
                 }
                 return false;

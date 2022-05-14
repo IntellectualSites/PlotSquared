@@ -45,8 +45,10 @@ import com.plotsquared.core.util.PatternUtil;
 import com.plotsquared.core.util.Permissions;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.item.ItemTypes;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -187,7 +189,8 @@ public class ComponentPresetManager {
         }
         final int size = (int) Math.ceil((double) allowedPresets.size() / 9.0D);
         final PlotInventory plotInventory = new PlotInventory(this.inventoryUtil, player, size,
-                TranslatableCaption.of("preset.title").getComponent(player)) {
+                TranslatableCaption.of("preset.title").getComponent(player)
+        ) {
             @Override
             public boolean onClick(final int index) {
                 if (!getPlayer().getCurrentPlot().equals(plot)) {
@@ -218,7 +221,8 @@ public class ComponentPresetManager {
                     if (!econHandler.isEnabled(plot.getArea())) {
                         getPlayer().sendMessage(
                                 TranslatableCaption.of("preset.economy_disabled"),
-                                Template.of("preset", componentPreset.getDisplayName()));
+                                TagResolver.resolver("preset", Tag.inserting(Component.text(componentPreset.getDisplayName())))
+                        );
                         return false;
                     }
                     if (econHandler.getMoney(getPlayer()) < componentPreset.getCost()) {
@@ -228,7 +232,10 @@ public class ComponentPresetManager {
                         econHandler.withdrawMoney(getPlayer(), componentPreset.getCost());
                         getPlayer().sendMessage(
                                 TranslatableCaption.of("economy.removed_balance"),
-                                Template.of("money", econHandler.format(componentPreset.getCost()))
+                                TagResolver.resolver(
+                                        "money",
+                                        Tag.inserting(Component.text(econHandler.format(componentPreset.getCost())))
+                                )
                         );
                     }
                 }
@@ -258,19 +265,21 @@ public class ComponentPresetManager {
             final List<String> lore = new ArrayList<>();
             if (preset.getCost() > 0) {
                 if (!this.econHandler.isEnabled(plot.getArea())) {
-                    lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.parse(
+                    lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.deserialize(
                             TranslatableCaption.of("preset.preset_lore_economy_disabled").getComponent(player))));
                 } else {
-                    lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.parse(
+                    lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.deserialize(
                             TranslatableCaption.of("preset.preset_lore_cost").getComponent(player),
-                            Template.of("cost", String.format("%.2f", preset.getCost()))
+                            TagResolver.resolver("cost", Tag.inserting(Component.text(String.format("%.2f", preset.getCost()))))
                     )));
                 }
             }
-            lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.parse(
+            lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.deserialize(
                     TranslatableCaption.of("preset.preset_lore_component").getComponent(player),
-                    Template.of("component", preset.getComponent().name().toLowerCase()),
-                    Template.of("prefix", TranslatableCaption.of("core.prefix").getComponent(player))
+                    TagResolver.builder()
+                            .tag("component", Tag.inserting(Component.text(preset.getComponent().name().toLowerCase())))
+                            .tag("prefix", Tag.inserting(TranslatableCaption.of("core.prefix").toComponent(player)))
+                            .build()
             )));
             lore.removeIf(String::isEmpty);
             lore.addAll(preset.getDescription());

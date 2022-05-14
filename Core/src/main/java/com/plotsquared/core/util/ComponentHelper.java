@@ -23,55 +23,50 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.configuration.caption;
+package com.plotsquared.core.util;
 
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.TextComponent;
+
+import java.util.Collection;
 
 /**
- * A holder for a caption.
- * Useful when constructing messages in multiple steps with {@link TagResolver}s.
+ * A utility class for modifying components.
+ *
+ * @since TODO
  */
-public class CaptionHolder {
-
-    private Caption caption = StaticCaption.of("");
-    private TagResolver[] tagResolvers = new TagResolver[0];
+public class ComponentHelper {
 
     /**
-     * Set the {@link Caption} to send.
+     * Joins multiple {@link Component}s into one final {@link ComponentLike}
      *
-     * @param caption The new caption.
-     */
-    public void set(Caption caption) {
-        this.caption = caption;
-    }
-
-    /**
-     * Get the {@link Caption} to send.
-     *
-     * @return The caption to send.
-     */
-    public Caption get() {
-        return this.caption;
-    }
-
-    /**
-     * Get the {@link TagResolver}s to use when resolving tags in the {@link Caption}.
-     *
-     * @return The tag resolvers to use.
+     * @param components The components to join
+     * @param delimiter  The delimiter to use between the components
+     * @return The joined components
      * @since TODO
      */
-    public TagResolver[] getTagResolvers() {
-        return this.tagResolvers;
+    public static ComponentLike join(Collection<? extends ComponentLike> components, Component delimiter) {
+        return join(components.toArray(ComponentLike[]::new), delimiter);
     }
 
     /**
-     * Set the {@link TagResolver}s to use when resolving tags in the {@link Caption}.
+     * Joins multiple {@link ComponentLike}s into one final {@link ComponentLike}
      *
-     * @param tagResolvers The tag resolvers to use.
+     * @param components The components to join
+     * @param delimiter  The delimiter to use between the components
+     * @return The joined components
      * @since TODO
      */
-    public void setTagResolvers(TagResolver... tagResolvers) {
-        this.tagResolvers = tagResolvers;
+    public static Component join(ComponentLike[] components, Component delimiter) {
+        TextComponent.Builder builder = Component.text();
+        for (int i = 0, j = components.length; i < j; i++) {
+            if (i > 0) {
+                builder.append(delimiter);
+            }
+            builder.append(components[i]);
+        }
+        return builder.build();
     }
 
 }

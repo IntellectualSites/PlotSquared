@@ -51,6 +51,9 @@ import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
@@ -176,13 +179,16 @@ public class Template extends SubCommand {
                 if (args[0].equalsIgnoreCase("export")) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            net.kyori.adventure.text.minimessage.Template.of("value", "/plot template export <world>")
+                            TagResolver.resolver("value", Tag.inserting(Component.text("/plot template export <world>")))
                     );
                     return true;
                 } else if (args[0].equalsIgnoreCase("import")) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            net.kyori.adventure.text.minimessage.Template.of("value", "/plot template import <world> <template>")
+                            TagResolver.resolver(
+                                    "value",
+                                    Tag.inserting(Component.text("/plot template import <world> <template>"))
+                            )
                     );
                     return true;
                 }
@@ -196,14 +202,17 @@ public class Template extends SubCommand {
                 if (args.length != 3) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            net.kyori.adventure.text.minimessage.Template.of("value", "/plot template import <world> <template>")
+                            TagResolver.resolver(
+                                    "value",
+                                    Tag.inserting(Component.text("/plot template import <world> <template>"))
+                            )
                     );
                     return false;
                 }
                 if (this.plotAreaManager.hasPlotArea(world)) {
                     player.sendMessage(
                             TranslatableCaption.of("setup.setup_world_taken"),
-                            net.kyori.adventure.text.minimessage.Template.of("value", world)
+                            TagResolver.resolver("value", Tag.inserting(Component.text(world)))
                     );
                     return false;
                 }
@@ -211,7 +220,7 @@ public class Template extends SubCommand {
                 if (!result) {
                     player.sendMessage(
                             TranslatableCaption.of("template.invalid_template"),
-                            net.kyori.adventure.text.minimessage.Template.of("value", args[2])
+                            TagResolver.resolver("value", Tag.inserting(Component.text(args[2])))
                     );
                     return false;
                 }
@@ -249,7 +258,7 @@ public class Template extends SubCommand {
                 if (args.length != 2) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            net.kyori.adventure.text.minimessage.Template.of("value", "/plot template export <world>")
+                            TagResolver.resolver("value", Tag.inserting(Component.text("/plot template export <world>")))
                     );
                     return false;
                 }
@@ -257,7 +266,7 @@ public class Template extends SubCommand {
                 if (area == null) {
                     player.sendMessage(
                             TranslatableCaption.of("errors.not_valid_plot_world"),
-                            net.kyori.adventure.text.minimessage.Template.of("value", args[1])
+                            TagResolver.resolver("value", Tag.inserting(Component.text(args[1])))
                     );
                     return false;
                 }
@@ -269,7 +278,7 @@ public class Template extends SubCommand {
                         e.printStackTrace();
                         player.sendMessage(
                                 TranslatableCaption.of("template.template_failed"),
-                                net.kyori.adventure.text.minimessage.Template.of("value", e.getMessage())
+                                TagResolver.resolver("value", Tag.inserting(Component.text(e.getMessage())))
                         );
                         return;
                     }
