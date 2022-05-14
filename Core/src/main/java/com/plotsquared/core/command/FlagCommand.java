@@ -689,8 +689,8 @@ public final class FlagCommand extends Command {
                     TranslatableCaption.of("flag.flag_info_example"),
                     TagResolver.builder()
                             .tag("command", Tag.preProcessParsed("/plot flag set"))
-                            .tag("flag", Tag.inserting(Component.text(plotFlag.getName())))
-                            .tag("value", Tag.inserting(Component.text(plotFlag.getExample())))
+                            .tag("flag", Tag.preProcessParsed(plotFlag.getName()))
+                            .tag("value", Tag.preProcessParsed(plotFlag.getExample()))
                             .build()
             );
             // Default value
