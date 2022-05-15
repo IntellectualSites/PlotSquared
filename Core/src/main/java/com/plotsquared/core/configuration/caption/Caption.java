@@ -46,7 +46,7 @@ public interface Caption {
      * Get the Adventure {@link ComponentLike} for this caption
      *
      * @param localeHolder Locale holder
-     * @return ComponentLike
+     * @return {@link ComponentLike}
      * @since TODO
      */
     @NonNull Component toComponent(@NonNull LocaleHolder localeHolder);
