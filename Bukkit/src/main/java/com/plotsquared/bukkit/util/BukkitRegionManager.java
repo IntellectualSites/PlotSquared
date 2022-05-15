@@ -278,7 +278,7 @@ public class BukkitRegionManager extends RegionManager {
                                         int minY = value.getMin().getY();
                                         for (int yIndex = 0; yIndex < ids.length; yIndex++) {
                                             int y = yIndex + minY;
-                                            BaseBlock id = ids[y];
+                                            BaseBlock id = ids[yIndex];
                                             if (id != null) {
                                                 value.setBlock(x1, y, z1, id);
                                             } else {

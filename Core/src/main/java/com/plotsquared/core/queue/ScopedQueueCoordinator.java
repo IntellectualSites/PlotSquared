@@ -35,8 +35,12 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * Queue that only sets blocks with a designated area
+ * Queue that only sets blocks with a designated X-Z area, will accept any Y values. Requires all blocks be set normalized in
+ * the x and z directions, i.e. starting from 0,0. An offset of the minimum point of the region will then be applied to x and z.
+ *
+ * @deprecated This should be renamed to NormalizedScopedQueueCoordinator or something.
  */
+@Deprecated(forRemoval = true, since = "TODO")
 public class ScopedQueueCoordinator extends DelegateQueueCoordinator {
 
     private final Location min;

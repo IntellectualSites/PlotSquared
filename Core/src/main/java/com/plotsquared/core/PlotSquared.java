@@ -889,8 +889,8 @@ public class PlotSquared {
                             e.printStackTrace();
                         }
                         LOGGER.info("| generator: {}>{}", baseGenerator, areaGen);
-                        LOGGER.info("| plot world: {}", pa);
-                        LOGGER.info("| manager: {}", pa);
+                        LOGGER.info("| plot world: {}", pa.getClass().getCanonicalName());
+                        LOGGER.info("| manager: {}", pa.getPlotManager().getClass().getCanonicalName());
                         LOGGER.info("Note: Area created for cluster '{}' (invalid or old configuration?)", name);
                         areaGen.getPlotGenerator().initialize(pa);
                         areaGen.augment(pa);
@@ -906,6 +906,13 @@ public class PlotSquared {
                     throw new IllegalArgumentException("Invalid Generator: " + gen_string);
                 }
                 PlotArea pa = areaGen.getPlotGenerator().getNewPlotArea(world, null, null, null);
+                LOGGER.info("- generator: {}>{}", baseGenerator, areaGen);
+                LOGGER.info("- plot world: {}", pa.getClass().getCanonicalName());
+                LOGGER.info("- plot area manager: {}", pa.getPlotManager().getClass().getCanonicalName());
+                if (!this.worldConfiguration.contains(path)) {
+                    this.worldConfiguration.createSection(path);
+                    worldSection = this.worldConfiguration.getConfigurationSection(path);
+                }
                 pa.saveConfiguration(worldSection);
                 pa.loadDefaultConfiguration(worldSection);
                 try {
@@ -913,9 +920,6 @@ public class PlotSquared {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                LOGGER.info("- generator: {}>{}", baseGenerator, areaGen);
-                LOGGER.info("- plot world: {}", pa);
-                LOGGER.info("- plot area manager: {}", pa.getPlotManager());
                 areaGen.getPlotGenerator().initialize(pa);
                 areaGen.augment(pa);
                 addPlotArea(pa);

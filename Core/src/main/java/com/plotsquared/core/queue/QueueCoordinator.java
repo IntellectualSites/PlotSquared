@@ -143,7 +143,8 @@ public abstract class QueueCoordinator {
     }
 
     /**
-     * Set a chunk object (e.g. the Bukkit Chunk object) to the queue
+     * Set a chunk object (e.g. the Bukkit Chunk object) to the queue. This will be used as fallback in case of WNA failure.
+     * Should ONLY be used in specific cases (i.e. generation, where a chunk is being populated)
      *
      * @param chunkObject chunk object. Usually the implementation-specific chunk (e.g. bukkit Chunk)
      */

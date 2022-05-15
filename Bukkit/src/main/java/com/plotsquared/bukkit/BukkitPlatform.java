@@ -513,8 +513,10 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 this.backgroundPipeline.registerService(essentialsUUIDService);
             }
 
-            final SquirrelIdUUIDService impromptuMojangService = new SquirrelIdUUIDService(Settings.UUID.IMPROMPTU_LIMIT);
-            this.impromptuPipeline.registerService(impromptuMojangService);
+            if (Settings.UUID.IMPROMPTU_SERVICE_MOJANG_API) {
+                final SquirrelIdUUIDService impromptuMojangService = new SquirrelIdUUIDService(Settings.UUID.IMPROMPTU_LIMIT);
+                this.impromptuPipeline.registerService(impromptuMojangService);
+            }
             final SquirrelIdUUIDService backgroundMojangService = new SquirrelIdUUIDService(Settings.UUID.BACKGROUND_LIMIT);
             this.backgroundPipeline.registerService(backgroundMojangService);
         } else {
