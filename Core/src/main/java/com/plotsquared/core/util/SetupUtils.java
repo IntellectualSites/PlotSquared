@@ -34,6 +34,7 @@ import java.util.HashMap;
 public abstract class SetupUtils {
 
     public static HashMap<String, GeneratorWrapper<?>> generators = new HashMap<>();
+    protected boolean loaded = false;
 
     /**
      * @since 6.1.0
