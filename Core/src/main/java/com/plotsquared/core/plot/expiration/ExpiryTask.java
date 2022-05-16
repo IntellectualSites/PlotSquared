@@ -75,9 +75,9 @@ public class ExpiryTask {
                     plots = plots != null ? plots : getPlotsToCheck();
                     int diff = settings.REQUIRED_PLOTS;
                     boolean min = true;
-                    if (settings.REQUIRED_PLOTS - plots.size() < settings.REQUIRED_PLOTS) {
+                    if (plots.size() > settings.REQUIRED_PLOTS) {
                         min = false;
-                        diff = settings.REQUIRED_PLOTS - plots.size();
+                        diff = plots.size() - settings.REQUIRED_PLOTS;
                     }
                     List<Long> entireList =
                             plots.stream().map(plot -> ExpireManager.IMP.getAge(plot, settings.DELETE_IF_OWNER_IS_UNKNOWN))

@@ -32,6 +32,7 @@ import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.CaptionHolder;
 import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -39,6 +40,7 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.PriceFlag;
+import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.MathMan;
@@ -418,7 +420,7 @@ public class ListCmd extends SubCommand {
                 Caption color;
                 if (plot.getOwner() == null) {
                     color = TranslatableCaption.of("info.plot_list_no_owner");
-                } else if (plot.isOwner(player.getUUID())) {
+                } else if (plot.isOwner(player.getUUID()) || plot.getOwner().equals(DBFunc.EVERYONE)) {
                     color = TranslatableCaption.of("info.plot_list_owned_by");
                 } else if (plot.isAdded(player.getUUID())) {
                     color = TranslatableCaption.of("info.plot_list_added_to");
@@ -456,37 +458,60 @@ public class ListCmd extends SubCommand {
                 String prefix = "";
                 String online = TranslatableCaption.of("info.plot_list_player_online").getComponent(player);
                 String offline = TranslatableCaption.of("info.plot_list_player_offline").getComponent(player);
+                String unknown = TranslatableCaption.of("info.plot_list_player_unknown").getComponent(player);
+                String server = TranslatableCaption.of("info.plot_list_player_server").getComponent(player);
+                String everyone = TranslatableCaption.of("info.plot_list_player_everyone").getComponent(player);
                 TextComponent.Builder builder = Component.text();
-                try {
-                    final List<UUIDMapping> names = PlotSquared.get().getImpromptuUUIDPipeline().getNames(plot.getOwners())
-                            .get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS);
-                    for (final UUIDMapping uuidMapping : names) {
-                        PlotPlayer<?> pp = PlotSquared.platform().playerManager().getPlayerIfExists(uuidMapping.getUuid());
-                        Template prefixTemplate = Template.of("prefix", prefix);
-                        Template playerTemplate = Template.of("player", uuidMapping.getUsername());
-                        if (pp != null) {
-                            builder.append(MINI_MESSAGE.parse(online, prefixTemplate, playerTemplate));
-                        } else {
-                            builder.append(MINI_MESSAGE.parse(offline, prefixTemplate, playerTemplate));
-                        }
-                        prefix = ", ";
-                    }
-                } catch (InterruptedException | ExecutionException e) {
-                    final StringBuilder playerBuilder = new StringBuilder();
-                    final Iterator<UUID> uuidIterator = plot.getOwners().iterator();
-                    while (uuidIterator.hasNext()) {
-                        final UUID uuid = uuidIterator.next();
-                        playerBuilder.append(uuid);
-                        if (uuidIterator.hasNext()) {
-                            playerBuilder.append(", ");
-                        }
-                    }
-                    player.sendMessage(
-                            TranslatableCaption.of("errors.invalid_player"),
-                            Templates.of("value", playerBuilder.toString())
+                if (plot.getFlag(ServerPlotFlag.class)) {
+                    Template serverTemplate = Template.of(
+                            "info.server",
+                            TranslatableCaption.of("info.server").getComponent(player)
                     );
-                } catch (TimeoutException e) {
-                    player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
+                    builder.append(MINI_MESSAGE.parse(server, serverTemplate));
+                } else {
+                    try {
+                        final List<UUIDMapping> names = PlotSquared.get().getImpromptuUUIDPipeline().getNames(plot.getOwners())
+                                .get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS);
+                        for (final UUIDMapping uuidMapping : names) {
+                            PlotPlayer<?> pp = PlotSquared.platform().playerManager().getPlayerIfExists(uuidMapping.getUuid());
+                            Template prefixTemplate = Template.of("prefix", prefix);
+                            Template playerTemplate = Template.of("player", uuidMapping.getUsername());
+                            if (pp != null) {
+                                builder.append(MINI_MESSAGE.parse(online, prefixTemplate, playerTemplate));
+                            } else if (uuidMapping.getUsername().equalsIgnoreCase("unknown")) {
+                                Template unknownTemplate = Template.of(
+                                        "info.unknown",
+                                        TranslatableCaption.of("info.unknown").getComponent(player)
+                                );
+                                builder.append(MINI_MESSAGE.parse(unknown, unknownTemplate));
+                            } else if (uuidMapping.getUuid().equals(DBFunc.EVERYONE)) {
+                                Template everyoneTemplate = Template.of(
+                                        "info.everyone",
+                                        TranslatableCaption.of("info.everyone").getComponent(player)
+                                );
+                                builder.append(MINI_MESSAGE.parse(everyone, everyoneTemplate));
+                            } else {
+                                builder.append(MINI_MESSAGE.parse(offline, prefixTemplate, playerTemplate));
+                            }
+                            prefix = ", ";
+                        }
+                    } catch (InterruptedException | ExecutionException e) {
+                        final StringBuilder playerBuilder = new StringBuilder();
+                        final Iterator<UUID> uuidIterator = plot.getOwners().iterator();
+                        while (uuidIterator.hasNext()) {
+                            final UUID uuid = uuidIterator.next();
+                            playerBuilder.append(uuid);
+                            if (uuidIterator.hasNext()) {
+                                playerBuilder.append(", ");
+                            }
+                        }
+                        player.sendMessage(
+                                TranslatableCaption.of("errors.invalid_player"),
+                                Templates.of("value", playerBuilder.toString())
+                        );
+                    } catch (TimeoutException e) {
+                        player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
+                    }
                 }
                 Template players = Template.of("players", builder.asComponent());
                 caption.set(TranslatableCaption.of("info.plot_list_item"));

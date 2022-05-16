@@ -41,7 +41,7 @@ import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.queue.ChunkQueueCoordinator;
+import com.plotsquared.core.queue.BlockArrayCacheScopedQueueCoordinator;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
@@ -83,6 +83,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class HybridUtils {
 
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + HybridUtils.class.getSimpleName());
+    private static final BlockState AIR = BlockTypes.AIR.getDefaultState();
 
     public static HybridUtils manager;
     public static Set<BlockVector2> regions;
@@ -136,6 +137,11 @@ public class HybridUtils {
          *
          */
         TaskManager.runTaskAsync(() -> {
+            final PlotArea area = this.plotAreaManager.getPlotArea(world, null);
+            if (!(area instanceof HybridPlotWorld hpw)) {
+                return;
+            }
+
             final BlockVector3 bot = region.getMinimumPoint();
             final BlockVector3 top = region.getMaximumPoint();
 
@@ -152,37 +158,28 @@ public class HybridUtils {
             final int height = area.getMaxGenHeight() - area.getMinGenHeight() + 1;
             final int minHeight = area.getMinGenHeight();
 
-            final PlotArea area = this.plotAreaManager.getPlotArea(world, null);
-
-            if (!(area instanceof HybridPlotWorld hpw)) {
-                return;
-            }
-
-            ChunkQueueCoordinator chunk = new ChunkQueueCoordinator(worldUtil.getWeWorld(world), bot, top, false);
-            hpw.getGenerator().generateChunk(chunk, hpw);
-
-            final BlockState airBlock = BlockTypes.AIR.getDefaultState();
-            final BlockState[][][] oldBlocks = chunk.getBlocks();
             final BlockState[][][] newBlocks = new BlockState[height][width][length];
-            for (final BlockState[][] newBlock : newBlocks) {
-                for (final BlockState[] blockStates : newBlock) {
-                    Arrays.fill(blockStates, airBlock);
-                }
-            }
-            for (final BlockState[][] oldBlock : oldBlocks) {
-                for (final BlockState[] blockStates : oldBlock) {
-                    Arrays.fill(blockStates, airBlock);
-                }
-            }
 
-            System.gc();
-            System.gc();
+            BlockArrayCacheScopedQueueCoordinator oldBlockQueue = new BlockArrayCacheScopedQueueCoordinator(
+                    Location.at("", region.getMinimumPoint().withY(hpw.getMinGenHeight())),
+                    Location.at("", region.getMaximumPoint().withY(hpw.getMaxGenHeight()))
+            );
+
+            region.getChunks().forEach(chunkPos -> {
+                int relChunkX = chunkPos.getX() - cbx;
+                int relChunkZ = chunkPos.getZ() - cbz;
+                oldBlockQueue.setOffsetX(relChunkX << 4);
+                oldBlockQueue.setOffsetZ(relChunkZ << 4);
+                hpw.getGenerator().generateChunk(oldBlockQueue, hpw);
+            });
+
+            final BlockState[][][] oldBlocks = oldBlockQueue.getBlockStates();
 
             QueueCoordinator queue = area.getQueue();
             queue.addReadChunks(region.getChunks());
-            queue.setChunkConsumer(blockVector2 -> {
-                int X = blockVector2.getX();
-                int Z = blockVector2.getZ();
+            queue.setChunkConsumer(chunkPos -> {
+                int X = chunkPos.getX();
+                int Z = chunkPos.getZ();
                 int minX;
                 if (X == cbx) {
                     minX = bx & 15;
@@ -220,6 +217,9 @@ public class HybridUtils {
                         for (int yIndex = 0; yIndex < height; yIndex++) {
                             int y = yIndex + minHeight;
                             BlockState block = queue.getBlock(xx, y, zz);
+                            if (block == null) {
+                                block = AIR;
+                            }
                             int xr = xb + x;
                             int zr = zb + z;
                             newBlocks[yIndex][xr][zr] = block;
@@ -240,10 +240,10 @@ public class HybridUtils {
                     for (int z = 0; z < length; z++) {
                         Set<BlockType> types = new HashSet<>();
                         for (int yIndex = 0; yIndex < height; yIndex++) {
-                            BlockState old = oldBlocks[yIndex][x][z];
+                            BlockState old = oldBlocks[yIndex][x][z]; // Nullable
                             try {
-                                BlockState now = newBlocks[yIndex][x][z];
-                                if (!old.equals(now)) {
+                                BlockState now = newBlocks[yIndex][x][z]; // Not null
+                                if (!now.equals(old) && !(old == null && now.getBlockType().equals(BlockTypes.AIR))) {
                                     changes[i]++;
                                 }
                                 if (now.getBlockType().getMaterial().isAir()) {
@@ -301,8 +301,6 @@ public class HybridUtils {
                 analysis.data_sd = (int) (MathMan.getSD(data, analysis.data) * 100);
                 analysis.air_sd = (int) (MathMan.getSD(air, analysis.air) * 100);
                 analysis.variety_sd = (int) (MathMan.getSD(variety, analysis.variety) * 100);
-                System.gc();
-                System.gc();
                 whenDone.value = analysis;
                 whenDone.run();
             });
