@@ -58,7 +58,7 @@ public class DescriptionFlag extends StringFlag<DescriptionFlag> {
 
     @Override
     public String getExample() {
-        return "&6This is my plot!";
+        return "<gold>This is my plot!";
     }
 
     @Override
