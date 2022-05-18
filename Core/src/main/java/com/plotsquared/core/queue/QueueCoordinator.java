@@ -253,7 +253,7 @@ public abstract class QueueCoordinator {
      * If the queue should accept biome placement
      *
      * @param enabled If biomes should be enabled
-     * @since TODO
+     * @since 6.8.0
      */
     public abstract void setBiomesEnabled(boolean enabled);
 
