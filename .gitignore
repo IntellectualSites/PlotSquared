@@ -133,3 +133,5 @@ classes/
 *.bat
 docs/
 build/
+
+.DS_Store
