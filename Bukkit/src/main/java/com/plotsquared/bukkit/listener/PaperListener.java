@@ -25,6 +25,7 @@
  */
 package com.plotsquared.bukkit.listener;
 
+import com.destroystokyo.paper.event.block.BeaconEffectEvent;
 import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
 import com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent;
 import com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent;
@@ -43,6 +44,7 @@ import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.flag.implementations.BeaconEffectFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
@@ -404,6 +406,24 @@ public class PaperListener implements Listener {
             event.setCompletions(result);
             event.setHandled(true);
         } catch (final Exception ignored) {
+        }
+    }
+
+    @EventHandler
+    public void onBeaconEffect(final BeaconEffectEvent event) {
+        Block block = event.getBlock();
+        Location beaconLocation = BukkitUtil.adapt(block.getLocation());
+        Plot beaconPlot = beaconLocation.getPlot();
+
+        Player player = event.getPlayer();
+        Location playerLocation = BukkitUtil.adapt(player.getLocation());
+
+        PlotPlayer<Player> plotPlayer = BukkitUtil.adapt(player);
+        Plot playerStandingPlot = playerLocation.getPlot();
+        if (playerStandingPlot != null
+                && !playerStandingPlot.getFlag(BeaconEffectFlag.class)
+                && !playerStandingPlot.equals(beaconPlot)) {
+            event.setCancelled(true);
         }
     }
 

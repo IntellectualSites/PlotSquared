@@ -30,6 +30,7 @@ import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.plot.flag.implementations.AnimalAttackFlag;
 import com.plotsquared.core.plot.flag.implementations.AnimalCapFlag;
 import com.plotsquared.core.plot.flag.implementations.AnimalInteractFlag;
+import com.plotsquared.core.plot.flag.implementations.BeaconEffectFlag;
 import com.plotsquared.core.plot.flag.implementations.BlockBurnFlag;
 import com.plotsquared.core.plot.flag.implementations.BlockIgnitionFlag;
 import com.plotsquared.core.plot.flag.implementations.BlockedCmdsFlag;
@@ -200,6 +201,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(VillagerInteractFlag.VILLAGER_INTERACT_FALSE);
         this.addFlag(VineGrowFlag.VINE_GROW_TRUE);
         this.addFlag(ProjectilesFlag.PROJECTILES_FALSE);
+        this.addFlag(BeaconEffectFlag.BEACON_EFFECT_TRUE);
 
         // Double flags
         this.addFlag(PriceFlag.PRICE_NOT_BUYABLE);
