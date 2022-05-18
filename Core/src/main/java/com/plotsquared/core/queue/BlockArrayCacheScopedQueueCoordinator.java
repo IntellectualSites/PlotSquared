@@ -64,7 +64,7 @@ public class BlockArrayCacheScopedQueueCoordinator extends ScopedQueueCoordinato
      *
      * @param min Inclusive location of the minimum point to limit the scope to.
      * @param max Inclusive location of the maximum point to limit the scope to.
-     * @since TODO
+     * @since 6.8.0
      */
     public BlockArrayCacheScopedQueueCoordinator(Location min, Location max) {
         super(null, min, max);

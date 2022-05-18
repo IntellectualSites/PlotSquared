@@ -76,7 +76,7 @@ public class BukkitSetupUtils extends SetupUtils {
 
     @Override
     public void updateGenerators(final boolean force) {
-        if (!SetupUtils.generators.isEmpty() && !force) {
+        if (loaded && !SetupUtils.generators.isEmpty() && !force) {
             return;
         }
         String testWorld = "CheckingPlotSquaredGenerator";
@@ -100,6 +100,7 @@ public class BukkitSetupUtils extends SetupUtils {
                 e.printStackTrace();
             }
         }
+        loaded = true;
     }
 
     @Override

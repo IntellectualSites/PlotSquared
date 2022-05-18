@@ -41,7 +41,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @deprecated This class is poorly designed and will no longer be used in P2
  */
-@Deprecated(forRemoval = true, since = "TODO")
+@Deprecated(forRemoval = true, since = "6.8.0")
 public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
 
     public final BiomeType[][][] biomeResult;

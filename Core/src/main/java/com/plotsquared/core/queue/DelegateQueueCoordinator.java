@@ -32,6 +32,7 @@ import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.util.SideEffectSet;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
@@ -133,6 +134,13 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
             return parent.isSettingBiomes();
         }
         return false;
+    }
+
+    @Override
+    public void setBiomesEnabled(final boolean enabled) {
+        if (parent != null) {
+            parent.setBiomesEnabled(enabled);
+        }
     }
 
     @Override
@@ -245,6 +253,21 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
     public void setLightingMode(@Nullable LightingMode mode) {
         if (parent != null) {
             parent.setLightingMode(mode);
+        }
+    }
+
+    @Override
+    public SideEffectSet getSideEffectSet() {
+        if (parent != null) {
+            return parent.getSideEffectSet();
+        }
+        return null;
+    }
+
+    @Override
+    public void setSideEffectSet(final SideEffectSet sideEffectSet) {
+        if (parent != null) {
+            parent.setSideEffectSet(sideEffectSet);
         }
     }
 
