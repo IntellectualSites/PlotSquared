@@ -96,6 +96,8 @@ import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.comment.CommentManager;
+import com.plotsquared.core.plot.flag.GlobalFlagContainer;
+import com.plotsquared.core.plot.flag.implementations.BeaconEffectFlag;
 import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
@@ -269,6 +271,11 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         TaskManager.setPlatformImplementation(new BukkitTaskManager(this, timeConverter));
 
         final PlotSquared plotSquared = new PlotSquared(this, "Bukkit");
+
+        //Paper specific flags
+        if (PaperLib.isPaper()) {
+            GlobalFlagContainer.getInstance().addFlag(BeaconEffectFlag.BEACON_EFFECT_TRUE);
+        }
 
         // FAWE
         if (Settings.FAWE_Components.FAWE_HOOK) {
