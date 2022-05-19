@@ -414,15 +414,18 @@ public class PaperListener implements Listener {
         Block block = event.getBlock();
         Location beaconLocation = BukkitUtil.adapt(block.getLocation());
         Plot beaconPlot = beaconLocation.getPlot();
+        if (beaconPlot == null) {
+            return;
+        }
 
         Player player = event.getPlayer();
         Location playerLocation = BukkitUtil.adapt(player.getLocation());
 
         PlotPlayer<Player> plotPlayer = BukkitUtil.adapt(player);
         Plot playerStandingPlot = playerLocation.getPlot();
-        if (playerStandingPlot != null
-                && !playerStandingPlot.getFlag(BeaconEffectFlag.class)
-                && !playerStandingPlot.equals(beaconPlot)) {
+        boolean effectDisabled = !Settings.Paper_Components.BEACON_EFFECTS ||
+                        (playerStandingPlot != null && !playerStandingPlot.getFlag(BeaconEffectFlag.class));
+        if (effectDisabled && !beaconPlot.equals(playerStandingPlot)) {
             event.setCancelled(true);
         }
     }
