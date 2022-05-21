@@ -423,9 +423,11 @@ public class PaperListener implements Listener {
 
         PlotPlayer<Player> plotPlayer = BukkitUtil.adapt(player);
         Plot playerStandingPlot = playerLocation.getPlot();
-        boolean effectDisabled = !Settings.Paper_Components.BEACON_EFFECTS ||
-                        (playerStandingPlot != null && !playerStandingPlot.getFlag(BeaconEffectFlag.class));
-        if (effectDisabled && !beaconPlot.equals(playerStandingPlot)) {
+        if (playerStandingPlot == null || beaconPlot.equals(playerStandingPlot)) {
+            return;
+        }
+
+        if (Settings.Paper_Components.BEACON_EFFECTS || playerStandingPlot.getFlag(BeaconEffectFlag.class)) {
             event.setCancelled(true);
         }
     }

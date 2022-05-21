@@ -666,8 +666,8 @@ public class Settings extends Config {
         public static boolean TILE_ENTITY_CHECK = true;
         @Comment("Use Paper's async tab completion")
         public static boolean ASYNC_TAB_COMPLETION;
-        @Comment("Allow beacon effects originating from other plots affecting the own plot")
-        public static boolean BEACON_EFFECTS = false;
+        @Comment("Prevent cross plot beacon effects")
+        public static boolean BEACON_EFFECTS = true;
 
     }
 
