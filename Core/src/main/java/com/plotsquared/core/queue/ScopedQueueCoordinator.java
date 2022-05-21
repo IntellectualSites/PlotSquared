@@ -40,21 +40,18 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @deprecated This should be renamed to NormalizedScopedQueueCoordinator or something.
  */
-@Deprecated(forRemoval = true, since = "TODO")
+@Deprecated(forRemoval = true, since = "6.8.0")
 public class ScopedQueueCoordinator extends DelegateQueueCoordinator {
 
     private final Location min;
     private final Location max;
     private final int minX;
-    private final int minY;
     private final int minZ;
 
     private final int maxX;
-    private final int maxY;
     private final int maxZ;
 
     private final int dx;
-    private final int dy;
     private final int dz;
 
     /**
@@ -65,15 +62,12 @@ public class ScopedQueueCoordinator extends DelegateQueueCoordinator {
         this.min = min;
         this.max = max;
         this.minX = min.getX();
-        this.minY = min.getY();
         this.minZ = min.getZ();
 
         this.maxX = max.getX();
-        this.maxY = max.getY();
         this.maxZ = max.getZ();
 
         this.dx = maxX - minX;
-        this.dy = maxY - minY;
         this.dz = maxZ - minZ;
     }
 
@@ -84,11 +78,11 @@ public class ScopedQueueCoordinator extends DelegateQueueCoordinator {
 
     @Override
     public boolean setBiome(int x, int y, int z, @NonNull BiomeType biome) {
-        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super.setBiome(x + minX, y + minY, z + minZ, biome);
+        return x >= 0 && x <= dx && z >= 0 && z <= dz && super.setBiome(x + minX, y, z + minZ, biome);
     }
 
     public void fillBiome(BiomeType biome) {
-        for (int y = 0; y <= dy; y++) {
+        for (int y = min.getY(); y <= max.getY(); y++) {
             for (int x = 0; x <= dx; x++) {
                 for (int z = 0; z < dz; z++) {
                     setBiome(x, y, z, biome);
@@ -99,27 +93,22 @@ public class ScopedQueueCoordinator extends DelegateQueueCoordinator {
 
     @Override
     public boolean setBlock(int x, int y, int z, @NonNull BaseBlock id) {
-        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super.setBlock(x + minX, y + minY, z + minZ, id);
+        return x >= 0 && x <= dx && z >= 0 && z <= dz && super.setBlock(x + minX, y, z + minZ, id);
     }
 
     @Override
     public boolean setBlock(int x, int y, int z, @NonNull BlockState id) {
-        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super.setBlock(x + minX, y + minY, z + minZ, id);
+        return x >= 0 && x <= dx && z >= 0 && z <= dz && super.setBlock(x + minX, y, z + minZ, id);
     }
 
     @Override
     public boolean setBlock(int x, int y, int z, @NonNull Pattern pattern) {
-        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super.setBlock(
-                x + minX,
-                y + minY,
-                z + minZ,
-                pattern
-        );
+        return x >= 0 && x <= dx && z >= 0 && z <= dz && super.setBlock(x + minX, y, z + minZ, pattern);
     }
 
     @Override
     public boolean setTile(int x, int y, int z, @NonNull CompoundTag tag) {
-        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super.setTile(x + minX, y + minY, z + minZ, tag);
+        return x >= 0 && x <= dx && z >= 0 && z <= dz && super.setTile(x + minX, y, z + minZ, tag);
     }
 
     public @NonNull Location getMin() {

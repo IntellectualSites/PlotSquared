@@ -63,10 +63,27 @@ import java.util.function.Consumer;
 
 public class BukkitQueueCoordinator extends BasicQueueCoordinator {
 
-    private final SideEffectSet noSideEffectSet;
-    private final SideEffectSet lightingSideEffectSet;
-    private final SideEffectSet edgeSideEffectSet;
-    private final SideEffectSet edgeLightingSideEffectSet;
+    private static final SideEffectSet NO_SIDE_EFFECT_SET;
+    private static final SideEffectSet EDGE_SIDE_EFFECT_SET;
+    private static final SideEffectSet LIGHTING_SIDE_EFFECT_SET;
+    private static final SideEffectSet EDGE_LIGHTING_SIDE_EFFECT_SET;
+
+    static {
+        NO_SIDE_EFFECT_SET = SideEffectSet.none().with(SideEffect.LIGHTING, SideEffect.State.OFF).with(
+                SideEffect.NEIGHBORS,
+                SideEffect.State.OFF
+        );
+        EDGE_SIDE_EFFECT_SET = SideEffectSet.none().with(SideEffect.UPDATE, SideEffect.State.ON).with(
+                SideEffect.NEIGHBORS,
+                SideEffect.State.ON
+        );
+        LIGHTING_SIDE_EFFECT_SET = SideEffectSet.none().with(SideEffect.NEIGHBORS, SideEffect.State.OFF);
+        EDGE_LIGHTING_SIDE_EFFECT_SET = SideEffectSet.none().with(SideEffect.UPDATE, SideEffect.State.ON).with(
+                SideEffect.NEIGHBORS,
+                SideEffect.State.ON
+        );
+    }
+
     private org.bukkit.World bukkitWorld;
     @Inject
     private ChunkCoordinatorBuilderFactory chunkCoordinatorBuilderFactory;
@@ -77,19 +94,6 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
     @Inject
     public BukkitQueueCoordinator(@NonNull World world) {
         super(world);
-        noSideEffectSet = SideEffectSet.none().with(SideEffect.LIGHTING, SideEffect.State.OFF).with(
-                SideEffect.NEIGHBORS,
-                SideEffect.State.OFF
-        );
-        lightingSideEffectSet = SideEffectSet.none().with(SideEffect.NEIGHBORS, SideEffect.State.OFF);
-        edgeSideEffectSet = noSideEffectSet.with(SideEffect.UPDATE, SideEffect.State.ON).with(
-                SideEffect.NEIGHBORS,
-                SideEffect.State.ON
-        );
-        edgeLightingSideEffectSet = noSideEffectSet.with(SideEffect.UPDATE, SideEffect.State.ON).with(
-                SideEffect.NEIGHBORS,
-                SideEffect.State.ON
-        );
     }
 
     @Override
@@ -202,7 +206,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                     localChunk.getTiles().forEach((blockVector3, tag) -> {
                         try {
                             BaseBlock block = getWorld().getBlock(blockVector3).toBaseBlock(tag);
-                            getWorld().setBlock(blockVector3, block, noSideEffectSet);
+                            getWorld().setBlock(blockVector3, block, getSideEffectSet(SideEffectState.NONE));
                         } catch (WorldEditException ignored) {
                             StateWrapper sw = new StateWrapper(tag);
                             sw.restoreTag(getWorld().getName(), blockVector3.getX(), blockVector3.getY(), blockVector3.getZ());
@@ -259,9 +263,9 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
             }
             SideEffectSet sideEffectSet;
             if (lighting) {
-                sideEffectSet = edge ? edgeLightingSideEffectSet : lightingSideEffectSet;
+                sideEffectSet = getSideEffectSet(edge ? SideEffectState.EDGE_LIGHTING : SideEffectState.LIGHTING);
             } else {
-                sideEffectSet = edge ? edgeSideEffectSet : noSideEffectSet;
+                sideEffectSet = getSideEffectSet(edge ? SideEffectState.EDGE : SideEffectState.NONE);
             }
             getWorld().setBlock(loc, block, sideEffectSet);
         } catch (WorldEditException ignored) {
@@ -380,6 +384,25 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
             return getBlockChunks().get(blockVector2.withZ(blockVector2.getZ() + 1)) == null;
         }
         return false;
+    }
+
+    private SideEffectSet getSideEffectSet(SideEffectState state) {
+        if (getSideEffectSet() != null) {
+            return getSideEffectSet();
+        }
+        return switch (state) {
+            case NONE -> NO_SIDE_EFFECT_SET;
+            case EDGE -> EDGE_SIDE_EFFECT_SET;
+            case LIGHTING -> LIGHTING_SIDE_EFFECT_SET;
+            case EDGE_LIGHTING -> EDGE_LIGHTING_SIDE_EFFECT_SET;
+        };
+    }
+
+    private enum SideEffectState {
+        NONE,
+        EDGE,
+        LIGHTING,
+        EDGE_LIGHTING
     }
 
 }

@@ -76,10 +76,11 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
     private final int totalSize;
     private final AtomicInteger expectedSize;
     private final AtomicInteger loadingChunks = new AtomicInteger();
+    private final boolean forceSync;
 
     private int batchSize;
     private PlotSquaredTask task;
-    private boolean shouldCancel;
+    private volatile boolean shouldCancel;
     private boolean finished;
 
     @Inject
@@ -92,7 +93,8 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
             @Assisted final @NonNull Runnable whenDone,
             @Assisted final @NonNull Consumer<Throwable> throwableConsumer,
             @Assisted final boolean unloadAfter,
-            @Assisted final @NonNull Collection<ProgressSubscriber> progressSubscribers
+            @Assisted final @NonNull Collection<ProgressSubscriber> progressSubscribers,
+            @Assisted final boolean forceSync
     ) {
         this.requestedChunks = new LinkedBlockingQueue<>(requestedChunks);
         this.availableChunks = new LinkedBlockingQueue<>();
@@ -107,14 +109,27 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
         this.plugin = JavaPlugin.getPlugin(BukkitPlatform.class);
         this.bukkitWorld = Bukkit.getWorld(world.getName());
         this.progressSubscribers.addAll(progressSubscribers);
+        this.forceSync = forceSync;
     }
 
     @Override
     public void start() {
-        // Request initial batch
-        this.requestBatch();
-        // Wait until next tick to give the chunks a chance to be loaded
-        TaskManager.runTaskLater(() -> task = TaskManager.runTaskRepeat(this, TaskTime.ticks(1)), TaskTime.ticks(1));
+        if (!forceSync) {
+            // Request initial batch
+            this.requestBatch();
+            // Wait until next tick to give the chunks a chance to be loaded
+            TaskManager.runTaskLater(() -> task = TaskManager.runTaskRepeat(this, TaskTime.ticks(1)), TaskTime.ticks(1));
+        } else {
+            try {
+                while (!shouldCancel && !requestedChunks.isEmpty()) {
+                    chunkConsumer.accept(requestedChunks.poll());
+                }
+            } catch (Throwable t) {
+                throwableConsumer.accept(t);
+            } finally {
+                finish();
+            }
+        }
     }
 
     @Override
@@ -131,7 +146,9 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
             for (final ProgressSubscriber subscriber : this.progressSubscribers) {
                 subscriber.notifyEnd();
             }
-            task.cancel();
+            if (task != null) {
+                task.cancel();
+            }
             finished = true;
         }
     }

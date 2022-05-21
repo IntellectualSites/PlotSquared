@@ -34,6 +34,7 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.util.Location;
+import com.sk89q.worldedit.util.SideEffectSet;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
@@ -61,6 +62,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     private int lastX = Integer.MIN_VALUE;
     private int lastZ = Integer.MIN_VALUE;
     private boolean settingBiomes = false;
+    private boolean disableBiomes = false;
     private boolean settingTiles = false;
     private boolean regen = false;
     private int[] regenStart;
@@ -68,7 +70,8 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     private CuboidRegion regenRegion = null;
     private Consumer<BlockVector2> consumer = null;
     private boolean unloadAfter = true;
-    private Runnable whenDone;
+    private Runnable whenDone = null;
+    private SideEffectSet sideEffectSet = null;
     @Nullable
     private LightingMode lightingMode = LightingMode.valueOf(Settings.QUEUE.LIGHTING_MODE);
 
@@ -120,6 +123,9 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     @SuppressWarnings("removal")
     @Override
     public boolean setBiome(int x, int z, @NonNull BiomeType biomeType) {
+        if (disableBiomes) {
+            return false;
+        }
         LocalChunk chunk = getChunk(x >> 4, z >> 4);
         for (int y = world.getMinY(); y <= world.getMaxY(); y++) {
             chunk.setBiome(x & 15, y, z & 15, biomeType);
@@ -130,6 +136,9 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
 
     @Override
     public final boolean setBiome(int x, int y, int z, @NonNull BiomeType biomeType) {
+        if (disableBiomes) {
+            return false;
+        }
         LocalChunk chunk = getChunk(x >> 4, z >> 4);
         chunk.setBiome(x & 15, y, z & 15, biomeType);
         settingBiomes = true;
@@ -139,6 +148,12 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     @Override
     public boolean isSettingBiomes() {
         return this.settingBiomes;
+    }
+
+    @Override
+    public void setBiomesEnabled(boolean settingBiomes) {
+        this.settingBiomes = settingBiomes;
+        this.disableBiomes = true;
     }
 
     @Override
@@ -313,6 +328,29 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     @Override
     public void setCompleteTask(Runnable whenDone) {
         this.whenDone = whenDone;
+    }
+
+    @Override
+    public SideEffectSet getSideEffectSet() {
+        return sideEffectSet;
+    }
+
+    @Override
+    public void setSideEffectSet(SideEffectSet sideEffectSet) {
+        this.sideEffectSet = sideEffectSet;
+    }
+
+    // Don't ask about the @NonNull placement. That's how it needs to be else it errors.
+    @Override
+    public void setBiomeCuboid(
+            final com.plotsquared.core.location.@NonNull Location pos1,
+            final com.plotsquared.core.location.@NonNull Location pos2,
+            @NonNull final BiomeType biome
+    ) {
+        if (disableBiomes) {
+            return;
+        }
+        super.setBiomeCuboid(pos1, pos2, biome);
     }
 
     /**

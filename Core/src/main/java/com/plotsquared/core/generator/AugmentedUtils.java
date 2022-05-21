@@ -54,12 +54,23 @@ public class AugmentedUtils {
         enabled = true;
     }
 
-    public static boolean generate(
-            @Nullable Object chunkObject,
+    /**
+     * Generate an augmented world chunk at the given location. If a queue is given, the data will be written to it, else a new
+     * queue will be created and written to world. Returns true if generation occurred.
+     *
+     * @param world  World name to generate data for. Must be a PlotSquared world containing one or more areas else nothing will
+     *               happen.
+     * @param chunkX Chunk X position
+     * @param chunkZ Chunk Z position
+     * @param queue  Queue to write to, if desired.
+     * @return true if generation occurred.
+     * @since 6.8.0
+     */
+    public static boolean generateChunk(
             final @NonNull String world,
             final int chunkX,
             final int chunkZ,
-            QueueCoordinator queue
+            @Nullable QueueCoordinator queue
     ) {
         if (!enabled) {
             return false;
@@ -97,9 +108,6 @@ public class AugmentedUtils {
                         .platform()
                         .worldUtil()
                         .getWeWorld(world));
-                if (chunkObject != null) {
-                    queue.setChunkObject(chunkObject);
-                }
             }
             QueueCoordinator primaryMask;
             // coordinates
@@ -157,13 +165,9 @@ public class AugmentedUtils {
                 }
                 generationResult = true;
             }
-            if (chunkObject != null) {
-                primaryMask.setChunkObject(chunkObject);
-            }
-            if (chunkObject != null) {
-                secondaryMask.setChunkObject(chunkObject);
-            }
 
+            // This queue should not be enqueued as it is simply used to restrict block setting, and then delegate to the
+            // actual queue
             ScopedQueueCoordinator scoped =
                     new ScopedQueueCoordinator(
                             secondaryMask,
@@ -172,13 +176,26 @@ public class AugmentedUtils {
                     );
             generator.generateChunk(scoped, area);
             generator.populateChunk(scoped, area);
-            scoped.setForceSync(true);
-            scoped.enqueue();
         }
         if (enqueue) {
             queue.enqueue();
         }
         return generationResult;
+    }
+
+    /**
+     * @deprecated Use {@link AugmentedUtils#generateChunk(String, int, int, QueueCoordinator)} as chunkObject is not required
+     * in the above method
+     */
+    @Deprecated(forRemoval = true, since = "6.8.0")
+    public static boolean generate(
+            @Nullable Object chunkObject,
+            final @NonNull String world,
+            final int chunkX,
+            final int chunkZ,
+            QueueCoordinator queue
+    ) {
+        return generateChunk(world, chunkX, chunkZ, queue);
     }
 
 }
