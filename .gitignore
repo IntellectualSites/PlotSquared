@@ -131,6 +131,8 @@ local.properties
 checkstyle.xml
 classes/
 *.bat
+
+# Other
 docs/
 build/
 

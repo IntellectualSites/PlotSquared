@@ -85,6 +85,8 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("javax.annotation", "com.plotsquared.core.annotation")
     relocate("com.github.spotbugs", "com.plotsquared.core.spotbugs")
     relocate("javax.inject", "com.plotsquared.core.annotation.inject")
+    relocate("net.jcip", "com.plotsquared.core.annotations.jcip")
+    relocate("edu.umd.cs.findbugs", "com.plotsquared.core.annotations.findbugs")
 
     // Get rid of all the libs which are 100% unused.
     minimize()
