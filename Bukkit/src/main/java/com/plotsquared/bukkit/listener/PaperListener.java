@@ -44,7 +44,7 @@ import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.plot.flag.implementations.BeaconEffectFlag;
+import com.plotsquared.core.plot.flag.implementations.DisableBeaconEffectOverflowFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
@@ -418,16 +418,29 @@ public class PaperListener implements Listener {
             return;
         }
 
+        PlotArea area = beaconLocation.getPlotArea();
+        if (area == null) {
+            return;
+        }
+
         Player player = event.getPlayer();
         Location playerLocation = BukkitUtil.adapt(player.getLocation());
 
         PlotPlayer<Player> plotPlayer = BukkitUtil.adapt(player);
         Plot playerStandingPlot = playerLocation.getPlot();
-        if (playerStandingPlot == null || beaconPlot.equals(playerStandingPlot)) {
+        if (playerStandingPlot == null) {
+            if (area.getRoadFlag(DisableBeaconEffectOverflowFlag.class)
+                    || Settings.Paper_Components.DISABLE_BEACON_EFFECT_OVERFLOW) {
+                event.setCancelled(true);
+            }
             return;
         }
 
-        if (Settings.Paper_Components.BEACON_EFFECTS || playerStandingPlot.getFlag(BeaconEffectFlag.class)) {
+        if (beaconPlot.equals(playerStandingPlot)) {
+            return;
+        }
+
+        if (Settings.Paper_Components.DISABLE_BEACON_EFFECT_OVERFLOW || playerStandingPlot.getFlag(DisableBeaconEffectOverflowFlag.class)) {
             event.setCancelled(true);
         }
     }

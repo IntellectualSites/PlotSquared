@@ -667,7 +667,7 @@ public class Settings extends Config {
         @Comment("Use Paper's async tab completion")
         public static boolean ASYNC_TAB_COMPLETION;
         @Comment("Prevent cross plot beacon effects")
-        public static boolean BEACON_EFFECTS = true;
+        public static boolean DISABLE_BEACON_EFFECT_OVERFLOW = true;
 
     }
 

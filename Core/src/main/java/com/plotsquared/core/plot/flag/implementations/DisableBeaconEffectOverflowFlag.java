@@ -29,17 +29,17 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class BeaconEffectFlag extends BooleanFlag<BeaconEffectFlag> {
+public class DisableBeaconEffectOverflowFlag extends BooleanFlag<DisableBeaconEffectOverflowFlag> {
 
-    public static final BeaconEffectFlag BEACON_EFFECT_TRUE = new BeaconEffectFlag(true);
-    public static final BeaconEffectFlag BEACON_EFFECT_FALSE = new BeaconEffectFlag(false);
+    public static final DisableBeaconEffectOverflowFlag BEACON_EFFECT_TRUE = new DisableBeaconEffectOverflowFlag(true);
+    public static final DisableBeaconEffectOverflowFlag BEACON_EFFECT_FALSE = new DisableBeaconEffectOverflowFlag(false);
 
-    private BeaconEffectFlag(boolean value){
+    private DisableBeaconEffectOverflowFlag(boolean value){
         super(value, TranslatableCaption.of("flags.flag_description_beacon_effect"));
     }
 
     @Override
-    protected BeaconEffectFlag flagOf(@NonNull final Boolean value) {
+    protected DisableBeaconEffectOverflowFlag flagOf(@NonNull final Boolean value) {
         return value ? BEACON_EFFECT_TRUE : BEACON_EFFECT_FALSE;
     }
 
