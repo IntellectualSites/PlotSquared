@@ -779,6 +779,10 @@ public class BlockEventListener implements Listener {
             }
             return;
         }
+        if (tLocation.getY() >= tArea.getMaxBuildHeight() || tLocation.getY() < tArea.getMinBuildHeight()) {
+            event.setCancelled(true);
+            return;
+        }
         Plot tPlot = tArea.getOwnedPlot(tLocation);
 
         if (fBlock.getType() == Material.DRAGON_EGG && fArea != null) {
