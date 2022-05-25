@@ -551,6 +551,10 @@ public class BlockEventListener implements Listener {
         if (plot == null) {
             return;
         }
+        if (location.getY() >= area.getMaxBuildHeight() || location.getY() < area.getMinBuildHeight()) {
+            event.setCancelled(true);
+            return;
+        }
         switch (event.getNewState().getType()) {
             case SNOW:
             case SNOW_BLOCK:
