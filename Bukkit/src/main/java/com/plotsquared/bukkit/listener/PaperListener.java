@@ -44,7 +44,7 @@ import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.plot.flag.implementations.DisableBeaconEffectOverflowFlag;
+import com.plotsquared.core.plot.flag.implementations.BeaconEffectsFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
@@ -414,9 +414,6 @@ public class PaperListener implements Listener {
         Block block = event.getBlock();
         Location beaconLocation = BukkitUtil.adapt(block.getLocation());
         Plot beaconPlot = beaconLocation.getPlot();
-        if (beaconPlot == null) {
-            return;
-        }
 
         PlotArea area = beaconLocation.getPlotArea();
         if (area == null) {
@@ -429,18 +426,22 @@ public class PaperListener implements Listener {
         PlotPlayer<Player> plotPlayer = BukkitUtil.adapt(player);
         Plot playerStandingPlot = playerLocation.getPlot();
         if (playerStandingPlot == null) {
-            if (area.getRoadFlag(DisableBeaconEffectOverflowFlag.class)
-                    || Settings.Paper_Components.DISABLE_BEACON_EFFECT_OVERFLOW) {
+            if (!area.getRoadFlag(BeaconEffectsFlag.class) ||
+                    (beaconPlot != null && Settings.Paper_Components.DISABLE_BEACON_EFFECT_OVERFLOW)) {
                 event.setCancelled(true);
             }
             return;
         }
 
-        if (beaconPlot.equals(playerStandingPlot)) {
+        boolean plotBeaconEffects = playerStandingPlot.getFlag(BeaconEffectsFlag.class);
+        if (playerStandingPlot.equals(beaconPlot)) {
+            if (!plotBeaconEffects) {
+                event.setCancelled(true);
+            }
             return;
         }
 
-        if (Settings.Paper_Components.DISABLE_BEACON_EFFECT_OVERFLOW || playerStandingPlot.getFlag(DisableBeaconEffectOverflowFlag.class)) {
+        if (!plotBeaconEffects || Settings.Paper_Components.DISABLE_BEACON_EFFECT_OVERFLOW) {
             event.setCancelled(true);
         }
     }

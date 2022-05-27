@@ -97,7 +97,7 @@ import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.comment.CommentManager;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
-import com.plotsquared.core.plot.flag.implementations.DisableBeaconEffectOverflowFlag;
+import com.plotsquared.core.plot.flag.implementations.BeaconEffectsFlag;
 import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
@@ -274,7 +274,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
         //Paper specific flags
         if (PaperLib.isPaper()) {
-            GlobalFlagContainer.getInstance().addFlag(DisableBeaconEffectOverflowFlag.BEACON_EFFECT_TRUE);
+            GlobalFlagContainer.getInstance().addFlag(BeaconEffectsFlag.BEACON_EFFECT_TRUE);
         }
 
         // FAWE
