@@ -21,7 +21,7 @@ plugins {
 version = "6.8.1-SNAPSHOT"
 
 allprojects {
-    group = "com.plotsquared"
+    group = "com.intellectualsites.plotsquared"
     version = rootProject.version
 
     repositories {
