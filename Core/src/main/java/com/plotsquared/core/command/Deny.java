@@ -166,6 +166,7 @@ public class Deny extends SubCommand {
     }
 
     private void handleKick(PlotPlayer<?> player, Plot plot) {
+        plot = plot.getBasePlot(false);
         if (player == null) {
             return;
         }

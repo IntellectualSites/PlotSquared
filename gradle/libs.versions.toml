@@ -17,7 +17,7 @@ adventure-platform-bukkit = "4.1.0"
 
 # Plugins
 worldedit = "7.2.10"
-fawe = "2.1.2"
+fawe = "2.2.0"
 vault = "1.7.1"
 placeholderapi = "2.11.1"
 luckperms = "5.4"
