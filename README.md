@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://i.imgur.com/33Y65YL.png" width="150">
+    <img src="https://raw.githubusercontent.com/IntellectualSites/Assets/main/plugins/PlotSquared/PlotSquared.svg" width="300">
 </p>
 
 ---
