@@ -754,66 +754,66 @@ public class BlockEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChange(BlockFromToEvent event) {
-        Block fBlock = event.getBlock();
+        Block fromBlock = event.getBlock();
 
         // Check liquid flow flag inside of origin plot too
-        final Location fLocation = BukkitUtil.adapt(fBlock.getLocation());
-        final PlotArea fArea = fLocation.getPlotArea();
-        if (fArea != null) {
-            final Plot fPlot = fArea.getOwnedPlot(fLocation);
-            if (fPlot != null && fPlot.getFlag(LiquidFlowFlag.class) == LiquidFlowFlag.FlowStatus.DISABLED && event
+        final Location fromLocation = BukkitUtil.adapt(fromBlock.getLocation());
+        final PlotArea fromArea = fromLocation.getPlotArea();
+        if (fromArea != null) {
+            final Plot fromPlot = fromArea.getOwnedPlot(fromLocation);
+            if (fromPlot != null && fromPlot.getFlag(LiquidFlowFlag.class) == LiquidFlowFlag.FlowStatus.DISABLED && event
                     .getBlock()
                     .isLiquid()) {
-                fPlot.debug("Liquid could not flow because liquid-flow = disabled");
+                fromPlot.debug("Liquid could not flow because liquid-flow = disabled");
                 event.setCancelled(true);
                 return;
             }
         }
 
-        Block tBlock = event.getToBlock();
-        Location tLocation = BukkitUtil.adapt(tBlock.getLocation());
-        PlotArea tArea = tLocation.getPlotArea();
-        if (tArea == null) {
-            if (fBlock.getType() == Material.DRAGON_EGG && fArea != null) {
+        Block toBlock = event.getToBlock();
+        Location toLocation = BukkitUtil.adapt(toBlock.getLocation());
+        PlotArea toArea = toLocation.getPlotArea();
+        if (toArea == null) {
+            if (fromBlock.getType() == Material.DRAGON_EGG && fromArea != null) {
                 event.setCancelled(true);
             }
             return;
         }
-        if (tLocation.getY() >= tArea.getMaxBuildHeight() || tLocation.getY() < tArea.getMinBuildHeight()) {
+        if (toLocation.getY() >= toArea.getMaxBuildHeight() || toLocation.getY() < toArea.getMinBuildHeight()) {
             event.setCancelled(true);
             return;
         }
-        Plot tPlot = tArea.getOwnedPlot(tLocation);
+        Plot toPlot = toArea.getOwnedPlot(toLocation);
 
-        if (fBlock.getType() == Material.DRAGON_EGG && fArea != null) {
-            final Plot fromPlot = fArea.getOwnedPlot(fLocation);
+        if (fromBlock.getType() == Material.DRAGON_EGG && fromArea != null) {
+            final Plot fromPlot = fromArea.getOwnedPlot(fromLocation);
 
-            if (fromPlot != null || tPlot != null) {
-                if ((fromPlot == null || !fromPlot.equals(tPlot)) && (tPlot == null || !tPlot.equals(fromPlot))) {
+            if (fromPlot != null || toPlot != null) {
+                if ((fromPlot == null || !fromPlot.equals(toPlot)) && (toPlot == null || !toPlot.equals(fromPlot))) {
                     event.setCancelled(true);
                     return;
                 }
             }
         }
 
-        if (tPlot != null) {
-            if (!tArea.contains(fLocation.getX(), fLocation.getZ()) || !Objects.equals(tPlot, tArea.getOwnedPlot(fLocation))) {
+        if (toPlot != null) {
+            if (!toArea.contains(fromLocation.getX(), fromLocation.getZ()) || !Objects.equals(toPlot, toArea.getOwnedPlot(fromLocation))) {
                 event.setCancelled(true);
                 return;
             }
-            if (tPlot.getFlag(LiquidFlowFlag.class) == LiquidFlowFlag.FlowStatus.ENABLED && event.getBlock().isLiquid()) {
+            if (toPlot.getFlag(LiquidFlowFlag.class) == LiquidFlowFlag.FlowStatus.ENABLED && event.getBlock().isLiquid()) {
                 return;
             }
-            if (tPlot.getFlag(DisablePhysicsFlag.class)) {
-                tPlot.debug(event.getBlock().getType() + " could not update because disable-physics = true");
+            if (toPlot.getFlag(DisablePhysicsFlag.class)) {
+                toPlot.debug(event.getBlock().getType() + " could not update because disable-physics = true");
                 event.setCancelled(true);
                 return;
             }
-            if (tPlot.getFlag(LiquidFlowFlag.class) == LiquidFlowFlag.FlowStatus.DISABLED && event.getBlock().isLiquid()) {
-                tPlot.debug("Liquid could not flow because liquid-flow = disabled");
+            if (toPlot.getFlag(LiquidFlowFlag.class) == LiquidFlowFlag.FlowStatus.DISABLED && event.getBlock().isLiquid()) {
+                toPlot.debug("Liquid could not flow because liquid-flow = disabled");
                 event.setCancelled(true);
             }
-        } else if (!tArea.contains(fLocation.getX(), fLocation.getZ()) || !Objects.equals(null, tArea.getOwnedPlot(fLocation))) {
+        } else if (!toArea.contains(fromLocation.getX(), fromLocation.getZ()) || !Objects.equals(null, toArea.getOwnedPlot(fromLocation))) {
             event.setCancelled(true);
         } else if (event.getBlock().isLiquid()) {
             final org.bukkit.Location location = event.getBlock().getLocation();
