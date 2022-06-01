@@ -32,7 +32,6 @@ import com.intellectualsites.paster.IncendoPaster;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.Storage;
-import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.inject.annotations.ConfigFile;
 import com.plotsquared.core.inject.annotations.WorldFile;
@@ -47,7 +46,6 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.nio.file.Files;
-import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 @CommandDeclaration(command = "debugpaste",
