@@ -32,6 +32,7 @@ import com.intellectualsites.paster.IncendoPaster;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.Storage;
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.inject.annotations.ConfigFile;
 import com.plotsquared.core.inject.annotations.WorldFile;
@@ -46,7 +47,10 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 @CommandDeclaration(command = "debugpaste",
         aliases = "dp",
@@ -76,9 +80,9 @@ public class DebugPaste extends SubCommand {
                 StringBuilder b = new StringBuilder();
                 b.append(
                         """
-                         # Welcome to this paste
-                         # It is meant to provide us at IntellectualSites with better information about your problem
-                         """
+                                # Welcome to this paste
+                                # It is meant to provide us at IntellectualSites with better information about your problem
+                                """
                 );
                 b.append("# PlotSquared Information\n");
                 b.append("PlotSquared Version: ").append(PlotSquared.get().getVersion())
@@ -173,22 +177,18 @@ public class DebugPaste extends SubCommand {
                     );
                 }
 
-                final File langDir = new File(
-                        PlotSquared.platform().getDirectory(),
-                        "lang"
-                );
-
-                if (langDir.exists()) {
-                    File[] fileList = langDir.listFiles();
-                    if (fileList != null) {
-                        for (File current : fileList) {
-                            if (current == null || current.exists()) {
-                                continue;
-                            }
-                            if (current.getName().startsWith("messages_") && current.getName().endsWith(".json")) {
-                                incendoPaster.addFile(current);
-                            }
-                        }
+                final Path langDir = PlotSquared.platform().getDirectory().toPath().resolve("lang");
+                if (Files.isDirectory(langDir)) {
+                    try (Stream<Path> files = Files.list(langDir)) {
+                        files.filter(Files::isRegularFile)
+                                .filter(path -> path.getFileName().toString().startsWith("messages_") &&
+                                        path.getFileName().toString().endsWith(".json")
+                                ).forEach(path -> {
+                                    try {
+                                        incendoPaster.addFile(path.toFile());
+                                    } catch (IOException ignored) {
+                                    }
+                                });
                     }
                 }
 
