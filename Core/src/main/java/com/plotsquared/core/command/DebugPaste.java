@@ -193,19 +193,6 @@ public class DebugPaste extends SubCommand {
                 }
 
                 try {
-                    for (File current : langDir.listFiles()) {
-                        try {
-                            if (current.getName().startsWith("messages_") && current.getName().endsWith(".json")) {
-                                incendoPaster.addFile(current);
-                            }
-                        } catch (NullPointerException ignored) {
-                        }
-                    }
-                } catch (NullPointerException ignored) {
-                    //No lang files found
-                }
-
-                try {
                     final String rawResponse = incendoPaster.upload();
                     final JsonObject jsonObject =
                             new JsonParser().parse(rawResponse).getAsJsonObject();
