@@ -178,6 +178,20 @@ public class DebugPaste extends SubCommand {
                         "lang"
                 );
 
+                if (langDir.exists()) {
+                    File[] fileList = langDir.listFiles();
+                    if (fileList != null) {
+                        for (File current : fileList) {
+                            if (current == null || current.exists()) {
+                                continue;
+                            }
+                            if (current.getName().startsWith("messages_") && current.getName().endsWith(".json")) {
+                                incendoPaster.addFile(current);
+                            }
+                        }
+                    }
+                }
+
                 try {
                     for (File current : langDir.listFiles()) {
                         try {
