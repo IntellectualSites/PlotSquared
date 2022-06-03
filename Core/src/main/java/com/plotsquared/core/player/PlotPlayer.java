@@ -1016,6 +1016,12 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     abstract Audience getAudience();
 
     /**
+     * Closes the current open inventory, if present
+     * @since TODO
+     */
+    public abstract void closeInventory();
+
+    /**
      * Get this player's {@link LockRepository}
      *
      * @return Lock repository instance

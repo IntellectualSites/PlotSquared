@@ -364,6 +364,11 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
     }
 
+    @Override
+    public void closeInventory() {
+        this.player.closeInventory();
+    }
+
     /**
      * Convert from PlotSquared's {@link TeleportCause} to Bukkit's {@link PlayerTeleportEvent.TeleportCause}
      *

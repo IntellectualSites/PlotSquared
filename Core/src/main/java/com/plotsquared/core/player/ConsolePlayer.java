@@ -258,4 +258,8 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
         return true;
     }
 
+    @Override
+    public void closeInventory() {
+    }
+
 }

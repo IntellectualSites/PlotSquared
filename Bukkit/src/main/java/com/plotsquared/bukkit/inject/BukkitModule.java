@@ -28,6 +28,7 @@ package com.plotsquared.bukkit.inject;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.listener.SingleWorldListener;
@@ -43,6 +44,8 @@ import com.plotsquared.bukkit.util.BukkitSetupUtils;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.fawe.FaweRegionManager;
 import com.plotsquared.bukkit.util.fawe.FaweSchematicHandler;
+import com.plotsquared.bukkit.util.gui.BukkitPlotInventory;
+import com.plotsquared.bukkit.util.gui.BukkitPlotInventoryProvider;
 import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -70,6 +73,7 @@ import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
+import com.plotsquared.core.util.gui.PlotInventoryProvider;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extension.platform.Actor;
 import org.apache.logging.log4j.LogManager;
@@ -103,6 +107,7 @@ public class BukkitModule extends AbstractModule {
         bind(InventoryUtil.class).to(BukkitInventoryUtil.class);
         bind(SetupUtils.class).to(BukkitSetupUtils.class);
         bind(WorldUtil.class).to(BukkitUtil.class);
+        bind(new TypeLiteral<PlotInventoryProvider<?, ?>>(){}).to(BukkitPlotInventoryProvider.class);
         install(new FactoryModuleBuilder()
                 .implement(ProgressSubscriber.class, DefaultProgressSubscriber.class)
                 .build(ProgressSubscriberFactory.class));
