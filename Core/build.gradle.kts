@@ -37,6 +37,10 @@ dependencies {
     // Logging
     compileOnlyApi(libs.log4j)
 
+    // Records are cool. Builders are cooler
+    compileOnly(libs.recordBuilderProcessor)
+    annotationProcessor(libs.recordBuilderProcessor)
+
     // Other libraries
     api(libs.prtree)
     api(libs.aopalliance)
