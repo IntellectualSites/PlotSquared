@@ -27,28 +27,17 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.events.PlotFlagAddEvent;
-import com.plotsquared.core.events.PlotFlagRemoveEvent;
-import com.plotsquared.core.events.Result;
+import com.plotsquared.core.gui.PlotMusicInventory;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.plot.PlotItemStack;
-import com.plotsquared.core.plot.flag.PlotFlag;
-import com.plotsquared.core.plot.flag.implementations.MusicFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
-import com.plotsquared.core.util.gui.PlotInventory;
 import com.plotsquared.core.util.gui.PlotInventoryProvider;
-import com.sk89q.worldedit.world.item.ItemTypes;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
-import java.util.List;
-import java.util.stream.Stream;
 
 @CommandDeclaration(command = "music",
         permission = "plots.music",
@@ -57,30 +46,13 @@ import java.util.stream.Stream;
         requiredType = RequiredType.PLAYER)
 public class Music extends SubCommand {
 
-    private static final List<String> DISCS = Stream.of(
-            "music_disc_13",
-            "music_disc_cat",
-            "music_disc_blocks",
-            "music_disc_chirp",
-            "music_disc_far",
-            "music_disc_mall",
-            "music_disc_mellohi",
-            "music_disc_stal",
-            "music_disc_strad",
-            "music_disc_ward",
-            "music_disc_11",
-            "music_disc_wait",
-            "music_disc_otherside",
-            "music_disc_pigstep"
-    ).filter(s -> ItemTypes.get(s) != null).toList();
-
     private final EventDispatcher eventDispatcher;
     private final PlotInventoryProvider<?, ?> inventoryProvider;
 
     @Inject
     public Music(
-            final @NonNull EventDispatcher eventDispatcher, final
-    PlotInventoryProvider<?, ?> inventoryProvider
+            final @NonNull EventDispatcher eventDispatcher,
+            final PlotInventoryProvider<?, ?> inventoryProvider
     ) {
         this.eventDispatcher = eventDispatcher;
         this.inventoryProvider = inventoryProvider;
@@ -110,66 +82,7 @@ public class Music extends SubCommand {
             return true;
         }
 
-        final PlotInventory<?, ?> inventory = inventoryProvider.createInventory(
-                9 * 2,
-                TranslatableCaption.of("plotjukebox.jukebox_header")
-        );
-
-        for (final String disc : DISCS) {
-            PlotItemStack itemStack = new PlotItemStack(
-                    disc, 1, String.format("<gold>%s</gold>", disc),
-                    TranslatableCaption.of("plotjukebox.click_to_play").getComponent(player)
-            );
-            inventory.addItem(itemStack, (item, clicker) -> {
-                clicker.closeInventory();
-                PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(MusicFlag.class)
-                        .createFlagInstance(item.getType());
-                PlotFlagAddEvent event = eventDispatcher.callFlagAdd(plotFlag, plot);
-                if (event.getEventResult() == Result.DENY) {
-                    clicker.sendMessage(
-                            TranslatableCaption.of("events.event_denied"),
-                            TagResolver.resolver("value", Tag.inserting(Component.text("Music addition")))
-                    );
-                    return;
-                }
-                plot.setFlag(event.getFlag());
-                clicker.sendMessage(
-                        TranslatableCaption.of("flag.flag_added"),
-                        TagResolver.builder()
-                                .tag("flag", Tag.inserting(Component.text("music")))
-                                .tag("value", Tag.inserting(Component.text(event.getFlag().getValue().toString())))
-                                .build()
-                );
-            });
-        }
-
-        PlotItemStack cancelItem = new PlotItemStack(
-                ItemTypes.BEDROCK, 1,
-                TranslatableCaption.of("plotjukebox.cancel_music").getComponent(player),
-                TranslatableCaption.of("plotjukebox.reset_music").getComponent(player)
-        );
-        inventory.setItem(inventory.size() - 1, cancelItem, (item, clicker) -> {
-            clicker.closeInventory();
-            PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(MusicFlag.class)
-                    .createFlagInstance(item.getType());
-            PlotFlagRemoveEvent event = eventDispatcher.callFlagRemove(plotFlag, plot);
-            if (event.getEventResult() == Result.DENY) {
-                clicker.sendMessage(
-                        TranslatableCaption.of("events.event_denied"),
-                        TagResolver.resolver("value", Tag.inserting(Component.text("Music removal")))
-                );
-                return;
-            }
-            plot.removeFlag(event.getFlag());
-            clicker.sendMessage(
-                    TranslatableCaption.of("flag.flag_removed"),
-                    TagResolver.builder()
-                            .tag("flag", Tag.inserting(Component.text("music")))
-                            .tag("value", Tag.inserting(Component.text("music_disc")))
-                            .build()
-            );
-        });
-        inventory.open(player);
+        new PlotMusicInventory<>(inventoryProvider, player, plot, eventDispatcher).open();
         return true;
     }
 

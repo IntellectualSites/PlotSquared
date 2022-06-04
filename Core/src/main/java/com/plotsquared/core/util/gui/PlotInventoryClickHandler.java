@@ -25,11 +25,10 @@
  */
 package com.plotsquared.core.util.gui;
 
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotItemStack;
 
-public interface PlotInventoryClickHandler<P> {
+public interface PlotInventoryClickHandler {
 
-    void handle(PlotItemStack itemStack, PlotPlayer<P> plotPlayer);
+    void handle(PlotItemStack itemStack, PlotInventoryClickType clickType);
 
 }

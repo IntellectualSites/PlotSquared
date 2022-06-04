@@ -41,9 +41,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -61,85 +59,45 @@ import java.util.WeakHashMap;
 public class BukkitPlotInventory extends PlotInventory<Player, ItemStack> {
 
     private static Listener INVENTORY_LISTENER;
-    private final ItemStack[] items;
-    private final PlotInventoryClickHandler<Player>[] clickHandlers;
-    private final Map<UUID, Inventory> viewers = new WeakHashMap<>();
     private static final Map<UUID, BukkitPlotInventory> INVENTORIES = new WeakHashMap<>();
+
+    private final ItemStack[] items;
+    final PlotInventoryClickHandler[] clickHandlers;
+    Inventory nativeInventory;
 
     /**
      * {@inheritDoc}
      */
-    protected BukkitPlotInventory(final int size, final Caption titleCaption, final TagResolver... titleResolvers) {
-        super(size, titleCaption, titleResolvers);
+    protected BukkitPlotInventory(
+            PlotPlayer<Player> player, final int size, final Caption titleCaption,
+            final TagResolver... titleResolvers
+    ) {
+        super(player, size, titleCaption, titleResolvers);
         this.items = new ItemStack[size];
         this.clickHandlers = new PlotInventoryClickHandler[size];
+        this.nativeInventory = Bukkit.createInventory(player.getPlatformPlayer(), size(),
+                BukkitUtil.LEGACY_COMPONENT_SERIALIZER.serialize(MiniMessage.miniMessage().deserialize(
+                        titleCaption().getComponent(player), titleResolvers()
+                ))
+        );
 
-        if (INVENTORY_LISTENER != null) {
-            return;
+        if (INVENTORY_LISTENER == null) {
+            INVENTORY_LISTENER = new BukkitPlotInventoryListener(INVENTORIES);
+            BukkitPlatform bukkitPlatform = ((BukkitPlatform) PlotSquared.platform());
+            bukkitPlatform.getServer().getPluginManager().registerEvents(INVENTORY_LISTENER, bukkitPlatform);
         }
-        INVENTORY_LISTENER = new Listener() {
-            @EventHandler
-            public void onInventoryClick(final org.bukkit.event.inventory.InventoryClickEvent event) {
-                final PlotPlayer<Player> player = BukkitUtil.adapt((Player) event.getWhoClicked());
-
-                BukkitPlotInventory currentInventory = INVENTORIES.get(player.getUUID());
-                if (currentInventory == null) {
-                    return;
-                }
-                if (!Objects.equals(event.getClickedInventory(), currentInventory.viewers.get(player.getUUID()))) {
-                    return;
-                }
-
-                final int slot = event.getRawSlot();
-                if (slot < 0 || slot >= currentInventory.size()) {
-                    return;
-                }
-                final PlotInventoryClickHandler<Player> clickHandler = currentInventory.clickHandlers[slot];
-                if (clickHandler == null) {
-                    return;
-                }
-                event.setCancelled(true);
-                final ItemStack item = event.getCurrentItem();
-                if (item == null) {
-                    clickHandler.handle(null, player);
-                    return;
-                }
-                clickHandler.handle(new PlotItemStack(
-                        BukkitAdapter.asItemType(item.getType()),
-                        item.getAmount(),
-                        item.getItemMeta().getDisplayName(),
-                        item.getItemMeta().hasLore() ? item.getItemMeta().getLore().toArray(String[]::new) : new String[0]
-                ), player);
-            }
-
-            @EventHandler
-            public void onInventoryClose(InventoryCloseEvent event) {
-                final PlotPlayer<Player> player = BukkitUtil.adapt((Player) event.getPlayer());
-                BukkitPlotInventory currentInventory = INVENTORIES.get(player.getUUID());
-                if (currentInventory == null) {
-                    return;
-                }
-                currentInventory.viewers.remove(player.getUUID());
-                INVENTORIES.remove(player.getUUID());
-            }
-
-        };
-        BukkitPlatform bukkitPlatform = ((BukkitPlatform) PlotSquared.platform());
-        bukkitPlatform.getServer().getPluginManager().registerEvents(INVENTORY_LISTENER, bukkitPlatform);
     }
 
     @Override
-    public void setItem(final int slot, final PlotItemStack item, final PlotInventoryClickHandler<Player> onClick) {
+    public void setItem(final int slot, final PlotItemStack item, final PlotInventoryClickHandler onClick) {
         Preconditions.checkElementIndex(slot, size(), "Slot must be in range (0, " + size() + ")");
         this.items[slot] = toPlatformItem(item);
         this.clickHandlers[slot] = onClick;
-        for (final Inventory value : viewers.values()) {
-            value.setItem(slot, this.items[slot]);
-        }
+        this.nativeInventory.setItem(slot, this.items[slot]);
     }
 
     @Override
-    public void addItem(final PlotItemStack item, final PlotInventoryClickHandler<Player> onClick) {
+    public void addItem(final PlotItemStack item, final PlotInventoryClickHandler onClick) {
         // TODO: probably needs more love (who doesn't)
         int slot = -1;
         // try to fill stacks
@@ -161,31 +119,19 @@ public class BukkitPlotInventory extends PlotInventory<Player, ItemStack> {
         Preconditions.checkElementIndex(slot, size());
         this.items[slot] = toPlatformItem(item);
         this.clickHandlers[slot] = onClick;
-        for (final Inventory value : viewers.values()) {
-            value.setItem(slot, this.items[slot]);
-        }
+        this.nativeInventory.setItem(slot, this.items[slot]);
     }
 
     @Override
-    protected void openPlatformPlayer(final PlotPlayer<Player> player) {
-        Component title = MiniMessage.miniMessage().deserialize(
-                titleCaption().getComponent(player), titleResolvers()
-        );
-        Inventory inventory = Bukkit.createInventory(player.getPlatformPlayer(), size(),
-                BukkitUtil.LEGACY_COMPONENT_SERIALIZER.serialize(title)
-        );
-        for (int i = 0; i < items.length; i++) {
-            inventory.setItem(i, items[i]);
-        }
-        INVENTORIES.put(player.getUUID(), this);
-        viewers.put(player.getUUID(), inventory);
-        player.getPlatformPlayer().openInventory(inventory);
+    public void open() {
+        INVENTORIES.put(player().getUUID(), this);
+        player().getPlatformPlayer().openInventory(this.nativeInventory);
     }
 
     @Override
-    protected void closePlatformPlayer(final PlotPlayer<Player> player) {
-        if (player.getPlatformPlayer().getOpenInventory().getTopInventory().equals(INVENTORIES.get(player.getUUID()))) {
-            player.getPlatformPlayer().closeInventory();
+    public void close() {
+        if (Objects.equals(player().getPlatformPlayer().getOpenInventory().getTopInventory(), this.nativeInventory)) {
+            player().getPlatformPlayer().closeInventory();
         }
     }
 

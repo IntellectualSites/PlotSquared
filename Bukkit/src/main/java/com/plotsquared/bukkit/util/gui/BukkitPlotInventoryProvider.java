@@ -26,6 +26,7 @@
 package com.plotsquared.bukkit.util.gui;
 
 import com.plotsquared.core.configuration.caption.Caption;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.gui.PlotInventory;
 import com.plotsquared.core.util.gui.PlotInventoryProvider;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -36,11 +37,12 @@ public class BukkitPlotInventoryProvider implements PlotInventoryProvider<Player
 
     @Override
     public PlotInventory<Player, ItemStack> createInventory(
+            PlotPlayer<?> player,
             final int size,
             final Caption titleCaption,
             final TagResolver... titleResolvers
     ) {
-        return new BukkitPlotInventory(size, titleCaption, titleResolvers);
+        return new BukkitPlotInventory((PlotPlayer<Player>) player, size, titleCaption, titleResolvers);
     }
 
 }

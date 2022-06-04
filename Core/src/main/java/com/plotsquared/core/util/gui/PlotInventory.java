@@ -37,9 +37,10 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
  */
 public abstract class PlotInventory<P, I> {
 
-    private final PlotInventoryClickHandler<P> NOOP_CLICK_HANDLER = (x, y) -> {
+    private final PlotInventoryClickHandler NOOP_CLICK_HANDLER = (x, y) -> {
     };
 
+    private final PlotPlayer<P> player;
     private final int size;
     private final Caption titleCaption;
     private final TagResolver[] titleResolvers;
@@ -52,7 +53,8 @@ public abstract class PlotInventory<P, I> {
      * @param titleResolvers The tag resolvers to use for the title
      * @since 7.0.0
      */
-    protected PlotInventory(int size, Caption titleCaption, TagResolver... titleResolvers) {
+    protected PlotInventory(PlotPlayer<P> player, int size, Caption titleCaption, TagResolver... titleResolvers) {
+        this.player = player;
         this.size = size;
         this.titleCaption = titleCaption;
         this.titleResolvers = titleResolvers;
@@ -67,7 +69,7 @@ public abstract class PlotInventory<P, I> {
      * @param onClick The handler to call when clicking this item
      * @since TODO
      */
-    public abstract void setItem(int slot, PlotItemStack item, PlotInventoryClickHandler<P> onClick);
+    public abstract void setItem(int slot, PlotItemStack item, PlotInventoryClickHandler onClick);
 
     /**
      * Set an item in this inventory at a specific slot / index.
@@ -88,7 +90,7 @@ public abstract class PlotInventory<P, I> {
      * @param onClick The handler to call when clicking this item
      * @since TODO
      */
-    public abstract void addItem(PlotItemStack item, PlotInventoryClickHandler<P> onClick);
+    public abstract void addItem(PlotItemStack item, PlotInventoryClickHandler onClick);
 
     /**
      * Add an item to this inventory, at the first slot possible (first empty slot, or first slot with the exact same item)
@@ -101,28 +103,18 @@ public abstract class PlotInventory<P, I> {
     }
 
     /**
-     * Opens this inventory for a specific {@link PlotPlayer}
+     * Opens this inventory
      *
-     * @param player The player to open this inventory for
      * @since TODO
      */
-    public void open(PlotPlayer<?> player) {
-        this.openPlatformPlayer((PlotPlayer<P>) player);
-    }
-
-    protected abstract void openPlatformPlayer(PlotPlayer<P> player);
+    public abstract void open();
 
     /**
-     * Close this inventory for a specific {@link PlotPlayer}
+     * Close this inventory
      *
-     * @param player The player to close this inventory for
      * @since TODO
      */
-    public void close(PlotPlayer<?> player) {
-        this.closePlatformPlayer((PlotPlayer<P>) player);
-    }
-
-    protected abstract void closePlatformPlayer(PlotPlayer<P> player);
+    public abstract void close();
 
     public abstract I toPlatformItem(PlotItemStack item);
 
@@ -132,6 +124,14 @@ public abstract class PlotInventory<P, I> {
      */
     public int size() {
         return size;
+    }
+
+    /**
+     * Get the associated player of this inventory
+     * @return {@link PlotPlayer}
+     */
+    public PlotPlayer<P> player() {
+        return player;
     }
 
     protected Caption titleCaption() {

@@ -26,6 +26,7 @@
 package com.plotsquared.core.util.gui;
 
 import com.plotsquared.core.configuration.caption.Caption;
+import com.plotsquared.core.player.PlotPlayer;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 /**
@@ -44,6 +45,6 @@ public interface PlotInventoryProvider<P, I> {
      * @param titleResolvers The (optional) placeholder resolvers for the inventory
      * @return The platform inventory
      */
-    PlotInventory<P, I> createInventory(int size, Caption titleCaption, TagResolver... titleResolvers);
+    PlotInventory<P, I> createInventory(PlotPlayer<?> player, int size, Caption titleCaption, TagResolver... titleResolvers);
 
 }
