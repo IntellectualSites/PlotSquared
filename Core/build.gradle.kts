@@ -1,7 +1,6 @@
 import java.time.format.DateTimeFormatter
 
 dependencies {
-    implementation(platform("com.intellectualsites:bom:1.0.0-SNAPSHOT"))
     // Expected everywhere.
     compileOnlyApi("org.checkerframework:checker-qual")
 

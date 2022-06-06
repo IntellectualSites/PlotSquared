@@ -64,6 +64,10 @@ subprojects {
         plugin<EclipsePlugin>()
         plugin<IdeaPlugin>()
     }
+
+    dependencies {
+        implementation(platform("com.intellectualsites:bom:1.0.0-SNAPSHOT"))
+    }
 }
 
 allprojects {
