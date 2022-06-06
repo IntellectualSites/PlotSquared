@@ -66,7 +66,7 @@ subprojects {
     }
 
     dependencies {
-        implementation(platform("com.intellectualsites:bom:1.0.0-SNAPSHOT"))
+        implementation(platform("com.intellectualsites.bom:bom-newest:1.1"))
     }
 }
 

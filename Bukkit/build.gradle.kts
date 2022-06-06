@@ -21,20 +21,20 @@ dependencies {
     api(projects.plotSquaredCore)
 
     // Metrics
-    implementation(libs.bstats)
+    implementation("org.bstats:bstats-bukkit")
 
     // Paper
     compileOnly(libs.paper)
-    implementation(libs.paperlib)
+    implementation("io.papermc:paperlib")
 
     // Plugins
     compileOnly(libs.worldeditBukkit) {
         exclude(group = "org.bukkit")
         exclude(group = "org.spigotmc")
     }
-    compileOnly(libs.fastasyncworldeditBukkit) { isTransitive = false }
-    testImplementation(libs.fastasyncworldeditBukkit) { isTransitive = false }
-    compileOnly(libs.vault) {
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit") { isTransitive = false }
+    testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit") { isTransitive = false }
+    compileOnly("com.github.MilkBowl:VaultAPI") {
         exclude(group = "org.bukkit")
     }
     compileOnly(libs.placeholderapi)
@@ -44,12 +44,12 @@ dependencies {
 
     // Other libraries
     implementation(libs.squirrelid) { isTransitive = false }
-    implementation(libs.serverlib)
+    implementation("dev.notmyfault.serverlib:ServerLib")
 
     // Our libraries
     implementation(libs.arkitektonika)
     implementation(libs.http4j)
-    implementation(libs.paster)
+    implementation("com.intellectualsites.paster:Paster")
 
     // Adventure
     implementation("net.kyori:adventure-platform-bukkit")
