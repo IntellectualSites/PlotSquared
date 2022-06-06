@@ -18,6 +18,7 @@ repositories {
 }
 
 dependencies {
+    implementation(platform("com.intellectualsites:bom:1.0.0-SNAPSHOT"))
     api(projects.plotSquaredCore)
 
     // Metrics
@@ -52,7 +53,7 @@ dependencies {
     implementation(libs.paster)
 
     // Adventure
-    implementation(libs.adventurePlatformBukkit)
+    implementation("net.kyori:adventure-platform-bukkit")
 }
 
 tasks.processResources {

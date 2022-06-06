@@ -1,8 +1,9 @@
 import java.time.format.DateTimeFormatter
 
 dependencies {
+    implementation(platform("com.intellectualsites:bom:1.0.0-SNAPSHOT"))
     // Expected everywhere.
-    compileOnlyApi(libs.checkerqual)
+    compileOnlyApi("org.checkerframework:checker-qual")
 
     // Minecraft expectations
     compileOnlyApi(libs.gson)
@@ -12,8 +13,8 @@ dependencies {
     compileOnlyApi(libs.snakeyaml)
 
     // Adventure
-    api(libs.adventure)
-    api(libs.minimessage)
+    api("net.kyori:adventure-api")
+    api("net.kyori:adventure-text-minimessage")
 
     // Guice
     api(libs.guice) {
