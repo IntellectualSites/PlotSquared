@@ -40,14 +40,12 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public abstract class QueueCoordinator {
@@ -117,7 +115,8 @@ public abstract class QueueCoordinator {
     public abstract void setModified(long modified);
 
     /**
-     * Returns true if the queue should be forced to be synchronous when enqueued.
+     * Returns true if the queue should be forced to be synchronous when enqueued. This is not necessarily synchronous to the
+     * server, and simply effectively makes {@link QueueCoordinator#enqueue()} a blocking operation.
      *
      * @return is force sync
      */
@@ -126,7 +125,8 @@ public abstract class QueueCoordinator {
     }
 
     /**
-     * Set whether the queue should be forced to be synchronous
+     * Set whether the queue should be forced to be synchronous. This is not necessarily synchronous to the server, and simply
+     * effectively makes {@link QueueCoordinator#enqueue()} a blocking operation.
      *
      * @param forceSync force sync or not
      */
