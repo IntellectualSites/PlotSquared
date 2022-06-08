@@ -28,7 +28,7 @@ package com.plotsquared.core.util;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.queue.QueueCoordinator;
-import com.plotsquared.core.queue.ScopedQueueCoordinator;
+import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.world.World;
@@ -39,12 +39,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class ChunkManager {
 
-    private static final Map<BlockVector2, RunnableVal<ScopedQueueCoordinator>> forceChunks = new ConcurrentHashMap<>();
-    private static final Map<BlockVector2, RunnableVal<ScopedQueueCoordinator>> addChunks = new ConcurrentHashMap<>();
+    private static final Map<BlockVector2, RunnableVal<ZeroedDelegateScopedQueueCoordinator>> forceChunks = new ConcurrentHashMap<>();
+    private static final Map<BlockVector2, RunnableVal<ZeroedDelegateScopedQueueCoordinator>> addChunks = new ConcurrentHashMap<>();
 
     public static void setChunkInPlotArea(
-            RunnableVal<ScopedQueueCoordinator> force,
-            RunnableVal<ScopedQueueCoordinator> add,
+            RunnableVal<ZeroedDelegateScopedQueueCoordinator> force,
+            RunnableVal<ZeroedDelegateScopedQueueCoordinator> add,
             String world,
             BlockVector2 loc
     ) {
@@ -53,8 +53,8 @@ public abstract class ChunkManager {
         if (PlotSquared.get().getPlotAreaManager().isAugmented(world) && PlotSquared.get().isNonStandardGeneration(world, loc)) {
             int blockX = loc.getX() << 4;
             int blockZ = loc.getZ() << 4;
-            ScopedQueueCoordinator scoped =
-                    new ScopedQueueCoordinator(
+            ZeroedDelegateScopedQueueCoordinator scoped =
+                    new ZeroedDelegateScopedQueueCoordinator(
                             queue,
                             Location.at(world, blockX, weWorld.getMinY(), blockZ),
                             Location.at(world, blockX + 15, weWorld.getMaxY(), blockZ + 15)
@@ -79,8 +79,8 @@ public abstract class ChunkManager {
         }
     }
 
-    public static boolean preProcessChunk(BlockVector2 loc, ScopedQueueCoordinator queue) {
-        final RunnableVal<ScopedQueueCoordinator> forceChunk = forceChunks.get(loc);
+    public static boolean preProcessChunk(BlockVector2 loc, ZeroedDelegateScopedQueueCoordinator queue) {
+        final RunnableVal<ZeroedDelegateScopedQueueCoordinator> forceChunk = forceChunks.get(loc);
         if (forceChunk != null) {
             forceChunk.run(queue);
             forceChunks.remove(loc);
@@ -89,8 +89,8 @@ public abstract class ChunkManager {
         return false;
     }
 
-    public static boolean postProcessChunk(BlockVector2 loc, ScopedQueueCoordinator queue) {
-        final RunnableVal<ScopedQueueCoordinator> addChunk = forceChunks.get(loc);
+    public static boolean postProcessChunk(BlockVector2 loc, ZeroedDelegateScopedQueueCoordinator queue) {
+        final RunnableVal<ZeroedDelegateScopedQueueCoordinator> addChunk = forceChunks.get(loc);
         if (addChunk != null) {
             addChunk.run(queue);
             addChunks.remove(loc);

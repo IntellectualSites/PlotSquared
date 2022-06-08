@@ -37,7 +37,7 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueCoordinator;
-import com.plotsquared.core.queue.ScopedQueueCoordinator;
+import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.WorldUtil;
@@ -264,9 +264,9 @@ public class BukkitRegionManager extends RegionManager {
             map.saveEntitiesOut(Bukkit.getWorld(world.getName()).getChunkAt(x, z), currentPlotClear);
             AugmentedUtils.bypass(
                     ignoreAugment,
-                    () -> ChunkManager.setChunkInPlotArea(null, new RunnableVal<ScopedQueueCoordinator>() {
+                    () -> ChunkManager.setChunkInPlotArea(null, new RunnableVal<ZeroedDelegateScopedQueueCoordinator>() {
                         @Override
-                        public void run(ScopedQueueCoordinator value) {
+                        public void run(ZeroedDelegateScopedQueueCoordinator value) {
                             Location min = value.getMin();
                             int bx = min.getX();
                             int bz = min.getZ();

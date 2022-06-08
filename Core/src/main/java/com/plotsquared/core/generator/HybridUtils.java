@@ -597,20 +597,6 @@ public class HybridUtils {
     /**
      * Regenerate the road in a chunk in a plot area.
      *
-     * @param area   Plot area to regenerate road for
-     * @param chunk  Chunk location to regenerate
-     * @param extend How far to extend setting air above the road
-     * @return if successful
-     * @deprecated use {@link HybridUtils#regenerateRoad(PlotArea, BlockVector2, int, QueueCoordinator)}
-     */
-    @Deprecated(forRemoval = true, since = "6.6.0")
-    public boolean regenerateRoad(final PlotArea area, final BlockVector2 chunk, int extend) {
-        return regenerateRoad(area, chunk, extend, null);
-    }
-
-    /**
-     * Regenerate the road in a chunk in a plot area.
-     *
      * @param area             Plot area to regenerate road for
      * @param chunk            Chunk location to regenerate
      * @param extend           How far to extend setting air above the road

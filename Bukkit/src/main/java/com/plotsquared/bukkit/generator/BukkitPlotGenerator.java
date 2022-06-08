@@ -35,7 +35,7 @@ import com.plotsquared.core.generator.SingleWorldGenerator;
 import com.plotsquared.core.location.ChunkWrapper;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.queue.ScopedQueueCoordinator;
+import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
 import com.sk89q.worldedit.math.BlockVector2;
 import org.bukkit.World;
@@ -198,7 +198,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
         return result.getChunkData();
     }
 
-    private void generate(BlockVector2 loc, World world, ScopedQueueCoordinator result) {
+    private void generate(BlockVector2 loc, World world, ZeroedDelegateScopedQueueCoordinator result) {
         // Load if improperly loaded
         if (!this.loaded) {
             String name = world.getName();

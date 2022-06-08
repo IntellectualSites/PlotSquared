@@ -28,7 +28,7 @@ package com.plotsquared.core.generator;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.queue.ScopedQueueCoordinator;
+import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -54,9 +54,9 @@ public abstract class IndependentPlotGenerator {
      * @param result   queue
      * @param settings PlotArea (settings)
      */
-    public abstract void generateChunk(ScopedQueueCoordinator result, PlotArea settings);
+    public abstract void generateChunk(ZeroedDelegateScopedQueueCoordinator result, PlotArea settings);
 
-    public boolean populateChunk(ScopedQueueCoordinator result, PlotArea setting) {
+    public boolean populateChunk(ZeroedDelegateScopedQueueCoordinator result, PlotArea setting) {
         return false;
     }
 

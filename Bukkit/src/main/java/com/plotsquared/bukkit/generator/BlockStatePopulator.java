@@ -31,7 +31,7 @@ import com.plotsquared.core.location.ChunkWrapper;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.QueueCoordinator;
-import com.plotsquared.core.queue.ScopedQueueCoordinator;
+import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -65,7 +65,7 @@ final class BlockStatePopulator extends BlockPopulator {
             return;
         }
         final ChunkWrapper wrap = new ChunkWrapper(area.getWorldName(), source.getX(), source.getZ());
-        final ScopedQueueCoordinator chunk = this.queue.getForChunk(wrap.x, wrap.z,
+        final ZeroedDelegateScopedQueueCoordinator chunk = this.queue.getForChunk(wrap.x, wrap.z,
                 com.plotsquared.bukkit.util.BukkitWorld.getMinWorldHeight(world),
                 com.plotsquared.bukkit.util.BukkitWorld.getMaxWorldHeight(world) - 1
         );
