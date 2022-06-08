@@ -61,7 +61,8 @@ public class HybridGen extends IndependentPlotGenerator {
             short relativeZ,
             int x,
             int z,
-            boolean isRoad
+            boolean isRoad,
+            boolean biomes
     ) {
         int minY; // Math.min(world.PLOT_HEIGHT, world.ROAD_HEIGHT);
         if ((isRoad && Settings.Schematics.PASTE_ROAD_ON_TOP) || (!isRoad && Settings.Schematics.PASTE_ON_TOP)) {
@@ -77,6 +78,9 @@ public class HybridGen extends IndependentPlotGenerator {
                 }
             }
         }
+        if (!biomes) {
+            return;
+        }
         BiomeType biome = world.G_SCH_B.get(MathMan.pair(relativeX, relativeZ));
         if (biome != null) {
             result.setBiome(x, z, biome);
@@ -84,13 +88,15 @@ public class HybridGen extends IndependentPlotGenerator {
     }
 
     @Override
-    public void generateChunk(@NonNull ZeroedDelegateScopedQueueCoordinator result, @NonNull PlotArea settings) {
+    public void generateChunk(@NonNull ZeroedDelegateScopedQueueCoordinator result, @NonNull PlotArea settings, boolean biomes) {
         Preconditions.checkNotNull(result, "result cannot be null");
         Preconditions.checkNotNull(settings, "settings cannot be null");
 
         HybridPlotWorld hybridPlotWorld = (HybridPlotWorld) settings;
         // Biome
-        result.fillBiome(hybridPlotWorld.getPlotBiome());
+        if (biomes) {
+            result.fillBiome(hybridPlotWorld.getPlotBiome());
+        }
         // Bedrock
         if (hybridPlotWorld.PLOT_BEDROCK) {
             for (short x = 0; x < 16; x++) {
@@ -132,10 +138,8 @@ public class HybridGen extends IndependentPlotGenerator {
             }
             relativeX[i] = v;
             if (hybridPlotWorld.ROAD_WIDTH != 0) {
-                insideRoadX[i] =
-                        v < hybridPlotWorld.PATH_WIDTH_LOWER || v > hybridPlotWorld.PATH_WIDTH_UPPER;
-                insideWallX[i] =
-                        v == hybridPlotWorld.PATH_WIDTH_LOWER || v == hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideRoadX[i] = v < hybridPlotWorld.PATH_WIDTH_LOWER || v > hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideWallX[i] = v == hybridPlotWorld.PATH_WIDTH_LOWER || v == hybridPlotWorld.PATH_WIDTH_UPPER;
             }
         }
         // The Z-coordinate of a given Z coordinate, relative to the
@@ -153,14 +157,12 @@ public class HybridGen extends IndependentPlotGenerator {
             }
             relativeZ[i] = v;
             if (hybridPlotWorld.ROAD_WIDTH != 0) {
-                insideRoadZ[i] =
-                        v < hybridPlotWorld.PATH_WIDTH_LOWER || v > hybridPlotWorld.PATH_WIDTH_UPPER;
-                insideWallZ[i] =
-                        v == hybridPlotWorld.PATH_WIDTH_LOWER || v == hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideRoadZ[i] = v < hybridPlotWorld.PATH_WIDTH_LOWER || v > hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideWallZ[i] = v == hybridPlotWorld.PATH_WIDTH_LOWER || v == hybridPlotWorld.PATH_WIDTH_UPPER;
             }
         }
         // generation
-        int startY = hybridPlotWorld.getMinGenHeight() + (hybridPlotWorld.PLOT_BEDROCK ? 1: 0);
+        int startY = hybridPlotWorld.getMinGenHeight() + (hybridPlotWorld.PLOT_BEDROCK ? 1 : 0);
         for (short x = 0; x < 16; x++) {
             if (insideRoadX[x]) {
                 for (short z = 0; z < 16; z++) {
@@ -169,7 +171,7 @@ public class HybridGen extends IndependentPlotGenerator {
                         result.setBlock(x, y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
                     }
                     if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true);
+                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, biomes);
                     }
                 }
             } else if (insideWallX[x]) {
@@ -180,9 +182,7 @@ public class HybridGen extends IndependentPlotGenerator {
                             result.setBlock(x, y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
                         }
                         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z,
-                                    true
-                            );
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, biomes);
                         }
                     } else {
                         // wall
@@ -191,14 +191,10 @@ public class HybridGen extends IndependentPlotGenerator {
                         }
                         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
                             if (hybridPlotWorld.PLACE_TOP_BLOCK) {
-                                result.setBlock(x, hybridPlotWorld.WALL_HEIGHT + 1, z,
-                                        hybridPlotWorld.WALL_BLOCK.toPattern()
-                                );
+                                result.setBlock(x, hybridPlotWorld.WALL_HEIGHT + 1, z, hybridPlotWorld.WALL_BLOCK.toPattern());
                             }
                         } else {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z,
-                                    true
-                            );
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, biomes);
                         }
                     }
                 }
@@ -210,9 +206,7 @@ public class HybridGen extends IndependentPlotGenerator {
                             result.setBlock(x, y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
                         }
                         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z,
-                                    true
-                            );
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, biomes);
                         }
                     } else if (insideWallZ[z]) {
                         // wall
@@ -221,27 +215,19 @@ public class HybridGen extends IndependentPlotGenerator {
                         }
                         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
                             if (hybridPlotWorld.PLACE_TOP_BLOCK) {
-                                result.setBlock(x, hybridPlotWorld.WALL_HEIGHT + 1, z,
-                                        hybridPlotWorld.WALL_BLOCK.toPattern()
-                                );
+                                result.setBlock(x, hybridPlotWorld.WALL_HEIGHT + 1, z, hybridPlotWorld.WALL_BLOCK.toPattern());
                             }
                         } else {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z,
-                                    true
-                            );
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, biomes);
                         }
                     } else {
                         // plot
                         for (int y = startY; y < hybridPlotWorld.PLOT_HEIGHT; y++) {
                             result.setBlock(x, y, z, hybridPlotWorld.MAIN_BLOCK.toPattern());
                         }
-                        result.setBlock(x, hybridPlotWorld.PLOT_HEIGHT, z,
-                                hybridPlotWorld.TOP_BLOCK.toPattern()
-                        );
+                        result.setBlock(x, hybridPlotWorld.PLOT_HEIGHT, z, hybridPlotWorld.TOP_BLOCK.toPattern());
                         if (hybridPlotWorld.PLOT_SCHEMATIC) {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z,
-                                    false
-                            );
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, false, biomes);
                         }
                     }
                 }
@@ -257,6 +243,35 @@ public class HybridGen extends IndependentPlotGenerator {
     @Override
     public void initialize(PlotArea area) {
         // All initialization is done in the PlotArea class
+    }
+
+    @Override
+    public BiomeType getBiome(final PlotArea settings, final int worldX, final int worldY, final int worldZ) {
+        HybridPlotWorld hybridPlotWorld = (HybridPlotWorld) settings;
+        if (!hybridPlotWorld.PLOT_SCHEMATIC && !hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
+            return hybridPlotWorld.getPlotBiome();
+        }
+        int relativeX = worldX;
+        int relativeZ = worldZ;
+        if (hybridPlotWorld.ROAD_OFFSET_X != 0) {
+            relativeX -= hybridPlotWorld.ROAD_OFFSET_X;
+        }
+        if (hybridPlotWorld.ROAD_OFFSET_Z != 0) {
+            relativeZ -= hybridPlotWorld.ROAD_OFFSET_Z;
+        }
+        int size = hybridPlotWorld.PLOT_WIDTH + hybridPlotWorld.ROAD_WIDTH;
+        if (relativeX < 0) {
+            relativeX = size + (relativeX % size);
+        } else {
+            relativeX = relativeX % size;
+        }
+        if (relativeZ < 0) {
+            relativeZ = size + (relativeZ % size);
+        } else {
+            relativeZ = relativeZ % size;
+        }
+        BiomeType biome = hybridPlotWorld.G_SCH_B.get(MathMan.pair((short) relativeX, (short) relativeZ));
+        return biome == null ? hybridPlotWorld.getPlotBiome() : biome;
     }
 
 }

@@ -30,6 +30,7 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.plotsquared.core.setup.PlotAreaBuilder;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -51,10 +52,11 @@ public abstract class IndependentPlotGenerator {
      * The PlotArea settings is the same one this was initialized with.
      * The PseudoRandom random is a fast random object.
      *
-     * @param result   queue
+     * @param result   Queue to write to
      * @param settings PlotArea (settings)
+     * @param biomes   If biomes should be generated
      */
-    public abstract void generateChunk(ZeroedDelegateScopedQueueCoordinator result, PlotArea settings);
+    public abstract void generateChunk(ZeroedDelegateScopedQueueCoordinator result, PlotArea settings, boolean biomes);
 
     public boolean populateChunk(ZeroedDelegateScopedQueueCoordinator result, PlotArea setting) {
         return false;
@@ -99,6 +101,18 @@ public abstract class IndependentPlotGenerator {
     public <T> GeneratorWrapper<T> specify(final @NonNull String world) {
         return (GeneratorWrapper<T>) PlotSquared.platform().wrapPlotGenerator(world, this);
     }
+
+    /**
+     * Get the biome to be generated at a specific point
+     *
+     * @param settings PlotArea settings to provide biome
+     * @param x       World x position
+     * @param y       World y position
+     * @param z       World z position
+     * @return Biome type to be generated
+     * @since TODO
+     */
+    public abstract BiomeType getBiome(PlotArea settings, int x, int y, int z);
 
     @Override
     public String toString() {

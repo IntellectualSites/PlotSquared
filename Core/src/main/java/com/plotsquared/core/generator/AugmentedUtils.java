@@ -174,7 +174,7 @@ public class AugmentedUtils {
                             Location.at(world, blockX, area.getMinGenHeight(), blockZ),
                             Location.at(world, blockX + 15, area.getMaxGenHeight(), blockZ + 15)
                     );
-            generator.generateChunk(scoped, area);
+            generator.generateChunk(scoped, area, true);
             generator.populateChunk(scoped, area);
         }
         if (enqueue) {
