@@ -103,7 +103,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         this.full = false;
         this.platformGenerator = cg;
         this.plotGenerator = new DelegatePlotGenerator(cg, world);
-        this.useNewGenerationMethods = PlotSquared.platform().serverVersion()[1] >= 17;
+        this.useNewGenerationMethods = PlotSquared.platform().serverVersion()[1] >= 19;
         this.biomeProvider = null;
     }
 
