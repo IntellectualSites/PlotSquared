@@ -379,17 +379,6 @@ public abstract class RegionManager {
         });
     }
 
-    @Deprecated(forRemoval = true, since = "6.6.0")
-    public void setBiome(
-            final CuboidRegion region,
-            final int extendBiome,
-            final BiomeType biome,
-            final String world,
-            final Runnable whenDone
-    ) {
-        setBiome(region, extendBiome, biome, PlotSquared.get().getPlotAreaManager().getPlotAreas(world, region)[0], whenDone);
-    }
-
     /**
      * Set a region to a biome type.
      *

@@ -82,7 +82,6 @@ public class MainCommand extends Command {
             commands.add(Buy.class);
             if (Settings.Web.LEGACY_WEBINTERFACE) {
                 LOGGER.warn("Legacy webinterface is used. Please note that it will be removed in future.");
-                commands.add(Save.class);
             }
             commands.add(Load.class);
             commands.add(Confirm.class);
@@ -131,7 +130,6 @@ public class MainCommand extends Command {
             commands.add(Move.class);
             commands.add(Condense.class);
             commands.add(Copy.class);
-            commands.add(Chat.class);
             commands.add(Trim.class);
             commands.add(Done.class);
             commands.add(Continue.class);

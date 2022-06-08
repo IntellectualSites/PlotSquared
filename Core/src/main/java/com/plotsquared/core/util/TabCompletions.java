@@ -32,13 +32,11 @@ import com.plotsquared.core.command.Command;
 import com.plotsquared.core.command.CommandCategory;
 import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.uuid.UUIDMapping;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,23 +78,6 @@ public final class TabCompletions {
      * cache, so it will complete will all names known to PlotSquared
      *
      * @param input    Command input
-     * @param existing Players that should not be included in completions
-     * @return List of completions
-     * @deprecated In favor {@link #completePlayers(PlotPlayer, String, List)}
-     */
-    @Deprecated(forRemoval = true, since = "6.1.3")
-    public static @NonNull List<Command> completePlayers(
-            final @NonNull String input,
-            final @NonNull List<String> existing
-    ) {
-        return completePlayers(ConsolePlayer.getConsole(), input, existing);
-    }
-
-    /**
-     * Get a list of tab completions corresponding to player names. This uses the UUID pipeline
-     * cache, so it will complete will all names known to PlotSquared
-     *
-     * @param input    Command input
      * @param issuer   The player who issued the tab completion
      * @param existing Players that should not be included in completions
      * @return List of completions
@@ -108,24 +89,6 @@ public final class TabCompletions {
             final @NonNull List<String> existing
     ) {
         return completePlayers("players", issuer, input, existing, uuid -> true);
-    }
-
-    /**
-     * Get a list of tab completions corresponding to player names added to the given plot.
-     *
-     * @param plot     Plot to complete added players for
-     * @param input    Command input
-     * @param existing Players that should not be included in completions
-     * @return List of completions
-     *
-     * @deprecated In favor {@link #completeAddedPlayers(PlotPlayer, Plot, String, List)}
-     */
-    @Deprecated(forRemoval = true, since = "6.1.3")
-    public static @NonNull List<Command> completeAddedPlayers(
-            final @NonNull Plot plot,
-            final @NonNull String input, final @NonNull List<String> existing
-    ) {
-        return completeAddedPlayers(ConsolePlayer.getConsole(), plot, input, existing);
     }
 
     /**
@@ -257,24 +220,6 @@ public final class TabCompletions {
             });
         }
         return Collections.unmodifiableList(completions);
-    }
-
-    /**
-     * @param cacheIdentifier Cache key
-     * @param input           Command input
-     * @param existing        Players that should not be included in completions
-     * @param uuidFilter      Filter applied before caching values
-     * @return List of completions
-     * @deprecated In favor {@link #completePlayers(String, PlotPlayer, String, List, Predicate)}
-     */
-    @SuppressWarnings("unused")
-    @Deprecated(forRemoval = true, since = "6.1.3")
-    private static List<Command> completePlayers(
-            final @NonNull String cacheIdentifier,
-            final @NonNull String input, final @NonNull List<String> existing,
-            final @NonNull Predicate<UUID> uuidFilter
-    ) {
-        return completePlayers(cacheIdentifier, ConsolePlayer.getConsole(), input, existing, uuidFilter);
     }
 
     /**

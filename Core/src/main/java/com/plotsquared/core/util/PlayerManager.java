@@ -168,56 +168,6 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
     }
 
     /**
-     * Get the name from a UUID.
-     *
-     * @param owner Owner UUID
-     * @return The player's name, None, Everyone or Unknown
-     * @deprecated Use {@link #resolveName(UUID)}
-     */
-    @Deprecated(forRemoval = true, since = "6.4.0")
-    public static @NonNull String getName(final @Nullable UUID owner) {
-        return getName(owner, true);
-    }
-
-    /**
-     * Get the name from a UUID.
-     *
-     * @param owner    Owner UUID
-     * @param blocking Whether or not the operation can be blocking
-     * @return The player's name, None, Everyone or Unknown
-     * @deprecated Use {@link #resolveName(UUID, boolean)}
-     */
-    @Deprecated(forRemoval = true, since = "6.4.0")
-    public static @NonNull String getName(final @Nullable UUID owner, final boolean blocking) {
-        if (owner == null) {
-            TranslatableCaption.of("info.none");
-        }
-        if (owner.equals(DBFunc.EVERYONE)) {
-            TranslatableCaption.of("info.everyone");
-        }
-        if (owner.equals(DBFunc.SERVER)) {
-            TranslatableCaption.of("info.server");
-        }
-        final String name;
-        if (blocking) {
-            name = PlotSquared.get().getImpromptuUUIDPipeline()
-                    .getSingle(owner, Settings.UUID.BLOCKING_TIMEOUT);
-        } else {
-            final UUIDMapping uuidMapping =
-                    PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(owner);
-            if (uuidMapping != null) {
-                name = uuidMapping.getUsername();
-            } else {
-                name = null;
-            }
-        }
-        if (name == null) {
-            TranslatableCaption.of("info.unknown");
-        }
-        return name;
-    }
-
-    /**
      * Attempts to resolve the username by an uuid
      * <p>
      * <b>Note:</b> blocks the thread until the name was resolved or failed
