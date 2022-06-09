@@ -45,6 +45,9 @@ final class BlockStatePopulator extends BlockPopulator {
 
     private final IndependentPlotGenerator plotGenerator;
 
+    /**
+     * @since TODO
+     */
     public BlockStatePopulator(
             final @NonNull IndependentPlotGenerator plotGenerator
     ) {

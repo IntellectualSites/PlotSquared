@@ -62,7 +62,9 @@ public abstract class IndependentPlotGenerator {
      * @param result   Queue to write to
      * @param settings PlotArea (settings)
      * @return True if any population occured
+     * @deprecated {@link ScopedQueueCoordinator} will be renamed in v7.
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public boolean populateChunk(ScopedQueueCoordinator result, PlotArea settings) {
         return false;
     }

@@ -48,6 +48,9 @@ public class Location extends BlockLoc implements Comparable<Location> {
     private final BlockVector3 blockVector3;
     private final World<?> world;
 
+    /**
+     * @since TODO
+     */
     protected Location(
             final @NonNull World<?> world, final @NonNull BlockVector3 blockVector3,
             final float yaw, final float pitch

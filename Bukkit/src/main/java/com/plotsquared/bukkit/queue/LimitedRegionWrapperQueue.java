@@ -39,10 +39,18 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.generator.LimitedRegion;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+/**
+ * Wraps a {@link LimitedRegion} inside a P2 {@link com.plotsquared.core.queue.QueueCoordinator} so it can be written to.
+ *
+ * @since TODO
+ */
 public class LimitedRegionWrapperQueue extends DelegateQueueCoordinator {
 
     private final LimitedRegion limitedRegion;
 
+    /**
+     * @since TODO
+     */
     public LimitedRegionWrapperQueue(LimitedRegion limitedRegion) {
         super(null);
         this.limitedRegion = limitedRegion;

@@ -396,11 +396,20 @@ public class HybridGen extends IndependentPlotGenerator {
         // All initialization is done in the PlotArea class
     }
 
+    /**
+     * Wrapper to allow a WE {@link Entity} to effectively have a mutable location as the location in its NBT should be changed
+     * when set to the world.
+     *
+     * @since TODO
+     */
     private static final class PopulatingEntity implements Entity {
 
         private final Entity parent;
         private com.sk89q.worldedit.util.Location location;
 
+        /**
+         * @since TODO
+         */
         private PopulatingEntity(Entity parent, com.sk89q.worldedit.util.Location location) {
             this.parent = parent;
             this.location = location;

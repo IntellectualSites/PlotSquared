@@ -492,6 +492,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
     /**
      * Get the entities contained within the plot schematic for generation. Intended for internal use only.
+     *
+     * @since TODO
      */
     @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
     public @Nullable List<Entity> getPlotSchematicEntities() {
@@ -500,6 +502,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
     /**
      * Get the minimum point of the plot schematic for generation. Intended for internal use only.
+     *
+     * @since TODO
      */
     @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
     public @Nullable BlockVector3 getPlotSchematicMinPoint() {
@@ -508,6 +512,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
     /**
      * Get if post-generation population of chunks with tiles/entities is needed for this world. Not for public API use.
+     *
+     * @since TODO
      */
     @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
     public boolean populationNeeded() {
