@@ -34,6 +34,7 @@ import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.generator.GridPlotWorld;
@@ -204,7 +205,7 @@ public abstract class PlotArea {
                                     + "Reason: {}. This flag will not be added as a default flag.",
                             e.getFlag().getName(),
                             e.getValue(),
-                            e.getErrorMessage()
+                            e.getErrorMessage().getComponent(LocaleHolder.console())
                     );
                     e.printStackTrace();
                 }
@@ -317,127 +318,129 @@ public abstract class PlotArea {
         if ((this.min != null || this.max != null) && !(this instanceof GridPlotWorld)) {
             throw new IllegalArgumentException("Must extend GridPlotWorld to provide");
         }
-        if (config.contains("generator.terrain")) {
-            this.terrain = ConfigurationUtil.getTerrain(config);
-            this.type = ConfigurationUtil.getType(config);
-        }
-        this.mobSpawning = config.getBoolean("natural_mob_spawning");
-        this.miscSpawnUnowned = config.getBoolean("misc_spawn_unowned");
-        this.mobSpawnerSpawning = config.getBoolean("mob_spawner_spawning");
-        this.autoMerge = config.getBoolean("plot.auto_merge");
-        this.allowSigns = config.getBoolean("plot.create_signs");
-        if (PlotSquared.platform().serverVersion()[1] == 13) {
-            this.legacySignMaterial = config.getString("plot.legacy_sign_material");
-        } else {
-            this.signMaterial = config.getString("plot.sign_material");
-        }
-        String biomeString = config.getString("plot.biome");
-        if (!biomeString.startsWith("minecraft:")) {
-            biomeString = "minecraft:" + biomeString;
-            config.set("plot.biome", biomeString.toLowerCase());
-        }
-        this.plotBiome = ConfigurationUtil.BIOME.parseString(biomeString.toLowerCase());
-        this.schematicOnClaim = config.getBoolean("schematic.on_claim");
-        this.schematicFile = config.getString("schematic.file");
-        this.schematicClaimSpecify = config.getBoolean("schematic.specify_on_claim");
-        this.schematics = new ArrayList<>(config.getStringList("schematic.schematics"));
-        this.schematics.replaceAll(String::toLowerCase);
-        this.useEconomy = config.getBoolean("economy.use");
-        ConfigurationSection priceSection = config.getConfigurationSection("economy.prices");
-        if (this.useEconomy) {
-            this.prices = new HashMap<>();
-            for (String key : priceSection.getKeys(false)) {
-                String raw = priceSection.getString(key);
-                if (raw.contains("{arg}")) {
-                    raw = raw.replace("{arg}", "plots");
-                    priceSection.set(key, raw); // update if replaced
-                }
-                this.prices.put(key, PlotExpression.compile(raw, "plots"));
+        PlotSquared.get().queueWorldEditAction(() -> {
+            if (config.contains("generator.terrain")) {
+                this.terrain = ConfigurationUtil.getTerrain(config);
+                this.type = ConfigurationUtil.getType(config);
             }
-        }
-        this.plotChat = config.getBoolean("chat.enabled");
-        this.forcingPlotChat = config.getBoolean("chat.forced");
-        this.worldBorder = config.getBoolean("world.border");
-        this.maxBuildHeight = config.getInt("world.max_height");
-        this.minBuildHeight = config.getInt("world.min_height");
-        this.minGenHeight = config.getInt("world.min_gen_height");
-        this.maxGenHeight = config.getInt("world.max_gen_height");
+            this.mobSpawning = config.getBoolean("natural_mob_spawning");
+            this.miscSpawnUnowned = config.getBoolean("misc_spawn_unowned");
+            this.mobSpawnerSpawning = config.getBoolean("mob_spawner_spawning");
+            this.autoMerge = config.getBoolean("plot.auto_merge");
+            this.allowSigns = config.getBoolean("plot.create_signs");
+            if (PlotSquared.platform().serverVersion()[1] == 13) {
+                this.legacySignMaterial = config.getString("plot.legacy_sign_material");
+            } else {
+                this.signMaterial = config.getString("plot.sign_material");
+            }
+            String biomeString = config.getString("plot.biome");
+            if (!biomeString.startsWith("minecraft:")) {
+                biomeString = "minecraft:" + biomeString;
+                config.set("plot.biome", biomeString.toLowerCase());
+            }
+            this.plotBiome = ConfigurationUtil.BIOME.parseString(biomeString.toLowerCase());
+            this.schematicOnClaim = config.getBoolean("schematic.on_claim");
+            this.schematicFile = config.getString("schematic.file");
+            this.schematicClaimSpecify = config.getBoolean("schematic.specify_on_claim");
+            this.schematics = new ArrayList<>(config.getStringList("schematic.schematics"));
+            this.schematics.replaceAll(String::toLowerCase);
+            this.useEconomy = config.getBoolean("economy.use");
+            ConfigurationSection priceSection = config.getConfigurationSection("economy.prices");
+            if (this.useEconomy) {
+                this.prices = new HashMap<>();
+                for (String key : priceSection.getKeys(false)) {
+                    String raw = priceSection.getString(key);
+                    if (raw.contains("{arg}")) {
+                        raw = raw.replace("{arg}", "plots");
+                        priceSection.set(key, raw); // update if replaced
+                    }
+                    this.prices.put(key, PlotExpression.compile(raw, "plots"));
+                }
+            }
+            this.plotChat = config.getBoolean("chat.enabled");
+            this.forcingPlotChat = config.getBoolean("chat.forced");
+            this.worldBorder = config.getBoolean("world.border");
+            this.maxBuildHeight = config.getInt("world.max_height");
+            this.minBuildHeight = config.getInt("world.min_height");
+            this.minGenHeight = config.getInt("world.min_gen_height");
+            this.maxGenHeight = config.getInt("world.max_gen_height");
 
-        switch (config.getString("world.gamemode").toLowerCase()) {
-            case "creative", "c", "1" -> this.gameMode = GameModes.CREATIVE;
-            case "adventure", "a", "2" -> this.gameMode = GameModes.ADVENTURE;
-            case "spectator", "3" -> this.gameMode = GameModes.SPECTATOR;
-            default -> this.gameMode = GameModes.SURVIVAL;
-        }
+            switch (config.getString("world.gamemode").toLowerCase()) {
+                case "creative", "c", "1" -> this.gameMode = GameModes.CREATIVE;
+                case "adventure", "a", "2" -> this.gameMode = GameModes.ADVENTURE;
+                case "spectator", "3" -> this.gameMode = GameModes.SPECTATOR;
+                default -> this.gameMode = GameModes.SURVIVAL;
+            }
 
-        String homeNonMembers = config.getString("home.nonmembers");
-        String homeDefault = config.getString("home.default");
-        this.defaultHome = BlockLoc.fromString(homeDefault);
-        this.homeAllowNonmember = homeNonMembers.equalsIgnoreCase(homeDefault);
-        if (this.homeAllowNonmember) {
-            this.nonmemberHome = defaultHome;
-        } else {
-            this.nonmemberHome = BlockLoc.fromString(homeNonMembers);
-        }
+            String homeNonMembers = config.getString("home.nonmembers");
+            String homeDefault = config.getString("home.default");
+            this.defaultHome = BlockLoc.fromString(homeDefault);
+            this.homeAllowNonmember = homeNonMembers.equalsIgnoreCase(homeDefault);
+            if (this.homeAllowNonmember) {
+                this.nonmemberHome = defaultHome;
+            } else {
+                this.nonmemberHome = BlockLoc.fromString(homeNonMembers);
+            }
 
-        if ("side".equalsIgnoreCase(homeDefault)) {
-            this.defaultHome = null;
-        } else if (StringMan.isEqualIgnoreCaseToAny(homeDefault, "center", "middle", "centre")) {
-            this.defaultHome = new BlockLoc(Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE);
-        } else {
-            try {
+            if ("side".equalsIgnoreCase(homeDefault)) {
+                this.defaultHome = null;
+            } else if (StringMan.isEqualIgnoreCaseToAny(homeDefault, "center", "middle", "centre")) {
+                this.defaultHome = new BlockLoc(Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            } else {
+                try {
                 /*String[] split = homeDefault.split(",");
                 this.DEFAULT_HOME =
                     new PlotLoc(Integer.parseInt(split[0]), Integer.parseInt(split[1]));*/
-                this.defaultHome = BlockLoc.fromString(homeDefault);
-            } catch (NumberFormatException ignored) {
-                this.defaultHome = null;
+                    this.defaultHome = BlockLoc.fromString(homeDefault);
+                } catch (NumberFormatException ignored) {
+                    this.defaultHome = null;
+                }
             }
-        }
 
-        List<String> flags = config.getStringList("flags.default");
-        if (flags.isEmpty()) {
-            flags = config.getStringList("flags");
+            List<String> flags = config.getStringList("flags.default");
             if (flags.isEmpty()) {
-                flags = new ArrayList<>();
-                ConfigurationSection section = config.getConfigurationSection("flags");
-                Set<String> keys = section.getKeys(false);
-                for (String key : keys) {
-                    if (!"default".equals(key)) {
-                        flags.add(key + ';' + section.get(key));
+                flags = config.getStringList("flags");
+                if (flags.isEmpty()) {
+                    flags = new ArrayList<>();
+                    ConfigurationSection section = config.getConfigurationSection("flags");
+                    Set<String> keys = section.getKeys(false);
+                    for (String key : keys) {
+                        if (!"default".equals(key)) {
+                            flags.add(key + ';' + section.get(key));
+                        }
                     }
                 }
             }
-        }
-        this.getFlagContainer().addAll(parseFlags(flags));
-        ConsolePlayer.getConsole().sendMessage(
-                TranslatableCaption.of("flags.area_flags"),
-                Template.of("flags", flags.toString())
-        );
+            this.getFlagContainer().addAll(parseFlags(flags));
+            ConsolePlayer.getConsole().sendMessage(
+                    TranslatableCaption.of("flags.area_flags"),
+                    Template.of("flags", flags.toString())
+            );
 
-        this.spawnEggs = config.getBoolean("event.spawn.egg");
-        this.spawnCustom = config.getBoolean("event.spawn.custom");
-        this.spawnBreeding = config.getBoolean("event.spawn.breeding");
+            this.spawnEggs = config.getBoolean("event.spawn.egg");
+            this.spawnCustom = config.getBoolean("event.spawn.custom");
+            this.spawnBreeding = config.getBoolean("event.spawn.breeding");
 
-        List<String> roadflags = config.getStringList("road.flags");
-        if (roadflags.isEmpty()) {
-            roadflags = new ArrayList<>();
-            ConfigurationSection section = config.getConfigurationSection("road.flags");
-            Set<String> keys = section.getKeys(false);
-            for (String key : keys) {
-                if (!"default".equals(key)) {
-                    roadflags.add(key + ';' + section.get(key));
+            List<String> roadflags = config.getStringList("road.flags");
+            if (roadflags.isEmpty()) {
+                roadflags = new ArrayList<>();
+                ConfigurationSection section = config.getConfigurationSection("road.flags");
+                Set<String> keys = section.getKeys(false);
+                for (String key : keys) {
+                    if (!"default".equals(key)) {
+                        roadflags.add(key + ';' + section.get(key));
+                    }
                 }
             }
-        }
-        this.roadFlags = roadflags.size() > 0;
-        this.getRoadFlagContainer().addAll(parseFlags(roadflags));
-        ConsolePlayer.getConsole().sendMessage(
-                TranslatableCaption.of("flags.road_flags"),
-                Template.of("flags", roadflags.toString())
-        );
+            this.roadFlags = roadflags.size() > 0;
+            this.getRoadFlagContainer().addAll(parseFlags(roadflags));
+            ConsolePlayer.getConsole().sendMessage(
+                    TranslatableCaption.of("flags.road_flags"),
+                    Template.of("flags", roadflags.toString())
+            );
 
-        loadConfiguration(config);
+            loadConfiguration(config);
+        });
     }
 
     public abstract void loadConfiguration(ConfigurationSection config);

@@ -73,6 +73,7 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.world.block.BlockCategory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
@@ -108,6 +109,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -152,6 +154,7 @@ public class PlotSquared {
     private File storageFile;
     private EventDispatcher eventDispatcher;
     private PlotListener plotListener;
+    private Queue<Runnable> worldEditReadyQueue = new ArrayDeque<>();
 
     /**
      * Initialize PlotSquared with the desired Implementation class.
@@ -1572,6 +1575,23 @@ public class PlotSquared {
 
     public @NonNull PlotListener getPlotListener() {
         return this.plotListener;
+    }
+
+    public Queue<Runnable> worldEditReadyQueue() {
+        return worldEditReadyQueue;
+    }
+
+    /**
+     * Queue a task to be run when WorldEdit is ready or run instantly if WorldEdit is already ready.
+     *
+     * @param action The action to run
+     */
+    public void queueWorldEditAction(Runnable action) {
+        if (BlockCategory.REGISTRY.keySet().isEmpty()) {
+            worldEditReadyQueue.add(action);
+        } else {
+            action.run();
+        }
     }
 
     /**

@@ -39,6 +39,7 @@ import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.entity.Player;
 import com.sk89q.worldedit.event.extent.EditSessionEvent;
+import com.sk89q.worldedit.event.platform.PlatformReadyEvent;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.extent.NullExtent;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -60,6 +61,18 @@ public class WESubscriber {
     public WESubscriber(final @NonNull PlotAreaManager plotAreaManager, final @NonNull WorldUtil worldUtil) {
         this.plotAreaManager = plotAreaManager;
         this.worldUtil = worldUtil;
+    }
+
+    /**
+     * Called when the WorldEdit platform is ready.
+     * Indicates that the registries ({@link com.sk89q.worldedit.world.block.BlockCategory#REGISTRY}) are filled properly
+     */
+    @Subscribe
+    public void onPlatformReady(PlatformReadyEvent event) {
+        Runnable task;
+        while ((task = PlotSquared.get().worldEditReadyQueue().poll()) != null) {
+            task.run();
+        }
     }
 
     @Subscribe(priority = Priority.VERY_EARLY)
