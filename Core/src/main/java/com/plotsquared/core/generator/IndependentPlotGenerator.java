@@ -53,9 +53,15 @@ public abstract class IndependentPlotGenerator {
      *
      * @param result   queue
      * @param settings PlotArea (settings)
+     * @deprecated {@link ScopedQueueCoordinator} will be renamed in v7.
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public abstract void generateChunk(ScopedQueueCoordinator result, PlotArea settings);
 
+    /**
+     * @deprecated {@link ScopedQueueCoordinator} will be renamed in v7.
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public boolean populateChunk(ScopedQueueCoordinator result, PlotArea setting) {
         return false;
     }
