@@ -1577,6 +1577,10 @@ public class PlotSquared {
         return this.plotListener;
     }
 
+    /**
+     * @return A queue of actions to be executed after the WorldEdit platform has been initialized.
+     * @since TODO
+     */
     public Queue<Runnable> worldEditReadyQueue() {
         return worldEditReadyQueue;
     }
@@ -1585,6 +1589,7 @@ public class PlotSquared {
      * Queue a task to be run when WorldEdit is ready or run instantly if WorldEdit is already ready.
      *
      * @param action The action to run
+     * @since TODO
      */
     public void queueWorldEditAction(Runnable action) {
         if (BlockCategory.REGISTRY.keySet().isEmpty()) {
