@@ -34,7 +34,7 @@ allprojects {
 
         maven {
             name = "Sonatype OSS (S01)"
-            url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
+            url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
         }
 
         maven {
@@ -63,6 +63,10 @@ subprojects {
 
         plugin<EclipsePlugin>()
         plugin<IdeaPlugin>()
+    }
+
+    dependencies {
+        implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.2"))
     }
 }
 
