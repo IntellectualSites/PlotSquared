@@ -112,30 +112,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
     @Override
     public @NonNull List<BlockPopulator> getDefaultPopulators(@NonNull World world) {
         try {
-            if (!this.loaded) {
-                String name = world.getName();
-                PlotSquared.get().loadWorld(name, this);
-                final Set<PlotArea> areas = this.plotAreaManager.getPlotAreasSet(name);
-                if (!areas.isEmpty()) {
-                    PlotArea area = areas.iterator().next();
-                    if (!area.isMobSpawning()) {
-                        if (!area.isSpawnEggs()) {
-                            world.setSpawnFlags(false, false);
-                        }
-                        world.setAmbientSpawnLimit(0);
-                        world.setAnimalSpawnLimit(0);
-                        world.setMonsterSpawnLimit(0);
-                        world.setWaterAnimalSpawnLimit(0);
-                    } else {
-                        world.setSpawnFlags(true, true);
-                        world.setAmbientSpawnLimit(-1);
-                        world.setAnimalSpawnLimit(-1);
-                        world.setMonsterSpawnLimit(-1);
-                        world.setWaterAnimalSpawnLimit(-1);
-                    }
-                }
-                this.loaded = true;
-            }
+            checkLoaded(world);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -152,6 +129,41 @@ public class BukkitPlotGenerator extends ChunkGenerator
             }
         }
         return toAdd;
+    }
+
+    private synchronized void checkLoaded(@NonNull World world) {
+        // Do not attempt to load configurations until WorldEdit has a platform ready.
+        try {
+            WorldEdit.getInstance().getPlatformManager().queryCapability(Capability.WORLD_EDITING);
+        } catch (Throwable t) {
+            return;
+        }
+        if (!this.loaded) {
+            String name = world.getName();
+            PlotSquared.get().loadWorld(name, this);
+            final Set<PlotArea> areas = this.plotAreaManager.getPlotAreasSet(name);
+            if (!areas.isEmpty()) {
+                PlotArea area = areas.iterator().next();
+                if (!area.isMobSpawning()) {
+                    if (!area.isSpawnEggs()) {
+                        world.setSpawnFlags(false, false);
+                    }
+                    setSpawnLimits(world, 0);
+                } else {
+                    world.setSpawnFlags(true, true);
+                    setSpawnLimits(world, -1);
+                }
+            }
+            this.loaded = true;
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void setSpawnLimits(@NonNull World world, int limit) {
+        world.setAmbientSpawnLimit(limit);
+        world.setAnimalSpawnLimit(limit);
+        world.setMonsterSpawnLimit(limit);
+        world.setWaterAnimalSpawnLimit(limit);
     }
 
     @Override
@@ -201,9 +213,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
     private void generate(BlockVector2 loc, World world, ScopedQueueCoordinator result) {
         // Load if improperly loaded
         if (!this.loaded) {
-            String name = world.getName();
-            PlotSquared.get().loadWorld(name, this);
-            this.loaded = true;
+            checkLoaded(world);
         }
         // Process the chunk
         if (ChunkManager.preProcessChunk(loc, result)) {
