@@ -35,13 +35,23 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.plotsquared.core.util.MathMan;
+import com.sk89q.worldedit.entity.BaseEntity;
+import com.sk89q.worldedit.entity.Entity;
+import com.sk89q.worldedit.extent.Extent;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.math.Vector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.regions.RegionOperationException;
+import com.sk89q.worldedit.world.NullWorld;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class HybridGen extends IndependentPlotGenerator {
 
+    private static final CuboidRegion CHUNK = new CuboidRegion(BlockVector3.ZERO, BlockVector3.at(15, 396, 15));
     private final HybridPlotWorldFactory hybridPlotWorldFactory;
 
     @Inject
@@ -55,12 +65,17 @@ public class HybridGen extends IndependentPlotGenerator {
     }
 
     private void placeSchem(
-            HybridPlotWorld world, ScopedQueueCoordinator result, short relativeX,
-            short relativeZ, int x, int z, boolean isRoad
+            HybridPlotWorld world,
+            ScopedQueueCoordinator result,
+            short relativeX,
+            short relativeZ,
+            int x,
+            int z,
+            boolean isRoad,
+            boolean isPopulating
     ) {
         int minY; // Math.min(world.PLOT_HEIGHT, world.ROAD_HEIGHT);
-        if ((isRoad && Settings.Schematics.PASTE_ROAD_ON_TOP) || (!isRoad
-                && Settings.Schematics.PASTE_ON_TOP)) {
+        if ((isRoad && Settings.Schematics.PASTE_ROAD_ON_TOP) || (!isRoad && Settings.Schematics.PASTE_ON_TOP)) {
             minY = world.SCHEM_Y;
         } else {
             minY = world.getMinBuildHeight();
@@ -69,7 +84,9 @@ public class HybridGen extends IndependentPlotGenerator {
         if (blocks != null) {
             for (int y = 0; y < blocks.length; y++) {
                 if (blocks[y] != null) {
-                    result.setBlock(x, minY + y, z, blocks[y]);
+                    if (!isPopulating || blocks[y].hasNbtData()) {
+                        result.setBlock(x, minY + y, z, blocks[y]);
+                    }
                 }
             }
         }
@@ -128,19 +145,17 @@ public class HybridGen extends IndependentPlotGenerator {
             }
             relativeX[i] = v;
             if (hybridPlotWorld.ROAD_WIDTH != 0) {
-                insideRoadX[i] =
-                        v < hybridPlotWorld.PATH_WIDTH_LOWER || v > hybridPlotWorld.PATH_WIDTH_UPPER;
-                insideWallX[i] =
-                        v == hybridPlotWorld.PATH_WIDTH_LOWER || v == hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideRoadX[i] = v < hybridPlotWorld.PATH_WIDTH_LOWER || v > hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideWallX[i] = v == hybridPlotWorld.PATH_WIDTH_LOWER || v == hybridPlotWorld.PATH_WIDTH_UPPER;
             }
         }
         // The Z-coordinate of a given Z coordinate, relative to the
         // plot (Counting from the corner with the least positive
         // coordinates)
         short[] relativeZ = new short[16];
-        // Whether or not the given Z coordinate belongs to the road
+        // Whether the given Z coordinate belongs to the road
         boolean[] insideRoadZ = new boolean[16];
-        // Whether or not the given Z coordinate belongs to the wall
+        // Whether the given Z coordinate belongs to the wall
         boolean[] insideWallZ = new boolean[16];
         for (short i = 0; i < 16; i++) {
             short v = (short) (relativeOffsetZ + i);
@@ -149,14 +164,12 @@ public class HybridGen extends IndependentPlotGenerator {
             }
             relativeZ[i] = v;
             if (hybridPlotWorld.ROAD_WIDTH != 0) {
-                insideRoadZ[i] =
-                        v < hybridPlotWorld.PATH_WIDTH_LOWER || v > hybridPlotWorld.PATH_WIDTH_UPPER;
-                insideWallZ[i] =
-                        v == hybridPlotWorld.PATH_WIDTH_LOWER || v == hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideRoadZ[i] = v < hybridPlotWorld.PATH_WIDTH_LOWER || v > hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideWallZ[i] = v == hybridPlotWorld.PATH_WIDTH_LOWER || v == hybridPlotWorld.PATH_WIDTH_UPPER;
             }
         }
         // generation
-        int startY = hybridPlotWorld.getMinGenHeight() + (hybridPlotWorld.PLOT_BEDROCK ? 1: 0);
+        int startY = hybridPlotWorld.getMinGenHeight() + (hybridPlotWorld.PLOT_BEDROCK ? 1 : 0);
         for (short x = 0; x < 16; x++) {
             if (insideRoadX[x]) {
                 for (short z = 0; z < 16; z++) {
@@ -165,7 +178,7 @@ public class HybridGen extends IndependentPlotGenerator {
                         result.setBlock(x, y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
                     }
                     if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true);
+                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, false);
                     }
                 }
             } else if (insideWallX[x]) {
@@ -176,9 +189,7 @@ public class HybridGen extends IndependentPlotGenerator {
                             result.setBlock(x, y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
                         }
                         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z,
-                                    true
-                            );
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, false);
                         }
                     } else {
                         // wall
@@ -187,14 +198,10 @@ public class HybridGen extends IndependentPlotGenerator {
                         }
                         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
                             if (hybridPlotWorld.PLACE_TOP_BLOCK) {
-                                result.setBlock(x, hybridPlotWorld.WALL_HEIGHT + 1, z,
-                                        hybridPlotWorld.WALL_BLOCK.toPattern()
-                                );
+                                result.setBlock(x, hybridPlotWorld.WALL_HEIGHT + 1, z, hybridPlotWorld.WALL_BLOCK.toPattern());
                             }
                         } else {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z,
-                                    true
-                            );
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, false);
                         }
                     }
                 }
@@ -206,9 +213,7 @@ public class HybridGen extends IndependentPlotGenerator {
                             result.setBlock(x, y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
                         }
                         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z,
-                                    true
-                            );
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, false);
                         }
                     } else if (insideWallZ[z]) {
                         // wall
@@ -217,32 +222,168 @@ public class HybridGen extends IndependentPlotGenerator {
                         }
                         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
                             if (hybridPlotWorld.PLACE_TOP_BLOCK) {
-                                result.setBlock(x, hybridPlotWorld.WALL_HEIGHT + 1, z,
-                                        hybridPlotWorld.WALL_BLOCK.toPattern()
-                                );
+                                result.setBlock(x, hybridPlotWorld.WALL_HEIGHT + 1, z, hybridPlotWorld.WALL_BLOCK.toPattern());
                             }
                         } else {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z,
-                                    true
-                            );
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, false);
                         }
                     } else {
                         // plot
                         for (int y = startY; y < hybridPlotWorld.PLOT_HEIGHT; y++) {
                             result.setBlock(x, y, z, hybridPlotWorld.MAIN_BLOCK.toPattern());
                         }
-                        result.setBlock(x, hybridPlotWorld.PLOT_HEIGHT, z,
-                                hybridPlotWorld.TOP_BLOCK.toPattern()
-                        );
+                        result.setBlock(x, hybridPlotWorld.PLOT_HEIGHT, z, hybridPlotWorld.TOP_BLOCK.toPattern());
                         if (hybridPlotWorld.PLOT_SCHEMATIC) {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z,
-                                    false
-                            );
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, false, false);
                         }
                     }
                 }
             }
         }
+    }
+
+    @Override
+    public boolean populateChunk(final ScopedQueueCoordinator result, final PlotArea settings) {
+        HybridPlotWorld hybridPlotWorld = (HybridPlotWorld) settings;
+        if (!hybridPlotWorld.populationNeeded()) {
+            return false;
+        }
+        // Coords
+        Location min = result.getMin();
+        int bx = min.getX() - hybridPlotWorld.ROAD_OFFSET_X;
+        int bz = min.getZ() - hybridPlotWorld.ROAD_OFFSET_Z;
+        // The relative X-coordinate (within the plot) of the minimum X coordinate
+        // contained in the scoped queue
+        short relativeOffsetX;
+        if (bx < 0) {
+            relativeOffsetX = (short) (hybridPlotWorld.SIZE + (bx % hybridPlotWorld.SIZE));
+        } else {
+            relativeOffsetX = (short) (bx % hybridPlotWorld.SIZE);
+        }
+        // The relative Z-coordinate (within the plot) of the minimum Z coordinate
+        // contained in the scoped queue
+        short relativeOffsetZ;
+        if (bz < 0) {
+            relativeOffsetZ = (short) (hybridPlotWorld.SIZE + (bz % hybridPlotWorld.SIZE));
+        } else {
+            relativeOffsetZ = (short) (bz % hybridPlotWorld.SIZE);
+        }
+        boolean allRoad = true;
+        boolean overlap = false;
+
+        // The X-coordinate of a given X coordinate, relative to the
+        // plot (Counting from the corner with the least positive
+        // coordinates)
+        short[] relativeX = new short[16];
+        boolean[] insideRoadX = new boolean[16];
+        boolean[] insideWallX = new boolean[16];
+        short offsetX = relativeOffsetX;
+        while (offsetX >= hybridPlotWorld.SIZE) {
+            offsetX -= hybridPlotWorld.SIZE;
+        }
+        for (short i = 0; i < 16; i++) {
+            if (offsetX >= hybridPlotWorld.SIZE) {
+                offsetX -= hybridPlotWorld.SIZE;
+                overlap = true;
+            }
+            relativeX[i] = offsetX;
+            if (hybridPlotWorld.ROAD_WIDTH != 0) {
+                boolean insideRoad = offsetX < hybridPlotWorld.PATH_WIDTH_LOWER || offsetX > hybridPlotWorld.PATH_WIDTH_UPPER;
+                boolean insideWall = offsetX == hybridPlotWorld.PATH_WIDTH_LOWER || offsetX == hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideRoadX[i] = insideRoad;
+                insideWallX[i] = insideWall;
+                allRoad &= insideRoad && insideWall;
+            }
+            offsetX++;
+        }
+
+        // The Z-coordinate of a given Z coordinate, relative to the
+        // plot (Counting from the corner with the least positive
+        // coordinates)
+        short[] relativeZ = new short[16];
+        boolean[] insideRoadZ = new boolean[16];
+        boolean[] insideWallZ = new boolean[16];
+        short offsetZ = relativeOffsetZ;
+        while (offsetZ >= hybridPlotWorld.SIZE) {
+            offsetZ -= hybridPlotWorld.SIZE;
+            overlap = true;
+        }
+        for (short i = 0; i < 16; i++) {
+            if (offsetZ >= hybridPlotWorld.SIZE) {
+                offsetZ -= hybridPlotWorld.SIZE;
+            }
+            relativeZ[i] = offsetZ;
+            if (hybridPlotWorld.ROAD_WIDTH != 0) {
+                boolean insideRoad = offsetZ < hybridPlotWorld.PATH_WIDTH_LOWER || offsetZ > hybridPlotWorld.PATH_WIDTH_UPPER;
+                boolean insideWall = offsetZ == hybridPlotWorld.PATH_WIDTH_LOWER || offsetZ == hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideRoadZ[i] = insideRoad;
+                insideWallZ[i] = insideWall;
+                allRoad &= insideRoad && insideWall;
+            }
+            offsetZ++;
+        }
+        for (short x = 0; x < 16; x++) {
+            if (insideRoadX[x]) {
+                if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
+                    for (short z = 0; z < 16; z++) {
+                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, true);
+                    }
+                }
+            } else if (insideWallX[x]) {
+                if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
+                    for (short z = 0; z < 16; z++) {
+                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, true);
+                    }
+                }
+            } else {
+                for (short z = 0; z < 16; z++) {
+                    if (insideRoadZ[z] || insideWallZ[z]) {
+                        if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, true);
+                        }
+                    } else if (hybridPlotWorld.PLOT_SCHEMATIC) {
+                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, false, true);
+                    }
+                }
+            }
+        }
+        if (!allRoad && hybridPlotWorld.getPlotSchematicEntities() != null && !hybridPlotWorld
+                .getPlotSchematicEntities()
+                .isEmpty()) {
+            CuboidRegion region = CHUNK.clone();
+            try {
+                region.shift(hybridPlotWorld
+                        .getPlotSchematicMinPoint()
+                        .add(relativeOffsetX, 0, relativeOffsetZ)
+                        .subtract(hybridPlotWorld.PATH_WIDTH_LOWER + 1, 0, hybridPlotWorld.PATH_WIDTH_LOWER + 1));
+                for (Entity entity : hybridPlotWorld.getPlotSchematicEntities()) {
+                    if (region.contains(entity.getLocation().toVector().toBlockPoint())) {
+                        Vector3 pos = (entity.getLocation().toVector()
+                                .subtract(region.getMinimumPoint().withY(hybridPlotWorld.getPlotSchematicMinPoint().getY()).toVector3()))
+                                .add(min.getBlockVector3().withY(hybridPlotWorld.SCHEM_Y).toVector3());
+                        result.setEntity(new PopulatingEntity(
+                                entity,
+                                new com.sk89q.worldedit.util.Location(NullWorld.getInstance(), pos)
+                        ));
+                    }
+                }
+            } catch (RegionOperationException e) {
+                throw new RuntimeException(e);
+            }
+            if (overlap) {
+                try {
+                    region.shift(BlockVector3.at(-hybridPlotWorld.SIZE, 0, -hybridPlotWorld.SIZE));
+                    for (Entity entity : hybridPlotWorld.getPlotSchematicEntities()) {
+                        if (region.contains(entity.getLocation().toVector().toBlockPoint())) {
+                            result.setEntity(entity);
+                        }
+                    }
+                } catch (RegionOperationException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        return true;
     }
 
     @Override
@@ -253,6 +394,51 @@ public class HybridGen extends IndependentPlotGenerator {
     @Override
     public void initialize(PlotArea area) {
         // All initialization is done in the PlotArea class
+    }
+
+    private static final class PopulatingEntity implements Entity {
+
+        private final Entity parent;
+        private com.sk89q.worldedit.util.Location location;
+
+        private PopulatingEntity(Entity parent, com.sk89q.worldedit.util.Location location) {
+            this.parent = parent;
+            this.location = location;
+        }
+
+        @Nullable
+        @Override
+        public BaseEntity getState() {
+            return parent.getState();
+        }
+
+        @Override
+        public boolean remove() {
+            return parent.remove();
+        }
+
+        @Override
+        public com.sk89q.worldedit.util.Location getLocation() {
+            return location;
+        }
+
+        @Override
+        public boolean setLocation(final com.sk89q.worldedit.util.Location location) {
+            this.location = location;
+            return true;
+        }
+
+        @Override
+        public Extent getExtent() {
+            return parent.getExtent();
+        }
+
+        @Nullable
+        @Override
+        public <T> T getFacet(final Class<? extends T> cls) {
+            return parent.getFacet(cls);
+        }
+
     }
 
 }

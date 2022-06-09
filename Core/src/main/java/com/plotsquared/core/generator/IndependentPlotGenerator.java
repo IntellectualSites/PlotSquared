@@ -47,9 +47,7 @@ public abstract class IndependentPlotGenerator {
     public abstract String getName();
 
     /**
-     * Use the setBlock or setBiome method of the PlotChunk result parameter to make changes.
-     * The PlotArea settings is the same one this was initialized with.
-     * The PseudoRandom random is a fast random object.
+     * Generate chunk block data
      *
      * @param result   queue
      * @param settings PlotArea (settings)
@@ -59,10 +57,13 @@ public abstract class IndependentPlotGenerator {
     public abstract void generateChunk(ScopedQueueCoordinator result, PlotArea settings);
 
     /**
-     * @deprecated {@link ScopedQueueCoordinator} will be renamed in v7.
+     * Populates the queue representing a chunk area with tile entities and entities
+     *
+     * @param result   Queue to write to
+     * @param settings PlotArea (settings)
+     * @return True if any population occured
      */
-    @Deprecated(forRemoval = true, since = "TODO")
-    public boolean populateChunk(ScopedQueueCoordinator result, PlotArea setting) {
+    public boolean populateChunk(ScopedQueueCoordinator result, PlotArea settings) {
         return false;
     }
 

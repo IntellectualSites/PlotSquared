@@ -37,6 +37,8 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.extension.platform.Capability;
 import com.sk89q.worldedit.math.BlockVector2;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -49,8 +51,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-public class BukkitPlotGenerator extends ChunkGenerator
-        implements GeneratorWrapper<ChunkGenerator> {
+public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrapper<ChunkGenerator> {
 
     @SuppressWarnings("unused")
     public final boolean PAPER_ASYNC_SAFE = true;
@@ -73,7 +74,12 @@ public class BukkitPlotGenerator extends ChunkGenerator
         this.plotGenerator = generator;
         this.platformGenerator = this;
         this.populators = new ArrayList<>();
-        this.populators.add(new BlockStatePopulator(this.plotGenerator, this.plotAreaManager));
+        int minecraftMinorVersion = PlotSquared.platform().serverVersion()[1];
+        if (minecraftMinorVersion >= 17) {
+            this.populators.add(new BlockStatePopulator(this.plotGenerator));
+        } else {
+            this.populators.add(new BlockStatePopulator116(this.plotGenerator));
+        }
         this.full = true;
     }
 
@@ -159,7 +165,6 @@ public class BukkitPlotGenerator extends ChunkGenerator
             @NonNull World world, @NonNull Random random, int x, int z,
             @NonNull BiomeGrid biome
     ) {
-
         int minY = BukkitWorld.getMinWorldHeight(world);
         int maxY = BukkitWorld.getMaxWorldHeight(world);
         GenChunk result = new GenChunk(minY, maxY);
