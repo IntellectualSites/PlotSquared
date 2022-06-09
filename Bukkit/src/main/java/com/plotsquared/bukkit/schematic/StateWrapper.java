@@ -243,8 +243,15 @@ public class StateWrapper {
                         return true;
                     }
                     String player = skullOwner.getString("Name");
-                    skull.setOwningPlayer(Bukkit.getOfflinePlayer(player));
-                    skull.update(true);
+                    if (player == null || player.isEmpty()) {
+                        return false;
+                    }
+                    try {
+                        skull.setOwningPlayer(Bukkit.getOfflinePlayer(player));
+                        skull.update(true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     return true;
                 }
                 return false;
