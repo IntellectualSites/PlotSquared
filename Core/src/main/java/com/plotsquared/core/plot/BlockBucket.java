@@ -126,6 +126,7 @@ public final class BlockBucket implements ConfigurationSerializable {
             if (string.isEmpty()) {
                 this.single = null;
                 this.pattern = null;
+                this.compiled = true;
                 return;
             }
             // Convert legacy format
@@ -146,6 +147,7 @@ public final class BlockBucket implements ConfigurationSerializable {
                     }
                     this.single = BlockUtil.get(string);
                     this.pattern = new BlockPattern(single);
+                    this.compiled = true;
                     return;
                 } catch (Exception ignore) {
                 }
