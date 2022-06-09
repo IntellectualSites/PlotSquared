@@ -37,8 +37,6 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.extension.platform.Capability;
 import com.sk89q.worldedit.math.BlockVector2;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -135,9 +133,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
 
     private synchronized void checkLoaded(@NonNull World world) {
         // Do not attempt to load configurations until WorldEdit has a platform ready.
-        try {
-            WorldEdit.getInstance().getPlatformManager().queryCapability(Capability.WORLD_EDITING);
-        } catch (Throwable t) {
+        if (!PlotSquared.get().isWeInitialised()) {
             return;
         }
         if (!this.loaded) {
