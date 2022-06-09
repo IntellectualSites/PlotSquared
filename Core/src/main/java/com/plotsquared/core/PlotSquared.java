@@ -1611,6 +1611,7 @@ public class PlotSquared {
 
     private final class WEPlatformReadyListener {
 
+        @SuppressWarnings("unused")
         @Subscribe(priority = EventHandler.Priority.VERY_EARLY)
         public void onPlatformReady(PlatformReadyEvent event) {
             weInitialised = true;
