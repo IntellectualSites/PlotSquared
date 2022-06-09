@@ -76,23 +76,7 @@ public abstract class QueueCoordinator {
      * @param x chunk x coordinate
      * @param z chunk z coordinate
      * @return a new {@link ZeroedDelegateScopedQueueCoordinator}
-     * @deprecated Use {@link ZeroedDelegateScopedQueueCoordinator#getForChunk(int, int, int, int)}
-     */
-    @Deprecated(forRemoval = true, since = "6.6.0")
-    public ZeroedDelegateScopedQueueCoordinator getForChunk(int x, int z) {
-        if (getWorld() == null) {
-            return getForChunk(x, z, PlotSquared.platform().versionMinHeight(), PlotSquared.platform().versionMaxHeight());
-        }
-        return getForChunk(x, z, getWorld().getMinY(), getWorld().getMaxY());
-    }
-
-    /**
-     * Get a {@link ZeroedDelegateScopedQueueCoordinator} limited to the chunk at the specific chunk Coordinates
-     *
-     * @param x chunk x coordinate
-     * @param z chunk z coordinate
-     * @return a new {@link ZeroedDelegateScopedQueueCoordinator}
-     * @since 6.6.0
+     * @since TODO
      */
     public ZeroedDelegateScopedQueueCoordinator getForChunk(int x, int z, int minY, int maxY) {
         int bx = x << 4;

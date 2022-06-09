@@ -79,6 +79,9 @@ public abstract class ChunkManager {
         }
     }
 
+    /**
+     * @since TODO
+     */
     public static boolean preProcessChunk(BlockVector2 loc, ZeroedDelegateScopedQueueCoordinator queue) {
         final RunnableVal<ZeroedDelegateScopedQueueCoordinator> forceChunk = forceChunks.get(loc);
         if (forceChunk != null) {
@@ -89,6 +92,9 @@ public abstract class ChunkManager {
         return false;
     }
 
+    /**
+     * @since TODO
+     */
     public static boolean postProcessChunk(BlockVector2 loc, ZeroedDelegateScopedQueueCoordinator queue) {
         final RunnableVal<ZeroedDelegateScopedQueueCoordinator> addChunk = forceChunks.get(loc);
         if (addChunk != null) {
