@@ -278,8 +278,12 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
             @NonNull World world, @NonNull Random random, int x, int z, @NonNull BiomeGrid biome
     ) {
         if (useNewGenerationMethods) {
-            // Return super as it will throw an exception caught by the server that will mean this method is no longer used.
-            return super.generateChunkData(world, random, x, z, biome);
+            if (this.platformGenerator != this) {
+                return this.platformGenerator.generateChunkData(world, random, x, z, biome);
+            } else {
+                // Return super as it will throw an exception caught by the server that will mean this method is no longer used.
+                return super.generateChunkData(world, random, x, z, biome);
+            }
         }
         int minY = BukkitWorld.getMinWorldHeight(world);
         int maxY = BukkitWorld.getMaxWorldHeight(world);
