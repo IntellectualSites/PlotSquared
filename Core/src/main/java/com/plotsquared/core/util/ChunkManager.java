@@ -42,6 +42,7 @@ public abstract class ChunkManager {
     private static final Map<BlockVector2, RunnableVal<ZeroedDelegateScopedQueueCoordinator>> forceChunks = new ConcurrentHashMap<>();
     private static final Map<BlockVector2, RunnableVal<ZeroedDelegateScopedQueueCoordinator>> addChunks = new ConcurrentHashMap<>();
 
+    @Deprecated(forRemoval = true, since = "TODO")
     public static void setChunkInPlotArea(
             RunnableVal<ZeroedDelegateScopedQueueCoordinator> force,
             RunnableVal<ZeroedDelegateScopedQueueCoordinator> add,
