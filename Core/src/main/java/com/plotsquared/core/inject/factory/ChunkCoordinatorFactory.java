@@ -37,36 +37,6 @@ import java.util.function.Consumer;
 
 public interface ChunkCoordinatorFactory {
 
-    /**
-     * @deprecated Use {@link ChunkCoordinatorFactory#create(long, int, Consumer, World, Collection, Runnable, Consumer, boolean, Collection, boolean)}
-     */
-    @Deprecated(forRemoval = true, since = "TODO")
-    @NonNull
-    default ChunkCoordinator create(
-            final long maxIterationTime,
-            final int initialBatchSize,
-            final @NonNull Consumer<BlockVector2> chunkConsumer,
-            final @NonNull World world,
-            final @NonNull Collection<BlockVector2> requestedChunks,
-            final @NonNull Runnable whenDone,
-            final @NonNull Consumer<Throwable> throwableConsumer,
-            final boolean unloadAfter,
-            final @NonNull Collection<ProgressSubscriber> progressSubscribers
-    ) {
-        return create(
-                maxIterationTime,
-                initialBatchSize,
-                chunkConsumer,
-                world,
-                requestedChunks,
-                whenDone,
-                throwableConsumer,
-                unloadAfter,
-                progressSubscribers,
-                false
-        );
-    }
-
     @NonNull ChunkCoordinator create(
             final long maxIterationTime,
             final int initialBatchSize,
