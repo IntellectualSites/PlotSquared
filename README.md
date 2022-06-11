@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://raw.githubusercontent.com/IntellectualSites/Assets/main/plugins/PlotSquared/PlotSquared.svg" width="300">
+    <img src="https://raw.githubusercontent.com/IntellectualSites/Assets/main/plugins/PlotSquared/PlotSquared.svg" width="250">
 </p>
 
 ---
@@ -41,15 +41,20 @@ is to provide a lag-free and smooth experience.
 * [Plot2Dynmap](http://www.spigotmc.org/resources/plot2dynmap.1292/)
 * [HoloPlots](https://www.spigotmc.org/resources/holoplots.4880/)
 * [PlotHider](https://www.spigotmc.org/resources/plot-hider.20701/)
-### Unmaintained or integrated into PlotSquared  
-* [AdvPlots](http://www.spigotmc.org/resources/advplots-%CE%B2.1500/)
-* [PlotRankup](http://www.spigotmc.org/resources/plotrankup.1571/)
-* [PlotZSux](https://www.spigotmc.org/resources/plotzsux.9563/)
-* [IslandPlots](https://www.spigotmc.org/resources/islandplots.9421/)
-* [BiomeGenerator](https://www.spigotmc.org/resources/biomegenerator.1663/)
-* [PlotSquaredMG](https://www.spigotmc.org/resources/plotsquaredmg.8025/)
-* [BasicPlots](https://www.spigotmc.org/resources/basicplots.6901/)
 
-# Sponsors
-Our official sponsor list can be found [here](https://intellectualsites.github.io/download/sponsors.html). <br>
-If you are interested and want to be listed here, [contact us](https://intellectualsites.github.io/download/contact.html).
+### Edit The Code
+
+Want to add new features to PlotSquared or fix bugs yourself? You can get the game running, with FastAsyncWorldEdit, from the code here:
+
+For additional information about compiling PlotSquared, see [CONTRIBUTING.md](https://github.com/IntellectualSites/.github/blob/main/CONTRIBUTING.md)
+
+### Submitting Your Changes
+PlotSquared is open source (specifically licensed under GPL v3), so note that your contributions will also be open source. The best way to submit a change is to create a fork on GitHub, put your changes there, and then create a "pull request" on our PlotSquared repository.
+
+<a href="https://yourkit.com/">
+    <img src="https://www.yourkit.com/images/yklogo.png">
+</a>
+
+Thank you to YourKit for supporting our product by providing us with their innovative and intelligent tools
+for monitoring and profiling Java and .NET applications.
+YourKit is the creator of [YourKit Java Profiler](https://www.yourkit.com/java/profiler/), [YourKit .NET Profiler](https://www.yourkit.com/.net/profiler/), and [YourKit YouMonitor](https://www.yourkit.com/youmonitor/).
