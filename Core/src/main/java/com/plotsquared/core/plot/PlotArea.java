@@ -965,7 +965,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * Merge a list of plots together. This is non-blocking for the world-changes that will be made. To run a tasks when the
+     * Merge a list of plots together. This is non-blocking for the world-changes that will be made. To run a task when the
      * world changes are complete, use {@link PlotArea#mergePlots(List, boolean, Runnable)};
      *
      * @param plotIds     List of plot IDs to merge
