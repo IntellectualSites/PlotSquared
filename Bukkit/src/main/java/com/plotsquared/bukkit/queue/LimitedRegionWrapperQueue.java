@@ -34,6 +34,8 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.generator.LimitedRegion;
@@ -45,6 +47,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @since TODO
  */
 public class LimitedRegionWrapperQueue extends DelegateQueueCoordinator {
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private final LimitedRegion limitedRegion;
 
@@ -67,7 +71,12 @@ public class LimitedRegionWrapperQueue extends DelegateQueueCoordinator {
         if (result && id.hasNbtData()) {
             CompoundTag tag = id.getNbtData();
             StateWrapper sw = new StateWrapper(tag);
-            sw.restoreTag(limitedRegion.getBlockState(x, y, z).getBlock());
+            try {
+                sw.restoreTag(limitedRegion.getBlockState(x, y, z).getBlock());
+            } catch (IllegalArgumentException e) {
+                LOGGER.error("Error attempting to populate tile entity into the world at location {},{},{}", x, y, z, e);
+                return false;
+            }
         }
         return result;
     }
@@ -78,7 +87,7 @@ public class LimitedRegionWrapperQueue extends DelegateQueueCoordinator {
             limitedRegion.setType(x, y, z, BukkitAdapter.adapt(id.getBlockType()));
             limitedRegion.setBlockData(x, y, z, BukkitAdapter.adapt(id));
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            LOGGER.error("Error attempting to populate block into the world at location {},{},{}", x, y, z, e);
             return false;
         }
         return true;
@@ -86,15 +95,15 @@ public class LimitedRegionWrapperQueue extends DelegateQueueCoordinator {
 
     @Override
     public boolean setEntity(@NonNull final Entity entity) {
+        EntityType type = BukkitAdapter.adapt(entity.getState().getType());
+        double x = entity.getLocation().getX();
+        double y = entity.getLocation().getY();
+        double z = entity.getLocation().getZ();
+        Location location = new Location(limitedRegion.getWorld(), x, y, z);
         try {
-            EntityType type = BukkitAdapter.adapt(entity.getState().getType());
-            double x = entity.getLocation().getX();
-            double y = entity.getLocation().getY();
-            double z = entity.getLocation().getZ();
-            Location location = new Location(limitedRegion.getWorld(), x, y, z);
             limitedRegion.spawnEntity(location, type);
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            LOGGER.error("Error attempting to populate entity into the world at location {},{},{}", (int) x, (int) y, (int) z, e);
             return false;
         }
         return true;
@@ -103,7 +112,12 @@ public class LimitedRegionWrapperQueue extends DelegateQueueCoordinator {
     @Override
     public boolean setTile(final int x, final int y, final int z, @NonNull final CompoundTag tag) {
         StateWrapper sw = new StateWrapper(tag);
-        return sw.restoreTag(limitedRegion.getBlockState(x, y, z).getBlock());
+        try {
+            return sw.restoreTag(limitedRegion.getBlockState(x, y, z).getBlock());
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("Error attempting to populate tile entity into the world at location {},{},{}", x, y, z, e);
+            return false;
+        }
     }
 
     @Override
