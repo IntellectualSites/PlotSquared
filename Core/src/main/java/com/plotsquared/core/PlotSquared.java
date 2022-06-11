@@ -72,7 +72,10 @@ import com.plotsquared.core.util.ReflectionUtils;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.event.platform.PlatformReadyEvent;
 import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.util.eventbus.EventHandler;
+import com.sk89q.worldedit.util.eventbus.Subscribe;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
@@ -153,6 +156,8 @@ public class PlotSquared {
     private EventDispatcher eventDispatcher;
     private PlotListener plotListener;
 
+    private boolean weInitialised;
+
     /**
      * Initialize PlotSquared with the desired Implementation class.
      *
@@ -223,6 +228,7 @@ public class PlotSquared {
             }
 
             this.worldedit = WorldEdit.getInstance();
+            WorldEdit.getInstance().getEventBus().register(new WEPlatformReadyListener());
 
             // Create Event utility class
             this.eventDispatcher = new EventDispatcher(this.worldedit);
@@ -1577,6 +1583,13 @@ public class PlotSquared {
     }
 
     /**
+     * Get if the {@link PlatformReadyEvent} has been sent by WE. There is no way to query this within WE itself.
+     */
+    public boolean isWeInitialised() {
+        return weInitialised;
+    }
+
+    /**
      * Different ways of sorting {@link Plot plots}
      */
     public enum SortType {
@@ -1596,6 +1609,17 @@ public class PlotSquared {
          * Sort plots based on their distance from the origin of the world
          */
         DISTANCE_FROM_ORIGIN
+    }
+
+    private final class WEPlatformReadyListener {
+
+        @SuppressWarnings("unused")
+        @Subscribe(priority = EventHandler.Priority.VERY_EARLY)
+        public void onPlatformReady(PlatformReadyEvent event) {
+            weInitialised = true;
+            WorldEdit.getInstance().getEventBus().unregister(WEPlatformReadyListener.this);
+        }
+
     }
 
 }

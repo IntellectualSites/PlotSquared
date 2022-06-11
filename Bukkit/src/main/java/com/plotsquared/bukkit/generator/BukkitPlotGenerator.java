@@ -150,7 +150,11 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     }
 
     // Extracted to synchronized method for thread-safety, preventing multiple internal world load calls
-    private synchronized void checkLoaded(World world) {
+    private synchronized void checkLoaded(@NonNull World world) {
+        // Do not attempt to load configurations until WorldEdit has a platform ready.
+        if (!PlotSquared.get().isWeInitialised()) {
+            return;
+        }
         if (!this.loaded) {
             String name = world.getName();
             PlotSquared.get().loadWorld(name, this);
@@ -172,11 +176,11 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     }
 
     @SuppressWarnings("deprecation") // Kept for compatibility with <=1.17.1
-    private void setSpawnLimits(World world, int spawnLimit) {
-        world.setAmbientSpawnLimit(spawnLimit);
-        world.setAnimalSpawnLimit(spawnLimit);
-        world.setMonsterSpawnLimit(spawnLimit);
-        world.setWaterAnimalSpawnLimit(spawnLimit);
+    private void setSpawnLimits(@NonNull World world, int limit) {
+        world.setAmbientSpawnLimit(limit);
+        world.setAnimalSpawnLimit(limit);
+        world.setMonsterSpawnLimit(limit);
+        world.setWaterAnimalSpawnLimit(limit);
     }
 
     @Override
@@ -323,6 +327,11 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     }
 
     private void generate(BlockVector2 loc, String world, ZeroedDelegateScopedQueueCoordinator result, boolean biomes) {
+        if (!this.loaded) {
+            synchronized (this) {
+                PlotSquared.get().loadWorld(world, this);
+            }
+        }
         // Process the chunk
         if (ChunkManager.preProcessChunk(loc, result)) {
             return;
