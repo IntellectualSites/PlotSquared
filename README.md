@@ -44,7 +44,7 @@ is to provide a lag-free and smooth experience.
 
 ### Edit The Code
 
-Want to add new features to PlotSquared or fix bugs yourself? You can get the game running, with FastAsyncWorldEdit, from the code here:
+Want to add new features to PlotSquared or fix bugs yourself? You can get the game running, with PlotSquared, from the code here:
 
 For additional information about compiling PlotSquared, see [CONTRIBUTING.md](https://github.com/IntellectualSites/.github/blob/main/CONTRIBUTING.md)
 
