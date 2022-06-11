@@ -44,14 +44,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
-final class BlockStatePopulator116 extends BlockPopulator {
+final class LegacyBlockStatePopulator extends BlockPopulator {
 
     private final IndependentPlotGenerator plotGenerator;
 
     /**
      * @since TODO
      */
-    public BlockStatePopulator116(
+    public LegacyBlockStatePopulator(
             final @NonNull IndependentPlotGenerator plotGenerator
     ) {
         this.plotGenerator = plotGenerator;
