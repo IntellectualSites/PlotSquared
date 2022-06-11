@@ -385,7 +385,7 @@ public class HybridGen extends IndependentPlotGenerator {
     }
 
     /**
-     * Wrapper to allow a WE {@link Entity} to effectively have a mutable location as the location in its NBT should be changed
+     * Wrapper to allow a WorldEdit {@link Entity} to effectively have a mutable location as the location in its NBT should be changed
      * when set to the world.
      *
      * @since TODO

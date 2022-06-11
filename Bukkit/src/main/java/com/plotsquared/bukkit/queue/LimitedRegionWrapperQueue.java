@@ -48,7 +48,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public class LimitedRegionWrapperQueue extends DelegateQueueCoordinator {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + LimitedRegionWrapperQueue.class.getSimpleName());
 
     private final LimitedRegion limitedRegion;
 

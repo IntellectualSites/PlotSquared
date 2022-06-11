@@ -264,7 +264,7 @@ public class StateWrapper {
     /**
      * Get a CompoundTag of the contents of a block's inventory (chest, furnace, etc.).
      *
-     * @deprecated in favour of using WE methods for obtaining NBT, specifically by obtaining a
+     * @deprecated in favour of using WorldEdit methods for obtaining NBT, specifically by obtaining a
      *         {@link com.sk89q.worldedit.world.block.BaseBlock} and then using {@link com.sk89q.worldedit.world.block.BaseBlock#getNbtData()}
      */
     @Deprecated(forRemoval = true, since = "TODO")
