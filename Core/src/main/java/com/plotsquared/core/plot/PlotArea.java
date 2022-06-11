@@ -1379,7 +1379,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * Get the min height from which P2 will generate blocks. Inclusive.
+     * Get the min height from which PlotSquared will generate blocks. Inclusive.
      *
      * @since 6.6.0
      */
@@ -1388,7 +1388,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * Get the max height to which P2 will generate blocks. Inclusive.
+     * Get the max height to which PlotSquared will generate blocks. Inclusive.
      *
      * @since 6.6.0
      */

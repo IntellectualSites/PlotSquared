@@ -44,7 +44,7 @@ public class Settings extends Config {
 
     @Comment("This value is not configurable. It shows the platform you are using.") // This is a comment
     @Final
-    public static String PLATFORM; // These values are set from P2 before loading
+    public static String PLATFORM; // These values are set from PlotSquared before loading
 
     @Comment({"Show additional information in console. It helps us at IntellectualSites to find out more about an issue.",
             "Leave it off if you don't need it, it can spam your console."})
@@ -634,10 +634,10 @@ public class Settings extends Config {
 
     }
 
-    @Comment("Enable or disable all of or parts of the FAWE-P2 hook")
+    @Comment("Enable or disable all of or parts of the FastAsyncWorldEdit-PlotSquared hook")
     public static final class FAWE_Components {
 
-        @Comment("Use FAWE for queue handling.")
+        @Comment("Use FastAsyncWorldEdit for queue handling.")
         public static boolean FAWE_HOOK = true;
         public static boolean CUBOIDS = true;
         public static boolean CLEAR = true;

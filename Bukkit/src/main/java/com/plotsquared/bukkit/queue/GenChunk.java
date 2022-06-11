@@ -110,7 +110,7 @@ public class GenChunk extends ScopedQueueCoordinator {
     /**
      * Set the world and XZ of the chunk being represented via {@link ChunkWrapper}
      *
-     * @param wrap P2 ChunkWrapper
+     * @param wrap PlotSquared ChunkWrapper
      */
     public void setChunk(@NonNull ChunkWrapper wrap) {
         chunk = null;

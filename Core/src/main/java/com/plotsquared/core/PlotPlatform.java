@@ -359,9 +359,9 @@ public interface PlotPlatform<P> extends LocaleHolder {
     @NonNull String toLegacyPlatformString(@NonNull Component component);
 
     /**
-     * Returns if the FAWE-P2 hook is active/enabled
+     * Returns if the FastAsyncWorldEdit-PlotSquared hook is active/enabled
      *
-     * @return status of FAWE-P2 hook
+     * @return status of FastAsyncWorldEdit-PlotSquared hook
      */
     default boolean isFaweHooking() {
         return false;
