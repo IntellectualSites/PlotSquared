@@ -138,35 +138,35 @@ public class HybridGen extends IndependentPlotGenerator {
         short[] relativeX = new short[16];
         boolean[] insideRoadX = new boolean[16];
         boolean[] insideWallX = new boolean[16];
+        short offsetX = relativeOffsetX;
         for (short i = 0; i < 16; i++) {
-            short v = (short) (relativeOffsetX + i);
-            while (v >= hybridPlotWorld.SIZE) {
-                v -= hybridPlotWorld.SIZE;
+            if (offsetX >= hybridPlotWorld.SIZE) {
+                offsetX -= hybridPlotWorld.SIZE;
             }
-            relativeX[i] = v;
+            relativeX[i] = offsetX;
             if (hybridPlotWorld.ROAD_WIDTH != 0) {
-                insideRoadX[i] = v < hybridPlotWorld.PATH_WIDTH_LOWER || v > hybridPlotWorld.PATH_WIDTH_UPPER;
-                insideWallX[i] = v == hybridPlotWorld.PATH_WIDTH_LOWER || v == hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideRoadX[i] = offsetX < hybridPlotWorld.PATH_WIDTH_LOWER || offsetX > hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideWallX[i] = offsetX == hybridPlotWorld.PATH_WIDTH_LOWER || offsetX == hybridPlotWorld.PATH_WIDTH_UPPER;
             }
+            offsetX++;
         }
         // The Z-coordinate of a given Z coordinate, relative to the
         // plot (Counting from the corner with the least positive
         // coordinates)
         short[] relativeZ = new short[16];
-        // Whether the given Z coordinate belongs to the road
         boolean[] insideRoadZ = new boolean[16];
-        // Whether the given Z coordinate belongs to the wall
         boolean[] insideWallZ = new boolean[16];
+        short offsetZ = relativeOffsetZ;
         for (short i = 0; i < 16; i++) {
-            short v = (short) (relativeOffsetZ + i);
-            while (v >= hybridPlotWorld.SIZE) {
-                v -= hybridPlotWorld.SIZE;
+            if (offsetZ >= hybridPlotWorld.SIZE) {
+                offsetZ -= hybridPlotWorld.SIZE;
             }
-            relativeZ[i] = v;
+            relativeZ[i] = offsetZ;
             if (hybridPlotWorld.ROAD_WIDTH != 0) {
-                insideRoadZ[i] = v < hybridPlotWorld.PATH_WIDTH_LOWER || v > hybridPlotWorld.PATH_WIDTH_UPPER;
-                insideWallZ[i] = v == hybridPlotWorld.PATH_WIDTH_LOWER || v == hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideRoadZ[i] = offsetZ < hybridPlotWorld.PATH_WIDTH_LOWER || offsetZ > hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideWallZ[i] = offsetZ == hybridPlotWorld.PATH_WIDTH_LOWER || offsetZ == hybridPlotWorld.PATH_WIDTH_UPPER;
             }
+            offsetZ++;
         }
         // generation
         int startY = hybridPlotWorld.getMinGenHeight() + (hybridPlotWorld.PLOT_BEDROCK ? 1 : 0);
@@ -278,9 +278,6 @@ public class HybridGen extends IndependentPlotGenerator {
         boolean[] insideRoadX = new boolean[16];
         boolean[] insideWallX = new boolean[16];
         short offsetX = relativeOffsetX;
-        while (offsetX >= hybridPlotWorld.SIZE) {
-            offsetX -= hybridPlotWorld.SIZE;
-        }
         for (short i = 0; i < 16; i++) {
             if (offsetX >= hybridPlotWorld.SIZE) {
                 offsetX -= hybridPlotWorld.SIZE;
@@ -304,13 +301,10 @@ public class HybridGen extends IndependentPlotGenerator {
         boolean[] insideRoadZ = new boolean[16];
         boolean[] insideWallZ = new boolean[16];
         short offsetZ = relativeOffsetZ;
-        while (offsetZ >= hybridPlotWorld.SIZE) {
-            offsetZ -= hybridPlotWorld.SIZE;
-            overlap = true;
-        }
         for (short i = 0; i < 16; i++) {
             if (offsetZ >= hybridPlotWorld.SIZE) {
                 offsetZ -= hybridPlotWorld.SIZE;
+                overlap = true;
             }
             relativeZ[i] = offsetZ;
             if (hybridPlotWorld.ROAD_WIDTH != 0) {
@@ -323,13 +317,7 @@ public class HybridGen extends IndependentPlotGenerator {
             offsetZ++;
         }
         for (short x = 0; x < 16; x++) {
-            if (insideRoadX[x]) {
-                if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-                    for (short z = 0; z < 16; z++) {
-                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, true);
-                    }
-                }
-            } else if (insideWallX[x]) {
+            if (insideRoadX[x] || insideWallX[x]) {
                 if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
                     for (short z = 0; z < 16; z++) {
                         placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, true);
