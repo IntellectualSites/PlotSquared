@@ -167,7 +167,7 @@ public final class TabCompletions {
     }
 
     /**
-     * Get a list of completions corresponding to WorldEdit(/FAWE) patterns. This uses
+     * Get a list of completions corresponding to WorldEdit(/FastAsyncWorldEdit) patterns. This uses
      * WorldEdit's pattern completer internally.
      *
      * @param input Command input

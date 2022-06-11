@@ -174,7 +174,7 @@ public abstract class RegionManager {
      * @param whenDone task to run when complete
      * @param manager  plot manager
      * @param actor    the player running the clear
-     * @return {@code true} if the clear worked. {@code false} if someone went wrong so P2 can then handle the clear
+     * @return {@code true} if the clear worked. {@code false} if someone went wrong so PlotSquared can then handle the clear
      */
     public abstract boolean handleClear(
             @NonNull Plot plot,

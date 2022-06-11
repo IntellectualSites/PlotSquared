@@ -1581,7 +1581,7 @@ public class PlotSquared {
     }
 
     /**
-     * Get if the {@link PlatformReadyEvent} has been sent by WE. There is no way to query this within WE itself.
+     * Get if the {@link PlatformReadyEvent} has been sent by WorldEdit. There is no way to query this within WorldEdit itself.
      */
     public boolean isWeInitialised() {
         return weInitialised;
