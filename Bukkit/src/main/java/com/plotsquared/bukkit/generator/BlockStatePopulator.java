@@ -78,7 +78,7 @@ final class BlockStatePopulator extends BlockPopulator {
             return;
         }
         LimitedRegionWrapperQueue wrapped = new LimitedRegionWrapperQueue(limitedRegion);
-        // It is possible for the region to be larger than the chunk, but there is not reason for P2 to need to populate
+        // It is possible for the region to be larger than the chunk, but there is no reason for P2 to need to populate
         // outside of the actual chunk area.
         Location min = UncheckedWorldLocation.at(worldInfo.getName(), chunkX << 4, worldInfo.getMinHeight(), chunkZ << 4);
         Location max = UncheckedWorldLocation.at(

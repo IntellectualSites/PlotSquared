@@ -60,7 +60,8 @@ public class StateWrapper {
     public CompoundTag tag = null;
 
     /**
-     * @deprecated in favour of using WE methods for obtaining NBT
+     * @deprecated in favour of using WE methods for obtaining NBT, specifically by obtaining a
+     *         {@link com.sk89q.worldedit.world.block.BaseBlock} and then using {@link com.sk89q.worldedit.world.block.BaseBlock#getNbtData()}
      */
     @Deprecated(forRemoval = true, since = "TODO")
     public StateWrapper(org.bukkit.block.BlockState state) {
@@ -261,7 +262,10 @@ public class StateWrapper {
     }
 
     /**
-     * @deprecated in favour of using WE methods for obtaining NBT
+     * Get a CompoundTag of the contents of a block's inventory (chest, furnace, etc.).
+     *
+     * @deprecated in favour of using WE methods for obtaining NBT, specifically by obtaining a
+     *         {@link com.sk89q.worldedit.world.block.BaseBlock} and then using {@link com.sk89q.worldedit.world.block.BaseBlock#getNbtData()}
      */
     @Deprecated(forRemoval = true, since = "TODO")
     public CompoundTag getTag() {

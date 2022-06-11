@@ -40,7 +40,7 @@ import org.bukkit.generator.LimitedRegion;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * Wraps a {@link LimitedRegion} inside a P2 {@link com.plotsquared.core.queue.QueueCoordinator} so it can be written to.
+ * Wraps a {@link LimitedRegion} inside a {@link com.plotsquared.core.queue.QueueCoordinator} so it can be written to.
  *
  * @since TODO
  */
