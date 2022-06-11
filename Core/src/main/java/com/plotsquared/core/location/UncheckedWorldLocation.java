@@ -36,7 +36,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @since TODO
  */
 @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
-public class UncheckedWorldLocation extends Location {
+public final class UncheckedWorldLocation extends Location {
 
     private final String worldName;
 
@@ -61,6 +61,7 @@ public class UncheckedWorldLocation extends Location {
      *
      * @since TODO
      */
+    @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
     public static @NonNull UncheckedWorldLocation at(
             final @NonNull String world, final int x, final int y, final int z
     ) {
@@ -68,6 +69,7 @@ public class UncheckedWorldLocation extends Location {
     }
 
     @Override
+    @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
     public @NonNull String getWorldName() {
         return this.worldName;
     }
