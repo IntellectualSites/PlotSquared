@@ -89,6 +89,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -166,6 +167,20 @@ import java.util.regex.Pattern;
 @SuppressWarnings("unused")
 public class PlayerEventListener extends PlotListener implements Listener {
 
+    private static final Set<Material> MINECARTS = Set.of(
+            Material.MINECART,
+            Material.TNT_MINECART,
+            Material.CHEST_MINECART,
+            Material.COMMAND_BLOCK_MINECART,
+            Material.FURNACE_MINECART,
+            Material.HOPPER_MINECART
+    );
+    private static final Set<Material> BOOKS = Set.of(
+            Material.BOOK,
+            Material.KNOWLEDGE_BOOK,
+            Material.WRITABLE_BOOK,
+            Material.WRITTEN_BOOK
+    );
     private final EventDispatcher eventDispatcher;
     private final WorldEdit worldEdit;
     private final PlotAreaManager plotAreaManager;
@@ -880,34 +895,26 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 oldLore = lore.toString();
             }
         }
+        Material itemType = newItem.getType();
         if (!"[(+NBT)]".equals(newLore) || (current.equals(newItem) && newLore.equals(oldLore))) {
-            switch (newItem.getType()) {
-                case LEGACY_BANNER:
-                case PLAYER_HEAD:
-                    if (newMeta != null) {
-                        break;
-                    }
-                default:
-                    return;
+            if (newMeta == null || (itemType != Material.LEGACY_BANNER && itemType != Material.PLAYER_HEAD)) {
+                return;
             }
         }
         Block block = player.getTargetBlock(null, 7);
         org.bukkit.block.BlockState state = block.getState();
         Material stateType = state.getType();
-        Material itemType = newItem.getType();
         if (stateType != itemType) {
-            switch (stateType) {
-                case LEGACY_STANDING_BANNER:
-                case LEGACY_WALL_BANNER:
-                    if (itemType == Material.LEGACY_BANNER) {
-                        break;
-                    }
-                case LEGACY_SKULL:
-                    if (itemType == Material.LEGACY_SKULL_ITEM) {
-                        break;
-                    }
-                default:
+            if (stateType == Material.LEGACY_WALL_BANNER || stateType == Material.LEGACY_STANDING_BANNER) {
+                if (itemType != Material.LEGACY_BANNER) {
                     return;
+                }
+            } else if (stateType == Material.LEGACY_SKULL) {
+                if (itemType != Material.LEGACY_SKULL_ITEM) {
+                    return;
+                }
+            } else {
+                return;
             }
         }
         Location location = BukkitUtil.adapt(state.getLocation());
@@ -1133,14 +1140,21 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     //Allow all players to eat while also allowing the block place event ot be fired
                     return;
                 }
-                switch (type) {
-                    case ACACIA_BOAT, BIRCH_BOAT, CHEST_MINECART, COMMAND_BLOCK_MINECART, DARK_OAK_BOAT, FURNACE_MINECART, HOPPER_MINECART, JUNGLE_BOAT, MINECART, OAK_BOAT, SPRUCE_BOAT, TNT_MINECART -> eventType = PlayerBlockEventType.PLACE_VEHICLE;
-                    case FIREWORK_ROCKET, FIREWORK_STAR -> eventType = PlayerBlockEventType.SPAWN_MOB;
-                    case BOOK, KNOWLEDGE_BOOK, WRITABLE_BOOK, WRITTEN_BOOK -> eventType = PlayerBlockEventType.READ;
-                    case ARMOR_STAND -> {
-                        location = BukkitUtil.adapt(block.getRelative(event.getBlockFace()).getLocation());
-                        eventType = PlayerBlockEventType.PLACE_MISC;
-                    }
+                if (type == Material.ARMOR_STAND) {
+                    location = BukkitUtil.adapt(block.getRelative(event.getBlockFace()).getLocation());
+                    eventType = PlayerBlockEventType.PLACE_MISC;
+                }
+                if (Tag.ITEMS_BOATS.isTagged(type) || MINECARTS.contains(type)) {
+                    eventType = PlayerBlockEventType.PLACE_VEHICLE;
+                    break;
+                }
+                if (type == Material.FIREWORK_ROCKET || type == Material.FIREWORK_STAR) {
+                    eventType = PlayerBlockEventType.SPAWN_MOB;
+                    break;
+                }
+                if (BOOKS.contains(type)) {
+                    eventType = PlayerBlockEventType.READ;
+                    break;
                 }
                 break;
             }
