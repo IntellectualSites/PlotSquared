@@ -58,6 +58,7 @@ public class ChunkCoordinatorBuilder {
     private long maxIterationTime = Settings.QUEUE.MAX_ITERATION_TIME; // A little over 1 tick;
     private int initialBatchSize = Settings.QUEUE.INITIAL_BATCH_SIZE;
     private boolean unloadAfter = true;
+    private boolean forceSync = false;
 
     @Inject
     public ChunkCoordinatorBuilder(@NonNull ChunkCoordinatorFactory chunkCoordinatorFactory) {
@@ -197,6 +198,18 @@ public class ChunkCoordinatorBuilder {
         return this;
     }
 
+    /**
+     * Set whether the chunks coordinator should be forced to be synchronous. This is not necessarily synchronous to the server,
+     * and simply effectively makes {@link ChunkCoordinator#start()} ()} a blocking operation.
+     *
+     * @param forceSync force sync or not
+     * @since TODO
+     */
+    public @NonNull ChunkCoordinatorBuilder forceSync(final boolean forceSync) {
+        this.forceSync = forceSync;
+        return this;
+    }
+
     public @NonNull ChunkCoordinatorBuilder withProgressSubscriber(ProgressSubscriber progressSubscriber) {
         this.progressSubscribers.add(progressSubscriber);
         return this;
@@ -227,7 +240,8 @@ public class ChunkCoordinatorBuilder {
                         this.whenDone,
                         this.throwableConsumer,
                         this.unloadAfter,
-                        this.progressSubscribers
+                        this.progressSubscribers,
+                        this.forceSync
                 );
     }
 

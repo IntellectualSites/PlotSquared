@@ -235,6 +235,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                         .withConsumer(consumer)
                         .unloadAfter(isUnloadAfter())
                         .withProgressSubscribers(getProgressSubscribers())
+                        .forceSync(isForceSync())
                         .build();
         return super.enqueue();
     }

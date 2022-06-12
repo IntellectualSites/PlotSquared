@@ -92,9 +92,9 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
             @Assisted final @NonNull Collection<BlockVector2> requestedChunks,
             @Assisted final @NonNull Runnable whenDone,
             @Assisted final @NonNull Consumer<Throwable> throwableConsumer,
-            @Assisted final boolean unloadAfter,
+            @Assisted("unloadAfter") final boolean unloadAfter,
             @Assisted final @NonNull Collection<ProgressSubscriber> progressSubscribers,
-            @Assisted final boolean forceSync
+            @Assisted("forceSync") final boolean forceSync
     ) {
         this.requestedChunks = new LinkedBlockingQueue<>(requestedChunks);
         this.availableChunks = new LinkedBlockingQueue<>();
