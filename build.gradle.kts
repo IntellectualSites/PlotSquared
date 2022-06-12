@@ -176,6 +176,10 @@ allprojects {
 
     tasks {
 
+        register<Delete>("cleanup") {
+            delete(rootDir.resolve("build"))
+        }
+
         compileJava {
             options.compilerArgs.addAll(arrayOf("-Xmaxerrs", "1000"))
             options.compilerArgs.add("-Xlint:all")
@@ -193,6 +197,7 @@ allprojects {
 
         named("build") {
             dependsOn(named("shadowJar"))
+            finalizedBy("cleanup")
         }
         test {
             useJUnitPlatform()
