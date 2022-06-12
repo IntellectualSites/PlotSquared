@@ -41,14 +41,17 @@ import org.khelekore.prtree.SimpleMBR;
  * An unmodifiable 6-tuple (world,x,y,z,yaw,pitch)
  */
 @SuppressWarnings("unused")
-public final class Location extends BlockLoc implements Comparable<Location> {
+public sealed class Location extends BlockLoc implements Comparable<Location> permits UncheckedWorldLocation {
 
     private final float yaw;
     private final float pitch;
     private final BlockVector3 blockVector3;
     private final World<?> world;
 
-    private Location(
+    /**
+     * @since TODO
+     */
+    protected Location(
             final @NonNull World<?> world, final @NonNull BlockVector3 blockVector3,
             final float yaw, final float pitch
     ) {

@@ -40,11 +40,13 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.queue.GlobalBlockQueue;
+import com.plotsquared.core.util.AnnotationHelper;
 import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.SchematicHandler;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.CompoundTagBuilder;
+import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.transform.BlockTransformExtent;
 import com.sk89q.worldedit.internal.helper.MCDirections;
@@ -58,11 +60,13 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 public class HybridPlotWorld extends ClassicPlotWorld {
@@ -71,6 +75,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     private static final AffineTransform transform = new AffineTransform().rotateY(90);
     public boolean ROAD_SCHEMATIC_ENABLED;
     public boolean PLOT_SCHEMATIC = false;
+    @Deprecated(forRemoval = true, since = "TODO")
     public int PLOT_SCHEMATIC_HEIGHT = -1;
     public short PATH_WIDTH_LOWER;
     public short PATH_WIDTH_UPPER;
@@ -80,6 +85,11 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     private Location SIGN_LOCATION;
     private File root = null;
     private int lastOverlayHeightError = Integer.MIN_VALUE;
+    private List<Entity> schem3Entities = null;
+    private BlockVector3 schem3MinPoint = null;
+    private boolean schem1PopulationNeeded = false;
+    private boolean schem2PopulationNeeded = false;
+    private boolean schem3PopulationNeeded = false;
 
     @Inject
     private SchematicHandler schematicHandler;
@@ -98,6 +108,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         PlotSquared.platform().injector().injectMembers(this);
     }
 
+    @Deprecated(forRemoval = true, since = "TODO")
     public static byte wrap(byte data, int start) {
         if ((data >= start) && (data < (start + 4))) {
             data = (byte) ((((data - start) + 2) & 3) + start);
@@ -105,6 +116,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         return data;
     }
 
+    @Deprecated(forRemoval = true, since = "TODO")
     public static byte wrap2(byte data, int start) {
         if ((data >= start) && (data < (start + 2))) {
             data = (byte) ((((data - start) + 1) & 1) + start);
@@ -112,8 +124,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         return data;
     }
 
-    // FIXME depends on block ids
-    // Possibly make abstract?
     public static BaseBlock rotate(BaseBlock id) {
 
         CompoundTag tag = id.getNbtData();
@@ -251,6 +261,14 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         Schematic schematic1 = this.schematicHandler.getSchematic(schematic1File);
         Schematic schematic2 = this.schematicHandler.getSchematic(schematic2File);
         Schematic schematic3 = this.schematicHandler.getSchematic(schematic3File);
+
+        // If the plot schematic contains entities, then they need to be populated upon generation.
+        if (schematic3 != null && !schematic3.getClipboard().getEntities().isEmpty()) {
+            this.schem3Entities = new ArrayList<>(schematic3.getClipboard().getEntities());
+            this.schem3MinPoint = schematic3.getClipboard().getMinimumPoint();
+            this.schem3PopulationNeeded = true;
+        }
+
         int shift = this.ROAD_WIDTH / 2;
         int oddshift = (this.ROAD_WIDTH & 1);
 
@@ -314,24 +332,34 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             for (short x = 0; x < w3; x++) {
                 for (short z = 0; z < l3; z++) {
                     for (short y = 0; y < h3; y++) {
-                        BaseBlock id =
-                                blockArrayClipboard3.getFullBlock(BlockVector3.at(
-                                        x + min.getBlockX(),
-                                        y + min.getBlockY(),
-                                        z + min.getBlockZ()
-                                ));
+                        BaseBlock id = blockArrayClipboard3.getFullBlock(BlockVector3.at(
+                                x + min.getBlockX(),
+                                y + min.getBlockY(),
+                                z + min.getBlockZ()
+                        ));
                         if (!id.getBlockType().getMaterial().isAir()) {
-                            addOverlayBlock((short) (x + shift + oddshift + centerShiftX), (short) (y + plotY),
-                                    (short) (z + shift + oddshift + centerShiftZ), id, false, h3
+                            schem3PopulationNeeded |= id.hasNbtData();
+                            addOverlayBlock(
+                                    (short) (x + shift + oddshift + centerShiftX),
+                                    (short) (y + plotY),
+                                    (short) (z + shift + oddshift + centerShiftZ),
+                                    id,
+                                    false,
+                                    h3
                             );
                         }
                     }
-                    BiomeType biome = blockArrayClipboard3.getBiome(BlockVector2.at(x + min.getBlockX(), z + min.getBlockZ()));
-                    addOverlayBiome(
-                            (short) (x + shift + oddshift + centerShiftX),
-                            (short) (z + shift + oddshift + centerShiftZ),
-                            biome
-                    );
+                    if (blockArrayClipboard3.hasBiomes()) {
+                        BiomeType biome = blockArrayClipboard3.getBiome(BlockVector2.at(
+                                x + min.getBlockX(),
+                                z + min.getBlockZ()
+                        ));
+                        addOverlayBiome(
+                                (short) (x + shift + oddshift + centerShiftX),
+                                (short) (z + shift + oddshift + centerShiftZ),
+                                biome
+                        );
+                    }
                 }
             }
 
@@ -339,7 +367,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 LOGGER.info("- plot schematic: {}", schematic3File.getPath());
             }
         }
-        if ((schematic1 == null&& schematic2 == null) || this.ROAD_WIDTH == 0) {
+        if ((schematic1 == null && schematic2 == null) || this.ROAD_WIDTH == 0) {
             if (Settings.DEBUG) {
                 LOGGER.info("- schematic: false");
             }
@@ -370,6 +398,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                             z + min.getBlockZ()
                     ));
                     if (!id.getBlockType().getMaterial().isAir()) {
+                        schem1PopulationNeeded |= id.hasNbtData();
                         addOverlayBlock((short) (x - shift), (short) (y + roadY), (short) (z + shift + oddshift), id, false, h1);
                         addOverlayBlock(
                                 (short) (z + shift + oddshift),
@@ -381,9 +410,11 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                         );
                     }
                 }
-                BiomeType biome = blockArrayClipboard1.getBiome(BlockVector2.at(x + min.getBlockX(), z + min.getBlockZ()));
-                addOverlayBiome((short) (x - shift), (short) (z + shift + oddshift), biome);
-                addOverlayBiome((short) (z + shift + oddshift), (short) (shift - x + (oddshift - 1)), biome);
+                if (blockArrayClipboard1.hasBiomes()) {
+                    BiomeType biome = blockArrayClipboard1.getBiome(BlockVector2.at(x + min.getBlockX(), z + min.getBlockZ()));
+                    addOverlayBiome((short) (x - shift), (short) (z + shift + oddshift), biome);
+                    addOverlayBiome((short) (z + shift + oddshift), (short) (shift - x + (oddshift - 1)), biome);
+                }
             }
         }
 
@@ -406,11 +437,14 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                             z + min.getBlockZ()
                     ));
                     if (!id.getBlockType().getMaterial().isAir()) {
+                        schem2PopulationNeeded |= id.hasNbtData();
                         addOverlayBlock((short) (x - shift), (short) (y + roadY), (short) (z - shift), id, false, h2);
                     }
                 }
-                BiomeType biome = blockArrayClipboard2.getBiome(BlockVector2.at(x + min.getBlockX(), z + min.getBlockZ()));
-                addOverlayBiome((short) (x - shift), (short) (z - shift), biome);
+                if (blockArrayClipboard2.hasBiomes()) {
+                    BiomeType biome = blockArrayClipboard2.getBiome(BlockVector2.at(x + min.getBlockX(), z + min.getBlockZ()));
+                    addOverlayBiome((short) (x - shift), (short) (z - shift), biome);
+                }
             }
         }
     }
@@ -456,7 +490,51 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         this.G_SCH_B.put(pair, id);
     }
 
+    /**
+     * Get the entities contained within the plot schematic for generation. Intended for internal use only.
+     *
+     * @since TODO
+     */
+    @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
+    public @Nullable List<Entity> getPlotSchematicEntities() {
+        return schem3Entities;
+    }
+
+    /**
+     * Get the minimum point of the plot schematic for generation. Intended for internal use only.
+     *
+     * @since TODO
+     */
+    @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
+    public @Nullable BlockVector3 getPlotSchematicMinPoint() {
+        return schem3MinPoint;
+    }
+
+    /**
+     * Get if post-generation population of chunks with tiles/entities is needed for this world. Not for public API use.
+     *
+     * @since TODO
+     */
+    @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
+    public boolean populationNeeded() {
+        return schem1PopulationNeeded || schem2PopulationNeeded || schem3PopulationNeeded;
+    }
+
+    /**
+     * @deprecated in favour of {@link HybridPlotWorld#getSchematicRoot()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public File getRoot() {
+        return this.root;
+    }
+
+    /**
+     * Get the root folder for this world's generation schematics. May be null if schematics not initialised via
+     * {@link HybridPlotWorld#setupSchematics()}
+     *
+     * @since TODO
+     */
+    public @Nullable File getSchematicRoot() {
         return this.root;
     }
 
