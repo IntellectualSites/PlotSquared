@@ -35,11 +35,13 @@ import com.sk89q.jnbt.Tag;
 import com.sk89q.worldedit.blocks.BaseItemStack;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.item.ItemType;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.Sign;
+import org.bukkit.block.Skull;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -57,6 +59,11 @@ public class StateWrapper {
     public org.bukkit.block.BlockState state = null;
     public CompoundTag tag = null;
 
+    /**
+     * @deprecated in favour of using WE methods for obtaining NBT, specifically by obtaining a
+     *         {@link com.sk89q.worldedit.world.block.BaseBlock} and then using {@link com.sk89q.worldedit.world.block.BaseBlock#getNbtData()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public StateWrapper(org.bukkit.block.BlockState state) {
         this.state = state;
     }
@@ -230,10 +237,37 @@ public class StateWrapper {
                 }
                 return false;
             }
+            case "skull" -> {
+                if (state instanceof Skull skull) {
+                    CompoundTag skullOwner = ((CompoundTag) this.tag.getValue().get("SkullOwner"));
+                    if (skullOwner == null) {
+                        return true;
+                    }
+                    String player = skullOwner.getString("Name");
+                    if (player == null || player.isEmpty()) {
+                        return false;
+                    }
+                    try {
+                        skull.setOwningPlayer(Bukkit.getOfflinePlayer(player));
+                        skull.update(true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return true;
+                }
+                return false;
+            }
         }
         return false;
     }
 
+    /**
+     * Get a CompoundTag of the contents of a block's inventory (chest, furnace, etc.).
+     *
+     * @deprecated in favour of using WorldEdit methods for obtaining NBT, specifically by obtaining a
+     *         {@link com.sk89q.worldedit.world.block.BaseBlock} and then using {@link com.sk89q.worldedit.world.block.BaseBlock#getNbtData()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public CompoundTag getTag() {
         if (this.tag != null) {
             return this.tag;

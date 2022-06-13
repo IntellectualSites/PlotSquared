@@ -44,7 +44,7 @@ public enum PlotAreaTerrainType {
     ORE,
 
     /**
-     * Generate everything using the vanilla generator but with PS roads.
+     * Generate everything using the vanilla generator but with PlotSquared roads.
      */
     ROAD,
 

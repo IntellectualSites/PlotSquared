@@ -65,7 +65,6 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import org.apache.logging.log4j.LogManager;
@@ -965,7 +964,31 @@ public abstract class PlotArea {
         return this.plots.remove(id) != null;
     }
 
+    /**
+     * Merge a list of plots together. This is non-blocking for the world-changes that will be made. To run a task when the
+     * world changes are complete, use {@link PlotArea#mergePlots(List, boolean, Runnable)};
+     *
+     * @param plotIds     List of plot IDs to merge
+     * @param removeRoads If the roads between plots should be removed
+     * @return if merges were completed successfully.
+     */
     public boolean mergePlots(final @NonNull List<PlotId> plotIds, final boolean removeRoads) {
+        return mergePlots(plotIds, removeRoads, null);
+    }
+
+    /**
+     * Merge a list of plots together. This is non-blocking for the world-changes that will be made.
+     *
+     * @param plotIds     List of plot IDs to merge
+     * @param removeRoads If the roads between plots should be removed
+     * @param whenDone  Task to run when any merge world changes are complete. Also runs if no changes were made. Does not
+     *                    run if there was an error or if too few plots IDs were supplied.
+     * @return if merges were completed successfully.
+     * @since TODO
+     */
+    public boolean mergePlots(
+            final @NonNull List<PlotId> plotIds, final boolean removeRoads, final @Nullable Runnable whenDone
+    ) {
         if (plotIds.size() < 2) {
             return false;
         }
@@ -1028,6 +1051,9 @@ public abstract class PlotArea {
             }
         }
         manager.finishPlotMerge(plotIds, queue);
+        if (whenDone != null) {
+            queue.setCompleteTask(whenDone);
+        }
         queue.enqueue();
         return true;
     }
@@ -1379,7 +1405,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * Get the min height from which P2 will generate blocks. Inclusive.
+     * Get the min height from which PlotSquared will generate blocks. Inclusive.
      *
      * @since 6.6.0
      */
@@ -1388,7 +1414,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * Get the max height to which P2 will generate blocks. Inclusive.
+     * Get the max height to which PlotSquared will generate blocks. Inclusive.
      *
      * @since 6.6.0
      */

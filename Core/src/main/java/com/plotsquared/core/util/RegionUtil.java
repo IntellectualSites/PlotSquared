@@ -109,7 +109,7 @@ public class RegionUtil {
         return new Rectangle2D.Double(min.getX(), min.getZ(), max.getX(), max.getZ());
     }
 
-    // Because WE (not fawe) lack this for CuboidRegion
+    // Because WorldEdit (not FastAsyncWorldEdit) lack this for CuboidRegion
     public static boolean intersects(CuboidRegion region, CuboidRegion other) {
         BlockVector3 regionMin = region.getMinimumPoint();
         BlockVector3 regionMax = region.getMaximumPoint();
