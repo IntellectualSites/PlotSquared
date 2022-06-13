@@ -18,11 +18,9 @@ plugins {
     idea
 }
 
-version = "6.8.2-SNAPSHOT"
-
-allprojects {
+subprojects {
     group = "com.plotsquared"
-    version = rootProject.version
+    version = "6.8.2-SNAPSHOT"
 
     repositories {
         mavenCentral()
@@ -50,9 +48,7 @@ allprojects {
             url = uri("https://maven.enginehub.org/repo/")
         }
     }
-}
 
-subprojects {
     apply {
         plugin<JavaPlugin>()
         plugin<JavaLibraryPlugin>()
@@ -68,9 +64,7 @@ subprojects {
     dependencies {
         implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.2"))
     }
-}
 
-allprojects {
     dependencies {
         // Tests
         testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
@@ -165,7 +159,7 @@ allprojects {
                         developerConnection.set("scm:git://github.com/IntellectualSites/PlotSquared.git")
                     }
 
-                    issueManagement{
+                    issueManagement {
                         system.set("GitHub")
                         url.set("https://github.com/IntellectualSites/PlotSquared/issues")
                     }
@@ -197,7 +191,6 @@ allprojects {
             useJUnitPlatform()
         }
     }
-
 }
 
 nexusPublishing {
@@ -207,4 +200,8 @@ nexusPublishing {
             snapshotRepositoryUrl.set(URI.create("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
         }
     }
+}
+
+tasks.getByName<Jar>("jar") {
+    enabled = false
 }
