@@ -203,7 +203,7 @@ public class ChunkCoordinatorBuilder {
      * and simply effectively makes {@link ChunkCoordinator#start()} ()} a blocking operation.
      *
      * @param forceSync force sync or not
-     * @since TODO
+     * @since 6.9.0
      */
     public @NonNull ChunkCoordinatorBuilder forceSync(final boolean forceSync) {
         this.forceSync = forceSync;

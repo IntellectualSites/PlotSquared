@@ -63,7 +63,7 @@ public class StateWrapper {
      * @deprecated in favour of using WE methods for obtaining NBT, specifically by obtaining a
      *         {@link com.sk89q.worldedit.world.block.BaseBlock} and then using {@link com.sk89q.worldedit.world.block.BaseBlock#getNbtData()}
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.0")
     public StateWrapper(org.bukkit.block.BlockState state) {
         this.state = state;
     }
@@ -267,7 +267,7 @@ public class StateWrapper {
      * @deprecated in favour of using WorldEdit methods for obtaining NBT, specifically by obtaining a
      *         {@link com.sk89q.worldedit.world.block.BaseBlock} and then using {@link com.sk89q.worldedit.world.block.BaseBlock#getNbtData()}
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.0")
     public CompoundTag getTag() {
         if (this.tag != null) {
             return this.tag;

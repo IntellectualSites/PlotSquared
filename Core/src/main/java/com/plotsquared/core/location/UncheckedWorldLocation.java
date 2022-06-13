@@ -33,7 +33,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * Used internally for generation to reference locations in worlds that "don't exist yet". There is no guarantee that the world
  * name provided by {@link UncheckedWorldLocation#getWorldName()} exists on the server.
  *
- * @since TODO
+ * @since 6.9.0
  */
 @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
 public final class UncheckedWorldLocation extends Location {
@@ -41,7 +41,7 @@ public final class UncheckedWorldLocation extends Location {
     private final String worldName;
 
     /**
-     * @since TODO
+     * @since 6.9.0
      */
     private UncheckedWorldLocation(
             final @NonNull String worldName, final int x, final int y, final int z
@@ -59,7 +59,7 @@ public final class UncheckedWorldLocation extends Location {
      * @param z     Z coordinate
      * @return New location
      *
-     * @since TODO
+     * @since 6.9.0
      */
     @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
     public static @NonNull UncheckedWorldLocation at(

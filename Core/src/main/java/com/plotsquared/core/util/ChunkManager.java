@@ -45,7 +45,7 @@ public abstract class ChunkManager {
     /**
      * @deprecated {@link ScopedQueueCoordinator} will be renamed in v7.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.0")
     public static void setChunkInPlotArea(
             RunnableVal<ScopedQueueCoordinator> force,
             RunnableVal<ScopedQueueCoordinator> add,
@@ -86,7 +86,7 @@ public abstract class ChunkManager {
     /**
      * @deprecated {@link ScopedQueueCoordinator} will be renamed in v7.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.0")
     public static boolean preProcessChunk(BlockVector2 loc, ScopedQueueCoordinator queue) {
         final RunnableVal<ScopedQueueCoordinator> forceChunk = forceChunks.get(loc);
         if (forceChunk != null) {
@@ -100,7 +100,7 @@ public abstract class ChunkManager {
     /**
      * @deprecated {@link ScopedQueueCoordinator} will be renamed in v7.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.0")
     public static boolean postProcessChunk(BlockVector2 loc, ScopedQueueCoordinator queue) {
         final RunnableVal<ScopedQueueCoordinator> addChunk = forceChunks.get(loc);
         if (addChunk != null) {

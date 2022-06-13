@@ -984,7 +984,7 @@ public abstract class PlotArea {
      * @param whenDone  Task to run when any merge world changes are complete. Also runs if no changes were made. Does not
      *                    run if there was an error or if too few plots IDs were supplied.
      * @return if merges were completed successfully.
-     * @since TODO
+     * @since 6.9.0
      */
     public boolean mergePlots(
             final @NonNull List<PlotId> plotIds, final boolean removeRoads, final @Nullable Runnable whenDone
