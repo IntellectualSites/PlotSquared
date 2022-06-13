@@ -176,10 +176,6 @@ allprojects {
 
     tasks {
 
-        register<Delete>("cleanup") {
-            delete(rootDir.resolve("build"))
-        }
-
         compileJava {
             options.compilerArgs.addAll(arrayOf("-Xmaxerrs", "1000"))
             options.compilerArgs.add("-Xlint:all")
@@ -192,12 +188,10 @@ allprojects {
         shadowJar {
             this.archiveClassifier.set(null as String?)
             this.archiveFileName.set("${project.name}-${project.version}.${this.archiveExtension.getOrElse("jar")}")
-            this.destinationDirectory.set(rootProject.tasks.shadowJar.get().destinationDirectory.get())
         }
 
         named("build") {
             dependsOn(named("shadowJar"))
-            finalizedBy("cleanup")
         }
         test {
             useJUnitPlatform()
