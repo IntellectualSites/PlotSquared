@@ -18,9 +18,12 @@ plugins {
     idea
 }
 
+group = "com.plotsquared"
+version = "6.9.1-SNAPSHOT"
+
 subprojects {
-    group = "com.plotsquared"
-    version = "6.9.1-SNAPSHOT"
+    group = rootProject.group
+    version = rootProject.version
 
     repositories {
         mavenCentral()
