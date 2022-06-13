@@ -37,6 +37,7 @@ import com.plotsquared.core.events.PlotComponentSetEvent;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.Result;
+import com.plotsquared.core.generator.ClassicPlotWorld;
 import com.plotsquared.core.generator.SquarePlotWorld;
 import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.location.Direction;
@@ -255,6 +256,9 @@ public final class PlotModificationManager {
                             manager.unClaimPlot(current, null, queue);
                         } else {
                             manager.claimPlot(current, queue);
+                            if (plot.getArea() instanceof ClassicPlotWorld cpw) {
+                                manager.setComponent(current.getId(), "wall", cpw.WALL_FILLING.toPattern(), actor, queue);
+                            }
                         }
                     }
                     if (queue.size() > 0) {
