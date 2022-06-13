@@ -3,14 +3,6 @@
     "config:base",
     ":disableDependencyDashboard"
   ],
-  "ignoreDeps": [
-    "guava",
-    "com.google.guava:guava",
-    "com.google.code.gson:gson",
-    "gson",
-    "snakeyaml",
-    "net.kyori"
-  ],
   "timezone": "Europe/Berlin",
   "schedule": [
     "every monday"
