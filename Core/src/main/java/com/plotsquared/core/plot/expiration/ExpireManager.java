@@ -445,11 +445,6 @@ public class ExpireManager {
         plot.getPlotModificationManager().deletePlot(null, whenDone);
     }
 
-    @Deprecated(forRemoval = true, since = "6.4.0")
-    public long getAge(UUID uuid) {
-        return getAge(uuid, false);
-    }
-
     /**
      * Get the age (last play time) of the passed player
      *

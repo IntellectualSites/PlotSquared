@@ -42,7 +42,6 @@ import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.location.PlotLoc;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
@@ -1280,20 +1279,6 @@ public abstract class PlotArea implements ComponentLike {
         return this.signMaterial;
     }
 
-    /**
-     * Get the legacy plot sign material before wall signs used a "wall" stance.
-     *
-     * @return the legacy sign material.
-     * @deprecated Use {@link #signMaterial()}. This method is used for 1.13 only and
-     *         will be removed without replacement in favor of {@link #signMaterial()}
-     *         once we remove the support for 1.13.
-     * @since 6.0.3
-     */
-    @Deprecated(forRemoval = true, since = "6.0.3")
-    public String getLegacySignMaterial() {
-        return this.legacySignMaterial;
-    }
-
     public boolean isSpawnCustom() {
         return this.spawnCustom;
     }
@@ -1350,22 +1335,6 @@ public abstract class PlotArea implements ComponentLike {
      */
     public BlockLoc defaultHome() {
         return this.defaultHome;
-    }
-
-    /**
-     * @deprecated Use {@link #nonmemberHome}
-     */
-    @Deprecated(forRemoval = true, since = "6.1.4")
-    public PlotLoc getNonmemberHome() {
-        return new PlotLoc(this.defaultHome.getX(), this.defaultHome.getY(), this.defaultHome.getZ());
-    }
-
-    /**
-     * @deprecated Use {@link #defaultHome}
-     */
-    @Deprecated(forRemoval = true, since = "6.1.4")
-    public PlotLoc getDefaultHome() {
-        return new PlotLoc(this.defaultHome.getX(), this.defaultHome.getY(), this.defaultHome.getZ());
     }
 
     protected void setDefaultHome(BlockLoc defaultHome) {

@@ -26,7 +26,6 @@
 package com.plotsquared.core.util;
 
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -74,11 +73,6 @@ public class RegionUtil {
             max = max.getMaximum(next.getMaximumPoint());
         }
         return new CuboidRegion(min, max);
-    }
-
-    @Deprecated(forRemoval = true, since = "6.6.0")
-    public static CuboidRegion createRegion(int pos1x, int pos2x, int pos1z, int pos2z) {
-        return createRegion(pos1x, pos2x, 0, 255, pos1z, pos2z);
     }
 
     public static CuboidRegion createRegion(

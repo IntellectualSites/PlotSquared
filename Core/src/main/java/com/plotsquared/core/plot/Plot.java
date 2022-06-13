@@ -124,9 +124,6 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
  */
 public class Plot {
 
-    @Deprecated(forRemoval = true, since = "6.6.0")
-    public static final int MAX_HEIGHT = 256;
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Plot.class.getSimpleName());
     private static final DecimalFormat FLAG_DECIMAL_FORMAT = new DecimalFormat("0");
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
@@ -1693,19 +1690,6 @@ public class Plot {
     public boolean hasRatings() {
         Plot base = this.getBasePlot(false);
         return base.settings != null && base.settings.getRatings() != null;
-    }
-
-    @Deprecated(forRemoval = true, since = "6.1.0")
-    public boolean claim(final @NonNull PlotPlayer<?> player, boolean teleport, String schematic) {
-        if (!canClaim(player)) {
-            return false;
-        }
-        return claim(player, teleport, schematic, true);
-    }
-
-    @Deprecated(forRemoval = true, since = "6.1.0")
-    public boolean claim(final @NonNull PlotPlayer<?> player, boolean teleport, String schematic, boolean updateDB) {
-        return claim(player, teleport, schematic, updateDB, false);
     }
 
     /**
