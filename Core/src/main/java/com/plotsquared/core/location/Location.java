@@ -49,7 +49,7 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     private final World<?> world;
 
     /**
-     * @since TODO
+     * @since 6.9.0
      */
     protected Location(
             final @NonNull World<?> world, final @NonNull BlockVector3 blockVector3,

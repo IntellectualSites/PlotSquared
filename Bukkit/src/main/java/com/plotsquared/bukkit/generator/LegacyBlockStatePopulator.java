@@ -49,7 +49,7 @@ final class LegacyBlockStatePopulator extends BlockPopulator {
     private final IndependentPlotGenerator plotGenerator;
 
     /**
-     * @since TODO
+     * @since 6.9.0
      */
     public LegacyBlockStatePopulator(
             final @NonNull IndependentPlotGenerator plotGenerator

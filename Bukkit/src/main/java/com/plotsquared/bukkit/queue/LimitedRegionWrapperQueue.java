@@ -44,7 +44,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 /**
  * Wraps a {@link LimitedRegion} inside a {@link com.plotsquared.core.queue.QueueCoordinator} so it can be written to.
  *
- * @since TODO
+ * @since 6.9.0
  */
 public class LimitedRegionWrapperQueue extends DelegateQueueCoordinator {
 
@@ -53,7 +53,7 @@ public class LimitedRegionWrapperQueue extends DelegateQueueCoordinator {
     private final LimitedRegion limitedRegion;
 
     /**
-     * @since TODO
+     * @since 6.9.0
      */
     public LimitedRegionWrapperQueue(LimitedRegion limitedRegion) {
         super(null);

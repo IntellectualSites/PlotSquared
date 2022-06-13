@@ -75,7 +75,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     private static final AffineTransform transform = new AffineTransform().rotateY(90);
     public boolean ROAD_SCHEMATIC_ENABLED;
     public boolean PLOT_SCHEMATIC = false;
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.0")
     public int PLOT_SCHEMATIC_HEIGHT = -1;
     public short PATH_WIDTH_LOWER;
     public short PATH_WIDTH_UPPER;
@@ -108,7 +108,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         PlotSquared.platform().injector().injectMembers(this);
     }
 
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.0")
     public static byte wrap(byte data, int start) {
         if ((data >= start) && (data < (start + 4))) {
             data = (byte) ((((data - start) + 2) & 3) + start);
@@ -116,7 +116,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         return data;
     }
 
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.0")
     public static byte wrap2(byte data, int start) {
         if ((data >= start) && (data < (start + 2))) {
             data = (byte) ((((data - start) + 1) & 1) + start);
@@ -493,7 +493,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     /**
      * Get the entities contained within the plot schematic for generation. Intended for internal use only.
      *
-     * @since TODO
+     * @since 6.9.0
      */
     @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
     public @Nullable List<Entity> getPlotSchematicEntities() {
@@ -503,7 +503,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     /**
      * Get the minimum point of the plot schematic for generation. Intended for internal use only.
      *
-     * @since TODO
+     * @since 6.9.0
      */
     @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
     public @Nullable BlockVector3 getPlotSchematicMinPoint() {
@@ -513,7 +513,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     /**
      * Get if post-generation population of chunks with tiles/entities is needed for this world. Not for public API use.
      *
-     * @since TODO
+     * @since 6.9.0
      */
     @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
     public boolean populationNeeded() {
@@ -523,7 +523,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     /**
      * @deprecated in favour of {@link HybridPlotWorld#getSchematicRoot()}
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.0")
     public File getRoot() {
         return this.root;
     }
@@ -532,7 +532,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
      * Get the root folder for this world's generation schematics. May be null if schematics not initialised via
      * {@link HybridPlotWorld#setupSchematics()}
      *
-     * @since TODO
+     * @since 6.9.0
      */
     public @Nullable File getSchematicRoot() {
         return this.root;

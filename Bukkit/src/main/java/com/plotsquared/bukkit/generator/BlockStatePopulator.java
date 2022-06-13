@@ -46,7 +46,7 @@ final class BlockStatePopulator extends BlockPopulator {
     private final IndependentPlotGenerator plotGenerator;
 
     /**
-     * @since TODO
+     * @since 6.9.0
      */
     public BlockStatePopulator(
             final @NonNull IndependentPlotGenerator plotGenerator
@@ -57,7 +57,7 @@ final class BlockStatePopulator extends BlockPopulator {
     /**
      * @deprecated Use {@link BlockStatePopulator#BlockStatePopulator(IndependentPlotGenerator)} as plotAreManager is unused
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.0")
     public BlockStatePopulator(
             final @NonNull IndependentPlotGenerator plotGenerator,
             final @NonNull PlotAreaManager plotAreaManager

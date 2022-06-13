@@ -93,7 +93,7 @@ public abstract class QueueCoordinator {
      * @since 6.6.0
      * @deprecated {@link ScopedQueueCoordinator} will be renamed in v7.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.0")
     public ScopedQueueCoordinator getForChunk(int x, int z, int minY, int maxY) {
         int bx = x << 4;
         int bz = z << 4;

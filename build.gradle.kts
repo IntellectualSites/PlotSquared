@@ -20,7 +20,7 @@ plugins {
 
 subprojects {
     group = "com.plotsquared"
-    version = "6.8.2-SNAPSHOT"
+    version = "6.9.1-SNAPSHOT"
 
     repositories {
         mavenCentral()
@@ -62,7 +62,7 @@ subprojects {
     }
 
     dependencies {
-        implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.2"))
+        implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.5"))
     }
 
     dependencies {
