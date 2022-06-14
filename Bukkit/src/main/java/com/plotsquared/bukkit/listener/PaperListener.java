@@ -44,9 +44,11 @@ import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.flag.FlagContainer;
 import com.plotsquared.core.plot.flag.implementations.BeaconEffectsFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
+import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.Permissions;
 import net.kyori.adventure.text.minimessage.Template;
@@ -409,7 +411,7 @@ public class PaperListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBeaconEffect(final BeaconEffectEvent event) {
         Block block = event.getBlock();
         Location beaconLocation = BukkitUtil.adapt(block.getLocation());
@@ -426,14 +428,16 @@ public class PaperListener implements Listener {
         PlotPlayer<Player> plotPlayer = BukkitUtil.adapt(player);
         Plot playerStandingPlot = playerLocation.getPlot();
         if (playerStandingPlot == null) {
-            if (!area.getRoadFlag(BeaconEffectsFlag.class) ||
+            FlagContainer container = area.getRoadFlagContainer();
+            if (!getBooleanFlagValue(container, BeaconEffectsFlag.class, true) ||
                     (beaconPlot != null && Settings.Paper_Components.DISABLE_BEACON_EFFECT_OVERFLOW)) {
                 event.setCancelled(true);
             }
             return;
         }
 
-        boolean plotBeaconEffects = playerStandingPlot.getFlag(BeaconEffectsFlag.class);
+        FlagContainer container = playerStandingPlot.getFlagContainer();
+        boolean plotBeaconEffects = getBooleanFlagValue(container, BeaconEffectsFlag.class, true);
         if (playerStandingPlot.equals(beaconPlot)) {
             if (!plotBeaconEffects) {
                 event.setCancelled(true);
@@ -444,6 +448,13 @@ public class PaperListener implements Listener {
         if (!plotBeaconEffects || Settings.Paper_Components.DISABLE_BEACON_EFFECT_OVERFLOW) {
             event.setCancelled(true);
         }
+    }
+
+    private boolean getBooleanFlagValue(@NonNull FlagContainer container,
+                                        @NonNull Class<? extends BooleanFlag<?>> flagClass,
+                                        boolean defaultValue) {
+        BooleanFlag<?> flag = container.getFlag(flagClass);
+        return flag == null ? defaultValue : flag.getValue();
     }
 
 }

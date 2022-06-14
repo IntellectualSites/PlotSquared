@@ -30,6 +30,7 @@ import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.plot.flag.implementations.AnimalAttackFlag;
 import com.plotsquared.core.plot.flag.implementations.AnimalCapFlag;
 import com.plotsquared.core.plot.flag.implementations.AnimalInteractFlag;
+import com.plotsquared.core.plot.flag.implementations.BeaconEffectsFlag;
 import com.plotsquared.core.plot.flag.implementations.BlockBurnFlag;
 import com.plotsquared.core.plot.flag.implementations.BlockIgnitionFlag;
 import com.plotsquared.core.plot.flag.implementations.BlockedCmdsFlag;
@@ -144,6 +145,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(AnimalAttackFlag.ANIMAL_ATTACK_FALSE);
         this.addFlag(AnimalInteractFlag.ANIMAL_INTERACT_FALSE);
         this.addFlag(BlockBurnFlag.BLOCK_BURN_FALSE);
+        this.addFlag(BeaconEffectsFlag.BEACON_EFFECT_TRUE);
         this.addFlag(BlockIgnitionFlag.BLOCK_IGNITION_TRUE);
         this.addFlag(ChatFlag.CHAT_FLAG_TRUE);
         this.addFlag(CopperOxideFlag.COPPER_OXIDE_FALSE);

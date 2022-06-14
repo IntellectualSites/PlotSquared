@@ -48,6 +48,7 @@ import com.plotsquared.bukkit.listener.PlayerEventListener;
 import com.plotsquared.bukkit.listener.ProjectileEventListener;
 import com.plotsquared.bukkit.listener.ServerListener;
 import com.plotsquared.bukkit.listener.SingleWorldListener;
+import com.plotsquared.bukkit.listener.SpigotListener;
 import com.plotsquared.bukkit.listener.WorldEvents;
 import com.plotsquared.bukkit.placeholder.PAPIPlaceholders;
 import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
@@ -96,8 +97,6 @@ import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.comment.CommentManager;
-import com.plotsquared.core.plot.flag.GlobalFlagContainer;
-import com.plotsquared.core.plot.flag.implementations.BeaconEffectsFlag;
 import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
@@ -272,11 +271,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
         final PlotSquared plotSquared = new PlotSquared(this, "Bukkit");
 
-        //Paper specific flags
-        if (PaperLib.isPaper()) {
-            GlobalFlagContainer.getInstance().addFlag(BeaconEffectsFlag.BEACON_EFFECT_TRUE);
-        }
-
         // FAWE
         if (Settings.FAWE_Components.FAWE_HOOK) {
             Plugin fawe = getServer().getPluginManager().getPlugin("FastAsyncWorldEdit");
@@ -374,6 +368,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 } else {
                     getServer().getPluginManager().registerEvents(injector().getInstance(PaperListener.class), this);
                 }
+            } else {
+                getServer().getPluginManager().registerEvents(injector().getInstance(SpigotListener.class), this);
             }
             this.plotListener.startRunnable();
         }
