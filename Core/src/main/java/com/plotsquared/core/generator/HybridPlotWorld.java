@@ -486,7 +486,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
     /**
      * @deprecated This method should not be available for public API usage and will be made private.
-     * @since TODO
      */
     @Deprecated(forRemoval = true, since = "TODO")
     public void addOverlayBlock(short x, short y, short z, BaseBlock id, boolean rotate, int height) {
@@ -517,7 +516,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
     /**
      * @deprecated This method should not be available for public API usage and will be made private.
-     * @since TODO
      */
     @Deprecated(forRemoval = true, since = "TODO")
     public void addOverlayBiome(short x, short z, BiomeType id) {
