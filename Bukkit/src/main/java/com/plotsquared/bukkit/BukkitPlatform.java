@@ -271,7 +271,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
         final PlotSquared plotSquared = new PlotSquared(this, "Bukkit");
 
-        // FAWE
+        // FastAsyncWorldEdit
         if (Settings.FAWE_Components.FAWE_HOOK) {
             Plugin fawe = getServer().getPluginManager().getPlugin("FastAsyncWorldEdit");
             if (fawe != null) {
@@ -279,7 +279,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                     Class.forName("com.fastasyncworldedit.bukkit.regions.plotsquared.FaweQueueCoordinator");
                     faweHook = true;
                 } catch (Exception ignored) {
-                    LOGGER.error("Incompatible version of FAWE to enable hook, please upgrade: https://ci.athion" +
+                    LOGGER.error("Incompatible version of FastAsyncWorldEdit to enable hook, please upgrade: https://ci.athion" +
                             ".net/job/FastAsyncWorldEdit/");
                 }
             }
@@ -435,7 +435,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
         plotSquared.startExpiryTasks();
 
-        // Once the server has loaded force updating all generators known to P2
+        // Once the server has loaded force updating all generators known to PlotSquared
         TaskManager.runTaskLater(() -> PlotSquared.platform().setupUtils().updateGenerators(true), TaskTime.ticks(1L));
 
         // Services are accessed in order

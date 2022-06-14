@@ -551,6 +551,10 @@ public class BlockEventListener implements Listener {
         if (plot == null) {
             return;
         }
+        if (location.getY() >= area.getMaxBuildHeight() || location.getY() < area.getMinBuildHeight()) {
+            event.setCancelled(true);
+            return;
+        }
         switch (event.getNewState().getType()) {
             case SNOW:
             case SNOW_BLOCK:
@@ -750,62 +754,66 @@ public class BlockEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChange(BlockFromToEvent event) {
-        Block from = event.getBlock();
+        Block fromBlock = event.getBlock();
 
         // Check liquid flow flag inside of origin plot too
-        final Location fLocation = BukkitUtil.adapt(from.getLocation());
-        final PlotArea fromArea = fLocation.getPlotArea();
+        final Location fromLocation = BukkitUtil.adapt(fromBlock.getLocation());
+        final PlotArea fromArea = fromLocation.getPlotArea();
         if (fromArea != null) {
-            final Plot plot = fromArea.getOwnedPlot(fLocation);
-            if (plot != null && plot.getFlag(LiquidFlowFlag.class) == LiquidFlowFlag.FlowStatus.DISABLED && event
+            final Plot fromPlot = fromArea.getOwnedPlot(fromLocation);
+            if (fromPlot != null && fromPlot.getFlag(LiquidFlowFlag.class) == LiquidFlowFlag.FlowStatus.DISABLED && event
                     .getBlock()
                     .isLiquid()) {
-                plot.debug("Liquid could not flow because liquid-flow = disabled");
+                fromPlot.debug("Liquid could not flow because liquid-flow = disabled");
                 event.setCancelled(true);
                 return;
             }
         }
 
-        Block to = event.getToBlock();
-        Location tLocation = BukkitUtil.adapt(to.getLocation());
-        PlotArea area = tLocation.getPlotArea();
-        if (area == null) {
-            if (from.getType() == Material.DRAGON_EGG && fromArea != null) {
+        Block toBlock = event.getToBlock();
+        Location toLocation = BukkitUtil.adapt(toBlock.getLocation());
+        PlotArea toArea = toLocation.getPlotArea();
+        if (toArea == null) {
+            if (fromBlock.getType() == Material.DRAGON_EGG && fromArea != null) {
                 event.setCancelled(true);
             }
             return;
         }
-        Plot plot = area.getOwnedPlot(tLocation);
+        if (toLocation.getY() >= toArea.getMaxBuildHeight() || toLocation.getY() < toArea.getMinBuildHeight()) {
+            event.setCancelled(true);
+            return;
+        }
+        Plot toPlot = toArea.getOwnedPlot(toLocation);
 
-        if (from.getType() == Material.DRAGON_EGG && fromArea != null) {
-            final Plot fromPlot = fromArea.getOwnedPlot(fLocation);
+        if (fromBlock.getType() == Material.DRAGON_EGG && fromArea != null) {
+            final Plot fromPlot = fromArea.getOwnedPlot(fromLocation);
 
-            if (fromPlot != null || plot != null) {
-                if ((fromPlot == null || !fromPlot.equals(plot)) && (plot == null || !plot.equals(fromPlot))) {
+            if (fromPlot != null || toPlot != null) {
+                if ((fromPlot == null || !fromPlot.equals(toPlot)) && (toPlot == null || !toPlot.equals(fromPlot))) {
                     event.setCancelled(true);
                     return;
                 }
             }
         }
 
-        if (plot != null) {
-            if (!area.contains(fLocation.getX(), fLocation.getZ()) || !Objects.equals(plot, area.getOwnedPlot(fLocation))) {
+        if (toPlot != null) {
+            if (!toArea.contains(fromLocation.getX(), fromLocation.getZ()) || !Objects.equals(toPlot, toArea.getOwnedPlot(fromLocation))) {
                 event.setCancelled(true);
                 return;
             }
-            if (plot.getFlag(LiquidFlowFlag.class) == LiquidFlowFlag.FlowStatus.ENABLED && event.getBlock().isLiquid()) {
+            if (toPlot.getFlag(LiquidFlowFlag.class) == LiquidFlowFlag.FlowStatus.ENABLED && event.getBlock().isLiquid()) {
                 return;
             }
-            if (plot.getFlag(DisablePhysicsFlag.class)) {
-                plot.debug(event.getBlock().getType() + " could not update because disable-physics = true");
+            if (toPlot.getFlag(DisablePhysicsFlag.class)) {
+                toPlot.debug(event.getBlock().getType() + " could not update because disable-physics = true");
                 event.setCancelled(true);
                 return;
             }
-            if (plot.getFlag(LiquidFlowFlag.class) == LiquidFlowFlag.FlowStatus.DISABLED && event.getBlock().isLiquid()) {
-                plot.debug("Liquid could not flow because liquid-flow = disabled");
+            if (toPlot.getFlag(LiquidFlowFlag.class) == LiquidFlowFlag.FlowStatus.DISABLED && event.getBlock().isLiquid()) {
+                toPlot.debug("Liquid could not flow because liquid-flow = disabled");
                 event.setCancelled(true);
             }
-        } else if (!area.contains(fLocation.getX(), fLocation.getZ()) || !Objects.equals(null, area.getOwnedPlot(fLocation))) {
+        } else if (!toArea.contains(fromLocation.getX(), fromLocation.getZ()) || !Objects.equals(null, toArea.getOwnedPlot(fromLocation))) {
             event.setCancelled(true);
         } else if (event.getBlock().isLiquid()) {
             final org.bukkit.Location location = event.getBlock().getLocation();
@@ -957,7 +965,12 @@ public class BlockEventListener implements Listener {
     public void onBlockDispense(BlockDispenseEvent event) {
         Material type = event.getItem().getType();
         switch (type.toString()) {
-            case "SHULKER_BOX", "WHITE_SHULKER_BOX", "ORANGE_SHULKER_BOX", "MAGENTA_SHULKER_BOX", "LIGHT_BLUE_SHULKER_BOX", "YELLOW_SHULKER_BOX", "LIME_SHULKER_BOX", "PINK_SHULKER_BOX", "GRAY_SHULKER_BOX", "LIGHT_GRAY_SHULKER_BOX", "CYAN_SHULKER_BOX", "PURPLE_SHULKER_BOX", "BLUE_SHULKER_BOX", "BROWN_SHULKER_BOX", "GREEN_SHULKER_BOX", "RED_SHULKER_BOX", "BLACK_SHULKER_BOX", "CARVED_PUMPKIN", "WITHER_SKELETON_SKULL", "FLINT_AND_STEEL", "BONE_MEAL", "SHEARS", "GLASS_BOTTLE", "GLOWSTONE", "COD_BUCKET", "PUFFERFISH_BUCKET", "SALMON_BUCKET", "TROPICAL_FISH_BUCKET", "AXOLOTL_BUCKET", "BUCKET", "WATER_BUCKET", "LAVA_BUCKET" -> {
+            case "SHULKER_BOX", "WHITE_SHULKER_BOX", "ORANGE_SHULKER_BOX", "MAGENTA_SHULKER_BOX", "LIGHT_BLUE_SHULKER_BOX",
+                    "YELLOW_SHULKER_BOX", "LIME_SHULKER_BOX", "PINK_SHULKER_BOX", "GRAY_SHULKER_BOX", "LIGHT_GRAY_SHULKER_BOX",
+                    "CYAN_SHULKER_BOX", "PURPLE_SHULKER_BOX", "BLUE_SHULKER_BOX", "BROWN_SHULKER_BOX", "GREEN_SHULKER_BOX",
+                    "RED_SHULKER_BOX", "BLACK_SHULKER_BOX", "CARVED_PUMPKIN", "WITHER_SKELETON_SKULL", "FLINT_AND_STEEL",
+                    "BONE_MEAL", "SHEARS", "GLASS_BOTTLE", "GLOWSTONE", "COD_BUCKET", "PUFFERFISH_BUCKET", "SALMON_BUCKET",
+                    "TROPICAL_FISH_BUCKET", "AXOLOTL_BUCKET", "BUCKET", "WATER_BUCKET", "LAVA_BUCKET", "TADPOLE_BUCKET" -> {
                 if (event.getBlock().getType() == Material.DROPPER) {
                     return;
                 }

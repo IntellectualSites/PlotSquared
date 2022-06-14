@@ -40,7 +40,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @deprecated This should be renamed to NormalizedScopedQueueCoordinator or something.
  */
-@Deprecated(forRemoval = true, since = "TODO")
+@Deprecated(forRemoval = true, since = "6.8.0")
 public class ScopedQueueCoordinator extends DelegateQueueCoordinator {
 
     private final Location min;

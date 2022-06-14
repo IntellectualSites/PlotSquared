@@ -18,10 +18,11 @@ plugins {
     idea
 }
 
-version = "6.7.1-SNAPSHOT"
+group = "com.plotsquared"
+version = "6.9.1-SNAPSHOT"
 
-allprojects {
-    group = "com.plotsquared"
+subprojects {
+    group = rootProject.group
     version = rootProject.version
 
     repositories {
@@ -34,7 +35,7 @@ allprojects {
 
         maven {
             name = "Sonatype OSS (S01)"
-            url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
+            url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
         }
 
         maven {
@@ -50,9 +51,7 @@ allprojects {
             url = uri("https://maven.enginehub.org/repo/")
         }
     }
-}
 
-subprojects {
     apply {
         plugin<JavaPlugin>()
         plugin<JavaLibraryPlugin>()
@@ -64,10 +63,11 @@ subprojects {
         plugin<EclipsePlugin>()
         plugin<IdeaPlugin>()
     }
-}
 
-val javadocDir = rootDir.resolve("docs").resolve("javadoc").resolve(project.name)
-allprojects {
+    dependencies {
+        implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.5"))
+    }
+
     dependencies {
         // Tests
         testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
@@ -162,7 +162,7 @@ allprojects {
                         developerConnection.set("scm:git://github.com/IntellectualSites/PlotSquared.git")
                     }
 
-                    issueManagement{
+                    issueManagement {
                         system.set("GitHub")
                         url.set("https://github.com/IntellectualSites/PlotSquared/issues")
                     }
@@ -172,11 +172,6 @@ allprojects {
     }
 
     tasks {
-        named<Delete>("clean") {
-            doFirst {
-                javadocDir.deleteRecursively()
-            }
-        }
 
         compileJava {
             options.compilerArgs.addAll(arrayOf("-Xmaxerrs", "1000"))
@@ -187,20 +182,9 @@ allprojects {
             options.encoding = "UTF-8"
         }
 
-        javadoc {
-            val opt = options as StandardJavadocDocletOptions
-            opt.addStringOption("Xdoclint:none", "-quiet")
-            opt.tags(
-                    "apiNote:a:API Note:",
-                    "implSpec:a:Implementation Requirements:",
-                    "implNote:a:Implementation Note:"
-            )
-        }
-
         shadowJar {
             this.archiveClassifier.set(null as String?)
             this.archiveFileName.set("${project.name}-${project.version}.${this.archiveExtension.getOrElse("jar")}")
-            this.destinationDirectory.set(rootProject.tasks.shadowJar.get().destinationDirectory.get())
         }
 
         named("build") {
@@ -210,7 +194,6 @@ allprojects {
             useJUnitPlatform()
         }
     }
-
 }
 
 nexusPublishing {
@@ -222,36 +205,6 @@ nexusPublishing {
     }
 }
 
-tasks {
-    val aggregatedJavadocs = create<Javadoc>("aggregatedJavadocs") {
-        title = "${project.name} ${project.version} API"
-        setDestinationDir(javadocDir)
-        options.destinationDirectory = javadocDir
-
-        doFirst {
-            javadocDir.deleteRecursively()
-        }
-    }.also {
-        it.group = "Documentation"
-        it.description = "Generate javadocs from all child projects as if it was a single project"
-    }
-
-    subprojects.forEach { subProject ->
-        subProject.afterEvaluate {
-            subProject.tasks.withType<Javadoc>().forEach { task ->
-                aggregatedJavadocs.source += task.source
-                aggregatedJavadocs.classpath += task.classpath
-                aggregatedJavadocs.excludes += task.excludes
-                aggregatedJavadocs.includes += task.includes
-
-                val rootOptions = aggregatedJavadocs.options as StandardJavadocDocletOptions
-                val subOptions = task.options as StandardJavadocDocletOptions
-                rootOptions.links(*subOptions.links.orEmpty().minus(rootOptions.links.orEmpty().toSet()).toTypedArray())
-            }
-        }
-    }
-
-    build {
-        dependsOn(aggregatedJavadocs)
-    }
+tasks.getByName<Jar>("jar") {
+    enabled = false
 }

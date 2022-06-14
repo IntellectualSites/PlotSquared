@@ -38,6 +38,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlayerManager;
 import net.kyori.adventure.text.Component;
@@ -110,6 +111,9 @@ public final class PlaceholderRegistry {
             return plot.getAlias();
         });
         this.createPlaceholder("currentplot_owner", (player, plot) -> {
+            if (plot.getFlag(ServerPlotFlag.class)){
+                return legacyComponent(TranslatableCaption.of("info.server"), player);
+            }
             final UUID plotOwner = plot.getOwnerAbs();
             if (plotOwner == null) {
                 return legacyComponent(TranslatableCaption.of("generic.generic_unowned"), player);

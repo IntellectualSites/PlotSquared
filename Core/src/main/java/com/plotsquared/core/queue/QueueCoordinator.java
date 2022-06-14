@@ -40,14 +40,12 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public abstract class QueueCoordinator {
@@ -93,7 +91,9 @@ public abstract class QueueCoordinator {
      * @param z chunk z coordinate
      * @return a new {@link ScopedQueueCoordinator}
      * @since 6.6.0
+     * @deprecated {@link ScopedQueueCoordinator} will be renamed in v7.
      */
+    @Deprecated(forRemoval = true, since = "6.9.0")
     public ScopedQueueCoordinator getForChunk(int x, int z, int minY, int maxY) {
         int bx = x << 4;
         int bz = z << 4;
@@ -117,7 +117,8 @@ public abstract class QueueCoordinator {
     public abstract void setModified(long modified);
 
     /**
-     * Returns true if the queue should be forced to be synchronous when enqueued.
+     * Returns true if the queue should be forced to be synchronous when enqueued. This is not necessarily synchronous to the
+     * server, and simply effectively makes {@link QueueCoordinator#enqueue()} a blocking operation.
      *
      * @return is force sync
      */
@@ -126,7 +127,8 @@ public abstract class QueueCoordinator {
     }
 
     /**
-     * Set whether the queue should be forced to be synchronous
+     * Set whether the queue should be forced to be synchronous. This is not necessarily synchronous to the server, and simply
+     * effectively makes {@link QueueCoordinator#enqueue()} a blocking operation.
      *
      * @param forceSync force sync or not
      */
@@ -253,7 +255,7 @@ public abstract class QueueCoordinator {
      * If the queue should accept biome placement
      *
      * @param enabled If biomes should be enabled
-     * @since TODO
+     * @since 6.8.0
      */
     public abstract void setBiomesEnabled(boolean enabled);
 

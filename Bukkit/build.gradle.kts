@@ -8,7 +8,7 @@ repositories {
 
     maven {
         name = "PaperMC"
-        url = uri("https://papermc.io/repo/repository/maven-public/")
+        url = uri("https://repo.papermc.io/repository/maven-public/")
     }
 
     maven {
@@ -21,20 +21,20 @@ dependencies {
     api(projects.plotSquaredCore)
 
     // Metrics
-    implementation(libs.bstats)
+    implementation("org.bstats:bstats-bukkit")
 
     // Paper
     compileOnly(libs.paper)
-    implementation(libs.paperlib)
+    implementation("io.papermc:paperlib")
 
     // Plugins
     compileOnly(libs.worldeditBukkit) {
         exclude(group = "org.bukkit")
         exclude(group = "org.spigotmc")
     }
-    compileOnly(libs.fastasyncworldeditBukkit) { isTransitive = false }
-    testImplementation(libs.fastasyncworldeditBukkit) { isTransitive = false }
-    compileOnly(libs.vault) {
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit") { isTransitive = false }
+    testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit") { isTransitive = false }
+    compileOnly("com.github.MilkBowl:VaultAPI") {
         exclude(group = "org.bukkit")
     }
     compileOnly(libs.placeholderapi)
@@ -44,15 +44,15 @@ dependencies {
 
     // Other libraries
     implementation(libs.squirrelid) { isTransitive = false }
-    implementation(libs.serverlib)
+    implementation("dev.notmyfault.serverlib:ServerLib")
 
     // Our libraries
     implementation(libs.arkitektonika)
     implementation(libs.http4j)
-    implementation(libs.paster)
+    implementation("com.intellectualsites.paster:Paster")
 
     // Adventure
-    implementation(libs.adventurePlatformBukkit)
+    implementation("net.kyori:adventure-platform-bukkit")
 }
 
 tasks.processResources {
@@ -85,6 +85,8 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("javax.annotation", "com.plotsquared.core.annotation")
     relocate("com.github.spotbugs", "com.plotsquared.core.spotbugs")
     relocate("javax.inject", "com.plotsquared.core.annotation.inject")
+    relocate("net.jcip", "com.plotsquared.core.annotations.jcip")
+    relocate("edu.umd.cs.findbugs", "com.plotsquared.core.annotations.findbugs")
 
     // Get rid of all the libs which are 100% unused.
     minimize()
@@ -95,10 +97,10 @@ tasks.named<ShadowJar>("shadowJar") {
 tasks {
     withType<Javadoc> {
         val opt = options as StandardJavadocDocletOptions
-        opt.links("https://papermc.io/javadocs/paper/1.18/")
+        opt.links("https://jd.papermc.io/paper/1.18/")
         opt.links("https://docs.enginehub.org/javadoc/com.sk89q.worldedit/worldedit-bukkit/" + libs.worldeditBukkit.get().versionConstraint.toString())
         opt.links("https://javadoc.io/doc/com.plotsquared/PlotSquared-Core/latest/")
-        opt.links("https://jd.adventure.kyori.net/api/" + libs.adventure.get().versionConstraint.toString())
+        opt.links("https://jd.adventure.kyori.net/api/4.9.3/")
         opt.links("https://google.github.io/guice/api-docs/" + libs.guice.get().versionConstraint.toString() + "/javadoc/")
         opt.links("https://checkerframework.org/api/")
     }
