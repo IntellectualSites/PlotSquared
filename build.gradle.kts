@@ -121,7 +121,7 @@ subprojects {
                 pom {
 
                     name.set(project.name + " " + project.version)
-                    description.set("PlotSquared is a land and world management plugin for Minecraft.")
+                    description.set("PlotSquared, a land and world management plugin for Minecraft.")
                     url.set("https://github.com/IntellectualSites/PlotSquared")
 
                     licenses {
