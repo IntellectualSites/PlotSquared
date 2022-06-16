@@ -62,6 +62,22 @@ public abstract class QueueCoordinator {
     }
 
     /**
+     * Get a {@link ZeroedDelegateScopedQueueCoordinator} limited to the chunk at the specific chunk Coordinates
+     *
+     * @param x chunk x coordinate
+     * @param z chunk z coordinate
+     * @return a new {@link ZeroedDelegateScopedQueueCoordinator}
+     * @since TODO
+     */
+    public ZeroedDelegateScopedQueueCoordinator getForChunk(int x, int z, int minY, int maxY) {
+        int bx = x << 4;
+        int bz = z << 4;
+        return new ZeroedDelegateScopedQueueCoordinator(this, Location.at(getWorld().getName(), bx, minY, bz),
+                Location.at(getWorld().getName(), bx + 15, maxY, bz + 15)
+        );
+    }
+
+    /**
      * Get the size of the queue in chunks
      *
      * @return size
