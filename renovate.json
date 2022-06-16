@@ -3,17 +3,9 @@
     "config:base",
     ":disableDependencyDashboard"
   ],
-  "ignoreDeps": [
-    "guava",
-    "com.google.guava:guava",
-    "com.google.code.gson:gson",
-    "gson",
-    "snakeyaml",
-    "net.kyori"
-  ],
   "timezone": "Europe/Berlin",
   "schedule": [
-    "on monday after 9am"
+    "every monday"
   ],
   "labels": ["Renovate"],
   "commitMessagePrefix": "build: ",

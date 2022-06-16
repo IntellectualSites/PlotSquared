@@ -1,27 +1,20 @@
 /*
- *       _____  _       _    _____                                _
- *      |  __ \| |     | |  / ____|                              | |
- *      | |__) | | ___ | |_| (___   __ _ _   _  __ _ _ __ ___  __| |
- *      |  ___/| |/ _ \| __|\___ \ / _` | | | |/ _` | '__/ _ \/ _` |
- *      | |    | | (_) | |_ ____) | (_| | |_| | (_| | | |  __/ (_| |
- *      |_|    |_|\___/ \__|_____/ \__, |\__,_|\__,_|_|  \___|\__,_|
- *                                    | |
- *                                    |_|
- *            PlotSquared plot management system for Minecraft
- *               Copyright (C) 2014 - 2022 IntellectualSites
+ * PlotSquared, a land and world management plugin for Minecraft.
+ * Copyright (C) IntellectualSites <https://intellectualsites.com>
+ * Copyright (C) IntellectualSites team and contributors
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
 
@@ -35,13 +28,23 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.plotsquared.core.util.MathMan;
+import com.sk89q.worldedit.entity.BaseEntity;
+import com.sk89q.worldedit.entity.Entity;
+import com.sk89q.worldedit.extent.Extent;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.math.Vector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.regions.RegionOperationException;
+import com.sk89q.worldedit.world.NullWorld;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class HybridGen extends IndependentPlotGenerator {
 
+    private static final CuboidRegion CHUNK = new CuboidRegion(BlockVector3.ZERO, BlockVector3.at(15, 396, 15));
     private final HybridPlotWorldFactory hybridPlotWorldFactory;
 
     @Inject
@@ -62,6 +65,7 @@ public class HybridGen extends IndependentPlotGenerator {
             int x,
             int z,
             boolean isRoad,
+            boolean isPopulating,
             boolean biomes
     ) {
         int minY; // Math.min(world.PLOT_HEIGHT, world.ROAD_HEIGHT);
@@ -74,7 +78,9 @@ public class HybridGen extends IndependentPlotGenerator {
         if (blocks != null) {
             for (int y = 0; y < blocks.length; y++) {
                 if (blocks[y] != null) {
-                    result.setBlock(x, minY + y, z, blocks[y]);
+                    if (!isPopulating || blocks[y].hasNbtData()) {
+                        result.setBlock(x, minY + y, z, blocks[y]);
+                    }
                 }
             }
         }
@@ -131,35 +137,35 @@ public class HybridGen extends IndependentPlotGenerator {
         short[] relativeX = new short[16];
         boolean[] insideRoadX = new boolean[16];
         boolean[] insideWallX = new boolean[16];
+        short offsetX = relativeOffsetX;
         for (short i = 0; i < 16; i++) {
-            short v = (short) (relativeOffsetX + i);
-            while (v >= hybridPlotWorld.SIZE) {
-                v -= hybridPlotWorld.SIZE;
+            if (offsetX >= hybridPlotWorld.SIZE) {
+                offsetX -= hybridPlotWorld.SIZE;
             }
-            relativeX[i] = v;
+            relativeX[i] = offsetX;
             if (hybridPlotWorld.ROAD_WIDTH != 0) {
-                insideRoadX[i] = v < hybridPlotWorld.PATH_WIDTH_LOWER || v > hybridPlotWorld.PATH_WIDTH_UPPER;
-                insideWallX[i] = v == hybridPlotWorld.PATH_WIDTH_LOWER || v == hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideRoadX[i] = offsetX < hybridPlotWorld.PATH_WIDTH_LOWER || offsetX > hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideWallX[i] = offsetX == hybridPlotWorld.PATH_WIDTH_LOWER || offsetX == hybridPlotWorld.PATH_WIDTH_UPPER;
             }
+            offsetX++;
         }
         // The Z-coordinate of a given Z coordinate, relative to the
         // plot (Counting from the corner with the least positive
         // coordinates)
         short[] relativeZ = new short[16];
-        // Whether or not the given Z coordinate belongs to the road
         boolean[] insideRoadZ = new boolean[16];
-        // Whether or not the given Z coordinate belongs to the wall
         boolean[] insideWallZ = new boolean[16];
+        short offsetZ = relativeOffsetZ;
         for (short i = 0; i < 16; i++) {
-            short v = (short) (relativeOffsetZ + i);
-            while (v >= hybridPlotWorld.SIZE) {
-                v -= hybridPlotWorld.SIZE;
+            if (offsetZ >= hybridPlotWorld.SIZE) {
+                offsetZ -= hybridPlotWorld.SIZE;
             }
-            relativeZ[i] = v;
+            relativeZ[i] = offsetZ;
             if (hybridPlotWorld.ROAD_WIDTH != 0) {
-                insideRoadZ[i] = v < hybridPlotWorld.PATH_WIDTH_LOWER || v > hybridPlotWorld.PATH_WIDTH_UPPER;
-                insideWallZ[i] = v == hybridPlotWorld.PATH_WIDTH_LOWER || v == hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideRoadZ[i] = offsetZ < hybridPlotWorld.PATH_WIDTH_LOWER || offsetZ > hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideWallZ[i] = offsetZ == hybridPlotWorld.PATH_WIDTH_LOWER || offsetZ == hybridPlotWorld.PATH_WIDTH_UPPER;
             }
+            offsetZ++;
         }
         // generation
         int startY = hybridPlotWorld.getMinGenHeight() + (hybridPlotWorld.PLOT_BEDROCK ? 1 : 0);
@@ -171,7 +177,7 @@ public class HybridGen extends IndependentPlotGenerator {
                         result.setBlock(x, y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
                     }
                     if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, biomes);
+                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, false, biomes);
                     }
                 }
             } else if (insideWallX[x]) {
@@ -182,7 +188,7 @@ public class HybridGen extends IndependentPlotGenerator {
                             result.setBlock(x, y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
                         }
                         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, biomes);
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, false, biomes);
                         }
                     } else {
                         // wall
@@ -194,7 +200,7 @@ public class HybridGen extends IndependentPlotGenerator {
                                 result.setBlock(x, hybridPlotWorld.WALL_HEIGHT + 1, z, hybridPlotWorld.WALL_BLOCK.toPattern());
                             }
                         } else {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, biomes);
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, false, biomes);
                         }
                     }
                 }
@@ -206,7 +212,7 @@ public class HybridGen extends IndependentPlotGenerator {
                             result.setBlock(x, y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
                         }
                         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, biomes);
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, false, biomes);
                         }
                     } else if (insideWallZ[z]) {
                         // wall
@@ -218,7 +224,7 @@ public class HybridGen extends IndependentPlotGenerator {
                                 result.setBlock(x, hybridPlotWorld.WALL_HEIGHT + 1, z, hybridPlotWorld.WALL_BLOCK.toPattern());
                             }
                         } else {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, biomes);
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, false, biomes);
                         }
                     } else {
                         // plot
@@ -227,12 +233,144 @@ public class HybridGen extends IndependentPlotGenerator {
                         }
                         result.setBlock(x, hybridPlotWorld.PLOT_HEIGHT, z, hybridPlotWorld.TOP_BLOCK.toPattern());
                         if (hybridPlotWorld.PLOT_SCHEMATIC) {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, false, biomes);
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, false, false, biomes);
                         }
                     }
                 }
             }
         }
+    }
+
+    @Override
+    public boolean populateChunk(final ZeroedDelegateScopedQueueCoordinator result, final PlotArea settings) {
+        HybridPlotWorld hybridPlotWorld = (HybridPlotWorld) settings;
+        if (!hybridPlotWorld.populationNeeded()) {
+            return false;
+        }
+        // Coords
+        Location min = result.getMin();
+        int bx = min.getX() - hybridPlotWorld.ROAD_OFFSET_X;
+        int bz = min.getZ() - hybridPlotWorld.ROAD_OFFSET_Z;
+        // The relative X-coordinate (within the plot) of the minimum X coordinate
+        // contained in the scoped queue
+        short relativeOffsetX;
+        if (bx < 0) {
+            relativeOffsetX = (short) (hybridPlotWorld.SIZE + (bx % hybridPlotWorld.SIZE));
+        } else {
+            relativeOffsetX = (short) (bx % hybridPlotWorld.SIZE);
+        }
+        // The relative Z-coordinate (within the plot) of the minimum Z coordinate
+        // contained in the scoped queue
+        short relativeOffsetZ;
+        if (bz < 0) {
+            relativeOffsetZ = (short) (hybridPlotWorld.SIZE + (bz % hybridPlotWorld.SIZE));
+        } else {
+            relativeOffsetZ = (short) (bz % hybridPlotWorld.SIZE);
+        }
+        boolean allRoad = true;
+        boolean overlap = false;
+
+        // The X-coordinate of a given X coordinate, relative to the
+        // plot (Counting from the corner with the least positive
+        // coordinates)
+        short[] relativeX = new short[16];
+        boolean[] insideRoadX = new boolean[16];
+        boolean[] insideWallX = new boolean[16];
+        short offsetX = relativeOffsetX;
+        for (short i = 0; i < 16; i++) {
+            if (offsetX >= hybridPlotWorld.SIZE) {
+                offsetX -= hybridPlotWorld.SIZE;
+                overlap = true;
+            }
+            relativeX[i] = offsetX;
+            if (hybridPlotWorld.ROAD_WIDTH != 0) {
+                boolean insideRoad = offsetX < hybridPlotWorld.PATH_WIDTH_LOWER || offsetX > hybridPlotWorld.PATH_WIDTH_UPPER;
+                boolean insideWall = offsetX == hybridPlotWorld.PATH_WIDTH_LOWER || offsetX == hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideRoadX[i] = insideRoad;
+                insideWallX[i] = insideWall;
+                allRoad &= insideRoad && insideWall;
+            }
+            offsetX++;
+        }
+
+        // The Z-coordinate of a given Z coordinate, relative to the
+        // plot (Counting from the corner with the least positive
+        // coordinates)
+        short[] relativeZ = new short[16];
+        boolean[] insideRoadZ = new boolean[16];
+        boolean[] insideWallZ = new boolean[16];
+        short offsetZ = relativeOffsetZ;
+        for (short i = 0; i < 16; i++) {
+            if (offsetZ >= hybridPlotWorld.SIZE) {
+                offsetZ -= hybridPlotWorld.SIZE;
+                overlap = true;
+            }
+            relativeZ[i] = offsetZ;
+            if (hybridPlotWorld.ROAD_WIDTH != 0) {
+                boolean insideRoad = offsetZ < hybridPlotWorld.PATH_WIDTH_LOWER || offsetZ > hybridPlotWorld.PATH_WIDTH_UPPER;
+                boolean insideWall = offsetZ == hybridPlotWorld.PATH_WIDTH_LOWER || offsetZ == hybridPlotWorld.PATH_WIDTH_UPPER;
+                insideRoadZ[i] = insideRoad;
+                insideWallZ[i] = insideWall;
+                allRoad &= insideRoad && insideWall;
+            }
+            offsetZ++;
+        }
+        for (short x = 0; x < 16; x++) {
+            if (insideRoadX[x] || insideWallX[x]) {
+                if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
+                    for (short z = 0; z < 16; z++) {
+                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, true, false);
+                    }
+                }
+            } else {
+                for (short z = 0; z < 16; z++) {
+                    if (insideRoadZ[z] || insideWallZ[z]) {
+                        if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, true, false);
+                        }
+                    } else if (hybridPlotWorld.PLOT_SCHEMATIC) {
+                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, false, true, false);
+                    }
+                }
+            }
+        }
+        if (!allRoad && hybridPlotWorld.getPlotSchematicEntities() != null && !hybridPlotWorld
+                .getPlotSchematicEntities()
+                .isEmpty()) {
+            CuboidRegion region = CHUNK.clone();
+            try {
+                region.shift(hybridPlotWorld
+                        .getPlotSchematicMinPoint()
+                        .add(relativeOffsetX, 0, relativeOffsetZ)
+                        .subtract(hybridPlotWorld.PATH_WIDTH_LOWER + 1, 0, hybridPlotWorld.PATH_WIDTH_LOWER + 1));
+                for (Entity entity : hybridPlotWorld.getPlotSchematicEntities()) {
+                    if (region.contains(entity.getLocation().toVector().toBlockPoint())) {
+                        Vector3 pos = (entity.getLocation().toVector()
+                                .subtract(region.getMinimumPoint().withY(hybridPlotWorld.getPlotSchematicMinPoint().getY()).toVector3()))
+                                .add(min.getBlockVector3().withY(hybridPlotWorld.SCHEM_Y).toVector3());
+                        result.setEntity(new PopulatingEntity(
+                                entity,
+                                new com.sk89q.worldedit.util.Location(NullWorld.getInstance(), pos)
+                        ));
+                    }
+                }
+            } catch (RegionOperationException e) {
+                throw new RuntimeException(e);
+            }
+            if (overlap) {
+                try {
+                    region.shift(BlockVector3.at(-hybridPlotWorld.SIZE, 0, -hybridPlotWorld.SIZE));
+                    for (Entity entity : hybridPlotWorld.getPlotSchematicEntities()) {
+                        if (region.contains(entity.getLocation().toVector().toBlockPoint())) {
+                            result.setEntity(entity);
+                        }
+                    }
+                } catch (RegionOperationException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        return true;
     }
 
     @Override
@@ -272,6 +410,60 @@ public class HybridGen extends IndependentPlotGenerator {
         }
         BiomeType biome = hybridPlotWorld.G_SCH_B.get(MathMan.pair((short) relativeX, (short) relativeZ));
         return biome == null ? hybridPlotWorld.getPlotBiome() : biome;
+    }
+
+    /**
+     * Wrapper to allow a WorldEdit {@link Entity} to effectively have a mutable location as the location in its NBT should be changed
+     * when set to the world.
+     *
+     * @since 6.9.0
+     */
+    private static final class PopulatingEntity implements Entity {
+
+        private final Entity parent;
+        private com.sk89q.worldedit.util.Location location;
+
+        /**
+         * @since 6.9.0
+         */
+        private PopulatingEntity(Entity parent, com.sk89q.worldedit.util.Location location) {
+            this.parent = parent;
+            this.location = location;
+        }
+
+        @Nullable
+        @Override
+        public BaseEntity getState() {
+            return parent.getState();
+        }
+
+        @Override
+        public boolean remove() {
+            return parent.remove();
+        }
+
+        @Override
+        public com.sk89q.worldedit.util.Location getLocation() {
+            return location;
+        }
+
+        @Override
+        public boolean setLocation(final com.sk89q.worldedit.util.Location location) {
+            this.location = location;
+            return true;
+        }
+
+        @Override
+        public Extent getExtent() {
+            return parent.getExtent();
+        }
+
+        @Nullable
+        @Override
+        public <T> T getFacet(final Class<? extends T> cls) {
+            return parent.getFacet(cls);
+        }
+
     }
 
 }

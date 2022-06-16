@@ -1,32 +1,24 @@
 /*
- *       _____  _       _    _____                                _
- *      |  __ \| |     | |  / ____|                              | |
- *      | |__) | | ___ | |_| (___   __ _ _   _  __ _ _ __ ___  __| |
- *      |  ___/| |/ _ \| __|\___ \ / _` | | | |/ _` | '__/ _ \/ _` |
- *      | |    | | (_) | |_ ____) | (_| | |_| | (_| | | |  __/ (_| |
- *      |_|    |_|\___/ \__|_____/ \__, |\__,_|\__,_|_|  \___|\__,_|
- *                                    | |
- *                                    |_|
- *            PlotSquared plot management system for Minecraft
- *               Copyright (C) 2014 - 2022 IntellectualSites
+ * PlotSquared, a land and world management plugin for Minecraft.
+ * Copyright (C) IntellectualSites <https://intellectualsites.com>
+ * Copyright (C) IntellectualSites team and contributors
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -76,11 +68,6 @@ public class RegionUtil {
         return new CuboidRegion(min, max);
     }
 
-    @Deprecated(forRemoval = true, since = "6.6.0")
-    public static CuboidRegion createRegion(int pos1x, int pos2x, int pos1z, int pos2z) {
-        return createRegion(pos1x, pos2x, 0, 255, pos1z, pos2z);
-    }
-
     public static CuboidRegion createRegion(
             int pos1x, int pos2x, int pos1y, int pos2y, int pos1z,
             int pos2z
@@ -109,7 +96,7 @@ public class RegionUtil {
         return new Rectangle2D.Double(min.getX(), min.getZ(), max.getX(), max.getZ());
     }
 
-    // Because WE (not fawe) lack this for CuboidRegion
+    // Because WorldEdit (not FastAsyncWorldEdit) lack this for CuboidRegion
     public static boolean intersects(CuboidRegion region, CuboidRegion other) {
         BlockVector3 regionMin = region.getMinimumPoint();
         BlockVector3 regionMax = region.getMaximumPoint();

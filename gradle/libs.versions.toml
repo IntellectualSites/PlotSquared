@@ -5,10 +5,6 @@ checker-qual = "3.22.0"
 guice = "5.1.0"
 spotbugs = "4.7.0"
 
-# Adventure & MiniMessage
-adventure-api = "4.10.1"
-adventure-platform-bukkit = "4.1.0"
-
 # Plugins
 worldedit = "7.2.10"
 placeholderapi = "2.11.1"
@@ -39,11 +35,6 @@ checkerqual = { group = "org.checkerframework", name = "checker-qual", version.r
 guice = { group = "com.google.inject", name = "guice", version.ref = "guice" }
 guiceassistedinject = { group = "com.google.inject.extensions", name = "guice-assistedinject", version.ref = "guice" }
 spotbugs = { group = "com.github.spotbugs", name = "spotbugs-annotations", version.ref = "spotbugs" }
-
-# Adventure & MiniMessage
-adventure = { group = "net.kyori", name = "adventure-api", version.ref = "adventure-api" }
-minimessage = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "adventure-api" }
-adventurePlatformBukkit = { group = "net.kyori", name = "adventure-platform-bukkit", version.ref = "adventure-platform-bukkit" }
 
 # Plugins
 worldeditCore = { group = "com.sk89q.worldedit", name = "worldedit-core", version.ref = "worldedit" }

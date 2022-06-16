@@ -1,27 +1,20 @@
 /*
- *       _____  _       _    _____                                _
- *      |  __ \| |     | |  / ____|                              | |
- *      | |__) | | ___ | |_| (___   __ _ _   _  __ _ _ __ ___  __| |
- *      |  ___/| |/ _ \| __|\___ \ / _` | | | |/ _` | '__/ _ \/ _` |
- *      | |    | | (_) | |_ ____) | (_| | |_| | (_| | | |  __/ (_| |
- *      |_|    |_|\___/ \__|_____/ \__, |\__,_|\__,_|_|  \___|\__,_|
- *                                    | |
- *                                    |_|
- *            PlotSquared plot management system for Minecraft
- *               Copyright (C) 2014 - 2022 IntellectualSites
+ * PlotSquared, a land and world management plugin for Minecraft.
+ * Copyright (C) IntellectualSites <https://intellectualsites.com>
+ * Copyright (C) IntellectualSites team and contributors
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.queue;
 
@@ -58,6 +51,7 @@ public class ChunkCoordinatorBuilder {
     private long maxIterationTime = Settings.QUEUE.MAX_ITERATION_TIME; // A little over 1 tick;
     private int initialBatchSize = Settings.QUEUE.INITIAL_BATCH_SIZE;
     private boolean unloadAfter = true;
+    private boolean forceSync = false;
 
     @Inject
     public ChunkCoordinatorBuilder(@NonNull ChunkCoordinatorFactory chunkCoordinatorFactory) {
@@ -197,6 +191,18 @@ public class ChunkCoordinatorBuilder {
         return this;
     }
 
+    /**
+     * Set whether the chunks coordinator should be forced to be synchronous. This is not necessarily synchronous to the server,
+     * and simply effectively makes {@link ChunkCoordinator#start()} ()} a blocking operation.
+     *
+     * @param forceSync force sync or not
+     * @since 6.9.0
+     */
+    public @NonNull ChunkCoordinatorBuilder forceSync(final boolean forceSync) {
+        this.forceSync = forceSync;
+        return this;
+    }
+
     public @NonNull ChunkCoordinatorBuilder withProgressSubscriber(ProgressSubscriber progressSubscriber) {
         this.progressSubscribers.add(progressSubscriber);
         return this;
@@ -227,7 +233,8 @@ public class ChunkCoordinatorBuilder {
                         this.whenDone,
                         this.throwableConsumer,
                         this.unloadAfter,
-                        this.progressSubscribers
+                        this.progressSubscribers,
+                        this.forceSync
                 );
     }
 

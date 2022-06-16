@@ -1,27 +1,20 @@
 /*
- *       _____  _       _    _____                                _
- *      |  __ \| |     | |  / ____|                              | |
- *      | |__) | | ___ | |_| (___   __ _ _   _  __ _ _ __ ___  __| |
- *      |  ___/| |/ _ \| __|\___ \ / _` | | | |/ _` | '__/ _ \/ _` |
- *      | |    | | (_) | |_ ____) | (_| | |_| | (_| | | |  __/ (_| |
- *      |_|    |_|\___/ \__|_____/ \__, |\__,_|\__,_|_|  \___|\__,_|
- *                                    | |
- *                                    |_|
- *            PlotSquared plot management system for Minecraft
- *               Copyright (C) 2014 - 2022 IntellectualSites
+ * PlotSquared, a land and world management plugin for Minecraft.
+ * Copyright (C) IntellectualSites <https://intellectualsites.com>
+ * Copyright (C) IntellectualSites team and contributors
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.queue;
 
@@ -40,14 +33,12 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public abstract class QueueCoordinator {
@@ -71,38 +62,6 @@ public abstract class QueueCoordinator {
     }
 
     /**
-     * Get a {@link ZeroedDelegateScopedQueueCoordinator} limited to the chunk at the specific chunk Coordinates
-     *
-     * @param x chunk x coordinate
-     * @param z chunk z coordinate
-     * @return a new {@link ZeroedDelegateScopedQueueCoordinator}
-     * @deprecated Use {@link ZeroedDelegateScopedQueueCoordinator#getForChunk(int, int, int, int)}
-     */
-    @Deprecated(forRemoval = true, since = "6.6.0")
-    public ZeroedDelegateScopedQueueCoordinator getForChunk(int x, int z) {
-        if (getWorld() == null) {
-            return getForChunk(x, z, PlotSquared.platform().versionMinHeight(), PlotSquared.platform().versionMaxHeight());
-        }
-        return getForChunk(x, z, getWorld().getMinY(), getWorld().getMaxY());
-    }
-
-    /**
-     * Get a {@link ZeroedDelegateScopedQueueCoordinator} limited to the chunk at the specific chunk Coordinates
-     *
-     * @param x chunk x coordinate
-     * @param z chunk z coordinate
-     * @return a new {@link ZeroedDelegateScopedQueueCoordinator}
-     * @since 6.6.0
-     */
-    public ZeroedDelegateScopedQueueCoordinator getForChunk(int x, int z, int minY, int maxY) {
-        int bx = x << 4;
-        int bz = z << 4;
-        return new ZeroedDelegateScopedQueueCoordinator(this, Location.at(getWorld().getName(), bx, minY, bz),
-                Location.at(getWorld().getName(), bx + 15, maxY, bz + 15)
-        );
-    }
-
-    /**
      * Get the size of the queue in chunks
      *
      * @return size
@@ -117,7 +76,8 @@ public abstract class QueueCoordinator {
     public abstract void setModified(long modified);
 
     /**
-     * Returns true if the queue should be forced to be synchronous when enqueued.
+     * Returns true if the queue should be forced to be synchronous when enqueued. This is not necessarily synchronous to the
+     * server, and simply effectively makes {@link QueueCoordinator#enqueue()} a blocking operation.
      *
      * @return is force sync
      */
@@ -126,7 +86,8 @@ public abstract class QueueCoordinator {
     }
 
     /**
-     * Set whether the queue should be forced to be synchronous
+     * Set whether the queue should be forced to be synchronous. This is not necessarily synchronous to the server, and simply
+     * effectively makes {@link QueueCoordinator#enqueue()} a blocking operation.
      *
      * @param forceSync force sync or not
      */
