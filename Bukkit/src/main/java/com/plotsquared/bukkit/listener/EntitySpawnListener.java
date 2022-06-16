@@ -140,8 +140,8 @@ public class EntitySpawnListener implements Listener {
                 if (type == EntityType.DROPPED_ITEM) {
                     if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
                         event.setCancelled(true);
-                        return;
                     }
+                    return;
                 }
                 if (type.isAlive()) {
                     event.setCancelled(true);

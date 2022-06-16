@@ -233,10 +233,17 @@ public class BlockEventListener implements Listener {
             plot.debug("Prevented block physics and resent block change because disable-physics = true");
             return;
         }
-        if (event.getChangedType() == Material.COMPARATOR || PHYSICS_BLOCKS.contains(event.getChangedType())) {
+        if (event.getChangedType() == Material.COMPARATOR) {
             if (!plot.getFlag(RedstoneFlag.class)) {
                 event.setCancelled(true);
                 plot.debug("Prevented comparator update because redstone = false");
+            }
+            return;
+        }
+        if (PHYSICS_BLOCKS.contains(event.getChangedType())) {
+            if (plot.getFlag(DisablePhysicsFlag.class)) {
+                event.setCancelled(true);
+                plot.debug("Prevented block physics because disable-physics = true");
             }
             return;
         }
@@ -682,28 +689,29 @@ public class BlockEventListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        if (Tag.ICE.isTagged(block.getType())) {
+        Material blockType = block.getType();
+        if (Tag.ICE.isTagged(blockType)) {
             if (!plot.getFlag(IceMeltFlag.class)) {
                 plot.debug("Ice could not melt because ice-melt = false");
                 event.setCancelled(true);
             }
             return;
         }
-        if (Tag.SNOW.isTagged(block.getType())) {
+        if (Tag.SNOW.isTagged(blockType)) {
             if (!plot.getFlag(SnowMeltFlag.class)) {
                 plot.debug("Snow could not melt because snow-melt = false");
                 event.setCancelled(true);
             }
             return;
         }
-        if (block.getType() == Material.FARMLAND) {
+        if (blockType == Material.FARMLAND) {
             if (!plot.getFlag(SoilDryFlag.class)) {
                 plot.debug("Soil could not dry because soil-dry = false");
                 event.setCancelled(true);
             }
             return;
         }
-        if (Tag.CORAL_BLOCKS.isTagged(block.getType())) {
+        if (Tag.CORAL_BLOCKS.isTagged(blockType) || Tag.CORALS.isTagged(blockType)) {
             if (!plot.getFlag(CoralDryFlag.class)) {
                 plot.debug("Coral could not dry because coral-dry = false");
                 event.setCancelled(true);

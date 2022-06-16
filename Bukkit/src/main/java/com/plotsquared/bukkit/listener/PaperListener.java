@@ -244,8 +244,8 @@ public class PaperListener implements Listener {
                     if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
                         event.setShouldAbortSpawn(true);
                         event.setCancelled(true);
-                        return;
                     }
+                    return;
                 }
                 if (type.isAlive()) {
                     event.setShouldAbortSpawn(true);

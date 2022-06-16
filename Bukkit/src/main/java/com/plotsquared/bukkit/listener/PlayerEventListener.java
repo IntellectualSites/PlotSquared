@@ -852,10 +852,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
         if ((slot > 8) || !event.getEventName().equals("InventoryCreativeEvent")) {
             return;
         }
-        ItemStack current = inv.getItemInHand();
+        ItemStack oldItem = inv.getItemInHand();
+        ItemMeta oldMeta = oldItem.getItemMeta();
         ItemStack newItem = event.getCursor();
         ItemMeta newMeta = newItem.getItemMeta();
-        ItemMeta oldMeta = newItem.getItemMeta();
 
         if (event.getClick() == ClickType.CREATIVE) {
             final Plot plot = pp.getCurrentPlot();
@@ -896,7 +896,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             }
         }
         Material itemType = newItem.getType();
-        if (!"[(+NBT)]".equals(newLore) || (current.equals(newItem) && newLore.equals(oldLore))) {
+        if (!"[(+NBT)]".equals(newLore) || (oldItem.equals(newItem) && newLore.equals(oldLore))) {
             if (newMeta == null || (itemType != Material.LEGACY_BANNER && itemType != Material.PLAYER_HEAD)) {
                 return;
             }
@@ -953,7 +953,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             }
         }
         if (cancelled) {
-            if ((current.getType() == newItem.getType()) && (current.getDurability() == newItem
+            if ((oldItem.getType() == newItem.getType()) && (oldItem.getDurability() == newItem
                     .getDurability())) {
                 event.setCursor(
                         new ItemStack(newItem.getType(), newItem.getAmount(), newItem.getDurability()));
