@@ -1,27 +1,20 @@
 /*
- *       _____  _       _    _____                                _
- *      |  __ \| |     | |  / ____|                              | |
- *      | |__) | | ___ | |_| (___   __ _ _   _  __ _ _ __ ___  __| |
- *      |  ___/| |/ _ \| __|\___ \ / _` | | | |/ _` | '__/ _ \/ _` |
- *      | |    | | (_) | |_ ____) | (_| | |_| | (_| | | |  __/ (_| |
- *      |_|    |_|\___/ \__|_____/ \__, |\__,_|\__,_|_|  \___|\__,_|
- *                                    | |
- *                                    |_|
- *            PlotSquared plot management system for Minecraft
- *               Copyright (C) 2014 - 2022 IntellectualSites
+ * PlotSquared, a land and world management plugin for Minecraft.
+ * Copyright (C) IntellectualSites <https://intellectualsites.com>
+ * Copyright (C) IntellectualSites team and contributors
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration;
 
@@ -44,7 +37,7 @@ public class Settings extends Config {
 
     @Comment("This value is not configurable. It shows the platform you are using.") // This is a comment
     @Final
-    public static String PLATFORM; // These values are set from P2 before loading
+    public static String PLATFORM; // These values are set from PlotSquared before loading
 
     @Comment({"Show additional information in console. It helps us at IntellectualSites to find out more about an issue.",
             "Leave it off if you don't need it, it can spam your console."})
@@ -634,10 +627,10 @@ public class Settings extends Config {
 
     }
 
-    @Comment("Enable or disable all of or parts of the FAWE-P2 hook")
+    @Comment("Enable or disable all of or parts of the FastAsyncWorldEdit-PlotSquared hook")
     public static final class FAWE_Components {
 
-        @Comment("Use FAWE for queue handling.")
+        @Comment("Use FastAsyncWorldEdit for queue handling.")
         public static boolean FAWE_HOOK = true;
         public static boolean CUBOIDS = true;
         public static boolean CLEAR = true;

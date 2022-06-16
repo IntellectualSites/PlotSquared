@@ -1,27 +1,20 @@
 /*
- *       _____  _       _    _____                                _
- *      |  __ \| |     | |  / ____|                              | |
- *      | |__) | | ___ | |_| (___   __ _ _   _  __ _ _ __ ___  __| |
- *      |  ___/| |/ _ \| __|\___ \ / _` | | | |/ _` | '__/ _ \/ _` |
- *      | |    | | (_) | |_ ____) | (_| | |_| | (_| | | |  __/ (_| |
- *      |_|    |_|\___/ \__|_____/ \__, |\__,_|\__,_|_|  \___|\__,_|
- *                                    | |
- *                                    |_|
- *            PlotSquared plot management system for Minecraft
- *               Copyright (C) 2014 - 2022 IntellectualSites
+ * PlotSquared, a land and world management plugin for Minecraft.
+ * Copyright (C) IntellectualSites <https://intellectualsites.com>
+ * Copyright (C) IntellectualSites team and contributors
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
@@ -165,56 +158,6 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
             }
         }
         return list.asComponent();
-    }
-
-    /**
-     * Get the name from a UUID.
-     *
-     * @param owner Owner UUID
-     * @return The player's name, None, Everyone or Unknown
-     * @deprecated Use {@link #resolveName(UUID)}
-     */
-    @Deprecated(forRemoval = true, since = "6.4.0")
-    public static @NonNull String getName(final @Nullable UUID owner) {
-        return getName(owner, true);
-    }
-
-    /**
-     * Get the name from a UUID.
-     *
-     * @param owner    Owner UUID
-     * @param blocking Whether or not the operation can be blocking
-     * @return The player's name, None, Everyone or Unknown
-     * @deprecated Use {@link #resolveName(UUID, boolean)}
-     */
-    @Deprecated(forRemoval = true, since = "6.4.0")
-    public static @NonNull String getName(final @Nullable UUID owner, final boolean blocking) {
-        if (owner == null) {
-            TranslatableCaption.of("info.none");
-        }
-        if (owner.equals(DBFunc.EVERYONE)) {
-            TranslatableCaption.of("info.everyone");
-        }
-        if (owner.equals(DBFunc.SERVER)) {
-            TranslatableCaption.of("info.server");
-        }
-        final String name;
-        if (blocking) {
-            name = PlotSquared.get().getImpromptuUUIDPipeline()
-                    .getSingle(owner, Settings.UUID.BLOCKING_TIMEOUT);
-        } else {
-            final UUIDMapping uuidMapping =
-                    PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(owner);
-            if (uuidMapping != null) {
-                name = uuidMapping.getUsername();
-            } else {
-                name = null;
-            }
-        }
-        if (name == null) {
-            TranslatableCaption.of("info.unknown");
-        }
-        return name;
     }
 
     /**

@@ -1,27 +1,20 @@
 /*
- *       _____  _       _    _____                                _
- *      |  __ \| |     | |  / ____|                              | |
- *      | |__) | | ___ | |_| (___   __ _ _   _  __ _ _ __ ___  __| |
- *      |  ___/| |/ _ \| __|\___ \ / _` | | | |/ _` | '__/ _ \/ _` |
- *      | |    | | (_) | |_ ____) | (_| | |_| | (_| | | |  __/ (_| |
- *      |_|    |_|\___/ \__|_____/ \__, |\__,_|\__,_|_|  \___|\__,_|
- *                                    | |
- *                                    |_|
- *            PlotSquared plot management system for Minecraft
- *               Copyright (C) 2014 - 2022 IntellectualSites
+ * PlotSquared, a land and world management plugin for Minecraft.
+ * Copyright (C) IntellectualSites <https://intellectualsites.com>
+ * Copyright (C) IntellectualSites team and contributors
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.generator;
 
@@ -49,8 +42,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-public class BukkitPlotGenerator extends ChunkGenerator
-        implements GeneratorWrapper<ChunkGenerator> {
+public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrapper<ChunkGenerator> {
 
     @SuppressWarnings("unused")
     public final boolean PAPER_ASYNC_SAFE = true;
@@ -73,7 +65,12 @@ public class BukkitPlotGenerator extends ChunkGenerator
         this.plotGenerator = generator;
         this.platformGenerator = this;
         this.populators = new ArrayList<>();
-        this.populators.add(new BlockStatePopulator(this.plotGenerator, this.plotAreaManager));
+        int minecraftMinorVersion = PlotSquared.platform().serverVersion()[1];
+        if (minecraftMinorVersion >= 17) {
+            this.populators.add(new BlockStatePopulator(this.plotGenerator));
+        } else {
+            this.populators.add(new LegacyBlockStatePopulator(this.plotGenerator));
+        }
         this.full = true;
     }
 
@@ -112,30 +109,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
     @Override
     public @NonNull List<BlockPopulator> getDefaultPopulators(@NonNull World world) {
         try {
-            if (!this.loaded) {
-                String name = world.getName();
-                PlotSquared.get().loadWorld(name, this);
-                final Set<PlotArea> areas = this.plotAreaManager.getPlotAreasSet(name);
-                if (!areas.isEmpty()) {
-                    PlotArea area = areas.iterator().next();
-                    if (!area.isMobSpawning()) {
-                        if (!area.isSpawnEggs()) {
-                            world.setSpawnFlags(false, false);
-                        }
-                        world.setAmbientSpawnLimit(0);
-                        world.setAnimalSpawnLimit(0);
-                        world.setMonsterSpawnLimit(0);
-                        world.setWaterAnimalSpawnLimit(0);
-                    } else {
-                        world.setSpawnFlags(true, true);
-                        world.setAmbientSpawnLimit(-1);
-                        world.setAnimalSpawnLimit(-1);
-                        world.setMonsterSpawnLimit(-1);
-                        world.setWaterAnimalSpawnLimit(-1);
-                    }
-                }
-                this.loaded = true;
-            }
+            checkLoaded(world);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -154,12 +128,44 @@ public class BukkitPlotGenerator extends ChunkGenerator
         return toAdd;
     }
 
+    private synchronized void checkLoaded(@NonNull World world) {
+        // Do not attempt to load configurations until WorldEdit has a platform ready.
+        if (!PlotSquared.get().isWeInitialised()) {
+            return;
+        }
+        if (!this.loaded) {
+            String name = world.getName();
+            PlotSquared.get().loadWorld(name, this);
+            final Set<PlotArea> areas = this.plotAreaManager.getPlotAreasSet(name);
+            if (!areas.isEmpty()) {
+                PlotArea area = areas.iterator().next();
+                if (!area.isMobSpawning()) {
+                    if (!area.isSpawnEggs()) {
+                        world.setSpawnFlags(false, false);
+                    }
+                    setSpawnLimits(world, 0);
+                } else {
+                    world.setSpawnFlags(true, true);
+                    setSpawnLimits(world, -1);
+                }
+            }
+            this.loaded = true;
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void setSpawnLimits(@NonNull World world, int limit) {
+        world.setAmbientSpawnLimit(limit);
+        world.setAnimalSpawnLimit(limit);
+        world.setMonsterSpawnLimit(limit);
+        world.setWaterAnimalSpawnLimit(limit);
+    }
+
     @Override
     public @NonNull ChunkData generateChunkData(
             @NonNull World world, @NonNull Random random, int x, int z,
             @NonNull BiomeGrid biome
     ) {
-
         int minY = BukkitWorld.getMinWorldHeight(world);
         int maxY = BukkitWorld.getMaxWorldHeight(world);
         GenChunk result = new GenChunk(minY, maxY);
@@ -201,9 +207,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
     private void generate(BlockVector2 loc, World world, ZeroedDelegateScopedQueueCoordinator result) {
         // Load if improperly loaded
         if (!this.loaded) {
-            String name = world.getName();
-            PlotSquared.get().loadWorld(name, this);
-            this.loaded = true;
+            checkLoaded(world);
         }
         // Process the chunk
         if (ChunkManager.preProcessChunk(loc, result)) {
