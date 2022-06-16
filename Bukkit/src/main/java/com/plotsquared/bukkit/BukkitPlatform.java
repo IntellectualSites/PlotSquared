@@ -656,20 +656,15 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             final @NonNull SQLiteUUIDService sqLiteUUIDService,
             final @NonNull CacheUUIDService cacheUUIDService
     ) {
-        // Load all uuids into a big chunky boi queue
-        final Queue<UUID> uuidQueue = new LinkedBlockingQueue<>();
+        // Record all unique UUID's and put them into a queue
+        final Set<UUID> uuidSet = new HashSet<>();
         PlotSquared.get().forEachPlotRaw(plot -> {
-            final Set<UUID> uuids = new HashSet<>();
-            uuids.add(plot.getOwnerAbs());
-            uuids.addAll(plot.getMembers());
-            uuids.addAll(plot.getTrusted());
-            uuids.addAll(plot.getDenied());
-            for (final UUID uuid : uuids) {
-                if (!uuidQueue.contains(uuid)) {
-                    uuidQueue.add(uuid);
-                }
-            }
+            uuidSet.add(plot.getOwnerAbs());
+            uuidSet.addAll(plot.getMembers());
+            uuidSet.addAll(plot.getTrusted());
+            uuidSet.addAll(plot.getDenied());
         });
+        final Queue<UUID> uuidQueue = new LinkedBlockingQueue<>(uuidSet);
 
         LOGGER.info("(UUID) {} UUIDs will be cached", uuidQueue.size());
 
