@@ -423,8 +423,7 @@ public class Area extends SubCommand {
                                         player.sendMessage(TranslatableCaption.of("setup.setup_finished"));
                                         if (area.getTerrain() != PlotAreaTerrainType.ALL) {
                                             QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(world));
-                                            queue.setChunkConsumer(chunk -> AugmentedUtils.generate(
-                                                    null,
+                                            queue.setChunkConsumer(chunk -> AugmentedUtils.generateChunk(
                                                     world,
                                                     chunk.getX(),
                                                     chunk.getZ(),
@@ -796,8 +795,7 @@ public class Area extends SubCommand {
                     return false;
                 }
                 QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(area.getWorldName()));
-                queue.setChunkConsumer(chunk -> AugmentedUtils.generate(
-                        null,
+                queue.setChunkConsumer(chunk -> AugmentedUtils.generateChunk(
                         area.getWorldName(),
                         chunk.getX(),
                         chunk.getZ(),

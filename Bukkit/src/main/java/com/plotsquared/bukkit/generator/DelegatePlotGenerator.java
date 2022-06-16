@@ -24,7 +24,7 @@ import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.queue.ScopedQueueCoordinator;
+import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.plotsquared.core.util.MathMan;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import org.bukkit.World;
@@ -60,7 +60,7 @@ final class DelegatePlotGenerator extends IndependentPlotGenerator {
     }
 
     @Override
-    public void generateChunk(final ScopedQueueCoordinator result, PlotArea settings) {
+    public void generateChunk(final ZeroedDelegateScopedQueueCoordinator result, PlotArea settings) {
         World world = BukkitUtil.getWorld(this.world);
         Location min = result.getMin();
         int chunkX = min.getX() >> 4;

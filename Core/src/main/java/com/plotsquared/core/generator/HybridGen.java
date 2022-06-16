@@ -26,7 +26,7 @@ import com.plotsquared.core.inject.factory.HybridPlotWorldFactory;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.queue.ScopedQueueCoordinator;
+import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.plotsquared.core.util.MathMan;
 import com.sk89q.worldedit.entity.BaseEntity;
 import com.sk89q.worldedit.entity.Entity;
@@ -59,7 +59,7 @@ public class HybridGen extends IndependentPlotGenerator {
 
     private void placeSchem(
             HybridPlotWorld world,
-            ScopedQueueCoordinator result,
+            ZeroedDelegateScopedQueueCoordinator result,
             short relativeX,
             short relativeZ,
             int x,
@@ -90,7 +90,7 @@ public class HybridGen extends IndependentPlotGenerator {
     }
 
     @Override
-    public void generateChunk(@NonNull ScopedQueueCoordinator result, @NonNull PlotArea settings) {
+    public void generateChunk(@NonNull ZeroedDelegateScopedQueueCoordinator result, @NonNull PlotArea settings) {
         Preconditions.checkNotNull(result, "result cannot be null");
         Preconditions.checkNotNull(settings, "settings cannot be null");
 
@@ -236,7 +236,7 @@ public class HybridGen extends IndependentPlotGenerator {
     }
 
     @Override
-    public boolean populateChunk(final ScopedQueueCoordinator result, final PlotArea settings) {
+    public boolean populateChunk(final ZeroedDelegateScopedQueueCoordinator result, final PlotArea settings) {
         HybridPlotWorld hybridPlotWorld = (HybridPlotWorld) settings;
         if (!hybridPlotWorld.populationNeeded()) {
             return false;

@@ -62,35 +62,17 @@ public abstract class QueueCoordinator {
     }
 
     /**
-     * Get a {@link ScopedQueueCoordinator} limited to the chunk at the specific chunk Coordinates
+     * Get a {@link ZeroedDelegateScopedQueueCoordinator} limited to the chunk at the specific chunk Coordinates
      *
      * @param x chunk x coordinate
      * @param z chunk z coordinate
-     * @return a new {@link ScopedQueueCoordinator}
-     * @deprecated Use {@link ScopedQueueCoordinator#getForChunk(int, int, int, int)}
+     * @return a new {@link ZeroedDelegateScopedQueueCoordinator}
+     * @since TODO
      */
-    @Deprecated(forRemoval = true, since = "6.6.0")
-    public ScopedQueueCoordinator getForChunk(int x, int z) {
-        if (getWorld() == null) {
-            return getForChunk(x, z, PlotSquared.platform().versionMinHeight(), PlotSquared.platform().versionMaxHeight());
-        }
-        return getForChunk(x, z, getWorld().getMinY(), getWorld().getMaxY());
-    }
-
-    /**
-     * Get a {@link ScopedQueueCoordinator} limited to the chunk at the specific chunk Coordinates
-     *
-     * @param x chunk x coordinate
-     * @param z chunk z coordinate
-     * @return a new {@link ScopedQueueCoordinator}
-     * @since 6.6.0
-     * @deprecated {@link ScopedQueueCoordinator} will be renamed in v7.
-     */
-    @Deprecated(forRemoval = true, since = "6.9.0")
-    public ScopedQueueCoordinator getForChunk(int x, int z, int minY, int maxY) {
+    public ZeroedDelegateScopedQueueCoordinator getForChunk(int x, int z, int minY, int maxY) {
         int bx = x << 4;
         int bz = z << 4;
-        return new ScopedQueueCoordinator(this, Location.at(getWorld().getName(), bx, minY, bz),
+        return new ZeroedDelegateScopedQueueCoordinator(this, Location.at(getWorld().getName(), bx, minY, bz),
                 Location.at(getWorld().getName(), bx + 15, maxY, bz + 15)
         );
     }

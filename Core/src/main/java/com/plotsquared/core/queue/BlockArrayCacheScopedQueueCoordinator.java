@@ -38,7 +38,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * {@link BlockArrayCacheScopedQueueCoordinator#setOffsetZ(int)}
  */
 @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to change at any time and created for specific use cases.")
-public class BlockArrayCacheScopedQueueCoordinator extends ScopedQueueCoordinator {
+public class BlockArrayCacheScopedQueueCoordinator extends ZeroedDelegateScopedQueueCoordinator {
 
     private final BlockState[][][] blockStates;
     private final int height;
