@@ -1,27 +1,20 @@
 /*
- *       _____  _       _    _____                                _
- *      |  __ \| |     | |  / ____|                              | |
- *      | |__) | | ___ | |_| (___   __ _ _   _  __ _ _ __ ___  __| |
- *      |  ___/| |/ _ \| __|\___ \ / _` | | | |/ _` | '__/ _ \/ _` |
- *      | |    | | (_) | |_ ____) | (_| | |_| | (_| | | |  __/ (_| |
- *      |_|    |_|\___/ \__|_____/ \__, |\__,_|\__,_|_|  \___|\__,_|
- *                                    | |
- *                                    |_|
- *            PlotSquared plot management system for Minecraft
- *               Copyright (C) 2014 - 2022 IntellectualSites
+ * PlotSquared, a land and world management plugin for Minecraft.
+ * Copyright (C) IntellectualSites <https://intellectualsites.com>
+ * Copyright (C) IntellectualSites team and contributors
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
 
@@ -972,7 +965,31 @@ public abstract class PlotArea implements ComponentLike {
         return this.plots.remove(id) != null;
     }
 
+    /**
+     * Merge a list of plots together. This is non-blocking for the world-changes that will be made. To run a task when the
+     * world changes are complete, use {@link PlotArea#mergePlots(List, boolean, Runnable)};
+     *
+     * @param plotIds     List of plot IDs to merge
+     * @param removeRoads If the roads between plots should be removed
+     * @return if merges were completed successfully.
+     */
     public boolean mergePlots(final @NonNull List<PlotId> plotIds, final boolean removeRoads) {
+        return mergePlots(plotIds, removeRoads, null);
+    }
+
+    /**
+     * Merge a list of plots together. This is non-blocking for the world-changes that will be made.
+     *
+     * @param plotIds     List of plot IDs to merge
+     * @param removeRoads If the roads between plots should be removed
+     * @param whenDone  Task to run when any merge world changes are complete. Also runs if no changes were made. Does not
+     *                    run if there was an error or if too few plots IDs were supplied.
+     * @return if merges were completed successfully.
+     * @since 6.9.0
+     */
+    public boolean mergePlots(
+            final @NonNull List<PlotId> plotIds, final boolean removeRoads, final @Nullable Runnable whenDone
+    ) {
         if (plotIds.size() < 2) {
             return false;
         }
@@ -1035,6 +1052,9 @@ public abstract class PlotArea implements ComponentLike {
             }
         }
         manager.finishPlotMerge(plotIds, queue);
+        if (whenDone != null) {
+            queue.setCompleteTask(whenDone);
+        }
         queue.enqueue();
         return true;
     }
@@ -1356,7 +1376,7 @@ public abstract class PlotArea implements ComponentLike {
     }
 
     /**
-     * Get the min height from which P2 will generate blocks. Inclusive.
+     * Get the min height from which PlotSquared will generate blocks. Inclusive.
      *
      * @since 6.6.0
      */
@@ -1365,7 +1385,7 @@ public abstract class PlotArea implements ComponentLike {
     }
 
     /**
-     * Get the max height to which P2 will generate blocks. Inclusive.
+     * Get the max height to which PlotSquared will generate blocks. Inclusive.
      *
      * @since 6.6.0
      */

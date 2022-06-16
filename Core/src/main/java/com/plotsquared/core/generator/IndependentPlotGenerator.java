@@ -1,27 +1,20 @@
 /*
- *       _____  _       _    _____                                _
- *      |  __ \| |     | |  / ____|                              | |
- *      | |__) | | ___ | |_| (___   __ _ _   _  __ _ _ __ ___  __| |
- *      |  ___/| |/ _ \| __|\___ \ / _` | | | |/ _` | '__/ _ \/ _` |
- *      | |    | | (_) | |_ ____) | (_| | |_| | (_| | | |  __/ (_| |
- *      |_|    |_|\___/ \__|_____/ \__, |\__,_|\__,_|_|  \___|\__,_|
- *                                    | |
- *                                    |_|
- *            PlotSquared plot management system for Minecraft
- *               Copyright (C) 2014 - 2022 IntellectualSites
+ * PlotSquared, a land and world management plugin for Minecraft.
+ * Copyright (C) IntellectualSites <https://intellectualsites.com>
+ * Copyright (C) IntellectualSites team and contributors
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
 
@@ -47,22 +40,25 @@ public abstract class IndependentPlotGenerator {
     public abstract String getName();
 
     /**
-     * Use the setBlock or setBiome method of the PlotChunk result parameter to make changes.
-     * The PlotArea settings is the same one this was initialized with.
-     * The PseudoRandom random is a fast random object.
+     * Generate chunk block data
      *
      * @param result   queue
      * @param settings PlotArea (settings)
      * @deprecated {@link ScopedQueueCoordinator} will be renamed in v7.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.0")
     public abstract void generateChunk(ScopedQueueCoordinator result, PlotArea settings);
 
     /**
+     * Populates the queue representing a chunk area with tile entities and entities
+     *
+     * @param result   Queue to write to
+     * @param settings PlotArea (settings)
+     * @return True if any population occurred
      * @deprecated {@link ScopedQueueCoordinator} will be renamed in v7.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
-    public boolean populateChunk(ScopedQueueCoordinator result, PlotArea setting) {
+    @Deprecated(forRemoval = true, since = "6.9.0")
+    public boolean populateChunk(ScopedQueueCoordinator result, PlotArea settings) {
         return false;
     }
 

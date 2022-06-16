@@ -18,10 +18,12 @@ plugins {
     idea
 }
 
+
+group = "com.intellectualsites.plotsquared"
 version = "7.0.0-SNAPSHOT"
 
-allprojects {
-    group = "com.intellectualsites.plotsquared"
+subprojects {
+    group = rootProject.group
     version = rootProject.version
 
     repositories {
@@ -50,9 +52,7 @@ allprojects {
             url = uri("https://maven.enginehub.org/repo/")
         }
     }
-}
 
-subprojects {
     apply {
         plugin<JavaPlugin>()
         plugin<JavaLibraryPlugin>()
@@ -68,9 +68,7 @@ subprojects {
     dependencies {
         implementation(platform("com.intellectualsites.bom:bom-newest:1.5"))
     }
-}
 
-allprojects {
     dependencies {
         // Tests
         testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
@@ -124,7 +122,7 @@ allprojects {
                 pom {
 
                     name.set(project.name + " " + project.version)
-                    description.set("PlotSquared is a land and world management plugin for Minecraft.")
+                    description.set("PlotSquared, a land and world management plugin for Minecraft.")
                     url.set("https://github.com/IntellectualSites/PlotSquared")
 
                     licenses {
@@ -165,7 +163,7 @@ allprojects {
                         developerConnection.set("scm:git://github.com/IntellectualSites/PlotSquared.git")
                     }
 
-                    issueManagement{
+                    issueManagement {
                         system.set("GitHub")
                         url.set("https://github.com/IntellectualSites/PlotSquared/issues")
                     }
@@ -188,7 +186,6 @@ allprojects {
         shadowJar {
             this.archiveClassifier.set(null as String?)
             this.archiveFileName.set("${project.name}-${project.version}.${this.archiveExtension.getOrElse("jar")}")
-            this.destinationDirectory.set(rootProject.tasks.shadowJar.get().destinationDirectory.get())
         }
 
         named("build") {
@@ -198,7 +195,6 @@ allprojects {
             useJUnitPlatform()
         }
     }
-
 }
 
 nexusPublishing {
@@ -208,4 +204,8 @@ nexusPublishing {
             snapshotRepositoryUrl.set(URI.create("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
         }
     }
+}
+
+tasks.getByName<Jar>("jar") {
+    enabled = false
 }
