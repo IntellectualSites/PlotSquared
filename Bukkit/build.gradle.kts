@@ -99,7 +99,7 @@ tasks {
         val opt = options as StandardJavadocDocletOptions
         opt.links("https://jd.papermc.io/paper/1.18/")
         opt.links("https://docs.enginehub.org/javadoc/com.sk89q.worldedit/worldedit-bukkit/" + libs.worldeditBukkit.get().versionConstraint.toString())
-        opt.links("https://javadoc.io/doc/com.plotsquared/PlotSquared-Core/latest/")
+        opt.links("https://intellectualsites.github.io/plotsquared-javadocs/core/")
         opt.links("https://jd.adventure.kyori.net/api/4.9.3/")
         opt.links("https://google.github.io/guice/api-docs/" + libs.guice.get().versionConstraint.toString() + "/javadoc/")
         opt.links("https://checkerframework.org/api/")
