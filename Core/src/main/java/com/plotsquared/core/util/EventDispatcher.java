@@ -332,6 +332,16 @@ public class EventDispatcher {
     ) {
         PlotArea area = location.getPlotArea();
         assert area != null;
+        if ((location.getY() >= area.getMaxBuildHeight() || location.getY() < area
+                .getMinBuildHeight()) && !Permissions
+                .hasPermission(player, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
+            player.sendMessage(
+                    TranslatableCaption.of("height.height_limit"),
+                    Template.of("minHeight", String.valueOf(area.getMinBuildHeight())),
+                    Template.of("maxHeight", String.valueOf(area.getMaxBuildHeight()))
+            );
+            return false;
+        }
         Plot plot = area.getPlot(location);
         if (plot != null) {
             if (plot.isAdded(player.getUUID())) {
