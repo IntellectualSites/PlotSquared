@@ -124,17 +124,17 @@ public class EntitySpawnListener implements Listener {
             return;
         }
         Plot plot = location.getOwnedPlotAbs();
+        EntityType type = entity.getType();
         if (plot == null) {
-            EntityType type = entity.getType();
             if (!area.isMobSpawning()) {
-                switch (type) {
-                    case DROPPED_ITEM:
-                        if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
-                            event.setCancelled(true);
-                            return;
-                        }
-                    case PLAYER:
-                        return;
+                if (type == EntityType.PLAYER) {
+                    return;
+                }
+                if (type == EntityType.DROPPED_ITEM) {
+                    if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
+                        event.setCancelled(true);
+                    }
+                    return;
                 }
                 if (type.isAlive()) {
                     event.setCancelled(true);
@@ -148,15 +148,16 @@ public class EntitySpawnListener implements Listener {
         if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
             event.setCancelled(true);
         }
-        switch (entity.getType()) {
-            case ENDER_CRYSTAL:
-                if (BukkitEntityUtil.checkEntity(entity, plot)) {
-                    event.setCancelled(true);
-                }
-            case SHULKER:
-                if (!entity.hasMetadata("shulkerPlot")) {
-                    entity.setMetadata("shulkerPlot", new FixedMetadataValue((Plugin) PlotSquared.platform(), plot.getId()));
-                }
+        if (type == EntityType.ENDER_CRYSTAL) {
+            if (BukkitEntityUtil.checkEntity(entity, plot)) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+        if (type == EntityType.SHULKER) {
+            if (!entity.hasMetadata("shulkerPlot")) {
+                entity.setMetadata("shulkerPlot", new FixedMetadataValue((Plugin) PlotSquared.platform(), plot.getId()));
+            }
         }
     }
 
