@@ -115,22 +115,14 @@ public class HybridGen extends IndependentPlotGenerator {
         Location min = result.getMin();
         int bx = min.getX() - hybridPlotWorld.ROAD_OFFSET_X;
         int bz = min.getZ() - hybridPlotWorld.ROAD_OFFSET_Z;
+
         // The relative X-coordinate (within the plot) of the minimum X coordinate
         // contained in the scoped queue
-        short relativeOffsetX;
-        if (bx < 0) {
-            relativeOffsetX = (short) (hybridPlotWorld.SIZE + (bx % hybridPlotWorld.SIZE));
-        } else {
-            relativeOffsetX = (short) (bx % hybridPlotWorld.SIZE);
-        }
+        short relativeOffsetX = (short) Math.floorMod(bx, hybridPlotWorld.SIZE);
         // The relative Z-coordinate (within the plot) of the minimum Z coordinate
         // contained in the scoped queue
-        short relativeOffsetZ;
-        if (bz < 0) {
-            relativeOffsetZ = (short) (hybridPlotWorld.SIZE + (bz % hybridPlotWorld.SIZE));
-        } else {
-            relativeOffsetZ = (short) (bz % hybridPlotWorld.SIZE);
-        }
+        short relativeOffsetZ = (short) Math.floorMod(bz, hybridPlotWorld.SIZE);
+
         // The X-coordinate of a given X coordinate, relative to the
         // plot (Counting from the corner with the least positive
         // coordinates)
@@ -251,22 +243,14 @@ public class HybridGen extends IndependentPlotGenerator {
         Location min = result.getMin();
         int bx = min.getX() - hybridPlotWorld.ROAD_OFFSET_X;
         int bz = min.getZ() - hybridPlotWorld.ROAD_OFFSET_Z;
+
         // The relative X-coordinate (within the plot) of the minimum X coordinate
         // contained in the scoped queue
-        short relativeOffsetX;
-        if (bx < 0) {
-            relativeOffsetX = (short) (hybridPlotWorld.SIZE + (bx % hybridPlotWorld.SIZE));
-        } else {
-            relativeOffsetX = (short) (bx % hybridPlotWorld.SIZE);
-        }
+        short relativeOffsetX = (short) Math.floorMod(bx, hybridPlotWorld.SIZE);
         // The relative Z-coordinate (within the plot) of the minimum Z coordinate
         // contained in the scoped queue
-        short relativeOffsetZ;
-        if (bz < 0) {
-            relativeOffsetZ = (short) (hybridPlotWorld.SIZE + (bz % hybridPlotWorld.SIZE));
-        } else {
-            relativeOffsetZ = (short) (bz % hybridPlotWorld.SIZE);
-        }
+        short relativeOffsetZ = (short) Math.floorMod(bz, hybridPlotWorld.SIZE);
+
         boolean allRoad = true;
         boolean overlap = false;
 
@@ -398,16 +382,8 @@ public class HybridGen extends IndependentPlotGenerator {
             relativeZ -= hybridPlotWorld.ROAD_OFFSET_Z;
         }
         int size = hybridPlotWorld.PLOT_WIDTH + hybridPlotWorld.ROAD_WIDTH;
-        if (relativeX < 0) {
-            relativeX = size + (relativeX % size);
-        } else {
-            relativeX = relativeX % size;
-        }
-        if (relativeZ < 0) {
-            relativeZ = size + (relativeZ % size);
-        } else {
-            relativeZ = relativeZ % size;
-        }
+        relativeX = Math.floorMod(relativeX, size);
+        relativeZ = Math.floorMod(relativeZ, size);
         BiomeType biome = hybridPlotWorld.G_SCH_B.get(MathMan.pair((short) relativeX, (short) relativeZ));
         return biome == null ? hybridPlotWorld.getPlotBiome() : biome;
     }
