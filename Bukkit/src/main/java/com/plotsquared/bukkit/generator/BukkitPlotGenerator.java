@@ -34,6 +34,8 @@ import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector2;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.HeightMap;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -51,6 +53,8 @@ import java.util.Random;
 import java.util.Set;
 
 public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrapper<ChunkGenerator> {
+
+    private static final Logger LOGGER =  LogManager.getLogger("PlotSquared/" + BukkitPlotGenerator.class.getSimpleName());
 
     @SuppressWarnings("unused")
     public final boolean PAPER_ASYNC_SAFE = true;
@@ -130,7 +134,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         try {
             checkLoaded(world);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Error attempting to load world into PlotSquared.", e);
         }
         ArrayList<BlockPopulator> toAdd = new ArrayList<>();
         List<BlockPopulator> existing = world.getPopulators();
@@ -206,7 +210,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         try {
             generate(BlockVector2.at(chunkX, chunkZ), worldInfo.getName(), result, false);
         } catch (Throwable e) {
-            e.printStackTrace();
+            LOGGER.error("Error attempting to generate chunk.", e);
         }
     }
 
@@ -319,7 +323,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
                 generate(BlockVector2.at(x, z), world.getName(), result, true);
             }
         } catch (Throwable e) {
-            e.printStackTrace();
+            LOGGER.error("Error attempting to load world into PlotSquared.", e);
         }
         // Return the result data
         return result.getChunkData();
@@ -341,7 +345,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
             this.plotGenerator.generateChunk(result, area, biomes);
         } catch (Throwable e) {
             // Recover from generator error
-            e.printStackTrace();
+            LOGGER.error("Error attempting to generate chunk.", e);
         }
         ChunkManager.postProcessChunk(loc, result);
     }
