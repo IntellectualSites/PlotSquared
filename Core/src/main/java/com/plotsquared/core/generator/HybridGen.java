@@ -42,6 +42,8 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.EnumSet;
+
 public class HybridGen extends IndependentPlotGenerator {
 
     private static final CuboidRegion CHUNK = new CuboidRegion(BlockVector3.ZERO, BlockVector3.at(15, 396, 15));
@@ -64,12 +66,11 @@ public class HybridGen extends IndependentPlotGenerator {
             short relativeZ,
             int x,
             int z,
-            boolean isRoad,
-            boolean isPopulating,
-            boolean biomes
+            EnumSet<SchematicFeature> features
     ) {
         int minY; // Math.min(world.PLOT_HEIGHT, world.ROAD_HEIGHT);
-        if ((isRoad && Settings.Schematics.PASTE_ROAD_ON_TOP) || (!isRoad && Settings.Schematics.PASTE_ON_TOP)) {
+        if ((features.contains(SchematicFeature.ROAD) && Settings.Schematics.PASTE_ROAD_ON_TOP)
+                || (!features.contains(SchematicFeature.ROAD) && Settings.Schematics.PASTE_ON_TOP)) {
             minY = world.SCHEM_Y;
         } else {
             minY = world.getMinBuildHeight();
@@ -78,13 +79,13 @@ public class HybridGen extends IndependentPlotGenerator {
         if (blocks != null) {
             for (int y = 0; y < blocks.length; y++) {
                 if (blocks[y] != null) {
-                    if (!isPopulating || blocks[y].hasNbtData()) {
+                    if (!features.contains(SchematicFeature.POPULATING) || blocks[y].hasNbtData()) {
                         result.setBlock(x, minY + y, z, blocks[y]);
                     }
                 }
             }
         }
-        if (!biomes) {
+        if (!features.contains(SchematicFeature.BIOMES)) {
             return;
         }
         BiomeType biome = world.G_SCH_B.get(MathMan.pair(relativeX, relativeZ));
@@ -111,6 +112,13 @@ public class HybridGen extends IndependentPlotGenerator {
                 }
             }
         }
+        EnumSet<SchematicFeature> roadFeatures = EnumSet.of(SchematicFeature.ROAD);
+        EnumSet<SchematicFeature> plotFeatures = EnumSet.noneOf(SchematicFeature.class);
+        if (biomes) {
+            roadFeatures.add(SchematicFeature.BIOMES);
+            plotFeatures.add(SchematicFeature.BIOMES);
+        }
+
         // Coords
         Location min = result.getMin();
         int bx = min.getX() - hybridPlotWorld.ROAD_OFFSET_X;
@@ -169,7 +177,7 @@ public class HybridGen extends IndependentPlotGenerator {
                         result.setBlock(x, y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
                     }
                     if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, false, biomes);
+                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, roadFeatures);
                     }
                 }
             } else if (insideWallX[x]) {
@@ -180,7 +188,7 @@ public class HybridGen extends IndependentPlotGenerator {
                             result.setBlock(x, y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
                         }
                         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, false, biomes);
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, roadFeatures);
                         }
                     } else {
                         // wall
@@ -192,7 +200,7 @@ public class HybridGen extends IndependentPlotGenerator {
                                 result.setBlock(x, hybridPlotWorld.WALL_HEIGHT + 1, z, hybridPlotWorld.WALL_BLOCK.toPattern());
                             }
                         } else {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, false, biomes);
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, roadFeatures);
                         }
                     }
                 }
@@ -204,7 +212,7 @@ public class HybridGen extends IndependentPlotGenerator {
                             result.setBlock(x, y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
                         }
                         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, false, biomes);
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, roadFeatures);
                         }
                     } else if (insideWallZ[z]) {
                         // wall
@@ -216,7 +224,7 @@ public class HybridGen extends IndependentPlotGenerator {
                                 result.setBlock(x, hybridPlotWorld.WALL_HEIGHT + 1, z, hybridPlotWorld.WALL_BLOCK.toPattern());
                             }
                         } else {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, false, biomes);
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, roadFeatures);
                         }
                     } else {
                         // plot
@@ -225,7 +233,7 @@ public class HybridGen extends IndependentPlotGenerator {
                         }
                         result.setBlock(x, hybridPlotWorld.PLOT_HEIGHT, z, hybridPlotWorld.TOP_BLOCK.toPattern());
                         if (hybridPlotWorld.PLOT_SCHEMATIC) {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, false, false, biomes);
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, plotFeatures);
                         }
                     }
                 }
@@ -239,6 +247,9 @@ public class HybridGen extends IndependentPlotGenerator {
         if (!hybridPlotWorld.populationNeeded()) {
             return false;
         }
+        EnumSet<SchematicFeature> roadFeatures = EnumSet.of(SchematicFeature.POPULATING, SchematicFeature.ROAD);
+        EnumSet<SchematicFeature> plotFeatures = EnumSet.of(SchematicFeature.POPULATING);
+
         // Coords
         Location min = result.getMin();
         int bx = min.getX() - hybridPlotWorld.ROAD_OFFSET_X;
@@ -303,17 +314,17 @@ public class HybridGen extends IndependentPlotGenerator {
             if (insideRoadX[x] || insideWallX[x]) {
                 if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
                     for (short z = 0; z < 16; z++) {
-                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, true, false);
+                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, roadFeatures);
                     }
                 }
             } else {
                 for (short z = 0; z < 16; z++) {
                     if (insideRoadZ[z] || insideWallZ[z]) {
                         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, true, false);
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, roadFeatures);
                         }
                     } else if (hybridPlotWorld.PLOT_SCHEMATIC) {
-                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, false, true, false);
+                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, plotFeatures);
                     }
                 }
             }
@@ -440,6 +451,12 @@ public class HybridGen extends IndependentPlotGenerator {
             return parent.getFacet(cls);
         }
 
+    }
+
+    private enum SchematicFeature {
+        BIOMES,
+        ROAD,
+        POPULATING
     }
 
 }
