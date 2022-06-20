@@ -67,8 +67,7 @@ public class BlockEventListener117 implements Listener {
 
         if (entity instanceof Player player) {
             plotPlayer = BukkitUtil.adapt(player);
-            if ((location.getY() >= area.getMaxBuildHeight() || location.getY() < area
-                    .getMinBuildHeight()) && !Permissions
+            if (!area.buildRangeContainsY(location.getY()) && !Permissions
                     .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 event.setCancelled(true);
                 plotPlayer.sendMessage(
@@ -137,7 +136,7 @@ public class BlockEventListener117 implements Listener {
                     event.getBlocks().remove(i);
                     continue;
                 }
-                if (blockLocation.getY() < area.getMinBuildHeight() || blockLocation.getY() >= area.getMaxBuildHeight()) {
+                if (!area.buildRangeContainsY(location.getY())) {
                     event.getBlocks().remove(i);
                 }
             }

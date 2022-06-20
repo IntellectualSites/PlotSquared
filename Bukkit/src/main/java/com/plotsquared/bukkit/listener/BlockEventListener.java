@@ -272,8 +272,7 @@ public class BlockEventListener implements Listener {
         BukkitPlayer pp = BukkitUtil.adapt(player);
         Plot plot = area.getPlot(location);
         if (plot != null) {
-            if ((location.getY() >= area.getMaxBuildHeight() || location.getY() < area
-                    .getMinBuildHeight()) && !Permissions
+            if (!area.buildRangeContainsY(location.getY()) && !Permissions
                     .hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 event.setCancelled(true);
                 pp.sendMessage(
@@ -359,8 +358,7 @@ public class BlockEventListener implements Listener {
                     event.setCancelled(true);
                     return;
                 }
-            } else if ((location.getY() >= area.getMaxBuildHeight() || location.getY() < area
-                    .getMinBuildHeight()) && !Permissions
+            } else if (!area.buildRangeContainsY(location.getY()) && !Permissions
                     .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 event.setCancelled(true);
                 plotPlayer.sendMessage(
@@ -546,7 +544,7 @@ public class BlockEventListener implements Listener {
         if (plot == null) {
             return;
         }
-        if (location.getY() >= area.getMaxBuildHeight() || location.getY() < area.getMinBuildHeight()) {
+        if (!area.buildRangeContainsY(location.getY())) {
             event.setCancelled(true);
             return;
         }
@@ -774,7 +772,7 @@ public class BlockEventListener implements Listener {
             }
             return;
         }
-        if (toLocation.getY() >= toArea.getMaxBuildHeight() || toLocation.getY() < toArea.getMinBuildHeight()) {
+        if (!toArea.buildRangeContainsY(toLocation.getY())) {
             event.setCancelled(true);
             return;
         }
@@ -848,7 +846,7 @@ public class BlockEventListener implements Listener {
             return;
         }
 
-        if (location.getY() >= area.getMaxBuildHeight() || location.getY() < area.getMinBuildHeight()) {
+        if (!area.buildRangeContainsY(location.getY())) {
             event.setCancelled(true);
             return;
         }
@@ -894,8 +892,6 @@ public class BlockEventListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        int minBuildHeight = area.getMinBuildHeight();
-        int maxBuildHeight = area.getMaxBuildHeight();
         for (Block block1 : event.getBlocks()) {
             Location bloc = BukkitUtil.adapt(block1.getLocation());
             Location newLoc = bloc.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ());
@@ -907,10 +903,7 @@ public class BlockEventListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if (bloc.getY() < minBuildHeight
-                    || bloc.getY() >= maxBuildHeight
-                    || newLoc.getY() < minBuildHeight
-                    || newLoc.getY() >= maxBuildHeight) {
+            if (!area.buildRangeContainsY(bloc.getY()) || !area.buildRangeContainsY(newLoc.getY())) {
                 event.setCancelled(true);
                 return;
             }
@@ -949,8 +942,6 @@ public class BlockEventListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        int minBuildHeight = area.getMinBuildHeight();
-        int maxBuildHeight = area.getMaxBuildHeight();
         for (Block block1 : event.getBlocks()) {
             Location bloc = BukkitUtil.adapt(block1.getLocation());
             Location newLoc = bloc.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ());
@@ -962,10 +953,7 @@ public class BlockEventListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if (bloc.getY() < minBuildHeight
-                    || bloc.getY() >= maxBuildHeight
-                    || newLoc.getY() < minBuildHeight
-                    || newLoc.getY() >= maxBuildHeight) {
+            if (!area.buildRangeContainsY(bloc.getY()) || !area.buildRangeContainsY(newLoc.getY())) {
                 event.setCancelled(true);
                 return;
             }
@@ -992,7 +980,7 @@ public class BlockEventListener implements Listener {
                     return;
                 }
                 PlotArea area = location.getPlotArea();
-                if (area != null && (location.getY() < area.getMinBuildHeight() || location.getY() >= area.getMaxBuildHeight())) {
+                if (area != null && !area.buildRangeContainsY(location.getY())) {
                     event.setCancelled(true);
                 }
             }
@@ -1035,7 +1023,7 @@ public class BlockEventListener implements Listener {
                     event.getBlocks().remove(i);
                     continue;
                 }
-                if (location.getY() < area.getMinBuildHeight() || location.getY() >= area.getMaxBuildHeight()) {
+                if (!area.buildRangeContainsY(location.getY())) {
                     event.getBlocks().remove(i);
                 }
             }
@@ -1128,8 +1116,7 @@ public class BlockEventListener implements Listener {
         Plot plot = area.getOwnedPlot(location1);
         if (player != null) {
             BukkitPlayer pp = BukkitUtil.adapt(player);
-            if ((location1.getY() >= area.getMaxBuildHeight() || location1.getY() < area
-                    .getMinBuildHeight()) && !Permissions
+            if (!area.buildRangeContainsY(location1.getY()) && !Permissions
                     .hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 event.setCancelled(true);
                 pp.sendMessage(
@@ -1249,7 +1236,7 @@ public class BlockEventListener implements Listener {
                 if (!Objects.equals(plot, origin)) {
                     return true;
                 }
-                return blockLocation.getY() < area.getMinBuildHeight() || blockLocation.getY() >= area.getMaxBuildHeight();
+                return !area.buildRangeContainsY(location.getY());
             });
         }
         if (blocks.isEmpty()) {
@@ -1294,7 +1281,7 @@ public class BlockEventListener implements Listener {
             if (Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 continue;
             }
-            if (currentLocation.getY() >= area.getMaxBuildHeight() || currentLocation.getY() < area.getMinBuildHeight()) {
+            if (!area.buildRangeContainsY(currentLocation.getY())) {
                 pp.sendMessage(
                         TranslatableCaption.of("height.height_limit"),
                         Template.of("minHeight", String.valueOf(area.getMinBuildHeight())),

@@ -624,6 +624,16 @@ public abstract class PlotArea {
                 getRegionAbs() == null || this.region.contains(location.getBlockVector3()));
     }
 
+    /**
+     * Get if the PlotArea's build range (min build height -> max build height) contains the given y value
+     *
+     * @param y y height
+     * @return if build height contains y
+     */
+    public boolean buildRangeContainsY(int y) {
+        return y >= minBuildHeight && y < maxBuildHeight;
+    }
+
     public @NonNull Set<Plot> getPlotsAbs(final UUID uuid) {
         if (uuid == null) {
             return Collections.emptySet();

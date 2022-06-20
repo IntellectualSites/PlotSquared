@@ -1725,7 +1725,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (area == null) {
                 continue;
             }
-            if (pp != null && (location.getY() >= area.getMaxBuildHeight() || location.getY() < area.getMinBuildHeight()) && !Permissions.hasPermission(
+            if (pp != null && !area.buildRangeContainsY(location.getY()) && !Permissions.hasPermission(
                     pp,
                     Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT
             )) {
