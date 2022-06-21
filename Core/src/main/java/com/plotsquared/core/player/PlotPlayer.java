@@ -61,7 +61,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.title.Title;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -91,7 +91,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
 
     private static final String NON_EXISTENT_CAPTION = "<red>PlotSquared does not recognize the caption: ";
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotPlayer.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     // Used to track debug mode
     private static final Set<PlotPlayer<?>> debugModeEnabled =

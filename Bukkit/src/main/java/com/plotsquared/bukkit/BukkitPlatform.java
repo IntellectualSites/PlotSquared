@@ -109,11 +109,11 @@ import com.plotsquared.core.uuid.CacheUUIDService;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.plotsquared.core.uuid.offline.OfflineModeUUIDService;
 import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import io.papermc.lib.PaperLib;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.DrilldownPie;
@@ -165,7 +165,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 @Singleton
 public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPlatform<Player> {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + BukkitPlatform.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
     private static final int BSTATS_ID = 1404;
 
     static {

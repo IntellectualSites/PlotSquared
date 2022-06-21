@@ -27,7 +27,7 @@ import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Array;
@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class PlotAnalysis {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotAnalysis.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     public static boolean running = false;
     public int changes;

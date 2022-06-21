@@ -28,7 +28,7 @@ import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.HashUtil;
 import com.plotsquared.core.util.RegionManager;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -41,7 +41,7 @@ import java.util.Set;
  */
 public abstract class SquarePlotManager extends GridPlotManager {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + SquarePlotManager.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     private final SquarePlotWorld squarePlotWorld;
     private final RegionManager regionManager;

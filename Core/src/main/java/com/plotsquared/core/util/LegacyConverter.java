@@ -25,7 +25,7 @@ import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.plot.BlockBucket;
 import com.sk89q.worldedit.world.block.BlockState;
 import net.kyori.adventure.text.minimessage.Template;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -41,7 +41,7 @@ import java.util.Map;
 public final class LegacyConverter {
 
     public static final String CONFIGURATION_VERSION = "post_flattening";
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + LegacyConverter.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
     private static final HashMap<String, ConfigurationType> TYPE_MAP = new HashMap<>();
 
     static {

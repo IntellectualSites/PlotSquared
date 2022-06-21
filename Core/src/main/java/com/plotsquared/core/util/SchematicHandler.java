@@ -64,7 +64,7 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -107,7 +107,7 @@ import java.util.zip.GZIPOutputStream;
 
 public abstract class SchematicHandler {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + SchematicHandler.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
     private static final Gson GSON = new Gson();
     public static SchematicHandler manager;
     private final WorldUtil worldUtil;

@@ -44,7 +44,7 @@ import com.plotsquared.core.util.HashUtil;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -78,7 +78,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @SuppressWarnings("SqlDialectInspection")
 public class SQLManager implements AbstractDB {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + SQLManager.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     // Public final
     public final String SET_OWNER;

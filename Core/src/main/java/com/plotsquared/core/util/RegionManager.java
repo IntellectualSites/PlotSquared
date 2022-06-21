@@ -40,7 +40,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -51,7 +51,7 @@ import java.util.Set;
 
 public abstract class RegionManager {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + RegionManager.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     public static RegionManager manager = null;
     protected final WorldUtil worldUtil;

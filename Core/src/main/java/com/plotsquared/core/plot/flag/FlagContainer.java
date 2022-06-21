@@ -22,7 +22,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.util.AnnotationHelper;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -39,7 +39,7 @@ import java.util.Objects;
  */
 public class FlagContainer {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + FlagContainer.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     private final Map<String, String> unknownFlags = new HashMap<>();
     private final Map<Class<?>, PlotFlag<?, ?>> flagMap = new HashMap<>();

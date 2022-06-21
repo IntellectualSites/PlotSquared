@@ -65,7 +65,7 @@ import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extension.platform.Actor;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
@@ -74,7 +74,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class BukkitModule extends AbstractModule {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + BukkitModule.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     private final BukkitPlatform bukkitPlatform;
 

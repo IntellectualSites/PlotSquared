@@ -39,7 +39,7 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -51,7 +51,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
         usage = "/plot claim")
 public class Claim extends SubCommand {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Claim.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;

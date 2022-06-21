@@ -19,7 +19,7 @@
 package com.plotsquared.core.database;
 
 import com.plotsquared.core.PlotSquared;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
@@ -35,7 +35,7 @@ import java.sql.Statement;
  */
 public class SQLite extends Database {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + SQLite.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     private final String dbLocation;
     private Connection connection;

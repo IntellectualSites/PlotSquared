@@ -69,7 +69,7 @@ import com.sk89q.worldedit.event.platform.PlatformReadyEvent;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.util.eventbus.EventHandler;
 import com.sk89q.worldedit.util.eventbus.Subscribe;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -117,7 +117,7 @@ import java.util.zip.ZipInputStream;
 @SuppressWarnings({"WeakerAccess"})
 public class PlotSquared {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotSquared.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
     private static @MonotonicNonNull PlotSquared instance;
 
     // Implementation

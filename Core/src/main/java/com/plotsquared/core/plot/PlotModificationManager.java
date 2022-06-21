@@ -47,7 +47,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import net.kyori.adventure.text.minimessage.Template;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -68,7 +68,7 @@ import java.util.stream.Collectors;
  */
 public final class PlotModificationManager {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotModificationManager.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     private final Plot plot;
     private final ProgressSubscriberFactory subscriberFactory;

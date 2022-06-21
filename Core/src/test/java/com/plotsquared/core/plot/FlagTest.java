@@ -26,7 +26,7 @@ import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.PlotTitleFlag;
 import com.plotsquared.core.plot.flag.implementations.UseFlag;
 import com.sk89q.worldedit.world.item.ItemType;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 
 public class FlagTest {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + FlagTest.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     private ItemType testBlock;
 

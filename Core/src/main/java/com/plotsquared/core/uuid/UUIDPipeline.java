@@ -26,7 +26,7 @@ import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.util.ThreadUtils;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -59,7 +59,7 @@ import java.util.function.Function;
  */
 public class UUIDPipeline {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + UUIDPipeline.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
     private final Executor executor;

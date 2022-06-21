@@ -50,7 +50,7 @@ import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -64,7 +64,7 @@ import java.util.Locale;
 
 public class HybridPlotWorld extends ClassicPlotWorld {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + HybridPlotWorld.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
     private static final AffineTransform transform = new AffineTransform().rotateY(90);
     public boolean ROAD_SCHEMATIC_ENABLED;
     public boolean PLOT_SCHEMATIC = false;

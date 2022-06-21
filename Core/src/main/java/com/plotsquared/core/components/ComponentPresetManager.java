@@ -40,7 +40,7 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -61,7 +61,7 @@ import java.util.stream.Collectors;
 public class ComponentPresetManager {
 
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + ComponentPresetManager.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     private final List<ComponentPreset> presets;
     private final EconHandler econHandler;

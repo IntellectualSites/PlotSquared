@@ -25,7 +25,7 @@ import com.plotsquared.core.configuration.caption.CaptionMap;
 import com.plotsquared.core.configuration.caption.LocalizedCaptionMap;
 import com.plotsquared.core.configuration.caption.PerUserLocaleCaptionMap;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -54,7 +54,7 @@ import java.util.stream.Stream;
  */
 public final class CaptionLoader {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + CaptionLoader.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     private static final Gson GSON;
 

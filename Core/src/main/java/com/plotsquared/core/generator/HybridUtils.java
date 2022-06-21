@@ -55,7 +55,7 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -75,7 +75,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class HybridUtils {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + HybridUtils.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
     private static final BlockState AIR = BlockTypes.AIR.getDefaultState();
 
     public static HybridUtils manager;

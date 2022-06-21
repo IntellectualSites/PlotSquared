@@ -36,7 +36,7 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
@@ -51,7 +51,7 @@ import java.util.concurrent.CompletableFuture;
         aliases = {"plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap"})
 public class MainCommand extends Command {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + MainCommand.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     private static MainCommand instance;
     public Help help;

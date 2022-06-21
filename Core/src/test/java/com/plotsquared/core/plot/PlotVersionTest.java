@@ -19,13 +19,13 @@
 package com.plotsquared.core.plot;
 
 import com.plotsquared.core.PlotVersion;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
 public class PlotVersionTest {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotVersionTest.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     @Test
     public void tryParse() {

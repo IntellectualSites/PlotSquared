@@ -26,7 +26,7 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.Plot;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.NBTOutputStream;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -45,7 +45,7 @@ import java.util.zip.GZIPOutputStream;
  */
 public class PlotUploader {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotUploader.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
     private static final Path TEMP_DIR = Paths.get(PlotSquared.platform().getDirectory().getPath());
     private final SchematicHandler schematicHandler;
     private final Arkitektonika arkitektonika;

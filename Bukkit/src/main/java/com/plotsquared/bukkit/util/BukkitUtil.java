@@ -47,7 +47,7 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -108,7 +108,7 @@ public class BukkitUtil extends WorldUtil {
     public static final BukkitAudiences BUKKIT_AUDIENCES = BukkitAudiences.create(BukkitPlatform.getPlugin(BukkitPlatform.class));
     public static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacySection();
     public static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + BukkitUtil.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
     private final Collection<BlockType> tileEntityTypes = new HashSet<>();
 
     /**

@@ -22,7 +22,7 @@ import com.google.common.util.concurrent.RateLimiter;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.enginehub.squirrelid.Profile;
@@ -41,7 +41,7 @@ import java.util.UUID;
 @SuppressWarnings("UnstableApiUsage")
 public class SquirrelIdUUIDService implements UUIDService {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + SquirrelIdUUIDService.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     private final ProfileService profileService;
     private final RateLimiter rateLimiter;

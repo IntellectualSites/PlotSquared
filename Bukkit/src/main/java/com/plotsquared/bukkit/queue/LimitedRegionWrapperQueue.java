@@ -27,7 +27,7 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
@@ -41,7 +41,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public class LimitedRegionWrapperQueue extends DelegateQueueCoordinator {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + LimitedRegionWrapperQueue.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     private final LimitedRegion limitedRegion;
 

@@ -21,7 +21,7 @@ package com.plotsquared.core.configuration.file;
 import com.plotsquared.core.configuration.Configuration;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.InvalidConfigurationException;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -40,7 +40,7 @@ import java.util.Map;
  */
 public class YamlConfiguration extends FileConfiguration {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + YamlConfiguration.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     private static final String COMMENT_PREFIX = "# ";
     private static final String BLANK_CONFIG = "{}\n";

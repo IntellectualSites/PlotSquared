@@ -24,14 +24,14 @@ import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.GlobalBlockQueue;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class SquarePlotWorld extends GridPlotWorld {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + SquarePlotWorld.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     public int PLOT_WIDTH = 42;
     public int ROAD_WIDTH = 7;

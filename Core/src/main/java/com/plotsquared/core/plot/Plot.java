@@ -73,7 +73,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -118,7 +118,7 @@ public class Plot {
     @Deprecated(forRemoval = true, since = "6.6.0")
     public static final int MAX_HEIGHT = 256;
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Plot.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
     private static final DecimalFormat FLAG_DECIMAL_FORMAT = new DecimalFormat("0");
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
     private static final Cleaner CLEANER = Cleaner.create();

@@ -18,7 +18,7 @@
  */
 package com.plotsquared.core.configuration.caption.load;
 
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -35,7 +35,7 @@ import static com.plotsquared.core.configuration.caption.load.CaptionLoader.load
 
 final class ClassLoaderCaptionProvider implements DefaultCaptionProvider {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + ClassLoaderCaptionProvider.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
     private final ClassLoader classLoader;
     private final Function<@NonNull Locale, @NonNull String> urlProvider;
 

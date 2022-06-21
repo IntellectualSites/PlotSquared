@@ -24,7 +24,7 @@ import com.plotsquared.core.configuration.Settings;
 import com.sk89q.worldedit.world.block.BlockCategory;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.block.BlockType;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -38,7 +38,7 @@ import java.util.Map;
  */
 public class BlockTypeWrapper {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + BlockTypeWrapper.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     private static final Map<BlockType, BlockTypeWrapper> blockTypes = new HashMap<>();
     private static final Map<String, BlockTypeWrapper> blockCategories = new HashMap<>();

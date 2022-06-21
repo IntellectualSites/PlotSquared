@@ -25,7 +25,7 @@ import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.PlotVersion;
 import com.plotsquared.core.configuration.Settings;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
@@ -39,7 +39,7 @@ import java.net.URL;
 
 public class UpdateUtility implements Listener {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + UpdateUtility.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     public static PlotVersion internalVersion;
     public static String spigotVersion;

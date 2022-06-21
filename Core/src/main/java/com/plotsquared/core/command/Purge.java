@@ -34,7 +34,7 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDMapping;
 import net.kyori.adventure.text.minimessage.Template;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -53,7 +53,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
         confirmation = true)
 public class Purge extends SubCommand {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Purge.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     private final PlotAreaManager plotAreaManager;
     private final PlotListener plotListener;

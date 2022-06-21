@@ -21,7 +21,7 @@ package com.plotsquared.core.configuration;
 import com.plotsquared.core.configuration.Settings.Enabled_Components;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.util.StringMan;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
@@ -40,7 +40,7 @@ import java.util.Map;
 
 public class Config {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Config.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     /**
      * Get the value for a node<br>

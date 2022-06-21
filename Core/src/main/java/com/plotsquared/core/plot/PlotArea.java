@@ -60,7 +60,7 @@ import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -85,7 +85,7 @@ import java.util.function.Consumer;
  */
 public abstract class PlotArea {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotArea.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
     private static final DecimalFormat FLAG_DECIMAL_FORMAT = new DecimalFormat("0");
 

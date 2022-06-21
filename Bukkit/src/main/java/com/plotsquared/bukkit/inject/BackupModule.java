@@ -26,12 +26,12 @@ import com.plotsquared.core.backup.NullBackupManager;
 import com.plotsquared.core.backup.PlayerBackupProfile;
 import com.plotsquared.core.backup.SimpleBackupManager;
 import com.plotsquared.core.inject.factory.PlayerBackupProfileFactory;
-import org.apache.logging.log4j.LogManager;
+import com.sk89q.worldedit.internal.util.LogManagerCompat;
 import org.apache.logging.log4j.Logger;
 
 public class BackupModule extends AbstractModule {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + BackupModule.class.getSimpleName());
+    private static final Logger LOGGER = LogManagerCompat.getLogger();
 
     @Override
     protected void configure() {
