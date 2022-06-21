@@ -265,14 +265,8 @@ public class BlockEventListener implements Listener {
         BukkitPlayer pp = BukkitUtil.adapt(player);
         Plot plot = area.getPlot(location);
         if (plot != null) {
-            if (!area.buildRangeContainsY(location.getY()) && !Permissions
-                    .hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
+            if (area.notifyIfOutsideBuildArea(pp, location.getY())) {
                 event.setCancelled(true);
-                pp.sendMessage(
-                        TranslatableCaption.of("height.height_limit"),
-                        Template.of("minHeight", String.valueOf(area.getMinBuildHeight())),
-                        Template.of("maxHeight", String.valueOf(area.getMaxBuildHeight()))
-                );
                 return;
             }
             if (!plot.hasOwner()) {
@@ -351,14 +345,8 @@ public class BlockEventListener implements Listener {
                     event.setCancelled(true);
                     return;
                 }
-            } else if (!area.buildRangeContainsY(location.getY()) && !Permissions
-                    .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
+            } else if (area.notifyIfOutsideBuildArea(plotPlayer, location.getY())) {
                 event.setCancelled(true);
-                plotPlayer.sendMessage(
-                        TranslatableCaption.of("height.height_limit"),
-                        Template.of("minHeight", String.valueOf(area.getMinBuildHeight())),
-                        Template.of("maxHeight", String.valueOf(area.getMaxBuildHeight()))
-                );
                 return;
             }
             if (!plot.hasOwner()) {
@@ -1083,14 +1071,8 @@ public class BlockEventListener implements Listener {
         Plot plot = area.getOwnedPlot(location1);
         if (player != null) {
             BukkitPlayer pp = BukkitUtil.adapt(player);
-            if (!area.buildRangeContainsY(location1.getY()) && !Permissions
-                    .hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
+            if (area.notifyIfOutsideBuildArea(pp, location1.getY())) {
                 event.setCancelled(true);
-                pp.sendMessage(
-                        TranslatableCaption.of("height.height_limit"),
-                        Template.of("minHeight", String.valueOf(area.getMinBuildHeight())),
-                        Template.of("maxHeight", String.valueOf(area.getMaxBuildHeight()))
-                );
                 return;
             }
             if (plot == null) {
@@ -1245,15 +1227,7 @@ public class BlockEventListener implements Listener {
                 event.setCancelled(true);
                 break;
             }
-            if (Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
-                continue;
-            }
-            if (!area.buildRangeContainsY(currentLocation.getY())) {
-                pp.sendMessage(
-                        TranslatableCaption.of("height.height_limit"),
-                        Template.of("minHeight", String.valueOf(area.getMinBuildHeight())),
-                        Template.of("maxHeight", String.valueOf(area.getMaxBuildHeight()))
-                );
+            if (area.notifyIfOutsideBuildArea(pp, currentLocation.getY())) {
                 event.setCancelled(true);
                 break;
             }

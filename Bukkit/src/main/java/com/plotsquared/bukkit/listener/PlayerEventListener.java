@@ -1739,16 +1739,8 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (area == null) {
                 continue;
             }
-            if (pp != null && !area.buildRangeContainsY(location.getY()) && !Permissions.hasPermission(
-                    pp,
-                    Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT
-            )) {
+            if (area.notifyIfOutsideBuildArea(pp, location.getY())) {
                 event.setCancelled(true);
-                pp.sendMessage(
-                        TranslatableCaption.of("height.height_limit"),
-                        Template.of("minHeight", String.valueOf(area.getMinBuildHeight())),
-                        Template.of("maxHeight", String.valueOf(area.getMaxBuildHeight()))
-                );
                 return;
             }
             Plot plot = location.getOwnedPlot();

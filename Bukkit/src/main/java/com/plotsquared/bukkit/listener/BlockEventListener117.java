@@ -21,15 +21,11 @@ package com.plotsquared.bukkit.listener;
 import com.google.inject.Inject;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.CopperOxideFlag;
 import com.plotsquared.core.plot.flag.implementations.MiscInteractFlag;
-import com.plotsquared.core.util.Permissions;
-import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -88,14 +84,8 @@ public class BlockEventListener117 implements Listener {
 
         if (entity instanceof Player player) {
             plotPlayer = BukkitUtil.adapt(player);
-            if (!area.buildRangeContainsY(location.getY()) && !Permissions
-                    .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
+            if (area.notifyIfOutsideBuildArea(plotPlayer, location.getY())) {
                 event.setCancelled(true);
-                plotPlayer.sendMessage(
-                        TranslatableCaption.of("height.height_limit"),
-                        Template.of("minHeight", String.valueOf(area.getMinBuildHeight())),
-                        Template.of("maxHeight", String.valueOf(area.getMaxBuildHeight()))
-                );
                 return;
             }
         }
