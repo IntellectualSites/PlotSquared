@@ -232,15 +232,15 @@ public class PaperListener implements Listener {
         if (plot == null) {
             EntityType type = event.getType();
             if (!area.isMobSpawning()) {
-                switch (type) {
-                    case DROPPED_ITEM:
-                        if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
-                            event.setShouldAbortSpawn(true);
-                            event.setCancelled(true);
-                            return;
-                        }
-                    case PLAYER:
-                        return;
+                if (type == EntityType.PLAYER) {
+                    return;
+                }
+                if (type == EntityType.DROPPED_ITEM) {
+                    if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
+                        event.setShouldAbortSpawn(true);
+                        event.setCancelled(true);
+                    }
+                    return;
                 }
                 if (type.isAlive()) {
                     event.setShouldAbortSpawn(true);

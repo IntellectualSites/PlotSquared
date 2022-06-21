@@ -108,11 +108,20 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
 public class BlockEventListener implements Listener {
 
+    private static final Set<Material> PISTONS = Set.of(
+            Material.PISTON,
+            Material.STICKY_PISTON
+    );
+    private static final Set<Material> PHYSICS_BLOCKS = Set.of(
+            Material.TURTLE_EGG,
+            Material.TURTLE_SPAWN_EGG
+    );
     private final PlotAreaManager plotAreaManager;
     private final WorldEdit worldEdit;
 
@@ -218,48 +227,31 @@ public class BlockEventListener implements Listener {
             plot.debug("Prevented block physics and resent block change because disable-physics = true");
             return;
         }
-        switch (event.getChangedType()) {
-            case COMPARATOR: {
-                if (!plot.getFlag(RedstoneFlag.class)) {
-                    event.setCancelled(true);
-                    plot.debug("Prevented comparator update because redstone = false");
-                }
-                return;
+        if (event.getChangedType() == Material.COMPARATOR) {
+            if (!plot.getFlag(RedstoneFlag.class)) {
+                event.setCancelled(true);
+                plot.debug("Prevented comparator update because redstone = false");
             }
-            case ANVIL:
-            case DRAGON_EGG:
-            case GRAVEL:
-            case SAND:
-            case TURTLE_EGG:
-            case TURTLE_HELMET:
-            case TURTLE_SPAWN_EGG: {
-                if (plot.getFlag(DisablePhysicsFlag.class)) {
-                    event.setCancelled(true);
-                    plot.debug("Prevented block physics because disable-physics = true");
-                }
-                return;
+            return;
+        }
+        if (PHYSICS_BLOCKS.contains(event.getChangedType())) {
+            if (plot.getFlag(DisablePhysicsFlag.class)) {
+                event.setCancelled(true);
+                plot.debug("Prevented block physics because disable-physics = true");
             }
-            default:
-                if (Settings.Redstone.DETECT_INVALID_EDGE_PISTONS) {
-                    switch (block.getType()) {
-                        case PISTON, STICKY_PISTON -> {
-                            org.bukkit.block.data.Directional piston = (org.bukkit.block.data.Directional) block.getBlockData();
-                            switch (piston.getFacing()) {
-                                case EAST -> location = location.add(1, 0, 0);
-                                case SOUTH -> location = location.add(-1, 0, 0);
-                                case WEST -> location = location.add(0, 0, 1);
-                                case NORTH -> location = location.add(0, 0, -1);
-                            }
-                            Plot newPlot = area.getOwnedPlotAbs(location);
-                            if (!plot.equals(newPlot)) {
-                                event.setCancelled(true);
-                                plot.debug("Prevented piston update because of invalid edge piston detection");
-                                return;
-                            }
-                        }
-                    }
+            return;
+        }
+        if (Settings.Redstone.DETECT_INVALID_EDGE_PISTONS) {
+            if (PISTONS.contains(block.getType())) {
+                org.bukkit.block.data.Directional piston = (org.bukkit.block.data.Directional) block.getBlockData();
+                final BlockFace facing = piston.getFacing();
+                location = location.add(facing.getModX(), facing.getModY(), facing.getModZ());
+                Plot newPlot = area.getOwnedPlotAbs(location);
+                if (!plot.equals(newPlot)) {
+                    event.setCancelled(true);
+                    plot.debug("Prevented piston update because of invalid edge piston detection");
                 }
-                break;
+            }
         }
     }
 
@@ -572,21 +564,18 @@ public class BlockEventListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        switch (event.getNewState().getType()) {
-            case SNOW:
-            case SNOW_BLOCK:
-                if (!plot.getFlag(SnowFormFlag.class)) {
-                    plot.debug("Snow could not form because snow-form = false");
-                    event.setCancelled(true);
-                }
-                return;
-            case ICE:
-            case FROSTED_ICE:
-            case PACKED_ICE:
-                if (!plot.getFlag(IceFormFlag.class)) {
-                    plot.debug("Ice could not form because ice-form = false");
-                    event.setCancelled(true);
-                }
+        if (org.bukkit.Tag.SNOW.isTagged(event.getNewState().getType())) {
+            if (!plot.getFlag(SnowFormFlag.class)) {
+                plot.debug("Snow could not form because snow-form = false");
+                event.setCancelled(true);
+            }
+            return;
+        }
+        if (org.bukkit.Tag.ICE.isTagged(event.getNewState().getType())) {
+            if (!plot.getFlag(IceFormFlag.class)) {
+                plot.debug("Ice could not form because ice-form = false");
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -607,18 +596,12 @@ public class BlockEventListener implements Listener {
             return;
         }
         Class<? extends BooleanFlag<?>> flag;
-        switch (event.getNewState().getType()) {
-            case SNOW:
-            case SNOW_BLOCK:
-                flag = SnowFormFlag.class;
-                break;
-            case ICE:
-            case FROSTED_ICE:
-            case PACKED_ICE:
-                flag = IceFormFlag.class;
-                break;
-            default:
-                return; // other blocks are ignored by this event
+        if (org.bukkit.Tag.SNOW.isTagged(event.getNewState().getType())) {
+            flag = SnowFormFlag.class;
+        } else if (org.bukkit.Tag.ICE.isTagged(event.getNewState().getType())) {
+            flag = IceFormFlag.class;
+        } else {
+            return;
         }
         boolean allowed = plot.getFlag(flag);
         Entity entity = event.getEntity();
@@ -722,50 +705,33 @@ public class BlockEventListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        switch (block.getType()) {
-            case ICE:
-                if (!plot.getFlag(IceMeltFlag.class)) {
-                    plot.debug("Ice could not melt because ice-melt = false");
-                    event.setCancelled(true);
-                }
-                break;
-            case SNOW:
-                if (!plot.getFlag(SnowMeltFlag.class)) {
-                    plot.debug("Snow could not melt because snow-melt = false");
-                    event.setCancelled(true);
-                }
-                break;
-            case FARMLAND:
-                if (!plot.getFlag(SoilDryFlag.class)) {
-                    plot.debug("Soil could not dry because soil-dry = false");
-                    event.setCancelled(true);
-                }
-                break;
-            case TUBE_CORAL_BLOCK:
-            case BRAIN_CORAL_BLOCK:
-            case BUBBLE_CORAL_BLOCK:
-            case FIRE_CORAL_BLOCK:
-            case HORN_CORAL_BLOCK:
-            case TUBE_CORAL:
-            case BRAIN_CORAL:
-            case BUBBLE_CORAL:
-            case FIRE_CORAL:
-            case HORN_CORAL:
-            case TUBE_CORAL_FAN:
-            case BRAIN_CORAL_FAN:
-            case BUBBLE_CORAL_FAN:
-            case FIRE_CORAL_FAN:
-            case HORN_CORAL_FAN:
-            case BRAIN_CORAL_WALL_FAN:
-            case BUBBLE_CORAL_WALL_FAN:
-            case FIRE_CORAL_WALL_FAN:
-            case HORN_CORAL_WALL_FAN:
-            case TUBE_CORAL_WALL_FAN:
-                if (!plot.getFlag(CoralDryFlag.class)) {
-                    plot.debug("Coral could not dry because coral-dry = false");
-                    event.setCancelled(true);
-                }
-                break;
+        Material blockType = block.getType();
+        if (org.bukkit.Tag.ICE.isTagged(blockType)) {
+            if (!plot.getFlag(IceMeltFlag.class)) {
+                plot.debug("Ice could not melt because ice-melt = false");
+                event.setCancelled(true);
+            }
+            return;
+        }
+        if (org.bukkit.Tag.SNOW.isTagged(blockType)) {
+            if (!plot.getFlag(SnowMeltFlag.class)) {
+                plot.debug("Snow could not melt because snow-melt = false");
+                event.setCancelled(true);
+            }
+            return;
+        }
+        if (blockType == Material.FARMLAND) {
+            if (!plot.getFlag(SoilDryFlag.class)) {
+                plot.debug("Soil could not dry because soil-dry = false");
+                event.setCancelled(true);
+            }
+            return;
+        }
+        if (org.bukkit.Tag.CORAL_BLOCKS.isTagged(blockType) || org.bukkit.Tag.CORALS.isTagged(blockType)) {
+            if (!plot.getFlag(CoralDryFlag.class)) {
+                plot.debug("Coral could not dry because coral-dry = false");
+                event.setCancelled(true);
+            }
         }
     }
 
