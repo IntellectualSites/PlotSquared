@@ -627,7 +627,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * Get if the PlotArea's build range (min build height -> max build height) contains the given y value
+     * Get if the {@code PlotArea}'s build range (min build height -> max build height) contains the given y value
      *
      * @param y y height
      * @return if build height contains y
