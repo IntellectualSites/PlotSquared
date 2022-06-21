@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.arkitektonika)
     implementation(libs.http4j)
     implementation("com.intellectualsites.paster:Paster")
+    implementation("com.intellectualsites.informative-annotations:informative-annotations")
 
     // Adventure
     implementation("net.kyori:adventure-platform-bukkit")
@@ -87,6 +88,7 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("javax.inject", "com.plotsquared.core.annotation.inject")
     relocate("net.jcip", "com.plotsquared.core.annotations.jcip")
     relocate("edu.umd.cs.findbugs", "com.plotsquared.core.annotations.findbugs")
+    relocate("com.intellectualsites.informative-annotations", "com.plotsquared.core.annotation.informative")
 
     // Get rid of all the libs which are 100% unused.
     minimize()

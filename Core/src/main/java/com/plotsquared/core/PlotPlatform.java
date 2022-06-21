@@ -22,6 +22,7 @@ import cloud.commandframework.services.ServicePipeline;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
+import com.intellectualsites.annotations.DoNotUse;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.generator.GeneratorWrapper;
@@ -33,7 +34,6 @@ import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.util.AnnotationHelper;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.PlatformWorldManager;
@@ -308,7 +308,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * @return worldedit implementations
      * @since 6.3.0
      */
-    @AnnotationHelper.ApiDescription(info = "Internal use only")
+    @DoNotUse
     @NonNull String worldEditImplementations();
 
     /**

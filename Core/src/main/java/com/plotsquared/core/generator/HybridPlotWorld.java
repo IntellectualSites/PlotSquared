@@ -20,6 +20,7 @@ package com.plotsquared.core.generator;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.intellectualsites.annotations.DoNotUse;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.Settings;
@@ -33,7 +34,6 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.util.AnnotationHelper;
 import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.SchematicHandler;
@@ -531,7 +531,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
      *
      * @since 6.9.0
      */
-    @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
+    @DoNotUse
     public @Nullable List<Entity> getPlotSchematicEntities() {
         return schem3Entities;
     }
@@ -541,7 +541,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
      *
      * @since 6.9.0
      */
-    @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
+    @DoNotUse
     public @Nullable BlockVector3 getPlotSchematicMinPoint() {
         return schem3MinPoint;
     }
@@ -551,7 +551,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
      *
      * @since 6.9.0
      */
-    @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
+    @DoNotUse
     public boolean populationNeeded() {
         return schem1PopulationNeeded || schem2PopulationNeeded || schem3PopulationNeeded;
     }
