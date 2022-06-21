@@ -18,8 +18,8 @@
  */
 package com.plotsquared.core.queue;
 
+import com.intellectualsites.annotations.DoNotUse;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.util.AnnotationHelper;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -37,7 +37,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * in {@link BlockArrayCacheScopedQueueCoordinator#setOffsetX(int)} and
  * {@link BlockArrayCacheScopedQueueCoordinator#setOffsetZ(int)}
  */
-@AnnotationHelper.ApiDescription(info = "Internal use only. Subject to change at any time and created for specific use cases.")
+@DoNotUse
 public class BlockArrayCacheScopedQueueCoordinator extends ScopedQueueCoordinator {
 
     private final BlockState[][][] blockStates;

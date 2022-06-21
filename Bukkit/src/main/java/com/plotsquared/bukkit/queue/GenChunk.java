@@ -19,12 +19,12 @@
 package com.plotsquared.bukkit.queue;
 
 import com.google.common.base.Preconditions;
+import com.intellectualsites.annotations.DoNotUse;
 import com.plotsquared.bukkit.util.BukkitBlockUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.location.ChunkWrapper;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.queue.ScopedQueueCoordinator;
-import com.plotsquared.core.util.AnnotationHelper;
 import com.plotsquared.core.util.ChunkUtil;
 import com.plotsquared.core.util.PatternUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -44,7 +44,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Arrays;
 
-@AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
+@DoNotUse
 public class GenChunk extends ScopedQueueCoordinator {
 
     public final Biome[] biomes;

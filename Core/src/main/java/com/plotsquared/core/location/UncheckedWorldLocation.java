@@ -18,7 +18,7 @@
  */
 package com.plotsquared.core.location;
 
-import com.plotsquared.core.util.AnnotationHelper;
+import com.intellectualsites.annotations.DoNotUse;
 import com.sk89q.worldedit.math.BlockVector3;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -28,7 +28,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @since 6.9.0
  */
-@AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
+@DoNotUse
 public final class UncheckedWorldLocation extends Location {
 
     private final String worldName;
@@ -54,7 +54,7 @@ public final class UncheckedWorldLocation extends Location {
      *
      * @since 6.9.0
      */
-    @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
+    @DoNotUse
     public static @NonNull UncheckedWorldLocation at(
             final @NonNull String world, final int x, final int y, final int z
     ) {
@@ -62,7 +62,7 @@ public final class UncheckedWorldLocation extends Location {
     }
 
     @Override
-    @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
+    @DoNotUse
     public @NonNull String getWorldName() {
         return this.worldName;
     }
