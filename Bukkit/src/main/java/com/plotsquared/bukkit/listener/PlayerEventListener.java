@@ -146,13 +146,11 @@ import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 /**
  * Player Events involving plots.
@@ -1719,6 +1717,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         if (PlotSquared.get().getPlotAreaManager().getPlotAreasSet(world).size() == 0) {
             return;
         }
+        BukkitPlayer pp = (event.getEntity() instanceof Player player) ? BukkitUtil.adapt(player) : null;
         int minX = Integer.MAX_VALUE;
         int maxX = Integer.MIN_VALUE;
         int minZ = Integer.MAX_VALUE;
@@ -1739,6 +1738,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
             PlotArea area = location.getPlotArea();
             if (area == null) {
                 continue;
+            }
+            if (area.notifyIfOutsideBuildArea(pp, location.getY())) {
+                event.setCancelled(true);
+                return;
             }
             Plot plot = location.getOwnedPlot();
             if (plot == null) {
