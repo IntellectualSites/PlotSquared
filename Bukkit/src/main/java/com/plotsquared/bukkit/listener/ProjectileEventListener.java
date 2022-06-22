@@ -149,6 +149,18 @@ public class ProjectileEventListener implements Listener {
         Plot plot = area.getPlot(location);
         ProjectileSource shooter = entity.getShooter();
         if (shooter instanceof Player) {
+            if (!((Player) shooter).isOnline()) {
+                if (plot != null) {
+                    if (plot.isAdded(((Player) shooter).getUniqueId()) || plot.getFlag(ProjectilesFlag.class)) {
+                        return;
+                    }
+                }
+
+                entity.remove();
+                event.setCancelled(true);
+                return;
+            }
+
             PlotPlayer<?> pp = BukkitUtil.adapt((Player) shooter);
             if (plot == null) {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
