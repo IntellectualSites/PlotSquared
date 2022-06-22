@@ -156,7 +156,7 @@ import java.util.UUID;
  * Player Events involving plots.
  */
 @SuppressWarnings("unused")
-public class PlayerEventListener extends PlotListener implements Listener {
+public class PlayerEventListener implements Listener {
 
     private static final Set<Material> MINECARTS = Set.of(
             Material.MINECART,
@@ -175,6 +175,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
     private final EventDispatcher eventDispatcher;
     private final WorldEdit worldEdit;
     private final PlotAreaManager plotAreaManager;
+    private final PlotListener plotListener;
     // To prevent recursion
     private boolean tmpTeleport = true;
     private Field fieldPlayer;
@@ -194,12 +195,13 @@ public class PlayerEventListener extends PlotListener implements Listener {
     public PlayerEventListener(
             final @NonNull PlotAreaManager plotAreaManager,
             final @NonNull EventDispatcher eventDispatcher,
-            final @NonNull WorldEdit worldEdit
+            final @NonNull WorldEdit worldEdit,
+            final @NonNull PlotListener plotListener
     ) {
-        super(eventDispatcher);
         this.eventDispatcher = eventDispatcher;
         this.worldEdit = worldEdit;
         this.plotAreaManager = plotAreaManager;
+        this.plotListener = plotListener;
     }
 
     @EventHandler
@@ -352,7 +354,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         if (area != null) {
             Plot plot = area.getPlot(location);
             if (plot != null) {
-                plotEntry(pp, plot);
+                plotListener.plotEntry(pp, plot);
             }
         }
         // Delayed
@@ -404,7 +406,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 PlotArea area = location.getPlotArea();
                 if (area == null) {
                     if (lastPlot != null) {
-                        plotExit(pp, lastPlot);
+                        plotListener.plotExit(pp, lastPlot);
                         lastPlotAccess.remove();
                     }
                     try (final MetaDataAccess<Location> lastLocationAccess =
@@ -538,7 +540,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (now == null) {
                 try (final MetaDataAccess<Boolean> kickAccess =
                              pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
-                    if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(false)) {
+                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(false)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
                                 Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_EXIT_DENIED))
@@ -556,7 +558,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 }
             } else if (now.equals(lastPlot)) {
                 ForceFieldListener.handleForcefield(player, pp, now);
-            } else if (!plotEntry(pp, now) && this.tmpTeleport) {
+            } else if (!plotListener.plotEntry(pp, now) && this.tmpTeleport) {
                 pp.sendMessage(
                         TranslatableCaption.of("deny.no_enter"),
                         Template.of("plot", now.toString())
@@ -628,7 +630,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (plot == null) {
                 try (final MetaDataAccess<Boolean> kickAccess =
                              pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
-                    if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(false)) {
+                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(false)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
                                 Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_EXIT_DENIED))
@@ -646,7 +648,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 }
             } else if (plot.equals(lastPlot)) {
                 ForceFieldListener.handleForcefield(player, pp, plot);
-            } else if (!plotEntry(pp, plot) && this.tmpTeleport) {
+            } else if (!plotListener.plotEntry(pp, plot) && this.tmpTeleport) {
                 pp.sendMessage(
                         TranslatableCaption.of("deny.no_enter"),
                         Template.of("plot", plot.toString())
@@ -793,7 +795,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             lastLocationAccess.remove();
         }
         if (plot != null) {
-            plotExit(pp, plot);
+            plotListener.plotExit(pp, plot);
         }
         if (this.worldEdit != null) {
             if (!Permissions.hasPermission(pp, Permission.PERMISSION_WORLDEDIT_BYPASS)) {
@@ -807,7 +809,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         if (location.isPlotArea()) {
             plot = location.getPlot();
             if (plot != null) {
-                plotEntry(pp, plot);
+                plotListener.plotEntry(pp, plot);
             }
         }
     }
@@ -1280,7 +1282,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         TaskManager.removeFromTeleportQueue(event.getPlayer().getName());
         BukkitPlayer pp = BukkitUtil.adapt(event.getPlayer());
         pp.unregister();
-        this.logout(pp.getUUID());
+        plotListener.logout(pp.getUUID());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
