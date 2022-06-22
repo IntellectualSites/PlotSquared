@@ -163,7 +163,7 @@ public class HybridUtils {
                 int relChunkZ = chunkPos.getZ() - cbz;
                 oldBlockQueue.setOffsetX(relChunkX << 4);
                 oldBlockQueue.setOffsetZ(relChunkZ << 4);
-                hpw.getGenerator().generateChunk(oldBlockQueue, hpw);
+                hpw.getGenerator().generateChunk(oldBlockQueue, hpw, false);
             });
 
             final BlockState[][][] oldBlocks = oldBlockQueue.getBlockStates();

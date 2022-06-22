@@ -137,15 +137,16 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
     }
 
     @Override
-    public void addWorld(final @NonNull String worldName) {
+    public boolean addWorld(final @NonNull String worldName) {
         PlotWorld world = this.plotWorlds.get(worldName);
         if (world != null) {
-            return;
+            return false;
         }
         // Create a new empty world. When a new area is added
         // the world will be re-recreated with the correct type
         world = new StandardPlotWorld(worldName, null);
         this.plotWorlds.put(worldName, world);
+        return true;
     }
 
     @Override

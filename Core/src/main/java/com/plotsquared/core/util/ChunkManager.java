@@ -38,7 +38,6 @@ public abstract class ChunkManager {
     /**
      * @since TODO
      */
-    @Deprecated(forRemoval = true, since = "6.9.0")
     public static void setChunkInPlotArea(
             RunnableVal<ZeroedDelegateScopedQueueCoordinator> force,
             RunnableVal<ZeroedDelegateScopedQueueCoordinator> add,
