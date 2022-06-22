@@ -242,10 +242,10 @@ public class HybridGen extends IndependentPlotGenerator {
     }
 
     @Override
-    public boolean populateChunk(final ZeroedDelegateScopedQueueCoordinator result, final PlotArea settings) {
+    public void populateChunk(final ZeroedDelegateScopedQueueCoordinator result, final PlotArea settings) {
         HybridPlotWorld hybridPlotWorld = (HybridPlotWorld) settings;
         if (!hybridPlotWorld.populationNeeded()) {
-            return false;
+            return;
         }
         EnumSet<SchematicFeature> roadFeatures = EnumSet.of(SchematicFeature.POPULATING, SchematicFeature.ROAD);
         EnumSet<SchematicFeature> plotFeatures = EnumSet.of(SchematicFeature.POPULATING);
@@ -365,7 +365,7 @@ public class HybridGen extends IndependentPlotGenerator {
                 }
             }
         }
-        return true;
+        return;
     }
 
     @Override

@@ -420,14 +420,6 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         return this.lastPlotArea = area;
     }
 
-    private PlotArea getPlotArea(String name) {
-        final Set<PlotArea> areas = this.plotAreaManager.getPlotAreasSet(name);
-        if (!areas.isEmpty()) {
-            return areas.iterator().next();
-        }
-        return null;
-    }
-
     /**
      * Biome provider should never need to be accessed outside of this class.
      */

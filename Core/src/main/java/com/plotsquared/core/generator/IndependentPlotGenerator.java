@@ -46,12 +46,18 @@ public abstract class IndependentPlotGenerator {
      * @param result   Queue to write to
      * @param settings PlotArea (settings)
      * @param biomes   If biomes should be generated
+     * @since TODO
      */
     public abstract void generateChunk(ZeroedDelegateScopedQueueCoordinator result, PlotArea settings, boolean biomes);
 
-    public boolean populateChunk(ZeroedDelegateScopedQueueCoordinator result, PlotArea setting) {
-        return false;
-    }
+    /**
+     * Populate a chunk-queue with tile entities, entities, etc.
+     *
+     * @param result  Queue to write to
+     * @param setting PlotArea (settings)
+     * @since TODO
+     */
+    public void populateChunk(ZeroedDelegateScopedQueueCoordinator result, PlotArea setting) {}
 
     /**
      * Return a new PlotArea object.
