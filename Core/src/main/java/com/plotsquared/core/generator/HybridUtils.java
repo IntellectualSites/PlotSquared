@@ -189,13 +189,13 @@ public class HybridUtils {
                 if (X == ctx) {
                     maxX = tx & 15;
                 } else {
-                    maxX = 16;
+                    maxX = 15;
                 }
                 int maxZ;
                 if (Z == ctz) {
                     maxZ = tz & 15;
                 } else {
-                    maxZ = 16;
+                    maxZ = 15;
                 }
 
                 int chunkBlockX = X << 4;
@@ -221,7 +221,7 @@ public class HybridUtils {
                 }
             });
 
-            final Runnable run = () -> TaskManager.runTaskAsync(() -> {
+            final Runnable run = () -> {
                 int size = width * length;
                 int[] changes = new int[size];
                 int[] faces = new int[size];
@@ -296,7 +296,7 @@ public class HybridUtils {
                 analysis.variety_sd = (int) (MathMan.getSD(variety, analysis.variety) * 100);
                 whenDone.value = analysis;
                 whenDone.run();
-            });
+            };
             queue.setCompleteTask(run);
             queue.enqueue();
         });

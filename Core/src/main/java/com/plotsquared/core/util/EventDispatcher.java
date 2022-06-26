@@ -19,6 +19,7 @@
 package com.plotsquared.core.util;
 
 import com.google.common.eventbus.EventBus;
+import com.intellectualsites.annotations.DoNotUse;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlayerAutoPlotEvent;
@@ -81,8 +82,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@AnnotationHelper.ApiDescription(info = "This is an internal class used by PlotSquared to dispatch events." +
-        "This is in no form part of the API and is subject to change at any time.")
+@DoNotUse
 public class EventDispatcher {
 
     private final EventBus eventBus = new EventBus("PlotSquaredEvents");
@@ -332,6 +332,15 @@ public class EventDispatcher {
     ) {
         PlotArea area = location.getPlotArea();
         assert area != null;
+        if (!area.buildRangeContainsY(location.getY()) && !Permissions
+                .hasPermission(player, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
+            player.sendMessage(
+                    TranslatableCaption.of("height.height_limit"),
+                    Template.of("minHeight", String.valueOf(area.getMinBuildHeight())),
+                    Template.of("maxHeight", String.valueOf(area.getMaxBuildHeight()))
+            );
+            return false;
+        }
         Plot plot = area.getPlot(location);
         if (plot != null) {
             if (plot.isAdded(player.getUUID())) {
