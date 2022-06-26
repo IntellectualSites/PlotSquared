@@ -313,7 +313,7 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     /**
      * Get the absolute {@link Plot}, if any, that contains this location
      *
-     * @return (Absolute) plot containing the location, or {code null}
+     * @return (Absolute) plot containing the location, or {@code null}
      */
     public @Nullable Plot getPlotAbs() {
         final PlotArea area = this.getPlotArea();
@@ -327,7 +327,7 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     /**
      * Get the {@link Plot}, if any, that contains this location
      *
-     * @return plot containing the location, or {code null}
+     * @return plot containing the location, or {@code null}
      */
     public @Nullable Plot getPlot() {
         final PlotArea area = this.getPlotArea();
