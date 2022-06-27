@@ -462,6 +462,7 @@ public final class FlagCommand extends Command {
             return;
         }
         final Plot plot = player.getLocation().getPlotAbs();
+        final PlotFlag<?, ?> flagWithOldValue = plot.getFlagContainer().getFlag(flag.getClass());
         PlotFlagRemoveEvent event = eventDispatcher.callFlagRemove(flag, plot);
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
@@ -506,7 +507,7 @@ public final class FlagCommand extends Command {
                     if (plot.removeFlag(flag)) {
                         player.sendMessage(TranslatableCaption.of("flag.flag_removed"), Template.of("flag", args[0]), Template.of(
                                 "value",
-                                String.valueOf(flag)
+                                String.valueOf(flagWithOldValue)
                         ));
                         return;
                     } else {
@@ -544,7 +545,7 @@ public final class FlagCommand extends Command {
         }
         player.sendMessage(TranslatableCaption.of("flag.flag_removed"), Template.of("flag", args[0]), Template.of(
                 "value",
-                String.valueOf(flag)
+                String.valueOf(flagWithOldValue)
         ));
     }
 
