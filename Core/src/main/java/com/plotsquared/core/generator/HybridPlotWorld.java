@@ -500,7 +500,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         int pair = MathMan.pair(x, z);
         BaseBlock[] existing = this.G_SCH.computeIfAbsent(pair, k -> new BaseBlock[height]);
         if (y >= height) {
-            if (y != lastOverlayHeightError) {
+            if (y > lastOverlayHeightError) {
                 lastOverlayHeightError = y;
                 LOGGER.error(String.format("Error adding overlay block. `y > height`. y=%s, height=%s", y, height));
             }
