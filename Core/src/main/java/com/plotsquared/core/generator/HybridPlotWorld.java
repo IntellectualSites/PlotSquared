@@ -21,6 +21,7 @@ package com.plotsquared.core.generator;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intellectualsites.annotations.DoNotUse;
+import com.intellectualsites.annotations.NotPublic;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.Settings;
@@ -480,7 +481,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     /**
      * @deprecated This method should not be available for public API usage and will be made private.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(since = "6.9.1")
+    @NotPublic
     public void addOverlayBlock(short x, short y, short z, BaseBlock id, boolean rotate, int height) {
         if (z < 0) {
             z += this.SIZE;
@@ -510,7 +512,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     /**
      * @deprecated This method should not be available for public API usage and will be made private.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(since = "6.9.1")
+    @NotPublic
     public void addOverlayBiome(short x, short z, BiomeType id) {
         if (z < 0) {
             z += this.SIZE;

@@ -643,7 +643,7 @@ public abstract class PlotArea {
      * @param player Player to check
      * @param y      y height to check
      * @return true if outside build area with no permissions
-     * @since TODO
+     * @since 6.9.1
      */
     public boolean notifyIfOutsideBuildArea(PlotPlayer<?> player, int y) {
         if (!buildRangeContainsY(y) && !Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
