@@ -90,7 +90,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
             this.populators.add(new LegacyBlockStatePopulator(this.plotGenerator));
         }
         this.full = true;
-        this.useNewGenerationMethods = PlotSquared.platform().serverVersion()[1] >= 17;
+        this.useNewGenerationMethods = PlotSquared.platform().serverVersion()[1] >= 19;
         this.biomeProvider = new BukkitPlotBiomeProvider();
     }
 
