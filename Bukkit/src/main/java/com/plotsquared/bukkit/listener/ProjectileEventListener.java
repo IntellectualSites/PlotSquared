@@ -89,7 +89,7 @@ public class ProjectileEventListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onProjectileLaunch(ProjectileLaunchEvent event) {
         Projectile entity = event.getEntity();
         ProjectileSource shooter = entity.getShooter();
