@@ -666,8 +666,6 @@ public class Settings extends Config {
         public static boolean TILE_ENTITY_CHECK = true;
         @Comment("Use Paper's async tab completion")
         public static boolean ASYNC_TAB_COMPLETION;
-        @Comment("Prevent cross plot beacon effects")
-        public static boolean DISABLE_BEACON_EFFECT_OVERFLOW = true;
 
     }
 
@@ -817,6 +815,8 @@ public class Settings extends Config {
         );
         @Comment("Whether PlotSquared should hook into MvDWPlaceholderAPI or not")
         public static boolean USE_MVDWAPI = true;
+        @Comment("Prevent cross plot beacon effects")
+        public static boolean DISABLE_BEACON_EFFECT_OVERFLOW = true;
 
     }
 

@@ -34,7 +34,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Fallback listener for paper events on spigot
@@ -42,12 +42,12 @@ import org.jetbrains.annotations.NotNull;
 public class SpigotListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
-    public void onEffect(@NotNull EntityPotionEffectEvent event) {
+    public void onEffect(@NonNull EntityPotionEffectEvent event) {
         if (event.getCause() != EntityPotionEffectEvent.Cause.BEACON) {
             return;
         }
-        Entity entity = event.getEntity();
 
+        Entity entity = event.getEntity();
         Location location = BukkitUtil.adapt(entity.getLocation());
         Plot plot = location.getPlot();
         if (plot == null) {

@@ -430,7 +430,7 @@ public class PaperListener implements Listener {
         if (playerStandingPlot == null) {
             FlagContainer container = area.getRoadFlagContainer();
             if (!getBooleanFlagValue(container, BeaconEffectsFlag.class, true) ||
-                    (beaconPlot != null && Settings.Paper_Components.DISABLE_BEACON_EFFECT_OVERFLOW)) {
+                    (beaconPlot != null && Settings.Enabled_Components.DISABLE_BEACON_EFFECT_OVERFLOW)) {
                 event.setCancelled(true);
             }
             return;
@@ -445,7 +445,7 @@ public class PaperListener implements Listener {
             return;
         }
 
-        if (!plotBeaconEffects || Settings.Paper_Components.DISABLE_BEACON_EFFECT_OVERFLOW) {
+        if (!plotBeaconEffects || Settings.Enabled_Components.DISABLE_BEACON_EFFECT_OVERFLOW) {
             event.setCancelled(true);
         }
     }

@@ -112,6 +112,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
@@ -148,17 +149,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 /**
  * Player Events involving plots.
@@ -194,6 +194,29 @@ public class PlayerEventListener extends PlotListener implements Listener {
         this.eventDispatcher = eventDispatcher;
         this.worldEdit = worldEdit;
         this.plotAreaManager = plotAreaManager;
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEffect(@NonNull EntityPotionEffectEvent event) {
+        if (Settings.Enabled_Components.DISABLE_BEACON_EFFECT_OVERFLOW ||
+                event.getCause() != EntityPotionEffectEvent.Cause.BEACON ||
+                !(event.getEntity() instanceof Player player)) {
+            return;
+        }
+
+        UUID uuid = player.getUniqueId();
+        PotionEffect effect = event.getNewEffect();
+        if (effect == null) {
+            PotionEffect oldEffect = event.getOldEffect();
+            if (oldEffect != null) {
+                String name = oldEffect.getType().getName();
+                this.addEffect(uuid, name, -1);
+            }
+        } else {
+            long expiresAt = System.currentTimeMillis() + effect.getDuration() * 50L; //Convert ticks to milliseconds
+            String name = effect.getType().getName();
+            this.addEffect(uuid, name, expiresAt);
+        }
     }
 
     @EventHandler
