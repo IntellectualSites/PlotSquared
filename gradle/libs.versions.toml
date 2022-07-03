@@ -6,7 +6,7 @@ spotbugs = "4.7.1"
 
 # Plugins
 worldedit = "7.2.10"
-placeholderapi = "2.11.1"
+placeholderapi = "2.11.2"
 luckperms = "5.4"
 essentialsx = "2.19.4"
 mvdwapi = "3.1.1"
