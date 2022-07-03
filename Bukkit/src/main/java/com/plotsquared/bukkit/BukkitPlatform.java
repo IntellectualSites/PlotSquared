@@ -732,6 +732,11 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         this.getServer().getPluginManager().disablePlugin(this);
     }
 
+    @Override
+    public void shutdownServer() {
+        getServer().shutdown();
+    }
+
     private void registerCommands() {
         final BukkitCommand bukkitCommand = new BukkitCommand();
         final PluginCommand plotCommand = getCommand("plots");
