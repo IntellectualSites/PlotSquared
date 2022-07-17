@@ -829,7 +829,6 @@ public class BlockEventListener implements Listener {
             }
             for (Block block1 : event.getBlocks()) {
                 Location bloc = BukkitUtil.adapt(block1.getLocation());
-                //if (block1.getPistonMoveReaction() == PistonMoveReaction.BREAK) return;
                 if (bloc.isPlotArea() || bloc
                         .add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())
                         .isPlotArea() && block1.getPistonMoveReaction() != PistonMoveReaction.BREAK) {
@@ -852,7 +851,6 @@ public class BlockEventListener implements Listener {
         for (Block block1 : event.getBlocks()) {
             Location bloc = BukkitUtil.adapt(block1.getLocation());
             Location newLoc = bloc.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ());
-            //if (block1.getPistonMoveReaction() == PistonMoveReaction.BREAK) return;
             if (!area.contains(bloc.getX(), bloc.getZ()) || !area.contains(newLoc) && block1.getPistonMoveReaction() != PistonMoveReaction.BREAK) {
                 event.setCancelled(true);
                 return;
