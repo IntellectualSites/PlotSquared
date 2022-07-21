@@ -115,8 +115,8 @@ public class Remove extends SubCommand {
             }
             if (count == 0) {
                 player.sendMessage(
-                        TranslatableCaption.of("errors.invalid_player"),
-                        Template.of("value", args[0])
+                        TranslatableCaption.of("member.player_not_removed"),
+                        Template.of("player", args[0])
                 );
             } else {
                 player.sendMessage(
