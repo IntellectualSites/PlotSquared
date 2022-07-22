@@ -778,6 +778,8 @@ public class PlayerEventListener implements Listener {
                     spymessageTemplate
             );
         }
+
+        this.eventDispatcher.callChat(plotPlayer, plot, message, plotRecipients, spies);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

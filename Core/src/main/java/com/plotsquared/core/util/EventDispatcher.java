@@ -27,6 +27,7 @@ import com.plotsquared.core.events.PlayerAutoPlotsChosenEvent;
 import com.plotsquared.core.events.PlayerClaimPlotEvent;
 import com.plotsquared.core.events.PlayerEnterPlotEvent;
 import com.plotsquared.core.events.PlayerLeavePlotEvent;
+import com.plotsquared.core.events.PlayerPlotChatEvent;
 import com.plotsquared.core.events.PlayerPlotDeniedEvent;
 import com.plotsquared.core.events.PlayerPlotHelperEvent;
 import com.plotsquared.core.events.PlayerPlotTrustedEvent;
@@ -80,6 +81,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @DoNotUse
@@ -240,6 +242,22 @@ public class EventDispatcher {
         callEvent(event);
         return event;
     }
+
+    /**
+     * @since TODO
+     */
+    public PlayerPlotChatEvent callChat(
+            PlotPlayer<?> player,
+            Plot plot,
+            String message,
+            Set<PlotPlayer<?>> recipients,
+            Set<PlotPlayer<?>> spies
+    ) {
+        PlayerPlotChatEvent event = new PlayerPlotChatEvent(player, plot, message, recipients, spies);
+        callEvent(event);
+        return event;
+    }
+
 
     public PlayerPlotDeniedEvent callDenied(
             PlotPlayer<?> initiator, Plot plot, UUID player,
