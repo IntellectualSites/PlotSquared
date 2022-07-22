@@ -26,12 +26,13 @@ import java.util.Set;
 /**
  * @since TODO
  */
-public class PlayerPlotChatEvent extends PlotEvent {
+public class PlayerPlotChatEvent extends PlotEvent implements CancellablePlotEvent {
 
     private final PlotPlayer<?> player;
     private final String message;
     private final Set<PlotPlayer<?>> recipients;
     private final Set<PlotPlayer<?>> spies;
+    private Result eventResult;
 
     public PlayerPlotChatEvent(
             PlotPlayer<?> player,
@@ -82,4 +83,15 @@ public class PlayerPlotChatEvent extends PlotEvent {
     public Set<PlotPlayer<?>> getSpies() {
         return this.spies;
     }
+
+    @Override
+    public Result getEventResult() {
+        return this.eventResult;
+    }
+
+    @Override
+    public void setEventResult(final Result eventResult) {
+        this.eventResult = eventResult;
+    }
+
 }
