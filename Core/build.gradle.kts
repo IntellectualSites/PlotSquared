@@ -64,5 +64,6 @@ tasks {
         opt.links("https://google.github.io/guice/api-docs/" + libs.guice.get().versionConstraint.toString() + "/javadoc/")
         opt.links("https://checkerframework.org/api/")
         opt.links("https://javadoc.io/doc/com.intellectualsites.informative-annotations/informative-annotations/latest/")
+        opt.encoding("UTF-8")
     }
 }
