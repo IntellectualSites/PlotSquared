@@ -497,6 +497,13 @@ public class PlotListener {
         playerEffects.remove(uuid);
     }
 
+    /**
+     * Marks an effect as a status effect that will be removed on leaving a plot
+     * @param uuid The uuid of the player the effect belongs to
+     * @param name The name of the status effect
+     * @param expiresAt The time when the effect expires
+     * @since TODO
+     */
     public void addEffect(@NonNull UUID uuid, @NonNull String name, long expiresAt) {
         List<StatusEffect> effects = playerEffects.getOrDefault(uuid, new ArrayList<>());
         effects.removeIf(effect -> effect.name.equals(name));
@@ -520,15 +527,14 @@ public class PlotListener {
         }
 
     }
-    private static class StatusEffect {
-        final @NonNull String name;
-        final long expiresAt;
+
+    private record StatusEffect(@NonNull String name, long expiresAt) {
 
         private StatusEffect(@NonNull String name, long expiresAt) {
-            this.name = name;
-            this.expiresAt = expiresAt;
-        }
+                this.name = name;
+                this.expiresAt = expiresAt;
+            }
 
-    }
+        }
 
 }

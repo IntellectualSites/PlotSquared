@@ -220,12 +220,12 @@ public class PlayerEventListener implements Listener {
             PotionEffect oldEffect = event.getOldEffect();
             if (oldEffect != null) {
                 String name = oldEffect.getType().getName();
-                this.addEffect(uuid, name, -1);
+                plotListener.addEffect(uuid, name, -1);
             }
         } else {
             long expiresAt = System.currentTimeMillis() + effect.getDuration() * 50L; //Convert ticks to milliseconds
             String name = effect.getType().getName();
-            this.addEffect(uuid, name, expiresAt);
+            plotListener.addEffect(uuid, name, expiresAt);
         }
     }
 
