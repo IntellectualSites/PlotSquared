@@ -1,31 +1,25 @@
 /*
- *       _____  _       _    _____                                _
- *      |  __ \| |     | |  / ____|                              | |
- *      | |__) | | ___ | |_| (___   __ _ _   _  __ _ _ __ ___  __| |
- *      |  ___/| |/ _ \| __|\___ \ / _` | | | |/ _` | '__/ _ \/ _` |
- *      | |    | | (_) | |_ ____) | (_| | |_| | (_| | | |  __/ (_| |
- *      |_|    |_|\___/ \__|_____/ \__, |\__,_|\__,_|_|  \___|\__,_|
- *                                    | |
- *                                    |_|
- *            PlotSquared plot management system for Minecraft
- *               Copyright (C) 2014 - 2022 IntellectualSites
+ * PlotSquared, a land and world management plugin for Minecraft.
+ * Copyright (C) IntellectualSites <https://intellectualsites.com>
+ * Copyright (C) IntellectualSites team and contributors
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
 import com.google.common.eventbus.EventBus;
+import com.intellectualsites.annotations.DoNotUse;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlayerAutoPlotEvent;
@@ -88,8 +82,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@AnnotationHelper.ApiDescription(info = "This is an internal class used by PlotSquared to dispatch events." +
-        "This is in no form part of the API and is subject to change at any time.")
+@DoNotUse
 public class EventDispatcher {
 
     private final EventBus eventBus = new EventBus("PlotSquaredEvents");
@@ -339,6 +332,15 @@ public class EventDispatcher {
     ) {
         PlotArea area = location.getPlotArea();
         assert area != null;
+        if (!area.buildRangeContainsY(location.getY()) && !Permissions
+                .hasPermission(player, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
+            player.sendMessage(
+                    TranslatableCaption.of("height.height_limit"),
+                    Template.of("minHeight", String.valueOf(area.getMinBuildHeight())),
+                    Template.of("maxHeight", String.valueOf(area.getMaxBuildHeight()))
+            );
+            return false;
+        }
         Plot plot = area.getPlot(location);
         if (plot != null) {
             if (plot.isAdded(player.getUUID())) {

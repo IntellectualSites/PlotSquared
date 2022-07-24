@@ -1,27 +1,20 @@
 /*
- *       _____  _       _    _____                                _
- *      |  __ \| |     | |  / ____|                              | |
- *      | |__) | | ___ | |_| (___   __ _ _   _  __ _ _ __ ___  __| |
- *      |  ___/| |/ _ \| __|\___ \ / _` | | | |/ _` | '__/ _ \/ _` |
- *      | |    | | (_) | |_ ____) | (_| | |_| | (_| | | |  __/ (_| |
- *      |_|    |_|\___/ \__|_____/ \__, |\__,_|\__,_|_|  \___|\__,_|
- *                                    | |
- *                                    |_|
- *            PlotSquared plot management system for Minecraft
- *               Copyright (C) 2014 - 2022 IntellectualSites
+ * PlotSquared, a land and world management plugin for Minecraft.
+ * Copyright (C) IntellectualSites <https://intellectualsites.com>
+ * Copyright (C) IntellectualSites team and contributors
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
@@ -37,9 +30,18 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * The Permissions class handles checking user permissions.<br>
  * - This will respect * nodes and plots.admin and can be used to check permission ranges (e.g. plots.plot.5)<br>
  * - Checking the PlotPlayer class directly will not take the above into account<br>
+ *
+ * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
+ * classes
  */
+@Deprecated(forRemoval = true, since = "TODO")
 public class Permissions {
 
+    /**
+     * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
+     * classes
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public static boolean hasPermission(PlotPlayer<?> player, Permission permission, boolean notify) {
         return hasPermission(player, permission.toString(), notify);
     }
@@ -50,18 +52,25 @@ public class Permissions {
      * @param caller     permission holder
      * @param permission Permission
      * @return {@code true} if the owner has the given permission, else {@code false}
+     * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
+     * classes
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public static boolean hasPermission(final @NonNull PermissionHolder caller, final @NonNull Permission permission) {
         return caller.hasPermission(permission.toString());
     }
 
     /**
-     * Check if the owner of the profile has a given (global) permission
+     * Check if the owner of the profile has a given (global) permission. There is no guarantee that per-world permissions will
+     * be checked because unmaintained crap plugins like PEX exist.
      *
      * @param caller     permission holder
      * @param permission Permission
      * @return {@code true} if the owner has the given permission, else {@code false}
+     * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
+     * classes
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public static boolean hasPermission(final @NonNull PermissionHolder caller, final @NonNull String permission) {
         return caller.hasPermission(permission);
     }
@@ -75,7 +84,10 @@ public class Permissions {
      * @param key        Permission "key"
      * @return {@code true} if the owner has the given permission, else {@code false}
      * @since 6.0.10
+     * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
+     * classes
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public static boolean hasKeyedPermission(
             final @NonNull PermissionHolder caller, final @NonNull String permission,
             final @NonNull String key
@@ -90,7 +102,10 @@ public class Permissions {
      * @param permission permission
      * @param notify     if to notify the permission holder
      * @return if permission is had
+     * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
+     * classes
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public static boolean hasPermission(PlotPlayer<?> player, String permission, boolean notify) {
         if (!hasPermission(player, permission)) {
             if (notify) {
@@ -104,6 +119,11 @@ public class Permissions {
         return true;
     }
 
+    /**
+     * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
+     * classes
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public static int hasPermissionRange(PlotPlayer<?> player, Permission Permission, int range) {
         return hasPermissionRange(player, Permission.toString(), range);
     }
@@ -117,7 +137,10 @@ public class Permissions {
      * @param stub   The permission stub to check e.g. for `plots.plot.#` the stub is `plots.plot`
      * @param range  The range to check
      * @return The highest permission they have within that range
+     * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
+     * classes
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public static int hasPermissionRange(PlotPlayer<?> player, String stub, int range) {
         return player.hasPermissionRange(stub, range);
     }

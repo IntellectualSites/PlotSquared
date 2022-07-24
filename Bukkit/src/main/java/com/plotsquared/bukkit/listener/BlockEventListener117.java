@@ -1,27 +1,20 @@
 /*
- *       _____  _       _    _____                                _
- *      |  __ \| |     | |  / ____|                              | |
- *      | |__) | | ___ | |_| (___   __ _ _   _  __ _ _ __ ___  __| |
- *      |  ___/| |/ _ \| __|\___ \ / _` | | | |/ _` | '__/ _ \/ _` |
- *      | |    | | (_) | |_ ____) | (_| | |_| | (_| | | |  __/ (_| |
- *      |_|    |_|\___/ \__|_____/ \__, |\__,_|\__,_|_|  \___|\__,_|
- *                                    | |
- *                                    |_|
- *            PlotSquared plot management system for Minecraft
- *               Copyright (C) 2014 - 2022 IntellectualSites
+ * PlotSquared, a land and world management plugin for Minecraft.
+ * Copyright (C) IntellectualSites <https://intellectualsites.com>
+ * Copyright (C) IntellectualSites team and contributors
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
 
@@ -33,6 +26,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.CopperOxideFlag;
 import com.plotsquared.core.plot.flag.implementations.MiscInteractFlag;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -46,10 +40,30 @@ import org.bukkit.event.block.BlockReceiveGameEvent;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
 public class BlockEventListener117 implements Listener {
+
+    private static final Set<Material> COPPER_OXIDIZING = Set.of(
+            Material.COPPER_BLOCK,
+            Material.EXPOSED_COPPER,
+            Material.WEATHERED_COPPER,
+            Material.OXIDIZED_COPPER,
+            Material.CUT_COPPER,
+            Material.EXPOSED_CUT_COPPER,
+            Material.WEATHERED_CUT_COPPER,
+            Material.OXIDIZED_CUT_COPPER,
+            Material.CUT_COPPER_STAIRS,
+            Material.EXPOSED_CUT_COPPER_STAIRS,
+            Material.WEATHERED_CUT_COPPER_STAIRS,
+            Material.OXIDIZED_CUT_COPPER_STAIRS,
+            Material.CUT_COPPER_SLAB,
+            Material.EXPOSED_CUT_COPPER_SLAB,
+            Material.WEATHERED_CUT_COPPER_SLAB,
+            Material.OXIDIZED_CUT_COPPER_SLAB
+    );
 
     @Inject
     public BlockEventListener117() {
@@ -66,10 +80,19 @@ public class BlockEventListener117 implements Listener {
             return;
         }
 
+        BukkitPlayer plotPlayer = null;
+
+        if (entity instanceof Player player) {
+            plotPlayer = BukkitUtil.adapt(player);
+            if (area.notifyIfOutsideBuildArea(plotPlayer, location.getY())) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+
         Plot plot = location.getOwnedPlot();
         if (plot == null || !plot.getFlag(MiscInteractFlag.class)) {
-            if (entity instanceof Player player) {
-                BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
+            if (plotPlayer != null) {
                 if (plot != null) {
                     if (!plot.isAdded(plotPlayer.getUUID())) {
                         plot.debug(plotPlayer.getName() + " couldn't trigger sculk sensors because misc-interact = false");
@@ -101,12 +124,12 @@ public class BlockEventListener117 implements Listener {
         PlotArea area = location.getPlotArea();
         if (area == null) {
             for (int i = blocks.size() - 1; i >= 0; i--) {
-                location = BukkitUtil.adapt(blocks.get(i).getLocation());
-                if (location.isPlotArea()) {
+                Location blockLocation = BukkitUtil.adapt(blocks.get(i).getLocation());
+                blockLocation = BukkitUtil.adapt(blocks.get(i).getLocation());
+                if (blockLocation.isPlotArea()) {
                     blocks.remove(i);
                 }
             }
-            return;
         } else {
             Plot origin = area.getOwnedPlot(location);
             if (origin == null) {
@@ -114,27 +137,19 @@ public class BlockEventListener117 implements Listener {
                 return;
             }
             for (int i = blocks.size() - 1; i >= 0; i--) {
-                location = BukkitUtil.adapt(blocks.get(i).getLocation());
-                if (!area.contains(location.getX(), location.getZ())) {
+                Location blockLocation = BukkitUtil.adapt(blocks.get(i).getLocation());
+                if (!area.contains(blockLocation.getX(), blockLocation.getZ())) {
                     blocks.remove(i);
                     continue;
                 }
-                Plot plot = area.getOwnedPlot(location);
+                Plot plot = area.getOwnedPlot(blockLocation);
                 if (!Objects.equals(plot, origin)) {
                     event.getBlocks().remove(i);
+                    continue;
                 }
-            }
-        }
-        Plot origin = area.getPlot(location);
-        if (origin == null) {
-            event.setCancelled(true);
-            return;
-        }
-        for (int i = blocks.size() - 1; i >= 0; i--) {
-            location = BukkitUtil.adapt(blocks.get(i).getLocation());
-            Plot plot = area.getOwnedPlot(location);
-            if (!Objects.equals(plot, origin) && (!plot.isMerged() && !origin.isMerged())) {
-                event.getBlocks().remove(i);
+                if (!area.buildRangeContainsY(location.getY())) {
+                    event.getBlocks().remove(i);
+                }
             }
         }
     }
@@ -155,27 +170,11 @@ public class BlockEventListener117 implements Listener {
         if (plot == null) {
             return;
         }
-        switch (event.getNewState().getType()) {
-            case COPPER_BLOCK:
-            case EXPOSED_COPPER:
-            case WEATHERED_COPPER:
-            case OXIDIZED_COPPER:
-            case CUT_COPPER:
-            case EXPOSED_CUT_COPPER:
-            case WEATHERED_CUT_COPPER:
-            case OXIDIZED_CUT_COPPER:
-            case CUT_COPPER_STAIRS:
-            case EXPOSED_CUT_COPPER_STAIRS:
-            case WEATHERED_CUT_COPPER_STAIRS:
-            case OXIDIZED_CUT_COPPER_STAIRS:
-            case CUT_COPPER_SLAB:
-            case EXPOSED_CUT_COPPER_SLAB:
-            case WEATHERED_CUT_COPPER_SLAB:
-            case OXIDIZED_CUT_COPPER_SLAB:
-                if (!plot.getFlag(CopperOxideFlag.class)) {
-                    plot.debug("Copper could not oxide because copper-oxide = false");
-                    event.setCancelled(true);
-                }
+        if (COPPER_OXIDIZING.contains(event.getNewState().getType())) {
+            if (!plot.getFlag(CopperOxideFlag.class)) {
+                plot.debug("Copper could not oxide because copper-oxide = false");
+                event.setCancelled(true);
+            }
         }
     }
 

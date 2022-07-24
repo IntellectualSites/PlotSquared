@@ -1,27 +1,20 @@
 /*
- *       _____  _       _    _____                                _
- *      |  __ \| |     | |  / ____|                              | |
- *      | |__) | | ___ | |_| (___   __ _ _   _  __ _ _ __ ___  __| |
- *      |  ___/| |/ _ \| __|\___ \ / _` | | | |/ _` | '__/ _ \/ _` |
- *      | |    | | (_) | |_ ____) | (_| | |_| | (_| | | |  __/ (_| |
- *      |_|    |_|\___/ \__|_____/ \__, |\__,_|\__,_|_|  \___|\__,_|
- *                                    | |
- *                                    |_|
- *            PlotSquared plot management system for Minecraft
- *               Copyright (C) 2014 - 2022 IntellectualSites
+ * PlotSquared, a land and world management plugin for Minecraft.
+ * Copyright (C) IntellectualSites <https://intellectualsites.com>
+ * Copyright (C) IntellectualSites team and contributors
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
 
@@ -43,6 +36,7 @@ import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.location.PlotLoc;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
@@ -55,6 +49,7 @@ import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.RegionUtil;
 import com.plotsquared.core.util.StringMan;
@@ -629,6 +624,38 @@ public abstract class PlotArea {
     public boolean contains(final @NonNull Location location) {
         return StringMan.isEqual(location.getWorldName(), this.getWorldName()) && (
                 getRegionAbs() == null || this.region.contains(location.getBlockVector3()));
+    }
+
+    /**
+     * Get if the {@code PlotArea}'s build range (min build height -> max build height) contains the given y value
+     *
+     * @param y y height
+     * @return if build height contains y
+     */
+    public boolean buildRangeContainsY(int y) {
+        return y >= minBuildHeight && y < maxBuildHeight;
+    }
+
+    /**
+     * Utility method to check if the player is attempting to place blocks outside the build area, and notify of this if the
+     * player does not have permissions.
+     *
+     * @param player Player to check
+     * @param y      y height to check
+     * @return true if outside build area with no permissions
+     * @since 6.9.1
+     */
+    public boolean notifyIfOutsideBuildArea(PlotPlayer<?> player, int y) {
+        if (!buildRangeContainsY(y) && !Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
+            player.sendMessage(
+                    TranslatableCaption.of("height.height_limit"),
+                    Template.of("minHeight", String.valueOf(minBuildHeight)),
+                    Template.of("maxHeight", String.valueOf(maxBuildHeight))
+            );
+            // Return true if "failed" as the method will always be inverted otherwise
+            return true;
+        }
+        return false;
     }
 
     public @NonNull Set<Plot> getPlotsAbs(final UUID uuid) {

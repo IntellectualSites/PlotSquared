@@ -1,27 +1,20 @@
 /*
- *       _____  _       _    _____                                _
- *      |  __ \| |     | |  / ____|                              | |
- *      | |__) | | ___ | |_| (___   __ _ _   _  __ _ _ __ ___  __| |
- *      |  ___/| |/ _ \| __|\___ \ / _` | | | |/ _` | '__/ _ \/ _` |
- *      | |    | | (_) | |_ ____) | (_| | |_| | (_| | | |  __/ (_| |
- *      |_|    |_|\___/ \__|_____/ \__, |\__,_|\__,_|_|  \___|\__,_|
- *                                    | |
- *                                    |_|
- *            PlotSquared plot management system for Minecraft
- *               Copyright (C) 2014 - 2022 IntellectualSites
+ * PlotSquared, a land and world management plugin for Minecraft.
+ * Copyright (C) IntellectualSites <https://intellectualsites.com>
+ * Copyright (C) IntellectualSites team and contributors
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
 
@@ -89,6 +82,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -164,11 +158,26 @@ import java.util.UUID;
  * Player Events involving plots.
  */
 @SuppressWarnings("unused")
-public class PlayerEventListener extends PlotListener implements Listener {
+public class PlayerEventListener implements Listener {
 
+    private static final Set<Material> MINECARTS = Set.of(
+            Material.MINECART,
+            Material.TNT_MINECART,
+            Material.CHEST_MINECART,
+            Material.COMMAND_BLOCK_MINECART,
+            Material.FURNACE_MINECART,
+            Material.HOPPER_MINECART
+    );
+    private static final Set<Material> BOOKS = Set.of(
+            Material.BOOK,
+            Material.KNOWLEDGE_BOOK,
+            Material.WRITABLE_BOOK,
+            Material.WRITTEN_BOOK
+    );
     private final EventDispatcher eventDispatcher;
     private final WorldEdit worldEdit;
     private final PlotAreaManager plotAreaManager;
+    private final PlotListener plotListener;
     // To prevent recursion
     private boolean tmpTeleport = true;
     private Field fieldPlayer;
@@ -188,12 +197,13 @@ public class PlayerEventListener extends PlotListener implements Listener {
     public PlayerEventListener(
             final @NonNull PlotAreaManager plotAreaManager,
             final @NonNull EventDispatcher eventDispatcher,
-            final @NonNull WorldEdit worldEdit
+            final @NonNull WorldEdit worldEdit,
+            final @NonNull PlotListener plotListener
     ) {
-        super(eventDispatcher);
         this.eventDispatcher = eventDispatcher;
         this.worldEdit = worldEdit;
         this.plotAreaManager = plotAreaManager;
+        this.plotListener = plotListener;
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -369,7 +379,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         if (area != null) {
             Plot plot = area.getPlot(location);
             if (plot != null) {
-                plotEntry(pp, plot);
+                plotListener.plotEntry(pp, plot);
             }
         }
         // Delayed
@@ -421,7 +431,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 PlotArea area = location.getPlotArea();
                 if (area == null) {
                     if (lastPlot != null) {
-                        plotExit(pp, lastPlot);
+                        plotListener.plotExit(pp, lastPlot);
                         lastPlotAccess.remove();
                     }
                     try (final MetaDataAccess<Location> lastLocationAccess =
@@ -555,7 +565,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (now == null) {
                 try (final MetaDataAccess<Boolean> kickAccess =
                              pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
-                    if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(false)) {
+                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(false)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
                                 Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_EXIT_DENIED))
@@ -573,7 +583,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 }
             } else if (now.equals(lastPlot)) {
                 ForceFieldListener.handleForcefield(player, pp, now);
-            } else if (!plotEntry(pp, now) && this.tmpTeleport) {
+            } else if (!plotListener.plotEntry(pp, now) && this.tmpTeleport) {
                 pp.sendMessage(
                         TranslatableCaption.of("deny.no_enter"),
                         Template.of("plot", now.toString())
@@ -645,7 +655,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (plot == null) {
                 try (final MetaDataAccess<Boolean> kickAccess =
                              pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
-                    if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(false)) {
+                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(false)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
                                 Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_EXIT_DENIED))
@@ -663,7 +673,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 }
             } else if (plot.equals(lastPlot)) {
                 ForceFieldListener.handleForcefield(player, pp, plot);
-            } else if (!plotEntry(pp, plot) && this.tmpTeleport) {
+            } else if (!plotListener.plotEntry(pp, plot) && this.tmpTeleport) {
                 pp.sendMessage(
                         TranslatableCaption.of("deny.no_enter"),
                         Template.of("plot", plot.toString())
@@ -810,7 +820,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             lastLocationAccess.remove();
         }
         if (plot != null) {
-            plotExit(pp, plot);
+            plotListener.plotExit(pp, plot);
         }
         if (this.worldEdit != null) {
             if (!Permissions.hasPermission(pp, Permission.PERMISSION_WORLDEDIT_BYPASS)) {
@@ -824,7 +834,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         if (location.isPlotArea()) {
             plot = location.getPlot();
             if (plot != null) {
-                plotEntry(pp, plot);
+                plotListener.plotEntry(pp, plot);
             }
         }
     }
@@ -860,10 +870,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
         if ((slot > 8) || !event.getEventName().equals("InventoryCreativeEvent")) {
             return;
         }
-        ItemStack current = inv.getItemInHand();
+        ItemStack oldItem = inv.getItemInHand();
+        ItemMeta oldMeta = oldItem.getItemMeta();
         ItemStack newItem = event.getCursor();
         ItemMeta newMeta = newItem.getItemMeta();
-        ItemMeta oldMeta = newItem.getItemMeta();
 
         if (event.getClick() == ClickType.CREATIVE) {
             final Plot plot = pp.getCurrentPlot();
@@ -903,34 +913,26 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 oldLore = lore.toString();
             }
         }
-        if (!"[(+NBT)]".equals(newLore) || (current.equals(newItem) && newLore.equals(oldLore))) {
-            switch (newItem.getType()) {
-                case LEGACY_BANNER:
-                case PLAYER_HEAD:
-                    if (newMeta != null) {
-                        break;
-                    }
-                default:
-                    return;
+        Material itemType = newItem.getType();
+        if (!"[(+NBT)]".equals(newLore) || (oldItem.equals(newItem) && newLore.equals(oldLore))) {
+            if (newMeta == null || (itemType != Material.LEGACY_BANNER && itemType != Material.PLAYER_HEAD)) {
+                return;
             }
         }
         Block block = player.getTargetBlock(null, 7);
         org.bukkit.block.BlockState state = block.getState();
         Material stateType = state.getType();
-        Material itemType = newItem.getType();
         if (stateType != itemType) {
-            switch (stateType) {
-                case LEGACY_STANDING_BANNER:
-                case LEGACY_WALL_BANNER:
-                    if (itemType == Material.LEGACY_BANNER) {
-                        break;
-                    }
-                case LEGACY_SKULL:
-                    if (itemType == Material.LEGACY_SKULL_ITEM) {
-                        break;
-                    }
-                default:
+            if (stateType == Material.LEGACY_WALL_BANNER || stateType == Material.LEGACY_STANDING_BANNER) {
+                if (itemType != Material.LEGACY_BANNER) {
                     return;
+                }
+            } else if (stateType == Material.LEGACY_SKULL) {
+                if (itemType != Material.LEGACY_SKULL_ITEM) {
+                    return;
+                }
+            } else {
+                return;
             }
         }
         Location location = BukkitUtil.adapt(state.getLocation());
@@ -969,7 +971,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             }
         }
         if (cancelled) {
-            if ((current.getType() == newItem.getType()) && (current.getDurability() == newItem
+            if ((oldItem.getType() == newItem.getType()) && (oldItem.getDurability() == newItem
                     .getDurability())) {
                 event.setCursor(
                         new ItemStack(newItem.getType(), newItem.getAmount(), newItem.getDurability()));
@@ -1156,14 +1158,21 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     //Allow all players to eat while also allowing the block place event ot be fired
                     return;
                 }
-                switch (type) {
-                    case ACACIA_BOAT, BIRCH_BOAT, CHEST_MINECART, COMMAND_BLOCK_MINECART, DARK_OAK_BOAT, FURNACE_MINECART, HOPPER_MINECART, JUNGLE_BOAT, MINECART, OAK_BOAT, SPRUCE_BOAT, TNT_MINECART -> eventType = PlayerBlockEventType.PLACE_VEHICLE;
-                    case FIREWORK_ROCKET, FIREWORK_STAR -> eventType = PlayerBlockEventType.SPAWN_MOB;
-                    case BOOK, KNOWLEDGE_BOOK, WRITABLE_BOOK, WRITTEN_BOOK -> eventType = PlayerBlockEventType.READ;
-                    case ARMOR_STAND -> {
-                        location = BukkitUtil.adapt(block.getRelative(event.getBlockFace()).getLocation());
-                        eventType = PlayerBlockEventType.PLACE_MISC;
-                    }
+                if (type == Material.ARMOR_STAND) {
+                    location = BukkitUtil.adapt(block.getRelative(event.getBlockFace()).getLocation());
+                    eventType = PlayerBlockEventType.PLACE_MISC;
+                }
+                if (Tag.ITEMS_BOATS.isTagged(type) || MINECARTS.contains(type)) {
+                    eventType = PlayerBlockEventType.PLACE_VEHICLE;
+                    break;
+                }
+                if (type == Material.FIREWORK_ROCKET || type == Material.FIREWORK_STAR) {
+                    eventType = PlayerBlockEventType.SPAWN_MOB;
+                    break;
+                }
+                if (BOOKS.contains(type)) {
+                    eventType = PlayerBlockEventType.READ;
+                    break;
                 }
                 break;
             }
@@ -1298,7 +1307,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         TaskManager.removeFromTeleportQueue(event.getPlayer().getName());
         BukkitPlayer pp = BukkitUtil.adapt(event.getPlayer());
         pp.unregister();
-        this.logout(pp.getUUID());
+        plotListener.logout(pp.getUUID());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -1735,6 +1744,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         if (PlotSquared.get().getPlotAreaManager().getPlotAreasSet(world).size() == 0) {
             return;
         }
+        BukkitPlayer pp = (event.getEntity() instanceof Player player) ? BukkitUtil.adapt(player) : null;
         int minX = Integer.MAX_VALUE;
         int maxX = Integer.MIN_VALUE;
         int minZ = Integer.MAX_VALUE;
@@ -1755,6 +1765,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
             PlotArea area = location.getPlotArea();
             if (area == null) {
                 continue;
+            }
+            if (area.notifyIfOutsideBuildArea(pp, location.getY())) {
+                event.setCancelled(true);
+                return;
             }
             Plot plot = location.getOwnedPlot();
             if (plot == null) {

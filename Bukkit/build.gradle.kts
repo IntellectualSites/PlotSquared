@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.arkitektonika)
     implementation(libs.http4j)
     implementation("com.intellectualsites.paster:Paster")
+    implementation("com.intellectualsites.informative-annotations:informative-annotations")
 
     // Adventure
     implementation("net.kyori:adventure-platform-bukkit")
@@ -87,6 +88,7 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("javax.inject", "com.plotsquared.core.annotation.inject")
     relocate("net.jcip", "com.plotsquared.core.annotations.jcip")
     relocate("edu.umd.cs.findbugs", "com.plotsquared.core.annotations.findbugs")
+    relocate("com.intellectualsites.informative-annotations", "com.plotsquared.core.annotation.informative")
 
     // Get rid of all the libs which are 100% unused.
     minimize()
@@ -99,9 +101,10 @@ tasks {
         val opt = options as StandardJavadocDocletOptions
         opt.links("https://jd.papermc.io/paper/1.18/")
         opt.links("https://docs.enginehub.org/javadoc/com.sk89q.worldedit/worldedit-bukkit/" + libs.worldeditBukkit.get().versionConstraint.toString())
-        opt.links("https://javadoc.io/doc/com.plotsquared/PlotSquared-Core/latest/")
+        opt.links("https://intellectualsites.github.io/plotsquared-javadocs/core/")
         opt.links("https://jd.adventure.kyori.net/api/4.9.3/")
         opt.links("https://google.github.io/guice/api-docs/" + libs.guice.get().versionConstraint.toString() + "/javadoc/")
         opt.links("https://checkerframework.org/api/")
+        opt.encoding("UTF-8")
     }
 }
