@@ -30,9 +30,18 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * The Permissions class handles checking user permissions.<br>
  * - This will respect * nodes and plots.admin and can be used to check permission ranges (e.g. plots.plot.5)<br>
  * - Checking the PlotPlayer class directly will not take the above into account<br>
+ *
+ * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
+ * classes
  */
+@Deprecated(forRemoval = true, since = "TODO")
 public class Permissions {
 
+    /**
+     * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
+     * classes
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public static boolean hasPermission(PlotPlayer<?> player, Permission permission, boolean notify) {
         return hasPermission(player, permission.toString(), notify);
     }
@@ -43,18 +52,25 @@ public class Permissions {
      * @param caller     permission holder
      * @param permission Permission
      * @return {@code true} if the owner has the given permission, else {@code false}
+     * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
+     * classes
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public static boolean hasPermission(final @NonNull PermissionHolder caller, final @NonNull Permission permission) {
         return caller.hasPermission(permission.toString());
     }
 
     /**
-     * Check if the owner of the profile has a given (global) permission
+     * Check if the owner of the profile has a given (global) permission. There is no guarantee that per-world permissions will
+     * be checked because unmaintained crap plugins like PEX exist.
      *
      * @param caller     permission holder
      * @param permission Permission
      * @return {@code true} if the owner has the given permission, else {@code false}
+     * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
+     * classes
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public static boolean hasPermission(final @NonNull PermissionHolder caller, final @NonNull String permission) {
         return caller.hasPermission(permission);
     }
@@ -68,7 +84,10 @@ public class Permissions {
      * @param key        Permission "key"
      * @return {@code true} if the owner has the given permission, else {@code false}
      * @since 6.0.10
+     * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
+     * classes
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public static boolean hasKeyedPermission(
             final @NonNull PermissionHolder caller, final @NonNull String permission,
             final @NonNull String key
@@ -83,7 +102,10 @@ public class Permissions {
      * @param permission permission
      * @param notify     if to notify the permission holder
      * @return if permission is had
+     * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
+     * classes
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public static boolean hasPermission(PlotPlayer<?> player, String permission, boolean notify) {
         if (!hasPermission(player, permission)) {
             if (notify) {
@@ -97,6 +119,11 @@ public class Permissions {
         return true;
     }
 
+    /**
+     * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
+     * classes
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public static int hasPermissionRange(PlotPlayer<?> player, Permission Permission, int range) {
         return hasPermissionRange(player, Permission.toString(), range);
     }
@@ -110,7 +137,10 @@ public class Permissions {
      * @param stub   The permission stub to check e.g. for `plots.plot.#` the stub is `plots.plot`
      * @param range  The range to check
      * @return The highest permission they have within that range
+     * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
+     * classes
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public static int hasPermissionRange(PlotPlayer<?> player, String stub, int range) {
         return player.hasPermissionRange(stub, range);
     }
