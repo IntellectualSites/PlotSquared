@@ -34,14 +34,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
  * classes
  */
-@Deprecated(forRemoval = true, since = "TODO")
+@Deprecated(forRemoval = true, since = "6.9.3")
 public class Permissions {
 
     /**
      * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
      * classes
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.3")
     public static boolean hasPermission(PlotPlayer<?> player, Permission permission, boolean notify) {
         return hasPermission(player, permission.toString(), notify);
     }
@@ -55,7 +55,7 @@ public class Permissions {
      * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
      * classes
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.3")
     public static boolean hasPermission(final @NonNull PermissionHolder caller, final @NonNull Permission permission) {
         return caller.hasPermission(permission.toString());
     }
@@ -70,7 +70,7 @@ public class Permissions {
      * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
      * classes
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.3")
     public static boolean hasPermission(final @NonNull PermissionHolder caller, final @NonNull String permission) {
         return caller.hasPermission(permission);
     }
@@ -87,7 +87,7 @@ public class Permissions {
      * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
      * classes
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.3")
     public static boolean hasKeyedPermission(
             final @NonNull PermissionHolder caller, final @NonNull String permission,
             final @NonNull String key
@@ -105,7 +105,7 @@ public class Permissions {
      * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
      * classes
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.3")
     public static boolean hasPermission(PlotPlayer<?> player, String permission, boolean notify) {
         if (!hasPermission(player, permission)) {
             if (notify) {
@@ -123,7 +123,7 @@ public class Permissions {
      * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
      * classes
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.3")
     public static int hasPermissionRange(PlotPlayer<?> player, Permission Permission, int range) {
         return hasPermissionRange(player, Permission.toString(), range);
     }
@@ -140,7 +140,7 @@ public class Permissions {
      * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
      * classes
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.9.3")
     public static int hasPermissionRange(PlotPlayer<?> player, String stub, int range) {
         return player.hasPermissionRange(stub, range);
     }

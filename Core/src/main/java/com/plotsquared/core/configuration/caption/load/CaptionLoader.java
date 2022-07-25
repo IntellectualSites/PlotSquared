@@ -174,7 +174,7 @@ public final class CaptionLoader {
     public @NonNull CaptionMap loadAll(final @NonNull Path directory) throws IOException {
         final Map<Locale, CaptionMap> localeMaps = new HashMap<>();
         try (final Stream<Path> files = Files.list(directory)) {
-            final List<Path> captionFiles = files.filter(Files::isRegularFile).collect(Collectors.toList());
+            final List<Path> captionFiles = files.filter(Files::isRegularFile).toList();
             for (Path file : captionFiles) {
                 try {
                     final CaptionMap localeMap = loadSingle(file);
@@ -221,7 +221,7 @@ public final class CaptionLoader {
      * @throws IOException              if the file couldn't be accessed or read successfully.
      * @throws IllegalArgumentException if the file name doesn't match the specified format.
      * @see #loadSingle(Path)
-     * @since TODO
+     * @since 6.9.3
      */
     public @NonNull CaptionMap loadOrCreateSingle(final @NonNull Path file) throws IOException {
         final Locale locale = this.localeExtractor.apply(file);
