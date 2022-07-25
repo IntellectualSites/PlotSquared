@@ -197,6 +197,9 @@ public class PlotSquared {
             this.loadCaptionMap();
         } catch (final Exception e) {
             LOGGER.error("Failed to load caption map", e);
+            LOGGER.error("Shutting down server to prevent further issues");
+            this.platform.shutdownServer();
+            throw new RuntimeException("Abort loading PlotSquared");
         }
 
         // Setup the global flag container
@@ -267,7 +270,7 @@ public class PlotSquared {
             captionMap = this.captionLoader.loadAll(this.platform.getDirectory().toPath().resolve("lang"));
         } else {
             String fileName = "messages_" + Settings.Enabled_Components.DEFAULT_LOCALE + ".json";
-            captionMap = this.captionLoader.loadSingle(this.platform.getDirectory().toPath().resolve("lang").resolve(fileName));
+            captionMap = this.captionLoader.loadOrCreateSingle(this.platform.getDirectory().toPath().resolve("lang").resolve(fileName));
         }
         this.captionMaps.put(TranslatableCaption.DEFAULT_NAMESPACE, captionMap);
         LOGGER.info(

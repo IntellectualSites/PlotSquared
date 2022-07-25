@@ -76,6 +76,11 @@ public interface PlotPlatform<P> extends LocaleHolder {
     void shutdown();
 
     /**
+     * Completely shuts down the server.
+     */
+    void shutdownServer();
+
+    /**
      * Get the name of the plugin
      *
      * @return Plugin name
