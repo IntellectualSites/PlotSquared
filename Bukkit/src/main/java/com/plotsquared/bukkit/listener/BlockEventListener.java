@@ -692,7 +692,7 @@ public class BlockEventListener implements Listener {
             }
             return;
         }
-        if (Tag.CORAL_BLOCKS.isTagged(blockType) || Tag.CORALS.isTagged(blockType)) {
+        if (Tag.CORAL_BLOCKS.isTagged(blockType) || Tag.CORALS.isTagged(blockType) || Tag.WALL_CORALS.isTagged(blockType)) {
             if (!plot.getFlag(CoralDryFlag.class)) {
                 plot.debug("Coral could not dry because coral-dry = false");
                 event.setCancelled(true);
