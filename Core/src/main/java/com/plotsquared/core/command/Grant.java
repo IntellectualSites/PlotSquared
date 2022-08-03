@@ -32,7 +32,6 @@ import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import com.plotsquared.core.uuid.UUIDMapping;
 import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.Collection;
@@ -40,6 +39,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
@@ -88,8 +88,8 @@ public class Grant extends Command {
                                 Template.of("value", String.valueOf(uuids))
                         );
                     } else {
-                        final UUIDMapping uuid = uuids.toArray(new UUIDMapping[0])[0];
-                        PlotPlayer<?> pp = PlotSquared.platform().playerManager().getPlayerIfExists(uuid.getUuid());
+                        final UUID uuid = uuids.iterator().next();
+                        PlotPlayer<?> pp = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                         if (pp != null) {
                             try (final MetaDataAccess<Integer> access = pp.accessPersistentMetaData(
                                     PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
@@ -103,7 +103,7 @@ public class Grant extends Command {
                                 }
                             }
                         } else {
-                            DBFunc.getPersistentMeta(uuid.getUuid(), new RunnableVal<>() {
+                            DBFunc.getPersistentMeta(uuid, new RunnableVal<>() {
                                 @Override
                                 public void run(Map<String, byte[]> value) {
                                     final byte[] array = value.get("grantedPlots");
@@ -128,7 +128,7 @@ public class Grant extends Command {
                                         boolean replace = array != null;
                                         String key = "grantedPlots";
                                         byte[] rawData = Ints.toByteArray(amount);
-                                        DBFunc.addPersistentMeta(uuid.getUuid(), key, rawData, replace);
+                                        DBFunc.addPersistentMeta(uuid, key, rawData, replace);
                                         player.sendMessage(
                                                 TranslatableCaption.of("grants.added"),
                                                 Template.of("grants", String.valueOf(amount))
