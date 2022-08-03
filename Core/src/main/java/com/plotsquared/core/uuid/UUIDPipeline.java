@@ -41,13 +41,10 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * An UUID pipeline is essentially an ordered list of
@@ -65,7 +62,6 @@ public class UUIDPipeline {
     private final Executor executor;
     private final List<UUIDService> serviceList;
     private final List<Consumer<List<UUIDMapping>>> consumerList;
-    private final ScheduledExecutorService timeoutExecutor;
 
     /**
      * Construct a new UUID pipeline
@@ -77,7 +73,6 @@ public class UUIDPipeline {
         this.executor = executor;
         this.serviceList = Lists.newLinkedList();
         this.consumerList = Lists.newLinkedList();
-        this.timeoutExecutor = Executors.newSingleThreadScheduledExecutor();
     }
 
     /**
@@ -207,10 +202,8 @@ public class UUIDPipeline {
      * @param uuid     UUID consumer
      */
     public void getSingle(final @NonNull String username, final @NonNull BiConsumer<@Nullable UUID, @Nullable Throwable> uuid) {
-        this.getUUIDs(Collections.singletonList(username)).applyToEither(
-                        timeoutAfter(Settings.UUID.NON_BLOCKING_TIMEOUT),
-                        Function.identity()
-                )
+        this.getUUIDs(Collections.singletonList(username))
+                .orTimeout(Settings.UUID.NON_BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS)
                 .whenComplete((uuids, throwable) -> {
                     if (throwable != null) {
                         uuid.accept(null, throwable);
@@ -231,10 +224,8 @@ public class UUIDPipeline {
      * @param username Username consumer
      */
     public void getSingle(final @NonNull UUID uuid, final @NonNull BiConsumer<@Nullable String, @Nullable Throwable> username) {
-        this.getNames(Collections.singletonList(uuid)).applyToEither(
-                        timeoutAfter(Settings.UUID.NON_BLOCKING_TIMEOUT),
-                        Function.identity()
-                )
+        this.getNames(Collections.singletonList(uuid))
+                .orTimeout(Settings.UUID.NON_BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS)
                 .whenComplete((uuids, throwable) -> {
                     if (throwable != null) {
                         username.accept(null, throwable);
@@ -262,7 +253,7 @@ public class UUIDPipeline {
             final @NonNull Collection<@NonNull UUID> requests,
             final long timeout
     ) {
-        return this.getNames(requests).applyToEither(timeoutAfter(timeout), Function.identity());
+        return this.getNames(requests).orTimeout(timeout, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -279,13 +270,7 @@ public class UUIDPipeline {
             final @NonNull Collection<String> requests,
             final long timeout
     ) {
-        return this.getUUIDs(requests).applyToEither(timeoutAfter(timeout), Function.identity());
-    }
-
-    private @NonNull CompletableFuture<@NonNull List<@NonNull UUIDMapping>> timeoutAfter(final long timeout) {
-        final CompletableFuture<List<UUIDMapping>> result = new CompletableFuture<>();
-        this.timeoutExecutor.schedule(() -> result.completeExceptionally(new TimeoutException()), timeout, TimeUnit.MILLISECONDS);
-        return result;
+        return this.getUUIDs(requests).orTimeout(timeout, TimeUnit.MILLISECONDS);
     }
 
     /**
