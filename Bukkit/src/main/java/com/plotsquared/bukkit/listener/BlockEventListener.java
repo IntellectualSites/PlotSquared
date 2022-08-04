@@ -121,11 +121,23 @@ public class BlockEventListener implements Listener {
             Material.TURTLE_EGG,
             Material.TURTLE_SPAWN_EGG
     );
-    private static final Set<Material> SNOW = Set.of( // needed as Tag.SNOW isn't present in 1.16.5
-        Material.SNOW,
-        Material.SNOW_BLOCK,
-        Material.POWDER_SNOW
-    );
+    private static final Set<Material> SNOW;  // needed as Tag.SNOW isn't present in 1.16.5
+
+    static {
+        if (PlotSquared.platform().serverVersion()[1] < 17) {
+            SNOW = Set.of(
+                    Material.SNOW,
+                    Material.SNOW_BLOCK
+            );
+        } else {
+            SNOW = Set.of(
+                    Material.SNOW,
+                    Material.SNOW_BLOCK,
+                    Material.POWDER_SNOW // only since 1.17
+            );
+        }
+    }
+
     private final PlotAreaManager plotAreaManager;
     private final WorldEdit worldEdit;
 
