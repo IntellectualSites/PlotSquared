@@ -5,7 +5,7 @@ guice = "5.1.0"
 spotbugs = "4.7.1"
 
 # Plugins
-worldedit = "7.2.11"
+worldedit = "7.2.12"
 placeholderapi = "2.11.2"
 luckperms = "5.4"
 essentialsx = "2.19.4"
