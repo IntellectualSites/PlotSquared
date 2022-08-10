@@ -229,15 +229,15 @@ public class PaperListener implements Listener {
         Plot plot = location.getOwnedPlotAbs();
         if (plot == null) {
             EntityType type = event.getType();
+            // PreCreatureSpawnEvent **should** not be called for DROPPED_ITEM, just for the sake of consistency
+            if (type == EntityType.DROPPED_ITEM) {
+                if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
+                    event.setCancelled(true);
+                }
+                return;
+            }
             if (!area.isMobSpawning()) {
                 if (type == EntityType.PLAYER) {
-                    return;
-                }
-                if (type == EntityType.DROPPED_ITEM) {
-                    if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
-                        event.setShouldAbortSpawn(true);
-                        event.setCancelled(true);
-                    }
                     return;
                 }
                 if (type.isAlive()) {
