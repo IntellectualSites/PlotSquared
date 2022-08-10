@@ -121,6 +121,23 @@ public class BlockEventListener implements Listener {
             Material.TURTLE_EGG,
             Material.TURTLE_SPAWN_EGG
     );
+    private static final Set<Material> SNOW;  // needed as Tag.SNOW isn't present in 1.16.5
+
+    static {
+        if (PlotSquared.platform().serverVersion()[1] < 17) {
+            SNOW = Set.of(
+                    Material.SNOW,
+                    Material.SNOW_BLOCK
+            );
+        } else {
+            SNOW = Set.of(
+                    Material.SNOW,
+                    Material.SNOW_BLOCK,
+                    Material.POWDER_SNOW // only since 1.17
+            );
+        }
+    }
+
     private final PlotAreaManager plotAreaManager;
     private final WorldEdit worldEdit;
 
@@ -529,7 +546,7 @@ public class BlockEventListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        if (Tag.SNOW.isTagged(event.getNewState().getType())) {
+        if (SNOW.contains(event.getNewState().getType())) {
             if (!plot.getFlag(SnowFormFlag.class)) {
                 plot.debug("Snow could not form because snow-form = false");
                 event.setCancelled(true);
@@ -561,7 +578,7 @@ public class BlockEventListener implements Listener {
             return;
         }
         Class<? extends BooleanFlag<?>> flag;
-        if (Tag.SNOW.isTagged(event.getNewState().getType())) {
+        if (SNOW.contains(event.getNewState().getType())) {
             flag = SnowFormFlag.class;
         } else if (Tag.ICE.isTagged(event.getNewState().getType())) {
             flag = IceFormFlag.class;
@@ -678,7 +695,7 @@ public class BlockEventListener implements Listener {
             }
             return;
         }
-        if (Tag.SNOW.isTagged(blockType)) {
+        if (SNOW.contains(blockType)) {
             if (!plot.getFlag(SnowMeltFlag.class)) {
                 plot.debug("Snow could not melt because snow-melt = false");
                 event.setCancelled(true);
