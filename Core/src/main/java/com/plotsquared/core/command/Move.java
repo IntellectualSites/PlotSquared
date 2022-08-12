@@ -20,12 +20,15 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
@@ -42,10 +45,12 @@ import java.util.concurrent.CompletableFuture;
 public class Move extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
+    private final EventDispatcher eventDispatcher;
 
     @Inject
-    public Move(final @NonNull PlotAreaManager plotAreaManager) {
+    public Move(final @NonNull PlotAreaManager plotAreaManager, final @NonNull EventDispatcher eventDispatcher) {
         this.plotAreaManager = plotAreaManager;
+        this.eventDispatcher = eventDispatcher;
     }
 
     @Override
@@ -98,7 +103,13 @@ public class Move extends SubCommand {
             return CompletableFuture.completedFuture(false);
         }
 
+        if (this.eventDispatcher.callMove(player, plot1, plot2).getEventResult() == Result.DENY) {
+            player.sendMessage(TranslatableCaption.of("move.event_cancelled"));
+            return CompletableFuture.completedFuture(false);
+        }
+
         // Set strings here as the plot objects are mutable (the PlotID changes after being moved).
+        PlotId oldPlotId = plot1.getId().copy();
         String p1 = plot1.toString();
         String p2 = plot2.toString();
 
@@ -110,6 +121,7 @@ public class Move extends SubCommand {
                         Template.of("origin", p1),
                         Template.of("target", p2)
                 );
+                this.eventDispatcher.callPostMove(player, oldPlotId, plot1);
                 return true;
             } else {
                 player.sendMessage(TranslatableCaption.of("move.requires_unowned"));

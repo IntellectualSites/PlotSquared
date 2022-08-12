@@ -42,6 +42,7 @@ import com.plotsquared.core.events.PlotEvent;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.PlotMergeEvent;
+import com.plotsquared.core.events.PlotMoveEvent;
 import com.plotsquared.core.events.PlotRateEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.TeleportCause;
@@ -49,6 +50,7 @@ import com.plotsquared.core.events.post.PostPlayerAutoPlotEvent;
 import com.plotsquared.core.events.post.PostPlotChangeOwnerEvent;
 import com.plotsquared.core.events.post.PostPlotDeleteEvent;
 import com.plotsquared.core.events.post.PostPlotMergeEvent;
+import com.plotsquared.core.events.post.PostPlotMoveEvent;
 import com.plotsquared.core.events.post.PostPlotUnlinkEvent;
 import com.plotsquared.core.listener.PlayerBlockEventType;
 import com.plotsquared.core.location.Direction;
@@ -294,6 +296,16 @@ public class EventDispatcher {
         PlotDoneEvent event = new PlotDoneEvent(plot);
         callEvent(event);
         return event;
+    }
+
+    public PlotMoveEvent callMove(PlotPlayer<?> initiator, Plot from, Plot destination) {
+        PlotMoveEvent event = new PlotMoveEvent(initiator, from, destination);
+        callEvent(event);
+        return event;
+    }
+
+    public void callPostMove(PlotPlayer<?> initiator, PlotId old, Plot destination) {
+        callEvent(new PostPlotMoveEvent(initiator, old, destination));
     }
 
     public void doJoinTask(final PlotPlayer<?> player) {
