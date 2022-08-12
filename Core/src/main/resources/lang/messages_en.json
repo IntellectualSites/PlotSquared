@@ -6,6 +6,7 @@
   "move.move_merged": "<prefix><red>Merged plots may not be moved. Please unmerge the plot before performing the move.</red>",
   "move.copy_success": "<prefix><dark_aqua>Successfully copied plots</dark_aqua> <gold><origin></gold><dark_aqua> -> </dark_aqua><gold><target></gold>",
   "move.requires_unowned": "<prefix><red>The location specified is already occupied.</red>",
+  "move.event_cancelled": "<prefix><gray>Move was cancelled by an external plugin</gray>",
   "debug.requires_unmerged": "<prefix><red>The plot cannot be merged.</red>",
   "debug.debug_header": "<prefix> <gold>Debug Information</gold>\n",
   "debug.debug_section": "<gray>>></gray> <gold><bold><val></bold></gold>",
