@@ -109,6 +109,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unused")
 public class BlockEventListener implements Listener {
@@ -121,22 +123,10 @@ public class BlockEventListener implements Listener {
             Material.TURTLE_EGG,
             Material.TURTLE_SPAWN_EGG
     );
-    private static final Set<Material> SNOW;  // needed as Tag.SNOW isn't present in 1.16.5
-
-    static {
-        if (PlotSquared.platform().serverVersion()[1] < 17) {
-            SNOW = Set.of(
-                    Material.SNOW,
-                    Material.SNOW_BLOCK
-            );
-        } else {
-            SNOW = Set.of(
-                    Material.SNOW,
-                    Material.SNOW_BLOCK,
-                    Material.POWDER_SNOW // only since 1.17
-            );
-        }
-    }
+    private static final Set<Material> SNOW = Stream.of(Material.values()) // needed as Tag.SNOW isn't present in 1.16.5
+            .filter(material -> material.name().contains("SNOW"))
+            .filter(Material::isBlock)
+            .collect(Collectors.toUnmodifiableSet());
 
     private final PlotAreaManager plotAreaManager;
     private final WorldEdit worldEdit;
