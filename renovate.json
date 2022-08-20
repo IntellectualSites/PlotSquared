@@ -1,6 +1,8 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base"
+    "config:base",
+    ":semanticCommitsDisabled"
   ],
   "labels": ["Renovate"],
   "rebaseWhen": "conflicted"
