@@ -1016,6 +1016,14 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         return this.lockRepository;
     }
 
+    /**
+     * Removes any effects present of the given type.
+     *
+     * @param name the name of the type to remove
+     * @since TODO
+     */
+    public abstract void removeEffect(@NonNull String name);
+
     @FunctionalInterface
     public interface PlotPlayerConverter<BaseObject> {
 

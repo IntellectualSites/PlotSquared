@@ -41,6 +41,7 @@ import com.plotsquared.bukkit.listener.PlayerEventListener;
 import com.plotsquared.bukkit.listener.ProjectileEventListener;
 import com.plotsquared.bukkit.listener.ServerListener;
 import com.plotsquared.bukkit.listener.SingleWorldListener;
+import com.plotsquared.bukkit.listener.SpigotListener;
 import com.plotsquared.bukkit.listener.WorldEvents;
 import com.plotsquared.bukkit.placeholder.PAPIPlaceholders;
 import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
@@ -360,6 +361,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 } else {
                     getServer().getPluginManager().registerEvents(injector().getInstance(PaperListener.class), this);
                 }
+            } else {
+                getServer().getPluginManager().registerEvents(injector().getInstance(SpigotListener.class), this);
             }
             this.plotListener.startRunnable();
         }
