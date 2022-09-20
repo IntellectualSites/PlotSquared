@@ -70,7 +70,7 @@ subprojects {
 
     dependencies {
         // Tests
-        testImplementation("org.junit.jupiter:junit-jupiter:5.9.0")
+        testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
     }
 
     plugins.withId("java") {
