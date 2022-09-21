@@ -1020,7 +1020,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      * Removes any effects present of the given type.
      *
      * @param name the name of the type to remove
-     * @since TODO
+     * @since 6.10.0
      */
     public abstract void removeEffect(@NonNull String name);
 

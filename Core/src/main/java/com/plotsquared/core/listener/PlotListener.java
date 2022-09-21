@@ -502,7 +502,7 @@ public class PlotListener {
      * @param uuid The uuid of the player the effect belongs to
      * @param name The name of the status effect
      * @param expiresAt The time when the effect expires
-     * @since TODO
+     * @since 6.10.0
      */
     public void addEffect(@NonNull UUID uuid, @NonNull String name, long expiresAt) {
         List<StatusEffect> effects = playerEffects.getOrDefault(uuid, new ArrayList<>());
