@@ -442,6 +442,7 @@ public class BlockEventListener implements Listener {
             case "TWISTING_VINES":
             case "CAVE_VINES":
             case "VINE":
+            case "GLOW_BERRIES":
                 if (!plot.getFlag(VineGrowFlag.class)) {
                     plot.debug("Vine could not grow because vine-grow = false");
                     event.setCancelled(true);
