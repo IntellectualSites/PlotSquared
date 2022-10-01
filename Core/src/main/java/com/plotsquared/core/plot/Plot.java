@@ -457,7 +457,7 @@ public class Plot {
      * that could alter the de facto owner of the plot.
      *
      * @return The plot owner of this particular (sub-)plot
-     * as stored in the database, if one exists. Else, null.
+     *         as stored in the database, if one exists. Else, null.
      */
     public @Nullable UUID getOwnerAbs() {
         return this.owner;
