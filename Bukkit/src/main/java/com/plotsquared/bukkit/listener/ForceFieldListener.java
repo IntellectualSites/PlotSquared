@@ -18,7 +18,6 @@
  */
 package com.plotsquared.bukkit.listener;
 
-import com.google.common.collect.Iterables;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.location.Location;
@@ -39,8 +38,11 @@ public class ForceFieldListener {
 
     private static Set<PlotPlayer<?>> getNearbyPlayers(Player player, Plot plot) {
         Set<PlotPlayer<?>> players = new HashSet<>();
-        for (Player nearPlayer : Iterables
-                .filter(player.getNearbyEntities(5d, 5d, 5d), Player.class)) {
+        for (Player nearPlayer : player.getNearbyEntities(5d, 5d, 5d).stream()
+                .filter(entity -> entity instanceof Player)
+                .map(entity -> (Player) entity)
+                .toList()
+        ) {
             PlotPlayer<?> plotPlayer;
             if ((plotPlayer = BukkitUtil.adapt(nearPlayer)) == null || !plot
                     .equals(plotPlayer.getCurrentPlot())) {
@@ -54,8 +56,11 @@ public class ForceFieldListener {
     }
 
     private static PlotPlayer<?> hasNearbyPermitted(Player player, Plot plot) {
-        for (Player nearPlayer : Iterables
-                .filter(player.getNearbyEntities(5d, 5d, 5d), Player.class)) {
+        for (Player nearPlayer : player.getNearbyEntities(5d, 5d, 5d).stream()
+                .filter(entity -> entity instanceof Player)
+                .map(entity -> (Player) entity)
+                .toList()
+        ) {
             PlotPlayer<?> plotPlayer;
             if ((plotPlayer = BukkitUtil.adapt(nearPlayer)) == null || !plot
                     .equals(plotPlayer.getCurrentPlot())) {
