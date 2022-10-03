@@ -126,6 +126,7 @@ public class Buy extends Command {
                 plot.removeFlag(event.getFlag());
             }
             plot.setOwner(player.getUUID());
+            plot.getPlotModificationManager().setSign(player.getName());
             player.sendMessage(
                     TranslatableCaption.of("working.claimed"),
                     Template.of("plot", plot.getId().toString())
