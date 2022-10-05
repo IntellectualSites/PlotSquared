@@ -51,6 +51,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import javax.sound.midi.SysexMessage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -123,10 +124,7 @@ public class ListCmd extends SubCommand {
     }
 
     public void noArgs(PlotPlayer<?> player) {
-        player.sendMessage(
-                TranslatableCaption.of("commandconfig.subcommand_set_options_header"),
-                Templates.of("values", Arrays.toString(getArgumentList(player)))
-        );
+        onCommand(player, new String[]{"mine"});
     }
 
     @Override
