@@ -973,7 +973,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                                 || !entity.hasMetadata("keep")) {
                                             Entity passenger = entity.getPassenger();
                                             if ((Settings.Enabled_Components.KILL_OWNED_ROAD_MOBS
-                                                    || !(passenger instanceof Player)) && entity.getMetadata("keep").isEmpty()) {
+                                                    || !((passenger instanceof Player) || livingEntity.isLeashed())) && entity.getMetadata("keep").isEmpty()) {
                                                 if (entity.hasMetadata("ps-tmp-teleport")) {
                                                     continue;
                                                 }
