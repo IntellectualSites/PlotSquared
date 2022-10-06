@@ -53,7 +53,8 @@ final class ClassLoaderCaptionProvider implements DefaultCaptionProvider {
         try {
             final InputStream stream = this.classLoader.getResourceAsStream(url);
             if (stream == null) {
-                LOGGER.warn("No resource for locale '{}' found", locale);
+                LOGGER.info("No resource for locale '{}' found in the plugin file, please keep the 'lang' folder up-to-date by yourself ",
+                        locale);
                 return null;
             }
             try (final BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
