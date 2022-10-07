@@ -849,7 +849,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                             // managed elsewhere
                             continue;
                         case "SHULKER":
-                            if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
+                            if (Settings.Enabled_Components.KILL_ROAD_MOBS && (Settings.Enabled_Components.KILL_NAMED_ROAD_MOBS || entity.getCustomName() == null)) {
                                 LivingEntity livingEntity = (LivingEntity) entity;
                                 List<MetadataValue> meta = entity.getMetadata("shulkerPlot");
                                 if (!meta.isEmpty()) {
@@ -973,7 +973,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                                 || !entity.hasMetadata("keep")) {
                                             Entity passenger = entity.getPassenger();
                                             if ((Settings.Enabled_Components.KILL_OWNED_ROAD_MOBS
-                                                    || !((passenger instanceof Player) || livingEntity.isLeashed())) && entity.getMetadata("keep").isEmpty()) {
+                                                    || !((passenger instanceof Player) || livingEntity.isLeashed()))
+                                                    && (Settings.Enabled_Components.KILL_NAMED_ROAD_MOBS || entity.getCustomName() == null)
+                                                    && entity.getMetadata("keep").isEmpty()) {
                                                 if (entity.hasMetadata("ps-tmp-teleport")) {
                                                     continue;
                                                 }
@@ -983,8 +985,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                         }
                                     } else {
                                         Entity passenger = entity.getPassenger();
-                                        if ((Settings.Enabled_Components.KILL_OWNED_ROAD_MOBS
-                                                || !(passenger instanceof Player)) && entity.getMetadata("keep").isEmpty()) {
+                                        if ((Settings.Enabled_Components.KILL_OWNED_ROAD_MOBS || !(passenger instanceof Player))
+                                                && (Settings.Enabled_Components.KILL_NAMED_ROAD_MOBS && entity.getCustomName() != null)
+                                                && entity.getMetadata("keep").isEmpty()) {
                                             if (entity.hasMetadata("ps-tmp-teleport")) {
                                                 continue;
                                             }
