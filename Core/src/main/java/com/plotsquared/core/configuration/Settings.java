@@ -759,6 +759,8 @@ public class Settings extends Config {
         @Comment("Also kill any road mobs that are being ridden, or are leashed")
         public static boolean
                 KILL_OWNED_ROAD_MOBS = false;
+        @Comment("Also kill any road mobs that are being named")
+        public static boolean KILL_NAMED_ROAD_MOBS = false;
         @Comment("Kill items on roads (Stick, Paper, etc.)")
         public static boolean KILL_ROAD_ITEMS = false;
         @Comment("Kill vehicles on roads (Boat, Minecart, etc.)")
