@@ -853,7 +853,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                 LivingEntity livingEntity = (LivingEntity) entity;
                                 List<MetadataValue> meta = entity.getMetadata("shulkerPlot");
                                 if (!meta.isEmpty()) {
-                                    if (livingEntity.isLeashed()) {
+                                    if (livingEntity.isLeashed() && !Settings.Enabled_Components.KILL_OWNED_ROAD_MOBS) {
                                         continue;
                                     }
                                     List<MetadataValue> keep = entity.getMetadata("keep");
