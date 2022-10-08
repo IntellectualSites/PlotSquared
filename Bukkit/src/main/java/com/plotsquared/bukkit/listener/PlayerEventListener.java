@@ -1756,11 +1756,11 @@ public class PlayerEventListener implements Listener {
             maxZ = Math.max(state.getZ(), maxZ);
         }
         int y = event.getBlocks().get(0).getY(); // Don't need to worry about this too much
-        for (Location location : Set.of( // Use Set to lazily avoid duplicate locations
-                Location.at(world, minX, y, maxX),
-                Location.at(world, minZ, y, maxZ),
+        for (Location location : List.of( // We don't care about duplicate locations
+                Location.at(world, minX, y, minZ),
                 Location.at(world, minX, y, maxZ),
-                Location.at(world, minZ, y, maxX)
+                Location.at(world, maxX, y, minZ),
+                Location.at(world, maxX, y, maxZ)
         )) {
             PlotArea area = location.getPlotArea();
             if (area == null) {
