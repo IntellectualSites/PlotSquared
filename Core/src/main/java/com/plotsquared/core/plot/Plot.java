@@ -1836,8 +1836,8 @@ public class Plot {
         }
         // Swap cached
         final PlotId temp = PlotId.of(this.getId().getX(), this.getId().getY());
-        this.id = plot.getId().copy();
-        plot.id = temp.copy();
+        this.id = plot.getId();
+        plot.id = temp;
         this.area.removePlot(this.getId());
         plot.area.removePlot(plot.getId());
         this.area.addPlotAbs(this);
@@ -1863,7 +1863,7 @@ public class Plot {
             return false;
         }
         this.area.removePlot(this.id);
-        this.id = plot.getId().copy();
+        this.id = plot.getId();
         this.area.addPlotAbs(this);
         DBFunc.movePlot(this, plot);
         TaskManager.runTaskLater(whenDone, TaskTime.ticks(1L));
