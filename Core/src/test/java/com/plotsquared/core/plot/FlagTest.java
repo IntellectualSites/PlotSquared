@@ -101,7 +101,7 @@ public class FlagTest {
     public void shouldSuccessfullyParseTitleFlagWithTitleEmptyAndSubTitleSingleWord() {
         Assertions.assertDoesNotThrow(() -> {
             var title = PlotTitleFlag.TITLE_FLAG_DEFAULT.parse("\"\" \"single\"").getValue();
-            Assertions.assertEquals(" ", title.title());
+            Assertions.assertEquals("", title.title());
             Assertions.assertEquals("single", title.subtitle());
         }, "Should not throw a FlagParseException");
     }
