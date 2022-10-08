@@ -54,6 +54,13 @@ tasks.processResources {
                 "date" to rootProject.grgit.head().dateTime.format(DateTimeFormatter.ofPattern("yy.MM.dd"))
         )
     }
+
+    doLast {
+        copy {
+            from(File("$rootDir/LICENSE"))
+            into("$buildDir/resources/main/")
+        }
+    }
 }
 
 tasks {
