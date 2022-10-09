@@ -866,10 +866,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                         com.plotsquared.core.location.Location pLoc = BukkitUtil.adapt(entity.getLocation());
                                         PlotArea area = pLoc.getPlotArea();
                                         if (area != null) {
-                                            PlotId currentPlotId = area.getPlotAbs(pLoc).getId();
-                                            if (!originalPlotId.equals(currentPlotId) && (currentPlotId == null || !area.getPlot(
-                                                            originalPlotId)
-                                                    .equals(area.getPlot(currentPlotId)))) {
+                                            Plot currentPlot = area.getPlotAbs(pLoc);
+                                            if (currentPlot == null || !originalPlotId.equals(currentPlot.getId())) {
                                                 if (entity.hasMetadata("ps-tmp-teleport")) {
                                                     continue;
                                                 }
@@ -883,11 +881,11 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                     com.plotsquared.core.location.Location pLoc = BukkitUtil.adapt(entity.getLocation());
                                     PlotArea area = pLoc.getPlotArea();
                                     if (area != null) {
-                                        PlotId currentPlotId = area.getPlotAbs(pLoc).getId();
-                                        if (currentPlotId != null) {
+                                        Plot currentPlot = area.getPlotAbs(pLoc);
+                                        if (currentPlot != null) {
                                             entity.setMetadata(
                                                     "shulkerPlot",
-                                                    new FixedMetadataValue((Plugin) PlotSquared.platform(), currentPlotId)
+                                                    new FixedMetadataValue((Plugin) PlotSquared.platform(), currentPlot.getId())
                                             );
                                         }
                                     }
