@@ -174,8 +174,9 @@ public class HybridPlotManager extends ClassicPlotManager {
                     for (int y = 0; y < blocks.length; y++) {
                         if (blocks[y] != null) {
                             queue.setBlock(x, minY + y, z, blocks[y]);
-                        } else {
+                        } else if (!isRoad) {
                             // This is necessary, otherwise any blocks not specified in the schematic will remain after a clear
+                            //  Do not set air for road as this may cause cavernous roads when debugroadregen is used
                             queue.setBlock(x, minY + y, z, airBlock);
                         }
                     }
