@@ -60,6 +60,11 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class ExpireManager {
 
+    /**
+     * @deprecated Use {@link PlotPlatform#expireManager()} instead
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
+    public static ExpireManager IMP;
     private final ConcurrentHashMap<UUID, Long> dates_cache;
     private final ConcurrentHashMap<UUID, Long> account_age_cache;
     private final EventDispatcher eventDispatcher;
