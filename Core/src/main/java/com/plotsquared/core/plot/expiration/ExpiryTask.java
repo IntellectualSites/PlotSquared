@@ -18,6 +18,7 @@
  */
 package com.plotsquared.core.plot.expiration;
 
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -73,7 +74,7 @@ public class ExpiryTask {
                         diff = plots.size() - settings.REQUIRED_PLOTS;
                     }
                     List<Long> entireList =
-                            plots.stream().map(plot -> ExpireManager.IMP.getAge(plot, settings.DELETE_IF_OWNER_IS_UNKNOWN))
+                            plots.stream().map(plot -> PlotSquared.platform().expireManager().getAge(plot, settings.DELETE_IF_OWNER_IS_UNKNOWN))
                                     .collect(Collectors.toList());
                     List<Long> top = new ArrayList<>(diff + 1);
                     if (diff > 1000) {

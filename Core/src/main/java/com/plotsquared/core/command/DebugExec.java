@@ -19,6 +19,7 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
@@ -139,10 +140,8 @@ public class DebugExec extends SubCommand {
                     return true;
                 }
                 case "start-expire" -> {
-                    if (ExpireManager.IMP == null) {
-                        ExpireManager.IMP = new ExpireManager(this.eventDispatcher);
-                    }
-                    if (ExpireManager.IMP.runAutomatedTask()) {
+                    ExpireManager manager = PlotSquared.platform().expireManager() == null ? new ExpireManager(this.eventDispatcher) : PlotSquared.platform().expireManager();
+                    if (manager.runAutomatedTask()) {
                         player.sendMessage(TranslatableCaption.of("debugexec.expiry_started"));
                     } else {
                         player.sendMessage(TranslatableCaption.of("debugexec.expiry_already_started"));
@@ -150,7 +149,7 @@ public class DebugExec extends SubCommand {
                     return true;
                 }
                 case "stop-expire" -> {
-                    if (ExpireManager.IMP == null || !ExpireManager.IMP.cancelTask()) {
+                    if (PlotSquared.platform().expireManager() == null || !PlotSquared.platform().expireManager().cancelTask()) {
                         player.sendMessage(TranslatableCaption.of("debugexec.task_halted"));
                     } else {
                         player.sendMessage(TranslatableCaption.of("debugexec.task_cancelled"));
