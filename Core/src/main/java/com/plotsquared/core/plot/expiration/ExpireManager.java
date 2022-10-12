@@ -18,6 +18,7 @@
  */
 package com.plotsquared.core.plot.expiration;
 
+import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.Templates;
