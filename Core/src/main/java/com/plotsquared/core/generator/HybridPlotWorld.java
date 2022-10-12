@@ -285,7 +285,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
         // SCHEM_Y should be normalised to the plot "start" height
         if (schematic3 != null) {
-            if ((plotSchemHeight = maxSchematicHeight = schematic3.getClipboard().getDimensions().getY()) == worldGenHeight) {
+            plotSchemHeight = maxSchematicHeight = schematic3.getClipboard().getDimensions().getY();
+            if (maxSchematicHeight == worldGenHeight) {
                 SCHEM_Y = getMinGenHeight();
                 plotY = 0;
             } else if (!Settings.Schematics.PASTE_ON_TOP) {
@@ -297,10 +298,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         int roadSchemHeight;
 
         if (schematic1 != null) {
-            if ((maxSchematicHeight = Math.max(
-                    (roadSchemHeight = schematic1.getClipboard().getDimensions().getY()),
-                    maxSchematicHeight
-            )) == worldGenHeight) {
+            roadSchemHeight = schematic1.getClipboard().getDimensions().getY();
+            maxSchematicHeight = Math.max(roadSchemHeight, maxSchematicHeight);
+            if (maxSchematicHeight == worldGenHeight) {
                 SCHEM_Y = getMinGenHeight();
                 roadY = 0; // Road is the lowest schematic
                 if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() != worldGenHeight) {
@@ -506,12 +506,12 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         if (y >= height) {
             if (y > lastOverlayHeightError) {
                 lastOverlayHeightError = y;
-                LOGGER.error(String.format(
-                        "Error adding overlay block in world %s. `y > height`. y=%s, height=%s",
+                LOGGER.error(
+                        "Error adding overlay block in world {}. `y > height`. y={}, height={}",
                         getWorldName(),
                         y,
                         height
-                ));
+                );
             }
             return;
         }
