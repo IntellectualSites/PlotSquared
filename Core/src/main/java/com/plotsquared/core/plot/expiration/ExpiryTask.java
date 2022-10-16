@@ -73,8 +73,9 @@ public class ExpiryTask {
                         min = false;
                         diff = plots.size() - settings.REQUIRED_PLOTS;
                     }
+                    ExpireManager expireManager = PlotSquared.platform().expireManager();
                     List<Long> entireList =
-                            plots.stream().map(plot -> PlotSquared.platform().expireManager().getAge(plot, settings.DELETE_IF_OWNER_IS_UNKNOWN))
+                            plots.stream().map(plot -> expireManager.getAge(plot, settings.DELETE_IF_OWNER_IS_UNKNOWN))
                                     .collect(Collectors.toList());
                     List<Long> top = new ArrayList<>(diff + 1);
                     if (diff > 1000) {

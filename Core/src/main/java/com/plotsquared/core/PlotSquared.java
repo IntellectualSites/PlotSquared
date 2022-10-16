@@ -290,11 +290,11 @@ public class PlotSquared {
 
     public void startExpiryTasks() {
         if (Settings.Enabled_Components.PLOT_EXPIRY) {
-            ExpireManager manager = new ExpireManager(this.eventDispatcher);
-            manager.runAutomatedTask();
+            ExpireManager expireManager = PlotSquared.platform().expireManager();
+            expireManager.runAutomatedTask();
             for (Settings.Auto_Clear settings : Settings.AUTO_CLEAR.getInstances()) {
                 ExpiryTask task = new ExpiryTask(settings, this.getPlotAreaManager());
-                manager.addTask(task);
+                expireManager.addTask(task);
             }
         }
     }
@@ -645,7 +645,8 @@ public class PlotSquared {
         } else {
             list = new ArrayList<>(input);
         }
-        list.sort(Comparator.comparingLong(a -> PlotSquared.platform().expireManager().getTimestamp(a.getOwnerAbs())));
+        ExpireManager expireManager = PlotSquared.platform().expireManager();
+        list.sort(Comparator.comparingLong(a -> expireManager.getTimestamp(a.getOwnerAbs())));
         return list;
     }
 

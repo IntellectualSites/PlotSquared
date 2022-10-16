@@ -140,8 +140,8 @@ public class DebugExec extends SubCommand {
                     return true;
                 }
                 case "start-expire" -> {
-                    ExpireManager manager = PlotSquared.platform().expireManager() == null ? new ExpireManager(this.eventDispatcher) : PlotSquared.platform().expireManager();
-                    if (manager.runAutomatedTask()) {
+                    ExpireManager expireManager = PlotSquared.platform().expireManager() == null ? new ExpireManager(this.eventDispatcher) : PlotSquared.platform().expireManager();
+                    if (expireManager.runAutomatedTask()) {
                         player.sendMessage(TranslatableCaption.of("debugexec.expiry_started"));
                     } else {
                         player.sendMessage(TranslatableCaption.of("debugexec.expiry_already_started"));
