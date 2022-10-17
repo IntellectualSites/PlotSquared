@@ -18,6 +18,7 @@
  */
 package com.plotsquared.core.plot.expiration;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.Caption;
@@ -76,6 +77,7 @@ public class ExpireManager {
      */
     private int running;
 
+    @Inject
     public ExpireManager(final @NonNull EventDispatcher eventDispatcher) {
         this.tasks = new ArrayDeque<>();
         this.dates_cache = new ConcurrentHashMap<>();
