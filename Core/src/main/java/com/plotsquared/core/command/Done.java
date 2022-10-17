@@ -19,6 +19,7 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotDoneEvent;
@@ -29,7 +30,6 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.expiration.PlotAnalysis;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
@@ -94,7 +94,7 @@ public class Done extends SubCommand {
                 Template.of("plot", plot.getId().toString())
         );
         final Settings.Auto_Clear doneRequirements = Settings.AUTO_CLEAR.get("done");
-        if (ExpireManager.IMP == null || doneRequirements == null) {
+        if (PlotSquared.platform().expireManager() == null || doneRequirements == null) {
             finish(plot, player, true);
             plot.removeRunning();
         } else {

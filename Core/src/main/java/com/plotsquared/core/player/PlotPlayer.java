@@ -42,7 +42,6 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotCluster;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotWeather;
-import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
@@ -618,8 +617,8 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                 LOGGER.info("Plot {} was deleted + cleared due to {} getting banned", owned.getId(), getName());
             }
         }
-        if (ExpireManager.IMP != null) {
-            ExpireManager.IMP.storeDate(getUUID(), System.currentTimeMillis());
+        if (PlotSquared.platform().expireManager() != null) {
+            PlotSquared.platform().expireManager().storeDate(getUUID(), System.currentTimeMillis());
         }
         PlotSquared.platform().playerManager().removePlayer(this);
         PlotSquared.platform().unregister(this);
