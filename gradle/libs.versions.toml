@@ -1,7 +1,7 @@
 [versions]
 # Platform expectations
 guice = "5.1.0"
-spotbugs = "4.7.2"
+spotbugs = "4.7.3"
 
 # Plugins
 worldedit = "7.2.12"
