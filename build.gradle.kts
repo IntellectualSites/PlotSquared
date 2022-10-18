@@ -19,7 +19,7 @@ plugins {
 }
 
 group = "com.plotsquared"
-version = "6.10.2"
+version = "6.10.3-SNAPSHOT"
 
 subprojects {
     group = rootProject.group
