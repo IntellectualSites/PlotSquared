@@ -112,7 +112,7 @@ public final class PlotId {
      * @return Plot ID copy
      * @deprecated PlotId is immutable, copy is not required.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.10.2")
     public @NonNull PlotId copy() {
         return this;
     }

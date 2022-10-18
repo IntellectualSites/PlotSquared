@@ -486,7 +486,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     /**
      * @deprecated This method should not be available for public API usage and will be made private.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.10.2")
     public void addOverlayBlock(short x, short y, short z, BaseBlock id, boolean rotate, int height) {
         if (z < 0) {
             z += this.SIZE;
@@ -521,7 +521,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     /**
      * @deprecated This method should not be available for public API usage and will be made private.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.10.2")
     public void addOverlayBiome(short x, short z, BiomeType id) {
         if (z < 0) {
             z += this.SIZE;
