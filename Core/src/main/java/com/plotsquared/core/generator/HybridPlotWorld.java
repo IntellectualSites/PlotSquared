@@ -298,7 +298,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         int roadSchemHeight;
 
         if (schematic1 != null) {
-            roadSchemHeight = schematic1.getClipboard().getDimensions().getY();
+            roadSchemHeight = Math.max(
+                    schematic1.getClipboard().getDimensions().getY(),
+                    schematic2.getClipboard().getDimensions().getY()
+            );
             maxSchematicHeight = Math.max(roadSchemHeight, maxSchematicHeight);
             if (maxSchematicHeight == worldGenHeight) {
                 SCHEM_Y = getMinGenHeight();
