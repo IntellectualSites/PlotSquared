@@ -93,10 +93,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     @Inject
     public HybridPlotWorld(
             @Assisted("world") final String worldName,
-            @Nullable @Assisted("id") final String id,
+            @javax.annotation.Nullable @Assisted("id") final String id,
             @Assisted final @NonNull IndependentPlotGenerator generator,
-            @Nullable @Assisted("min") final PlotId min,
-            @Nullable @Assisted("max") final PlotId max,
+            @javax.annotation.Nullable @Assisted("min") final PlotId min,
+            @javax.annotation.Nullable @Assisted("max") final PlotId max,
             @WorldConfig final @NonNull YamlConfiguration worldConfiguration,
             final @NonNull GlobalBlockQueue blockQueue
     ) {
