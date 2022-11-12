@@ -326,14 +326,18 @@ public class PaperListener implements Listener {
             return;
         }
         Location location = BukkitUtil.adapt(entity.getLocation());
-        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
             return;
         }
         PlotPlayer<Player> pp = BukkitUtil.adapt((Player) shooter);
         Plot plot = location.getOwnedPlot();
 
         if (plot == null) {
-            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_ROAD)) {
+            if (!area.isRoadFlagsAndFlagEquals(ProjectilesFlag.class, true) && !Permissions.hasPermission(
+                    pp,
+                    Permission.PERMISSION_ADMIN_PROJECTILE_ROAD
+            )) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
                         Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_ROAD))

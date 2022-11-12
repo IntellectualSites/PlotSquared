@@ -261,7 +261,7 @@ public class EntityEventListener implements Listener {
         }
         Plot plot = location.getOwnedPlot();
         if (plot == null) {
-            if (area.isRoadFlags() && area.getRoadFlag(InvincibleFlag.class)) {
+            if (area.isRoadFlagsAndFlagEquals(InvincibleFlag.class, true)) {
                 event.setCancelled(true);
             }
             return;

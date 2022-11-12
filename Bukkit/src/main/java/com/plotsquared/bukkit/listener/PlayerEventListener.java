@@ -889,8 +889,7 @@ public class PlayerEventListener implements Listener {
                 }
             } else {
                 PlotArea area = pp.getPlotAreaAbs();
-                if (area != null && area.isRoadFlags() && area
-                        .getRoadFlag(PreventCreativeCopyFlag.class)) {
+                if (area != null && area.isRoadFlagsAndFlagEquals(PreventCreativeCopyFlag.class, true)) {
                     final ItemStack newStack =
                             new ItemStack(newItem.getType(), newItem.getAmount());
                     event.setCursor(newStack);
@@ -998,8 +997,10 @@ public class PlayerEventListener implements Listener {
         Plot plot = location.getPlotAbs();
         BukkitPlayer pp = BukkitUtil.adapt(e.getPlayer());
         if (plot == null) {
-            if (!area.isRoadFlags() && !area.getRoadFlag(MiscInteractFlag.class) && !Permissions
-                    .hasPermission(pp, Permission.PERMISSION_ADMIN_INTERACT_ROAD)) {
+            if (!area.isRoadFlagsAndFlagEquals(MiscInteractFlag.class, true) && !Permissions.hasPermission(
+                    pp,
+                    Permission.PERMISSION_ADMIN_INTERACT_ROAD
+            )) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
                         Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_ROAD))
@@ -1009,9 +1010,7 @@ public class PlayerEventListener implements Listener {
         } else {
             if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
-                    pp.sendMessage(
-                            TranslatableCaption.of("done.building_restricted")
-                    );
+                    pp.sendMessage(TranslatableCaption.of("done.building_restricted"));
                     e.setCancelled(true);
                     return;
                 }
@@ -1594,7 +1593,10 @@ public class PlayerEventListener implements Listener {
             BukkitPlayer pp = BukkitUtil.adapt(p);
             Plot plot = area.getPlot(location);
             if (plot == null) {
-                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_ROAD)) {
+                if (!area.isRoadFlagsAndFlagEquals(VehicleBreakFlag.class, true) && !Permissions.hasPermission(
+                        pp,
+                        Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_ROAD
+                )) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
                             Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_ROAD))
@@ -1642,7 +1644,7 @@ public class PlayerEventListener implements Listener {
         }
         Plot plot = location.getOwnedPlot();
         if (plot == null) {
-            if (area.isRoadFlags() && !area.getRoadFlag(ItemDropFlag.class)) {
+            if (area.isRoadFlagsAndFlagEquals(ItemDropFlag.class, false)) {
                 event.setCancelled(true);
             }
             return;
@@ -1668,7 +1670,7 @@ public class PlayerEventListener implements Listener {
             }
             Plot plot = location.getOwnedPlot();
             if (plot == null) {
-                if (area.isRoadFlags() && area.getRoadFlag(DropProtectionFlag.class)) {
+                if (area.isRoadFlagsAndFlagEquals(DropProtectionFlag.class, true)) {
                     event.setCancelled(true);
                 }
                 return;
@@ -1690,17 +1692,15 @@ public class PlayerEventListener implements Listener {
         }
         Plot plot = location.getOwnedPlot();
         if (plot == null) {
-            if (area.isRoadFlags() && area.getRoadFlag(KeepInventoryFlag.class)) {
+            if (area.isRoadFlagsAndFlagEquals(KeepInventoryFlag.class, true)) {
                 event.setCancelled(true);
             }
             return;
         }
         if (plot.getFlag(KeepInventoryFlag.class)) {
-            if (plot.getFlag(KeepInventoryFlag.class)) {
-                plot.debug(event.getEntity().getName() + " kept their inventory because of keep-inventory = true");
-                event.getDrops().clear();
-                event.setKeepInventory(true);
-            }
+            plot.debug(event.getEntity().getName() + " kept their inventory because of keep-inventory = true");
+            event.getDrops().clear();
+            event.setKeepInventory(true);
         }
     }
 
@@ -1725,16 +1725,14 @@ public class PlayerEventListener implements Listener {
         }
         Plot plot = location.getOwnedPlot();
         if (plot == null) {
-            if (area.isRoadFlags() && area.getRoadFlag(DenyPortalTravelFlag.class)) {
+            if (area.isRoadFlagsAndFlagEquals(DenyPortalTravelFlag.class, true)) {
                 event.setCancelled(true);
             }
             return;
         }
         if (plot.getFlag(DenyPortalTravelFlag.class)) {
-            if (plot.getFlag(DenyPortalTravelFlag.class)) {
-                plot.debug(event.getPlayer().getName() + " did not travel thru a portal because of deny-portal-travel = true");
-                event.setCancelled(true);
-            }
+            plot.debug(event.getPlayer().getName() + " did not travel thru a portal because of deny-portal-travel = true");
+            event.setCancelled(true);
         }
     }
 
@@ -1772,7 +1770,7 @@ public class PlayerEventListener implements Listener {
             }
             Plot plot = location.getOwnedPlot();
             if (plot == null) {
-                if (area.isRoadFlags() && area.getRoadFlag(DenyPortalsFlag.class)) {
+                if (area.isRoadFlagsAndFlagEquals(DenyPortalsFlag.class, true)) {
                     event.setCancelled(true);
                     return;
                 }
@@ -1801,16 +1799,14 @@ public class PlayerEventListener implements Listener {
         }
         Plot plot = location.getOwnedPlot();
         if (plot == null) {
-            if (area.isRoadFlags() && area.getRoadFlag(LecternReadBookFlag.class)) {
+            if (area.isRoadFlagsAndFlagEquals(LecternReadBookFlag.class, true)) {
                 event.setCancelled(true);
             }
             return;
         }
         if (plot.getFlag(LecternReadBookFlag.class)) {
-            if (plot.getFlag(LecternReadBookFlag.class)) {
-                plot.debug(event.getPlayer().getName() + " could not take the book because of lectern-read-book = true");
-                event.setCancelled(true);
-            }
+            plot.debug(event.getPlayer().getName() + " could not take the book because of lectern-read-book = true");
+            event.setCancelled(true);
         }
     }
 
