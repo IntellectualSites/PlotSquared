@@ -104,6 +104,12 @@ public class BlockEventListener117 implements Listener {
             if (entity instanceof Item item) {
                 UUID itemThrower = item.getThrower();
                 if (plot != null) {
+                    if (itemThrower == null && (itemThrower = item.getOwner()) == null) {
+                        plot.debug(
+                                "A thrown item couldn't trigger sculk sensors because misc-interact = false and the item's owner could not be resolved.");
+                        event.setCancelled(true);
+                        return;
+                    }
                     if (!plot.isAdded(itemThrower)) {
                         if (!plot.isAdded(itemThrower)) {
                             plot.debug("A thrown item couldn't trigger sculk sensors because misc-interact = false");
