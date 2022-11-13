@@ -1250,6 +1250,7 @@ public abstract class PlotArea {
      * @param flagClass boolean flag to get value of
      * @param value     boolean value to check flag value against
      * @return Flag value or false if road flags disabled
+     * @since TODO
      */
     public boolean isRoadFlagsAndFlagEquals(final Class<? extends BooleanFlag<?>> flagClass, boolean value) {
         return this.roadFlags && (getRoadFlag(flagClass) == value);
