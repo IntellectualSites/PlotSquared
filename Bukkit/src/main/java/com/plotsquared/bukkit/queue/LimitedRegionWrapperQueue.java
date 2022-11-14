@@ -44,6 +44,7 @@ public class LimitedRegionWrapperQueue extends DelegateQueueCoordinator {
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + LimitedRegionWrapperQueue.class.getSimpleName());
 
     private final LimitedRegion limitedRegion;
+    private boolean useOtherRestoreTagMethod = false;
 
     /**
      * @since 6.9.0
@@ -65,10 +66,18 @@ public class LimitedRegionWrapperQueue extends DelegateQueueCoordinator {
             CompoundTag tag = id.getNbtData();
             StateWrapper sw = new StateWrapper(tag);
             try {
-                sw.restoreTag(limitedRegion.getBlockState(x, y, z).getBlock());
+                if (useOtherRestoreTagMethod && getWorld() != null) {
+                    sw.restoreTag(getWorld().getName(), x, y, z);
+                } else {
+                    sw.restoreTag(limitedRegion.getBlockState(x, y, z).getBlock());
+                }
             } catch (IllegalArgumentException e) {
                 LOGGER.error("Error attempting to populate tile entity into the world at location {},{},{}", x, y, z, e);
                 return false;
+            } catch (IllegalStateException e) {
+                useOtherRestoreTagMethod = true;
+                LOGGER.warn("IllegalStateException attempting to populate tile entity into the world at location {},{},{}. " +
+                        "Possibly on <=1.17.1, switching to secondary method.", x, y, z, e);
             }
         }
         return result;
