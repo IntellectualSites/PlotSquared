@@ -177,7 +177,7 @@ public class Claim extends SubCommand {
             }
         }
         if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
-            int border = area.getBorder();
+            int border = area.getBorder(false);
             if (border != Integer.MAX_VALUE && plot.getDistanceFromOrigin() > border && !force) {
                 player.sendMessage(TranslatableCaption.of("border.denied"));
                 return false;

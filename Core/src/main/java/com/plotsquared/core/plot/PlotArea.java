@@ -143,6 +143,7 @@ public abstract class PlotArea {
     private Map<String, PlotExpression> prices = new HashMap<>();
     private List<String> schematics = new ArrayList<>();
     private boolean worldBorder = false;
+    private int extraBorder;
     private boolean useEconomy = false;
     private int hash;
     private CuboidRegion region;
@@ -352,6 +353,7 @@ public abstract class PlotArea {
         this.plotChat = config.getBoolean("chat.enabled");
         this.forcingPlotChat = config.getBoolean("chat.forced");
         this.worldBorder = config.getBoolean("world.border");
+        this.extraBorder = config.getInt("world.extra_border");
         this.maxBuildHeight = config.getInt("world.max_height");
         this.minBuildHeight = config.getInt("world.min_height");
         this.minGenHeight = config.getInt("world.min_gen_height");
@@ -469,6 +471,7 @@ public abstract class PlotArea {
         options.put("event.spawn.custom", this.isSpawnCustom());
         options.put("event.spawn.breeding", this.isSpawnBreeding());
         options.put("world.border", this.hasWorldBorder());
+        options.put("world.extra_border", this.getExtaBorder());
         options.put("home.default", "side");
         String position = config.getString(
                 "home.nonmembers",
@@ -908,7 +911,9 @@ public abstract class PlotArea {
      * Get the plot border distance for a world<br>
      *
      * @return The border distance or Integer.MAX_VALUE if no border is set
+     * @deprecated Use {@link PlotArea#getBorder(boolean)}
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public int getBorder() {
         final Integer meta = (Integer) getMeta("worldBorder");
         if (meta != null) {
@@ -917,6 +922,26 @@ public abstract class PlotArea {
                 return Integer.MAX_VALUE;
             } else {
                 return border;
+            }
+        }
+        return Integer.MAX_VALUE;
+    }
+
+    /**
+     * Get the plot border distance for a world, specifying whether the returned value should include the world.extra-border
+     * value.
+     *
+     * @param includeExtra If the extra border given by world.extra-border should be included
+     * @return Border distance of Integer.MAX_VALUE if no border is set
+     */
+    public int getBorder(boolean includeExtra) {
+        final Integer meta = (Integer) getMeta("worldBorder");
+        if (meta != null) {
+            int border = meta + 1;
+            if (border == 0) {
+                return Integer.MAX_VALUE;
+            } else {
+                return includeExtra ? border + extraBorder : border;
             }
         }
         return Integer.MAX_VALUE;
@@ -1179,6 +1204,15 @@ public abstract class PlotArea {
      */
     public boolean hasWorldBorder() {
         return worldBorder;
+    }
+
+    /**
+     * Get the "extra border" size of the plot area.
+     *
+     * @return Plot area extra border size
+     */
+    public int getExtaBorder() {
+        return extraBorder;
     }
 
     /**

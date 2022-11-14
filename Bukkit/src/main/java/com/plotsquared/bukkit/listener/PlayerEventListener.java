@@ -596,7 +596,7 @@ public class PlayerEventListener implements Listener {
                 this.tmpTeleport = true;
                 return;
             }
-            int border = area.getBorder();
+            int border = area.getBorder(true);
             int x1;
             if (x2 > border && this.tmpTeleport) {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
@@ -687,7 +687,7 @@ public class PlayerEventListener implements Listener {
                 this.tmpTeleport = true;
                 return;
             }
-            int border = area.getBorder();
+            int border = area.getBorder(true);
             int z1;
             if (z2 > border && this.tmpTeleport) {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {

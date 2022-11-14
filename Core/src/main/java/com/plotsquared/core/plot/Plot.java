@@ -2690,6 +2690,11 @@ public class Plot {
         return false;
     }
 
+    /**
+     * Get the maximum distance of the plot from x=0, z=0.
+     *
+     * @return max block distance from 0,0
+     */
     public int getDistanceFromOrigin() {
         Location bot = getManager().getPlotBottomLocAbs(id);
         Location top = getManager().getPlotTopLocAbs(id);
@@ -2703,7 +2708,7 @@ public class Plot {
      * Expands the world border to include this plot if it is beyond the current border.
      */
     public void updateWorldBorder() {
-        int border = this.area.getBorder();
+        int border = this.area.getBorder(false);
         if (border == Integer.MAX_VALUE) {
             return;
         }
