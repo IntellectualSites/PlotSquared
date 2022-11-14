@@ -933,6 +933,7 @@ public abstract class PlotArea {
      *
      * @param includeExtra If the extra border given by world.extra-border should be included
      * @return Border distance of Integer.MAX_VALUE if no border is set
+     * @since TODO
      */
     public int getBorder(boolean includeExtra) {
         final Integer meta = (Integer) getMeta("worldBorder");
@@ -1210,6 +1211,7 @@ public abstract class PlotArea {
      * Get the "extra border" size of the plot area.
      *
      * @return Plot area extra border size
+     * @since TODO
      */
     public int getExtaBorder() {
         return extraBorder;
