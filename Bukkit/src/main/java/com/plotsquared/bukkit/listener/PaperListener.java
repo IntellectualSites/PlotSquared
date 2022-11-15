@@ -44,6 +44,7 @@ import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlotFlagUtil;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
@@ -334,7 +335,7 @@ public class PaperListener implements Listener {
         Plot plot = location.getOwnedPlot();
 
         if (plot == null) {
-            if (!area.isRoadFlagsAndFlagEquals(ProjectilesFlag.class, true) && !Permissions.hasPermission(
+            if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, ProjectilesFlag.class, true) && !Permissions.hasPermission(
                     pp,
                     Permission.PERMISSION_ADMIN_PROJECTILE_ROAD
             )) {

@@ -46,7 +46,6 @@ import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
-import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.MathMan;
@@ -1241,19 +1240,6 @@ public abstract class PlotArea {
      */
     public <T> T getRoadFlag(final Class<? extends PlotFlag<T, ?>> flagClass) {
         return this.roadFlagContainer.getFlag(flagClass).getValue();
-    }
-
-    /**
-     * Check if the value of a {@link BooleanFlag} matches the given boolean. If
-     * road flags are disabled, returns false.
-     *
-     * @param flagClass boolean flag to get value of
-     * @param value     boolean value to check flag value against
-     * @return Flag value or false if road flags disabled
-     * @since TODO
-     */
-    public boolean isRoadFlagsAndFlagEquals(final Class<? extends BooleanFlag<?>> flagClass, boolean value) {
-        return this.roadFlags && (getRoadFlag(flagClass) == value);
     }
 
     /**

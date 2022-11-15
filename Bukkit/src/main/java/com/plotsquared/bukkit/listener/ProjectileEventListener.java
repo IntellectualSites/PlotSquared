@@ -31,6 +31,7 @@ import com.plotsquared.core.plot.PlotHandler;
 import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlotFlagUtil;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -105,7 +106,7 @@ public class ProjectileEventListener implements Listener {
         Plot plot = location.getOwnedPlot();
 
         if (plot == null) {
-            if (!area.isRoadFlagsAndFlagEquals(ProjectilesFlag.class, true) && !Permissions.hasPermission(
+            if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, ProjectilesFlag.class, true) && !Permissions.hasPermission(
                     pp,
                     Permission.PERMISSION_ADMIN_PROJECTILE_ROAD
             )) {
@@ -158,7 +159,7 @@ public class ProjectileEventListener implements Listener {
                     if (plot.isAdded(((Player) shooter).getUniqueId()) || plot.getFlag(ProjectilesFlag.class)) {
                         return;
                     }
-                } else if (area.isRoadFlagsAndFlagEquals(ProjectilesFlag.class, true)) {
+                } else if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, ProjectilesFlag.class, true)) {
                     return;
                 }
 
@@ -169,7 +170,7 @@ public class ProjectileEventListener implements Listener {
 
             PlotPlayer<?> pp = BukkitUtil.adapt((Player) shooter);
             if (plot == null) {
-                if (!area.isRoadFlagsAndFlagEquals(ProjectilesFlag.class, true) && !Permissions.hasPermission(
+                if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, ProjectilesFlag.class, true) && !Permissions.hasPermission(
                         pp,
                         Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED
                 )) {
