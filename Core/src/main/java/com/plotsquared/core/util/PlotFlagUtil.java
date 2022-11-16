@@ -26,7 +26,7 @@ import java.util.Objects;
 /**
  * Util class for generic methods relating to plot flags.
  *
- * @since TODO
+ * @since 6.10.4
  */
 public final class PlotFlagUtil {
 
@@ -42,7 +42,7 @@ public final class PlotFlagUtil {
      * @param value     boolean value to check flag value against
      * @param <T>       The flag value type
      * @return true if road flag value matches with road flags enabled
-     * @since TODO
+     * @since 6.10.4
      */
     public static <T> boolean isAreaRoadFlagsAndFlagEquals(
             PlotArea area, final Class<? extends PlotFlag<T, ?>> flagClass, T value

@@ -51,7 +51,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 /**
  * @deprecated P2 effectively no longer supports 1.13
  */
-@Deprecated(forRemoval = true, since = "TODO")
+@Deprecated(forRemoval = true, since = "6.10.4")
 public class PaperListener113 extends PaperListener {
 
     @Inject
