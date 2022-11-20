@@ -142,14 +142,6 @@ public class Auto extends SubCommand {
                 }
             }
         }
-        int maxMerge = Permissions.hasPermissionRange(player, Permission.PERMISSION_MERGE, Settings.Limit.MAX_PLOTS);
-        if (sizeX * sizeZ > maxMerge) {
-            player.sendMessage(
-                    TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Permission.PERMISSION_MERGE + "." + (sizeX * sizeZ))
-            );
-            return false;
-        }
         return true;
     }
 
