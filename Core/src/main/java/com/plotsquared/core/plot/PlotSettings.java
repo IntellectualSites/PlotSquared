@@ -34,7 +34,9 @@ import java.util.UUID;
  * Generic settings class.
  * - Does not keep a reference to a parent class
  * - Direct changes here will not occur in the db (Use the parent plot object for that)
+ * This class is not part of the API and may change at any time. It is recommended to use equivalent methods in the Plot class.
  */
+@Deprecated
 public class PlotSettings {
 
     /**
