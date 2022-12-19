@@ -26,6 +26,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.CopperOxideFlag;
 import com.plotsquared.core.plot.flag.implementations.MiscInteractFlag;
+import com.plotsquared.core.util.PlotFlagUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -91,7 +92,8 @@ public class BlockEventListener117 implements Listener {
         }
 
         Plot plot = location.getOwnedPlot();
-        if (plot == null || !plot.getFlag(MiscInteractFlag.class)) {
+        if (plot == null && !PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, MiscInteractFlag.class, true) || plot != null && !plot.getFlag(
+                MiscInteractFlag.class)) {
             if (plotPlayer != null) {
                 if (plot != null) {
                     if (!plot.isAdded(plotPlayer.getUUID())) {
@@ -104,6 +106,12 @@ public class BlockEventListener117 implements Listener {
             if (entity instanceof Item item) {
                 UUID itemThrower = item.getThrower();
                 if (plot != null) {
+                    if (itemThrower == null && (itemThrower = item.getOwner()) == null) {
+                        plot.debug(
+                                "A thrown item couldn't trigger sculk sensors because misc-interact = false and the item's owner could not be resolved.");
+                        event.setCancelled(true);
+                        return;
+                    }
                     if (!plot.isAdded(itemThrower)) {
                         if (!plot.isAdded(itemThrower)) {
                             plot.debug("A thrown item couldn't trigger sculk sensors because misc-interact = false");

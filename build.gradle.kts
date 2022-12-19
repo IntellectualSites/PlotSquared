@@ -19,7 +19,7 @@ plugins {
 }
 
 group = "com.plotsquared"
-version = "6.10.2-SNAPSHOT"
+version = "6.10.6-SNAPSHOT"
 
 subprojects {
     group = rootProject.group
@@ -65,7 +65,7 @@ subprojects {
     }
 
     dependencies {
-        implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.16"))
+        implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.21"))
     }
 
     dependencies {

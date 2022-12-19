@@ -20,6 +20,7 @@ package com.plotsquared.core.util;
 
 import com.google.common.eventbus.EventBus;
 import com.intellectualsites.annotations.DoNotUse;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlayerAutoPlotEvent;
@@ -59,7 +60,6 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.Rating;
-import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DeviceInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.MiscPlaceFlag;
@@ -300,8 +300,8 @@ public class EventDispatcher {
         if (player == null) {
             return; //possible future warning message to figure out where we are retrieving null
         }
-        if (ExpireManager.IMP != null) {
-            ExpireManager.IMP.handleJoin(player);
+        if (PlotSquared.platform().expireManager() != null) {
+            PlotSquared.platform().expireManager().handleJoin(player);
         }
         if (this.worldEdit != null) {
             if (player.getAttribute("worldedit")) {

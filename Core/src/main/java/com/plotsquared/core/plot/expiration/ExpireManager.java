@@ -18,6 +18,8 @@
  */
 package com.plotsquared.core.plot.expiration;
 
+import com.google.inject.Inject;
+import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.Templates;
@@ -60,6 +62,10 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class ExpireManager {
 
+    /**
+     * @deprecated Use {@link PlotPlatform#expireManager()} instead
+     */
+    @Deprecated(forRemoval = true, since = "6.10.2")
     public static ExpireManager IMP;
     private final ConcurrentHashMap<UUID, Long> dates_cache;
     private final ConcurrentHashMap<UUID, Long> account_age_cache;
@@ -71,6 +77,7 @@ public class ExpireManager {
      */
     private int running;
 
+    @Inject
     public ExpireManager(final @NonNull EventDispatcher eventDispatcher) {
         this.tasks = new ArrayDeque<>();
         this.dates_cache = new ConcurrentHashMap<>();

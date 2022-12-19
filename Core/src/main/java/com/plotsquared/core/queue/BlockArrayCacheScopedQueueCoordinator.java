@@ -116,7 +116,7 @@ public class BlockArrayCacheScopedQueueCoordinator extends ScopedQueueCoordinato
         x += offsetX;
         z += offsetZ;
         if (x >= scopeMinX && x < scopeMaxX && y >= minY && y <= maxY && z >= scopeMinZ && z < scopeMaxZ) {
-            blockStates[y - minY][x][z] = id.toImmutableState();
+            blockStates[y - minY][x - scopeMinX][z - scopeMinZ] = id.toImmutableState();
         }
         return false;
     }

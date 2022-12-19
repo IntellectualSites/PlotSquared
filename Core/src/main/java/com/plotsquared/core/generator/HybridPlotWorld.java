@@ -21,7 +21,6 @@ package com.plotsquared.core.generator;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intellectualsites.annotations.DoNotUse;
-import com.intellectualsites.annotations.NotPublic;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.Settings;
@@ -75,6 +74,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public short PATH_WIDTH_UPPER;
     public HashMap<Integer, BaseBlock[]> G_SCH;
     public HashMap<Integer, BiomeType> G_SCH_B;
+    /**
+     * The Y level at which schematic generation will start, lowest of either road or plot schematic generation.
+     */
     public int SCHEM_Y;
     private Location SIGN_LOCATION;
     private File root = null;
@@ -91,10 +93,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     @Inject
     public HybridPlotWorld(
             @Assisted("world") final String worldName,
-            @Nullable @Assisted("id") final String id,
+            @javax.annotation.Nullable @Assisted("id") final String id,
             @Assisted final @NonNull IndependentPlotGenerator generator,
-            @Nullable @Assisted("min") final PlotId min,
-            @Nullable @Assisted("max") final PlotId max,
+            @javax.annotation.Nullable @Assisted("min") final PlotId min,
+            @javax.annotation.Nullable @Assisted("max") final PlotId max,
             @WorldConfig final @NonNull YamlConfiguration worldConfiguration,
             final @NonNull GlobalBlockQueue blockQueue
     ) {
@@ -267,34 +269,67 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         int oddshift = (this.ROAD_WIDTH & 1);
 
         SCHEM_Y = schematicStartHeight();
+
+        // plotY and roadY are important to allow plot and/or road schematic "overflow" into each other without causing AIOOB
+        //  exceptions when attempting either to set blocks to, or get block from G_SCH
+        // Default plot schematic start height, normalized to the minimum height schematics are pasted from.
         int plotY = PLOT_HEIGHT - SCHEM_Y;
         int minRoadWall = Settings.Schematics.USE_WALL_IN_ROAD_SCHEM_HEIGHT ? Math.min(ROAD_HEIGHT, WALL_HEIGHT) : ROAD_HEIGHT;
+        // Default road schematic start height, normalized to the minimum height schematics are pasted from.
         int roadY = minRoadWall - SCHEM_Y;
 
-        int worldHeight = getMaxGenHeight() - getMinGenHeight() + 1;
+        int worldGenHeight = getMaxGenHeight() - getMinGenHeight() + 1;
+
+        int maxSchematicHeight = 0;
+        int plotSchemHeight = 0;
 
         // SCHEM_Y should be normalised to the plot "start" height
         if (schematic3 != null) {
-            if (schematic3.getClipboard().getDimensions().getY() == worldHeight) {
-                SCHEM_Y = plotY = 0;
+            plotSchemHeight = maxSchematicHeight = schematic3.getClipboard().getDimensions().getY();
+            if (maxSchematicHeight == worldGenHeight) {
+                SCHEM_Y = getMinGenHeight();
+                plotY = 0;
             } else if (!Settings.Schematics.PASTE_ON_TOP) {
-                SCHEM_Y = plotY = getMinBuildHeight() - getMinGenHeight();
+                SCHEM_Y = getMinBuildHeight();
+                plotY = 0;
             }
         }
 
+        int roadSchemHeight;
+
         if (schematic1 != null) {
-            if (schematic1.getClipboard().getDimensions().getY() == worldHeight) {
-                SCHEM_Y = roadY = getMinGenHeight();
-                if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() != worldHeight
-                        && !Settings.Schematics.PASTE_ON_TOP) {
-                    plotY = PLOT_HEIGHT;
+            roadSchemHeight = Math.max(
+                    schematic1.getClipboard().getDimensions().getY(),
+                    schematic2.getClipboard().getDimensions().getY()
+            );
+            maxSchematicHeight = Math.max(roadSchemHeight, maxSchematicHeight);
+            if (maxSchematicHeight == worldGenHeight) {
+                SCHEM_Y = getMinGenHeight();
+                roadY = 0; // Road is the lowest schematic
+                if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() != worldGenHeight) {
+                    // Road is the lowest schematic. Normalize plotY to it.
+                    if (Settings.Schematics.PASTE_ON_TOP) {
+                        plotY = PLOT_HEIGHT - getMinGenHeight();
+                    } else {
+                        plotY = getMinBuildHeight() - getMinGenHeight();
+                    }
                 }
             } else if (!Settings.Schematics.PASTE_ROAD_ON_TOP) {
-                SCHEM_Y = roadY = getMinBuildHeight();
-                if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() != worldHeight
-                        && !Settings.Schematics.PASTE_ON_TOP) {
-                    plotY = PLOT_HEIGHT;
+                if (SCHEM_Y == getMinGenHeight()) { // Only possible if plot schematic is enabled
+                    // Plot is still the lowest schematic, normalize roadY to it
+                    roadY = getMinBuildHeight() - getMinGenHeight();
+                } else if (schematic3 != null) {
+                    SCHEM_Y = getMinBuildHeight();
+                    roadY = 0;// Road is the lowest schematic
+                    if (Settings.Schematics.PASTE_ON_TOP) {
+                        // Road is the lowest schematic. Normalize plotY to it.
+                        plotY = PLOT_HEIGHT - getMinBuildHeight();
+                    }
+                    maxSchematicHeight = Math.max(maxSchematicHeight, plotY + plotSchemHeight);
                 }
+            } else {
+                roadY = minRoadWall - SCHEM_Y;
+                maxSchematicHeight = Math.max(maxSchematicHeight, roadY + roadSchemHeight);
             }
         }
 
@@ -331,17 +366,15 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                                 y + min.getBlockY(),
                                 z + min.getBlockZ()
                         ));
-                        if (!id.getBlockType().getMaterial().isAir()) {
-                            schem3PopulationNeeded |= id.hasNbtData();
-                            addOverlayBlock(
-                                    (short) (x + shift + oddshift + centerShiftX),
-                                    (short) (y + plotY),
-                                    (short) (z + shift + oddshift + centerShiftZ),
-                                    id,
-                                    false,
-                                    h3
-                            );
-                        }
+                        schem3PopulationNeeded |= id.hasNbtData();
+                        addOverlayBlock(
+                                (short) (x + shift + oddshift + centerShiftX),
+                                (short) (y + plotY),
+                                (short) (z + shift + oddshift + centerShiftZ),
+                                id,
+                                false,
+                                maxSchematicHeight
+                        );
                     }
                     if (blockArrayClipboard3.hasBiomes()) {
                         BiomeType biome = blockArrayClipboard3.getBiome(BlockVector2.at(
@@ -391,18 +424,23 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                             y + min.getBlockY(),
                             z + min.getBlockZ()
                     ));
-                    if (!id.getBlockType().getMaterial().isAir()) {
-                        schem1PopulationNeeded |= id.hasNbtData();
-                        addOverlayBlock((short) (x - shift), (short) (y + roadY), (short) (z + shift + oddshift), id, false, h1);
-                        addOverlayBlock(
-                                (short) (z + shift + oddshift),
-                                (short) (y + roadY),
-                                (short) (shift - x + (oddshift - 1)),
-                                id,
-                                true,
-                                h1
-                        );
-                    }
+                    schem1PopulationNeeded |= id.hasNbtData();
+                    addOverlayBlock(
+                            (short) (x - shift),
+                            (short) (y + roadY),
+                            (short) (z + shift + oddshift),
+                            id,
+                            false,
+                            maxSchematicHeight
+                    );
+                    addOverlayBlock(
+                            (short) (z + shift + oddshift),
+                            (short) (y + roadY),
+                            (short) (shift - x + (oddshift - 1)),
+                            id,
+                            true,
+                            maxSchematicHeight
+                    );
                 }
                 if (blockArrayClipboard1.hasBiomes()) {
                     BiomeType biome = blockArrayClipboard1.getBiome(BlockVector2.at(x + min.getBlockX(), z + min.getBlockZ()));
@@ -430,10 +468,15 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                             y + min.getBlockY(),
                             z + min.getBlockZ()
                     ));
-                    if (!id.getBlockType().getMaterial().isAir()) {
-                        schem2PopulationNeeded |= id.hasNbtData();
-                        addOverlayBlock((short) (x - shift), (short) (y + roadY), (short) (z - shift), id, false, h2);
-                    }
+                    schem2PopulationNeeded |= id.hasNbtData();
+                    addOverlayBlock(
+                            (short) (x - shift),
+                            (short) (y + roadY),
+                            (short) (z - shift),
+                            id,
+                            false,
+                            maxSchematicHeight
+                    );
                 }
                 if (blockArrayClipboard2.hasBiomes()) {
                     BiomeType biome = blockArrayClipboard2.getBiome(BlockVector2.at(x + min.getBlockX(), z + min.getBlockZ()));
@@ -443,6 +486,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
     }
 
+    /**
+     * @deprecated This method should not be available for public API usage and will be made private.
+     */
+    @Deprecated(forRemoval = true, since = "6.10.2")
     public void addOverlayBlock(short x, short y, short z, BaseBlock id, boolean rotate, int height) {
         if (z < 0) {
             z += this.SIZE;
@@ -462,13 +509,22 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         if (y >= height) {
             if (y > lastOverlayHeightError) {
                 lastOverlayHeightError = y;
-                LOGGER.error(String.format("Error adding overlay block. `y > height`. y=%s, height=%s", y, height));
+                LOGGER.error(
+                        "Error adding overlay block in world {}. `y > height`. y={}, height={}",
+                        getWorldName(),
+                        y,
+                        height
+                );
             }
             return;
         }
         existing[y] = id;
     }
 
+    /**
+     * @deprecated This method should not be available for public API usage and will be made private.
+     */
+    @Deprecated(forRemoval = true, since = "6.10.2")
     public void addOverlayBiome(short x, short z, BiomeType id) {
         if (z < 0) {
             z += this.SIZE;

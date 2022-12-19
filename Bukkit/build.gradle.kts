@@ -24,7 +24,7 @@ dependencies {
     implementation("org.bstats:bstats-bukkit")
 
     // Paper
-    compileOnly(libs.paper)
+    compileOnly("io.papermc.paper:paper-api")
     implementation("io.papermc:paperlib")
 
     // Plugins

@@ -56,6 +56,7 @@ import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlotFlagUtil;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.WorldEdit;
@@ -166,7 +167,7 @@ public class BlockEventListener implements Listener {
         }
         Plot plot = location.getOwnedPlot();
         if (plot == null) {
-            if (area.isRoadFlags() && !area.getRoadFlag(RedstoneFlag.class)) {
+            if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, RedstoneFlag.class, false)) {
                 event.setNewCurrent(0);
             }
             return;
@@ -1084,7 +1085,10 @@ public class BlockEventListener implements Listener {
                 return;
             }
             if (plot == null) {
-                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_ROAD)) {
+                if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, BlockIgnitionFlag.class, true) && !Permissions.hasPermission(
+                        pp,
+                        Permission.PERMISSION_ADMIN_BUILD_ROAD
+                )) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
                             Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
@@ -1092,7 +1096,10 @@ public class BlockEventListener implements Listener {
                     event.setCancelled(true);
                 }
             } else if (!plot.hasOwner()) {
-                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_UNOWNED)) {
+                if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, BlockIgnitionFlag.class, true) && !Permissions.hasPermission(
+                        pp,
+                        Permission.PERMISSION_ADMIN_BUILD_UNOWNED
+                )) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
                             Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_UNOWNED))

@@ -36,7 +36,6 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotTitle;
 import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.plot.comment.CommentManager;
-import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DenyExitFlag;
@@ -163,8 +162,8 @@ public class PlotListener {
             if ((last != null) && !last.getId().equals(plot.getId())) {
                 plotExit(player, last);
             }
-            if (ExpireManager.IMP != null) {
-                ExpireManager.IMP.handleEntry(player, plot);
+            if (PlotSquared.platform().expireManager() != null) {
+                PlotSquared.platform().expireManager().handleEntry(player, plot);
             }
             lastPlot.set(plot);
         }
