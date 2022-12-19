@@ -101,7 +101,6 @@ import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.SpongeAbsorbEvent;
 import org.bukkit.event.world.StructureGrowEvent;
-import org.bukkit.material.Directional;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
