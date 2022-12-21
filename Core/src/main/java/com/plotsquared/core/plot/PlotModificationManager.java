@@ -263,6 +263,7 @@ public final class PlotModificationManager {
                     return;
                 }
                 Plot current = queue.poll();
+                current.clearCache();
                 if (plot.getArea().getTerrain() != PlotAreaTerrainType.NONE) {
                     try {
                         PlotSquared.platform().regionManager().regenerateRegion(

@@ -1303,6 +1303,7 @@ public class Plot {
             DBFunc.delete(current);
             current.setOwnerAbs(null);
             current.settings = null;
+            current.clearCache();
             for (final PlotPlayer<?> pp : players) {
                 this.plotListener.plotEntry(pp, current);
             }
@@ -1873,6 +1874,7 @@ public class Plot {
         this.area.removePlot(this.id);
         this.id = plot.getId();
         this.area.addPlotAbs(this);
+        clearCache();
         DBFunc.movePlot(this, plot);
         TaskManager.runTaskLater(whenDone, TaskTime.ticks(1L));
         return true;
