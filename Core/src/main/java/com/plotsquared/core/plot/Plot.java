@@ -578,7 +578,14 @@ public class Plot {
             return false;
         }
         final Set<Plot> connected = getConnectedPlots();
-        return connected.stream().anyMatch(current -> uuid.equals(current.getOwner()));
+        for (Plot current : connected) {
+            // can skip ServerPlotFlag check in getOwner()
+            // as flags are synchronized between plots
+            if (uuid.equals(current.getOwnerAbs())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
