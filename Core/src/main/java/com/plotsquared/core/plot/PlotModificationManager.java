@@ -327,6 +327,7 @@ public final class PlotModificationManager {
         ArrayList<PlotId> ids = new ArrayList<>(plots.size());
         for (Plot current : plots) {
             current.setHome(null);
+            current.clearCache();
             ids.add(current.getId());
         }
         this.plot.clearRatings();
@@ -478,8 +479,7 @@ public final class PlotModificationManager {
                 this.plot.updateWorldBorder();
             }
         }
-        Plot.connected_cache = null;
-        Plot.regions_cache = null;
+        this.plot.clearCache();
         this.plot.getTrusted().clear();
         this.plot.getMembers().clear();
         this.plot.getDenied().clear();
@@ -630,6 +630,7 @@ public final class PlotModificationManager {
         if (queue.size() > 0) {
             queue.enqueue();
         }
+        visited.forEach(Plot::clearCache);
         return toReturn;
     }
 
