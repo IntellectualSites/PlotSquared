@@ -71,6 +71,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Dispenser;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
@@ -100,7 +101,6 @@ import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.SpongeAbsorbEvent;
 import org.bukkit.event.world.StructureGrowEvent;
-import org.bukkit.material.Directional;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -926,6 +926,9 @@ public class BlockEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockDispense(BlockDispenseEvent event) {
+        if (!this.plotAreaManager.hasPlotArea(event.getBlock().getWorld().getName())) {
+            return;
+        }
         Material type = event.getItem().getType();
         switch (type.toString()) {
             case "SHULKER_BOX", "WHITE_SHULKER_BOX", "ORANGE_SHULKER_BOX", "MAGENTA_SHULKER_BOX", "LIGHT_BLUE_SHULKER_BOX",
@@ -937,7 +940,7 @@ public class BlockEventListener implements Listener {
                 if (event.getBlock().getType() == Material.DROPPER) {
                     return;
                 }
-                BlockFace targetFace = ((Directional) event.getBlock().getState().getData()).getFacing();
+                BlockFace targetFace = ((Dispenser) event.getBlock().getBlockData()).getFacing();
                 Location location = BukkitUtil.adapt(event.getBlock().getRelative(targetFace).getLocation());
                 if (location.isPlotRoad()) {
                     event.setCancelled(true);
