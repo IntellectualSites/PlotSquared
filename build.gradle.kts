@@ -1,7 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
-import org.cadixdev.gradle.licenser.LicenseExtension
-import org.cadixdev.gradle.licenser.Licenser
 import java.net.URI
+import com.diffplug.gradle.spotless.SpotlessPlugin
 
 plugins {
     java
@@ -10,7 +9,7 @@ plugins {
     signing
 
     alias(libs.plugins.shadow)
-    alias(libs.plugins.licenser)
+    alias(libs.plugins.spotless)
     alias(libs.plugins.grgit)
     alias(libs.plugins.nexus)
 
@@ -57,7 +56,7 @@ subprojects {
         plugin<JavaLibraryPlugin>()
         plugin<MavenPublishPlugin>()
         plugin<ShadowPlugin>()
-        plugin<Licenser>()
+        plugin<SpotlessPlugin>()
         plugin<SigningPlugin>()
 
         plugin<EclipsePlugin>()
@@ -87,10 +86,11 @@ subprojects {
         attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 17)
     }
 
-    configure<LicenseExtension> {
-        header(rootProject.file("HEADER.txt"))
-        include("**/*.java")
-        newLine.set(false)
+    spotless {
+        java {
+            licenseHeaderFile(rootProject.file("HEADER.txt"))
+            target("**/*.java")
+        }
     }
 
     java {
