@@ -184,7 +184,7 @@ public class DatabaseCommand extends SubCommand {
                                                         );
                                                 worldFile.renameTo(newFile);
                                             }
-                                            plot.setId(newId.copy());
+                                            plot.setId(newId);
                                             plot.setArea(pa);
                                             plots.add(plot);
                                             continue;

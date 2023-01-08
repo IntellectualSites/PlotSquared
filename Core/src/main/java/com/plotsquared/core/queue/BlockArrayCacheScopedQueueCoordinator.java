@@ -18,8 +18,8 @@
  */
 package com.plotsquared.core.queue;
 
+import com.intellectualsites.annotations.DoNotUse;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.util.AnnotationHelper;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -116,7 +116,7 @@ public class BlockArrayCacheScopedQueueCoordinator extends ZeroedDelegateScopedQ
         x += offsetX;
         z += offsetZ;
         if (x >= scopeMinX && x < scopeMaxX && y >= minY && y <= maxY && z >= scopeMinZ && z < scopeMaxZ) {
-            blockStates[y - minY][x][z] = id.toImmutableState();
+            blockStates[y - minY][x - scopeMinX][z - scopeMinZ] = id.toImmutableState();
         }
         return false;
     }

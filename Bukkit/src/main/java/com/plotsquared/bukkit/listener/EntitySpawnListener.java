@@ -126,14 +126,14 @@ public class EntitySpawnListener implements Listener {
         Plot plot = location.getOwnedPlotAbs();
         EntityType type = entity.getType();
         if (plot == null) {
+            if (type == EntityType.DROPPED_ITEM) {
+                if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
+                    event.setCancelled(true);
+                }
+                return;
+            }
             if (!area.isMobSpawning()) {
                 if (type == EntityType.PLAYER) {
-                    return;
-                }
-                if (type == EntityType.DROPPED_ITEM) {
-                    if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
-                        event.setCancelled(true);
-                    }
                     return;
                 }
                 if (type.isAlive()) {

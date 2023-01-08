@@ -297,7 +297,28 @@ public class Merge extends SubCommand {
                 run.run();
             }
         }
-        if (!force && !isOnline) {
+        if (force || !isOnline) {
+            if (force || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_MERGE_OTHER_OFFLINE)) {
+                if (plot.getPlotModificationManager().autoMerge(direction, maxSize - size, uuids.iterator().next(), player, terrain)) {
+                    if (this.econHandler.isEnabled(plotArea) && price > 0d) {
+                        if (!force && this.econHandler.getMoney(player) < price) {
+                            player.sendMessage(
+                                    TranslatableCaption.of("economy.cannot_afford_merge"),
+                                    Template.of("money", this.econHandler.format(price))
+                            );
+                            return false;
+                        }
+                        this.econHandler.withdrawMoney(player, price);
+                        player.sendMessage(
+                                TranslatableCaption.of("economy.removed_balance"),
+                                Template.of("money", this.econHandler.format(price))
+                        );
+                    }
+                    player.sendMessage(TranslatableCaption.of("merge.success_merge"));
+                    eventDispatcher.callPostMerge(player, plot);
+                    return true;
+                }
+            }
             player.sendMessage(TranslatableCaption.of("merge.no_available_automerge"));
             return false;
         }

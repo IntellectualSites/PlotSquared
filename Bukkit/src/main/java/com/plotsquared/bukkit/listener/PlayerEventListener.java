@@ -68,6 +68,7 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlotFlagUtil;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.task.TaskManager;
@@ -107,6 +108,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
@@ -143,6 +145,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -157,7 +160,7 @@ import java.util.UUID;
  * Player Events involving plots.
  */
 @SuppressWarnings("unused")
-public class PlayerEventListener extends PlotListener implements Listener {
+public class PlayerEventListener implements Listener {
 
     private static final Set<Material> MINECARTS = Set.of(
             Material.MINECART,
@@ -176,6 +179,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
     private final EventDispatcher eventDispatcher;
     private final WorldEdit worldEdit;
     private final PlotAreaManager plotAreaManager;
+    private final PlotListener plotListener;
     // To prevent recursion
     private boolean tmpTeleport = true;
     private Field fieldPlayer;
@@ -195,12 +199,36 @@ public class PlayerEventListener extends PlotListener implements Listener {
     public PlayerEventListener(
             final @NonNull PlotAreaManager plotAreaManager,
             final @NonNull EventDispatcher eventDispatcher,
-            final @NonNull WorldEdit worldEdit
+            final @NonNull WorldEdit worldEdit,
+            final @NonNull PlotListener plotListener
     ) {
-        super(eventDispatcher);
         this.eventDispatcher = eventDispatcher;
         this.worldEdit = worldEdit;
         this.plotAreaManager = plotAreaManager;
+        this.plotListener = plotListener;
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEffect(@NonNull EntityPotionEffectEvent event) {
+        if (Settings.Enabled_Components.DISABLE_BEACON_EFFECT_OVERFLOW ||
+                event.getCause() != EntityPotionEffectEvent.Cause.BEACON ||
+                !(event.getEntity() instanceof Player player)) {
+            return;
+        }
+
+        UUID uuid = player.getUniqueId();
+        PotionEffect effect = event.getNewEffect();
+        if (effect == null) {
+            PotionEffect oldEffect = event.getOldEffect();
+            if (oldEffect != null) {
+                String name = oldEffect.getType().getName();
+                plotListener.addEffect(uuid, name, -1);
+            }
+        } else {
+            long expiresAt = System.currentTimeMillis() + effect.getDuration() * 50L; //Convert ticks to milliseconds
+            String name = effect.getType().getName();
+            plotListener.addEffect(uuid, name, expiresAt);
+        }
     }
 
     @EventHandler
@@ -353,7 +381,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         if (area != null) {
             Plot plot = area.getPlot(location);
             if (plot != null) {
-                plotEntry(pp, plot);
+                plotListener.plotEntry(pp, plot);
             }
         }
         // Delayed
@@ -409,7 +437,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 PlotArea area = location.getPlotArea();
                 if (area == null) {
                     if (lastPlot != null) {
-                        plotExit(pp, lastPlot);
+                        plotListener.plotExit(pp, lastPlot);
                         lastPlotAccess.remove();
                     }
                     try (final MetaDataAccess<Location> lastLocationAccess =
@@ -543,7 +571,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (now == null) {
                 try (final MetaDataAccess<Boolean> kickAccess =
                              pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
-                    if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(false)) {
+                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(false)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
                                 TagResolver.resolver(
@@ -564,7 +592,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 }
             } else if (now.equals(lastPlot)) {
                 ForceFieldListener.handleForcefield(player, pp, now);
-            } else if (!plotEntry(pp, now) && this.tmpTeleport) {
+            } else if (!plotListener.plotEntry(pp, now) && this.tmpTeleport) {
                 pp.sendMessage(
                         TranslatableCaption.of("deny.no_enter"),
                         TagResolver.resolver("plot", Tag.inserting(Component.text(now.toString())))
@@ -636,7 +664,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (plot == null) {
                 try (final MetaDataAccess<Boolean> kickAccess =
                              pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
-                    if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(false)) {
+                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(false)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
                                 TagResolver.resolver(
@@ -657,7 +685,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 }
             } else if (plot.equals(lastPlot)) {
                 ForceFieldListener.handleForcefield(player, pp, plot);
-            } else if (!plotEntry(pp, plot) && this.tmpTeleport) {
+            } else if (!plotListener.plotEntry(pp, plot) && this.tmpTeleport) {
                 pp.sendMessage(
                         TranslatableCaption.of("deny.no_enter"),
                         TagResolver.resolver("plot", Tag.inserting(Component.text(plot.toString())))
@@ -792,7 +820,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             lastLocationAccess.remove();
         }
         if (plot != null) {
-            plotExit(pp, plot);
+            plotListener.plotExit(pp, plot);
         }
         if (this.worldEdit != null) {
             if (!Permissions.hasPermission(pp, Permission.PERMISSION_WORLDEDIT_BYPASS)) {
@@ -806,7 +834,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         if (location.isPlotArea()) {
             plot = location.getPlot();
             if (plot != null) {
-                plotEntry(pp, plot);
+                plotListener.plotEntry(pp, plot);
             }
         }
     }
@@ -861,8 +889,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 }
             } else {
                 PlotArea area = pp.getPlotAreaAbs();
-                if (area != null && area.isRoadFlags() && area
-                        .getRoadFlag(PreventCreativeCopyFlag.class)) {
+                if (area != null && PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, PreventCreativeCopyFlag.class, true)) {
                     final ItemStack newStack =
                             new ItemStack(newItem.getType(), newItem.getAmount());
                     event.setCursor(newStack);
@@ -979,8 +1006,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
         Plot plot = location.getPlotAbs();
         BukkitPlayer pp = BukkitUtil.adapt(e.getPlayer());
         if (plot == null) {
-            if (!area.isRoadFlags() && !area.getRoadFlag(MiscInteractFlag.class) && !Permissions
-                    .hasPermission(pp, Permission.PERMISSION_ADMIN_INTERACT_ROAD)) {
+            if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, MiscInteractFlag.class, true) && !Permissions.hasPermission(
+                    pp,
+                    Permission.PERMISSION_ADMIN_INTERACT_ROAD
+            )) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
                         TagResolver.resolver(
@@ -993,9 +1022,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         } else {
             if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
-                    pp.sendMessage(
-                            TranslatableCaption.of("done.building_restricted")
-                    );
+                    pp.sendMessage(TranslatableCaption.of("done.building_restricted"));
                     e.setCancelled(true);
                     return;
                 }
@@ -1303,7 +1330,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         TaskManager.removeFromTeleportQueue(event.getPlayer().getName());
         BukkitPlayer pp = BukkitUtil.adapt(event.getPlayer());
         pp.unregister();
-        this.logout(pp.getUUID());
+        plotListener.logout(pp.getUUID());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -1629,7 +1656,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
             BukkitPlayer pp = BukkitUtil.adapt(p);
             Plot plot = area.getPlot(location);
             if (plot == null) {
-                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_ROAD)) {
+                if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, VehicleBreakFlag.class, true) && !Permissions.hasPermission(
+                        pp,
+                        Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_ROAD
+                )) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
                             TagResolver.resolver(
@@ -1686,7 +1716,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         }
         Plot plot = location.getOwnedPlot();
         if (plot == null) {
-            if (area.isRoadFlags() && !area.getRoadFlag(ItemDropFlag.class)) {
+            if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, ItemDropFlag.class, false)) {
                 event.setCancelled(true);
             }
             return;
@@ -1712,7 +1742,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             }
             Plot plot = location.getOwnedPlot();
             if (plot == null) {
-                if (area.isRoadFlags() && area.getRoadFlag(DropProtectionFlag.class)) {
+                if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, DropProtectionFlag.class, true)) {
                     event.setCancelled(true);
                 }
                 return;
@@ -1734,17 +1764,15 @@ public class PlayerEventListener extends PlotListener implements Listener {
         }
         Plot plot = location.getOwnedPlot();
         if (plot == null) {
-            if (area.isRoadFlags() && area.getRoadFlag(KeepInventoryFlag.class)) {
+            if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, KeepInventoryFlag.class, true)) {
                 event.setCancelled(true);
             }
             return;
         }
         if (plot.getFlag(KeepInventoryFlag.class)) {
-            if (plot.getFlag(KeepInventoryFlag.class)) {
-                plot.debug(event.getEntity().getName() + " kept their inventory because of keep-inventory = true");
-                event.getDrops().clear();
-                event.setKeepInventory(true);
-            }
+            plot.debug(event.getEntity().getName() + " kept their inventory because of keep-inventory = true");
+            event.getDrops().clear();
+            event.setKeepInventory(true);
         }
     }
 
@@ -1769,16 +1797,14 @@ public class PlayerEventListener extends PlotListener implements Listener {
         }
         Plot plot = location.getOwnedPlot();
         if (plot == null) {
-            if (area.isRoadFlags() && area.getRoadFlag(DenyPortalTravelFlag.class)) {
+            if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, DenyPortalTravelFlag.class, true)) {
                 event.setCancelled(true);
             }
             return;
         }
         if (plot.getFlag(DenyPortalTravelFlag.class)) {
-            if (plot.getFlag(DenyPortalTravelFlag.class)) {
-                plot.debug(event.getPlayer().getName() + " did not travel thru a portal because of deny-portal-travel = true");
-                event.setCancelled(true);
-            }
+            plot.debug(event.getPlayer().getName() + " did not travel thru a portal because of deny-portal-travel = true");
+            event.setCancelled(true);
         }
     }
 
@@ -1788,6 +1814,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         if (PlotSquared.get().getPlotAreaManager().getPlotAreasSet(world).size() == 0) {
             return;
         }
+        BukkitPlayer pp = (event.getEntity() instanceof Player player) ? BukkitUtil.adapt(player) : null;
         int minX = Integer.MAX_VALUE;
         int maxX = Integer.MIN_VALUE;
         int minZ = Integer.MAX_VALUE;
@@ -1799,19 +1826,23 @@ public class PlayerEventListener extends PlotListener implements Listener {
             maxZ = Math.max(state.getZ(), maxZ);
         }
         int y = event.getBlocks().get(0).getY(); // Don't need to worry about this too much
-        for (Location location : Set.of( // Use Set to lazily avoid duplicate locations
-                Location.at(world, minX, y, maxX),
-                Location.at(world, minZ, y, maxZ),
+        for (Location location : List.of( // We don't care about duplicate locations
+                Location.at(world, minX, y, minZ),
                 Location.at(world, minX, y, maxZ),
-                Location.at(world, minZ, y, maxX)
+                Location.at(world, maxX, y, minZ),
+                Location.at(world, maxX, y, maxZ)
         )) {
             PlotArea area = location.getPlotArea();
             if (area == null) {
                 continue;
             }
+            if (area.notifyIfOutsideBuildArea(pp, location.getY())) {
+                event.setCancelled(true);
+                return;
+            }
             Plot plot = location.getOwnedPlot();
             if (plot == null) {
-                if (area.isRoadFlags() && area.getRoadFlag(DenyPortalsFlag.class)) {
+                if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, DenyPortalsFlag.class, true)) {
                     event.setCancelled(true);
                     return;
                 }
@@ -1840,16 +1871,14 @@ public class PlayerEventListener extends PlotListener implements Listener {
         }
         Plot plot = location.getOwnedPlot();
         if (plot == null) {
-            if (area.isRoadFlags() && area.getRoadFlag(LecternReadBookFlag.class)) {
+            if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, LecternReadBookFlag.class, true)) {
                 event.setCancelled(true);
             }
             return;
         }
         if (plot.getFlag(LecternReadBookFlag.class)) {
-            if (plot.getFlag(LecternReadBookFlag.class)) {
-                plot.debug(event.getPlayer().getName() + " could not take the book because of lectern-read-book = true");
-                event.setCancelled(true);
-            }
+            plot.debug(event.getPlayer().getName() + " could not take the book because of lectern-read-book = true");
+            event.setCancelled(true);
         }
     }
 

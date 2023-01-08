@@ -22,6 +22,7 @@ import cloud.commandframework.services.ServicePipeline;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
+import com.intellectualsites.annotations.DoNotUse;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.generator.GeneratorWrapper;
@@ -31,9 +32,9 @@ import com.plotsquared.core.inject.annotations.DefaultGenerator;
 import com.plotsquared.core.location.World;
 import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.util.AnnotationHelper;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.PlatformWorldManager;
@@ -74,6 +75,11 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * Completely shuts down the plugin.
      */
     void shutdown();
+
+    /**
+     * Completely shuts down the server.
+     */
+    void shutdownServer();
 
     /**
      * Get the name of the plugin
@@ -280,6 +286,16 @@ public interface PlotPlatform<P> extends LocaleHolder {
     }
 
     /**
+     * Get the {@link ExpireManager} implementation for the platform
+     *
+     * @return Expire manager
+     * @since 6.10.2
+     */
+    default @NonNull ExpireManager expireManager() {
+        return injector().getInstance(ExpireManager.class);
+    }
+
+    /**
      * Get the {@link PlotAreaManager} implementation.
      *
      * @return the PlotAreaManager
@@ -308,7 +324,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * @return worldedit implementations
      * @since 6.3.0
      */
-    @AnnotationHelper.ApiDescription(info = "Internal use only")
+    @DoNotUse
     @NonNull String worldEditImplementations();
 
     /**

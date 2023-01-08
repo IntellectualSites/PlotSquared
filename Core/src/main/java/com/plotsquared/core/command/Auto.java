@@ -254,6 +254,7 @@ public class Auto extends SubCommand {
                     TranslatableCaption.of("permission.no_permission"),
                     TagResolver.resolver("node", Tag.inserting(Permission.PERMISSION_AUTO_MEGA))
             );
+            return false;
         }
         if (!force && sizeX * sizeZ > Settings.Claim.MAX_AUTO_AREA) {
             player.sendMessage(

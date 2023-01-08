@@ -28,6 +28,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "near",
@@ -53,6 +54,10 @@ public class Near extends Command {
                 TagResolver.resolver("list", Tag.inserting(Component.text(StringMan.join(plot.getPlayersInPlot(), ", "))))
         );
         return CompletableFuture.completedFuture(true);
+    }
+
+    private List<PlotPlayer<?>> getPlayersInPlotVisible(Plot plot, PlotPlayer<?> executor) {
+        return plot.getPlayersInPlot().stream().filter(executor::canSee).toList();
     }
 
 }

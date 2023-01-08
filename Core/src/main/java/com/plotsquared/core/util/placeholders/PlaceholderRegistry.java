@@ -163,7 +163,7 @@ public final class PlaceholderRegistry {
                     PlayerManager.getPlayerList(plot.getDenied(), player));
         });
         this.createPlaceholder("currentplot_creationdate", (player, plot) -> {
-            if (plot.getTimestamp() == 0) {
+            if (plot.getTimestamp() == 0 || !plot.hasOwner()) {
                 return legacyComponent(TranslatableCaption.of("info.unknown"), player);
             }
             long creationDate = plot.getTimestamp();

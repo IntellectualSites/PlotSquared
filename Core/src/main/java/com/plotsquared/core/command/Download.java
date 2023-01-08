@@ -192,6 +192,7 @@ public class Download extends SubCommand {
                         schematicHandler.upload(compoundTag, null, null, new RunnableVal<>() {
                             @Override
                             public void run(URL value) {
+                                plot.removeRunning();
                                 player.sendMessage(
                                         TranslatableCaption.of("web.generation_link_success"),
                                         TagResolver.builder()

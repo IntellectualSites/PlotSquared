@@ -18,6 +18,7 @@
  */
 package com.plotsquared.bukkit.listener;
 
+import com.destroystokyo.paper.event.block.BeaconEffectEvent;
 import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
 import com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent;
 import com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent;
@@ -36,13 +37,17 @@ import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.flag.FlagContainer;
+import com.plotsquared.core.plot.flag.implementations.BeaconEffectsFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
+import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.Permissions;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import com.plotsquared.core.util.PlotFlagUtil;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
@@ -231,15 +236,15 @@ public class PaperListener implements Listener {
         Plot plot = location.getOwnedPlotAbs();
         if (plot == null) {
             EntityType type = event.getType();
+            // PreCreatureSpawnEvent **should** not be called for DROPPED_ITEM, just for the sake of consistency
+            if (type == EntityType.DROPPED_ITEM) {
+                if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
+                    event.setCancelled(true);
+                }
+                return;
+            }
             if (!area.isMobSpawning()) {
                 if (type == EntityType.PLAYER) {
-                    return;
-                }
-                if (type == EntityType.DROPPED_ITEM) {
-                    if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
-                        event.setShouldAbortSpawn(true);
-                        event.setCancelled(true);
-                    }
                     return;
                 }
                 if (type.isAlive()) {
@@ -324,14 +329,18 @@ public class PaperListener implements Listener {
             return;
         }
         Location location = BukkitUtil.adapt(entity.getLocation());
-        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
             return;
         }
         PlotPlayer<Player> pp = BukkitUtil.adapt((Player) shooter);
         Plot plot = location.getOwnedPlot();
 
         if (plot == null) {
-            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_ROAD)) {
+            if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, ProjectilesFlag.class, true) && !Permissions.hasPermission(
+                    pp,
+                    Permission.PERMISSION_ADMIN_PROJECTILE_ROAD
+            )) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
                         TagResolver.resolver(
@@ -409,6 +418,52 @@ public class PaperListener implements Listener {
             event.setHandled(true);
         } catch (final Exception ignored) {
         }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBeaconEffect(final BeaconEffectEvent event) {
+        Block block = event.getBlock();
+        Location beaconLocation = BukkitUtil.adapt(block.getLocation());
+        Plot beaconPlot = beaconLocation.getPlot();
+
+        PlotArea area = beaconLocation.getPlotArea();
+        if (area == null) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+        Location playerLocation = BukkitUtil.adapt(player.getLocation());
+
+        PlotPlayer<Player> plotPlayer = BukkitUtil.adapt(player);
+        Plot playerStandingPlot = playerLocation.getPlot();
+        if (playerStandingPlot == null) {
+            FlagContainer container = area.getRoadFlagContainer();
+            if (!getBooleanFlagValue(container, BeaconEffectsFlag.class, true) ||
+                    (beaconPlot != null && Settings.Enabled_Components.DISABLE_BEACON_EFFECT_OVERFLOW)) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+
+        FlagContainer container = playerStandingPlot.getFlagContainer();
+        boolean plotBeaconEffects = getBooleanFlagValue(container, BeaconEffectsFlag.class, true);
+        if (playerStandingPlot.equals(beaconPlot)) {
+            if (!plotBeaconEffects) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+
+        if (!plotBeaconEffects || Settings.Enabled_Components.DISABLE_BEACON_EFFECT_OVERFLOW) {
+            event.setCancelled(true);
+        }
+    }
+
+    private boolean getBooleanFlagValue(@NonNull FlagContainer container,
+                                        @NonNull Class<? extends BooleanFlag<?>> flagClass,
+                                        boolean defaultValue) {
+        BooleanFlag<?> flag = container.getFlag(flagClass);
+        return flag == null ? defaultValue : flag.getValue();
     }
 
 }

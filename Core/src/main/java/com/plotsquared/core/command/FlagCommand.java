@@ -486,6 +486,7 @@ public final class FlagCommand extends Command {
             return;
         }
         final Plot plot = player.getLocation().getPlotAbs();
+        final PlotFlag<?, ?> flagWithOldValue = plot.getFlagContainer().getFlag(flag.getClass());
         PlotFlagRemoveEvent event = eventDispatcher.callFlagRemove(flag, plot);
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(

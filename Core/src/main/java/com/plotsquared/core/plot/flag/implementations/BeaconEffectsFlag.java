@@ -16,18 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.util.query;
+package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.plot.flag.types.BooleanFlag;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.Collection;
+public class BeaconEffectsFlag extends BooleanFlag<BeaconEffectsFlag> {
 
-class ExpiredPlotProvider implements PlotProvider {
+    public static final BeaconEffectsFlag BEACON_EFFECT_TRUE = new BeaconEffectsFlag(true);
+    public static final BeaconEffectsFlag BEACON_EFFECT_FALSE = new BeaconEffectsFlag(false);
+
+    private BeaconEffectsFlag(boolean value){
+        super(value, TranslatableCaption.of("flags.flag_description_beacon_effect"));
+    }
 
     @Override
-    public Collection<Plot> getPlots() {
-        return PlotSquared.platform().expireManager().getPendingExpired();
+    protected BeaconEffectsFlag flagOf(@NonNull final Boolean value) {
+        return value ? BEACON_EFFECT_TRUE : BEACON_EFFECT_FALSE;
     }
 
 }

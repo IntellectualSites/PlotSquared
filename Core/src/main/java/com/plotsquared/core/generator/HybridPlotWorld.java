@@ -20,6 +20,7 @@ package com.plotsquared.core.generator;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.intellectualsites.annotations.DoNotUse;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.Settings;
@@ -33,7 +34,6 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.util.AnnotationHelper;
 import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.SchematicHandler;
@@ -93,10 +93,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     @Inject
     public HybridPlotWorld(
             @Assisted("world") final String worldName,
-            @Nullable @Assisted("id") final String id,
+            @javax.annotation.Nullable @Assisted("id") final String id,
             @Assisted final @NonNull IndependentPlotGenerator generator,
-            @Nullable @Assisted("min") final PlotId min,
-            @Nullable @Assisted("max") final PlotId max,
+            @javax.annotation.Nullable @Assisted("min") final PlotId min,
+            @javax.annotation.Nullable @Assisted("max") final PlotId max,
             @WorldConfig final @NonNull YamlConfiguration worldConfiguration,
             final @NonNull GlobalBlockQueue blockQueue
     ) {
@@ -281,10 +281,12 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         int worldGenHeight = getMaxGenHeight() - getMinGenHeight() + 1;
 
         int maxSchematicHeight = 0;
+        int plotSchemHeight = 0;
 
         // SCHEM_Y should be normalised to the plot "start" height
         if (schematic3 != null) {
-            if ((maxSchematicHeight = schematic3.getClipboard().getDimensions().getY()) == worldGenHeight) {
+            plotSchemHeight = maxSchematicHeight = schematic3.getClipboard().getDimensions().getY();
+            if (maxSchematicHeight == worldGenHeight) {
                 SCHEM_Y = getMinGenHeight();
                 plotY = 0;
             } else if (!Settings.Schematics.PASTE_ON_TOP) {
@@ -293,11 +295,15 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             }
         }
 
+        int roadSchemHeight;
+
         if (schematic1 != null) {
-            if ((maxSchematicHeight = Math.max(
+            roadSchemHeight = Math.max(
                     schematic1.getClipboard().getDimensions().getY(),
-                    maxSchematicHeight
-            )) == worldGenHeight) {
+                    schematic2.getClipboard().getDimensions().getY()
+            );
+            maxSchematicHeight = Math.max(roadSchemHeight, maxSchematicHeight);
+            if (maxSchematicHeight == worldGenHeight) {
                 SCHEM_Y = getMinGenHeight();
                 roadY = 0; // Road is the lowest schematic
                 if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() != worldGenHeight) {
@@ -319,8 +325,11 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                         // Road is the lowest schematic. Normalize plotY to it.
                         plotY = PLOT_HEIGHT - getMinBuildHeight();
                     }
-                    // If plot schematic is not paste-on-top, it will be from min build height thus plotY = 0 as well already.
+                    maxSchematicHeight = Math.max(maxSchematicHeight, plotY + plotSchemHeight);
                 }
+            } else {
+                roadY = minRoadWall - SCHEM_Y;
+                maxSchematicHeight = Math.max(maxSchematicHeight, roadY + roadSchemHeight);
             }
         }
 
@@ -480,7 +489,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     /**
      * @deprecated This method should not be available for public API usage and will be made private.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.10.2")
     public void addOverlayBlock(short x, short y, short z, BaseBlock id, boolean rotate, int height) {
         if (z < 0) {
             z += this.SIZE;
@@ -498,9 +507,14 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         int pair = MathMan.pair(x, z);
         BaseBlock[] existing = this.G_SCH.computeIfAbsent(pair, k -> new BaseBlock[height]);
         if (y >= height) {
-            if (y != lastOverlayHeightError) {
+            if (y > lastOverlayHeightError) {
                 lastOverlayHeightError = y;
-                LOGGER.error(String.format("Error adding overlay block. `y > height`. y=%s, height=%s", y, height));
+                LOGGER.error(
+                        "Error adding overlay block in world {}. `y > height`. y={}, height={}",
+                        getWorldName(),
+                        y,
+                        height
+                );
             }
             return;
         }
@@ -510,7 +524,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     /**
      * @deprecated This method should not be available for public API usage and will be made private.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.10.2")
     public void addOverlayBiome(short x, short z, BiomeType id) {
         if (z < 0) {
             z += this.SIZE;
@@ -531,7 +545,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
      *
      * @since 6.9.0
      */
-    @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
+    @DoNotUse
     public @Nullable List<Entity> getPlotSchematicEntities() {
         return schem3Entities;
     }
@@ -541,7 +555,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
      *
      * @since 6.9.0
      */
-    @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
+    @DoNotUse
     public @Nullable BlockVector3 getPlotSchematicMinPoint() {
         return schem3MinPoint;
     }
@@ -551,7 +565,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
      *
      * @since 6.9.0
      */
-    @AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
+    @DoNotUse
     public boolean populationNeeded() {
         return schem1PopulationNeeded || schem2PopulationNeeded || schem3PopulationNeeded;
     }

@@ -36,7 +36,6 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotTitle;
 import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.plot.comment.CommentManager;
-import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DenyExitFlag;
@@ -70,10 +69,13 @@ import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -85,6 +87,7 @@ public class PlotListener {
 
     private final HashMap<UUID, Interval> feedRunnable = new HashMap<>();
     private final HashMap<UUID, Interval> healRunnable = new HashMap<>();
+    private final Map<UUID, List<StatusEffect>> playerEffects = new HashMap<>();
 
     private final EventDispatcher eventDispatcher;
 
@@ -134,6 +137,17 @@ public class PlotListener {
                     }
                 }
             }
+
+            if (!playerEffects.isEmpty()) {
+                long currentTime = System.currentTimeMillis();
+                for (Iterator<Map.Entry<UUID, List<StatusEffect>>> iterator =
+                     playerEffects.entrySet().iterator(); iterator.hasNext(); ) {
+                    Map.Entry<UUID, List<StatusEffect>> entry = iterator.next();
+                    List<StatusEffect> effects = entry.getValue();
+                    effects.removeIf(effect -> currentTime > effect.expiresAt);
+                    if (effects.isEmpty()) iterator.remove();
+                }
+            }
         }, TaskTime.seconds(1L));
     }
 
@@ -151,8 +165,8 @@ public class PlotListener {
             if ((last != null) && !last.getId().equals(plot.getId())) {
                 plotExit(player, last);
             }
-            if (ExpireManager.IMP != null) {
-                ExpireManager.IMP.handleEntry(player, plot);
+            if (PlotSquared.platform().expireManager() != null) {
+                PlotSquared.platform().expireManager().handleEntry(player, plot);
             }
             lastPlot.set(plot);
         }
@@ -349,6 +363,17 @@ public class PlotListener {
         try (final MetaDataAccess<Plot> lastPlot = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
             final Plot previous = lastPlot.remove();
             this.eventDispatcher.callLeave(player, plot);
+
+            List<StatusEffect> effects = playerEffects.remove(player.getUUID());
+            if (effects != null) {
+                long currentTime = System.currentTimeMillis();
+                effects.forEach(effect -> {
+                    if (currentTime <= effect.expiresAt) {
+                        player.removeEffect(effect.name);
+                    }
+                });
+            }
+
             if (plot.hasOwner()) {
                 PlotArea pw = plot.getArea();
                 if (pw == null) {
@@ -461,6 +486,23 @@ public class PlotListener {
     public void logout(UUID uuid) {
         feedRunnable.remove(uuid);
         healRunnable.remove(uuid);
+        playerEffects.remove(uuid);
+    }
+
+    /**
+     * Marks an effect as a status effect that will be removed on leaving a plot
+     * @param uuid The uuid of the player the effect belongs to
+     * @param name The name of the status effect
+     * @param expiresAt The time when the effect expires
+     * @since 6.10.0
+     */
+    public void addEffect(@NonNull UUID uuid, @NonNull String name, long expiresAt) {
+        List<StatusEffect> effects = playerEffects.getOrDefault(uuid, new ArrayList<>());
+        effects.removeIf(effect -> effect.name.equals(name));
+        if (expiresAt != -1) {
+            effects.add(new StatusEffect(name, expiresAt));
+        }
+        playerEffects.put(uuid, effects);
     }
 
     private static class Interval {
@@ -477,5 +519,14 @@ public class PlotListener {
         }
 
     }
+
+    private record StatusEffect(@NonNull String name, long expiresAt) {
+
+        private StatusEffect(@NonNull String name, long expiresAt) {
+                this.name = name;
+                this.expiresAt = expiresAt;
+            }
+
+        }
 
 }

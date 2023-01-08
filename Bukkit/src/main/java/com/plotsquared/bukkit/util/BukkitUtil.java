@@ -58,6 +58,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.type.WallSign;
+import org.bukkit.entity.Allay;
 import org.bukkit.entity.Ambient;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.AreaEffectCloud;
@@ -438,6 +439,9 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(Animals.class);
                 allowedInterfaces.add(WaterMob.class);
                 allowedInterfaces.add(Ambient.class);
+                if (PlotSquared.platform().serverVersion()[1] >= 19) {
+                    allowedInterfaces.add(Allay.class);
+                }
             }
             case "tameable" -> allowedInterfaces.add(Tameable.class);
             case "vehicle" -> allowedInterfaces.add(Vehicle.class);

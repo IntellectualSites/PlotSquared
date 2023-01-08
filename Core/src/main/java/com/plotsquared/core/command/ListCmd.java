@@ -29,7 +29,6 @@ import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.PriceFlag;
 import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
@@ -245,7 +244,7 @@ public class ListCmd extends SubCommand {
                     );
                     return false;
                 }
-                if (ExpireManager.IMP == null) {
+                if (PlotSquared.platform().expireManager() == null) {
                     plotConsumer.accept(PlotQuery.newQuery().noPlots());
                 } else {
                     plotConsumer.accept(PlotQuery.newQuery().expiredPlots());

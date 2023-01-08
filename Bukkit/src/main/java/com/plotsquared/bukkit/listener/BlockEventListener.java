@@ -56,6 +56,7 @@ import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlotFlagUtil;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.WorldEdit;
@@ -71,6 +72,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Dispenser;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
@@ -100,7 +102,6 @@ import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.SpongeAbsorbEvent;
 import org.bukkit.event.world.StructureGrowEvent;
-import org.bukkit.material.Directional;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -110,6 +111,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unused")
 public class BlockEventListener implements Listener {
@@ -122,6 +125,11 @@ public class BlockEventListener implements Listener {
             Material.TURTLE_EGG,
             Material.TURTLE_SPAWN_EGG
     );
+    private static final Set<Material> SNOW = Stream.of(Material.values()) // needed as Tag.SNOW isn't present in 1.16.5
+            .filter(material -> material.name().contains("SNOW"))
+            .filter(Material::isBlock)
+            .collect(Collectors.toUnmodifiableSet());
+
     private final PlotAreaManager plotAreaManager;
     private final WorldEdit worldEdit;
 
@@ -160,7 +168,7 @@ public class BlockEventListener implements Listener {
         }
         Plot plot = location.getOwnedPlot();
         if (plot == null) {
-            if (area.isRoadFlags() && !area.getRoadFlag(RedstoneFlag.class)) {
+            if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, RedstoneFlag.class, false)) {
                 event.setNewCurrent(0);
             }
             return;
@@ -266,9 +274,7 @@ public class BlockEventListener implements Listener {
         BukkitPlayer pp = BukkitUtil.adapt(player);
         Plot plot = area.getPlot(location);
         if (plot != null) {
-            if ((location.getY() >= area.getMaxBuildHeight() || location.getY() < area
-                    .getMinBuildHeight()) && !Permissions
-                    .hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
+            if (area.notifyIfOutsideBuildArea(pp, location.getY())) {
                 event.setCancelled(true);
                 pp.sendMessage(
                         TranslatableCaption.of("height.height_limit"),
@@ -277,6 +283,7 @@ public class BlockEventListener implements Listener {
                                 .tag("maxheight", Tag.inserting(Component.text(area.getMaxBuildHeight())))
                                 .build()
                 );
+                return;
             }
             if (!plot.hasOwner()) {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_UNOWNED)) {
@@ -366,9 +373,7 @@ public class BlockEventListener implements Listener {
                     event.setCancelled(true);
                     return;
                 }
-            } else if ((location.getY() >= area.getMaxBuildHeight() || location.getY() < area
-                    .getMinBuildHeight()) && !Permissions
-                    .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
+            } else if (area.notifyIfOutsideBuildArea(plotPlayer, location.getY())) {
                 event.setCancelled(true);
                 plotPlayer.sendMessage(
                         TranslatableCaption.of("height.height_limit"),
@@ -377,6 +382,7 @@ public class BlockEventListener implements Listener {
                                 .tag("maxheight", Tag.inserting(Component.text(area.getMaxBuildHeight())))
                                 .build()
                 );
+                return;
             }
             if (!plot.hasOwner()) {
                 if (!Permissions
@@ -470,6 +476,7 @@ public class BlockEventListener implements Listener {
             case "TWISTING_VINES":
             case "CAVE_VINES":
             case "VINE":
+            case "GLOW_BERRIES":
                 if (!plot.getFlag(VineGrowFlag.class)) {
                     plot.debug("Vine could not grow because vine-grow = false");
                     event.setCancelled(true);
@@ -560,7 +567,7 @@ public class BlockEventListener implements Listener {
         if (plot == null) {
             return;
         }
-        if (location.getY() >= area.getMaxBuildHeight() || location.getY() < area.getMinBuildHeight()) {
+        if (!area.buildRangeContainsY(location.getY())) {
             event.setCancelled(true);
             return;
         }
@@ -727,7 +734,7 @@ public class BlockEventListener implements Listener {
             }
             return;
         }
-        if (org.bukkit.Tag.CORAL_BLOCKS.isTagged(blockType) || org.bukkit.Tag.CORALS.isTagged(blockType)) {
+        if (Tag.CORAL_BLOCKS.isTagged(blockType) || Tag.CORALS.isTagged(blockType) || Tag.WALL_CORALS.isTagged(blockType)) {
             if (!plot.getFlag(CoralDryFlag.class)) {
                 plot.debug("Coral could not dry because coral-dry = false");
                 event.setCancelled(true);
@@ -762,7 +769,7 @@ public class BlockEventListener implements Listener {
             }
             return;
         }
-        if (toLocation.getY() >= toArea.getMaxBuildHeight() || toLocation.getY() < toArea.getMinBuildHeight()) {
+        if (!toArea.buildRangeContainsY(toLocation.getY())) {
             event.setCancelled(true);
             return;
         }
@@ -836,6 +843,11 @@ public class BlockEventListener implements Listener {
             return;
         }
 
+        if (!area.buildRangeContainsY(location.getY())) {
+            event.setCancelled(true);
+            return;
+        }
+
         Plot plot = location.getOwnedPlot();
         if (plot == null || !plot.getFlag(CropGrowFlag.class)) {
             if (plot != null) {
@@ -879,15 +891,16 @@ public class BlockEventListener implements Listener {
         }
         for (Block block1 : event.getBlocks()) {
             Location bloc = BukkitUtil.adapt(block1.getLocation());
-            if (!area.contains(bloc.getX(), bloc.getZ()) || !area.contains(
-                    bloc.getX() + relative.getBlockX(),
-                    bloc.getZ() + relative.getBlockZ()
-            )) {
+            Location newLoc = bloc.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ());
+            if (!area.contains(bloc.getX(), bloc.getZ()) || !area.contains(newLoc)) {
                 event.setCancelled(true);
                 return;
             }
-            if (!plot.equals(area.getOwnedPlot(bloc)) || !plot
-                    .equals(area.getOwnedPlot(bloc.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())))) {
+            if (!plot.equals(area.getOwnedPlot(bloc)) || !plot.equals(area.getOwnedPlot(newLoc))) {
+                event.setCancelled(true);
+                return;
+            }
+            if (!area.buildRangeContainsY(bloc.getY()) || !area.buildRangeContainsY(newLoc.getY())) {
                 event.setCancelled(true);
                 return;
             }
@@ -913,9 +926,8 @@ public class BlockEventListener implements Listener {
             }
             for (Block block1 : event.getBlocks()) {
                 Location bloc = BukkitUtil.adapt(block1.getLocation());
-                if (bloc.isPlotArea() || bloc
-                        .add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())
-                        .isPlotArea()) {
+                Location newLoc = bloc.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ());
+                if (bloc.isPlotArea() || newLoc.isPlotArea()) {
                     event.setCancelled(true);
                     return;
                 }
@@ -929,15 +941,16 @@ public class BlockEventListener implements Listener {
         }
         for (Block block1 : event.getBlocks()) {
             Location bloc = BukkitUtil.adapt(block1.getLocation());
-            if (!area.contains(bloc.getX(), bloc.getZ()) || !area.contains(
-                    bloc.getX() + relative.getBlockX(),
-                    bloc.getZ() + relative.getBlockZ()
-            )) {
+            Location newLoc = bloc.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ());
+            if (!area.contains(bloc.getX(), bloc.getZ()) || !area.contains(newLoc)) {
                 event.setCancelled(true);
                 return;
             }
-            if (!plot.equals(area.getOwnedPlot(bloc)) || !plot
-                    .equals(area.getOwnedPlot(bloc.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())))) {
+            if (!plot.equals(area.getOwnedPlot(bloc)) || !plot.equals(area.getOwnedPlot(newLoc))) {
+                event.setCancelled(true);
+                return;
+            }
+            if (!area.buildRangeContainsY(bloc.getY()) || !area.buildRangeContainsY(newLoc.getY())) {
                 event.setCancelled(true);
                 return;
             }
@@ -946,6 +959,9 @@ public class BlockEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockDispense(BlockDispenseEvent event) {
+        if (!this.plotAreaManager.hasPlotArea(event.getBlock().getWorld().getName())) {
+            return;
+        }
         Material type = event.getItem().getType();
         switch (type.toString()) {
             case "SHULKER_BOX", "WHITE_SHULKER_BOX", "ORANGE_SHULKER_BOX", "MAGENTA_SHULKER_BOX", "LIGHT_BLUE_SHULKER_BOX",
@@ -957,9 +973,14 @@ public class BlockEventListener implements Listener {
                 if (event.getBlock().getType() == Material.DROPPER) {
                     return;
                 }
-                BlockFace targetFace = ((Directional) event.getBlock().getState().getData()).getFacing();
+                BlockFace targetFace = ((Dispenser) event.getBlock().getBlockData()).getFacing();
                 Location location = BukkitUtil.adapt(event.getBlock().getRelative(targetFace).getLocation());
                 if (location.isPlotRoad()) {
+                    event.setCancelled(true);
+                    return;
+                }
+                PlotArea area = location.getPlotArea();
+                if (area != null && !area.buildRangeContainsY(location.getY())) {
                     event.setCancelled(true);
                 }
             }
@@ -999,6 +1020,10 @@ public class BlockEventListener implements Listener {
                 }
                 Plot plot = area.getOwnedPlot(location);
                 if (!Objects.equals(plot, origin)) {
+                    event.getBlocks().remove(i);
+                    continue;
+                }
+                if (!area.buildRangeContainsY(location.getY())) {
                     event.getBlocks().remove(i);
                 }
             }
@@ -1091,8 +1116,15 @@ public class BlockEventListener implements Listener {
         Plot plot = area.getOwnedPlot(location1);
         if (player != null) {
             BukkitPlayer pp = BukkitUtil.adapt(player);
+            if (area.notifyIfOutsideBuildArea(pp, location1.getY())) {
+                event.setCancelled(true);
+                return;
+            }
             if (plot == null) {
-                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_ROAD)) {
+                if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, BlockIgnitionFlag.class, true) && !Permissions.hasPermission(
+                        pp,
+                        Permission.PERMISSION_ADMIN_BUILD_ROAD
+                )) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
                             TagResolver.resolver(
@@ -1103,7 +1135,10 @@ public class BlockEventListener implements Listener {
                     event.setCancelled(true);
                 }
             } else if (!plot.hasOwner()) {
-                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_UNOWNED)) {
+                if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, BlockIgnitionFlag.class, true) && !Permissions.hasPermission(
+                        pp,
+                        Permission.PERMISSION_ADMIN_BUILD_UNOWNED
+                )) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
                             TagResolver.resolver(
@@ -1207,7 +1242,10 @@ public class BlockEventListener implements Listener {
                     return true;
                 }
                 Plot plot = area.getOwnedPlot(blockLocation);
-                return !Objects.equals(plot, origin);
+                if (!Objects.equals(plot, origin)) {
+                    return true;
+                }
+                return !area.buildRangeContainsY(location.getY());
             });
         }
         if (blocks.isEmpty()) {
@@ -1260,6 +1298,7 @@ public class BlockEventListener implements Listener {
                                 .tag("maxheight", Tag.inserting(Component.text(area.getMaxBuildHeight())))
                                 .build()
                 );
+            if (area.notifyIfOutsideBuildArea(pp, currentLocation.getY())) {
                 event.setCancelled(true);
                 break;
             }

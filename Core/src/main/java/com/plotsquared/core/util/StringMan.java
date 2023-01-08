@@ -36,7 +36,8 @@ import java.util.regex.Pattern;
 
 public class StringMan {
 
-    private static final Pattern STRING_SPLIT_PATTERN = Pattern.compile("(?<quoted>\"[\\w ]+\")|(?<single>\\w+)");
+    // Stolen from https://stackoverflow.com/a/366532/12620913 | Debug: https://regex101.com/r/DudJLb/1
+    private static final Pattern STRING_SPLIT_PATTERN = Pattern.compile("[^\\s\"]+|\"([^\"]*)\"");
 
     public static String replaceFromMap(String string, Map<String, String> replacements) {
         StringBuilder sb = new StringBuilder(string);
@@ -355,7 +356,7 @@ public class StringMan {
         var matcher = StringMan.STRING_SPLIT_PATTERN.matcher(message);
         List<String> splitMessages = new ArrayList<>();
         while (matcher.find()) {
-            splitMessages.add(matcher.group(0).replaceAll("\"", ""));
+            splitMessages.add(matcher.group(matcher.groupCount() - 1).replaceAll("\"", ""));
         }
         return splitMessages;
     }

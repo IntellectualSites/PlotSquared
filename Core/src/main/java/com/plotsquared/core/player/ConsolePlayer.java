@@ -247,6 +247,10 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
     }
 
     @Override
+    public void removeEffect(@NonNull String name) {
+    }
+
+    @Override
     public boolean canSee(final PlotPlayer<?> other) {
         return true;
     }

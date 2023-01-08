@@ -36,8 +36,7 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Set;
 
@@ -46,10 +45,7 @@ public class FaweRegionManager extends BukkitRegionManager {
     private final FaweDelegateRegionManager delegate = new FaweDelegateRegionManager();
 
     @Inject
-    public FaweRegionManager(
-            @NonNull WorldUtil worldUtil, @NonNull GlobalBlockQueue blockQueue, @NonNull
-            ProgressSubscriberFactory subscriberFactory
-    ) {
+    public FaweRegionManager(WorldUtil worldUtil, GlobalBlockQueue blockQueue, ProgressSubscriberFactory subscriberFactory) {
         super(worldUtil, blockQueue, subscriberFactory);
     }
 
@@ -76,9 +72,9 @@ public class FaweRegionManager extends BukkitRegionManager {
 
     @Override
     public boolean handleClear(
-            @NotNull Plot plot,
+            @NonNull Plot plot,
             @Nullable Runnable whenDone,
-            @NotNull PlotManager manager,
+            @NonNull PlotManager manager,
             final @Nullable PlotPlayer<?> player
     ) {
         if (!Settings.FAWE_Components.CLEAR || !(manager instanceof HybridPlotManager)) {

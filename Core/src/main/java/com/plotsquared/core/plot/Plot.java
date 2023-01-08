@@ -40,7 +40,6 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.expiration.PlotAnalysis;
 import com.plotsquared.core.plot.flag.FlagContainer;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
@@ -1104,8 +1103,8 @@ public class Plot {
      * @return A boolean indicating whether or not the operation succeeded
      */
     public <V> boolean setFlag(final @NonNull PlotFlag<V, ?> flag) {
-        if (flag instanceof KeepFlag && ExpireManager.IMP != null) {
-            ExpireManager.IMP.updateExpired(this);
+        if (flag instanceof KeepFlag && PlotSquared.platform().expireManager() != null) {
+            PlotSquared.platform().expireManager().updateExpired(this);
         }
         for (final Plot plot : this.getConnectedPlots()) {
             plot.getFlagContainer().addFlag(flag);
@@ -1825,8 +1824,8 @@ public class Plot {
         }
         // Swap cached
         final PlotId temp = PlotId.of(this.getId().getX(), this.getId().getY());
-        this.id = plot.getId().copy();
-        plot.id = temp.copy();
+        this.id = plot.getId();
+        plot.id = temp;
         this.area.removePlot(this.getId());
         plot.area.removePlot(plot.getId());
         this.area.addPlotAbs(this);
@@ -1852,7 +1851,7 @@ public class Plot {
             return false;
         }
         this.area.removePlot(this.id);
-        this.id = plot.getId().copy();
+        this.id = plot.getId();
         this.area.addPlotAbs(this);
         DBFunc.movePlot(this, plot);
         TaskManager.runTaskLater(whenDone, TaskTime.ticks(1L));
@@ -2828,7 +2827,7 @@ public class Plot {
                         if (this.isOnline()) {
                             seen = TranslatableCaption.of("info.now").toComponent(player);
                         } else {
-                            int time = (int) (ExpireManager.IMP.getAge(this, false) / 1000);
+                            int time = (int) (PlotSquared.platform().expireManager().getAge(this, false) / 1000);
                             if (time != 0) {
                                 seen = Component.text(TimeUtil.secToTime(time));
                             } else {

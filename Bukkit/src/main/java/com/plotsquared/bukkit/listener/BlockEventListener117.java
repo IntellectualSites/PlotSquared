@@ -26,6 +26,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.CopperOxideFlag;
 import com.plotsquared.core.plot.flag.implementations.MiscInteractFlag;
+import com.plotsquared.core.util.PlotFlagUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -80,10 +81,20 @@ public class BlockEventListener117 implements Listener {
             return;
         }
 
+        BukkitPlayer plotPlayer = null;
+
+        if (entity instanceof Player player) {
+            plotPlayer = BukkitUtil.adapt(player);
+            if (area.notifyIfOutsideBuildArea(plotPlayer, location.getY())) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+
         Plot plot = location.getOwnedPlot();
-        if (plot == null || !plot.getFlag(MiscInteractFlag.class)) {
-            if (entity instanceof Player player) {
-                BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
+        if (plot == null && !PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, MiscInteractFlag.class, true) || plot != null && !plot.getFlag(
+                MiscInteractFlag.class)) {
+            if (plotPlayer != null) {
                 if (plot != null) {
                     if (!plot.isAdded(plotPlayer.getUUID())) {
                         plot.debug(plotPlayer.getName() + " couldn't trigger sculk sensors because misc-interact = false");
@@ -95,6 +106,12 @@ public class BlockEventListener117 implements Listener {
             if (entity instanceof Item item) {
                 UUID itemThrower = item.getThrower();
                 if (plot != null) {
+                    if (itemThrower == null && (itemThrower = item.getOwner()) == null) {
+                        plot.debug(
+                                "A thrown item couldn't trigger sculk sensors because misc-interact = false and the item's owner could not be resolved.");
+                        event.setCancelled(true);
+                        return;
+                    }
                     if (!plot.isAdded(itemThrower)) {
                         if (!plot.isAdded(itemThrower)) {
                             plot.debug("A thrown item couldn't trigger sculk sensors because misc-interact = false");
@@ -115,12 +132,12 @@ public class BlockEventListener117 implements Listener {
         PlotArea area = location.getPlotArea();
         if (area == null) {
             for (int i = blocks.size() - 1; i >= 0; i--) {
-                location = BukkitUtil.adapt(blocks.get(i).getLocation());
-                if (location.isPlotArea()) {
+                Location blockLocation = BukkitUtil.adapt(blocks.get(i).getLocation());
+                blockLocation = BukkitUtil.adapt(blocks.get(i).getLocation());
+                if (blockLocation.isPlotArea()) {
                     blocks.remove(i);
                 }
             }
-            return;
         } else {
             Plot origin = area.getOwnedPlot(location);
             if (origin == null) {
@@ -128,27 +145,19 @@ public class BlockEventListener117 implements Listener {
                 return;
             }
             for (int i = blocks.size() - 1; i >= 0; i--) {
-                location = BukkitUtil.adapt(blocks.get(i).getLocation());
-                if (!area.contains(location.getX(), location.getZ())) {
+                Location blockLocation = BukkitUtil.adapt(blocks.get(i).getLocation());
+                if (!area.contains(blockLocation.getX(), blockLocation.getZ())) {
                     blocks.remove(i);
                     continue;
                 }
-                Plot plot = area.getOwnedPlot(location);
+                Plot plot = area.getOwnedPlot(blockLocation);
                 if (!Objects.equals(plot, origin)) {
                     event.getBlocks().remove(i);
+                    continue;
                 }
-            }
-        }
-        Plot origin = area.getPlot(location);
-        if (origin == null) {
-            event.setCancelled(true);
-            return;
-        }
-        for (int i = blocks.size() - 1; i >= 0; i--) {
-            location = BukkitUtil.adapt(blocks.get(i).getLocation());
-            Plot plot = area.getOwnedPlot(location);
-            if (!Objects.equals(plot, origin) && (!plot.isMerged() && !origin.isMerged())) {
-                event.getBlocks().remove(i);
+                if (!area.buildRangeContainsY(location.getY())) {
+                    event.getBlocks().remove(i);
+                }
             }
         }
     }

@@ -29,7 +29,6 @@ import com.sk89q.worldedit.extension.input.ParserContext;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.function.pattern.BlockPattern;
 import com.sk89q.worldedit.function.pattern.Pattern;
-import com.sk89q.worldedit.function.pattern.RandomPattern;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
@@ -46,7 +45,7 @@ public class PatternUtil {
 
     public static BaseBlock apply(@NonNull Pattern pattern, int x, int y, int z) {
         Preconditions.checkNotNull(pattern, "Pattern may not be null");
-        if (pattern instanceof BlockPattern || pattern instanceof RandomPattern
+        if (pattern instanceof BlockPattern
                 || pattern instanceof BlockState || pattern instanceof BlockType
                 || pattern instanceof BaseBlock) {
             return pattern.applyBlock(BlockVector3.ZERO);

@@ -161,6 +161,7 @@ public enum Permission implements ComponentLike {
     PERMISSION_LIST_AREA("plots.list.area"),
     PERMISSION_ADMIN_COMMAND_LOAD("plots.admin.command.load"),
     PERMISSION_ADMIN_COMMAND_MERGE("plots.admin.command.merge"),
+    PERMISSION_ADMIN_COMMAND_MERGE_OTHER_OFFLINE("plots.admin.command.merge.other.offline"),
     PERMISSION_ADMIN_COMMAND_SET_OWNER("plots.admin.command.setowner"),
     PERMISSION_COMMENT("plots.comment"),
     PERMISSION_INBOX("plots.inbox"),

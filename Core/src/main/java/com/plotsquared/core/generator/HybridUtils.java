@@ -189,13 +189,13 @@ public class HybridUtils {
                 if (X == ctx) {
                     maxX = tx & 15;
                 } else {
-                    maxX = 16;
+                    maxX = 15;
                 }
                 int maxZ;
                 if (Z == ctz) {
                     maxZ = tz & 15;
                 } else {
-                    maxZ = 16;
+                    maxZ = 15;
                 }
 
                 int chunkBlockX = X << 4;
@@ -221,7 +221,7 @@ public class HybridUtils {
                 }
             });
 
-            final Runnable run = () -> TaskManager.runTaskAsync(() -> {
+            final Runnable run = () -> {
                 int size = width * length;
                 int[] changes = new int[size];
                 int[] faces = new int[size];
@@ -234,44 +234,52 @@ public class HybridUtils {
                         Set<BlockType> types = new HashSet<>();
                         for (int yIndex = 0; yIndex < height; yIndex++) {
                             BlockState old = oldBlocks[yIndex][x][z]; // Nullable
-                            try {
-                                BlockState now = newBlocks[yIndex][x][z]; // Not null
-                                if (!now.equals(old) && !(old == null && now.getBlockType().equals(BlockTypes.AIR))) {
-                                    changes[i]++;
-                                }
-                                if (now.getBlockType().getMaterial().isAir()) {
-                                    air[i]++;
-                                } else {
-                                    // check vertices
-                                    // modifications_adjacent
-                                    if (x > 0 && z > 0 && yIndex > 0 && x < width - 1 && z < length - 1 && yIndex < (height - 1)) {
-                                        if (newBlocks[yIndex - 1][x][z].getBlockType().getMaterial().isAir()) {
-                                            faces[i]++;
-                                        }
-                                        if (newBlocks[yIndex][x - 1][z].getBlockType().getMaterial().isAir()) {
-                                            faces[i]++;
-                                        }
-                                        if (newBlocks[yIndex][x][z - 1].getBlockType().getMaterial().isAir()) {
-                                            faces[i]++;
-                                        }
-                                        if (newBlocks[yIndex + 1][x][z].getBlockType().getMaterial().isAir()) {
-                                            faces[i]++;
-                                        }
-                                        if (newBlocks[yIndex][x + 1][z].getBlockType().getMaterial().isAir()) {
-                                            faces[i]++;
-                                        }
-                                        if (newBlocks[yIndex][x][z + 1].getBlockType().getMaterial().isAir()) {
-                                            faces[i]++;
-                                        }
+                            BlockState now = newBlocks[yIndex][x][z]; // Not null
+                            if (now == null) {
+                                throw new NullPointerException(String.format(
+                                        "\"now\" block null attempting to perform plot analysis. Indexes: x=%d of %d, yIndex=%d" +
+                                                " of %d, z=%d of %d",
+                                        x,
+                                        width,
+                                        yIndex,
+                                        height,
+                                        z,
+                                        length
+                                ));
+                            }
+                            if (!now.equals(old) && !(old == null && now.getBlockType().equals(BlockTypes.AIR))) {
+                                changes[i]++;
+                            }
+                            if (now.getBlockType().getMaterial().isAir()) {
+                                air[i]++;
+                            } else {
+                                // check vertices
+                                // modifications_adjacent
+                                if (x > 0 && z > 0 && yIndex > 0 && x < width - 1 && z < length - 1 && yIndex < (height - 1)) {
+                                    if (newBlocks[yIndex - 1][x][z].getBlockType().getMaterial().isAir()) {
+                                        faces[i]++;
                                     }
+                                    if (newBlocks[yIndex][x - 1][z].getBlockType().getMaterial().isAir()) {
+                                        faces[i]++;
+                                    }
+                                    if (newBlocks[yIndex][x][z - 1].getBlockType().getMaterial().isAir()) {
+                                        faces[i]++;
+                                    }
+                                    if (newBlocks[yIndex + 1][x][z].getBlockType().getMaterial().isAir()) {
+                                        faces[i]++;
+                                    }
+                                    if (newBlocks[yIndex][x + 1][z].getBlockType().getMaterial().isAir()) {
+                                        faces[i]++;
+                                    }
+                                    if (newBlocks[yIndex][x][z + 1].getBlockType().getMaterial().isAir()) {
+                                        faces[i]++;
+                                    }
+                                }
 
-                                    if (!now.equals(now.getBlockType().getDefaultState())) {
-                                        data[i]++;
-                                    }
-                                    types.add(now.getBlockType());
+                                if (!now.equals(now.getBlockType().getDefaultState())) {
+                                    data[i]++;
                                 }
-                            } catch (NullPointerException e) {
-                                e.printStackTrace();
+                                types.add(now.getBlockType());
                             }
                         }
                         variety[i] = types.size();
@@ -296,7 +304,7 @@ public class HybridUtils {
                 analysis.variety_sd = (int) (MathMan.getSD(variety, analysis.variety) * 100);
                 whenDone.value = analysis;
                 whenDone.run();
-            });
+            };
             queue.setCompleteTask(run);
             queue.enqueue();
         });

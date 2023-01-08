@@ -33,7 +33,6 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
@@ -51,7 +50,7 @@ final class LegacyBlockStatePopulator extends BlockPopulator {
     }
 
     @Override
-    public void populate(@NotNull final World world, @NotNull final Random random, @NotNull final Chunk source) {
+    public void populate(@NonNull final World world, @NonNull final Random random, @NonNull final Chunk source) {
         int chunkMinX = source.getX() << 4;
         int chunkMinZ = source.getZ() << 4;
         PlotArea area = Location.at(world.getName(), chunkMinX, 0, chunkMinZ).getPlotArea();

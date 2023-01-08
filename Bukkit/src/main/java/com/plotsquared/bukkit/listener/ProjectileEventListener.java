@@ -31,9 +31,9 @@ import com.plotsquared.core.plot.PlotHandler;
 import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.Permissions;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import com.plotsquared.core.util.PlotFlagUtil;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -91,7 +91,7 @@ public class ProjectileEventListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onProjectileLaunch(ProjectileLaunchEvent event) {
         Projectile entity = event.getEntity();
         ProjectileSource shooter = entity.getShooter();
@@ -99,14 +99,18 @@ public class ProjectileEventListener implements Listener {
             return;
         }
         Location location = BukkitUtil.adapt(entity.getLocation());
-        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
             return;
         }
         PlotPlayer<Player> pp = BukkitUtil.adapt((Player) shooter);
         Plot plot = location.getOwnedPlot();
 
         if (plot == null) {
-            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_ROAD)) {
+            if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, ProjectilesFlag.class, true) && !Permissions.hasPermission(
+                    pp,
+                    Permission.PERMISSION_ADMIN_PROJECTILE_ROAD
+            )) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
                         TagResolver.resolver(
@@ -160,9 +164,26 @@ public class ProjectileEventListener implements Listener {
         Plot plot = area.getPlot(location);
         ProjectileSource shooter = entity.getShooter();
         if (shooter instanceof Player) {
+            if (!((Player) shooter).isOnline()) {
+                if (plot != null) {
+                    if (plot.isAdded(((Player) shooter).getUniqueId()) || plot.getFlag(ProjectilesFlag.class)) {
+                        return;
+                    }
+                } else if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, ProjectilesFlag.class, true)) {
+                    return;
+                }
+
+                entity.remove();
+                event.setCancelled(true);
+                return;
+            }
+
             PlotPlayer<?> pp = BukkitUtil.adapt((Player) shooter);
             if (plot == null) {
-                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
+                if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, ProjectilesFlag.class, true) && !Permissions.hasPermission(
+                        pp,
+                        Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED
+                )) {
                     entity.remove();
                     event.setCancelled(true);
                 }
@@ -193,7 +214,6 @@ public class ProjectileEventListener implements Listener {
             if (sPlot == null || !PlotHandler.sameOwners(plot, sPlot)) {
                 entity.remove();
                 event.setCancelled(true);
-                return;
             }
         }
     }

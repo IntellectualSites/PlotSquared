@@ -19,6 +19,7 @@
 package com.plotsquared.bukkit.queue;
 
 import com.google.common.base.Preconditions;
+import com.intellectualsites.annotations.DoNotUse;
 import com.plotsquared.bukkit.util.BukkitBlockUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.location.ChunkWrapper;
@@ -183,7 +184,11 @@ public class GenChunk extends ZeroedDelegateScopedQueueCoordinator {
 
     @Override
     public boolean setBlock(int x, int y, int z, @NonNull Pattern pattern) {
-        return setBlock(x, y, z, PatternUtil.apply(Preconditions.checkNotNull(pattern, "Pattern may not be null"), x, y, z));
+        final BaseBlock block = PatternUtil.apply(Preconditions.checkNotNull(
+                pattern,
+                "Pattern may not be null"
+        ), x + (chunkX << 4), y, z + (chunkZ << 4));
+        return setBlock(x, y, z, block);
     }
 
     @Override
