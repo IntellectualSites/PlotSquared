@@ -40,6 +40,7 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.expiration.PlotAnalysis;
 import com.plotsquared.core.plot.flag.FlagContainer;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
@@ -2823,7 +2824,8 @@ public class Plot {
                     ComponentLike members = PlayerManager.getPlayerList(this.getMembers(), player);
                     ComponentLike denied = PlayerManager.getPlayerList(this.getDenied(), player);
                     ComponentLike seen;
-                    if (Settings.Enabled_Components.PLOT_EXPIRY && ExpireManager.IMP != null) {
+                    ExpireManager expireManager = PlotSquared.platform().expireManager();
+                    if (Settings.Enabled_Components.PLOT_EXPIRY && expireManager != null) {
                         if (this.isOnline()) {
                             seen = TranslatableCaption.of("info.now").toComponent(player);
                         } else {

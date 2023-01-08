@@ -25,7 +25,6 @@ import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.location.ChunkWrapper;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
-import com.plotsquared.core.util.AnnotationHelper;
 import com.plotsquared.core.util.ChunkUtil;
 import com.plotsquared.core.util.PatternUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -45,7 +44,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Arrays;
 
-@AnnotationHelper.ApiDescription(info = "Internal use only. Subject to changes at any time.")
+/**
+ * Internal use only. Subject to changes at any time.
+ */
+@DoNotUse
 public class GenChunk extends ZeroedDelegateScopedQueueCoordinator {
 
     public final Biome[] biomes;

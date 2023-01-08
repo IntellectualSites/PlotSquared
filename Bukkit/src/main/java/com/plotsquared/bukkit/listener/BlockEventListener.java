@@ -114,6 +114,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.bukkit.Tag.CORALS;
+import static org.bukkit.Tag.CORAL_BLOCKS;
+import static org.bukkit.Tag.WALL_CORALS;
+
 @SuppressWarnings("unused")
 public class BlockEventListener implements Listener {
 
@@ -734,7 +738,7 @@ public class BlockEventListener implements Listener {
             }
             return;
         }
-        if (Tag.CORAL_BLOCKS.isTagged(blockType) || Tag.CORALS.isTagged(blockType) || Tag.WALL_CORALS.isTagged(blockType)) {
+        if (CORAL_BLOCKS.isTagged(blockType) || CORALS.isTagged(blockType) || WALL_CORALS.isTagged(blockType)) {
             if (!plot.getFlag(CoralDryFlag.class)) {
                 plot.debug("Coral could not dry because coral-dry = false");
                 event.setCancelled(true);
@@ -787,7 +791,10 @@ public class BlockEventListener implements Listener {
         }
 
         if (toPlot != null) {
-            if (!toArea.contains(fromLocation.getX(), fromLocation.getZ()) || !Objects.equals(toPlot, toArea.getOwnedPlot(fromLocation))) {
+            if (!toArea.contains(fromLocation.getX(), fromLocation.getZ()) || !Objects.equals(
+                    toPlot,
+                    toArea.getOwnedPlot(fromLocation)
+            )) {
                 event.setCancelled(true);
                 return;
             }
@@ -803,7 +810,10 @@ public class BlockEventListener implements Listener {
                 toPlot.debug("Liquid could not flow because liquid-flow = disabled");
                 event.setCancelled(true);
             }
-        } else if (!toArea.contains(fromLocation.getX(), fromLocation.getZ()) || !Objects.equals(null, toArea.getOwnedPlot(fromLocation))) {
+        } else if (!toArea.contains(fromLocation.getX(), fromLocation.getZ()) || !Objects.equals(
+                null,
+                toArea.getOwnedPlot(fromLocation)
+        )) {
             event.setCancelled(true);
         } else if (event.getBlock().isLiquid()) {
             final org.bukkit.Location location = event.getBlock().getLocation();
@@ -1298,11 +1308,13 @@ public class BlockEventListener implements Listener {
                                 .tag("maxheight", Tag.inserting(Component.text(area.getMaxBuildHeight())))
                                 .build()
                 );
-            if (area.notifyIfOutsideBuildArea(pp, currentLocation.getY())) {
-                event.setCancelled(true);
-                break;
+                if (area.notifyIfOutsideBuildArea(pp, currentLocation.getY())) {
+                    event.setCancelled(true);
+                    break;
+                }
             }
         }
+
     }
 
 }

@@ -338,8 +338,10 @@ public class EventDispatcher {
                 .hasPermission(player, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
             player.sendMessage(
                     TranslatableCaption.of("height.height_limit"),
-                    Template.of("minHeight", String.valueOf(area.getMinBuildHeight())),
-                    Template.of("maxHeight", String.valueOf(area.getMaxBuildHeight()))
+                    TagResolver.builder()
+                            .tag("minheight", Tag.inserting(Component.text(area.getMinBuildHeight())))
+                            .tag("maxheight", Tag.inserting(Component.text(area.getMaxBuildHeight())))
+                            .build()
             );
             return false;
         }

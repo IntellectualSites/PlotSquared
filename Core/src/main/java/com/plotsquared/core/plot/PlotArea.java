@@ -657,8 +657,10 @@ public abstract class PlotArea implements ComponentLike {
         if (!buildRangeContainsY(y) && !Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
             player.sendMessage(
                     TranslatableCaption.of("height.height_limit"),
-                    Template.of("minHeight", String.valueOf(minBuildHeight)),
-                    Template.of("maxHeight", String.valueOf(maxBuildHeight))
+                    TagResolver.builder()
+                            .tag("minHeight", Tag.inserting(Component.text(minBuildHeight)))
+                            .tag("maxHeight",
+                            Tag.inserting(Component.text(maxBuildHeight))).build()
             );
             // Return true if "failed" as the method will always be inverted otherwise
             return true;
