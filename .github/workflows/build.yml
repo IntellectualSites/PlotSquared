@@ -42,6 +42,7 @@ jobs:
           ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
       - name: Publish core javadoc
        # if: ${{ runner.os == 'Linux' && env.STATUS == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/v7'}}
+        if: ${{ runner.os == 'Linux' && env.STATUS == 'snapshot' && github.event_name == 'push' && github.ref == 'refs/heads/v7'}}
         uses: cpina/github-action-push-to-another-repository@main
         env:
           SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
@@ -54,6 +55,7 @@ jobs:
           target-directory: v7/core
       - name: Publish bukkit javadoc
        # if: ${{ runner.os == 'Linux' && env.STATUS == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/v7'}}
+        if: ${{ runner.os == 'Linux' && env.STATUS == 'snapshot' && github.event_name == 'push' && github.ref == 'refs/heads/v7'}}
         uses: cpina/github-action-push-to-another-repository@main
         env:
           SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
