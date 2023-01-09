@@ -51,6 +51,7 @@ import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.BukkitWorld;
 import com.plotsquared.bukkit.util.SetGenCB;
 import com.plotsquared.bukkit.util.UpdateUtility;
+import com.plotsquared.bukkit.util.TranslationUpdateManager;
 import com.plotsquared.bukkit.util.task.BukkitTaskManager;
 import com.plotsquared.bukkit.util.task.PaperTimeConverter;
 import com.plotsquared.bukkit.util.task.SpigotTimeConverter;
@@ -138,6 +139,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.serverlib.ServerLib;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -290,6 +292,12 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         new BackupModule()
                 );
         this.injector.injectMembers(this);
+
+        try {
+            this.injector.getInstance(TranslationUpdateManager.class).upgradeTranslationFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         this.serverLocale = Locale.forLanguageTag(Settings.Enabled_Components.DEFAULT_LOCALE);
 
