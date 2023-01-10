@@ -68,9 +68,6 @@ import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
-import jdk.jfr.Category;
-import jdk.jfr.Event;
-import jdk.jfr.Label;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -2297,25 +2294,6 @@ public class Plot {
         return this.area.getPlotAbs(this.id.getRelative(direction));
     }
 
-    @Label("Connected Plots Search")
-    @Category("PlotSquared")
-    static class ConnectedPlotsEvent extends Event {
-
-        public ConnectedPlotsEvent(final int x, final int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        @Label("Plot Id X")
-        public int x;
-        @Label("Plot Id Y")
-        public int y;
-        @Label("Merged  Plots Count")
-        public int mergedSize;
-        @Label("Connected Plots Cache Miss")
-        public boolean cacheMiss;
-    }
-
     /**
      * Gets a set of plots connected (and including) this plot<br>
      * - This result is cached globally
@@ -2323,19 +2301,13 @@ public class Plot {
      * @return a Set of Plots connected to this Plot
      */
     public Set<Plot> getConnectedPlots() {
-        ConnectedPlotsEvent event = new ConnectedPlotsEvent(this.id.getX(), this.id.getY());
-        event.begin();
         if (this.settings == null) {
-            event.commit();
             return Collections.singleton(this);
         }
         if (!this.isMerged()) {
-            event.commit();
             return Collections.singleton(this);
         }
         if (this.connectedCache != null && this.connectedCache.contains(this)) {
-            event.mergedSize = this.connectedCache.size();
-            event.commit();
             return this.connectedCache;
         }
 
@@ -2443,9 +2415,6 @@ public class Plot {
             }
         }
         this.connectedCache = tmpSet;
-        event.mergedSize = tmpSet.size();
-        event.cacheMiss = true;
-        event.commit();
         return tmpSet;
     }
 

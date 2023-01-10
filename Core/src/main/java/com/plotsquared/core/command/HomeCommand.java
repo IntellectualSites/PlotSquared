@@ -35,9 +35,6 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import jdk.jfr.Category;
-import jdk.jfr.Event;
-import jdk.jfr.Label;
 import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -62,24 +59,13 @@ public class HomeCommand extends Command {
         this.plotAreaManager = plotAreaManager;
     }
 
-    @Label("Home Query")
-    @Category("PlotSquared")
-    static class HomeQueryEvent extends Event {
-        @Label("Result Size")
-        public int size;
-    }
-
     private void home(
             final @NonNull PlotPlayer<?> player,
             final @NonNull PlotQuery query, final int page,
             final RunnableVal3<Command, Runnable, Runnable> confirm,
             final RunnableVal2<Command, CommandResult> whenDone
     ) {
-        final HomeQueryEvent event = new HomeQueryEvent();
-        event.begin();
         List<Plot> plots = query.asList();
-        event.size = plots.size();
-        event.commit();
         if (plots.isEmpty()) {
             player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
             return;
