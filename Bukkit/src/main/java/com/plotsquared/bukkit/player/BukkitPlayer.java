@@ -67,14 +67,15 @@ public class BukkitPlayer extends PlotPlayer<Player> {
     private String name;
 
     /**
-     * <p>Please do not use this method. Instead use
-     * BukkitUtil.getPlayer(Player), as it caches player objects.</p>
-     *
      * @param plotAreaManager   PlotAreaManager instance
      * @param eventDispatcher   EventDispatcher instance
      * @param player            Bukkit player instance
      * @param permissionHandler PermissionHandler instance
+     *
+     * @deprecated Please do not use this method. Instead use {@link BukkitUtil#adapt(Player)}, as it caches player objects.
+     * This method will be made private in a future release.
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public BukkitPlayer(
             final @NonNull PlotAreaManager plotAreaManager, final @NonNull EventDispatcher eventDispatcher,
             final @NonNull Player player, final @NonNull PermissionHandler permissionHandler
