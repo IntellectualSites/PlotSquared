@@ -114,7 +114,7 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
     }
 
     /**
-     * @deprecated for removal. Use {@link PlayerAutoPlotEvent#setSizeX(int)} )}
+     * @deprecated for removal. Use {@link PlayerAutoPlotEvent#setSizeX(int)}
      */
     @Deprecated(forRemoval = true, since = "6.1.0")
     public void setSize_x(int sizeX) {
@@ -130,7 +130,7 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
     }
 
     /**
-     * @deprecated for removal. Use {@link PlayerAutoPlotEvent#setSizeZ(int)} )}
+     * @deprecated for removal. Use {@link PlayerAutoPlotEvent#setSizeZ(int)}
      */
     @Deprecated(forRemoval = true, since = "6.1.0")
     public void setSize_z(int sizeZ) {
