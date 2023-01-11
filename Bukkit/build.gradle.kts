@@ -48,7 +48,6 @@ dependencies {
 
     // Our libraries
     implementation(libs.arkitektonika)
-    implementation(libs.http4j)
     implementation("com.intellectualsites.paster:Paster")
     implementation("com.intellectualsites.informative-annotations:informative-annotations")
 
