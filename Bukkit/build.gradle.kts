@@ -98,6 +98,7 @@ tasks.named<ShadowJar>("shadowJar") {
 
 tasks {
     withType<Javadoc> {
+        val isRelease = if (rootProject.version.toString().endsWith("-SNAPSHOT")) "TODO" else rootProject.version.toString()
         val opt = options as StandardJavadocDocletOptions
         opt.links("https://jd.papermc.io/paper/1.18/")
         opt.links("https://docs.enginehub.org/javadoc/com.sk89q.worldedit/worldedit-bukkit/" + libs.worldeditBukkit.get().versionConstraint.toString())
@@ -110,5 +111,6 @@ tasks {
         opt.isUse = true
         opt.encoding("UTF-8")
         opt.keyWords()
+        opt.addStringOption("-since", isRelease)
     }
 }

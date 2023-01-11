@@ -65,6 +65,7 @@ tasks.processResources {
 
 tasks {
     withType<Javadoc> {
+        val isRelease = if (rootProject.version.toString().endsWith("-SNAPSHOT")) "TODO" else rootProject.version.toString()
         val opt = options as StandardJavadocDocletOptions
         opt.links("https://docs.enginehub.org/javadoc/com.sk89q.worldedit/worldedit-core/" + libs.worldeditCore.get().versionConstraint.toString())
         opt.links("https://jd.adventure.kyori.net/api/4.9.3/")
@@ -76,5 +77,6 @@ tasks {
         opt.isUse = true
         opt.encoding("UTF-8")
         opt.keyWords()
+        opt.addStringOption("-since", isRelease)
     }
 }
