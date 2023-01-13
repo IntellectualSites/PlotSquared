@@ -120,9 +120,9 @@ public class Help extends Command {
                             .deserialize(
                                     TranslatableCaption.of("help.help_info_item").getComponent(player),
                                     TagResolver.builder()
-                                            .tag("command",  Tag.inserting(Component.text("/plot help")))
-                                            .tag("category",  Tag.inserting(Component.text(c.name().toLowerCase())))
-                                            .tag("category_desc",  Tag.inserting(c.toComponent(player)))
+                                            .tag("command", Tag.inserting(Component.text("/plot help")))
+                                            .tag("category", Tag.inserting(Component.text(c.name().toLowerCase())))
+                                            .tag("category_desc", Tag.inserting(c.toComponent(player)))
                                             .build()
                             ));
                 }
@@ -130,9 +130,9 @@ public class Help extends Command {
                         .deserialize(
                                 TranslatableCaption.of("help.help_info_item").getComponent(player),
                                 TagResolver.builder()
-                                        .tag("command",  Tag.inserting(Component.text("/plot help")))
-                                        .tag("category",  Tag.inserting(Component.text("all")))
-                                        .tag("category_desc",  Tag.inserting(Component.text("Display all commands")))
+                                        .tag("command", Tag.inserting(Component.text("/plot help")))
+                                        .tag("category", Tag.inserting(Component.text("all")))
+                                        .tag("category_desc", Tag.inserting(TranslatableCaption.of("help.help_display_all_commands").toComponent(player)))
                                         .build()
                         ));
                 builder.append(Component.newline()).append(MINI_MESSAGE.deserialize(TranslatableCaption

@@ -437,7 +437,7 @@
   "help.help_footer": "<dark_gray><strikethrough>---------<reset> <gold>PlotSquared Help </gold><dark_gray><strikethrough>---------<reset>",
   "help.help_info_item": "<gold><command> <gray><category> </gray><dark_gray>- </dark_gray><gray><category_desc></gray>",
   "help.help_item": "<gold><usage> <gray>[<gold><alias></gold>]</gray>\n <dark_gray>- </dark_gray><gray><desc></gray>\n",
-  "help.help_display_all_commands": "<prefix><gray>Display all commands.</gray>",
+  "help.help_display_all_commands": "<gray>Display all commands.</gray>",
   "help.direction": "<prefix><gold>Current direction: </gold><gray><dir></gray>",
   "help.no_permission": "<prefix><red>You have no permission to access commands of that sub category, hence you cannot access the help page.</red>",
   "category.command_category_claiming": "<gray>Claiming</gray>",
