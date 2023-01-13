@@ -29,6 +29,8 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.events.PlayerPlotChatEvent;
+import com.plotsquared.core.events.Result;
 import com.plotsquared.core.listener.PlayerBlockEventType;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
@@ -738,11 +740,7 @@ public class PlayerEventListener implements Listener {
                 || area.isForcingPlotChat())) {
             return;
         }
-        if (plot.isDenied(plotPlayer.getUUID()) && !Permissions
-                .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_CHAT_BYPASS)) {
-            return;
-        }
-        event.setCancelled(true);
+
         Set<Player> recipients = event.getRecipients();
         recipients.clear();
         Set<PlotPlayer<?>> spies = new HashSet<>();
@@ -758,6 +756,22 @@ public class PlayerEventListener implements Listener {
             }
         }
         String message = event.getMessage();
+
+        PlayerPlotChatEvent plotChatEvent = this.eventDispatcher.callChat(plotPlayer, plot, message, plotRecipients, spies);
+
+        if (plotChatEvent.getEventResult() == Result.DENY) {
+            return;
+        }
+
+        boolean force = plotChatEvent.getEventResult() == Result.FORCE;
+
+        if (force || (plot.isDenied(plotPlayer.getUUID()) && !Permissions
+                .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_CHAT_BYPASS))) {
+            return;
+        }
+
+        event.setCancelled(true);
+
         String sender = event.getPlayer().getDisplayName();
         PlotId id = plot.getId();
         String worldName = plot.getWorldName();
