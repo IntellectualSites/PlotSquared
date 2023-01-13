@@ -122,9 +122,6 @@ public class Plot {
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
     private static final Cleaner CLEANER = Cleaner.create();
 
-    static Set<Plot> connected_cache;
-    static Set<CuboidRegion> regions_cache;
-
     static {
         FLAG_DECIMAL_FORMAT.setMaximumFractionDigits(340);
     }
@@ -206,6 +203,8 @@ public class Plot {
      * - The origin plot is used for plot grouping and relational data
      */
     private Plot origin;
+
+    private Set<Plot> connectedCache;
 
     /**
      * Constructor for a new plot.
@@ -576,7 +575,14 @@ public class Plot {
             return false;
         }
         final Set<Plot> connected = getConnectedPlots();
-        return connected.stream().anyMatch(current -> uuid.equals(current.getOwner()));
+        for (Plot current : connected) {
+            // can skip ServerPlotFlag check in getOwner()
+            // as flags are synchronized between plots
+            if (uuid.equals(current.getOwnerAbs())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -1294,6 +1300,7 @@ public class Plot {
             DBFunc.delete(current);
             current.setOwnerAbs(null);
             current.settings = null;
+            current.clearCache();
             for (final PlotPlayer<?> pp : players) {
                 this.plotListener.plotEntry(pp, current);
             }
@@ -1864,6 +1871,7 @@ public class Plot {
         this.area.removePlot(this.id);
         this.id = plot.getId();
         this.area.addPlotAbs(this);
+        clearCache();
         DBFunc.movePlot(this, plot);
         TaskManager.runTaskLater(whenDone, TaskTime.ticks(1L));
         return true;
@@ -2128,17 +2136,16 @@ public class Plot {
                     this.origin.origin = base;
                     other.origin = base;
                     this.origin = base;
-                    connected_cache = null;
+                    this.connectedCache = null;
                 }
             } else {
                 if (this.origin != null) {
                     this.origin.origin = null;
                     this.origin = null;
                 }
-                connected_cache = null;
+                this.connectedCache = null;
             }
             DBFunc.setMerged(this, this.getSettings().getMerged());
-            regions_cache = null;
         }
     }
 
@@ -2173,8 +2180,7 @@ public class Plot {
     }
 
     public void clearCache() {
-        connected_cache = null;
-        regions_cache = null;
+        this.connectedCache = null;
         if (this.origin != null) {
             this.origin.origin = null;
             this.origin = null;
@@ -2301,10 +2307,9 @@ public class Plot {
         if (!this.isMerged()) {
             return Collections.singleton(this);
         }
-        if (connected_cache != null && connected_cache.contains(this)) {
-            return connected_cache;
+        if (this.connectedCache != null && this.connectedCache.contains(this)) {
+            return this.connectedCache;
         }
-        regions_cache = null;
 
         HashSet<Plot> tmpSet = new HashSet<>();
         tmpSet.add(this);
@@ -2409,7 +2414,7 @@ public class Plot {
                 }
             }
         }
-        connected_cache = tmpSet;
+        this.connectedCache = tmpSet;
         return tmpSet;
     }
 
@@ -2421,19 +2426,15 @@ public class Plot {
      * @return all regions within the plot
      */
     public @NonNull Set<CuboidRegion> getRegions() {
-        if (regions_cache != null && connected_cache != null && connected_cache.contains(this)) {
-            return regions_cache;
-        }
         if (!this.isMerged()) {
             Location pos1 = this.getBottomAbs().withY(getArea().getMinBuildHeight());
             Location pos2 = this.getTopAbs().withY(getArea().getMaxBuildHeight());
-            connected_cache = Sets.newHashSet(this);
+            this.connectedCache = Sets.newHashSet(this);
             CuboidRegion rg = new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3());
-            regions_cache = Collections.singleton(rg);
-            return regions_cache;
+            return Collections.singleton(rg);
         }
         Set<Plot> plots = this.getConnectedPlots();
-        Set<CuboidRegion> regions = regions_cache = new HashSet<>();
+        Set<CuboidRegion> regions = new HashSet<>();
         Set<PlotId> visited = new HashSet<>();
         for (Plot current : plots) {
             if (visited.contains(current.getId())) {
