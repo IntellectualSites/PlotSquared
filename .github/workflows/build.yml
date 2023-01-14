@@ -1,15 +1,18 @@
 name: build
 
-on: [ pull_request, push ]
+on:
+  push:
+    branches:
+      - v6
 
 jobs:
   build:
-    if: ${{ github.event_name != 'pull_request' || github.repository != github.event.pull_request.head.repo.full_name }}
+    if: github.repository_owner == 'IntellectualSites'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-      - name: Validate Gradle Wrapper"
+      - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Setup Java
         uses: actions/setup-java@v3
