@@ -21,7 +21,6 @@ package com.plotsquared.core.util.query;
 import com.plotsquared.core.plot.Plot;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.Objects;
 import java.util.UUID;
 
 class OwnersIncludeFilter implements PlotFilter {

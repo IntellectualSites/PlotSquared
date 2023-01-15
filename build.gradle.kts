@@ -90,6 +90,9 @@ subprojects {
         java {
             licenseHeaderFile(rootProject.file("HEADER.txt"))
             target("**/*.java")
+            endWithNewline()
+            trimTrailingWhitespace()
+            removeUnusedImports()
         }
     }
 
