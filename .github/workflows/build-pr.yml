@@ -20,4 +20,4 @@ jobs:
           distribution: temurin
           java-version: 17
       - name: Clean Build
-        run: ./gradlew --warning-mode all
+        run: ./gradlew clean build
