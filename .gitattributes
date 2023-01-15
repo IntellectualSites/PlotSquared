@@ -1,1 +1,4 @@
-*.java text eol=lf
+* text=auto
+
+*.java text
+*.jar binary
