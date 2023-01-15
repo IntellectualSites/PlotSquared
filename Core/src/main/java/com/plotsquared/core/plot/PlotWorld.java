@@ -24,7 +24,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Collection;
-import java.util.Objects;
 
 /**
  * A world that contains plots

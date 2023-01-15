@@ -24,7 +24,6 @@ import org.bukkit.Bukkit;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Map;
-import java.util.Objects;
 
 public class BukkitWorld implements World<org.bukkit.World> {
 

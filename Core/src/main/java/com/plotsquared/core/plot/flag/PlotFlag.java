@@ -24,7 +24,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Objects;
 
 /**
  * A plot flag is any property that can be assigned
