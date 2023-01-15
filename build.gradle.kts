@@ -20,6 +20,16 @@ plugins {
 group = "com.plotsquared"
 version = "6.10.9-SNAPSHOT"
 
+if (!File("$rootDir/.git").exists()) {
+    logger.lifecycle("""
+    **************************************************************************************
+    You need to fork and clone this repository! Don't download a .zip file.
+    If you need assistance, consult the GitHub docs: https://docs.github.com/get-started/quickstart/fork-a-repo
+    **************************************************************************************
+    """.trimIndent()
+    ).also { kotlin.system.exitProcess(1) }
+}
+
 subprojects {
     group = rootProject.group
     version = rootProject.version
