@@ -38,7 +38,6 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.services.plots.AutoService;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.AutoClaimFinishTask;
 import com.plotsquared.core.util.task.RunnableVal;
@@ -246,7 +245,7 @@ public class Auto extends SubCommand {
         sizeX = event.getSizeX();
         sizeZ = event.getSizeZ();
         schematic = event.getSchematic();
-        if (!force && mega && !Permissions.hasPermission(player, Permission.PERMISSION_AUTO_MEGA)) {
+        if (!force && mega && !player.hasPermission(Permission.PERMISSION_AUTO_MEGA)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
                     Template.of("node", String.valueOf(Permission.PERMISSION_AUTO_MEGA))
@@ -279,11 +278,9 @@ public class Auto extends SubCommand {
                 );
                 return true;
             }
-            if (!force && !Permissions.hasPermission(
-                    player,
+            if (!force && !player.hasPermission(
                     Permission.PERMISSION_CLAIM_SCHEMATIC.format(schematic)
-            ) && !Permissions
-                    .hasPermission(player, "plots.admin.command.schematic")) {
+            ) && !player.hasPermission("plots.admin.command.schematic")) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
                         Template.of("node", "plots.claim.%s0")

@@ -48,7 +48,6 @@ import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.synchronization.LockRepository;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
@@ -200,6 +199,20 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         return this.permissionProfile.hasKeyedPermission(world, permission, key);
     }
 
+    @Override
+    public final boolean hasPermission(@NonNull String permission, boolean notify) {
+        if (!hasPermission(permission)) {
+            if (notify) {
+                sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", permission)
+                );
+            }
+            return false;
+        }
+        return true;
+    }
+
     public abstract Actor toActor();
 
     public abstract P getPlatformPlayer();
@@ -290,7 +303,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      * @return number of allowed plots within the scope (globally, or in the player's current world as defined in the settings.yml)
      */
     public int getAllowedPlots() {
-        return Permissions.hasPermissionRange(this, "plots.plot", Settings.Limit.MAX_PLOTS);
+        return hasPermissionRange("plots.plot", Settings.Limit.MAX_PLOTS);
     }
 
     /**

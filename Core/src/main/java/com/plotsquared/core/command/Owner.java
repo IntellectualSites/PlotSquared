@@ -31,7 +31,6 @@ import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.TaskManager;
@@ -99,10 +98,10 @@ public class Owner extends SetCommand {
             uuid = event.getNewOwner();
             boolean force = event.getEventResult() == Result.FORCE;
             if (uuid == null) {
-                if (!force && !Permissions
-                        .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_SET_OWNER,
-                                true
-                        )) {
+                if (!force && !player.hasPermission(
+                        Permission.PERMISSION_ADMIN_COMMAND_SET_OWNER,
+                        true
+                )) {
                     return;
                 }
                 PlotUnlinkEvent unlinkEvent = this.eventDispatcher.callUnlink(
@@ -139,8 +138,7 @@ public class Owner extends SetCommand {
                 );
                 return;
             }
-            if (!force && !Permissions
-                    .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_SET_OWNER)) {
+            if (!force && !player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_SET_OWNER)) {
                 if (other == null) {
                     player.sendMessage(
                             TranslatableCaption.of("errors.invalid_player_offline"),

@@ -54,7 +54,6 @@ import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.RegionUtil;
@@ -2207,7 +2206,7 @@ public class Plot {
     public boolean canClaim(@NonNull PlotPlayer<?> player) {
         PlotCluster cluster = this.getCluster();
         if (cluster != null) {
-            if (!cluster.isAdded(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.claim")) {
+            if (!cluster.isAdded(player.getUUID()) && !player.hasPermission("plots.admin.command.claim")) {
                 return false;
             }
         }
@@ -2598,7 +2597,7 @@ public class Plot {
             Template plotTemplate = Template.of("plot", this.toString());
             Template messageTemplate = Template.of("message", message);
             for (final PlotPlayer<?> player : players) {
-                if (isOwner(player.getUUID()) || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_DEBUG_OTHER)) {
+                if (isOwner(player.getUUID()) || player.hasPermission(Permission.PERMISSION_ADMIN_DEBUG_OTHER)) {
                     player.sendMessage(caption, plotTemplate, messageTemplate);
                 }
             }
@@ -2635,8 +2634,7 @@ public class Plot {
             return;
         }
         final Consumer<Location> locationConsumer = location -> {
-            if (Settings.Teleport.DELAY == 0 || Permissions
-                    .hasPermission(player, "plots.teleport.delay.bypass")) {
+            if (Settings.Teleport.DELAY == 0 || player.hasPermission("plots.teleport.delay.bypass")) {
                 player.sendMessage(TranslatableCaption.of("teleport.teleported_to_plot"));
                 player.teleport(location, cause);
                 resultConsumer.accept(true);

@@ -32,14 +32,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * - Checking the PlotPlayer class directly will not take the above into account<br>
  *
  * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
- * classes
+ *         classes
  */
 @Deprecated(forRemoval = true, since = "6.9.3")
 public class Permissions {
 
     /**
      * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
-     * classes
+     *         classes. Use {@link PlotPlayer#hasPermission(String, boolean)}
      */
     @Deprecated(forRemoval = true, since = "6.9.3")
     public static boolean hasPermission(PlotPlayer<?> player, Permission permission, boolean notify) {
@@ -53,7 +53,7 @@ public class Permissions {
      * @param permission Permission
      * @return {@code true} if the owner has the given permission, else {@code false}
      * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
-     * classes
+     *         classes. Use {@link PermissionHolder#hasPermission(Permission)}
      */
     @Deprecated(forRemoval = true, since = "6.9.3")
     public static boolean hasPermission(final @NonNull PermissionHolder caller, final @NonNull Permission permission) {
@@ -68,7 +68,7 @@ public class Permissions {
      * @param permission Permission
      * @return {@code true} if the owner has the given permission, else {@code false}
      * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
-     * classes
+     *         classes. Use {@link PermissionHolder#hasPermission(String)}
      */
     @Deprecated(forRemoval = true, since = "6.9.3")
     public static boolean hasPermission(final @NonNull PermissionHolder caller, final @NonNull String permission) {
@@ -85,7 +85,7 @@ public class Permissions {
      * @return {@code true} if the owner has the given permission, else {@code false}
      * @since 6.0.10
      * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
-     * classes
+     *         classes. Use {@link PermissionHolder#hasKeyedPermission(String, String)}
      */
     @Deprecated(forRemoval = true, since = "6.9.3")
     public static boolean hasKeyedPermission(
@@ -103,7 +103,7 @@ public class Permissions {
      * @param notify     if to notify the permission holder
      * @return if permission is had
      * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
-     * classes
+     *         classes. Use {@link PlotPlayer#hasPermission(String, boolean)}
      */
     @Deprecated(forRemoval = true, since = "6.9.3")
     public static boolean hasPermission(PlotPlayer<?> player, String permission, boolean notify) {
@@ -121,7 +121,7 @@ public class Permissions {
 
     /**
      * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
-     * classes
+     *         classes. Use {@link PlotPlayer#hasPermissionRange(Permission, int)}
      */
     @Deprecated(forRemoval = true, since = "6.9.3")
     public static int hasPermissionRange(PlotPlayer<?> player, Permission Permission, int range) {
@@ -138,7 +138,7 @@ public class Permissions {
      * @param range  The range to check
      * @return The highest permission they have within that range
      * @deprecated all logic that may once have been in the class lives elsewhere. We also want to do away with statically-accessed
-     * classes
+     *         classes. Use {@link PlotPlayer#hasPermissionRange(String, int)}
      */
     @Deprecated(forRemoval = true, since = "6.9.3")
     public static int hasPermissionRange(PlotPlayer<?> player, String stub, int range) {
