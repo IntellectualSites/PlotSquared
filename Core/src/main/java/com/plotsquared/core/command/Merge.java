@@ -32,7 +32,6 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.StringMan;
 import net.kyori.adventure.text.minimessage.Template;
@@ -124,7 +123,7 @@ public class Merge extends SubCommand {
             return false;
         }
         final int size = plot.getConnectedPlots().size();
-        int max = Permissions.hasPermissionRange(player, "plots.merge", Settings.Limit.MAX_PLOTS);
+        int max = player.hasPermissionRange("plots.merge", Settings.Limit.MAX_PLOTS);
         PlotMergeEvent event =
                 this.eventDispatcher.callMerge(plot, direction, max, player);
         if (event.getEventResult() == Result.DENY) {
@@ -152,7 +151,7 @@ public class Merge extends SubCommand {
         UUID uuid = player.getUUID();
 
         if (!force && !plot.isOwner(uuid)) {
-            if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_MERGE)) {
+            if (!player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_MERGE)) {
                 player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                 return false;
             } else {
@@ -164,8 +163,7 @@ public class Merge extends SubCommand {
             if (args.length == 2) {
                 terrain = "true".equalsIgnoreCase(args[1]);
             }
-            if (!force && !terrain && !Permissions
-                    .hasPermission(player, Permission.PERMISSION_MERGE_KEEP_ROAD)) {
+            if (!force && !terrain && !player.hasPermission(Permission.PERMISSION_MERGE_KEEP_ROAD)) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
                         Template.of("node", String.valueOf(Permission.PERMISSION_MERGE_KEEP_ROAD))
@@ -202,8 +200,7 @@ public class Merge extends SubCommand {
         } else {
             terrain = true;
         }
-        if (!force && !terrain && !Permissions
-                .hasPermission(player, Permission.PERMISSION_MERGE_KEEP_ROAD)) {
+        if (!force && !terrain && !player.hasPermission(Permission.PERMISSION_MERGE_KEEP_ROAD)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
                     Template.of("node", String.valueOf(Permission.PERMISSION_MERGE_KEEP_ROAD))
@@ -228,7 +225,7 @@ public class Merge extends SubCommand {
             player.sendMessage(TranslatableCaption.of("merge.no_available_automerge"));
             return false;
         }
-        if (!force && !Permissions.hasPermission(player, Permission.PERMISSION_MERGE_OTHER)) {
+        if (!force && !player.hasPermission(Permission.PERMISSION_MERGE_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
                     Template.of("node", String.valueOf(Permission.PERMISSION_MERGE_OTHER))
@@ -283,8 +280,14 @@ public class Merge extends SubCommand {
             }
         }
         if (force || !isOnline) {
-            if (force || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_MERGE_OTHER_OFFLINE)) {
-                if (plot.getPlotModificationManager().autoMerge(direction, maxSize - size, uuids.iterator().next(), player, terrain)) {
+            if (force || player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_MERGE_OTHER_OFFLINE)) {
+                if (plot.getPlotModificationManager().autoMerge(
+                        direction,
+                        maxSize - size,
+                        uuids.iterator().next(),
+                        player,
+                        terrain
+                )) {
                     if (this.econHandler.isEnabled(plotArea) && price > 0d) {
                         if (!force && this.econHandler.getMoney(player) < price) {
                             player.sendMessage(

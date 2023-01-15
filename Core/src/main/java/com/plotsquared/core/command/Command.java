@@ -25,7 +25,6 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.permissions.PermissionHolder;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.MathMan;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringComparison;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal2;
@@ -466,7 +465,7 @@ public abstract class Command {
             if (message) {
                 player.sendMessage(this.required.getErrorMessage());
             }
-        } else if (!Permissions.hasPermission(player, getPermission())) {
+        } else if (!player.hasPermission(getPermission())) {
             if (message) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),

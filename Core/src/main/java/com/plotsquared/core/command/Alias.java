@@ -26,7 +26,6 @@ import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MathMan;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.query.PlotQuery;
 import net.kyori.adventure.text.minimessage.Template;
 
@@ -194,7 +193,7 @@ public class Alias extends SubCommand {
     }
 
     private boolean isPermitted(PlotPlayer<?> player, Permission permission) {
-        return Permissions.hasPermission(player, permission);
+        return player.hasPermission(permission);
     }
 
 }

@@ -26,7 +26,6 @@ import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal;
@@ -69,7 +68,7 @@ public class Grant extends Command {
         final String arg0 = args[0].toLowerCase();
         switch (arg0) {
             case "add", "check" -> {
-                if (!Permissions.hasPermission(player, Permission.PERMISSION_GRANT.format(arg0))) {
+                if (!player.hasPermission(Permission.PERMISSION_GRANT.format(arg0))) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
                             Template.of("node", Permission.PERMISSION_GRANT.format(arg0))
@@ -150,10 +149,10 @@ public class Grant extends Command {
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
             final List<String> completions = new LinkedList<>();
-            if (Permissions.hasPermission(player, Permission.PERMISSION_GRANT_ADD)) {
+            if (player.hasPermission(Permission.PERMISSION_GRANT_ADD)) {
                 completions.add("add");
             }
-            if (Permissions.hasPermission(player, Permission.PERMISSION_GRANT_CHECK)) {
+            if (player.hasPermission(Permission.PERMISSION_GRANT_CHECK)) {
                 completions.add("check");
             }
             final List<Command> commands = completions.stream().filter(completion -> completion
@@ -168,7 +167,7 @@ public class Grant extends Command {
                             CommandCategory.ADMINISTRATION
                     ) {
                     }).collect(Collectors.toCollection(LinkedList::new));
-            if (Permissions.hasPermission(player, Permission.PERMISSION_GRANT_SINGLE) && args[0].length() > 0) {
+            if (player.hasPermission(Permission.PERMISSION_GRANT_SINGLE) && args[0].length() > 0) {
                 commands.addAll(TabCompletions.completePlayers(player, args[0], Collections.emptyList()));
             }
             return commands;

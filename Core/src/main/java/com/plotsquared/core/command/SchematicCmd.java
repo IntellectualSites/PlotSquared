@@ -30,7 +30,6 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.TabCompletions;
@@ -80,7 +79,7 @@ public class SchematicCmd extends SubCommand {
         String arg = args[0].toLowerCase();
         switch (arg) {
             case "paste" -> {
-                if (!Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_PASTE)) {
+                if (!player.hasPermission(Permission.PERMISSION_SCHEMATIC_PASTE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
                             Template.of("node", String.valueOf(Permission.PERMISSION_SCHEMATIC_PASTE))
@@ -104,8 +103,7 @@ public class SchematicCmd extends SubCommand {
                     player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
                     return false;
                 }
-                if (!plot.isOwner(player.getUUID()) && !Permissions
-                        .hasPermission(player, "plots.admin.command.schematic.paste")) {
+                if (!plot.isOwner(player.getUUID()) && !player.hasPermission("plots.admin.command.schematic.paste")) {
                     player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                     return false;
                 }
@@ -218,7 +216,7 @@ public class SchematicCmd extends SubCommand {
                 }
             }
             case "export", "save" -> {
-                if (!Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_SAVE)) {
+                if (!player.hasPermission(Permission.PERMISSION_SCHEMATIC_SAVE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
                             Template.of("node", String.valueOf(Permission.PERMISSION_SCHEMATIC_SAVE))
@@ -243,8 +241,7 @@ public class SchematicCmd extends SubCommand {
                     player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
                     return false;
                 }
-                if (!plot.isOwner(player.getUUID()) && !Permissions
-                        .hasPermission(player, "plots.admin.command.schematic.save")) {
+                if (!plot.isOwner(player.getUUID()) && !player.hasPermission("plots.admin.command.schematic.save")) {
                     player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                     return false;
                 }
@@ -261,7 +258,7 @@ public class SchematicCmd extends SubCommand {
                 }
             }
             case "list" -> {
-                if (!Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_LIST)) {
+                if (!player.hasPermission(Permission.PERMISSION_SCHEMATIC_LIST)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
                             Template.of("node", String.valueOf(Permission.PERMISSION_SCHEMATIC_LIST))
@@ -286,13 +283,13 @@ public class SchematicCmd extends SubCommand {
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
             final List<String> completions = new LinkedList<>();
-            if (Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_SAVE)) {
+            if (player.hasPermission(Permission.PERMISSION_SCHEMATIC_SAVE)) {
                 completions.add("save");
             }
-            if (Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_LIST)) {
+            if (player.hasPermission(Permission.PERMISSION_SCHEMATIC_LIST)) {
                 completions.add("list");
             }
-            if (Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_PASTE)) {
+            if (player.hasPermission(Permission.PERMISSION_SCHEMATIC_PASTE)) {
                 completions.add("paste");
             }
             final List<Command> commands = completions.stream().filter(completion -> completion
@@ -307,7 +304,7 @@ public class SchematicCmd extends SubCommand {
                             CommandCategory.ADMINISTRATION
                     ) {
                     }).collect(Collectors.toCollection(LinkedList::new));
-            if (Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC) && args[0].length() > 0) {
+            if (player.hasPermission(Permission.PERMISSION_SCHEMATIC) && args[0].length() > 0) {
                 commands.addAll(TabCompletions.completePlayers(player, args[0], Collections.emptyList()));
             }
             return commands;

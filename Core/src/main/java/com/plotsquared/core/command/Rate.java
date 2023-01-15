@@ -34,7 +34,6 @@ import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.InventoryUtil;
 import com.plotsquared.core.util.MathMan;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
@@ -114,8 +113,7 @@ public class Rate extends SubCommand {
                         player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
                         return false;
                     }
-                    if (!Permissions
-                            .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_PURGE_RATINGS, true)) {
+                    if (!player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_PURGE_RATINGS, true)) {
                         return false;
                     }
                     plot.clearRatings();
@@ -273,10 +271,10 @@ public class Rate extends SubCommand {
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
             final List<String> completions = new LinkedList<>();
-            if (Permissions.hasPermission(player, Permission.PERMISSION_RATE)) {
+            if (player.hasPermission(Permission.PERMISSION_RATE)) {
                 completions.add("1 - 10");
             }
-            if (Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_PURGE_RATINGS)) {
+            if (player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_PURGE_RATINGS)) {
                 completions.add("purge");
             }
             final List<Command> commands = completions.stream().filter(completion -> completion
@@ -284,7 +282,7 @@ public class Rate extends SubCommand {
                             .startsWith(args[0].toLowerCase()))
                     .map(completion -> new Command(null, true, completion, "", RequiredType.PLAYER, CommandCategory.INFO) {
                     }).collect(Collectors.toCollection(LinkedList::new));
-            if (Permissions.hasPermission(player, Permission.PERMISSION_RATE) && args[0].length() > 0) {
+            if (player.hasPermission(Permission.PERMISSION_RATE) && args[0].length() > 0) {
                 commands.addAll(TabCompletions.completePlayers(player, args[0], Collections.emptyList()));
             }
             return commands;
