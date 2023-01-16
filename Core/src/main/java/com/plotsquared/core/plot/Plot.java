@@ -2506,7 +2506,7 @@ public class Plot {
                 }
             }
             int minHeight = getArea().getMinBuildHeight();
-            int maxHeight = getArea().getMaxBuildHeight();
+            int maxHeight = getArea().getMaxBuildHeight() - 1;
             Location gtopabs = this.area.getPlotAbs(top).getTopAbs();
             Location gbotabs = this.area.getPlotAbs(bot).getBottomAbs();
             visited.addAll(Lists.newArrayList((Iterable<? extends PlotId>) PlotId.PlotRangeIterator.range(bot, top)));
