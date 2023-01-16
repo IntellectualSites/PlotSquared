@@ -239,9 +239,11 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
      * server's main thread.
      */
     private void processChunk(final @NonNull Chunk chunk) {
+        /* Chunk#isLoaded does not necessarily return true shortly after PaperLib#getChunkAtAsync completes, but the chunk is
+        still loaded.
         if (!chunk.isLoaded()) {
-            throw new IllegalArgumentException(String.format("Chunk %d;%d is is not loaded", chunk.getX(), chunk.getZ()));
-        }
+            throw new IllegalArgumentException(String.format("Chunk %d;%d is is not loaded", chunk.getX(), chunk.getZ());
+        }*/
         if (finished) {
             return;
         }
