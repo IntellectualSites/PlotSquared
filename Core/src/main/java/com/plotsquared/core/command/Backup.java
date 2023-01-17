@@ -27,7 +27,6 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.Component;
@@ -150,8 +149,7 @@ public final class Backup extends Command {
                             TranslatableCaption.of("generic.generic_merged").toComponent(player)
                     ))
             );
-        } else if (!plot.isOwner(player.getUUID()) && !Permissions
-                .hasPermission(player, Permission.PERMISSION_ADMIN_BACKUP_OTHER)) {
+        } else if (!plot.isOwner(player.getUUID()) && !player.hasPermission(Permission.PERMISSION_ADMIN_BACKUP_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
                     TagResolver.resolver(
@@ -215,8 +213,7 @@ public final class Backup extends Command {
             );
         } else if (plot.getVolume() > Integer.MAX_VALUE) {
             player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
-        } else if (!plot.isOwner(player.getUUID()) && !Permissions
-                .hasPermission(player, Permission.PERMISSION_ADMIN_BACKUP_OTHER)) {
+        } else if (!plot.isOwner(player.getUUID()) && !player.hasPermission(Permission.PERMISSION_ADMIN_BACKUP_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
                     TagResolver.resolver(
@@ -301,8 +298,7 @@ public final class Backup extends Command {
             );
         } else if (plot.getVolume() > Integer.MAX_VALUE) {
             player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
-        } else if (!plot.isOwner(player.getUUID()) && !Permissions
-                .hasPermission(player, Permission.PERMISSION_ADMIN_BACKUP_OTHER)) {
+        } else if (!plot.isOwner(player.getUUID()) && !player.hasPermission(Permission.PERMISSION_ADMIN_BACKUP_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
                     TagResolver.resolver(

@@ -25,7 +25,6 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.WEManager;
 import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.EditSession;
@@ -94,7 +93,7 @@ public class WESubscriber {
             } else {
                 mask = WEManager.getMask(plotPlayer);
                 if (mask.isEmpty()) {
-                    if (Permissions.hasPermission(plotPlayer, "plots.worldedit.bypass")) {
+                    if (plotPlayer.hasPermission("plots.worldedit.bypass")) {
                         plotPlayer.sendMessage(
                                 TranslatableCaption.of("worldedit.worldedit_bypass"),
                                 TagResolver.resolver("command", Tag.inserting(Component.text("/plot toggle worldedit")))

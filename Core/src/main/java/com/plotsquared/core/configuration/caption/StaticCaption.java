@@ -20,7 +20,6 @@ package com.plotsquared.core.configuration.caption;
 
 import com.google.common.base.Preconditions;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.checkerframework.checker.nullness.qual.NonNull;
 

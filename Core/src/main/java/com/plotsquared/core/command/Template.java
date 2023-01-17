@@ -39,7 +39,6 @@ import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.FileBytes;
 import com.plotsquared.core.util.FileUtils;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
@@ -288,10 +287,10 @@ public class Template extends SubCommand {
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
             final List<String> completions = new LinkedList<>();
-            if (Permissions.hasPermission(player, Permission.PERMISSION_TEMPLATE_EXPORT)) {
+            if (player.hasPermission(Permission.PERMISSION_TEMPLATE_EXPORT)) {
                 completions.add("export");
             }
-            if (Permissions.hasPermission(player, Permission.PERMISSION_TEMPLATE_IMPORT)) {
+            if (player.hasPermission(Permission.PERMISSION_TEMPLATE_IMPORT)) {
                 completions.add("import");
             }
             final List<Command> commands = completions.stream().filter(completion -> completion
@@ -306,7 +305,7 @@ public class Template extends SubCommand {
                             CommandCategory.ADMINISTRATION
                     ) {
                     }).collect(Collectors.toCollection(LinkedList::new));
-            if (Permissions.hasPermission(player, Permission.PERMISSION_TEMPLATE) && args[0].length() > 0) {
+            if (player.hasPermission(Permission.PERMISSION_TEMPLATE) && args[0].length() > 0) {
                 commands.addAll(TabCompletions.completePlayers(player, args[0], Collections.emptyList()));
             }
             return commands;

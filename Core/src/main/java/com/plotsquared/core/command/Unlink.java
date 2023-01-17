@@ -27,7 +27,6 @@ import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.Component;
@@ -93,8 +92,7 @@ public class Unlink extends SubCommand {
             return true;
         }
         boolean force = event.getEventResult() == Result.FORCE;
-        if (!force && !plot.isOwner(player.getUUID()) && !Permissions
-                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_UNLINK)) {
+        if (!force && !plot.isOwner(player.getUUID()) && !player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_UNLINK)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return true;
         }

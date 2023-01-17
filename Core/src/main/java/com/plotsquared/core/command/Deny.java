@@ -30,7 +30,6 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
@@ -81,13 +80,12 @@ public class Deny extends SubCommand {
             player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return false;
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions
-                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DENY)) {
+        if (!plot.isOwner(player.getUUID()) && !player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_DENY)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return true;
         }
 
-        int maxDenySize = Permissions.hasPermissionRange(player, Permission.PERMISSION_DENY, Settings.Limit.MAX_PLOTS);
+        int maxDenySize = player.hasPermissionRange(Permission.PERMISSION_DENY, Settings.Limit.MAX_PLOTS);
         int size = plot.getDenied().size();
         if (size >= maxDenySize) {
             player.sendMessage(
@@ -108,8 +106,7 @@ public class Deny extends SubCommand {
             } else {
                 for (UUID uuid : uuids) {
                     if (uuid == DBFunc.EVERYONE && !(
-                            Permissions.hasPermission(player, Permission.PERMISSION_DENY_EVERYONE) || Permissions
-                                    .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DENY))) {
+                            player.hasPermission(Permission.PERMISSION_DENY_EVERYONE) || player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_DENY))) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
                                 TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))

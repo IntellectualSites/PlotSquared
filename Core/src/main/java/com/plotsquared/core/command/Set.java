@@ -32,7 +32,6 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.PatternUtil;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
@@ -98,7 +97,7 @@ public class Set extends SubCommand {
                             BlockType::getName).toList());
                 }
 
-                if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_ALLOW_UNSAFE) &&
+                if (!player.hasPermission(Permission.PERMISSION_ADMIN_ALLOW_UNSAFE) &&
                         !forbiddenTypes.isEmpty()) {
                     for (String forbiddenType : forbiddenTypes) {
                         forbiddenType = forbiddenType.toLowerCase(Locale.ENGLISH);
@@ -134,7 +133,7 @@ public class Set extends SubCommand {
 
                 for (String component : components) {
                     if (component.equalsIgnoreCase(args[0])) {
-                        if (!Permissions.hasPermission(player, Permission.PERMISSION_SET_COMPONENT.format(component))) {
+                        if (!player.hasPermission(Permission.PERMISSION_SET_COMPONENT.format(component))) {
                             player.sendMessage(
                                     TranslatableCaption.of("permission.no_permission"),
                                     TagResolver.resolver(
@@ -216,7 +215,7 @@ public class Set extends SubCommand {
         }
         Command cmd = MainCommand.getInstance().getCommand("set" + args[0]);
         if (cmd != null) {
-            if (!Permissions.hasPermission(player, cmd.getPermission(), true)) {
+            if (!player.hasPermission(cmd.getPermission(), true)) {
                 return false;
             }
             cmd.execute(player, Arrays.copyOfRange(args, 1, args.length), null, null);
@@ -246,37 +245,37 @@ public class Set extends SubCommand {
         if (args.length == 1) {
             final List<String> completions = new LinkedList<>();
 
-            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_BIOME)) {
+            if (player.hasPermission(Permission.PERMISSION_SET_BIOME)) {
                 completions.add("biome");
             }
-            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_ALIAS)) {
+            if (player.hasPermission(Permission.PERMISSION_SET_ALIAS)) {
                 completions.add("alias");
             }
-            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_HOME)) {
+            if (player.hasPermission(Permission.PERMISSION_SET_HOME)) {
                 completions.add("home");
             }
-            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_MAIN)) {
+            if (player.hasPermission(Permission.PERMISSION_SET_MAIN)) {
                 completions.add("main");
             }
-            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_FLOOR)) {
+            if (player.hasPermission(Permission.PERMISSION_SET_FLOOR)) {
                 completions.add("floor");
             }
-            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_AIR)) {
+            if (player.hasPermission(Permission.PERMISSION_SET_AIR)) {
                 completions.add("air");
             }
-            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_ALL)) {
+            if (player.hasPermission(Permission.PERMISSION_SET_ALL)) {
                 completions.add("all");
             }
-            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_BORDER)) {
+            if (player.hasPermission(Permission.PERMISSION_SET_BORDER)) {
                 completions.add("border");
             }
-            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_WALL)) {
+            if (player.hasPermission(Permission.PERMISSION_SET_WALL)) {
                 completions.add("wall");
             }
-            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_OUTLINE)) {
+            if (player.hasPermission(Permission.PERMISSION_SET_OUTLINE)) {
                 completions.add("outline");
             }
-            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_MIDDLE)) {
+            if (player.hasPermission(Permission.PERMISSION_SET_MIDDLE)) {
                 completions.add("middle");
             }
             final List<Command> commands = completions.stream().filter(completion -> completion
@@ -285,7 +284,7 @@ public class Set extends SubCommand {
                     .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.APPEARANCE) {
                     }).collect(Collectors.toCollection(LinkedList::new));
 
-            if (Permissions.hasPermission(player, Permission.PERMISSION_SET) && args[0].length() > 0) {
+            if (player.hasPermission(Permission.PERMISSION_SET) && args[0].length() > 0) {
                 commands.addAll(TabCompletions.completePlayers(player, args[0], Collections.emptyList()));
             }
             return commands;
@@ -301,7 +300,7 @@ public class Set extends SubCommand {
 
             final Command cmd = MainCommand.getInstance().getCommand("set" + args[0]);
             if (cmd != null) {
-                if (!Permissions.hasPermission(player, cmd.getPermission(), true)) {
+                if (!player.hasPermission(cmd.getPermission(), true)) {
                     return new ArrayList<>();
                 }
                 return cmd.tab(player, newArgs, space);

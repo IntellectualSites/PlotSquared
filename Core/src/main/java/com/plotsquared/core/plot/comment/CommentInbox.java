@@ -21,7 +21,6 @@ package com.plotsquared.core.plot.comment;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal;
 
 import java.util.List;
@@ -37,9 +36,8 @@ public abstract class CommentInbox {
      * @return the inbox, otherwise {@code false} false
      */
     public boolean canRead(Plot plot, PlotPlayer<?> player) {
-        if (Permissions.hasPermission(player, "plots.inbox.read." + this, true)) {
-            return plot.isOwner(player.getUUID()) || Permissions
-                    .hasPermission(player, "plots.inbox.read." + this + ".other", true);
+        if (player.hasPermission("plots.inbox.read." + this, true)) {
+            return plot.isOwner(player.getUUID()) || player.hasPermission("plots.inbox.read." + this + ".other", true);
         }
         return false;
     }
@@ -51,11 +49,10 @@ public abstract class CommentInbox {
      */
     public boolean canWrite(Plot plot, PlotPlayer<?> player) {
         if (plot == null) {
-            return Permissions.hasPermission(player, "plots.inbox.write." + this, true);
+            return player.hasPermission("plots.inbox.write." + this, true);
         }
-        return Permissions.hasPermission(player, "plots.inbox.write." + this, true) && (
-                plot.isOwner(player.getUUID()) || Permissions
-                        .hasPermission(player, "plots.inbox.write." + this + ".other", true));
+        return player.hasPermission("plots.inbox.write." + this, true) && (
+                plot.isOwner(player.getUUID()) || player.hasPermission("plots.inbox.write." + this + ".other", true));
     }
 
     /**
@@ -65,9 +62,8 @@ public abstract class CommentInbox {
      */
     @SuppressWarnings({"BooleanMethodIsAlwaysInverted"})
     public boolean canModify(Plot plot, PlotPlayer<?> player) {
-        if (Permissions.hasPermission(player, "plots.inbox.modify." + this, true)) {
-            return plot.isOwner(player.getUUID()) || Permissions
-                    .hasPermission(player, "plots.inbox.modify." + this + ".other", true);
+        if (player.hasPermission("plots.inbox.modify." + this, true)) {
+            return plot.isOwner(player.getUUID()) || player.hasPermission("plots.inbox.modify." + this + ".other", true);
         }
         return false;
     }

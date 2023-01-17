@@ -144,7 +144,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                     plot.getRegions(),
                     blocks,
                     classicPlotWorld.getMinBuildHeight(),
-                    classicPlotWorld.getMaxBuildHeight(),
+                    classicPlotWorld.getMaxBuildHeight() - 1,
                     actor,
                     queue
             );
@@ -175,7 +175,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                             plot.getRegions(),
                             blocks,
                             classicPlotWorld.PLOT_HEIGHT + 1,
-                            classicPlotWorld.getMaxBuildHeight(),
+                            classicPlotWorld.getMaxBuildHeight() - 1,
                             actor,
                             queue
                     );
@@ -281,7 +281,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             }
         }
 
-        int maxY = classicPlotWorld.getMaxBuildHeight();
+        int maxY = classicPlotWorld.getMaxBuildHeight() - 1;
         if (!plot.isMerged(Direction.NORTH)) {
             int z = bottom.getZ();
             for (int x = bottom.getX(); x <= top.getX(); x++) {

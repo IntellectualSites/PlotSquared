@@ -32,7 +32,6 @@ import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
@@ -91,13 +90,14 @@ public class Clear extends Command {
         }
         boolean force = eventResult == Result.FORCE;
         checkTrue(
-                force || plot.isOwner(player.getUUID()) || Permissions
-                        .hasPermission(player, "plots.admin.command.clear"),
+                force || plot.isOwner(player.getUUID()) || player.hasPermission("plots.admin.command.clear"),
                 TranslatableCaption.of("permission.no_plot_perms")
         );
         checkTrue(plot.getRunning() == 0, TranslatableCaption.of("errors.wait_for_timer"));
-        checkTrue(force || !Settings.Done.RESTRICT_BUILDING || !DoneFlag.isDone(plot) || Permissions
-                .hasPermission(player, "plots.continue"), TranslatableCaption.of("done.done_already_done"));
+        checkTrue(
+                force || !Settings.Done.RESTRICT_BUILDING || !DoneFlag.isDone(plot) || player.hasPermission("plots.continue"),
+                TranslatableCaption.of("done.done_already_done")
+        );
         confirm.run(this, () -> {
             if (Settings.Teleport.ON_CLEAR) {
                 plot.getPlayersInPlot().forEach(playerInPlot -> plot.teleportPlayer(playerInPlot, TeleportCause.COMMAND_CLEAR,
