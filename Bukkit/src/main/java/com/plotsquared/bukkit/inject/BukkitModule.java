@@ -18,12 +18,16 @@
  */
 package com.plotsquared.bukkit.inject;
 
+import cloud.commandframework.CommandManager;
+import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator;
+import cloud.commandframework.paper.PaperCommandManager;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.listener.SingleWorldListener;
+import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.bukkit.queue.BukkitChunkCoordinator;
 import com.plotsquared.bukkit.queue.BukkitQueueCoordinator;
@@ -47,6 +51,8 @@ import com.plotsquared.core.inject.factory.ChunkCoordinatorBuilderFactory;
 import com.plotsquared.core.inject.factory.ChunkCoordinatorFactory;
 import com.plotsquared.core.inject.factory.HybridPlotWorldFactory;
 import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
+import com.plotsquared.core.player.ConsolePlayer;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.world.DefaultPlotAreaManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
@@ -68,9 +74,13 @@ import com.sk89q.worldedit.extension.platform.Actor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.util.function.Function;
 
 public class BukkitModule extends AbstractModule {
 
@@ -145,4 +155,27 @@ public class BukkitModule extends AbstractModule {
         return EconHandler.nullEconHandler();
     }
 
+    @Provides
+    @Singleton
+    @NonNull CommandManager<PlotPlayer<?>> provideCommandManager() throws Exception {
+        final Function<PlotPlayer<?>, CommandSender> plotToPlatform = plotPlayer -> {
+            if (plotPlayer instanceof BukkitPlayer bukkitPlayer) {
+                return bukkitPlayer.getPlatformPlayer();
+            }
+            return Bukkit.getConsoleSender();
+        };
+        final Function<CommandSender, PlotPlayer<?>> platformToPlot = commandSender -> {
+            if (commandSender instanceof Player player) {
+                return BukkitUtil.adapt(player);
+            }
+            return ConsolePlayer.getConsole();
+        };
+
+        return new PaperCommandManager<>(
+                this.bukkitPlatform,
+                AsynchronousCommandExecutionCoordinator.<PlotPlayer<?>>builder().withSynchronousParsing().build(),
+                platformToPlot,
+                plotToPlatform
+        );
+    }
 }
