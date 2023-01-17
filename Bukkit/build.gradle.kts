@@ -53,6 +53,10 @@ dependencies {
 
     // Adventure
     implementation("net.kyori:adventure-platform-bukkit")
+
+    // Cloud
+    implementation(libs.cloudPaper)
+    implementation(libs.cloudMinecraftExtras)
 }
 
 tasks.processResources {

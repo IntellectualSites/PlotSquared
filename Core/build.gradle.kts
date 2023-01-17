@@ -15,6 +15,11 @@ dependencies {
     api("net.kyori:adventure-api")
     api("net.kyori:adventure-text-minimessage")
 
+    // Cloud
+    api(libs.cloudServices)
+    api(libs.cloudCore)
+    api(libs.cloudAnnotations)
+
     // Guice
     api(libs.guice) {
         exclude(group = "com.google.guava")
@@ -40,7 +45,6 @@ dependencies {
     // Other libraries
     api(libs.prtree)
     api(libs.aopalliance)
-    api(libs.cloudServices)
     api(libs.arkitektonika)
     api("com.intellectualsites.paster:Paster")
     api("com.intellectualsites.informative-annotations:informative-annotations")

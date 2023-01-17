@@ -13,9 +13,9 @@ mvdwapi = "3.1.1"
 # Third party
 prtree = "2.0.0"
 aopalliance = "1.0"
-cloud-services = "1.8.0"
 arkitektonika = "2.1.1"
 squirrelid = "0.3.1"
+cloud = "1.8.0"
 
 # Gradle plugins
 shadow = "7.1.2"
@@ -39,10 +39,14 @@ essentialsx = { group = "net.essentialsx", name = "EssentialsX", version.ref = "
 # Third party
 prtree = { group = "com.intellectualsites.prtree", name = "PRTree", version.ref = "prtree" }
 aopalliance = { group = "aopalliance", name = "aopalliance", version.ref = "aopalliance" }
-cloudServices = { group = "cloud.commandframework", name = "cloud-services", version.ref = "cloud-services" }
 mvdwapi = { group = "com.intellectualsites.mvdwplaceholderapi", name = "MVdWPlaceholderAPI", version.ref = "mvdwapi" }
 squirrelid = { group = "org.enginehub", name = "squirrelid", version.ref = "squirrelid" }
 arkitektonika = { group = "com.intellectualsites.arkitektonika", name = "Arkitektonika-Client", version.ref = "arkitektonika" }
+cloudServices = { group = "cloud.commandframework", name = "cloud-services", version.ref = "cloud" }
+cloudCore = { group = "cloud.commandframework", name = "cloud-core", version.ref = "cloud" }
+cloudAnnotations = { group = "cloud.commandframework", name = "cloud-annotations", version.ref = "cloud" }
+cloudPaper = { group = "cloud.commandframework", name = "cloud-paper", version.ref = "cloud" }
+cloudMinecraftExtras = { group = "cloud.commandframework", name = "cloud-minecraft-extras", version.ref = "cloud" }
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
