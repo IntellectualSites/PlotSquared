@@ -67,16 +67,6 @@ public class ChunkListener implements Listener {
     private RefMethod methodGetHandleChunk;
     private RefMethod methodGetHandleWorld;
     private RefField mustSave;
-    /*
-    private RefMethod methodGetFullChunk;
-    private RefMethod methodGetBukkitChunk;
-    private RefMethod methodGetChunkProvider;
-    private RefMethod methodGetVisibleMap;
-    private RefField worldServer;
-    private RefField playerChunkMap;
-    private RefField updatingChunks;
-    private RefField visibleChunks;
-    */
     private Chunk lastChunk;
     private boolean ignoreUnload = false;
     private boolean isTrueForNotSave = true;
@@ -234,7 +224,8 @@ public class ChunkListener implements Listener {
         Chunk chunk = event.getChunk();
         if (Settings.Chunk_Processor.AUTO_TRIM) {
             String world = chunk.getWorld().getName();
-            if ((!Settings.Enabled_Components.WORLDS || !SinglePlotArea.isSinglePlotWorld(world)) && this.plotAreaManager.hasPlotArea(world)) {
+            if ((!Settings.Enabled_Components.WORLDS || !SinglePlotArea.isSinglePlotWorld(world)) && this.plotAreaManager.hasPlotArea(
+                    world)) {
                 if (unloadChunk(world, chunk, true)) {
                     return;
                 }

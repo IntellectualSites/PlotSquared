@@ -64,7 +64,6 @@ import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -79,8 +78,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class PlotListener {
-
-    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     private final HashMap<UUID, Interval> feedRunnable = new HashMap<>();
     private final HashMap<UUID, Interval> healRunnable = new HashMap<>();
@@ -142,7 +139,9 @@ public class PlotListener {
                     Map.Entry<UUID, List<StatusEffect>> entry = iterator.next();
                     List<StatusEffect> effects = entry.getValue();
                     effects.removeIf(effect -> currentTime > effect.expiresAt);
-                    if (effects.isEmpty()) iterator.remove();
+                    if (effects.isEmpty()) {
+                        iterator.remove();
+                    }
                 }
             }
         }, TaskTime.seconds(1L));
@@ -341,14 +340,14 @@ public class PlotListener {
             }
 
             TimedFlag.Timed<Integer> feed = plot.getFlag(FeedFlag.class);
-            if (feed.getInterval() != 0 && feed.getValue() != 0) {
+            if (feed.interval() != 0 && feed.value() != 0) {
                 feedRunnable
-                        .put(player.getUUID(), new Interval(feed.getInterval(), feed.getValue(), 20));
+                        .put(player.getUUID(), new Interval(feed.interval(), feed.value(), 20));
             }
             TimedFlag.Timed<Integer> heal = plot.getFlag(HealFlag.class);
-            if (heal.getInterval() != 0 && heal.getValue() != 0) {
+            if (heal.interval() != 0 && heal.value() != 0) {
                 healRunnable
-                        .put(player.getUUID(), new Interval(heal.getInterval(), heal.getValue(), 20));
+                        .put(player.getUUID(), new Interval(heal.interval(), heal.value(), 20));
             }
             return true;
         }
@@ -486,8 +485,9 @@ public class PlotListener {
 
     /**
      * Marks an effect as a status effect that will be removed on leaving a plot
-     * @param uuid The uuid of the player the effect belongs to
-     * @param name The name of the status effect
+     *
+     * @param uuid      The uuid of the player the effect belongs to
+     * @param name      The name of the status effect
      * @param expiresAt The time when the effect expires
      * @since 6.10.0
      */
@@ -517,11 +517,6 @@ public class PlotListener {
 
     private record StatusEffect(@NonNull String name, long expiresAt) {
 
-        private StatusEffect(@NonNull String name, long expiresAt) {
-                this.name = name;
-                this.expiresAt = expiresAt;
-            }
-
-        }
+    }
 
 }

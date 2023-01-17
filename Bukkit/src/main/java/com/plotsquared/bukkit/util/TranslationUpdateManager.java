@@ -60,4 +60,5 @@ public class TranslationUpdateManager {
             e.printStackTrace();
         }
     }
+
 }

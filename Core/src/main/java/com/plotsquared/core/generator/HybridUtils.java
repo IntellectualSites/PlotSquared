@@ -37,7 +37,6 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.BlockArrayCacheScopedQueueCoordinator;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueCoordinator;
-import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.RegionManager;
@@ -63,7 +62,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -88,7 +86,6 @@ public class HybridUtils {
     public static boolean UPDATE = false;
 
     private final PlotAreaManager plotAreaManager;
-    private final ChunkManager chunkManager;
     private final GlobalBlockQueue blockQueue;
     private final WorldUtil worldUtil;
     private final SchematicHandler schematicHandler;
@@ -97,14 +94,12 @@ public class HybridUtils {
     @Inject
     public HybridUtils(
             final @NonNull PlotAreaManager plotAreaManager,
-            final @NonNull ChunkManager chunkManager,
             final @NonNull GlobalBlockQueue blockQueue,
             final @NonNull WorldUtil worldUtil,
             final @NonNull SchematicHandler schematicHandler,
             final @NonNull EventDispatcher eventDispatcher
     ) {
         this.plotAreaManager = plotAreaManager;
-        this.chunkManager = chunkManager;
         this.blockQueue = blockQueue;
         this.worldUtil = worldUtil;
         this.schematicHandler = schematicHandler;
@@ -380,22 +375,6 @@ public class HybridUtils {
         run.run();
     }
 
-    public int checkModified(QueueCoordinator queue, int x1, int x2, int y1, int y2, int z1, int z2, BlockState[] blocks) {
-        int count = 0;
-        for (int y = y1; y <= y2; y++) {
-            for (int x = x1; x <= x2; x++) {
-                for (int z = z1; z <= z2; z++) {
-                    BlockState block = queue.getBlock(x, y, z);
-                    boolean same = Arrays.stream(blocks).anyMatch(p -> this.worldUtil.isBlockSame(block, p));
-                    if (!same) {
-                        count++;
-                    }
-                }
-            }
-        }
-        return count;
-    }
-
     public final ArrayList<BlockVector2> getChunks(BlockVector2 region) {
         ArrayList<BlockVector2> chunks = new ArrayList<>();
         int sx = region.getX() << 5;
@@ -645,7 +624,7 @@ public class HybridUtils {
             queue = queueCoordinator;
             enqueue = false;
         }
-        if (id1 == null || id2 == null || id1 != id2) {
+        if (id2 == null || id1 != id2) {
             if (id1 != null) {
                 Plot p1 = area.getPlotAbs(id1);
                 if (p1 != null && p1.hasOwner() && p1.isMerged()) {

@@ -341,7 +341,10 @@ public class HybridGen extends IndependentPlotGenerator {
                 for (Entity entity : hybridPlotWorld.getPlotSchematicEntities()) {
                     if (region.contains(entity.getLocation().toVector().toBlockPoint())) {
                         Vector3 pos = (entity.getLocation().toVector()
-                                .subtract(region.getMinimumPoint().withY(hybridPlotWorld.getPlotSchematicMinPoint().getY()).toVector3()))
+                                .subtract(region
+                                        .getMinimumPoint()
+                                        .withY(hybridPlotWorld.getPlotSchematicMinPoint().getY())
+                                        .toVector3()))
                                 .add(min.getBlockVector3().withY(hybridPlotWorld.SCHEM_Y).toVector3());
                         result.setEntity(new PopulatingEntity(
                                 entity,
@@ -365,7 +368,6 @@ public class HybridGen extends IndependentPlotGenerator {
                 }
             }
         }
-        return;
     }
 
     @Override

@@ -37,7 +37,7 @@ public class Confirm extends SubCommand {
         }
         CmdConfirm.removePending(player);
         if ((System.currentTimeMillis() - command.timestamp)
-                > Settings.Confirmation.CONFIRMATION_TIMEOUT_SECONDS * 1000) {
+                > Settings.Confirmation.CONFIRMATION_TIMEOUT_SECONDS * 1000L) {
             player.sendMessage(TranslatableCaption.of("confirm.expired_confirm"));
             return false;
         }

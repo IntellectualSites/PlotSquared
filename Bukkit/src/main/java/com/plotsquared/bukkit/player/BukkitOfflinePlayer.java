@@ -41,13 +41,9 @@ public class BukkitOfflinePlayer implements OfflinePlotPlayer {
      * @param player            Bukkit OfflinePlayer player to convert
      * @param permissionHandler Permission Profile to be used
      */
-    public BukkitOfflinePlayer(
-            final @NonNull OfflinePlayer player, final @NonNull
-            PermissionHandler permissionHandler
-    ) {
+    public BukkitOfflinePlayer(final @NonNull OfflinePlayer player, final @NonNull PermissionHandler permissionHandler) {
         this.player = player;
-        this.permissionProfile = permissionHandler.getPermissionProfile(this)
-                .orElse(NullPermissionProfile.INSTANCE);
+        this.permissionProfile = permissionHandler.getPermissionProfile(this).orElse(NullPermissionProfile.INSTANCE);
     }
 
     @NonNull

@@ -127,7 +127,7 @@ public class Purge extends SubCommand {
                         );
                         return false;
                     }
-                    owner = ownerMapping.getUuid();
+                    owner = ownerMapping.uuid();
                     break;
                 case "shared":
                 case "s":
@@ -139,7 +139,7 @@ public class Purge extends SubCommand {
                         );
                         return false;
                     }
-                    added = addedMapping.getUuid();
+                    added = addedMapping.uuid();
                     break;
                 case "clear":
                 case "c":
@@ -236,9 +236,12 @@ public class Purge extends SubCommand {
                             try {
                                 ids.add(plot.temp);
                                 if (finalClear) {
-                                    plot.getPlotModificationManager().clear(false, true, player, () -> {
-                                        LOGGER.info("Plot {} cleared by purge", plot.getId());
-                                    });
+                                    plot.getPlotModificationManager().clear(
+                                            false,
+                                            true,
+                                            player,
+                                            () -> LOGGER.info("Plot {} cleared by purge", plot.getId())
+                                    );
                                 } else {
                                     plot.getPlotModificationManager().removeSign();
                                 }

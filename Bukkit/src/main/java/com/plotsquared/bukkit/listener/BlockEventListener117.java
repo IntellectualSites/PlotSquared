@@ -92,7 +92,11 @@ public class BlockEventListener117 implements Listener {
         }
 
         Plot plot = location.getOwnedPlot();
-        if (plot == null && !PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, MiscInteractFlag.class, true) || plot != null && !plot.getFlag(
+        if (plot == null && !PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(
+                area,
+                MiscInteractFlag.class,
+                true
+        ) || plot != null && !plot.getFlag(
                 MiscInteractFlag.class)) {
             if (plotPlayer != null) {
                 if (plot != null) {

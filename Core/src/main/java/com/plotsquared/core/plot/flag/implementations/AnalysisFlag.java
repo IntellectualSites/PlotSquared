@@ -19,7 +19,6 @@
 package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.InternalFlag;
 import com.plotsquared.core.plot.flag.types.ListFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -34,7 +33,7 @@ public class AnalysisFlag extends ListFlag<Integer, AnalysisFlag> implements Int
     }
 
     @Override
-    public AnalysisFlag parse(@NonNull String input) throws FlagParseException {
+    public AnalysisFlag parse(@NonNull String input) {
         final String[] split = input.split(",");
         final List<Integer> numbers = new ArrayList<>();
         for (final String element : split) {

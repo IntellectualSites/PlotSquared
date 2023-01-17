@@ -19,7 +19,6 @@
 package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.types.ListFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -39,7 +38,7 @@ public class BlockedCmdsFlag extends ListFlag<String, BlockedCmdsFlag> {
     }
 
     @Override
-    public BlockedCmdsFlag parse(@NonNull String input) throws FlagParseException {
+    public BlockedCmdsFlag parse(@NonNull String input) {
         return flagOf(Arrays.asList(input.split(",")));
     }
 

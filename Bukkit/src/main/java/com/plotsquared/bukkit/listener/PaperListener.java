@@ -43,10 +43,10 @@ import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.util.PlotFlagUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import com.plotsquared.core.util.PlotFlagUtil;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
@@ -457,9 +457,11 @@ public class PaperListener implements Listener {
         }
     }
 
-    private boolean getBooleanFlagValue(@NonNull FlagContainer container,
-                                        @NonNull Class<? extends BooleanFlag<?>> flagClass,
-                                        boolean defaultValue) {
+    private boolean getBooleanFlagValue(
+            @NonNull FlagContainer container,
+            @NonNull Class<? extends BooleanFlag<?>> flagClass,
+            boolean defaultValue
+    ) {
         BooleanFlag<?> flag = container.getFlag(flagClass);
         return flag == null ? defaultValue : flag.getValue();
     }

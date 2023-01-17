@@ -89,7 +89,7 @@ public final class PlaceholderRegistry {
         this.createPlaceholder("world_name", player -> player.getLocation().getWorldName());
         this.createPlaceholder("has_plot", player -> player.getPlotCount() > 0 ? "true" : "false");
         this.createPlaceholder("allowed_plot_count", (player) -> {
-            if (player.getAllowedPlots() >= Integer.MAX_VALUE) { // Beautifies cases with '*' permission
+            if (player.getAllowedPlots() == Integer.MAX_VALUE) { // Beautifies cases with '*' permission
                 return legacyComponent(TranslatableCaption.of("info.infinite"), player);
             }
             return Integer.toString(player.getAllowedPlots());
@@ -102,7 +102,7 @@ public final class PlaceholderRegistry {
             return plot.getAlias();
         });
         this.createPlaceholder("currentplot_owner", (player, plot) -> {
-            if (plot.getFlag(ServerPlotFlag.class)){
+            if (plot.getFlag(ServerPlotFlag.class)) {
                 return legacyComponent(TranslatableCaption.of("info.server"), player);
             }
             final UUID plotOwner = plot.getOwnerAbs();
@@ -300,17 +300,7 @@ public final class PlaceholderRegistry {
     /**
      * Event called when a new {@link Placeholder} has been added
      */
-    public static class PlaceholderAddedEvent {
-
-        private final Placeholder placeholder;
-
-        public PlaceholderAddedEvent(Placeholder placeholder) {
-            this.placeholder = placeholder;
-        }
-
-        public Placeholder getPlaceholder() {
-            return this.placeholder;
-        }
+    public record PlaceholderAddedEvent(Placeholder placeholder) {
 
     }
 

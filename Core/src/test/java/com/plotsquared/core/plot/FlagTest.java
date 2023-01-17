@@ -25,44 +25,16 @@ import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.PlotTitleFlag;
 import com.plotsquared.core.plot.flag.implementations.UseFlag;
-import com.sk89q.worldedit.world.item.ItemType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FlagTest {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + FlagTest.class.getSimpleName());
-
-    private ItemType testBlock;
-
     @BeforeEach
-    public void setUp() throws Exception {
-        //EventUtil.manager = new EventUtilTest();
+    public void setUp() {
         DBFunc.dbManager = new AbstractDBTest();
     }
-
-//    @Test public void flagTest() throws Exception {
-//        Plot plot = new Plot(null, PlotId.of(0, 0));
-//        plot.owner = UUID.fromString("84499644-ad72-454b-a19d-f28c28df382b");
-//        //plot.setFlag(use, use.parseValue("33,33:1,6:4")); //TODO fix this so FlagTest will run during compile
-//        Optional<? extends Collection> flag = plot.getFlag(use);
-//        if (flag.isPresent()) {
-//            LOGGER.info(Flags.USE.valueToString(flag.get()));
-//            testBlock = ItemTypes.BONE_BLOCK;
-//            flag.get().add(testBlock);
-//        }
-//        flag.ifPresent(collection -> LOGGER.info(Flags.USE.valueToString(collection)));
-//        Optional<Set<BlockType>> flag2 = plot.getFlag(Flags.USE);
-//        if (flag2.isPresent()) {
-//            //   assertThat(flag2.get(), (Matcher<? super Set<BlockType>>) IsCollectionContaining.hasItem(testBlock));
-//        }
-//        if (flag.isPresent() && flag2.isPresent()) {
-//            assertEquals(flag.get(), flag2.get());
-//        }
-//    }
 
     @Test
     public void testFlagName() {
@@ -128,4 +100,5 @@ public class FlagTest {
                 ((TranslatableCaption) exception.getErrorMessage()).getKey()
         );
     }
+
 }

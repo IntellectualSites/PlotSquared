@@ -36,7 +36,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * The min and max points of this queue are offset according to the minimum point given in the constructor, and the offsets set
  * in {@link BlockArrayCacheScopedQueueCoordinator#setOffsetX(int)} and
  * {@link BlockArrayCacheScopedQueueCoordinator#setOffsetZ(int)}
- *
+ * <p>
  * Internal use only. Subject to change at any time and created for specific use cases.
  */
 @NotPublic
@@ -54,6 +54,7 @@ public class BlockArrayCacheScopedQueueCoordinator extends ZeroedDelegateScopedQ
     private final int scopeMaxZ;
     private int offsetX = 0;
     private int offsetZ = 0;
+
     /**
      * Construct a new instance
      *

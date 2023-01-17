@@ -232,12 +232,13 @@ public class Area extends SubCommand {
                 try (final ClipboardWriter clipboardWriter = BuiltInClipboardFormat.SPONGE_SCHEMATIC.getWriter(new FileOutputStream(
                         file))) {
                     final BlockArrayClipboard clipboard = new BlockArrayClipboard(selectedRegion);
-                    final EditSession editSession = WorldEdit
-                            .getInstance()
-                            .getEditSessionFactory()
-                            .getEditSession(selectedRegion.getWorld(), -1);
-                    final ForwardExtentCopy forwardExtentCopy =
-                            new ForwardExtentCopy(editSession, selectedRegion, clipboard, selectedRegion.getMinimumPoint());
+                    final EditSession editSession = WorldEdit.getInstance().newEditSession(selectedRegion.getWorld());
+                    final ForwardExtentCopy forwardExtentCopy = new ForwardExtentCopy(
+                            editSession,
+                            selectedRegion,
+                            clipboard,
+                            selectedRegion.getMinimumPoint()
+                    );
                     forwardExtentCopy.setCopyingBiomes(true);
                     forwardExtentCopy.setCopyingEntities(true);
                     Operations.complete(forwardExtentCopy);
@@ -724,7 +725,7 @@ public class Area extends SubCommand {
                         return false;
                 }
                 final List<PlotArea> areas = new ArrayList<>(Arrays.asList(this.plotAreaManager.getAllPlotAreas()));
-                paginate(player, areas, 8, page, new RunnableVal3<Integer, PlotArea, CaptionHolder>() {
+                paginate(player, areas, 8, page, new RunnableVal3<>() {
                     @Override
                     public void run(Integer i, PlotArea area, CaptionHolder caption) {
                         String name;

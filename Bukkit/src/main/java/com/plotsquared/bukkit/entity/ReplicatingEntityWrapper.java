@@ -185,10 +185,6 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 if (horse instanceof ChestedHorse horse1) {
                     this.horse.chest = horse1.isCarryingChest();
                 }
-                //todo these horse features need fixing
-                //this.horse.variant = horse.getVariant();
-                //this.horse.style = horse.getStyle();
-                //this.horse.color = horse.getColor();
                 storeTameable(horse);
                 storeAgeable(horse);
                 storeLiving(horse);
@@ -577,10 +573,6 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 if (horse instanceof ChestedHorse) {
                     ((ChestedHorse) horse).setCarryingChest(this.horse.chest);
                 }
-                //todo broken as of 1.13
-                //horse.setVariant(this.horse.variant);
-                //horse.setStyle(this.horse.style);
-                //horse.setColor(this.horse.color);
                 restoreTameable(horse);
                 restoreAgeable(horse);
                 restoreLiving(horse);

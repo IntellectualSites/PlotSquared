@@ -56,7 +56,7 @@ public final class ItemUtil {
         return ItemTypes.get(input);
     }
 
-    public static final ItemType[] parse(String commaDelimited) {
+    public static ItemType[] parse(String commaDelimited) {
         String[] split = commaDelimited.split(",(?![^\\(\\[]*[\\]\\)])");
         ItemType[] result = new ItemType[split.length];
         for (int i = 0; i < split.length; i++) {

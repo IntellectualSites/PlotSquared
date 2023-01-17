@@ -49,8 +49,8 @@ import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.BukkitWorld;
 import com.plotsquared.bukkit.util.SetGenCB;
-import com.plotsquared.bukkit.util.UpdateUtility;
 import com.plotsquared.bukkit.util.TranslationUpdateManager;
+import com.plotsquared.bukkit.util.UpdateUtility;
 import com.plotsquared.bukkit.util.task.BukkitTaskManager;
 import com.plotsquared.bukkit.util.task.PaperTimeConverter;
 import com.plotsquared.bukkit.util.task.SpigotTimeConverter;
@@ -293,7 +293,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         this.injector.injectMembers(this);
 
         try {
-            this.injector.getInstance(TranslationUpdateManager.class).upgradeTranslationFile();
+            this.injector.getInstance(TranslationUpdateManager.class);
+            TranslationUpdateManager.upgradeTranslationFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -363,7 +364,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             getServer().getPluginManager().registerEvents(injector().getInstance(ServerListener.class), this);
             getServer().getPluginManager().registerEvents(injector().getInstance(EntitySpawnListener.class), this);
             if (PaperLib.isPaper() && Settings.Paper_Components.PAPER_LISTENERS) {
-                    getServer().getPluginManager().registerEvents(injector().getInstance(PaperListener.class), this);
+                getServer().getPluginManager().registerEvents(injector().getInstance(PaperListener.class), this);
             } else {
                 getServer().getPluginManager().registerEvents(injector().getInstance(SpigotListener.class), this);
             }
@@ -1008,8 +1009,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     }
 
     @Override
-    public @Nullable
-    final ChunkGenerator getDefaultWorldGenerator(
+    public @Nullable ChunkGenerator getDefaultWorldGenerator(
             final @NonNull String worldName,
             final @Nullable String id
     ) {
@@ -1176,9 +1176,17 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     public @NonNull String worldEditImplementations() {
         StringBuilder msg = new StringBuilder();
         if (Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null) {
-            msg.append("FastAsyncWorldEdit: ").append(Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit").getDescription().getVersion());
+            msg.append("FastAsyncWorldEdit: ").append(Bukkit
+                    .getPluginManager()
+                    .getPlugin("FastAsyncWorldEdit")
+                    .getDescription()
+                    .getVersion());
         } else if (Bukkit.getPluginManager().getPlugin("AsyncWorldEdit") != null) {
-            msg.append("AsyncWorldEdit: ").append(Bukkit.getPluginManager().getPlugin("AsyncWorldEdit").getDescription().getVersion()).append("\n");
+            msg.append("AsyncWorldEdit: ").append(Bukkit
+                    .getPluginManager()
+                    .getPlugin("AsyncWorldEdit")
+                    .getDescription()
+                    .getVersion()).append("\n");
             msg.append("WorldEdit: ").append(Bukkit.getPluginManager().getPlugin("WorldEdit").getDescription().getVersion());
         } else {
             msg.append("WorldEdit: ").append(Bukkit.getPluginManager().getPlugin("WorldEdit").getDescription().getVersion());

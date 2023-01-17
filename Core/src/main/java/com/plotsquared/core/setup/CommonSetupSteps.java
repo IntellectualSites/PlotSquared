@@ -72,7 +72,7 @@ public enum CommonSetupSteps implements SetupStep {
         @Override
         public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String arg) {
             Optional<PlotAreaType> plotAreaType = PlotAreaType.fromString(arg);
-            if (!plotAreaType.isPresent()) {
+            if (plotAreaType.isEmpty()) {
                 plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_type_error"));
                 return this;
             }
@@ -180,8 +180,7 @@ public enum CommonSetupSteps implements SetupStep {
         @Override
         public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
             Optional<PlotAreaTerrainType> optTerrain;
-            if (!(optTerrain = PlotAreaTerrainType.fromString(argument))
-                    .isPresent()) {
+            if ((optTerrain = PlotAreaTerrainType.fromString(argument)).isEmpty()) {
                 plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_partial_area_error"));
                 return this;
             }

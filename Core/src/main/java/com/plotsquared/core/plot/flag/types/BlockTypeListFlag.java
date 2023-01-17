@@ -30,7 +30,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
         extends ListFlag<BlockTypeWrapper, F> {
@@ -73,11 +72,9 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
     public Collection<String> getTabCompletions() {
         final Collection<String> tabCompletions = new ArrayList<>();
         tabCompletions.addAll(
-                BlockType.REGISTRY.keySet().stream().map(val -> val.replace("minecraft:", ""))
-                        .collect(Collectors.toList()));
+                BlockType.REGISTRY.keySet().stream().map(val -> val.replace("minecraft:", "")).toList());
         tabCompletions.addAll(
-                BlockCategory.REGISTRY.keySet().stream().map(val -> "#" + val.replace("minecraft:", ""))
-                        .collect(Collectors.toList()));
+                BlockCategory.REGISTRY.keySet().stream().map(val -> "#" + val.replace("minecraft:", "")).toList());
         return tabCompletions;
     }
 

@@ -40,13 +40,7 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
             .expireAfterWrite(20, TimeUnit.SECONDS).build();
     Object plotLock = new Object();
 
-    final class AutoQuery {
-
-        private final PlotPlayer<?> player;
-        private final PlotId startId;
-        private final int sizeX;
-        private final int sizeZ;
-        private final PlotArea plotArea;
+    record AutoQuery(PlotPlayer<?> player, PlotId startId, int sizeX, int sizeZ, PlotArea plotArea) {
 
         /**
          * Crate a new auto query
@@ -73,7 +67,8 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
          *
          * @return Player
          */
-        public @NonNull PlotPlayer<?> getPlayer() {
+        @Override
+        public @NonNull PlotPlayer<?> player() {
             return this.player;
         }
 
@@ -82,7 +77,8 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
          *
          * @return Start ID
          */
-        public @Nullable PlotId getStartId() {
+        @Override
+        public @Nullable PlotId startId() {
             return this.startId;
         }
 
@@ -91,7 +87,8 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
          *
          * @return Number of plots along the X axis
          */
-        public int getSizeX() {
+        @Override
+        public int sizeX() {
             return this.sizeX;
         }
 
@@ -100,7 +97,8 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
          *
          * @return Number of plots along the Z axis
          */
-        public int getSizeZ() {
+        @Override
+        public int sizeZ() {
             return this.sizeZ;
         }
 
@@ -109,7 +107,8 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
          *
          * @return Plot area
          */
-        public @NonNull PlotArea getPlotArea() {
+        @Override
+        public @NonNull PlotArea plotArea() {
             return this.plotArea;
         }
 
@@ -132,10 +131,10 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
         @Override
         public List<Plot> handle(@NonNull AutoQuery autoQuery) {
             Plot plot;
-            PlotId nextId = autoQuery.getStartId();
+            PlotId nextId = autoQuery.startId();
             do {
                 synchronized (plotLock) {
-                    plot = autoQuery.getPlotArea().getNextFreePlot(autoQuery.getPlayer(), nextId);
+                    plot = autoQuery.plotArea().getNextFreePlot(autoQuery.player(), nextId);
                     if (plot != null && plotCandidateCache.getIfPresent(plot.getId()) == null) {
                         plotCandidateCache.put(plot.getId(), plot);
                         return Collections.singletonList(plot);
@@ -166,14 +165,14 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
             while (true) {
                 synchronized (plotLock) {
                     final PlotId start =
-                            autoQuery.getPlotArea().getMeta("lastPlot", PlotId.of(0, 0)).getNextId();
+                            autoQuery.plotArea().getMeta("lastPlot", PlotId.of(0, 0)).getNextId();
                     final PlotId end = PlotId.of(
-                            start.getX() + autoQuery.getSizeX() - 1,
-                            start.getY() + autoQuery.getSizeZ() - 1
+                            start.getX() + autoQuery.sizeX() - 1,
+                            start.getY() + autoQuery.sizeZ() - 1
                     );
                     final List<Plot> plots =
-                            autoQuery.getPlotArea().canClaim(autoQuery.getPlayer(), start, end);
-                    autoQuery.getPlotArea().setMeta("lastPlot", start); // set entry point for next try
+                            autoQuery.plotArea().canClaim(autoQuery.player(), start, end);
+                    autoQuery.plotArea().setMeta("lastPlot", start); // set entry point for next try
                     if (plots != null && !plots.isEmpty()) {
                         for (final Plot plot : plots) {
                             if (plotCandidateCache.getIfPresent(plot.getId()) != null) {
@@ -189,7 +188,7 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
 
         @Override
         public boolean test(final @NonNull AutoQuery autoQuery) {
-            return autoQuery.getPlotArea().getType() != PlotAreaType.PARTIAL;
+            return autoQuery.plotArea().getType() != PlotAreaType.PARTIAL;
         }
 
     }

@@ -429,9 +429,7 @@ public abstract class SchematicHandler {
         if (parent.exists()) {
             final String[] rawNames = parent.list((dir, name) -> name.endsWith(".schematic") || name.endsWith(".schem"));
             if (rawNames != null) {
-                final List<String> transformed = Arrays.stream(rawNames)
-                        //.map(rawName -> rawName.substring(0, rawName.length() - 10))
-                        .collect(Collectors.toList());
+                final List<String> transformed = Arrays.stream(rawNames).toList();
                 names.addAll(transformed);
             }
         }
@@ -727,10 +725,7 @@ public abstract class SchematicHandler {
                                     }
                                     BaseBlock block = aabb.getWorld().getFullBlock(point);
                                     if (block.getNbtData() != null) {
-                                        Map<String, Tag> values = new HashMap<>();
-                                        for (Map.Entry<String, Tag> entry : block.getNbtData().getValue().entrySet()) {
-                                            values.put(entry.getKey(), entry.getValue());
-                                        }
+                                        Map<String, Tag> values = new HashMap<>(block.getNbtData().getValue());
 
                                         // Positions are kept in NBT, we don't want that.
                                         values.remove("x");

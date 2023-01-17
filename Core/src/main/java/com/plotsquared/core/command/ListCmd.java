@@ -117,7 +117,7 @@ public class ListCmd extends SubCommand {
         if (player.hasPermission(Permission.PERMISSION_LIST_FUZZY)) {
             args.add("fuzzy <search...>");
         }
-        return args.toArray(new String[args.size()]);
+        return args.toArray(new String[0]);
     }
 
     public void noArgs(PlotPlayer<?> player) {
@@ -474,20 +474,20 @@ public class ListCmd extends SubCommand {
                         final List<UUIDMapping> names = PlotSquared.get().getImpromptuUUIDPipeline().getNames(plot.getOwners())
                                 .get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS);
                         for (final UUIDMapping uuidMapping : names) {
-                            PlotPlayer<?> pp = PlotSquared.platform().playerManager().getPlayerIfExists(uuidMapping.getUuid());
+                            PlotPlayer<?> pp = PlotSquared.platform().playerManager().getPlayerIfExists(uuidMapping.uuid());
                             TagResolver resolver = TagResolver.builder()
-                                .tag("prefix", Tag.inserting(Component.text(prefix)))
-                                .tag("player", Tag.inserting(Component.text(uuidMapping.getUsername())))
-                                .build();
-                        if (pp != null) {
-                            builder.append(MINI_MESSAGE.deserialize(online, resolver));
-                            } else if (uuidMapping.getUsername().equalsIgnoreCase("unknown")) {
+                                    .tag("prefix", Tag.inserting(Component.text(prefix)))
+                                    .tag("player", Tag.inserting(Component.text(uuidMapping.username())))
+                                    .build();
+                            if (pp != null) {
+                                builder.append(MINI_MESSAGE.deserialize(online, resolver));
+                            } else if (uuidMapping.username().equalsIgnoreCase("unknown")) {
                                 TagResolver unknownResolver = TagResolver.resolver(
                                         "info.unknown",
                                         Tag.inserting(TranslatableCaption.of("info.unknown").toComponent(player))
                                 );
                                 builder.append(MINI_MESSAGE.deserialize(unknown, unknownResolver));
-                            } else if (uuidMapping.getUuid().equals(DBFunc.EVERYONE)) {
+                            } else if (uuidMapping.uuid().equals(DBFunc.EVERYONE)) {
                                 TagResolver everyoneResolver = TagResolver.resolver(
                                         "info.everyone",
                                         Tag.inserting(TranslatableCaption.of("info.everyone").toComponent(player))

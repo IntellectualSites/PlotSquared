@@ -69,8 +69,9 @@ public class BukkitRegionManager extends RegionManager {
 
     @Inject
     public BukkitRegionManager(
-            @NonNull WorldUtil worldUtil, @NonNull GlobalBlockQueue blockQueue, @NonNull
-            ProgressSubscriberFactory subscriberFactory
+            @NonNull WorldUtil worldUtil,
+            @NonNull GlobalBlockQueue blockQueue,
+            @NonNull ProgressSubscriberFactory subscriberFactory
     ) {
         super(worldUtil, blockQueue, subscriberFactory);
         this.blockQueue = blockQueue;
@@ -257,7 +258,7 @@ public class BukkitRegionManager extends RegionManager {
             map.saveEntitiesOut(Bukkit.getWorld(world.getName()).getChunkAt(x, z), currentPlotClear);
             AugmentedUtils.bypass(
                     ignoreAugment,
-                    () -> ChunkManager.setChunkInPlotArea(null, new RunnableVal<ZeroedDelegateScopedQueueCoordinator>() {
+                    () -> ChunkManager.setChunkInPlotArea(null, new RunnableVal<>() {
                         @Override
                         public void run(ZeroedDelegateScopedQueueCoordinator value) {
                             Location min = value.getMin();

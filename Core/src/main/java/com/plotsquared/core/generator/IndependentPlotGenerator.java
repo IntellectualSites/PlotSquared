@@ -57,7 +57,8 @@ public abstract class IndependentPlotGenerator {
      * @param setting PlotArea (settings)
      * @since TODO
      */
-    public void populateChunk(ZeroedDelegateScopedQueueCoordinator result, PlotArea setting) {}
+    public void populateChunk(ZeroedDelegateScopedQueueCoordinator result, PlotArea setting) {
+    }
 
     /**
      * Return a new PlotArea object.
@@ -103,9 +104,9 @@ public abstract class IndependentPlotGenerator {
      * Get the biome to be generated at a specific point
      *
      * @param settings PlotArea settings to provide biome
-     * @param x       World x position
-     * @param y       World y position
-     * @param z       World z position
+     * @param x        World x position
+     * @param y        World y position
+     * @param z        World z position
      * @return Biome type to be generated
      * @since TODO
      */

@@ -92,23 +92,23 @@ public final class TimeUtil {
                 case "wks":
                 case "w":
 
-                    time += 604800 * numbers;
+                    time += 604800L * numbers;
                 case "days":
                 case "day":
                 case "d":
-                    time += 86400 * numbers;
+                    time += 86400L * numbers;
                 case "hour":
                 case "hr":
                 case "hrs":
                 case "hours":
                 case "h":
-                    time += 3600 * numbers;
+                    time += 3600L * numbers;
                 case "minutes":
                 case "minute":
                 case "mins":
                 case "min":
                 case "m":
-                    time += 60 * numbers;
+                    time += 60L * numbers;
                 case "seconds":
                 case "second":
                 case "secs":

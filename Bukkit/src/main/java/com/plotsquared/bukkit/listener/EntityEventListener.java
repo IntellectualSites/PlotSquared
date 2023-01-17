@@ -113,15 +113,7 @@ public class EntityEventListener implements Listener {
             return;
         }
         Entity victim = event.getEntity();
-/*
-        if (victim.getType().equals(EntityType.ITEM_FRAME)) {
-            Plot plot = BukkitUtil.getLocation(victim).getPlot();
-            if (plot != null && !plot.isAdded(damager.getUniqueId())) {
-                event.setCancelled(true);
-                return;
-            }
-        }
-*/
+
         if (!BukkitEntityUtil.entityDamage(damager, victim, event.getCause())) {
             if (event.isCancelled()) {
                 if (victim instanceof Ageable ageable) {

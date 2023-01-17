@@ -48,10 +48,10 @@ public class SettingsNodeStep implements SetupStep {
     ) {
         this.configurationNode = configurationNode;
         this.id = id;
-        if (wrapper.getSettingsNodes().length > id + 1) {
-            this.next = new SettingsNodeStep(wrapper.getSettingsNodes()[id + 1], id + 1, wrapper);
+        if (wrapper.settingsNodes().length > id + 1) {
+            this.next = new SettingsNodeStep(wrapper.settingsNodes()[id + 1], id + 1, wrapper);
         } else {
-            this.next = wrapper.getAfterwards();
+            this.next = wrapper.afterwards();
         }
     }
 

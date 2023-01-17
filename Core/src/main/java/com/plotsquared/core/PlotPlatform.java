@@ -203,7 +203,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * @return Player manager
      */
     default @NonNull PlayerManager<? extends PlotPlayer<P>, ? extends P> playerManager() {
-        return injector().getInstance(Key.get(new TypeLiteral<PlayerManager<? extends PlotPlayer<P>, ? extends P>>() {
+        return injector().getInstance(Key.get(new TypeLiteral<>() {
         }));
     }
 

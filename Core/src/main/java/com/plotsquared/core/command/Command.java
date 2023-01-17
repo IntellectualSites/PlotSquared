@@ -502,9 +502,9 @@ public abstract class Command {
 
     public String getCommandString() {
         if (this.parent == null) {
-            return "/" + toString();
+            return "/" + this;
         } else {
-            return this.parent.getCommandString() + " " + toString();
+            return this.parent.getCommandString() + " " + this;
         }
     }
 

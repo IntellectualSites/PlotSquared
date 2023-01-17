@@ -62,7 +62,6 @@ public class GenChunk extends ZeroedDelegateScopedQueueCoordinator {
     /**
      * @param minY minimum world Y, inclusive
      * @param maxY maximum world Y, inclusive
-     *
      * @since 6.6.0
      */
     public GenChunk(int minY, int maxY) {
@@ -110,9 +109,9 @@ public class GenChunk extends ZeroedDelegateScopedQueueCoordinator {
      */
     public void setChunk(@NonNull ChunkWrapper wrap) {
         chunk = null;
-        world = wrap.world;
-        chunkX = wrap.x;
-        chunkZ = wrap.z;
+        world = wrap.world();
+        chunkX = wrap.x();
+        chunkZ = wrap.z();
     }
 
     @Override

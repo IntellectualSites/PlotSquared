@@ -83,7 +83,7 @@ public class Caps extends SubCommand {
         final int current = countedEntities[type];
         final int max = plot.getFlag(capFlag);
         final String percentage = String.format("%.1f", 100 * ((float) current / max));
-        ComponentLike maxBeautified = max >= Integer.MAX_VALUE
+        ComponentLike maxBeautified = max == Integer.MAX_VALUE
                 ? TranslatableCaption.of("info.infinite").toComponent(player)
                 : Component.text(max);
         player.sendMessage(

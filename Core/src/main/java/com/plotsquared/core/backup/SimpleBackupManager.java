@@ -136,13 +136,7 @@ public class SimpleBackupManager implements BackupManager {
         return this.backupLimit;
     }
 
-    private static final class PlotCacheKey {
-
-        private final Plot plot;
-
-        private PlotCacheKey(Plot plot) {
-            this.plot = plot;
-        }
+    private record PlotCacheKey(Plot plot) {
 
         @Override
         public boolean equals(final Object o) {

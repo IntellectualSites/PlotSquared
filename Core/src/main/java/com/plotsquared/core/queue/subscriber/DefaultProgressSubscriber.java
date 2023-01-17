@@ -36,6 +36,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -92,11 +93,7 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
         this.actor = actor;
         this.interval = TaskTime.ms(interval);
         this.wait = TaskTime.ms(wait);
-        if (caption == null) {
-            this.caption = TranslatableCaption.of("working.progress");
-        } else {
-            this.caption = caption;
-        }
+        this.caption = Objects.requireNonNullElse(caption, TranslatableCaption.of("working.progress"));
     }
 
     @Override

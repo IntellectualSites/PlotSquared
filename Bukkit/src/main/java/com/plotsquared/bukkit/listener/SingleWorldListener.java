@@ -89,11 +89,6 @@ public class SingleWorldListener implements Listener {
         markChunkAsClean(event.getChunk());
     }
 
-    //    @EventHandler
-    //    public void onPopulate(ChunkPopulateEvent event) {
-    //        handle(event);
-    //    }
-
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChunkLoad(ChunkLoadEvent event) {
         handle(event);

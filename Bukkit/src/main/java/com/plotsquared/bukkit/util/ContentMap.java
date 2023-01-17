@@ -31,7 +31,6 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -82,28 +81,6 @@ public class ContentMap {
             EntityWrapper wrap = new ReplicatingEntityWrapper(entity, (short) 2);
             wrap.saveEntity();
             this.entities.add(wrap);
-        }
-    }
-
-    void saveEntitiesIn(Chunk chunk, CuboidRegion region, boolean delete) {
-        for (Entity entity : chunk.getEntities()) {
-            Location location = BukkitUtil.adapt(entity.getLocation());
-            int x = location.getX();
-            int z = location.getZ();
-            if (!BukkitChunkManager.isIn(region, x, z)) {
-                continue;
-            }
-            if (entity.getVehicle() != null) {
-                continue;
-            }
-            EntityWrapper wrap = new ReplicatingEntityWrapper(entity, (short) 2);
-            wrap.saveEntity();
-            this.entities.add(wrap);
-            if (delete) {
-                if (!(entity instanceof Player)) {
-                    entity.remove();
-                }
-            }
         }
     }
 

@@ -72,8 +72,7 @@ class SearchPlotProvider implements PlotProvider {
                 IntStream.range(0, size).mapToObj(i -> new ArrayList<Plot>())
                         .collect(Collectors.toCollection(() -> new ArrayList<>(size)));
 
-        PlotArea area = null;
-        String alias = null;
+        PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(search);
         for (Plot plot : PlotQuery.newQuery().allPlots()) {
             int count = 0;
             if (!uuids.isEmpty()) {
@@ -90,10 +89,10 @@ class SearchPlotProvider implements PlotProvider {
                     count++;
                 }
             }
-            if (area != null && plot.getArea().equals(area)) {
+            if (plot.getArea() != null && plot.getArea().equals(area)) {
                 count++;
             }
-            if (alias != null && alias.equals(plot.getAlias())) {
+            if (search.equals(plot.getAlias())) {
                 count += 2;
             }
             if (count != 0) {

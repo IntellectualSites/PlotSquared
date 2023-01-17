@@ -146,7 +146,6 @@ public final class CaptionLoader {
      * @param reader the reader to read the map from.
      * @return the translation map.
      */
-    @SuppressWarnings("UnstableApiUsage")
     static @NonNull Map<@NonNull String, @NonNull String> loadFromReader(final @NonNull Reader reader) {
         final Type type = new TypeToken<Map<String, String>>() {
         }.getType();
@@ -225,7 +224,7 @@ public final class CaptionLoader {
      */
     public @NonNull CaptionMap loadOrCreateSingle(final @NonNull Path file) throws IOException {
         final Locale locale = this.localeExtractor.apply(file);
-        if (!Files.exists(file) ) {
+        if (!Files.exists(file)) {
             Map<String, String> map = new LinkedHashMap<>();
             patch(map, locale);
             save(file, map);

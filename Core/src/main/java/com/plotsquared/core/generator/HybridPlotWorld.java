@@ -344,18 +344,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             if (w3 > PLOT_WIDTH || h3 > PLOT_WIDTH) {
                 this.ROAD_SCHEMATIC_ENABLED = true;
             }
-            int centerShiftZ;
-            if (l3 < this.PLOT_WIDTH) {
-                centerShiftZ = (this.PLOT_WIDTH - l3) / 2;
-            } else {
-                centerShiftZ = (PLOT_WIDTH - l3) / 2;
-            }
-            int centerShiftX;
-            if (w3 < this.PLOT_WIDTH) {
-                centerShiftX = (this.PLOT_WIDTH - w3) / 2;
-            } else {
-                centerShiftX = (PLOT_WIDTH - w3) / 2;
-            }
+            int centerShiftZ = (this.PLOT_WIDTH - l3) / 2;
+            int centerShiftX = (this.PLOT_WIDTH - w3) / 2;
 
             BlockVector3 min = blockArrayClipboard3.getMinimumPoint();
             for (short x = 0; x < w3; x++) {

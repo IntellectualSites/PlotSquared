@@ -33,8 +33,10 @@ public class StringManTest {
                 new Message("title \"sub title\"", List.of("title", "sub title")),
                 new Message("\"a title\" subtitle", List.of("a title", "subtitle")),
                 new Message("\"title\" \"subtitle\"", List.of("title", "subtitle")),
-                new Message("\"How <bold>bold</bold> of you\" \"to assume I like <rainbow>rainbows</rainbow>\"",
-                        List.of("How <bold>bold</bold> of you", "to assume I like <rainbow>rainbows</rainbow>"))
+                new Message(
+                        "\"How <bold>bold</bold> of you\" \"to assume I like <rainbow>rainbows</rainbow>\"",
+                        List.of("How <bold>bold</bold> of you", "to assume I like <rainbow>rainbows</rainbow>")
+                )
         );
 
         for (Message message : messages) {
@@ -53,4 +55,5 @@ public class StringManTest {
     private record Message(String input, List<String> expected) {
 
     }
+
 }

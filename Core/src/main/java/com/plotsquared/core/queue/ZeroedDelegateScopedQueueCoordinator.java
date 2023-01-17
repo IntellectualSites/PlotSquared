@@ -41,9 +41,6 @@ public class ZeroedDelegateScopedQueueCoordinator extends DelegateQueueCoordinat
     private final int minX;
     private final int minZ;
 
-    private final int maxX;
-    private final int maxZ;
-
     private final int dx;
     private final int dz;
 
@@ -59,11 +56,8 @@ public class ZeroedDelegateScopedQueueCoordinator extends DelegateQueueCoordinat
         this.minX = min.getX();
         this.minZ = min.getZ();
 
-        this.maxX = max.getX();
-        this.maxZ = max.getZ();
-
-        this.dx = maxX - minX;
-        this.dz = maxZ - minZ;
+        this.dx = max.getX() - minX;
+        this.dz = max.getZ() - minZ;
     }
 
     @Override

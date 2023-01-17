@@ -173,7 +173,7 @@ public class QuadMap<T> {
 
     public QuadMap<T> newInstance(int newsize, int x, int z, int min) {
         try {
-            return new QuadMap<T>(newsize, x, z, min) {
+            return new QuadMap<>(newsize, x, z, min) {
                 @Override
                 public CuboidRegion getRegion(T value) {
                     return QuadMap.this.getRegion(value);

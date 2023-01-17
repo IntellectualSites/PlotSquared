@@ -133,8 +133,6 @@ public class PlotSquared {
     private final Map<String, CaptionMap> captionMaps = new HashMap<>();
     public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
     private CaptionLoader captionLoader;
-    // WorldEdit instance
-    private WorldEdit worldedit;
     private File configFile;
     private File worldsFile;
     private YamlConfiguration worldConfiguration;
@@ -223,11 +221,11 @@ public class PlotSquared {
                 }
             }
 
-            this.worldedit = WorldEdit.getInstance();
+            WorldEdit worldedit = WorldEdit.getInstance();
             WorldEdit.getInstance().getEventBus().register(new WEPlatformReadyListener());
 
             // Create Event utility class
-            this.eventDispatcher = new EventDispatcher(this.worldedit);
+            this.eventDispatcher = new EventDispatcher(worldedit);
             // Create plot listener
             this.plotListener = new PlotListener(this.eventDispatcher);
 
@@ -270,7 +268,11 @@ public class PlotSquared {
             captionMap = this.captionLoader.loadAll(this.platform.getDirectory().toPath().resolve("lang"));
         } else {
             String fileName = "messages_" + Settings.Enabled_Components.DEFAULT_LOCALE + ".json";
-            captionMap = this.captionLoader.loadOrCreateSingle(this.platform.getDirectory().toPath().resolve("lang").resolve(fileName));
+            captionMap = this.captionLoader.loadOrCreateSingle(this.platform
+                    .getDirectory()
+                    .toPath()
+                    .resolve("lang")
+                    .resolve(fileName));
         }
         this.captionMaps.put(TranslatableCaption.DEFAULT_NAMESPACE, captionMap);
         LOGGER.info(
@@ -1519,10 +1521,6 @@ public class PlotSquared {
 
     public @NonNull UUIDPipeline getBackgroundUUIDPipeline() {
         return this.backgroundUUIDPipeline;
-    }
-
-    public @NonNull WorldEdit getWorldEdit() {
-        return this.worldedit;
     }
 
     public @NonNull File getConfigFile() {
