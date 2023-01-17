@@ -22,19 +22,25 @@ import cloud.commandframework.CommandManager;
 import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.meta.SimpleCommandMeta;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.plotsquared.core.player.PlotPlayer;
 import io.leangen.geantyref.TypeToken;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.stream.Stream;
+
 public class PlotSquaredCommandManager {
 
+    private final Injector injector;
     private final CommandManager<PlotPlayer<?>> commandManager;
     private final AnnotationParser<PlotPlayer<?>> annotationParser;
 
     @Inject
     public PlotSquaredCommandManager(
+            final @NonNull Injector injector,
             final @NonNull CommandManager<PlotPlayer<?>> commandManager
     ) {
+        this.injector = injector;
         this.commandManager = commandManager;
         this.annotationParser = new AnnotationParser<PlotPlayer<?>>(
                 this.commandManager,
@@ -45,11 +51,20 @@ public class PlotSquaredCommandManager {
     }
 
     /**
-     * Scans the given {@link Class class} for commands, and registers them.
+     * Scans the given {@code instance} for commands, and registers them.
      *
-     * @param clazz the class to scan.
+     * @param instance the instance to scan
      */
-    public void scanClass(final @NonNull Class<?> clazz) {
-        this.annotationParser.parse(clazz);
+    public void scanClass(final @NonNull Object instance) {
+        this.annotationParser.parse(instance);
+    }
+
+    /**
+     * Initializes all the known commands.
+     */
+    public void initializeCommands() {
+        final Stream<Class<?>> commandClasses = Stream.of(
+        );
+        commandClasses.map(injector::getInstance).forEach(this::scanClass);
     }
 }
