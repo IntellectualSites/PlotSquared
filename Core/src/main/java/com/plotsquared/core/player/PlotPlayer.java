@@ -57,6 +57,7 @@ import com.sk89q.worldedit.world.item.ItemType;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.title.Title;
 import org.apache.logging.log4j.LogManager;
@@ -205,7 +206,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
             if (notify) {
                 sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", permission)
+                        TagResolver.resolver("node", Tag.inserting(Component.text(permission)))
                 );
             }
             return false;
