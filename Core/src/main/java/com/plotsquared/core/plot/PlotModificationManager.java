@@ -220,17 +220,6 @@ public final class PlotModificationManager {
         if (isDelete) {
             this.removeSign();
         }
-        PlotUnlinkEvent event = PlotSquared.get().getEventDispatcher()
-                .callUnlink(
-                        this.plot.getArea(),
-                        this.plot,
-                        true,
-                        !isDelete,
-                        isDelete ? PlotUnlinkEvent.REASON.DELETE : PlotUnlinkEvent.REASON.CLEAR
-                );
-        if (event.getEventResult() != Result.DENY && this.unlinkPlot(event.isCreateRoad(), event.isCreateSign())) {
-            PlotSquared.get().getEventDispatcher().callPostUnlink(plot, event.getReason());
-        }
         final PlotManager manager = this.plot.getArea().getPlotManager();
         Runnable run = new Runnable() {
             @Override
@@ -281,7 +270,21 @@ public final class PlotModificationManager {
                 manager.clearPlot(current, this, actor, null);
             }
         };
-        run.run();
+        PlotUnlinkEvent event = PlotSquared.get().getEventDispatcher()
+                .callUnlink(
+                        this.plot.getArea(),
+                        this.plot,
+                        true,
+                        !isDelete,
+                        isDelete ? PlotUnlinkEvent.REASON.DELETE : PlotUnlinkEvent.REASON.CLEAR
+                );
+        if (event.getEventResult() != Result.DENY) {
+            if (this.unlinkPlot(event.isCreateRoad(), event.isCreateSign(), run)) {
+                PlotSquared.get().getEventDispatcher().callPostUnlink(plot, event.getReason());
+            }
+        } else {
+            run.run();
+        }
         return true;
     }
 
@@ -321,7 +324,23 @@ public final class PlotModificationManager {
      * @return success/!cancelled
      */
     public boolean unlinkPlot(final boolean createRoad, final boolean createSign) {
+        return unlinkPlot(createRoad, createSign, null);
+    }
+
+    /**
+     * Unlink the plot and all connected plots.
+     *
+     * @param createRoad whether to recreate road
+     * @param createSign whether to recreate signs
+     * @param whenDone   Task to run when unlink is complete
+     * @return success/!cancelled
+     * @since TODO
+     */
+    public boolean unlinkPlot(final boolean createRoad, final boolean createSign, final Runnable whenDone) {
         if (!this.plot.isMerged()) {
+            if (whenDone != null) {
+                whenDone.run();
+            }
             return false;
         }
         final Set<Plot> plots = this.plot.getConnectedPlots();
@@ -366,14 +385,17 @@ public final class PlotModificationManager {
                     current.getPlotModificationManager().setSign(PlayerManager.resolveName(current.getOwnerAbs()).getComponent(
                             LocaleHolder.console()));
                 }
+                if (whenDone != null) {
+                    TaskManager.runTask(whenDone);
+                }
             }));
+        } else if (whenDone != null) {
+            queue.setCompleteTask(whenDone);
         }
         if (createRoad) {
             manager.finishPlotUnlink(ids, queue);
         }
-        if (queue != null) {
-            queue.enqueue();
-        }
+        queue.enqueue();
         return true;
     }
 
