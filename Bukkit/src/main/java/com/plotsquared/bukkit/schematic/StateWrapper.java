@@ -37,7 +37,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -51,15 +50,6 @@ public class StateWrapper {
 
     public org.bukkit.block.BlockState state = null;
     public CompoundTag tag = null;
-
-    /**
-     * @deprecated in favour of using WE methods for obtaining NBT, specifically by obtaining a
-     *         {@link com.sk89q.worldedit.world.block.BaseBlock} and then using {@link com.sk89q.worldedit.world.block.BaseBlock#getNbtData()}
-     */
-    @Deprecated(forRemoval = true, since = "6.9.0")
-    public StateWrapper(org.bukkit.block.BlockState state) {
-        this.state = state;
-    }
 
     public StateWrapper(CompoundTag tag) {
         this.tag = tag;
@@ -252,26 +242,6 @@ public class StateWrapper {
             }
         }
         return false;
-    }
-
-    /**
-     * Get a CompoundTag of the contents of a block's inventory (chest, furnace, etc.).
-     *
-     * @deprecated in favour of using WorldEdit methods for obtaining NBT, specifically by obtaining a
-     *         {@link com.sk89q.worldedit.world.block.BaseBlock} and then using {@link com.sk89q.worldedit.world.block.BaseBlock#getNbtData()}
-     */
-    @Deprecated(forRemoval = true, since = "6.9.0")
-    public CompoundTag getTag() {
-        if (this.tag != null) {
-            return this.tag;
-        }
-        if (this.state instanceof InventoryHolder inv) {
-            ItemStack[] contents = inv.getInventory().getContents();
-            Map<String, Tag> values = new HashMap<>();
-            values.put("Items", new ListTag(CompoundTag.class, serializeInventory(contents)));
-            return new CompoundTag(values);
-        }
-        return null;
     }
 
     public String getId() {

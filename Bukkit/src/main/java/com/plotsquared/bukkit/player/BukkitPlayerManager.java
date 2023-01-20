@@ -66,13 +66,12 @@ public class BukkitPlayerManager extends PlayerManager<BukkitPlayer, Player> {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public @NonNull BukkitPlayer createPlayer(final @NonNull UUID uuid) {
         final Player player = Bukkit.getPlayer(uuid);
         if (player == null || !player.isOnline()) {
             throw new NoSuchPlayerException(uuid);
         }
-        return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, player, this.permissionHandler);
+        return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, player, false, this.permissionHandler);
     }
 
     @Nullable

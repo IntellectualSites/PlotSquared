@@ -107,17 +107,6 @@ public final class PlotId {
     }
 
     /**
-     * Get a copy of the plot ID
-     *
-     * @return Plot ID copy
-     * @deprecated PlotId is immutable, copy is not required.
-     */
-    @Deprecated(forRemoval = true, since = "6.10.2")
-    public @NonNull PlotId copy() {
-        return this;
-    }
-
-    /**
      * Get the ID X component
      *
      * @return X component
