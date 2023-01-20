@@ -20,7 +20,18 @@ package com.plotsquared.core.util;
 
 public class FileBytes {
 
+    /**
+     * @deprecated {@link FileBytes} class will be replaced by a record in the next major update. This variable will be
+     *         accessible using {@code FileBytes#path()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public final String path;
+
+    /**
+     * @deprecated {@link FileBytes} class will be replaced by a record in the next major update. This variable will be
+     *         accessible using {@code FileBytes#data()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public final byte[] data;
 
     public FileBytes(String path, byte[] data) {

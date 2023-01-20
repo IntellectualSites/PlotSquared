@@ -74,30 +74,65 @@ public class ComponentPreset implements ConfigurationSerializable {
         );
     }
 
+    /**
+     * @deprecated {@link ComponentPreset} class will be replaced by a record in the next major update. This method will become
+     *         {@code ComponentPreset#component()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public ClassicPlotManagerComponent getComponent() {
         return this.component;
     }
 
+    /**
+     * @deprecated {@link ComponentPreset} class will be replaced by a record in the next major update. This method will become
+     *         {@code ComponentPreset#pattern()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public String getPattern() {
         return this.pattern;
     }
 
+    /**
+     * @deprecated {@link ComponentPreset} class will be replaced by a record in the next major update. This method will become
+     *         {@code ComponentPreset#cost()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public double getCost() {
         return this.cost;
     }
 
+    /**
+     * @deprecated {@link ComponentPreset} class will be replaced by a record in the next major update. This method will become
+     *         {@code ComponentPreset#permission()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public String getPermission() {
         return this.permission;
     }
 
+    /**
+     * @deprecated {@link ComponentPreset} class will be replaced by a record in the next major update. This method will become
+     *         {@code ComponentPreset#displayName()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public String getDisplayName() {
         return this.displayName;
     }
 
+    /**
+     * @deprecated {@link ComponentPreset} class will be replaced by a record in the next major update. This method will become
+     *         {@code ComponentPreset#description()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public List<String> getDescription() {
         return this.description;
     }
 
+    /**
+     * @deprecated {@link ComponentPreset} class will be replaced by a record in the next major update. This method will become
+     *         {@code ComponentPreset#icon()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public ItemType getIcon() {
         return this.icon;
     }

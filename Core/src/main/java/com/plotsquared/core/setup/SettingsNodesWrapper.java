@@ -18,6 +18,7 @@
  */
 package com.plotsquared.core.setup;
 
+import com.plotsquared.core.components.ComponentPreset;
 import com.plotsquared.core.configuration.ConfigurationNode;
 
 /**
@@ -43,10 +44,20 @@ public class SettingsNodesWrapper {
         return this.settingsNodes.length == 0 ? this.afterwards : new SettingsNodeStep(this.settingsNodes[0], 0, this);
     }
 
+    /**
+     * @deprecated {@link SettingsNodesWrapper} class will be replaced by a record in the next major update. This method will become
+     *         {@code SettingsNodesWrapper#settingsNodes()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public ConfigurationNode[] getSettingsNodes() {
         return this.settingsNodes;
     }
 
+    /**
+     * @deprecated {@link SettingsNodesWrapper} class will be replaced by a record in the next major update. This method will become
+     *         {@code SettingsNodesWrapper#afterwards()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public SetupStep getAfterwards() {
         return this.afterwards;
     }

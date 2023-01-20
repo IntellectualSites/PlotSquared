@@ -18,6 +18,7 @@
  */
 package com.plotsquared.core.plot.flag.types;
 
+import com.plotsquared.core.components.ComponentPreset;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
@@ -86,10 +87,20 @@ public abstract class TimedFlag<T, F extends PlotFlag<TimedFlag.Timed<T>, F>>
             this.value = value;
         }
 
+        /**
+         * @deprecated {@link Timed} class will be replaced by a record in the next major update. This method will become
+         *         {@code Timed#interval()}
+         */
+        @Deprecated(forRemoval = true, since = "TODO")
         public int getInterval() {
             return interval;
         }
 
+        /**
+         * @deprecated {@link Timed} class will be replaced by a record in the next major update. This method will become
+         *         {@code Timed#value()}
+         */
+        @Deprecated(forRemoval = true, since = "TODO")
         public T getValue() {
             return value;
         }

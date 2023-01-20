@@ -23,8 +23,25 @@ import com.plotsquared.core.util.StringMan;
 
 public class ChunkWrapper {
 
+    /**
+     * @deprecated {@link ChunkWrapper} class will be replaced by a record in the next major update. This variable will be
+     *         accessible using {@code ChunkWrapper#x()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public final int x;
+
+    /**
+     * @deprecated {@link ChunkWrapper} class will be replaced by a record in the next major update. This variable will be
+     *         accessible using {@code ChunkWrapper#z()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public final int z;
+
+    /**
+     * @deprecated {@link ChunkWrapper} class will be replaced by a record in the next major update. This variable will be
+     *         accessible using {@code ChunkWrapper#world()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public final String world;
 
     public ChunkWrapper(String world, int x, int z) {

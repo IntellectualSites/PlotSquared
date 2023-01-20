@@ -36,10 +36,20 @@ public class UUIDMapping {
         this.username = username;
     }
 
+    /**
+     * @deprecated {@link UUIDMapping} class will be replaced by a record in the next major update. This method will become
+     *         {@code UUIDMapping#username()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public @NonNull String getUsername() {
         return this.username;
     }
 
+    /**
+     * @deprecated {@link UUIDMapping} class will be replaced by a record in the next major update. This method will become
+     *         {@code UUIDMapping#uuid()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public @NonNull UUID getUuid() {
         return this.uuid;
     }

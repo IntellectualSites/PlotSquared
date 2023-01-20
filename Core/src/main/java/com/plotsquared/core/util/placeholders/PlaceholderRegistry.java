@@ -310,6 +310,11 @@ public final class PlaceholderRegistry {
             this.placeholder = placeholder;
         }
 
+        /**
+         * @deprecated {@link PlaceholderAddedEvent} class will be replaced by a record in the next major update. This method will become
+         *         {@code PlaceholderAddedEvent#placeholder()}
+         */
+        @Deprecated(forRemoval = true, since = "TODO")
         public Placeholder getPlaceholder() {
             return this.placeholder;
         }

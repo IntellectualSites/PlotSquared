@@ -50,7 +50,9 @@ public class Config {
      * @param root configuration class
      * @param <T>  value type
      * @return value
+     * @deprecated Unused internally. Scheduled for removal in next major release.
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     @SuppressWarnings("unchecked")
     public static <T> T get(String key, Class<?> root) {
         String[] split = key.split("\\.");
@@ -445,6 +447,10 @@ public class Config {
             return INSTANCES.values();
         }
 
+        /**
+         * @deprecated Unused internally. Scheduled for removal in next major release.
+         */
+        @Deprecated(forRemoval = true, since = "TODO")
         public Collection<String> getSections() {
             return INSTANCES.keySet();
         }

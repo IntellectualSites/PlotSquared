@@ -22,11 +22,45 @@ import com.plotsquared.core.plot.PlotId;
 
 public class PlotComment {
 
+    /**
+     * @deprecated {@link PlotComment} class will be replaced by a record in the next major update. This variable will be
+     *         accessible using {@code PlotComment#comment()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public final String comment;
+
+    /**
+     * @deprecated {@link PlotComment} class will be replaced by a record in the next major update. This variable will be
+     *         accessible using {@code PlotComment#inbox()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public final String inbox;
+
+    /**
+     * @deprecated {@link PlotComment} class will be replaced by a record in the next major update. This variable will be
+     *         accessible using {@code PlotComment#senderName()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public final String senderName;
+
+    /**
+     * @deprecated {@link PlotComment} class will be replaced by a record in the next major update. This variable will be
+     *         accessible using {@code PlotComment#id()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public final PlotId id;
+
+    /**
+     * @deprecated {@link PlotComment} class will be replaced by a record in the next major update. This variable will be
+     *         accessible using {@code PlotComment#world()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public final String world;
+    /**
+     * @deprecated {@link PlotComment} class will be replaced by a record in the next major update. This variable will be
+     *         accessible using {@code PlotComment#timestamp()}
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public final long timestamp;
 
     public PlotComment(
