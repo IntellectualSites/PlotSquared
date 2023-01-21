@@ -204,7 +204,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 }
                 Object value;
                 try {
-                    final boolean accessible = field.isAccessible();
+                    final boolean accessible = field.canAccess(field);
                     field.setAccessible(true);
                     value = field.get(this);
                     field.setAccessible(accessible);
