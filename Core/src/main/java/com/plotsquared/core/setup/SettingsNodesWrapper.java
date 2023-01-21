@@ -18,7 +18,6 @@
  */
 package com.plotsquared.core.setup;
 
-import com.plotsquared.core.components.ComponentPreset;
 import com.plotsquared.core.configuration.ConfigurationNode;
 
 /**

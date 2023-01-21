@@ -18,7 +18,6 @@
  */
 package com.plotsquared.core.plot.flag.types;
 
-import com.plotsquared.core.components.ComponentPreset;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
