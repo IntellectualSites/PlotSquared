@@ -120,13 +120,6 @@ public class ListCmd extends SubCommand {
         return args.toArray(new String[args.size()]);
     }
 
-    public void noArgs(PlotPlayer<?> player) {
-        player.sendMessage(
-                TranslatableCaption.of("commandconfig.subcommand_set_options_header"),
-                Templates.of("values", Arrays.toString(getArgumentList(player)))
-        );
-    }
-
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length < 1) {
