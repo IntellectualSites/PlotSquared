@@ -130,8 +130,7 @@ public class ListCmd extends SubCommand {
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length < 1) {
-            noArgs(player);
-            return false;
+            args = new String[]{"mine"};
         }
 
         final int page;
@@ -143,8 +142,7 @@ public class ListCmd extends SubCommand {
                 if (tempPage < 0) {
                     tempPage = 0;
                 }
-            } catch (NumberFormatException ignored) {
-            }
+            } catch (NumberFormatException ignored) {}
             page = tempPage;
         } else {
             page = 0;
@@ -155,13 +153,14 @@ public class ListCmd extends SubCommand {
         String arg = args[0].toLowerCase();
         final boolean[] sort = new boolean[]{true};
 
+        final String[] finalArgs1 = args;
         final Consumer<PlotQuery> plotConsumer = query -> {
             if (query == null) {
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.did_you_mean"),
                         Template.of(
                                 "value",
-                                new StringComparison<>(args[0], new String[]{"mine", "shared", "world", "all"}).getBestMatch()
+                                new StringComparison<>(finalArgs1[0], new String[]{"mine", "shared", "world", "all"}).getBestMatch()
                         )
                 );
                 return;
@@ -181,7 +180,7 @@ public class ListCmd extends SubCommand {
                 player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
                 return;
             }
-            displayPlots(player, plots, 12, page, args);
+            displayPlots(player, plots, 12, page, finalArgs1);
         };
 
         switch (arg) {
@@ -238,11 +237,8 @@ public class ListCmd extends SubCommand {
                     );
                     return false;
                 }
-                if (PlotSquared.platform().expireManager() == null) {
-                    plotConsumer.accept(PlotQuery.newQuery().noPlots());
-                } else {
-                    plotConsumer.accept(PlotQuery.newQuery().expiredPlots());
-                }
+                PlotSquared.platform().expireManager();
+                plotConsumer.accept(PlotQuery.newQuery().expiredPlots());
             }
             case "area" -> {
                 if (!player.hasPermission(Permission.PERMISSION_LIST_AREA)) {
@@ -367,19 +363,21 @@ public class ListCmd extends SubCommand {
                     plotConsumer.accept(PlotQuery.newQuery().inWorld(args[0]));
                     break;
                 }
+                final String[] finalArgs = args;
                 PlotSquared.get().getImpromptuUUIDPipeline().getSingle(args[0], (uuid, throwable) -> {
                     if (throwable instanceof TimeoutException) {
                         player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                     } else if (throwable != null) {
                         if (uuid == null) {
                             try {
-                                uuid = UUID.fromString(args[0]);
+                                uuid = UUID.fromString(finalArgs[0]);
                             } catch (Exception ignored) {
                             }
                         }
                     }
+
                     if (uuid == null) {
-                        player.sendMessage(TranslatableCaption.of("errors.invalid_player"), Templates.of("value", args[0]));
+                        player.sendMessage(TranslatableCaption.of("errors.invalid_player"), Templates.of("value", finalArgs[0]));
                     } else {
                         if (!player.hasPermission(Permission.PERMISSION_LIST_PLAYER)) {
                             player.sendMessage(
