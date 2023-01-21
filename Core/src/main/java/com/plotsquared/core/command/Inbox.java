@@ -30,7 +30,6 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.comment.CommentInbox;
 import com.plotsquared.core.plot.comment.CommentManager;
 import com.plotsquared.core.plot.comment.PlotComment;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal;
@@ -285,13 +284,13 @@ public class Inbox extends SubCommand {
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
             final List<String> completions = new LinkedList<>();
-            if (Permissions.hasPermission(player, Permission.PERMISSION_INBOX_READ_OWNER)) {
+            if (player.hasPermission(Permission.PERMISSION_INBOX_READ_OWNER)) {
                 completions.add("owner");
             }
-            if (Permissions.hasPermission(player, Permission.PERMISSION_INBOX_READ_PUBLIC)) {
+            if (player.hasPermission(Permission.PERMISSION_INBOX_READ_PUBLIC)) {
                 completions.add("public");
             }
-            if (Permissions.hasPermission(player, Permission.PERMISSION_INBOX_READ_REPORT)) {
+            if (player.hasPermission(Permission.PERMISSION_INBOX_READ_REPORT)) {
                 completions.add("report");
             }
             final List<Command> commands = completions.stream().filter(completion -> completion
@@ -299,7 +298,7 @@ public class Inbox extends SubCommand {
                             .startsWith(args[0].toLowerCase()))
                     .map(completion -> new Command(null, true, completion, "", RequiredType.PLAYER, CommandCategory.CHAT) {
                     }).collect(Collectors.toCollection(LinkedList::new));
-            if (Permissions.hasPermission(player, Permission.PERMISSION_INBOX) && args[0].length() > 0) {
+            if (player.hasPermission(Permission.PERMISSION_INBOX) && args[0].length() > 0) {
                 commands.addAll(TabCompletions.completePlayers(player, args[0], Collections.emptyList()));
             }
             return commands;

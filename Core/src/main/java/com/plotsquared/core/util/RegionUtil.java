@@ -19,7 +19,6 @@
 package com.plotsquared.core.util;
 
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;

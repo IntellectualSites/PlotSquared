@@ -28,7 +28,6 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
@@ -82,8 +81,7 @@ public class Save extends SubCommand {
             player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
             return false;
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions
-                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_SAVE)) {
+        if (!plot.isOwner(player.getUUID()) && !player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_SAVE)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }

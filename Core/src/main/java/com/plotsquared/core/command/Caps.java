@@ -29,7 +29,6 @@ import com.plotsquared.core.plot.flag.implementations.HostileCapFlag;
 import com.plotsquared.core.plot.flag.implementations.MiscCapFlag;
 import com.plotsquared.core.plot.flag.implementations.MobCapFlag;
 import com.plotsquared.core.plot.flag.implementations.VehicleCapFlag;
-import com.plotsquared.core.util.Permissions;
 import net.kyori.adventure.text.minimessage.Template;
 
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ANIMAL;
@@ -51,8 +50,7 @@ public class Caps extends SubCommand {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
         }
-        if (!plot.isAdded(player.getUUID()) && !Permissions
-                .hasPermission(player, Permission.PERMISSION_ADMIN_CAPS_OTHER)) {
+        if (!plot.isAdded(player.getUUID()) && !player.hasPermission(Permission.PERMISSION_ADMIN_CAPS_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
                     Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_CAPS_OTHER))

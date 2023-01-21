@@ -23,7 +23,6 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.minimessage.Template;
@@ -49,8 +48,7 @@ public class Swap extends SubCommand {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return CompletableFuture.completedFuture(false);
         }
-        if (!plot1.isOwner(player.getUUID()) && !Permissions
-                .hasPermission(player, Permission.PERMISSION_ADMIN)) {
+        if (!plot1.isOwner(player.getUUID()) && !player.hasPermission(Permission.PERMISSION_ADMIN)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return CompletableFuture.completedFuture(false);
         }

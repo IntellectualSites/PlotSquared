@@ -35,7 +35,6 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
@@ -127,9 +126,8 @@ public class Claim extends SubCommand {
                                 Template.of("reason", "non-existent")
                         );
                     }
-                    if (!Permissions.hasPermission(player, Permission.PERMISSION_CLAIM_SCHEMATIC
-                            .format(schematic)) && !Permissions.hasPermission(
-                            player,
+                    if (!player.hasPermission(Permission.PERMISSION_CLAIM_SCHEMATIC
+                            .format(schematic)) && !player.hasPermission(
                             "plots.admin.command.schematic"
                     ) && !force) {
                         player.sendMessage(
@@ -176,7 +174,7 @@ public class Claim extends SubCommand {
                 );
             }
         }
-        if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
+        if (!player.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
             int border = area.getBorder();
             if (border != Integer.MAX_VALUE && plot.getDistanceFromOrigin() > border && !force) {
                 player.sendMessage(TranslatableCaption.of("border.denied"));

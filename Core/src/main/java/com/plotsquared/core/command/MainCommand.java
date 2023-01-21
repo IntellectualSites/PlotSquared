@@ -32,7 +32,6 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.util.EconHandler;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
@@ -244,8 +243,8 @@ public class MainCommand extends Command {
             PlotArea area = player.getApplicablePlotArea();
             Plot newPlot = Plot.fromString(area, args[0]);
             if (newPlot != null && (player instanceof ConsolePlayer || newPlot.getArea()
-                    .equals(area) || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN)
-                    || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_AREA_SUDO))
+                    .equals(area) || player.hasPermission(Permission.PERMISSION_ADMIN)
+                    || player.hasPermission(Permission.PERMISSION_ADMIN_AREA_SUDO))
                     && !newPlot.isDenied(player.getUUID())) {
                 final Location newLoc;
                 if (newPlot.getArea() instanceof SinglePlotArea) {

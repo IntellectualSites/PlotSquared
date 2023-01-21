@@ -56,7 +56,6 @@ import com.plotsquared.core.plot.flag.implementations.TitlesFlag;
 import com.plotsquared.core.plot.flag.implementations.WeatherFlag;
 import com.plotsquared.core.plot.flag.types.TimedFlag;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
@@ -149,8 +148,7 @@ public class PlotListener {
     }
 
     public boolean plotEntry(final PlotPlayer<?> player, final Plot plot) {
-        if (plot.isDenied(player.getUUID()) && !Permissions
-                .hasPermission(player, "plots.admin.entry.denied")) {
+        if (plot.isDenied(player.getUUID()) && !player.hasPermission("plots.admin.entry.denied")) {
             player.sendMessage(
                     TranslatableCaption.of("deny.no_enter"),
                     Template.of("plot", plot.toString())
@@ -188,7 +186,7 @@ public class PlotListener {
             }
 
             if (plot.getFlag(NotifyEnterFlag.class)) {
-                if (!Permissions.hasPermission(player, "plots.flag.notify-enter.bypass")) {
+                if (!player.hasPermission("plots.flag.notify-enter.bypass")) {
                     for (UUID uuid : plot.getOwners()) {
                         final PlotPlayer<?> owner = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                         if (owner != null && !owner.getUUID().equals(player.getUUID()) && owner.canSee(player)) {
@@ -200,7 +198,7 @@ public class PlotListener {
             }
 
             final FlyFlag.FlyStatus flyStatus = plot.getFlag(FlyFlag.class);
-            if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_FLIGHT)) {
+            if (!player.hasPermission(Permission.PERMISSION_ADMIN_FLIGHT)) {
                 if (flyStatus != FlyFlag.FlyStatus.DEFAULT) {
                     boolean flight = player.getFlight();
                     GameMode gamemode = player.getGameMode();
@@ -216,7 +214,7 @@ public class PlotListener {
             final GameMode gameMode = plot.getFlag(GamemodeFlag.class);
             if (!gameMode.equals(GamemodeFlag.DEFAULT)) {
                 if (player.getGameMode() != gameMode) {
-                    if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
+                    if (!player.hasPermission("plots.gamemode.bypass")) {
                         player.setGameMode(gameMode);
                     } else {
                         player.sendMessage(
@@ -231,7 +229,7 @@ public class PlotListener {
             final GameMode guestGameMode = plot.getFlag(GuestGamemodeFlag.class);
             if (!guestGameMode.equals(GamemodeFlag.DEFAULT)) {
                 if (player.getGameMode() != guestGameMode && !plot.isAdded(player.getUUID())) {
-                    if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
+                    if (!player.hasPermission("plots.gamemode.bypass")) {
                         player.setGameMode(guestGameMode);
                     } else {
                         player.sendMessage(
@@ -392,8 +390,7 @@ public class PlotListener {
                 }
                 try (final MetaDataAccess<Boolean> kickAccess =
                              player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
-                    if (plot.getFlag(DenyExitFlag.class) && !Permissions
-                            .hasPermission(player, Permission.PERMISSION_ADMIN_EXIT_DENIED) &&
+                    if (plot.getFlag(DenyExitFlag.class) && !player.hasPermission(Permission.PERMISSION_ADMIN_EXIT_DENIED) &&
                             !kickAccess.get().orElse(false)) {
                         if (previous != null) {
                             lastPlot.set(previous);
@@ -404,7 +401,7 @@ public class PlotListener {
                 if (!plot.getFlag(GamemodeFlag.class).equals(GamemodeFlag.DEFAULT) || !plot
                         .getFlag(GuestGamemodeFlag.class).equals(GamemodeFlag.DEFAULT)) {
                     if (player.getGameMode() != pw.getGameMode()) {
-                        if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
+                        if (!player.hasPermission("plots.gamemode.bypass")) {
                             player.setGameMode(pw.getGameMode());
                         } else {
                             player.sendMessage(
@@ -426,7 +423,7 @@ public class PlotListener {
                 }
 
                 if (plot.getFlag(NotifyLeaveFlag.class)) {
-                    if (!Permissions.hasPermission(player, "plots.flag.notify-leave.bypass")) {
+                    if (!player.hasPermission("plots.flag.notify-leave.bypass")) {
                         for (UUID uuid : plot.getOwners()) {
                             final PlotPlayer<?> owner = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                             if ((owner != null) && !owner.getUUID().equals(player.getUUID()) && owner.canSee(player)) {

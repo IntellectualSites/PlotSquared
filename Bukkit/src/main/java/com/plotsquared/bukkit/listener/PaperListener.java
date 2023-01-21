@@ -43,7 +43,6 @@ import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlotFlagUtil;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Chunk;
@@ -335,8 +334,7 @@ public class PaperListener implements Listener {
         Plot plot = location.getOwnedPlot();
 
         if (plot == null) {
-            if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, ProjectilesFlag.class, true) && !Permissions.hasPermission(
-                    pp,
+            if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, ProjectilesFlag.class, true) && !pp.hasPermission(
                     Permission.PERMISSION_ADMIN_PROJECTILE_ROAD
             )) {
                 pp.sendMessage(
@@ -347,7 +345,7 @@ public class PaperListener implements Listener {
                 event.setCancelled(true);
             }
         } else if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
+            if (!pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
                         Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED))
@@ -357,7 +355,7 @@ public class PaperListener implements Listener {
             }
         } else if (!plot.isAdded(pp.getUUID())) {
             if (!plot.getFlag(ProjectilesFlag.class)) {
-                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
+                if (!pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
                             Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER))

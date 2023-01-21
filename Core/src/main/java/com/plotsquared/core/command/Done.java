@@ -34,7 +34,6 @@ import com.plotsquared.core.plot.expiration.PlotAnalysis;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal;
 import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -75,8 +74,7 @@ public class Done extends SubCommand {
             return true;
         }
         boolean force = event.getEventResult() == Result.FORCE;
-        if (!force && !plot.isOwner(player.getUUID()) && !Permissions
-                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DONE)) {
+        if (!force && !plot.isOwner(player.getUUID()) && !player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_DONE)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }

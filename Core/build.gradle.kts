@@ -65,12 +65,18 @@ tasks.processResources {
 
 tasks {
     withType<Javadoc> {
+        val isRelease = if (rootProject.version.toString().endsWith("-SNAPSHOT")) "TODO" else rootProject.version.toString()
         val opt = options as StandardJavadocDocletOptions
         opt.links("https://docs.enginehub.org/javadoc/com.sk89q.worldedit/worldedit-core/" + libs.worldeditCore.get().versionConstraint.toString())
         opt.links("https://jd.adventure.kyori.net/api/4.9.3/")
         opt.links("https://google.github.io/guice/api-docs/" + libs.guice.get().versionConstraint.toString() + "/javadoc/")
         opt.links("https://checkerframework.org/api/")
         opt.links("https://javadoc.io/doc/com.intellectualsites.informative-annotations/informative-annotations/latest/")
+        opt.isLinkSource = true
+        opt.bottom(File("$rootDir/javadocfooter.html").readText())
+        opt.isUse = true
         opt.encoding("UTF-8")
+        opt.keyWords()
+        opt.addStringOption("-since", isRelease)
     }
 }
