@@ -56,7 +56,6 @@ import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.EditSessionBuilder;
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.entity.Player;
@@ -229,14 +228,12 @@ public class Area extends SubCommand {
                 try (final ClipboardWriter clipboardWriter = BuiltInClipboardFormat.SPONGE_SCHEMATIC.getWriter(new FileOutputStream(
                         file))) {
                     final BlockArrayClipboard clipboard = new BlockArrayClipboard(selectedRegion);
-
-                    EditSessionBuilder editSessionBuilder = WorldEdit.getInstance().newEditSessionBuilder();
-                    editSessionBuilder.world(selectedRegion.getWorld());
-                    final EditSession editSession = editSessionBuilder.build();
-
+                    final EditSession editSession = WorldEdit
+                            .getInstance()
+                            .getEditSessionFactory()
+                            .getEditSession(selectedRegion.getWorld(), -1);
                     final ForwardExtentCopy forwardExtentCopy =
                             new ForwardExtentCopy(editSession, selectedRegion, clipboard, selectedRegion.getMinimumPoint());
-
                     forwardExtentCopy.setCopyingBiomes(true);
                     forwardExtentCopy.setCopyingEntities(true);
                     Operations.complete(forwardExtentCopy);
