@@ -120,25 +120,22 @@ public class ListCmd extends SubCommand {
         return args.toArray(new String[args.size()]);
     }
 
-    public void noArgs(PlotPlayer<?> player) {
-        player.sendMessage(
-                TranslatableCaption.of("commandconfig.subcommand_set_options_header"),
-                Templates.of("values", Arrays.toString(getArgumentList(player)))
-        );
-    }
-
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
+        // finalArgs is reset to "mine" in the event that a user runs the command /plot list with no args,
+        // otherwise the original arguments will be used.
+        String[] finalArgs;
         if (args.length < 1) {
-            noArgs(player);
-            return false;
+            finalArgs = new String[] {"mine"};
+        } else {
+            finalArgs = args;
         }
 
         final int page;
-        if (args.length > 1) {
+        if (finalArgs.length > 1) {
             int tempPage = -1;
             try {
-                tempPage = Integer.parseInt(args[args.length - 1]);
+                tempPage = Integer.parseInt(finalArgs[finalArgs.length - 1]);
                 --tempPage;
                 if (tempPage < 0) {
                     tempPage = 0;
@@ -152,7 +149,7 @@ public class ListCmd extends SubCommand {
 
         String world = player.getLocation().getWorldName();
         PlotArea area = player.getApplicablePlotArea();
-        String arg = args[0].toLowerCase();
+        String arg = finalArgs[0].toLowerCase();
         final boolean[] sort = new boolean[]{true};
 
         final Consumer<PlotQuery> plotConsumer = query -> {
@@ -161,7 +158,7 @@ public class ListCmd extends SubCommand {
                         TranslatableCaption.of("commandconfig.did_you_mean"),
                         Template.of(
                                 "value",
-                                new StringComparison<>(args[0], new String[]{"mine", "shared", "world", "all"}).getBestMatch()
+                                new StringComparison<>(finalArgs[0], new String[]{"mine", "shared", "world", "all"}).getBestMatch()
                         )
                 );
                 return;
@@ -181,7 +178,7 @@ public class ListCmd extends SubCommand {
                 player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
                 return;
             }
-            displayPlots(player, plots, 12, page, args);
+            displayPlots(player, plots, 12, page, finalArgs);
         };
 
         switch (arg) {
@@ -332,7 +329,7 @@ public class ListCmd extends SubCommand {
                     );
                     return false;
                 }
-                if (args.length < (page == -1 ? 2 : 3)) {
+                if (finalArgs.length < (page == -1 ? 2 : 3)) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
                             Templates.of("value", "/plot list fuzzy <search...> [#]")
@@ -340,16 +337,16 @@ public class ListCmd extends SubCommand {
                     return false;
                 }
                 String term;
-                if (MathMan.isInteger(args[args.length - 1])) {
-                    term = StringMan.join(Arrays.copyOfRange(args, 1, args.length - 1), " ");
+                if (MathMan.isInteger(finalArgs[finalArgs.length - 1])) {
+                    term = StringMan.join(Arrays.copyOfRange(finalArgs, 1, finalArgs.length - 1), " ");
                 } else {
-                    term = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
+                    term = StringMan.join(Arrays.copyOfRange(finalArgs, 1, finalArgs.length), " ");
                 }
                 sort[0] = false;
                 plotConsumer.accept(PlotQuery.newQuery().plotsBySearch(term));
             }
             default -> {
-                if (this.plotAreaManager.hasPlotArea(args[0])) {
+                if (this.plotAreaManager.hasPlotArea(finalArgs[0])) {
                     if (!player.hasPermission(Permission.PERMISSION_LIST_WORLD)) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
@@ -357,29 +354,29 @@ public class ListCmd extends SubCommand {
                         );
                         return false;
                     }
-                    if (!player.hasPermission("plots.list.world." + args[0])) {
+                    if (!player.hasPermission("plots.list.world." + finalArgs[0])) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Templates.of("node", "plots.list.world." + args[0])
+                                Templates.of("node", "plots.list.world." + finalArgs[0])
                         );
                         return false;
                     }
-                    plotConsumer.accept(PlotQuery.newQuery().inWorld(args[0]));
+                    plotConsumer.accept(PlotQuery.newQuery().inWorld(finalArgs[0]));
                     break;
                 }
-                PlotSquared.get().getImpromptuUUIDPipeline().getSingle(args[0], (uuid, throwable) -> {
+                PlotSquared.get().getImpromptuUUIDPipeline().getSingle(finalArgs[0], (uuid, throwable) -> {
                     if (throwable instanceof TimeoutException) {
                         player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                     } else if (throwable != null) {
                         if (uuid == null) {
                             try {
-                                uuid = UUID.fromString(args[0]);
+                                uuid = UUID.fromString(finalArgs[0]);
                             } catch (Exception ignored) {
                             }
                         }
                     }
                     if (uuid == null) {
-                        player.sendMessage(TranslatableCaption.of("errors.invalid_player"), Templates.of("value", args[0]));
+                        player.sendMessage(TranslatableCaption.of("errors.invalid_player"), Templates.of("value", finalArgs[0]));
                     } else {
                         if (!player.hasPermission(Permission.PERMISSION_LIST_PLAYER)) {
                             player.sendMessage(
