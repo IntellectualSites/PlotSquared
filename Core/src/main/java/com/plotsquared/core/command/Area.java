@@ -229,14 +229,11 @@ public class Area extends SubCommand {
                 try (final ClipboardWriter clipboardWriter = BuiltInClipboardFormat.SPONGE_SCHEMATIC.getWriter(new FileOutputStream(
                         file))) {
                     final BlockArrayClipboard clipboard = new BlockArrayClipboard(selectedRegion);
-
                     EditSessionBuilder editSessionBuilder = WorldEdit.getInstance().newEditSessionBuilder();
                     editSessionBuilder.world(selectedRegion.getWorld());
                     final EditSession editSession = editSessionBuilder.build();
-
                     final ForwardExtentCopy forwardExtentCopy =
                             new ForwardExtentCopy(editSession, selectedRegion, clipboard, selectedRegion.getMinimumPoint());
-
                     forwardExtentCopy.setCopyingBiomes(true);
                     forwardExtentCopy.setCopyingEntities(true);
                     Operations.complete(forwardExtentCopy);
