@@ -162,7 +162,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     }
 
     /**
-     * The entire method is deprecated, but kept for compatibility with <=1.16.2.
+     * The entire method is deprecated, but kept for compatibility with versions lower than or equal to 1.16.2.
      * The method will be removed in future versions, because WorldEdit and FastAsyncWorldEdit only support the latest point
      * release.
      */
