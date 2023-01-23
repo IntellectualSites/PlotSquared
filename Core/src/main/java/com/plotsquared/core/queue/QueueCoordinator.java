@@ -221,7 +221,7 @@ public abstract class QueueCoordinator {
      * @return success or not
      * @deprecated Biomes now take XYZ, see {@link #setBiome(int, int, int, BiomeType)}
      *         <br>
-     *         Scheduled for removal once we drop the support for versions not supporting 3D biomes.
+     *         Scheduled for removal once we drop the support for versions not supporting 3D biomes, 1.18 and earlier.
      */
     @Deprecated(forRemoval = true, since = "6.0.0")
     public abstract boolean setBiome(int x, int z, @NonNull BiomeType biome);

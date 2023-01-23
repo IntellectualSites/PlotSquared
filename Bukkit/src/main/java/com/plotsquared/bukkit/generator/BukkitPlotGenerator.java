@@ -161,6 +161,12 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         world.setWaterAnimalSpawnLimit(limit);
     }
 
+    /**
+     * The entire method is deprecated, but kept for compatibility with versions lower than or equal to 1.16.2.
+     * The method will be removed in future versions, because WorldEdit and FastAsyncWorldEdit only support the latest point
+     * release.
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     @Override
     public @NonNull ChunkData generateChunkData(
             @NonNull World world, @NonNull Random random, int x, int z,
