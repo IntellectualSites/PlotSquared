@@ -545,14 +545,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     }
 
     /**
-     * @deprecated in favour of {@link HybridPlotWorld#getSchematicRoot()}
-     */
-    @Deprecated(forRemoval = true, since = "6.9.0")
-    public File getRoot() {
-        return this.root;
-    }
-
-    /**
      * Get the root folder for this world's generation schematics. May be null if schematics not initialised via
      * {@link HybridPlotWorld#setupSchematics()}
      *

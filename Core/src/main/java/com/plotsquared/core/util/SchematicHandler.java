@@ -120,84 +120,6 @@ public abstract class SchematicHandler {
         this.subscriberFactory = subscriberFactory;
     }
 
-    @Deprecated(forRemoval = true, since = "6.0.0")
-    public static void upload(
-            @Nullable UUID uuid,
-            final @Nullable String file,
-            final @NonNull String extension,
-            final @Nullable RunnableVal<OutputStream> writeTask,
-            final @NonNull RunnableVal<URL> whenDone
-    ) {
-        if (writeTask == null) {
-            TaskManager.runTask(whenDone);
-            return;
-        }
-        final String filename;
-        final String website;
-        if (uuid == null) {
-            uuid = UUID.randomUUID();
-            website = Settings.Web.URL + "upload.php?" + uuid;
-            filename = "plot." + extension;
-        } else {
-            website = Settings.Web.URL + "save.php?" + uuid;
-            filename = file + '.' + extension;
-        }
-        final URL url;
-        try {
-            url = new URL(Settings.Web.URL + "?key=" + uuid + "&type=" + extension);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            whenDone.run();
-            return;
-        }
-        TaskManager.runTaskAsync(() -> {
-            try {
-                String boundary = Long.toHexString(System.currentTimeMillis());
-                URLConnection con = new URL(website).openConnection();
-                con.setDoOutput(true);
-                con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
-                try (OutputStream output = con.getOutputStream();
-                     PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, StandardCharsets.UTF_8), true)) {
-                    String CRLF = "\r\n";
-                    writer.append("--").append(boundary).append(CRLF);
-                    writer.append("Content-Disposition: form-data; name=\"param\"").append(CRLF);
-                    writer.append("Content-Type: text/plain; charset=").append(StandardCharsets.UTF_8.displayName()).append(CRLF);
-                    String param = "value";
-                    writer.append(CRLF).append(param).append(CRLF).flush();
-                    writer.append("--").append(boundary).append(CRLF);
-                    writer.append("Content-Disposition: form-data; name=\"schematicFile\"; filename=\"").append(filename)
-                            .append(String.valueOf('"')).append(CRLF);
-                    writer.append("Content-Type: ").append(URLConnection.guessContentTypeFromName(filename)).append(CRLF);
-                    writer.append("Content-Transfer-Encoding: binary").append(CRLF);
-                    writer.append(CRLF).flush();
-                    writeTask.value = new AbstractDelegateOutputStream(output) {
-                        @Override
-                        public void close() {
-                        } // Don't close
-                    };
-                    writeTask.run();
-                    output.flush();
-                    writer.append(CRLF).flush();
-                    writer.append("--").append(boundary).append("--").append(CRLF).flush();
-                }
-                String content;
-                try (Scanner scanner = new Scanner(con.getInputStream()).useDelimiter("\\A")) {
-                    content = scanner.next().trim();
-                }
-                if (!content.startsWith("<")) {
-                }
-                int responseCode = ((HttpURLConnection) con).getResponseCode();
-                if (responseCode == 200) {
-                    whenDone.value = url;
-                }
-                TaskManager.runTask(whenDone);
-            } catch (IOException e) {
-                e.printStackTrace();
-                TaskManager.runTask(whenDone);
-            }
-        });
-    }
-
     public boolean exportAll(
             Collection<Plot> collection,
             final File outputDir,
@@ -512,24 +434,6 @@ public abstract class SchematicHandler {
             e.printStackTrace();
         }
         return null;
-    }
-
-    @Deprecated(forRemoval = true, since = "6.0.0")
-    public void upload(final CompoundTag tag, UUID uuid, String file, RunnableVal<URL> whenDone) {
-        if (tag == null) {
-            TaskManager.runTask(whenDone);
-            return;
-        }
-        upload(uuid, file, "schem", new RunnableVal<>() {
-            @Override
-            public void run(OutputStream output) {
-                try (NBTOutputStream nos = new NBTOutputStream(new GZIPOutputStream(output, true))) {
-                    nos.writeNamedTag("Schematic", tag);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }, whenDone);
     }
 
     /**
