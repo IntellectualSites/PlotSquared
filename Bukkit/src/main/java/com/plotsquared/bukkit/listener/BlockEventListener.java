@@ -98,6 +98,7 @@ import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.CauldronLevelChangeEvent;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
+import org.bukkit.event.block.MoistureChangeEvent;
 import org.bukkit.event.block.SpongeAbsorbEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
@@ -698,6 +699,28 @@ public class BlockEventListener implements Listener {
         if (Tag.CORAL_BLOCKS.isTagged(blockType) || Tag.CORALS.isTagged(blockType) || Tag.WALL_CORALS.isTagged(blockType)) {
             if (!plot.getFlag(CoralDryFlag.class)) {
                 plot.debug("Coral could not dry because coral-dry = false");
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onMoistureChange(MoistureChangeEvent event) {
+        Block block = event.getBlock();
+        Location location = BukkitUtil.adapt(block.getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = area.getOwnedPlot(location);
+        if (plot == null) {
+            event.setCancelled(true);
+            return;
+        }
+        Material blockType = block.getType();
+        if (blockType == Material.FARMLAND) {
+            if (!plot.getFlag(SoilDryFlag.class)) {
+                plot.debug("Soil could not dry because soil-dry = false");
                 event.setCancelled(true);
             }
         }
