@@ -71,6 +71,7 @@ import com.plotsquared.core.configuration.Storage;
 import com.plotsquared.core.configuration.caption.ChatFormatter;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.events.RemoveRoadEntityEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
@@ -1003,7 +1004,14 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     }
 
     private void removeEntity(Entity entity) {
-        if (Objects.equals(eventDispatcher.callRemoveRoadEntity(BukkitAdapter.adapt(entity)).getEventResult(), Result.DENY))
+        RemoveRoadEntityEvent event = eventDispatcher.callRemoveRoadEntity(
+                BukkitAdapter.adapt(entity),
+                BukkitAdapter.adapt(entity.getType()),
+                entity.getUniqueId(),
+                entity.getEntityId()
+        );
+
+        if (Objects.equals(event.getEventResult(), Result.DENY))
             return;
 
         entity.remove();

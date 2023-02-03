@@ -19,15 +19,26 @@
 package com.plotsquared.core.events;
 
 import com.sk89q.worldedit.entity.Entity;
+import com.sk89q.worldedit.world.entity.EntityType;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.util.UUID;
 
 public abstract class EntityEvent {
 
     private final Entity entity;
+    private final EntityType entityType;
+
+    private final UUID entityUuid;
+    private final int entityId;
+
     private String name;
 
-    public EntityEvent(Entity entity) {
+    public EntityEvent(Entity entity, final EntityType entityType, final UUID entityUuid, final int entityId) {
         this.entity = entity;
+        this.entityType = entityType;
+        this.entityUuid = entityUuid;
+        this.entityId = entityId;
     }
 
     /**
@@ -37,6 +48,37 @@ public abstract class EntityEvent {
      */
     public Entity getEntity() {
         return this.entity;
+    }
+
+    /**
+     * Obtain the {@link EntityType} of the entity involved in the event
+     *
+     * @return {@link EntityType} of entity
+     */
+    public EntityType getEntityType() {
+        return this.entityType;
+    }
+
+    /**
+     * Obtain the UUID of the entity involved in the event
+     *
+     * @return UUID of entity
+     */
+    public UUID getEntityUuid() {
+        return this.entityUuid;
+    }
+
+    /**
+     * Obtain the entity id of the entity involved in the event
+     *
+     * @return id of entity
+     */
+    public int getEntityId() {
+        return this.entityId;
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     /**

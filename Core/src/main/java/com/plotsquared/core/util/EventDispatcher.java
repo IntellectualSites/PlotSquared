@@ -76,6 +76,7 @@ import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import com.sk89q.worldedit.world.entity.EntityType;
 import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -298,8 +299,8 @@ public class EventDispatcher {
         return event;
     }
 
-    public RemoveRoadEntityEvent callRemoveRoadEntity(Entity entity) {
-        RemoveRoadEntityEvent event = new RemoveRoadEntityEvent(entity);
+    public RemoveRoadEntityEvent callRemoveRoadEntity(Entity entity, EntityType entityType, UUID entityUuid, int entityId) {
+        RemoveRoadEntityEvent event = new RemoveRoadEntityEvent(entity, entityType, entityUuid, entityId);
         eventBus.post(event);
         return event;
     }
