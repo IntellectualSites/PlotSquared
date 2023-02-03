@@ -815,7 +815,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                             continue;
                                         }
                                         iterator.remove();
-                                        this.removeEntity(entity);
+                                        this.removeRoadEntity(entity);
                                     }
                                     continue;
                                 }
@@ -829,7 +829,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                         continue;
                                     }
                                     iterator.remove();
-                                    this.removeEntity(entity);
+                                    this.removeRoadEntity(entity);
                                 }
                             }
                             continue;
@@ -839,7 +839,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         case "DROPPED_ITEM":
                             if (Settings.Enabled_Components.KILL_ROAD_ITEMS
                                     && plotArea.getOwnedPlotAbs(BukkitUtil.adapt(entity.getLocation())) == null) {
-                                this.removeEntity(entity);
+                                this.removeRoadEntity(entity);
                             }
                             // dropped item
                             continue;
@@ -871,7 +871,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                                     continue;
                                                 }
                                                 iterator.remove();
-                                                this.removeEntity(entity);
+                                                this.removeRoadEntity(entity);
                                             }
                                         }
                                     }
@@ -977,7 +977,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                                     continue;
                                                 }
                                                 iterator.remove();
-                                                this.removeEntity(entity);
+                                                this.removeRoadEntity(entity);
                                             }
                                         }
                                     } else {
@@ -989,7 +989,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                                 continue;
                                             }
                                             iterator.remove();
-                                            this.removeEntity(entity);
+                                            this.removeRoadEntity(entity);
                                         }
                                     }
                                 }
@@ -1003,7 +1003,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         }), TaskTime.seconds(1L));
     }
 
-    private void removeEntity(Entity entity) {
+    private void removeRoadEntity(Entity entity) {
         RemoveRoadEntityEvent event = eventDispatcher.callRemoveRoadEntity(
                 BukkitAdapter.adapt(entity),
                 BukkitAdapter.adapt(entity.getType()),
