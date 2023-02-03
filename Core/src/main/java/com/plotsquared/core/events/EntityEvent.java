@@ -34,7 +34,7 @@ public abstract class EntityEvent {
 
     private String name;
 
-    public EntityEvent(Entity entity, final EntityType entityType, final UUID entityUuid, final int entityId) {
+    public EntityEvent(Entity entity, EntityType entityType, UUID entityUuid, int entityId) {
         this.entity = entity;
         this.entityType = entityType;
         this.entityUuid = entityUuid;
