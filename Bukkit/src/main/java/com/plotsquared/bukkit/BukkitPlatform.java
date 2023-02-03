@@ -71,6 +71,7 @@ import com.plotsquared.core.configuration.Storage;
 import com.plotsquared.core.configuration.caption.ChatFormatter;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.events.Result;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.generator.SingleWorldGenerator;
@@ -109,6 +110,7 @@ import com.plotsquared.core.uuid.CacheUUIDService;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.plotsquared.core.uuid.offline.OfflineModeUUIDService;
 import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import io.papermc.lib.PaperLib;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -148,6 +150,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
@@ -811,7 +814,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                             continue;
                                         }
                                         iterator.remove();
-                                        entity.remove();
+                                        this.removeEntity(entity);
                                     }
                                     continue;
                                 }
@@ -825,7 +828,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                         continue;
                                     }
                                     iterator.remove();
-                                    entity.remove();
+                                    this.removeEntity(entity);
                                 }
                             }
                             continue;
@@ -835,7 +838,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         case "DROPPED_ITEM":
                             if (Settings.Enabled_Components.KILL_ROAD_ITEMS
                                     && plotArea.getOwnedPlotAbs(BukkitUtil.adapt(entity.getLocation())) == null) {
-                                entity.remove();
+                                this.removeEntity(entity);
                             }
                             // dropped item
                             continue;
@@ -867,7 +870,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                                     continue;
                                                 }
                                                 iterator.remove();
-                                                entity.remove();
+                                                this.removeEntity(entity);
                                             }
                                         }
                                     }
@@ -973,7 +976,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                                     continue;
                                                 }
                                                 iterator.remove();
-                                                entity.remove();
+                                                this.removeEntity(entity);
                                             }
                                         }
                                     } else {
@@ -985,7 +988,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                                 continue;
                                             }
                                             iterator.remove();
-                                            entity.remove();
+                                            this.removeEntity(entity);
                                         }
                                     }
                                 }
@@ -997,6 +1000,13 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 e.printStackTrace();
             }
         }), TaskTime.seconds(1L));
+    }
+
+    private void removeEntity(Entity entity) {
+        if (Objects.equals(eventDispatcher.callRemoveRoadEntity(BukkitAdapter.adapt(entity)).getEventResult(), Result.DENY))
+            return;
+
+        entity.remove();
     }
 
     @Override
