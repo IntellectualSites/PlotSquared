@@ -151,7 +151,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
@@ -814,8 +813,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                         if (entity.hasMetadata("ps-tmp-teleport")) {
                                             continue;
                                         }
-                                        iterator.remove();
-                                        this.removeRoadEntity(entity);
+                                        this.removeRoadEntity(entity, iterator);
                                     }
                                     continue;
                                 }
@@ -828,8 +826,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                     if (entity.hasMetadata("ps-tmp-teleport")) {
                                         continue;
                                     }
-                                    iterator.remove();
-                                    this.removeRoadEntity(entity);
+                                    this.removeRoadEntity(entity, iterator);
                                 }
                             }
                             continue;
@@ -839,7 +836,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         case "DROPPED_ITEM":
                             if (Settings.Enabled_Components.KILL_ROAD_ITEMS
                                     && plotArea.getOwnedPlotAbs(BukkitUtil.adapt(entity.getLocation())) == null) {
-                                this.removeRoadEntity(entity);
+                                this.removeRoadEntity(entity, iterator);
                             }
                             // dropped item
                             continue;
@@ -870,8 +867,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                                 if (entity.hasMetadata("ps-tmp-teleport")) {
                                                     continue;
                                                 }
-                                                iterator.remove();
-                                                this.removeRoadEntity(entity);
+                                                this.removeRoadEntity(entity, iterator);
                                             }
                                         }
                                     }
@@ -976,8 +972,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                                 if (entity.hasMetadata("ps-tmp-teleport")) {
                                                     continue;
                                                 }
-                                                iterator.remove();
-                                                this.removeRoadEntity(entity);
+                                                this.removeRoadEntity(entity, iterator);
                                             }
                                         }
                                     } else {
@@ -988,8 +983,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                             if (entity.hasMetadata("ps-tmp-teleport")) {
                                                 continue;
                                             }
-                                            iterator.remove();
-                                            this.removeRoadEntity(entity);
+                                            this.removeRoadEntity(entity, iterator);
                                         }
                                     }
                                 }
@@ -1003,15 +997,12 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         }), TaskTime.seconds(1L));
     }
 
-    private void removeRoadEntity(Entity entity) {
-        RemoveRoadEntityEvent event = eventDispatcher.callRemoveRoadEntity(
-                BukkitAdapter.adapt(entity),
-                BukkitAdapter.adapt(entity.getType()),
-                entity.getUniqueId(),
-                entity.getEntityId()
-        );
+    private void removeRoadEntity(Entity entity, Iterator<Entity> entityIterator) {
+        RemoveRoadEntityEvent event = eventDispatcher.callRemoveRoadEntity(BukkitAdapter.adapt(entity));
 
-        if (Objects.equals(event.getEventResult(), Result.DENY))
+        entityIterator.remove();
+
+        if (event.getEventResult() == Result.DENY)
             return;
 
         entity.remove();
