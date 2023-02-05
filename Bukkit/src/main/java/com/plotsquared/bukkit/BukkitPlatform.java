@@ -1000,11 +1000,11 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     private void removeRoadEntity(Entity entity, Iterator<Entity> entityIterator) {
         RemoveRoadEntityEvent event = eventDispatcher.callRemoveRoadEntity(BukkitAdapter.adapt(entity));
 
-        entityIterator.remove();
-
-        if (event.getEventResult() == Result.DENY)
+        if (event.getEventResult() == Result.DENY) {
             return;
+        }
 
+        entityIterator.remove();
         entity.remove();
     }
 
