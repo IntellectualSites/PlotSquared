@@ -20,6 +20,9 @@ package com.plotsquared.core.events;
 
 import com.sk89q.worldedit.entity.Entity;
 
+/**
+ * @since TODO
+ */
 public class RemoveRoadEntityEvent extends EntityEvent implements CancellablePlotEvent {
 
     private Result eventResult;
@@ -28,6 +31,7 @@ public class RemoveRoadEntityEvent extends EntityEvent implements CancellablePlo
      * RemoveRoadEntityEvent: Called when an entity on road is removed.
      *
      * @param entity The entity to remove
+     * @since TODO
      */
     public RemoveRoadEntityEvent(Entity entity) {
         super(entity);

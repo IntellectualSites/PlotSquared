@@ -21,12 +21,18 @@ package com.plotsquared.core.events;
 import com.sk89q.worldedit.entity.Entity;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+/**
+ * @since TODO
+ */
 public abstract class EntityEvent {
 
     private final Entity entity;
 
     private String name;
 
+    /**
+     * @since TODO
+     */
     public EntityEvent(Entity entity) {
         this.entity = entity;
     }
@@ -35,6 +41,7 @@ public abstract class EntityEvent {
      * Obtain the entity involved in the event
      *
      * @return Entity
+     * @since TODO
      */
     public Entity getEntity() {
         return this.entity;
@@ -44,8 +51,9 @@ public abstract class EntityEvent {
      * Obtain the event's class name
      *
      * @return the event class name
+     * @since TODO
      */
-    public @NonNull String getEventName() {
+    @NonNull public String getEventName() {
         if (this.name == null) {
             this.name = this.getClass().getSimpleName();
         }
