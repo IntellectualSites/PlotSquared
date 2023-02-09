@@ -45,6 +45,7 @@ import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.PlotRateEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
+import com.plotsquared.core.events.RemoveRoadEntityEvent;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.events.post.PostPlayerAutoPlotEvent;
 import com.plotsquared.core.events.post.PostPlotChangeOwnerEvent;
@@ -71,6 +72,7 @@ import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
@@ -293,6 +295,12 @@ public class EventDispatcher {
     public PlotDoneEvent callDone(Plot plot) {
         PlotDoneEvent event = new PlotDoneEvent(plot);
         callEvent(event);
+        return event;
+    }
+
+    public RemoveRoadEntityEvent callRemoveRoadEntity(Entity entity) {
+        RemoveRoadEntityEvent event = new RemoveRoadEntityEvent(entity);
+        eventBus.post(event);
         return event;
     }
 
