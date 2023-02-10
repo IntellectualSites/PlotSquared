@@ -74,7 +74,7 @@ subprojects {
     }
 
     dependencies {
-        implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.23"))
+        implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.24"))
     }
 
     dependencies {
