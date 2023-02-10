@@ -18,7 +18,7 @@ plugins {
 }
 
 group = "com.plotsquared"
-version = "6.10.10-SNAPSHOT"
+version = "6.11.0"
 
 if (!File("$rootDir/.git").exists()) {
     logger.lifecycle("""
