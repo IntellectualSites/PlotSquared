@@ -190,7 +190,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
      * The method will be removed in future versions, because WorldEdit and FastAsyncWorldEdit only support the latest point
      * release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.0")
     @Override
     public void generateNoise(
             @NotNull final WorldInfo worldInfo,
