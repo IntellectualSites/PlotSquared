@@ -18,7 +18,7 @@ plugins {
 }
 
 group = "com.plotsquared"
-version = "6.10.10-SNAPSHOT"
+version = "6.11.1-SNAPSHOT"
 
 if (!File("$rootDir/.git").exists()) {
     logger.lifecycle("""
@@ -74,7 +74,7 @@ subprojects {
     }
 
     dependencies {
-        implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.23"))
+        implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.24"))
     }
 
     dependencies {
