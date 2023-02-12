@@ -133,6 +133,7 @@ public class Clear extends Command {
                                 Template.of("amount", String.valueOf(System.currentTimeMillis() - start)),
                                 Template.of("plot", plot.getId().toString())
                         );
+                        eventDispatcher.callPostClear(plot);
                     });
                 });
                 if (!result) {
