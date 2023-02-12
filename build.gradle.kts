@@ -20,6 +20,16 @@ plugins {
 group = "com.plotsquared"
 version = "7.0.0-SNAPSHOT"
 
+if (!File("$rootDir/.git").exists()) {
+    logger.lifecycle("""
+    **************************************************************************************
+    You need to fork and clone this repository! Don't download a .zip file.
+    If you need assistance, consult the GitHub docs: https://docs.github.com/get-started/quickstart/fork-a-repo
+    **************************************************************************************
+    """.trimIndent()
+    ).also { kotlin.system.exitProcess(1) }
+}
+
 subprojects {
     group = rootProject.group
     version = rootProject.version
@@ -64,7 +74,7 @@ subprojects {
     }
 
     dependencies {
-        implementation(platform("com.intellectualsites.bom:bom-newest:1.21"))
+        implementation(platform("com.intellectualsites.bom:bom-newest:1.23"))
     }
 
     dependencies {
@@ -90,6 +100,9 @@ subprojects {
         java {
             licenseHeaderFile(rootProject.file("HEADER.txt"))
             target("**/*.java")
+            endWithNewline()
+            trimTrailingWhitespace()
+            removeUnusedImports()
         }
     }
 

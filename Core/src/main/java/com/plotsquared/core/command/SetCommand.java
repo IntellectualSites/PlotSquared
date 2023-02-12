@@ -23,7 +23,6 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -40,7 +39,7 @@ public abstract class SetCommand extends SubCommand {
             return false;
         }
         if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))) {
+            if (!player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
                         TagResolver.resolver(
@@ -53,7 +52,7 @@ public abstract class SetCommand extends SubCommand {
             }
         }
         if (!plot.isOwner(player.getUUID())) {
-            if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))) {
+            if (!player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
                         TagResolver.resolver(

@@ -35,7 +35,6 @@ import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.InventoryUtil;
 import com.plotsquared.core.util.PatternUtil;
-import com.plotsquared.core.util.Permissions;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import net.kyori.adventure.text.Component;
@@ -53,7 +52,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -155,8 +153,7 @@ public class ComponentPresetManager {
         } else if (!plot.hasOwner()) {
             player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return null;
-        } else if (!plot.isOwner(player.getUUID()) && !plot.getTrusted().contains(player.getUUID()) && !Permissions.hasPermission(
-                player,
+        } else if (!plot.isOwner(player.getUUID()) && !plot.getTrusted().contains(player.getUUID()) && !player.hasPermission(
                 Permission.PERMISSION_ADMIN_COMPONENTS_OTHER
         )) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
@@ -168,8 +165,7 @@ public class ComponentPresetManager {
 
         final List<ComponentPreset> allowedPresets = new ArrayList<>(this.presets.size());
         for (final ComponentPreset componentPreset : this.presets) {
-            if (!componentPreset.getPermission().isEmpty() && !Permissions.hasPermission(
-                    player,
+            if (!componentPreset.getPermission().isEmpty() && !player.hasPermission(
                     componentPreset.getPermission()
             )) {
                 continue;

@@ -16,42 +16,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.util.net;
+package com.plotsquared.core.events;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import com.sk89q.worldedit.entity.Entity;
 
-public class AbstractDelegateOutputStream extends OutputStream {
+/**
+ * @since TODO
+ */
+public class RemoveRoadEntityEvent extends EntityEvent implements CancellablePlotEvent {
 
-    private final OutputStream parent;
+    private Result eventResult;
 
-    public AbstractDelegateOutputStream(OutputStream os) {
-        this.parent = os;
+    /**
+     * RemoveRoadEntityEvent: Called when an entity on road is removed.
+     *
+     * @param entity The entity to remove
+     * @since TODO
+     */
+    public RemoveRoadEntityEvent(Entity entity) {
+        super(entity);
     }
 
     @Override
-    public void write(int b) throws IOException {
-        parent.write(b);
+    public Result getEventResult() {
+        return this.eventResult;
     }
 
     @Override
-    public void write(byte[] b) throws IOException {
-        parent.write(b);
-    }
-
-    @Override
-    public void write(byte[] b, int off, int len) throws IOException {
-        parent.write(b, off, len);
-    }
-
-    @Override
-    public void flush() throws IOException {
-        parent.flush();
-    }
-
-    @Override
-    public void close() throws IOException {
-        parent.close();
+    public void setEventResult(Result eventResult) {
+        this.eventResult = eventResult;
     }
 
 }

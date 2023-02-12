@@ -30,7 +30,6 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.UntrustedVisitFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MathMan;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
@@ -111,7 +110,7 @@ public class Visit extends Command {
 
         final Plot plot = plots.get(page - 1);
         if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_UNOWNED)) {
+            if (!player.hasPermission(Permission.PERMISSION_VISIT_UNOWNED)) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
                         TagResolver.resolver("node", Tag.inserting(Component.text("plots.visit.unowned")))
@@ -119,8 +118,7 @@ public class Visit extends Command {
                 return;
             }
         } else if (plot.isOwner(player.getUUID())) {
-            if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_OWNED) && !Permissions
-                    .hasPermission(player, Permission.PERMISSION_HOME)) {
+            if (!player.hasPermission(Permission.PERMISSION_VISIT_OWNED) && !player.hasPermission(Permission.PERMISSION_HOME)) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
                         TagResolver.resolver("node", Tag.inserting(Component.text("plots.visit.owned")))
@@ -128,7 +126,7 @@ public class Visit extends Command {
                 return;
             }
         } else if (plot.isAdded(player.getUUID())) {
-            if (!Permissions.hasPermission(player, Permission.PERMISSION_SHARED)) {
+            if (!player.hasPermission(Permission.PERMISSION_SHARED)) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
                         TagResolver.resolver("node", Tag.inserting(Component.text("plots.visit.shared")))
@@ -138,8 +136,8 @@ public class Visit extends Command {
         } else {
             // allow visit, if UntrustedVisit flag is set, or if the player has either the plot.visit.other or
             // plot.admin.visit.untrusted permission
-            if (!plot.getFlag(UntrustedVisitFlag.class) && !Permissions.hasPermission(player, Permission.PERMISSION_VISIT_OTHER)
-                    && !Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
+            if (!plot.getFlag(UntrustedVisitFlag.class) && !player.hasPermission(Permission.PERMISSION_VISIT_OTHER)
+                    && !player.hasPermission(Permission.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
                         TagResolver.resolver("node", Tag.inserting(Component.text("plots.visit.other")))
@@ -147,7 +145,7 @@ public class Visit extends Command {
                 return;
             }
             if (plot.isDenied(player.getUUID())) {
-                if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_DENIED)) {
+                if (!player.hasPermission(Permission.PERMISSION_VISIT_DENIED)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
                             TagResolver.resolver(

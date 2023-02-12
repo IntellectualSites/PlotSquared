@@ -87,4 +87,9 @@ public class BukkitOfflinePlayer implements OfflinePlotPlayer {
         );
     }
 
+    @Override
+    public boolean hasPermission(@NonNull final String permission, final boolean notify) {
+        return hasPermission(permission);
+    }
+
 }

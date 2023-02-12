@@ -45,6 +45,7 @@ import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.PlotRateEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
+import com.plotsquared.core.events.RemoveRoadEntityEvent;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.events.post.PostPlayerAutoPlotEvent;
 import com.plotsquared.core.events.post.PostPlotChangeOwnerEvent;
@@ -71,6 +72,7 @@ import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
@@ -298,6 +300,12 @@ public class EventDispatcher {
         return event;
     }
 
+    public RemoveRoadEntityEvent callRemoveRoadEntity(Entity entity) {
+        RemoveRoadEntityEvent event = new RemoveRoadEntityEvent(entity);
+        eventBus.post(event);
+        return event;
+    }
+
     public void doJoinTask(final PlotPlayer<?> player) {
         if (player == null) {
             return; //possible future warning message to figure out where we are retrieving null
@@ -334,8 +342,7 @@ public class EventDispatcher {
     ) {
         PlotArea area = location.getPlotArea();
         assert area != null;
-        if (!area.buildRangeContainsY(location.getY()) && !Permissions
-                .hasPermission(player, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
+        if (!area.buildRangeContainsY(location.getY()) && !player.hasPermission(Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
             player.sendMessage(
                     TranslatableCaption.of("height.height_limit"),
                     TagResolver.builder()
@@ -364,12 +371,12 @@ public class EventDispatcher {
                             return true;
                         }
                     }
-                    return Permissions.hasPermission(player,
+                    return player.hasPermission(
                             Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms
                     );
                 }
                 if (!plot.hasOwner()) {
-                    return Permissions.hasPermission(player,
+                    return player.hasPermission(
                             Permission.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms
                     );
                 }
@@ -380,7 +387,7 @@ public class EventDispatcher {
                         return true;
                     }
                 }
-                if (Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString(), false)) {
+                if (player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString(), false)) {
                     return true;
                 }
                 if (notifyPerms) {
@@ -399,12 +406,12 @@ public class EventDispatcher {
                             return true;
                         }
                     }
-                    return Permissions.hasPermission(player,
+                    return player.hasPermission(
                             Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), false
                     );
                 }
                 if (!plot.hasOwner()) {
-                    return Permissions.hasPermission(player,
+                    return player.hasPermission(
                             Permission.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), false
                     );
                 }
@@ -418,19 +425,19 @@ public class EventDispatcher {
                         return true;
                     }
                 }
-                return Permissions
-                        .hasPermission(player, Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
-                                false
-                        );
+                return player.hasPermission(
+                        Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
+                        false
+                );
             }
             case SPAWN_MOB: {
                 if (plot == null) {
-                    return Permissions.hasPermission(player,
+                    return player.hasPermission(
                             Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms
                     );
                 }
                 if (!plot.hasOwner()) {
-                    return Permissions.hasPermission(player,
+                    return player.hasPermission(
                             Permission.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms
                     );
                 }
@@ -444,10 +451,10 @@ public class EventDispatcher {
                         return true;
                     }
                 }
-                if (Permissions
-                        .hasPermission(player, Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
-                                false
-                        )) {
+                if (player.hasPermission(
+                        Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
+                        false
+                )) {
                     return true;
                 }
                 if (notifyPerms) {
@@ -467,12 +474,12 @@ public class EventDispatcher {
             }
             case PLACE_MISC: {
                 if (plot == null) {
-                    return Permissions.hasPermission(player,
+                    return player.hasPermission(
                             Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms
                     );
                 }
                 if (!plot.hasOwner()) {
-                    return Permissions.hasPermission(player,
+                    return player.hasPermission(
                             Permission.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms
                     );
                 }
@@ -486,10 +493,10 @@ public class EventDispatcher {
                         return true;
                     }
                 }
-                if (Permissions
-                        .hasPermission(player, Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
-                                false
-                        )) {
+                if (player.hasPermission(
+                        Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
+                        false
+                )) {
                     return true;
                 }
                 if (notifyPerms) {
@@ -509,12 +516,12 @@ public class EventDispatcher {
             }
             case PLACE_VEHICLE:
                 if (plot == null) {
-                    return Permissions.hasPermission(player,
+                    return player.hasPermission(
                             Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms
                     );
                 }
                 if (!plot.hasOwner()) {
-                    return Permissions.hasPermission(player,
+                    return player.hasPermission(
                             Permission.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms
                     );
                 }

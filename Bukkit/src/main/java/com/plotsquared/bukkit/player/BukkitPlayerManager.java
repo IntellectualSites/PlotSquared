@@ -70,7 +70,7 @@ public class BukkitPlayerManager extends PlayerManager<BukkitPlayer, Player> {
         if (player == null || !player.isOnline()) {
             throw new NoSuchPlayerException(uuid);
         }
-        return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, player, this.permissionHandler);
+        return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, player, false, this.permissionHandler);
     }
 
     @Nullable

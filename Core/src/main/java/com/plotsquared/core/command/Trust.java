@@ -26,7 +26,6 @@ import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal2;
@@ -70,8 +69,7 @@ public class Trust extends Command {
         }
         checkTrue(currentPlot.hasOwner(), TranslatableCaption.of("info.plot_unowned"));
         checkTrue(
-                currentPlot.isOwner(player.getUUID()) || Permissions
-                        .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST),
+                currentPlot.isOwner(player.getUUID()) || player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_TRUST),
                 TranslatableCaption.of("permission.no_plot_perms")
         );
 
@@ -102,8 +100,7 @@ public class Trust extends Command {
                 while (iterator.hasNext()) {
                     UUID uuid = iterator.next();
                     if (uuid == DBFunc.EVERYONE && !(
-                            Permissions.hasPermission(player, Permission.PERMISSION_TRUST_EVERYONE) || Permissions
-                                    .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST))) {
+                            player.hasPermission(Permission.PERMISSION_TRUST_EVERYONE) || player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_TRUST))) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
                                 TagResolver.resolver(
@@ -140,7 +137,7 @@ public class Trust extends Command {
                 }
                 checkTrue(!uuids.isEmpty(), null);
                 int localTrustSize = currentPlot.getTrusted().size();
-                int maxTrustSize = Permissions.hasPermissionRange(player, Permission.PERMISSION_TRUST, Settings.Limit.MAX_PLOTS);
+                int maxTrustSize = player.hasPermissionRange(Permission.PERMISSION_TRUST, Settings.Limit.MAX_PLOTS);
                 if (localTrustSize >= maxTrustSize) {
                     player.sendMessage(
                             TranslatableCaption.of("members.plot_max_members_trusted"),

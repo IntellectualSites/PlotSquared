@@ -20,7 +20,7 @@ cloud = "1.8.0"
 # Gradle plugins
 shadow = "7.1.2"
 grgit = "4.1.1"
-spotless = "6.12.1"
+spotless = "6.14.1"
 nexus = "1.1.0"
 
 [libraries]

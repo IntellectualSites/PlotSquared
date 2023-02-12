@@ -29,7 +29,6 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MathMan;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
@@ -108,8 +107,7 @@ public class HomeCommand extends Command {
         // /plot home <[area;]x;y>
         // /plot home <area> <x;y>
         // /plot home <area> <page>
-        if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_OWNED) && !Permissions
-                .hasPermission(player, Permission.PERMISSION_HOME)) {
+        if (!player.hasPermission(Permission.PERMISSION_VISIT_OWNED) && !player.hasPermission(Permission.PERMISSION_HOME)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
                     TagResolver.resolver("node", Tag.inserting(Component.text(Permission.PERMISSION_VISIT_OWNED.toString())))

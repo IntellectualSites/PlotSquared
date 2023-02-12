@@ -36,7 +36,6 @@ import com.plotsquared.bukkit.listener.ChunkListener;
 import com.plotsquared.bukkit.listener.EntityEventListener;
 import com.plotsquared.bukkit.listener.EntitySpawnListener;
 import com.plotsquared.bukkit.listener.PaperListener;
-import com.plotsquared.bukkit.listener.PaperListener113;
 import com.plotsquared.bukkit.listener.PlayerEventListener;
 import com.plotsquared.bukkit.listener.ProjectileEventListener;
 import com.plotsquared.bukkit.listener.ServerListener;
@@ -73,6 +72,8 @@ import com.plotsquared.core.configuration.Storage;
 import com.plotsquared.core.configuration.caption.ChatFormatter;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.events.RemoveRoadEntityEvent;
+import com.plotsquared.core.events.Result;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.generator.SingleWorldGenerator;
@@ -111,6 +112,7 @@ import com.plotsquared.core.uuid.CacheUUIDService;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.plotsquared.core.uuid.offline.OfflineModeUUIDService;
 import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import io.papermc.lib.PaperLib;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -364,11 +366,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             getServer().getPluginManager().registerEvents(injector().getInstance(ServerListener.class), this);
             getServer().getPluginManager().registerEvents(injector().getInstance(EntitySpawnListener.class), this);
             if (PaperLib.isPaper() && Settings.Paper_Components.PAPER_LISTENERS) {
-                if (serverVersion()[1] == 13) {
-                    getServer().getPluginManager().registerEvents(injector().getInstance(PaperListener113.class), this);
-                } else {
                     getServer().getPluginManager().registerEvents(injector().getInstance(PaperListener.class), this);
-                }
             } else {
                 getServer().getPluginManager().registerEvents(injector().getInstance(SpigotListener.class), this);
             }
@@ -823,8 +821,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                         if (entity.hasMetadata("ps-tmp-teleport")) {
                                             continue;
                                         }
-                                        iterator.remove();
-                                        entity.remove();
+                                        this.removeRoadEntity(entity, iterator);
                                     }
                                     continue;
                                 }
@@ -837,8 +834,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                     if (entity.hasMetadata("ps-tmp-teleport")) {
                                         continue;
                                     }
-                                    iterator.remove();
-                                    entity.remove();
+                                    this.removeRoadEntity(entity, iterator);
                                 }
                             }
                             continue;
@@ -848,7 +844,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         case "DROPPED_ITEM":
                             if (Settings.Enabled_Components.KILL_ROAD_ITEMS
                                     && plotArea.getOwnedPlotAbs(BukkitUtil.adapt(entity.getLocation())) == null) {
-                                entity.remove();
+                                this.removeRoadEntity(entity, iterator);
                             }
                             // dropped item
                             continue;
@@ -879,8 +875,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                                 if (entity.hasMetadata("ps-tmp-teleport")) {
                                                     continue;
                                                 }
-                                                iterator.remove();
-                                                entity.remove();
+                                                this.removeRoadEntity(entity, iterator);
                                             }
                                         }
                                     }
@@ -985,8 +980,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                                 if (entity.hasMetadata("ps-tmp-teleport")) {
                                                     continue;
                                                 }
-                                                iterator.remove();
-                                                entity.remove();
+                                                this.removeRoadEntity(entity, iterator);
                                             }
                                         }
                                     } else {
@@ -997,8 +991,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                             if (entity.hasMetadata("ps-tmp-teleport")) {
                                                 continue;
                                             }
-                                            iterator.remove();
-                                            entity.remove();
+                                            this.removeRoadEntity(entity, iterator);
                                         }
                                     }
                                 }
@@ -1010,6 +1003,17 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 e.printStackTrace();
             }
         }), TaskTime.seconds(1L));
+    }
+
+    private void removeRoadEntity(Entity entity, Iterator<Entity> entityIterator) {
+        RemoveRoadEntityEvent event = eventDispatcher.callRemoveRoadEntity(BukkitAdapter.adapt(entity));
+
+        if (event.getEventResult() == Result.DENY) {
+            return;
+        }
+
+        entityIterator.remove();
+        entity.remove();
     }
 
     @Override

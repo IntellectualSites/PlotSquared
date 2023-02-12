@@ -39,7 +39,6 @@ import com.plotsquared.core.plot.flag.types.IntegerFlag;
 import com.plotsquared.core.plot.flag.types.ListFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringComparison;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.helpmenu.HelpMenu;
@@ -132,7 +131,7 @@ public final class FlagCommand extends Command {
                             key.toLowerCase(),
                             entry.toString().toLowerCase()
                     );
-                    final boolean result = Permissions.hasPermission(player, permission);
+                    final boolean result = player.hasPermission(permission);
                     if (!result) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
@@ -159,9 +158,9 @@ public final class FlagCommand extends Command {
         boolean result;
         String basePerm = Permission.PERMISSION_SET_FLAG_KEY.format(key.toLowerCase());
         if (flag.isValuedPermission()) {
-            result = Permissions.hasKeyedPermission(player, basePerm, value);
+            result = player.hasKeyedPermission(basePerm, value);
         } else {
-            result = Permissions.hasPermission(player, basePerm);
+            result = player.hasPermission(basePerm);
             perm = basePerm;
         }
         if (!result) {
@@ -189,8 +188,7 @@ public final class FlagCommand extends Command {
             player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
             return false;
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions
-                .hasPermission(player, Permission.PERMISSION_SET_FLAG_OTHER)) {
+        if (!plot.isOwner(player.getUUID()) && !player.hasPermission(Permission.PERMISSION_SET_FLAG_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
                     TagResolver.resolver("node", Tag.inserting(Permission.PERMISSION_SET_FLAG_OTHER))
@@ -497,7 +495,7 @@ public final class FlagCommand extends Command {
         }
         boolean force = event.getEventResult() == Result.FORCE;
         flag = event.getFlag();
-        if (!force && !Permissions.hasPermission(player, Permission.PERMISSION_SET_FLAG_KEY.format(args[0].toLowerCase()))) {
+        if (!force && !player.hasPermission(Permission.PERMISSION_SET_FLAG_KEY.format(args[0].toLowerCase()))) {
             if (args.length != 2) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),

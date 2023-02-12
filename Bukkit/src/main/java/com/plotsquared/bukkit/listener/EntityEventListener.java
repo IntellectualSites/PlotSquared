@@ -37,7 +37,6 @@ import com.plotsquared.core.plot.flag.implementations.ExplosionFlag;
 import com.plotsquared.core.plot.flag.implementations.InvincibleFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlotFlagUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
@@ -371,14 +370,13 @@ public class EntityEventListener implements Listener {
             if (shooter instanceof Player) {
                 PlotPlayer<?> pp = BukkitUtil.adapt((Player) shooter);
                 if (plot == null) {
-                    if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
+                    if (!pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
                         entity.remove();
                         event.setCancelled(true);
                     }
                     return;
                 }
-                if (plot.isAdded(pp.getUUID()) || Permissions
-                        .hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
+                if (plot.isAdded(pp.getUUID()) || pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
                     return;
                 }
                 entity.remove();

@@ -231,6 +231,10 @@ public abstract class WorldUtil {
      */
     public abstract void refreshChunk(int x, int z, String world);
 
+    /**
+     * The legacy web interface is deprecated for removal in favor of Arkitektonika.
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public void upload(
             final @NonNull Plot plot,
             final @Nullable UUID uuid,

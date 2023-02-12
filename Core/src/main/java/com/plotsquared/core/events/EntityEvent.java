@@ -16,42 +16,48 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.util.net;
+package com.plotsquared.core.events;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import com.sk89q.worldedit.entity.Entity;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class AbstractDelegateOutputStream extends OutputStream {
+/**
+ * @since TODO
+ */
+public abstract class EntityEvent {
 
-    private final OutputStream parent;
+    private final Entity entity;
 
-    public AbstractDelegateOutputStream(OutputStream os) {
-        this.parent = os;
+    private String name;
+
+    /**
+     * @since TODO
+     */
+    public EntityEvent(Entity entity) {
+        this.entity = entity;
     }
 
-    @Override
-    public void write(int b) throws IOException {
-        parent.write(b);
+    /**
+     * Obtain the entity involved in the event
+     *
+     * @return Entity
+     * @since TODO
+     */
+    public Entity getEntity() {
+        return this.entity;
     }
 
-    @Override
-    public void write(byte[] b) throws IOException {
-        parent.write(b);
-    }
-
-    @Override
-    public void write(byte[] b, int off, int len) throws IOException {
-        parent.write(b, off, len);
-    }
-
-    @Override
-    public void flush() throws IOException {
-        parent.flush();
-    }
-
-    @Override
-    public void close() throws IOException {
-        parent.close();
+    /**
+     * Obtain the event's class name
+     *
+     * @return the event class name
+     * @since TODO
+     */
+    @NonNull public String getEventName() {
+        if (this.name == null) {
+            this.name = this.getClass().getSimpleName();
+        }
+        return this.name;
     }
 
 }
