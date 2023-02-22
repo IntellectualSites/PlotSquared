@@ -22,7 +22,7 @@ http4j = "1.3"
 shadow = "7.1.2"
 grgit = "4.1.1"
 spotless = "6.15.0"
-nexus = "1.1.0"
+nexus = "1.2.0"
 
 [libraries]
 # Platform expectations
