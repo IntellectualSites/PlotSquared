@@ -13,7 +13,7 @@ mvdwapi = "3.1.1"
 # Third party
 prtree = "2.0.0"
 aopalliance = "1.0"
-cloud-services = "1.8.0"
+cloud-services = "1.8.1"
 arkitektonika = "2.1.1"
 squirrelid = "0.3.1"
 http4j = "1.3"
