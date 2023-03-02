@@ -11,7 +11,7 @@ essentialsx = "2.19.7"
 mvdwapi = "3.1.1"
 
 # Third party
-prtree = "2.0.0"
+prtree = "2.0.1"
 aopalliance = "1.0"
 cloud-services = "1.8.2"
 arkitektonika = "2.1.1"
