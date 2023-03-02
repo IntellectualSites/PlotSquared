@@ -1,10 +1,8 @@
 name: build
-
 on:
   push:
     branches:
       - v7
-
 jobs:
   build:
     if: github.repository_owner == 'IntellectualSites'
@@ -13,7 +11,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
       - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v1
+        uses: gradle/wrapper-validation-action@55e685c48d84285a5b0418cd094606e199cca3b6 # v1
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
@@ -44,9 +42,14 @@ jobs:
           ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
           ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
       - name: Publish core javadoc
+<<<<<<< HEAD
        # if: ${{ runner.os == 'Linux' && env.STATUS == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/v7'}}
         if: ${{ runner.os == 'Linux' && env.STATUS == 'snapshot' && github.event_name == 'push' && github.ref == 'refs/heads/v7'}}
         uses: cpina/github-action-push-to-another-repository@main
+=======
+        if: ${{ runner.os == 'Linux' && env.STATUS == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/v6'}}
+        uses: cpina/github-action-push-to-another-repository@0a14457bb28b04dfa1652e0ffdfda866d2845c73 # main
+>>>>>>> v6
         env:
           SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
         with:
@@ -59,7 +62,7 @@ jobs:
       - name: Publish bukkit javadoc
        # if: ${{ runner.os == 'Linux' && env.STATUS == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/v7'}}
         if: ${{ runner.os == 'Linux' && env.STATUS == 'snapshot' && github.event_name == 'push' && github.ref == 'refs/heads/v7'}}
-        uses: cpina/github-action-push-to-another-repository@main
+        uses: cpina/github-action-push-to-another-repository@0a14457bb28b04dfa1652e0ffdfda866d2845c73 # main
         env:
           SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
         with:
