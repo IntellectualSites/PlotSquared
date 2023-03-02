@@ -494,7 +494,7 @@ public abstract class SchematicHandler {
     /**
      * The legacy web interface is deprecated for removal in favor of Arkitektonika.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.0")
     public List<String> getSaves(UUID uuid) {
         String rawJSON;
         try {

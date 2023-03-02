@@ -234,7 +234,7 @@ public abstract class WorldUtil {
     /**
      * The legacy web interface is deprecated for removal in favor of Arkitektonika.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.0")
     public void upload(
             final @NonNull Plot plot,
             final @Nullable UUID uuid,

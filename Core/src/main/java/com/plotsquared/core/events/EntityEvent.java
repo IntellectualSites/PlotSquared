@@ -31,7 +31,7 @@ public abstract class EntityEvent {
     private String name;
 
     /**
-     * @since TODO
+     * @since 6.11.0
      */
     public EntityEvent(Entity entity) {
         this.entity = entity;
@@ -41,7 +41,7 @@ public abstract class EntityEvent {
      * Obtain the entity involved in the event
      *
      * @return Entity
-     * @since TODO
+     * @since 6.11.0
      */
     public Entity getEntity() {
         return this.entity;
@@ -51,7 +51,7 @@ public abstract class EntityEvent {
      * Obtain the event's class name
      *
      * @return the event class name
-     * @since TODO
+     * @since 6.11.0
      */
     @NonNull public String getEventName() {
         if (this.name == null) {
