@@ -14,7 +14,7 @@ mvdwapi = "3.1.1"
 prtree = "2.0.0"
 aopalliance = "1.0"
 cloud-services = "1.8.2"
-arkitektonika = "2.1.1"
+arkitektonika = "2.1.2"
 squirrelid = "0.3.1"
 http4j = "1.3"
 
