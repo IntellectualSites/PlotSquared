@@ -4,6 +4,7 @@
     "config:base",
     ":semanticCommitsDisabled"
   ],
-  "labels": ["Renovate"],
-  "rebaseWhen": "conflicted"
+  "labels": ["dependencies"],
+  "rebaseWhen": "conflicted",
+  "schedule": ["on the first day of the week"]
 }
