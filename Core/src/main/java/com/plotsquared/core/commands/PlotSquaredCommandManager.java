@@ -24,6 +24,9 @@ import cloud.commandframework.meta.SimpleCommandMeta;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.plotsquared.core.commands.parsers.PlotMemberParser;
+import com.plotsquared.core.commands.requirements.CommandRequirementBuilderModifier;
+import com.plotsquared.core.commands.requirements.CommandRequirementPostProcessor;
+import com.plotsquared.core.commands.requirements.Requirements;
 import com.plotsquared.core.player.PlotPlayer;
 import io.leangen.geantyref.TypeToken;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -49,6 +52,8 @@ public class PlotSquaredCommandManager {
                 },
                 parameters -> SimpleCommandMeta.empty()
         );
+        this.annotationParser.registerBuilderModifier(Requirements.class, new CommandRequirementBuilderModifier());
+        this.commandManager.registerCommandPostProcessor(new CommandRequirementPostProcessor());
     }
 
     /**

@@ -288,7 +288,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      *
      * @return the plot the player is standing on or null if standing on a road or not in a {@link PlotArea}
      */
-    public Plot getCurrentPlot() {
+    public @Nullable Plot getCurrentPlot() {
         try (final MetaDataAccess<Plot> lastPlotAccess =
                      this.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
             if (lastPlotAccess.get().orElse(null) == null && !Settings.Enabled_Components.EVENTS) {
