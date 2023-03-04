@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -271,6 +272,25 @@ public class UUIDPipeline {
             final long timeout
     ) {
         return this.getUUIDs(requests).orTimeout(timeout, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Asynchronously attempt to fetch the mapping from a name.
+     * <p>
+     * This will timeout after the specified time and throws a {@link TimeoutException}
+     * if this happens
+     *
+     * @param username Name
+     * @param timeout  Timeout in milliseconds
+     * @return Mapping
+     */
+    public @NonNull CompletableFuture<Optional<UUIDMapping>> getUUID(
+            final @NonNull String username,
+            final long timeout
+    ) {
+        return this.getUUIDs(List.of(username), timeout).thenApply(
+                results -> results.stream().findFirst()
+        );
     }
 
     /**

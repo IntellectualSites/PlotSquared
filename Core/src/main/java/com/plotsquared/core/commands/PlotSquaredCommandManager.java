@@ -23,6 +23,7 @@ import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.meta.SimpleCommandMeta;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.plotsquared.core.commands.parsers.PlotMemberParser;
 import com.plotsquared.core.player.PlotPlayer;
 import io.leangen.geantyref.TypeToken;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -63,8 +64,13 @@ public class PlotSquaredCommandManager {
      * Initializes all the known commands.
      */
     public void initializeCommands() {
-        final Stream<Class<?>> commandClasses = Stream.of(
-        );
-        commandClasses.map(injector::getInstance).forEach(this::scanClass);
+        // We start by scanning the parsers.
+        Stream.of(
+                PlotMemberParser.class
+        ).map(this.injector::getInstance).forEach(this::scanClass);
+        // Then we scan the commands.
+        Stream.of(
+                CommandAdd.class
+        ).map(this.injector::getInstance).forEach(this::scanClass);
     }
 }
