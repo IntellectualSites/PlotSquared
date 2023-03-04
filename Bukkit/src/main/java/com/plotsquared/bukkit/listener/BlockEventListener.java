@@ -71,6 +71,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Dispenser;
+import org.bukkit.block.data.type.Farmland;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
@@ -709,20 +710,33 @@ public class BlockEventListener implements Listener {
         Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
         PlotArea area = location.getPlotArea();
+
         if (area == null) {
             return;
         }
+
         Plot plot = area.getOwnedPlot(location);
+
         if (plot == null) {
             event.setCancelled(true);
             return;
         }
-        Material blockType = block.getType();
-        if (blockType == Material.FARMLAND) {
-            if (!plot.getFlag(SoilDryFlag.class)) {
-                plot.debug("Soil could not dry because soil-dry = false");
-                event.setCancelled(true);
+
+        if (block.getBlockData() instanceof Farmland farmland && event.getNewState().getBlockData() instanceof Farmland newFarmland) {
+            int currentMoisture = farmland.getMoisture();
+            int newMoisture = newFarmland.getMoisture();
+
+            // farmland gets moisturizes
+            if (newMoisture > currentMoisture) {
+                return;
             }
+
+            if (plot.getFlag(SoilDryFlag.class)) {
+                return;
+            }
+
+            plot.debug("Soil could not dry because soil-dry = false");
+            event.setCancelled(true);
         }
     }
 
@@ -771,7 +785,10 @@ public class BlockEventListener implements Listener {
         }
 
         if (toPlot != null) {
-            if (!toArea.contains(fromLocation.getX(), fromLocation.getZ()) || !Objects.equals(toPlot, toArea.getOwnedPlot(fromLocation))) {
+            if (!toArea.contains(fromLocation.getX(), fromLocation.getZ()) || !Objects.equals(
+                    toPlot,
+                    toArea.getOwnedPlot(fromLocation)
+            )) {
                 event.setCancelled(true);
                 return;
             }
@@ -787,7 +804,10 @@ public class BlockEventListener implements Listener {
                 toPlot.debug("Liquid could not flow because liquid-flow = disabled");
                 event.setCancelled(true);
             }
-        } else if (!toArea.contains(fromLocation.getX(), fromLocation.getZ()) || !Objects.equals(null, toArea.getOwnedPlot(fromLocation))) {
+        } else if (!toArea.contains(fromLocation.getX(), fromLocation.getZ()) || !Objects.equals(
+                null,
+                toArea.getOwnedPlot(fromLocation)
+        )) {
             event.setCancelled(true);
         } else if (event.getBlock().isLiquid()) {
             final org.bukkit.Location location = event.getBlock().getLocation();
