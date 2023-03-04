@@ -3414,7 +3414,10 @@ public class SQLManager implements AbstractDB {
         }
     }
 
-    private record LegacySettings(int id, PlotSettings settings) {
+    private record LegacySettings(
+            int id,
+            PlotSettings settings
+    ) {
 
     }
 

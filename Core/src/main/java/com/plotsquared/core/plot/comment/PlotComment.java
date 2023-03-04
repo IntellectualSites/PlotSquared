@@ -20,6 +20,13 @@ package com.plotsquared.core.plot.comment;
 
 import com.plotsquared.core.plot.PlotId;
 
-public record PlotComment(String world, PlotId id, String comment, String senderName, String inbox, long timestamp) {
+public record PlotComment(
+        String world,
+        PlotId id,
+        String comment,
+        String senderName,
+        String inbox,
+        long timestamp
+) {
 
 }

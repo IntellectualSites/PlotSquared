@@ -23,7 +23,10 @@ import com.plotsquared.core.configuration.ConfigurationNode;
 /**
  * This class wraps an array of {@link ConfigurationNode}s.
  */
-public record SettingsNodesWrapper(ConfigurationNode[] settingsNodes, SetupStep afterwards) {
+public record SettingsNodesWrapper(
+        ConfigurationNode[] settingsNodes,
+        SetupStep afterwards
+) {
 
     /**
      * Returns the first step of this wrapper or the step or the

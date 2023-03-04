@@ -136,7 +136,9 @@ public class SimpleBackupManager implements BackupManager {
         return this.backupLimit;
     }
 
-    private record PlotCacheKey(Plot plot) {
+    private record PlotCacheKey(
+            Plot plot
+    ) {
 
         @Override
             public boolean equals(final Object o) {

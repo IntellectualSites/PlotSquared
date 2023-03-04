@@ -215,7 +215,11 @@ public final class BlockBucket implements ConfigurationSerializable {
         return result;
     }
 
-    private record Range(int min, int max, boolean automatic) {
+    private record Range(
+            int min,
+            int max,
+            boolean automatic
+    ) {
 
         public int getWeight() {
                 return max - min;

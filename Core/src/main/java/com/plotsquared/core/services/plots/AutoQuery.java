@@ -24,7 +24,13 @@ import com.plotsquared.core.plot.PlotId;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-public record AutoQuery(PlotPlayer<?> player, PlotId startId, int sizeX, int sizeZ, PlotArea plotArea) {
+public record AutoQuery(
+        PlotPlayer<?> player,
+        PlotId startId,
+        int sizeX,
+        int sizeZ,
+        PlotArea plotArea
+) {
 
     /**
      * Crate a new auto query

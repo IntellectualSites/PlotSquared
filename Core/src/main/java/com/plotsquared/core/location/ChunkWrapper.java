@@ -21,7 +21,11 @@ package com.plotsquared.core.location;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.StringMan;
 
-public record ChunkWrapper(String world, int x, int z) {
+public record ChunkWrapper(
+        String world,
+        int x,
+        int z
+) {
 
     @Override
     public int hashCode() {

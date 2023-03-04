@@ -25,7 +25,10 @@ import java.util.UUID;
 /**
  * A pair consisting of a UUID and a username
  */
-public record UUIDMapping(@NonNull UUID uuid, @NonNull String username) {
+public record UUIDMapping(
+        @NonNull UUID uuid,
+        @NonNull String username
+) {
 
     @Override
     public boolean equals(final Object o) {

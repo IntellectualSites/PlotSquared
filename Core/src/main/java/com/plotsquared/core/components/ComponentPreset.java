@@ -35,8 +35,15 @@ import java.util.Map;
  * the component GUI
  */
 @SerializableAs("preset")
-public record ComponentPreset(ClassicPlotManagerComponent component, String pattern, double cost, String permission,
-                              String displayName, List<String> description, ItemType icon) implements ConfigurationSerializable {
+public record ComponentPreset(
+        ClassicPlotManagerComponent component,
+        String pattern,
+        double cost,
+        String permission,
+        String displayName,
+        List<String> description,
+        ItemType icon
+) implements ConfigurationSerializable {
 
     @SuppressWarnings("unchecked")
     public static ComponentPreset deserialize(final @NonNull Map<String, Object> map) {

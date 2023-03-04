@@ -76,7 +76,10 @@ public abstract class TimedFlag<T, F extends PlotFlag<TimedFlag.Timed<T>, F>>
         return getValue().toString();
     }
 
-    public record Timed<T>(int interval, T value) {
+    public record Timed<T>(
+            int interval,
+            T value
+    ) {
 
         @Override
             public String toString() {

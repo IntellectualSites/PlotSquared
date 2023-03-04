@@ -18,6 +18,9 @@
  */
 package com.plotsquared.core.util;
 
-public record FileBytes(String path, byte[] data) {
+public record FileBytes(
+        String path,
+        byte[] data
+) {
 
 }

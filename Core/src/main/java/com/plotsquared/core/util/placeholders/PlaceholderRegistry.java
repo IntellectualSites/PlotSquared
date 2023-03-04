@@ -300,7 +300,9 @@ public final class PlaceholderRegistry {
     /**
     * Event called when a new {@link Placeholder} has been added
     */
-    public record PlaceholderAddedEvent(Placeholder placeholder) {
+    public record PlaceholderAddedEvent(
+            Placeholder placeholder
+    ) {
 
     }
 
