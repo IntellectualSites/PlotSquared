@@ -785,10 +785,7 @@ public class BlockEventListener implements Listener {
         }
 
         if (toPlot != null) {
-            if (!toArea.contains(fromLocation.getX(), fromLocation.getZ()) || !Objects.equals(
-                    toPlot,
-                    toArea.getOwnedPlot(fromLocation)
-            )) {
+            if (!toArea.contains(fromLocation.getX(), fromLocation.getZ()) || !Objects.equals(toPlot, toArea.getOwnedPlot(fromLocation))) {
                 event.setCancelled(true);
                 return;
             }
@@ -804,10 +801,7 @@ public class BlockEventListener implements Listener {
                 toPlot.debug("Liquid could not flow because liquid-flow = disabled");
                 event.setCancelled(true);
             }
-        } else if (!toArea.contains(fromLocation.getX(), fromLocation.getZ()) || !Objects.equals(
-                null,
-                toArea.getOwnedPlot(fromLocation)
-        )) {
+        } else if (!toArea.contains(fromLocation.getX(), fromLocation.getZ()) || !Objects.equals(null, toArea.getOwnedPlot(fromLocation))) {
             event.setCancelled(true);
         } else if (event.getBlock().isLiquid()) {
             final org.bukkit.Location location = event.getBlock().getLocation();
