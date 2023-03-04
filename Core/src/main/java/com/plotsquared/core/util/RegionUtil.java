@@ -95,6 +95,10 @@ public class RegionUtil {
                 .getY() && y <= max.getY();
     }
 
+    /**
+     * @deprecated Unused internally. Scheduled for removal in next major release.
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public static @NonNull Rectangle2D toRectangle(final @NonNull CuboidRegion region) {
         final BlockVector2 min = region.getMinimumPoint().toBlockVector2();
         final BlockVector2 max = region.getMaximumPoint().toBlockVector2();
