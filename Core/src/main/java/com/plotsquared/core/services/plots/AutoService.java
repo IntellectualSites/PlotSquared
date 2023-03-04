@@ -21,9 +21,7 @@ package com.plotsquared.core.services.plots;
 import cloud.commandframework.services.types.Service;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -34,87 +32,11 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
-public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> {
+public interface AutoService extends Service<AutoQuery, List<Plot>> {
 
     Cache<PlotId, Plot> plotCandidateCache = CacheBuilder.newBuilder()
             .expireAfterWrite(20, TimeUnit.SECONDS).build();
     Object plotLock = new Object();
-
-    final class AutoQuery {
-
-        private final PlotPlayer<?> player;
-        private final PlotId startId;
-        private final int sizeX;
-        private final int sizeZ;
-        private final PlotArea plotArea;
-
-        /**
-         * Crate a new auto query
-         *
-         * @param player   Player to claim for
-         * @param startId  Plot ID to start searching from
-         * @param sizeX    Number of plots along the X axis
-         * @param sizeZ    Number of plots along the Z axis
-         * @param plotArea Plot area to search in
-         */
-        public AutoQuery(
-                final @NonNull PlotPlayer<?> player, final @Nullable PlotId startId,
-                final int sizeX, final int sizeZ, final @NonNull PlotArea plotArea
-        ) {
-            this.player = player;
-            this.startId = startId;
-            this.sizeX = sizeX;
-            this.sizeZ = sizeZ;
-            this.plotArea = plotArea;
-        }
-
-        /**
-         * Get the player that the plots are meant for
-         *
-         * @return Player
-         */
-        public @NonNull PlotPlayer<?> getPlayer() {
-            return this.player;
-        }
-
-        /**
-         * Get the plot ID to start searching from
-         *
-         * @return Start ID
-         */
-        public @Nullable PlotId getStartId() {
-            return this.startId;
-        }
-
-        /**
-         * Get the number of plots along the X axis
-         *
-         * @return Number of plots along the X axis
-         */
-        public int getSizeX() {
-            return this.sizeX;
-        }
-
-        /**
-         * Get the number of plots along the Z axis
-         *
-         * @return Number of plots along the Z axis
-         */
-        public int getSizeZ() {
-            return this.sizeZ;
-        }
-
-        /**
-         * Get the plot area to search in
-         *
-         * @return Plot area
-         */
-        public @NonNull PlotArea getPlotArea() {
-            return this.plotArea;
-        }
-
-    }
-
 
     final class DefaultAutoService implements AutoService {
 
@@ -125,17 +47,16 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
 
     }
 
-
     final class SinglePlotService implements AutoService, Predicate<AutoQuery> {
 
         @Nullable
         @Override
         public List<Plot> handle(@NonNull AutoQuery autoQuery) {
             Plot plot;
-            PlotId nextId = autoQuery.getStartId();
+            PlotId nextId = autoQuery.startId();
             do {
                 synchronized (plotLock) {
-                    plot = autoQuery.getPlotArea().getNextFreePlot(autoQuery.getPlayer(), nextId);
+                    plot = autoQuery.plotArea().getNextFreePlot(autoQuery.player(), nextId);
                     if (plot != null && plotCandidateCache.getIfPresent(plot.getId()) == null) {
                         plotCandidateCache.put(plot.getId(), plot);
                         return Collections.singletonList(plot);
@@ -151,11 +72,10 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
 
         @Override
         public boolean test(final @NonNull AutoQuery autoQuery) {
-            return autoQuery.sizeX == 1 && autoQuery.sizeZ == 1;
+            return autoQuery.sizeX() == 1 && autoQuery.sizeZ() == 1;
         }
 
     }
-
 
     final class MultiPlotService implements AutoService, Predicate<AutoQuery> {
 
@@ -166,14 +86,14 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
             while (true) {
                 synchronized (plotLock) {
                     final PlotId start =
-                            autoQuery.getPlotArea().getMeta("lastPlot", PlotId.of(0, 0)).getNextId();
+                            autoQuery.plotArea().getMeta("lastPlot", PlotId.of(0, 0)).getNextId();
                     final PlotId end = PlotId.of(
-                            start.getX() + autoQuery.getSizeX() - 1,
-                            start.getY() + autoQuery.getSizeZ() - 1
+                            start.getX() + autoQuery.sizeX() - 1,
+                            start.getY() + autoQuery.sizeZ() - 1
                     );
                     final List<Plot> plots =
-                            autoQuery.getPlotArea().canClaim(autoQuery.getPlayer(), start, end);
-                    autoQuery.getPlotArea().setMeta("lastPlot", start); // set entry point for next try
+                            autoQuery.plotArea().canClaim(autoQuery.player(), start, end);
+                    autoQuery.plotArea().setMeta("lastPlot", start); // set entry point for next try
                     if (plots != null && !plots.isEmpty()) {
                         for (final Plot plot : plots) {
                             if (plotCandidateCache.getIfPresent(plot.getId()) != null) {
@@ -189,7 +109,7 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
 
         @Override
         public boolean test(final @NonNull AutoQuery autoQuery) {
-            return autoQuery.getPlotArea().getType() != PlotAreaType.PARTIAL;
+            return autoQuery.plotArea().getType() != PlotAreaType.PARTIAL;
         }
 
     }

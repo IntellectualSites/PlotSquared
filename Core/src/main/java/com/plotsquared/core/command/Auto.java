@@ -35,6 +35,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.services.plots.AutoQuery;
 import com.plotsquared.core.services.plots.AutoService;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
@@ -326,7 +327,7 @@ public class Auto extends SubCommand {
         }
 
         List<Plot> plots = this.servicePipeline
-                .pump(new AutoService.AutoQuery(player, null, sizeX, sizeZ, plotarea))
+                .pump(new AutoQuery(player, null, sizeX, sizeZ, plotarea))
                 .through(AutoService.class)
                 .getResult();
 

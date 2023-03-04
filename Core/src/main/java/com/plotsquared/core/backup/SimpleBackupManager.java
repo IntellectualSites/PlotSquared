@@ -136,33 +136,27 @@ public class SimpleBackupManager implements BackupManager {
         return this.backupLimit;
     }
 
-    private static final class PlotCacheKey {
-
-        private final Plot plot;
-
-        private PlotCacheKey(Plot plot) {
-            this.plot = plot;
-        }
+    private record PlotCacheKey(Plot plot) {
 
         @Override
-        public boolean equals(final Object o) {
-            if (this == o) {
-                return true;
+            public boolean equals(final Object o) {
+                if (this == o) {
+                    return true;
+                }
+                if (o == null || getClass() != o.getClass()) {
+                    return false;
+                }
+                final PlotCacheKey that = (PlotCacheKey) o;
+                return Objects.equals(plot.getArea(), that.plot.getArea())
+                        && Objects.equals(plot.getId(), that.plot.getId())
+                        && Objects.equals(plot.getOwnerAbs(), that.plot.getOwnerAbs());
             }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(plot.getArea(), plot.getId(), plot.getOwnerAbs());
             }
-            final PlotCacheKey that = (PlotCacheKey) o;
-            return Objects.equals(plot.getArea(), that.plot.getArea())
-                    && Objects.equals(plot.getId(), that.plot.getId())
-                    && Objects.equals(plot.getOwnerAbs(), that.plot.getOwnerAbs());
-        }
 
-        @Override
-        public int hashCode() {
-            return Objects.hash(plot.getArea(), plot.getId(), plot.getOwnerAbs());
         }
-
-    }
 
 }

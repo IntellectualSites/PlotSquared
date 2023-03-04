@@ -58,7 +58,7 @@ public class CommentManager {
                         if (value != null) {
                             int num = 0;
                             for (PlotComment comment : value) {
-                                if (comment.timestamp > getTimestamp(player, inbox.toString())) {
+                                if (comment.timestamp() > getTimestamp(player, inbox.toString())) {
                                     num++;
                                 }
                             }

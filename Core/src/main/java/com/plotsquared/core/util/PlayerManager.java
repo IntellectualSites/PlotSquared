@@ -98,7 +98,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
                             consumer.accept(null, throwable);
                         } else {
                             for (final UUIDMapping uuid : uuids) {
-                                result.add(uuid.getUuid());
+                                result.add(uuid.uuid());
                             }
                             consumer.accept(result, null);
                         }
@@ -136,7 +136,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
         try {
             for (final UUIDMapping mapping : PlotSquared.get().getImpromptuUUIDPipeline()
                     .getNames(players).get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS)) {
-                users.add(Component.text(mapping.getUsername()));
+                users.add(Component.text(mapping.username()));
             }
         } catch (final Exception e) {
             e.printStackTrace();
@@ -200,7 +200,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
             final UUIDMapping uuidMapping =
                     PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(owner);
             if (uuidMapping != null) {
-                name = uuidMapping.getUsername();
+                name = uuidMapping.username();
             } else {
                 name = null;
             }

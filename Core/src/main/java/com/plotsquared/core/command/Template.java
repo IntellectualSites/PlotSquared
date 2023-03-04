@@ -156,9 +156,9 @@ public class Template extends SubCommand {
              ZipOutputStream zos = new ZipOutputStream(fos)) {
 
             for (FileBytes file : files) {
-                ZipEntry ze = new ZipEntry(file.path);
+                ZipEntry ze = new ZipEntry(file.path());
                 zos.putNextEntry(ze);
-                zos.write(file.data);
+                zos.write(file.data());
             }
             zos.closeEntry();
         }

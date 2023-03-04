@@ -113,13 +113,12 @@ public class PlotSettings {
         this.position = position;
     }
 
-    @SuppressWarnings({"UnstableApiUsage"})
     public List<PlotComment> getComments(String inbox) {
         if (this.comments == null) {
             return Collections.emptyList();
         }
 
-        return this.comments.stream().filter(comment -> comment.inbox.equals(inbox))
+        return this.comments.stream().filter(comment -> comment.inbox().equals(inbox))
                 .collect(ImmutableList.toImmutableList());
     }
 

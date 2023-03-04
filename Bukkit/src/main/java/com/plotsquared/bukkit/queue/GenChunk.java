@@ -110,9 +110,9 @@ public class GenChunk extends ZeroedDelegateScopedQueueCoordinator {
      */
     public void setChunk(@NonNull ChunkWrapper wrap) {
         chunk = null;
-        world = wrap.world;
-        chunkX = wrap.x;
-        chunkZ = wrap.z;
+        world = wrap.world();
+        chunkX = wrap.x();
+        chunkZ = wrap.z();
     }
 
     @Override

@@ -85,24 +85,24 @@ public class Inbox extends SubCommand {
         for (int x = page * 12; x < max; x++) {
             PlotComment comment = comments[x];
             Component commentColored;
-            if (player.getName().equals(comment.senderName)) {
+            if (player.getName().equals(comment.senderName())) {
                 commentColored = MINI_MESSAGE
                         .deserialize(
                                 TranslatableCaption.of("list.comment_list_by_lister").getComponent(player),
-                                TagResolver.resolver("comment", Tag.inserting(Component.text(comment.comment)))
+                                TagResolver.resolver("comment", Tag.inserting(Component.text(comment.comment())))
                         );
             } else {
                 commentColored = MINI_MESSAGE
                         .deserialize(
                                 TranslatableCaption.of("list.comment_list_by_other").getComponent(player),
-                                TagResolver.resolver("comment", Tag.inserting(Component.text(comment.comment)))
+                                TagResolver.resolver("comment", Tag.inserting(Component.text(comment.comment())))
                         );
             }
             TagResolver resolver = TagResolver.builder()
                     .tag("number", Tag.inserting(Component.text(x)))
-                    .tag("world", Tag.inserting(Component.text(comment.world)))
-                    .tag("plot_id", Tag.inserting(Component.text(comment.id.getX() + ";" + comment.id.getY())))
-                    .tag("commenter", Tag.inserting(Component.text(comment.senderName)))
+                    .tag("world", Tag.inserting(Component.text(comment.world())))
+                    .tag("plot_id", Tag.inserting(Component.text(comment.id().getX() + ";" + comment.id().getY())))
+                    .tag("commenter", Tag.inserting(Component.text(comment.senderName())))
                     .tag("comment", Tag.inserting(commentColored))
                     .build();
             builder.append(MINI_MESSAGE
@@ -137,7 +137,7 @@ public class Inbox extends SubCommand {
                                 int unread = 0;
                                 for (PlotComment comment : value) {
                                     total++;
-                                    if (comment.timestamp > CommentManager
+                                    if (comment.timestamp() > CommentManager
                                             .getTimestamp(player, inbox.toString())) {
                                         unread++;
                                     }
@@ -242,7 +242,7 @@ public class Inbox extends SubCommand {
                             if (success) {
                                 player.sendMessage(
                                         TranslatableCaption.of("comment.comment_removed_success"),
-                                        TagResolver.resolver("value", Tag.inserting(Component.text(comment.comment)))
+                                        TagResolver.resolver("value", Tag.inserting(Component.text(comment.comment())))
                                 );
                             } else {
                                 player.sendMessage(

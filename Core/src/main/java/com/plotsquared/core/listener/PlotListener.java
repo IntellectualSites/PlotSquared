@@ -341,14 +341,14 @@ public class PlotListener {
             }
 
             TimedFlag.Timed<Integer> feed = plot.getFlag(FeedFlag.class);
-            if (feed.getInterval() != 0 && feed.getValue() != 0) {
+            if (feed.interval() != 0 && feed.value() != 0) {
                 feedRunnable
-                        .put(player.getUUID(), new Interval(feed.getInterval(), feed.getValue(), 20));
+                        .put(player.getUUID(), new Interval(feed.interval(), feed.value(), 20));
             }
             TimedFlag.Timed<Integer> heal = plot.getFlag(HealFlag.class);
-            if (heal.getInterval() != 0 && heal.getValue() != 0) {
+            if (heal.interval() != 0 && heal.value() != 0) {
                 healRunnable
-                        .put(player.getUUID(), new Interval(heal.getInterval(), heal.getValue(), 20));
+                        .put(player.getUUID(), new Interval(heal.interval(), heal.value(), 20));
             }
             return true;
         }
