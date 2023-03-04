@@ -75,7 +75,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
      * @deprecated Please do not use this method. Instead use {@link BukkitUtil#adapt(Player)}, as it caches player objects.
      * This method will be made private in a future release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.10.9")
     public BukkitPlayer(
             final @NonNull PlotAreaManager plotAreaManager, final @NonNull EventDispatcher eventDispatcher,
             final @NonNull Player player, final @NonNull PermissionHandler permissionHandler
@@ -92,7 +92,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
      * @deprecated Please do not use this method. Instead use {@link BukkitUtil#adapt(Player)}, as it caches player objects.
      * This method will be made private in a future release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.10.9")
     public BukkitPlayer(
             final @NonNull PlotAreaManager plotAreaManager, final @NonNull
             EventDispatcher eventDispatcher, final @NonNull Player player,
