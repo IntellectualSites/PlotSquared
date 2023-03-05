@@ -273,8 +273,7 @@ public class PlayerEventListener implements Listener {
         Plot plot = plotPlayer.getCurrentPlot();
         // Check WorldEdit
         switch (parts[0]) {
-            case "up":
-            case "worldedit:up":
+            case "up", "worldedit:up" -> {
                 if (plot == null || (!plot.isAdded(plotPlayer.getUUID()) && !plotPlayer.hasPermission(
                         Permission.PERMISSION_ADMIN_BUILD_OTHER,
                         true
@@ -282,6 +281,7 @@ public class PlayerEventListener implements Listener {
                     event.setCancelled(true);
                     return;
                 }
+            }
         }
         if (plot == null && !area.isRoadFlags()) {
             return;
@@ -1114,13 +1114,13 @@ public class PlayerEventListener implements Listener {
         Location location = BukkitUtil.adapt(block.getLocation());
         Action action = event.getAction();
         switch (action) {
-            case PHYSICAL: {
+            case PHYSICAL -> {
                 eventType = PlayerBlockEventType.TRIGGER_PHYSICAL;
                 blocktype1 = BukkitAdapter.asBlockType(block.getType());
-                break;
             }
+
             //todo rearrange the right click code. it is all over the place.
-            case RIGHT_CLICK_BLOCK: {
+            case RIGHT_CLICK_BLOCK -> {
                 Material blockType = block.getType();
                 eventType = PlayerBlockEventType.INTERACT_BLOCK;
                 blocktype1 = BukkitAdapter.asBlockType(block.getType());
@@ -1142,21 +1142,16 @@ public class PlayerEventListener implements Listener {
 
                 // in the following, lb needs to have the material of the item in hand i.e. type
                 switch (type.toString()) {
-                    case "REDSTONE":
-                    case "STRING":
-                    case "PUMPKIN_SEEDS":
-                    case "MELON_SEEDS":
-                    case "COCOA_BEANS":
-                    case "WHEAT_SEEDS":
-                    case "BEETROOT_SEEDS":
-                    case "SWEET_BERRIES":
-                    case "GLOW_BERRIES":
+                    case "REDSTONE", "STRING", "PUMPKIN_SEEDS", "MELON_SEEDS", "COCOA_BEANS", "WHEAT_SEEDS", "BEETROOT_SEEDS",
+                            "SWEET_BERRIES", "GLOW_BERRIES" -> {
                         return;
-                    default:
+                    }
+                    default -> {
                         //eventType = PlayerBlockEventType.PLACE_BLOCK;
                         if (type.isBlock()) {
                             return;
                         }
+                    }
                 }
                 if (PaperLib.isPaper()) {
                     if (MaterialTags.SPAWN_EGGS.isTagged(type) || Material.EGG.equals(type)) {
@@ -1189,9 +1184,8 @@ public class PlayerEventListener implements Listener {
                     eventType = PlayerBlockEventType.READ;
                     break;
                 }
-                break;
             }
-            case LEFT_CLICK_BLOCK: {
+            case LEFT_CLICK_BLOCK -> {
                 Material blockType = block.getType();
 
                 // todo: when the code above is rearranged, it would be great to beautify this as well.
@@ -1202,10 +1196,10 @@ public class PlayerEventListener implements Listener {
 
                 eventType = PlayerBlockEventType.INTERACT_BLOCK;
                 blocktype1 = BukkitAdapter.asBlockType(block.getType());
-                break;
             }
-            default:
+            default -> {
                 return;
+            }
         }
         if (this.worldEdit != null && pp.getAttribute("worldedit")) {
             if (event.getMaterial() == Material.getMaterial(this.worldEdit.getConfiguration().wandItem)) {

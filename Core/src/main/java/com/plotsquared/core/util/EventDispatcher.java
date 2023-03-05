@@ -359,11 +359,13 @@ public class EventDispatcher {
             }
         }
         switch (type) {
-            case TELEPORT_OBJECT:
+            case TELEPORT_OBJECT -> {
                 return false;
-            case READ:
+            }
+            case READ -> {
                 return true;
-            case INTERACT_BLOCK: {
+            }
+            case INTERACT_BLOCK -> {
                 if (plot == null) {
                     final List<BlockTypeWrapper> use = area.getRoadFlag(UseFlag.class);
                     for (final BlockTypeWrapper blockTypeWrapper : use) {
@@ -398,7 +400,7 @@ public class EventDispatcher {
                 }
                 return false;
             }
-            case TRIGGER_PHYSICAL: {
+            case TRIGGER_PHYSICAL -> {
                 if (plot == null) {
                     final List<BlockTypeWrapper> use = area.getRoadFlag(UseFlag.class);
                     for (final BlockTypeWrapper blockTypeWrapper : use) {
@@ -430,7 +432,7 @@ public class EventDispatcher {
                         false
                 );
             }
-            case SPAWN_MOB: {
+            case SPAWN_MOB -> {
                 if (plot == null) {
                     return player.hasPermission(
                             Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms
@@ -472,7 +474,7 @@ public class EventDispatcher {
                 }
                 return false;
             }
-            case PLACE_MISC: {
+            case PLACE_MISC -> {
                 if (plot == null) {
                     return player.hasPermission(
                             Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms
@@ -514,7 +516,7 @@ public class EventDispatcher {
                 }
                 return false;
             }
-            case PLACE_VEHICLE:
+            case PLACE_VEHICLE -> {
                 if (plot == null) {
                     return player.hasPermission(
                             Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms
@@ -526,8 +528,9 @@ public class EventDispatcher {
                     );
                 }
                 return plot.getFlag(VehiclePlaceFlag.class);
-            default:
-                break;
+            }
+            default -> {
+            }
         }
         return true;
     }

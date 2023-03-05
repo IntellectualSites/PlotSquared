@@ -190,7 +190,7 @@ public class Inbox extends SubCommand {
         final int page;
         if (args.length > 1) {
             switch (args[1].toLowerCase()) {
-                case "delete":
+                case "delete" -> {
                     if (!inbox.canModify(plot, player)) {
                         player.sendMessage(TranslatableCaption.of("comment.no_perm_inbox_modify"));
                         return false;
@@ -225,7 +225,6 @@ public class Inbox extends SubCommand {
                         );
                         return false;
                     }
-
                     if (!inbox.getComments(plot, new RunnableVal<>() {
                         @Override
                         public void run(List<PlotComment> value) {
@@ -254,7 +253,8 @@ public class Inbox extends SubCommand {
                         return false;
                     }
                     return true;
-                case "clear":
+                }
+                case "clear" -> {
                     if (!inbox.canModify(plot, player)) {
                         player.sendMessage(TranslatableCaption.of("comment.no_perm_inbox_modify"));
                     }
@@ -268,13 +268,15 @@ public class Inbox extends SubCommand {
                         plot.getPlotCommentContainer().removeComments(comments);
                     }
                     return true;
-                default:
+                }
+                default -> {
                     try {
                         page = Integer.parseInt(args[1]);
                     } catch (NumberFormatException ignored) {
                         sendUsage(player);
                         return false;
                     }
+                }
             }
         } else {
             page = 1;

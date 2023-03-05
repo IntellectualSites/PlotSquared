@@ -75,16 +75,19 @@ public class DebugRoadRegen extends SubCommand {
         }
         String kind = args[0].toLowerCase();
         switch (kind) {
-            case "plot":
+            case "plot" -> {
                 return regenPlot(player);
-            case "region":
+            }
+            case "region" -> {
                 return regenRegion(player, Arrays.copyOfRange(args, 1, args.length));
-            default:
+            }
+            default -> {
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
                         TagResolver.resolver("value", Tag.inserting(Component.text(DebugRoadRegen.USAGE)))
                 );
                 return false;
+            }
         }
     }
 

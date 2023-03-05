@@ -559,9 +559,10 @@ public abstract class Command {
 
     public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         switch (args.length) {
-            case 0:
+            case 0 -> {
                 return this.allCommands;
-            case 1:
+            }
+            case 1 -> {
                 String arg = args[0].toLowerCase();
                 if (space) {
                     Command cmd = getCommand(arg);
@@ -580,13 +581,15 @@ public abstract class Command {
                     }
                     return commands;
                 }
-            default:
+            }
+            default -> {
                 Command cmd = getCommand(args[0]);
                 if (cmd != null) {
                     return cmd.tab(player, Arrays.copyOfRange(args, 1, args.length), space);
                 } else {
                     return null;
                 }
+            }
         }
     }
 

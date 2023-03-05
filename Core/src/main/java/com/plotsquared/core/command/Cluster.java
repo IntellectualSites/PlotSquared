@@ -77,8 +77,7 @@ public class Cluster extends SubCommand {
         }
         String sub = args[0].toLowerCase();
         switch (sub) {
-            case "l":
-            case "list": {
+            case "l", "list" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_LIST)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -133,8 +132,7 @@ public class Cluster extends SubCommand {
                 }
                 return true;
             }
-            case "c":
-            case "create": {
+            case "c", "create" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_CREATE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -269,9 +267,7 @@ public class Cluster extends SubCommand {
                 );
                 return true;
             }
-            case "disband":
-            case "del":
-            case "delete": {
+            case "disband", "del", "delete" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_DELETE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -330,8 +326,7 @@ public class Cluster extends SubCommand {
                 ));
                 return true;
             }
-            case "res":
-            case "resize": {
+            case "res", "resize" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_RESIZE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -452,9 +447,7 @@ public class Cluster extends SubCommand {
                 player.sendMessage(TranslatableCaption.of("cluster.cluster_resized"));
                 return true;
             }
-            case "add":
-            case "inv":
-            case "invite": {
+            case "add", "inv", "invite" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_INVITE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -523,9 +516,7 @@ public class Cluster extends SubCommand {
                         });
                 return true;
             }
-            case "k":
-            case "remove":
-            case "kick": {
+            case "k", "remove", "kick" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_KICK)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -605,8 +596,7 @@ public class Cluster extends SubCommand {
                         });
                 return true;
             }
-            case "quit":
-            case "leave": {
+            case "quit", "leave" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_LEAVE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -667,7 +657,7 @@ public class Cluster extends SubCommand {
                 removePlayerPlots(cluster, uuid, player.getLocation().getWorldName());
                 return true;
             }
-            case "members": {
+            case "members" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_HELPERS)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -728,9 +718,7 @@ public class Cluster extends SubCommand {
                         });
                 return true;
             }
-            case "spawn":
-            case "home":
-            case "tp": {
+            case "spawn", "home", "tp" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_TP)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -778,10 +766,7 @@ public class Cluster extends SubCommand {
                 player.sendMessage(TranslatableCaption.of("cluster.cluster_teleporting"));
                 return true;
             }
-            case "i":
-            case "info":
-            case "show":
-            case "information": {
+            case "i", "info", "show", "information" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_INFO)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -850,9 +835,7 @@ public class Cluster extends SubCommand {
                         });
                 return true;
             }
-            case "sh":
-            case "setspawn":
-            case "sethome": {
+            case "sh", "setspawn", "sethome" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_SETHOME)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),

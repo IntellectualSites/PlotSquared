@@ -60,9 +60,10 @@ public class Help extends Command {
             RunnableVal2<Command, CommandResult> whenDone
     ) {
         switch (args.length) {
-            case 0:
+            case 0 -> {
                 return displayHelp(player, null, 0);
-            case 1:
+            }
+            case 1 -> {
                 if (MathMan.isInteger(args[0])) {
                     try {
                         return displayHelp(player, null, Integer.parseInt(args[0]));
@@ -72,7 +73,8 @@ public class Help extends Command {
                 } else {
                     return displayHelp(player, args[0], 1);
                 }
-            case 2:
+            }
+            case 2 -> {
                 if (MathMan.isInteger(args[1])) {
                     try {
                         return displayHelp(player, args[0], Integer.parseInt(args[1]));
@@ -81,8 +83,8 @@ public class Help extends Command {
                     }
                 }
                 return CompletableFuture.completedFuture(false);
-            default:
-                sendUsage(player);
+            }
+            default -> sendUsage(player);
         }
         return CompletableFuture.completedFuture(true);
     }
