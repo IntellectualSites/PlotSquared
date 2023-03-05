@@ -46,6 +46,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
@@ -813,11 +814,7 @@ public class Cluster extends SubCommand {
                                 player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                             } else {
                                 final String owner;
-                                if (username == null) {
-                                    owner = "unknown";
-                                } else {
-                                    owner = username;
-                                }
+                                owner = Objects.requireNonNullElse(username, "unknown");
                                 String name = cluster.getName();
                                 String size = (cluster.getP2().getX() - cluster.getP1().getX() + 1) + "x" + (
                                         cluster.getP2().getY() - cluster.getP1().getY() + 1);

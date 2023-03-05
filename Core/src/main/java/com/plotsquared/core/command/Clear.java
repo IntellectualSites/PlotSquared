@@ -107,37 +107,35 @@ public class Clear extends Command {
             }
             BackupManager.backup(player, plot, () -> {
                 final long start = System.currentTimeMillis();
-                boolean result = plot.getPlotModificationManager().clear(true, false, player, () -> {
-                    TaskManager.runTask(() -> {
-                        plot.removeRunning();
-                        // If the state changes, then mark it as no longer done
-                        if (DoneFlag.isDone(plot)) {
-                            PlotFlag<?, ?> plotFlag =
-                                    plot.getFlagContainer().getFlag(DoneFlag.class);
-                            PlotFlagRemoveEvent event = this.eventDispatcher
-                                    .callFlagRemove(plotFlag, plot);
-                            if (event.getEventResult() != Result.DENY) {
-                                plot.removeFlag(event.getFlag());
-                            }
+                boolean result = plot.getPlotModificationManager().clear(true, false, player, () -> TaskManager.runTask(() -> {
+                    plot.removeRunning();
+                    // If the state changes, then mark it as no longer done
+                    if (DoneFlag.isDone(plot)) {
+                        PlotFlag<?, ?> plotFlag =
+                                plot.getFlagContainer().getFlag(DoneFlag.class);
+                        PlotFlagRemoveEvent event = this.eventDispatcher
+                                .callFlagRemove(plotFlag, plot);
+                        if (event.getEventResult() != Result.DENY) {
+                            plot.removeFlag(event.getFlag());
                         }
-                        if (!plot.getFlag(AnalysisFlag.class).isEmpty()) {
-                            PlotFlag<?, ?> plotFlag =
-                                    plot.getFlagContainer().getFlag(AnalysisFlag.class);
-                            PlotFlagRemoveEvent event = this.eventDispatcher
-                                    .callFlagRemove(plotFlag, plot);
-                            if (event.getEventResult() != Result.DENY) {
-                                plot.removeFlag(event.getFlag());
-                            }
+                    }
+                    if (!plot.getFlag(AnalysisFlag.class).isEmpty()) {
+                        PlotFlag<?, ?> plotFlag =
+                                plot.getFlagContainer().getFlag(AnalysisFlag.class);
+                        PlotFlagRemoveEvent event = this.eventDispatcher
+                                .callFlagRemove(plotFlag, plot);
+                        if (event.getEventResult() != Result.DENY) {
+                            plot.removeFlag(event.getFlag());
                         }
-                        player.sendMessage(
-                                TranslatableCaption.of("working.clearing_done"),
-                                TagResolver.builder()
-                                        .tag("amount", Tag.inserting(Component.text(System.currentTimeMillis() - start)))
-                                        .tag("plot", Tag.inserting(Component.text(plot.getId().toString())))
-                                        .build()
-                        );
-                    });
-                });
+                    }
+                    player.sendMessage(
+                            TranslatableCaption.of("working.clearing_done"),
+                            TagResolver.builder()
+                                    .tag("amount", Tag.inserting(Component.text(System.currentTimeMillis() - start)))
+                                    .tag("plot", Tag.inserting(Component.text(plot.getId().toString())))
+                                    .build()
+                    );
+                }));
                 if (!result) {
                     player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
                 } else {
