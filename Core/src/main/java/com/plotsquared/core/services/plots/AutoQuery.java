@@ -24,33 +24,22 @@ import com.plotsquared.core.plot.PlotId;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+/**
+ * Crate a new auto query
+ *
+ * @param player   Player to claim for
+ * @param startId  Plot ID to start searching from
+ * @param sizeX    Number of plots along the X axis
+ * @param sizeZ    Number of plots along the Z axis
+ * @param plotArea Plot area to search in
+ */
 public record AutoQuery(
-        PlotPlayer<?> player,
-        PlotId startId,
+        @NonNull PlotPlayer<?> player,
+        @Nullable PlotId startId,
         int sizeX,
         int sizeZ,
-        PlotArea plotArea
+        @NonNull PlotArea plotArea
 ) {
-
-    /**
-     * Crate a new auto query
-     *
-     * @param player   Player to claim for
-     * @param startId  Plot ID to start searching from
-     * @param sizeX    Number of plots along the X axis
-     * @param sizeZ    Number of plots along the Z axis
-     * @param plotArea Plot area to search in
-     */
-    public AutoQuery(
-            final @NonNull PlotPlayer<?> player, final @Nullable PlotId startId,
-            final int sizeX, final int sizeZ, final @NonNull PlotArea plotArea
-    ) {
-        this.player = player;
-        this.startId = startId;
-        this.sizeX = sizeX;
-        this.sizeZ = sizeZ;
-        this.plotArea = plotArea;
-    }
 
     /**
      * Get the player that the plots are meant for

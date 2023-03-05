@@ -229,34 +229,6 @@ public final class BlockBucket implements ConfigurationSerializable {
                 return num <= max && num >= min;
             }
 
-            public boolean equals(final Object o) {
-                if (o == this) {
-                    return true;
-                }
-                if (!(o instanceof final Range other)) {
-                    return false;
-                }
-                if (this.min() != other.min()) {
-                    return false;
-                }
-                if (this.max() != other.max()) {
-                    return false;
-                }
-                if (this.automatic() != other.automatic()) {
-                    return false;
-                }
-                return true;
-            }
-
-            public int hashCode() {
-                final int PRIME = 59;
-                int result = 1;
-                result = result * PRIME + this.min();
-                result = result * PRIME + this.max();
-                result = result * PRIME + (this.automatic() ? 79 : 97);
-                return result;
-            }
-
         }
 
 }
