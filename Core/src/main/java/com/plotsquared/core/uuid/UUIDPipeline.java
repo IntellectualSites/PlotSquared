@@ -157,7 +157,7 @@ public class UUIDPipeline {
                     TimeUnit.MILLISECONDS
             );
             if (mappings.size() == 1) {
-                return mappings.get(0).getUuid();
+                return mappings.get(0).uuid();
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -182,7 +182,7 @@ public class UUIDPipeline {
         try {
             final List<UUIDMapping> mappings = this.getNames(Collections.singletonList(uuid)).get(timeout, TimeUnit.MILLISECONDS);
             if (mappings.size() == 1) {
-                return mappings.get(0).getUsername();
+                return mappings.get(0).username();
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -209,7 +209,7 @@ public class UUIDPipeline {
                         uuid.accept(null, throwable);
                     } else {
                         if (!uuids.isEmpty()) {
-                            uuid.accept(uuids.get(0).getUuid(), null);
+                            uuid.accept(uuids.get(0).uuid(), null);
                         } else {
                             uuid.accept(null, null);
                         }
@@ -231,7 +231,7 @@ public class UUIDPipeline {
                         username.accept(null, throwable);
                     } else {
                         if (!uuids.isEmpty()) {
-                            username.accept(uuids.get(0).getUsername(), null);
+                            username.accept(uuids.get(0).username(), null);
                         } else {
                             username.accept(null, null);
                         }
@@ -296,7 +296,7 @@ public class UUIDPipeline {
             if (service.canBeSynchronous()) {
                 final List<UUIDMapping> completedRequests = service.getNames(remainingRequests);
                 for (final UUIDMapping mapping : completedRequests) {
-                    remainingRequests.remove(mapping.getUuid());
+                    remainingRequests.remove(mapping.uuid());
                 }
                 mappings.addAll(completedRequests);
             } else {
@@ -311,7 +311,7 @@ public class UUIDPipeline {
             for (final UUIDService service : serviceList) {
                 final List<UUIDMapping> completedRequests = service.getNames(remainingRequests);
                 for (final UUIDMapping mapping : completedRequests) {
-                    remainingRequests.remove(mapping.getUuid());
+                    remainingRequests.remove(mapping.uuid());
                 }
                 mappings.addAll(completedRequests);
                 if (remainingRequests.isEmpty()) {
@@ -365,7 +365,7 @@ public class UUIDPipeline {
             if (service.canBeSynchronous()) {
                 final List<UUIDMapping> completedRequests = service.getUUIDs(remainingRequests);
                 for (final UUIDMapping mapping : completedRequests) {
-                    remainingRequests.remove(mapping.getUsername());
+                    remainingRequests.remove(mapping.username());
                 }
                 mappings.addAll(completedRequests);
             } else {
@@ -380,7 +380,7 @@ public class UUIDPipeline {
             for (final UUIDService service : serviceList) {
                 final List<UUIDMapping> completedRequests = service.getUUIDs(remainingRequests);
                 for (final UUIDMapping mapping : completedRequests) {
-                    remainingRequests.remove(mapping.getUsername());
+                    remainingRequests.remove(mapping.username());
                 }
                 mappings.addAll(completedRequests);
                 if (remainingRequests.isEmpty()) {

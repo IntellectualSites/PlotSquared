@@ -215,66 +215,20 @@ public final class BlockBucket implements ConfigurationSerializable {
         return result;
     }
 
-    private static final class Range {
-
-        private final int min;
-        private final int max;
-        private final boolean automatic;
-
-        public Range(int min, int max, boolean automatic) {
-            this.min = min;
-            this.max = max;
-            this.automatic = automatic;
-        }
+    private record Range(
+            int min,
+            int max,
+            boolean automatic
+    ) {
 
         public int getWeight() {
-            return max - min;
-        }
-
-        public boolean isInRange(final int num) {
-            return num <= max && num >= min;
-        }
-
-        public int getMin() {
-            return this.min;
-        }
-
-        public int getMax() {
-            return this.max;
-        }
-
-        public boolean equals(final Object o) {
-            if (o == this) {
-                return true;
+                return max - min;
             }
-            if (!(o instanceof final Range other)) {
-                return false;
-            }
-            if (this.getMin() != other.getMin()) {
-                return false;
-            }
-            if (this.getMax() != other.getMax()) {
-                return false;
-            }
-            if (this.isAutomatic() != other.isAutomatic()) {
-                return false;
-            }
-            return true;
-        }
 
-        public int hashCode() {
-            final int PRIME = 59;
-            int result = 1;
-            result = result * PRIME + this.getMin();
-            result = result * PRIME + this.getMax();
-            result = result * PRIME + (this.isAutomatic() ? 79 : 97);
-            return result;
-        }
+            public boolean isInRange(final int num) {
+                return num <= max && num >= min;
+            }
 
-        public boolean isAutomatic() {
-            return this.automatic;
         }
-
-    }
 
 }

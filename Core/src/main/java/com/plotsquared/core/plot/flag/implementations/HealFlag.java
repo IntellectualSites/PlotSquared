@@ -60,7 +60,7 @@ public class HealFlag extends TimedFlag<Integer, HealFlag> {
 
     @Override
     protected Integer mergeValue(Integer other) {
-        return this.getValue().getValue() + other;
+        return this.getValue().value() + other;
     }
 
     @Override

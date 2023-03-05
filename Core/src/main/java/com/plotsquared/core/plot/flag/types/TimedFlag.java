@@ -76,29 +76,16 @@ public abstract class TimedFlag<T, F extends PlotFlag<TimedFlag.Timed<T>, F>>
         return getValue().toString();
     }
 
-    public static final class Timed<T> {
-
-        private final int interval;
-        private final T value;
-
-        public Timed(int interval, T value) {
-            this.interval = interval;
-            this.value = value;
-        }
-
-        public int getInterval() {
-            return interval;
-        }
-
-        public T getValue() {
-            return value;
-        }
+    public record Timed<T>(
+            int interval,
+            T value
+    ) {
 
         @Override
-        public String toString() {
-            return String.format("%d %s", interval, value);
-        }
+            public String toString() {
+                return String.format("%d %s", interval, value);
+            }
 
-    }
+        }
 
 }

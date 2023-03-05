@@ -238,8 +238,8 @@ public final class TabCompletions {
                         PlotSquared.get().getImpromptuUUIDPipeline().getAllImmediately();
                 players = new ArrayList<>(mappings.size());
                 for (final UUIDMapping mapping : mappings) {
-                    if (uuidFilter.test(mapping.getUuid())) {
-                        players.add(mapping.getUsername());
+                    if (uuidFilter.test(mapping.uuid())) {
+                        players.add(mapping.username());
                     }
                 }
                 cachedCompletionValues.put(cacheIdentifier, players);

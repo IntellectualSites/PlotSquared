@@ -60,7 +60,7 @@ public class FeedFlag extends TimedFlag<Integer, FeedFlag> {
 
     @Override
     protected Integer mergeValue(Integer other) {
-        return this.getValue().getValue() + other;
+        return this.getValue().value() + other;
     }
 
     @Override

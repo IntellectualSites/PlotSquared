@@ -165,8 +165,8 @@ public class ComponentPresetManager {
 
         final List<ComponentPreset> allowedPresets = new ArrayList<>(this.presets.size());
         for (final ComponentPreset componentPreset : this.presets) {
-            if (!componentPreset.getPermission().isEmpty() && !player.hasPermission(
-                    componentPreset.getPermission()
+            if (!componentPreset.permission().isEmpty() && !player.hasPermission(
+                    componentPreset.permission()
             )) {
                 continue;
             }
@@ -200,30 +200,30 @@ public class ComponentPresetManager {
                     return false;
                 }
 
-                final Pattern pattern = PatternUtil.parse(null, componentPreset.getPattern(), false);
+                final Pattern pattern = PatternUtil.parse(null, componentPreset.pattern(), false);
                 if (pattern == null) {
                     getPlayer().sendMessage(TranslatableCaption.of("preset.preset_invalid"));
                     return false;
                 }
 
-                if (componentPreset.getCost() > 0.0D) {
+                if (componentPreset.cost() > 0.0D) {
                     if (!econHandler.isEnabled(plot.getArea())) {
                         getPlayer().sendMessage(
                                 TranslatableCaption.of("preset.economy_disabled"),
-                                TagResolver.resolver("preset", Tag.inserting(Component.text(componentPreset.getDisplayName())))
+                                TagResolver.resolver("preset", Tag.inserting(Component.text(componentPreset.displayName())))
                         );
                         return false;
                     }
-                    if (econHandler.getMoney(getPlayer()) < componentPreset.getCost()) {
+                    if (econHandler.getMoney(getPlayer()) < componentPreset.cost()) {
                         getPlayer().sendMessage(TranslatableCaption.of("preset.preset_cannot_afford"));
                         return false;
                     } else {
-                        econHandler.withdrawMoney(getPlayer(), componentPreset.getCost());
+                        econHandler.withdrawMoney(getPlayer(), componentPreset.cost());
                         getPlayer().sendMessage(
                                 TranslatableCaption.of("economy.removed_balance"),
                                 TagResolver.resolver(
                                         "money",
-                                        Tag.inserting(Component.text(econHandler.format(componentPreset.getCost())))
+                                        Tag.inserting(Component.text(econHandler.format(componentPreset.cost())))
                                 )
                         );
                     }
@@ -235,7 +235,7 @@ public class ComponentPresetManager {
                     queue.setCompleteTask(plot::removeRunning);
                     for (Plot current : plot.getConnectedPlots()) {
                         current.getPlotModificationManager().setComponent(
-                                componentPreset.getComponent().name(),
+                                componentPreset.component().name(),
                                 pattern,
                                 player,
                                 queue
@@ -252,32 +252,32 @@ public class ComponentPresetManager {
         for (int i = 0; i < allowedPresets.size(); i++) {
             final ComponentPreset preset = allowedPresets.get(i);
             final List<String> lore = new ArrayList<>();
-            if (preset.getCost() > 0) {
+            if (preset.cost() > 0) {
                 if (!this.econHandler.isEnabled(plot.getArea())) {
                     lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.deserialize(
                             TranslatableCaption.of("preset.preset_lore_economy_disabled").getComponent(player))));
                 } else {
                     lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.deserialize(
                             TranslatableCaption.of("preset.preset_lore_cost").getComponent(player),
-                            TagResolver.resolver("cost", Tag.inserting(Component.text(String.format("%.2f", preset.getCost()))))
+                            TagResolver.resolver("cost", Tag.inserting(Component.text(String.format("%.2f", preset.cost()))))
                     )));
                 }
             }
             lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.deserialize(
                     TranslatableCaption.of("preset.preset_lore_component").getComponent(player),
                     TagResolver.builder()
-                            .tag("component", Tag.inserting(Component.text(preset.getComponent().name().toLowerCase())))
+                            .tag("component", Tag.inserting(Component.text(preset.component().name().toLowerCase())))
                             .tag("prefix", Tag.inserting(TranslatableCaption.of("core.prefix").toComponent(player)))
                             .build()
             )));
             lore.removeIf(String::isEmpty);
-            lore.addAll(preset.getDescription());
+            lore.addAll(preset.description());
             plotInventory.setItem(
                     i,
                     new PlotItemStack(
-                            preset.getIcon().getId().replace("minecraft:", ""),
+                            preset.icon().getId().replace("minecraft:", ""),
                             1,
-                            preset.getDisplayName(),
+                            preset.displayName(),
                             lore.toArray(new String[0])
                     )
             );

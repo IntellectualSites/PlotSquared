@@ -2400,13 +2400,13 @@ public class SQLManager implements AbstractDB {
                 if (plot != null) {
                     statement.setString(1, plot.getArea().toString());
                     statement.setInt(2, plot.getId().hashCode());
-                    statement.setString(3, comment.comment);
-                    statement.setString(4, comment.inbox);
-                    statement.setString(5, comment.senderName);
+                    statement.setString(3, comment.comment());
+                    statement.setString(4, comment.inbox());
+                    statement.setString(5, comment.senderName());
                 } else {
-                    statement.setString(1, comment.comment);
-                    statement.setString(2, comment.inbox);
-                    statement.setString(3, comment.senderName);
+                    statement.setString(1, comment.comment());
+                    statement.setString(2, comment.inbox());
+                    statement.setString(3, comment.senderName());
                 }
             }
 
@@ -2518,10 +2518,10 @@ public class SQLManager implements AbstractDB {
             public void set(PreparedStatement statement) throws SQLException {
                 statement.setString(1, plot.getArea().toString());
                 statement.setInt(2, plot.getId().hashCode());
-                statement.setString(3, comment.comment);
-                statement.setString(4, comment.inbox);
-                statement.setInt(5, (int) (comment.timestamp / 1000));
-                statement.setString(6, comment.senderName);
+                statement.setString(3, comment.comment());
+                statement.setString(4, comment.inbox());
+                statement.setInt(5, (int) (comment.timestamp() / 1000));
+                statement.setString(6, comment.senderName());
             }
 
             @Override
@@ -3414,15 +3414,10 @@ public class SQLManager implements AbstractDB {
         }
     }
 
-    private static class LegacySettings {
-
-        public final int id;
-        public final PlotSettings settings;
-
-        public LegacySettings(int id, PlotSettings settings) {
-            this.id = id;
-            this.settings = settings;
-        }
+    private record LegacySettings(
+            int id,
+            PlotSettings settings
+    ) {
 
     }
 

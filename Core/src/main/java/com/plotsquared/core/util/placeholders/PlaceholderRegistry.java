@@ -298,19 +298,11 @@ public final class PlaceholderRegistry {
     }
 
     /**
-     * Event called when a new {@link Placeholder} has been added
-     */
-    public static class PlaceholderAddedEvent {
-
-        private final Placeholder placeholder;
-
-        public PlaceholderAddedEvent(Placeholder placeholder) {
-            this.placeholder = placeholder;
-        }
-
-        public Placeholder getPlaceholder() {
-            return this.placeholder;
-        }
+    * Event called when a new {@link Placeholder} has been added
+    */
+    public record PlaceholderAddedEvent(
+            Placeholder placeholder
+    ) {
 
     }
 

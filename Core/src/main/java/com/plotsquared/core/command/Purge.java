@@ -127,7 +127,7 @@ public class Purge extends SubCommand {
                         );
                         return false;
                     }
-                    owner = ownerMapping.getUuid();
+                    owner = ownerMapping.uuid();
                     break;
                 case "shared":
                 case "s":
@@ -139,7 +139,7 @@ public class Purge extends SubCommand {
                         );
                         return false;
                     }
-                    added = addedMapping.getUuid();
+                    added = addedMapping.uuid();
                     break;
                 case "clear":
                 case "c":
