@@ -58,6 +58,10 @@ public class WEManager {
         return false;
     }
 
+    /**
+     * @deprecated Unused internally. Scheduled for removal in next major release.
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public static boolean maskContains(Set<CuboidRegion> mask, double dx, double dy, double dz) {
         int x = Math.toIntExact(Math.round(dx >= 0 ? dx - 0.5 : dx + 0.5));
         int y = Math.toIntExact(Math.round(dy - 0.5));
@@ -70,6 +74,10 @@ public class WEManager {
         return false;
     }
 
+    /**
+     * @deprecated Unused internally. Scheduled for removal in next major release.
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public static boolean maskContains(Set<CuboidRegion> mask, double dx, double dz) {
         int x = Math.toIntExact(Math.round(dx >= 0 ? dx - 0.5 : dx + 0.5));
         int z = Math.toIntExact(Math.round(dz >= 0 ? dz - 0.5 : dz + 0.5));
@@ -116,10 +124,18 @@ public class WEManager {
         return regions;
     }
 
+    /**
+     * @deprecated Unused internally. Scheduled for removal in next major release.
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public static boolean intersects(CuboidRegion region1, CuboidRegion region2) {
         return RegionUtil.intersects(region1, region2);
     }
 
+    /**
+     * @deprecated Unused internally. Scheduled for removal in next major release.
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public static boolean regionContains(CuboidRegion selection, HashSet<CuboidRegion> mask) {
         for (CuboidRegion region : mask) {
             if (intersects(region, selection)) {

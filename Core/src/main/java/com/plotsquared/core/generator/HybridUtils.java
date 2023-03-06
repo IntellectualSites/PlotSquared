@@ -380,6 +380,10 @@ public class HybridUtils {
         run.run();
     }
 
+    /**
+     * @deprecated Unused internally and poor implementation. Scheduled for removal in next major release.
+     */
+    @Deprecated(forRemoval = true, since = "TODO")
     public int checkModified(QueueCoordinator queue, int x1, int x2, int y1, int y2, int z1, int z2, BlockState[] blocks) {
         int count = 0;
         for (int y = y1; y <= y2; y++) {
