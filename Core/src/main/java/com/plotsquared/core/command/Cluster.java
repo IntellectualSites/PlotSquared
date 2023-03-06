@@ -46,6 +46,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
@@ -77,8 +78,7 @@ public class Cluster extends SubCommand {
         }
         String sub = args[0].toLowerCase();
         switch (sub) {
-            case "l":
-            case "list": {
+            case "l", "list" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_LIST)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -133,8 +133,7 @@ public class Cluster extends SubCommand {
                 }
                 return true;
             }
-            case "c":
-            case "create": {
+            case "c", "create" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_CREATE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -269,9 +268,7 @@ public class Cluster extends SubCommand {
                 );
                 return true;
             }
-            case "disband":
-            case "del":
-            case "delete": {
+            case "disband", "del", "delete" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_DELETE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -330,8 +327,7 @@ public class Cluster extends SubCommand {
                 ));
                 return true;
             }
-            case "res":
-            case "resize": {
+            case "res", "resize" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_RESIZE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -452,9 +448,7 @@ public class Cluster extends SubCommand {
                 player.sendMessage(TranslatableCaption.of("cluster.cluster_resized"));
                 return true;
             }
-            case "add":
-            case "inv":
-            case "invite": {
+            case "add", "inv", "invite" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_INVITE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -523,9 +517,7 @@ public class Cluster extends SubCommand {
                         });
                 return true;
             }
-            case "k":
-            case "remove":
-            case "kick": {
+            case "k", "remove", "kick" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_KICK)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -605,8 +597,7 @@ public class Cluster extends SubCommand {
                         });
                 return true;
             }
-            case "quit":
-            case "leave": {
+            case "quit", "leave" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_LEAVE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -667,7 +658,7 @@ public class Cluster extends SubCommand {
                 removePlayerPlots(cluster, uuid, player.getLocation().getWorldName());
                 return true;
             }
-            case "members": {
+            case "members" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_HELPERS)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -728,9 +719,7 @@ public class Cluster extends SubCommand {
                         });
                 return true;
             }
-            case "spawn":
-            case "home":
-            case "tp": {
+            case "spawn", "home", "tp" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_TP)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -778,10 +767,7 @@ public class Cluster extends SubCommand {
                 player.sendMessage(TranslatableCaption.of("cluster.cluster_teleporting"));
                 return true;
             }
-            case "i":
-            case "info":
-            case "show":
-            case "information": {
+            case "i", "info", "show", "information" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_INFO)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -828,11 +814,7 @@ public class Cluster extends SubCommand {
                                 player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                             } else {
                                 final String owner;
-                                if (username == null) {
-                                    owner = "unknown";
-                                } else {
-                                    owner = username;
-                                }
+                                owner = Objects.requireNonNullElse(username, "unknown");
                                 String name = cluster.getName();
                                 String size = (cluster.getP2().getX() - cluster.getP1().getX() + 1) + "x" + (
                                         cluster.getP2().getY() - cluster.getP1().getY() + 1);
@@ -850,9 +832,7 @@ public class Cluster extends SubCommand {
                         });
                 return true;
             }
-            case "sh":
-            case "setspawn":
-            case "sethome": {
+            case "sh", "setspawn", "sethome" -> {
                 if (!player.hasPermission(Permission.PERMISSION_CLUSTER_SETHOME)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),

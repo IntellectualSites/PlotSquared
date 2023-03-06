@@ -90,12 +90,8 @@ public class Purge extends SubCommand {
                 return false;
             }
             switch (split[0].toLowerCase()) {
-                case "world":
-                case "w":
-                    world = split[1];
-                    break;
-                case "area":
-                case "a":
+                case "world", "w" -> world = split[1];
+                case "area", "a" -> {
                     area = this.plotAreaManager.getPlotAreaByString(split[1]);
                     if (area == null) {
                         player.sendMessage(
@@ -104,9 +100,8 @@ public class Purge extends SubCommand {
                         );
                         return false;
                     }
-                    break;
-                case "plotid":
-                case "id":
+                }
+                case "plotid", "id" -> {
                     try {
                         id = PlotId.fromString(split[1]);
                     } catch (IllegalArgumentException ignored) {
@@ -116,9 +111,8 @@ public class Purge extends SubCommand {
                         );
                         return false;
                     }
-                    break;
-                case "owner":
-                case "o":
+                }
+                case "owner", "o" -> {
                     UUIDMapping ownerMapping = PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(split[1]);
                     if (ownerMapping == null) {
                         player.sendMessage(
@@ -128,9 +122,8 @@ public class Purge extends SubCommand {
                         return false;
                     }
                     owner = ownerMapping.uuid();
-                    break;
-                case "shared":
-                case "s":
+                }
+                case "shared", "s" -> {
                     UUIDMapping addedMapping = PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(split[1]);
                     if (addedMapping == null) {
                         player.sendMessage(
@@ -140,22 +133,13 @@ public class Purge extends SubCommand {
                         return false;
                     }
                     added = addedMapping.uuid();
-                    break;
-                case "clear":
-                case "c":
-                case "delete":
-                case "d":
-                case "del":
-                    clear = Boolean.parseBoolean(split[1]);
-                    break;
-                case "unknown":
-                case "?":
-                case "u":
-                    unknown = Boolean.parseBoolean(split[1]);
-                    break;
-                default:
+                }
+                case "clear", "c", "delete", "d", "del" -> clear = Boolean.parseBoolean(split[1]);
+                case "unknown", "?", "u" -> unknown = Boolean.parseBoolean(split[1]);
+                default -> {
                     sendUsage(player);
                     return false;
+                }
             }
         }
         final HashSet<Plot> toDelete = new HashSet<>();
@@ -236,9 +220,8 @@ public class Purge extends SubCommand {
                             try {
                                 ids.add(plot.temp);
                                 if (finalClear) {
-                                    plot.getPlotModificationManager().clear(false, true, player, () -> {
-                                        LOGGER.info("Plot {} cleared by purge", plot.getId());
-                                    });
+                                    plot.getPlotModificationManager().clear(false, true, player,
+                                            () -> LOGGER.info("Plot {} cleared by purge", plot.getId()));
                                 } else {
                                     plot.getPlotModificationManager().removeSign();
                                 }
