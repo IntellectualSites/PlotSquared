@@ -22,7 +22,7 @@ import com.sk89q.worldedit.entity.Entity;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * @since TODO
+ * @since 6.11.1
  */
 public abstract class EntityEvent {
 

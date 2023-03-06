@@ -39,6 +39,10 @@ public class StringMan {
     // Stolen from https://stackoverflow.com/a/366532/12620913 | Debug: https://regex101.com/r/DudJLb/1
     private static final Pattern STRING_SPLIT_PATTERN = Pattern.compile("[^\\s\"]+|\"([^\"]*)\"");
 
+    /**
+     * @deprecated Unused internally. Scheduled for removal in next major release.
+     */
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static String replaceFromMap(String string, Map<String, String> replacements) {
         StringBuilder sb = new StringBuilder(string);
         int size = string.length();
@@ -70,6 +74,10 @@ public class StringMan {
         return count;
     }
 
+    /**
+     * @deprecated Unused internally. Scheduled for removal in next major release.
+     */
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static String getString(Object obj) {
         if (obj == null) {
             return "null";
@@ -102,6 +110,10 @@ public class StringMan {
         }
     }
 
+    /**
+     * @deprecated Unused internally. Scheduled for removal in next major release.
+     */
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static String replaceFirst(char c, String s) {
         if (s == null) {
             return "";
@@ -128,6 +140,10 @@ public class StringMan {
         return s;
     }
 
+    /**
+     * @deprecated Unused internally. Scheduled for removal in next major release.
+     */
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static String replaceAll(String string, Object... pairs) {
         StringBuilder sb = new StringBuilder(string);
         for (int i = 0; i < pairs.length; i += 2) {
@@ -144,6 +160,10 @@ public class StringMan {
         return sb.toString();
     }
 
+    /**
+     * @deprecated Unused internally. Scheduled for removal in next major release.
+     */
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static boolean isAlphanumeric(String str) {
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
@@ -165,6 +185,10 @@ public class StringMan {
         return true;
     }
 
+    /**
+     * @deprecated Unused internally. Scheduled for removal in next major release.
+     */
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static boolean isAlpha(String str) {
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
@@ -185,14 +209,26 @@ public class StringMan {
         return join(array, delimiter);
     }
 
+    /**
+     * @deprecated Unused internally. Scheduled for removal in next major release.
+     */
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static String join(Collection<?> collection, char delimiter) {
         return join(collection.toArray(), delimiter + "");
     }
 
+    /**
+     * @deprecated Unused internally. Scheduled for removal in next major release.
+     */
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static boolean isAsciiPrintable(char c) {
         return (c >= ' ') && (c < '');
     }
 
+    /**
+     * @deprecated Unused internally. Scheduled for removal in next major release.
+     */
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static boolean isAsciiPrintable(String s) {
         for (char c : s.toCharArray()) {
             if (!isAsciiPrintable(c)) {
@@ -249,6 +285,10 @@ public class StringMan {
         return result.toString();
     }
 
+    /**
+     * @deprecated Unused internally. Scheduled for removal in next major release.
+     */
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static String join(int[] array, String delimiter) {
         Integer[] wrapped = new Integer[array.length];
         for (int i = 0; i < array.length; i++) {
@@ -257,6 +297,10 @@ public class StringMan {
         return join(wrapped, delimiter);
     }
 
+    /**
+     * @deprecated Unused internally. Scheduled for removal in next major release.
+     */
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static boolean isEqualToAny(String a, String... args) {
         for (String arg : args) {
             if (StringMan.isEqual(a, arg)) {
@@ -284,6 +328,10 @@ public class StringMan {
         return a.equals(b);
     }
 
+    /**
+     * @deprecated Unused internally. Scheduled for removal in next major release.
+     */
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static boolean isEqualIgnoreCase(String a, String b) {
         return a.equals(b) || ((a != null) && (b != null) && (a.length() == b.length()) && a
                 .equalsIgnoreCase(b));
@@ -295,6 +343,10 @@ public class StringMan {
         return sb.toString();
     }
 
+    /**
+     * @deprecated Unused internally. Scheduled for removal in next major release.
+     */
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static boolean contains(String name, char c) {
         for (char current : name.toCharArray()) {
             if (c == current) {
@@ -304,6 +356,10 @@ public class StringMan {
         return false;
     }
 
+    /**
+     * @deprecated Unused internally. Scheduled for removal in next major release.
+     */
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public <T> Collection<T> match(Collection<T> col, String startsWith) {
         if (col == null) {
             return null;
