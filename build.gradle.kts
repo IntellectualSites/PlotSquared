@@ -1,6 +1,6 @@
+import com.diffplug.gradle.spotless.SpotlessPlugin
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import java.net.URI
-import com.diffplug.gradle.spotless.SpotlessPlugin
 
 plugins {
     java
@@ -18,7 +18,7 @@ plugins {
 }
 
 group = "com.plotsquared"
-version = "6.11.2-SNAPSHOT"
+version = "7.0.0-SNAPSHOT"
 
 if (!File("$rootDir/.git").exists()) {
     logger.lifecycle("""
@@ -74,7 +74,7 @@ subprojects {
     }
 
     dependencies {
-        implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.24"))
+        implementation(platform("com.intellectualsites.bom:bom-newest:1.24"))
     }
 
     dependencies {

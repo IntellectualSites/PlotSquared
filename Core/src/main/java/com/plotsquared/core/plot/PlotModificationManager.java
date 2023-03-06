@@ -46,7 +46,9 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -415,7 +417,10 @@ public final class PlotModificationManager {
             Caption[] lines = new Caption[]{TranslatableCaption.of("signs.owner_sign_line_1"), TranslatableCaption.of(
                     "signs.owner_sign_line_2"),
                     TranslatableCaption.of("signs.owner_sign_line_3"), TranslatableCaption.of("signs.owner_sign_line_4")};
-            PlotSquared.platform().worldUtil().setSign(location, lines, Template.of("id", id), Template.of("owner", name));
+            PlotSquared.platform().worldUtil().setSign(location, lines, TagResolver.builder()
+                    .tag("id", Tag.inserting(Component.text(id)))
+                    .tag("owner", Tag.inserting(Component.text(name)))
+                    .build());
         }
     }
 
@@ -524,7 +529,7 @@ public final class PlotModificationManager {
                         if (player != null) {
                             player.sendMessage(
                                     TranslatableCaption.of("events.event_denied"),
-                                    Template.of("value", "Auto merge on claim")
+                                    TagResolver.resolver("value", Tag.inserting(Component.text("Auto merge on claim")))
                             );
                         }
                         return;

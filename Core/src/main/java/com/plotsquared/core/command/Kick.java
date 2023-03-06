@@ -30,7 +30,9 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
@@ -80,7 +82,7 @@ public class Kick extends SubCommand {
             } else if (throwable != null || uuids.isEmpty()) {
                 player.sendMessage(
                         TranslatableCaption.of("errors.invalid_player"),
-                        Template.of("value", args[0])
+                        TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))
                 );
             } else {
                 Set<PlotPlayer<?>> players = new HashSet<>();
@@ -103,7 +105,7 @@ public class Kick extends SubCommand {
                 if (players.isEmpty()) {
                     player.sendMessage(
                             TranslatableCaption.of("errors.invalid_player"),
-                            Template.of("value", args[0])
+                            TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))
                     );
                     return;
                 }
@@ -111,14 +113,14 @@ public class Kick extends SubCommand {
                     if (!plot.equals(player2.getCurrentPlot())) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
-                                Template.of("value", args[0])
+                                TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))
                         );
                         return;
                     }
                     if (player2.hasPermission(Permission.PERMISSION_ADMIN_ENTRY_DENIED)) {
                         player.sendMessage(
                                 TranslatableCaption.of("cluster.cannot_kick_player"),
-                                Template.of("name", player2.getName())
+                                TagResolver.resolver("name", Tag.inserting(Component.text(player2.getName())))
                         );
                         return;
                     }

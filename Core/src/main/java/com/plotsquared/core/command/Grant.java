@@ -31,7 +31,9 @@ import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -63,7 +65,7 @@ public class Grant extends Command {
         checkTrue(
                 args.length >= 1 && args.length <= 2,
                 TranslatableCaption.of("commandconfig.command_syntax"),
-                Template.of("value", "/plot grant <check | add> [player]")
+                TagResolver.resolver("value", Tag.inserting(Component.text("/plot grant <check | add> [player]")))
         );
         final String arg0 = args[0].toLowerCase();
         switch (arg0) {
@@ -71,7 +73,7 @@ public class Grant extends Command {
                 if (!player.hasPermission(Permission.PERMISSION_GRANT.format(arg0))) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", Permission.PERMISSION_GRANT.format(arg0))
+                            TagResolver.resolver("node", Tag.inserting(Component.text(Permission.PERMISSION_GRANT.format(arg0))))
                     );
                     return CompletableFuture.completedFuture(false);
                 }
@@ -84,7 +86,7 @@ public class Grant extends Command {
                     } else if (throwable != null || uuids.size() != 1) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
-                                Template.of("value", String.valueOf(uuids))
+                                TagResolver.resolver("value", Tag.inserting(Component.text(String.valueOf(uuids))))
                         );
                     } else {
                         final UUID uuid = uuids.iterator().next();
@@ -95,7 +97,7 @@ public class Grant extends Command {
                                 if (args[0].equalsIgnoreCase("check")) {
                                     player.sendMessage(
                                             TranslatableCaption.of("grants.granted_plots"),
-                                            Template.of("amount", String.valueOf(access.get().orElse(0)))
+                                            TagResolver.resolver("amount", Tag.inserting(Component.text(access.get().orElse(0))))
                                     );
                                 } else {
                                     access.set(access.get().orElse(0) + 1);
@@ -115,7 +117,7 @@ public class Grant extends Command {
                                         }
                                         player.sendMessage(
                                                 TranslatableCaption.of("grants.granted_plots"),
-                                                Template.of("amount", String.valueOf(granted))
+                                                TagResolver.resolver("amount", Tag.inserting(Component.text(granted)))
                                         );
                                     } else { // add
                                         int amount;
@@ -130,7 +132,7 @@ public class Grant extends Command {
                                         DBFunc.addPersistentMeta(uuid, key, rawData, replace);
                                         player.sendMessage(
                                                 TranslatableCaption.of("grants.added"),
-                                                Template.of("grants", String.valueOf(amount))
+                                                TagResolver.resolver("grants", Tag.inserting(Component.text(amount)))
                                         );
                                     }
                                 }

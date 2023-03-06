@@ -18,22 +18,21 @@
  */
 package com.plotsquared.core.permissions;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Permission class.
  */
-public enum Permission {
+public enum Permission implements ComponentLike {
 
     //@formatter:off
     //<editor-fold desc="Static Permission">
     PERMISSION_STAR("*"),
     PERMISSION_ADMIN("plots.admin"),
     PERMISSION_ADMIN_AREA_SUDO("plots.admin.area.sudo"),
-    @Deprecated(forRemoval = true, since = "6.2.2")
-    PERMISSION_PROJECTILE_UNOWNED("plots.projectile.unowned"),
-    @Deprecated(forRemoval = true, since = "6.2.2")
-    PERMISSION_PROJECTILE_OTHER("plots.projectile.other"),
     PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS("plots.admin.interact.blockedcommands"),
     PERMISSION_WORLDEDIT_BYPASS("plots.worldedit.bypass"),
     PERMISSION_PLOT_TOGGLE_TITLES("plots.toggle.titles"),
@@ -217,6 +216,11 @@ public enum Permission {
 
     public String format(Object... replacements) {
         return String.format(this.toString(), replacements);
+    }
+
+    @Override
+    public @NotNull Component asComponent() {
+        return Component.text(text);
     }
 
 }

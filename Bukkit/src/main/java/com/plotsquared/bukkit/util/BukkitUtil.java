@@ -45,7 +45,7 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 import io.papermc.lib.PaperLib;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -333,7 +333,7 @@ public class BukkitUtil extends WorldUtil {
     @SuppressWarnings("deprecation")
     public void setSign(
             final @NonNull Location location, final @NonNull Caption[] lines,
-            final @NonNull Template... replacements
+            final @NonNull TagResolver... replacements
     ) {
         ensureLoaded(location.getWorldName(), location.getX(), location.getZ(), chunk -> {
             PlotArea area = location.getPlotArea();
@@ -366,8 +366,9 @@ public class BukkitUtil extends WorldUtil {
             final org.bukkit.block.BlockState blockstate = block.getState();
             if (blockstate instanceof final Sign sign) {
                 for (int i = 0; i < lines.length; i++) {
-                    sign.setLine(i, LEGACY_COMPONENT_SERIALIZER
-                            .serialize(MINI_MESSAGE.parse(lines[i].getComponent(LocaleHolder.console()), replacements)));
+                    sign.setLine(i, LEGACY_COMPONENT_SERIALIZER.serialize(
+                            MINI_MESSAGE.deserialize(lines[i].getComponent(LocaleHolder.console()), replacements)
+                    ));
                 }
                 sign.update(true, false);
             }

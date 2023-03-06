@@ -27,7 +27,9 @@ import com.plotsquared.core.plot.comment.CommentInbox;
 import com.plotsquared.core.plot.comment.CommentManager;
 import com.plotsquared.core.plot.comment.PlotComment;
 import com.plotsquared.core.util.StringMan;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -44,8 +46,10 @@ public class Comment extends SubCommand {
         if (args.length < 2) {
             player.sendMessage(
                     TranslatableCaption.of("comment.comment_syntax"),
-                    Template.of("command", "/plot comment [X;Z]"),
-                    Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
+                    TagResolver.builder()
+                            .tag("command", Tag.inserting(Component.text("/plot comment [X;Z]")))
+                            .tag("list", Tag.inserting(Component.text(StringMan.join(CommentManager.inboxes.keySet(), "|"))))
+                            .build()
             );
             return false;
         }
@@ -64,8 +68,10 @@ public class Comment extends SubCommand {
             if (args.length < 3) {
                 player.sendMessage(
                         TranslatableCaption.of("comment.comment_syntax"),
-                        Template.of("command", "/plot comment [X;Z]"),
-                        Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
+                        TagResolver.builder()
+                                .tag("command", Tag.inserting(Component.text("/plot comment [X;Z]")))
+                                .tag("list", Tag.inserting(Component.text(StringMan.join(CommentManager.inboxes.keySet(), "|"))))
+                                .build()
                 );
                 return false;
             }
@@ -76,8 +82,10 @@ public class Comment extends SubCommand {
         if (inbox == null) {
             player.sendMessage(
                     TranslatableCaption.of("comment.comment_syntax"),
-                    Template.of("command", "/plot comment [X;Z]"),
-                    Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
+                    TagResolver.builder()
+                            .tag("command", Tag.inserting(Component.text("/plot comment [X;Z]")))
+                            .tag("list", Tag.inserting(Component.text(StringMan.join(CommentManager.inboxes.keySet(), "|"))))
+                            .build()
             );
             return false;
         }
@@ -97,8 +105,10 @@ public class Comment extends SubCommand {
             player.sendMessage(TranslatableCaption.of("comment.no_plot_inbox"));
             player.sendMessage(
                     TranslatableCaption.of("comment.comment_syntax"),
-                    Template.of("command", "/plot comment [X;Z]"),
-                    Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
+                    TagResolver.builder()
+                            .tag("command", Tag.inserting(Component.text("/plot comment [X;Z]")))
+                            .tag("list", Tag.inserting(Component.text(StringMan.join(CommentManager.inboxes.keySet(), "|"))))
+                            .build()
             );
             return false;
         }

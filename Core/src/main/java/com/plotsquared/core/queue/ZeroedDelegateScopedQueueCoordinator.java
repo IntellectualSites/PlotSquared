@@ -28,13 +28,13 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * Queue that only sets blocks with a designated X-Z area, will accept any Y values. Requires all blocks be set normalized in
- * the x and z directions, i.e. starting from 0,0. An offset of the minimum point of the region will then be applied to x and z.
+ * Queue that only sets blocks with a designated X-Z area, will accept any Y values. Requires all blocks be set normalized to
+ * zero in the x and z directions, i.e. starting from 0,0. An offset of the minimum point of the region will then be applied to
+ * x and z.
  *
- * @deprecated This should be renamed to NormalizedScopedQueueCoordinator or something.
+ * @since TODO
  */
-@Deprecated(forRemoval = true, since = "6.8.0")
-public class ScopedQueueCoordinator extends DelegateQueueCoordinator {
+public class ZeroedDelegateScopedQueueCoordinator extends DelegateQueueCoordinator {
 
     private final Location min;
     private final Location max;
@@ -49,8 +49,10 @@ public class ScopedQueueCoordinator extends DelegateQueueCoordinator {
 
     /**
      * Create a new ScopedQueueCoordinator instance that delegates to a given QueueCoordinator. Locations are inclusive.
+     *
+     * @since TODO
      */
-    public ScopedQueueCoordinator(@Nullable QueueCoordinator parent, @NonNull Location min, @NonNull Location max) {
+    public ZeroedDelegateScopedQueueCoordinator(@Nullable QueueCoordinator parent, @NonNull Location min, @NonNull Location max) {
         super(parent);
         this.min = min;
         this.max = max;

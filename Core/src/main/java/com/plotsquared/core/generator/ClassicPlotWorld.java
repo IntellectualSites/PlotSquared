@@ -38,6 +38,7 @@ import javax.annotation.Nullable;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class ClassicPlotWorld extends SquarePlotWorld {
+
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + ClassicPlotWorld.class.getSimpleName());
 
     public int ROAD_HEIGHT = 62;
@@ -62,6 +63,21 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
             final @NonNull GlobalBlockQueue blockQueue
     ) {
         super(worldName, id, generator, min, max, worldConfiguration, blockQueue);
+    }
+
+    private static BlockBucket createCheckedBlockBucket(String input, BlockBucket def) {
+        final BlockBucket bucket = new BlockBucket(input);
+        Pattern pattern = null;
+        try {
+            pattern = bucket.toPattern();
+        } catch (Exception ignore) {
+        }
+        if (pattern == null) {
+            LOGGER.error("Failed to parse pattern '{}', check your worlds.yml", input);
+            LOGGER.error("Falling back to {}", def);
+            return def;
+        }
+        return bucket;
     }
 
     /**
@@ -142,21 +158,6 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
             return plotRoadMin;
         }
         return Math.min(WALL_HEIGHT, plotRoadMin);
-    }
-
-    private static BlockBucket createCheckedBlockBucket(String input, BlockBucket def) {
-        final BlockBucket bucket = new BlockBucket(input);
-        Pattern pattern = null;
-        try {
-            pattern = bucket.toPattern();
-        } catch (Exception ignore) {
-        }
-        if (pattern == null) {
-            LOGGER.error("Failed to parse pattern '{}', check your worlds.yml", input);
-            LOGGER.error("Falling back to {}", def);
-            return def;
-        }
-        return bucket;
     }
 
 }

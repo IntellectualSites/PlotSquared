@@ -145,54 +145,37 @@ public class EntityEventListener implements Listener {
         }
         CreatureSpawnEvent.SpawnReason reason = event.getSpawnReason();
         switch (reason.toString()) {
-            case "DISPENSE_EGG":
-            case "EGG":
-            case "OCELOT_BABY":
-            case "SPAWNER_EGG":
+            case "DISPENSE_EGG", "EGG", "OCELOT_BABY", "SPAWNER_EGG" -> {
                 if (!area.isSpawnEggs()) {
                     event.setCancelled(true);
                     return;
                 }
-                break;
-            case "REINFORCEMENTS":
-            case "NATURAL":
-            case "MOUNT":
-            case "PATROL":
-            case "RAID":
-            case "SHEARED":
-            case "SILVERFISH_BLOCK":
-            case "ENDER_PEARL":
-            case "TRAP":
-            case "VILLAGE_DEFENSE":
-            case "VILLAGE_INVASION":
-            case "BEEHIVE":
-            case "CHUNK_GEN":
+            }
+            case "REINFORCEMENTS", "NATURAL", "MOUNT", "PATROL", "RAID", "SHEARED", "SILVERFISH_BLOCK", "ENDER_PEARL",
+                    "TRAP", "VILLAGE_DEFENSE", "VILLAGE_INVASION", "BEEHIVE", "CHUNK_GEN" -> {
                 if (!area.isMobSpawning()) {
                     event.setCancelled(true);
                     return;
                 }
-                break;
-            case "BREEDING":
+            }
+            case "BREEDING" -> {
                 if (!area.isSpawnBreeding()) {
                     event.setCancelled(true);
                     return;
                 }
-                break;
-            case "BUILD_IRONGOLEM":
-            case "BUILD_SNOWMAN":
-            case "BUILD_WITHER":
-            case "CUSTOM":
+            }
+            case "BUILD_IRONGOLEM", "BUILD_SNOWMAN", "BUILD_WITHER", "CUSTOM" -> {
                 if (!area.isSpawnCustom() && entity.getType() != EntityType.ARMOR_STAND) {
                     event.setCancelled(true);
                     return;
                 }
-                break;
-            case "SPAWNER":
+            }
+            case "SPAWNER" -> {
                 if (!area.isMobSpawnerSpawning()) {
                     event.setCancelled(true);
                     return;
                 }
-                break;
+            }
         }
         Plot plot = area.getOwnedPlotAbs(location);
         if (plot == null) {

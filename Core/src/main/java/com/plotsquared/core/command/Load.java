@@ -35,7 +35,9 @@ import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.TimeUtil;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.net.MalformedURLException;
@@ -97,7 +99,7 @@ public class Load extends SubCommand {
                         // No schematics found:
                         player.sendMessage(
                                 TranslatableCaption.of("web.load_null"),
-                                Template.of("command", "/plot load")
+                                TagResolver.resolver("command", Tag.inserting(Component.text("/plot load")))
                         );
                         return false;
                     }
@@ -108,7 +110,7 @@ public class Load extends SubCommand {
                         // use /plot load <index>
                         player.sendMessage(
                                 TranslatableCaption.of("invalid.not_valid_number"),
-                                Template.of("value", "(1, " + schematics.size() + ')')
+                                TagResolver.resolver("value", Tag.inserting(Component.text("(1, " + schematics.size() + ')')))
                         );
                         return false;
                     }
@@ -128,7 +130,10 @@ public class Load extends SubCommand {
                             plot.removeRunning();
                             player.sendMessage(
                                     TranslatableCaption.of("schematics.schematic_invalid"),
-                                    Template.of("reason", "non-existent or not in gzip format")
+                                    TagResolver.resolver(
+                                            "reason",
+                                            Tag.inserting(Component.text("non-existent or not in gzip format"))
+                                    )
                             );
                             return;
                         }
@@ -159,7 +164,7 @@ public class Load extends SubCommand {
                 plot.removeRunning();
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.of("value", "/plot load <index>")
+                        TagResolver.resolver("value", Tag.inserting(Component.text("/plot load <index>")))
                 );
                 return false;
             }
@@ -210,46 +215,9 @@ public class Load extends SubCommand {
             }
             player.sendMessage(
                     TranslatableCaption.of("web.load_list"),
-                    Template.of("command", "/plot load #")
+                    TagResolver.resolver("command", Tag.inserting(Component.text("/plot load #")))
             );
         }
-    }
-
-    /**
-     * @deprecated Use {@link TimeUtil#secToTime(long)}
-     */
-    @Deprecated(forRemoval = true, since = "6.6.2")
-    public String secToTime(long time) {
-        StringBuilder toreturn = new StringBuilder();
-        if (time >= 33868800) {
-            int years = (int) (time / 33868800);
-            time -= years * 33868800;
-            toreturn.append(years).append("y ");
-        }
-        if (time >= 604800) {
-            int weeks = (int) (time / 604800);
-            time -= weeks * 604800;
-            toreturn.append(weeks).append("w ");
-        }
-        if (time >= 86400) {
-            int days = (int) (time / 86400);
-            time -= days * 86400;
-            toreturn.append(days).append("d ");
-        }
-        if (time >= 3600) {
-            int hours = (int) (time / 3600);
-            time -= hours * 3600;
-            toreturn.append(hours).append("h ");
-        }
-        if (time >= 60) {
-            int minutes = (int) (time / 60);
-            time -= minutes * 60;
-            toreturn.append(minutes).append("m ");
-        }
-        if (toreturn.length() == 0 || (time > 0)) {
-            toreturn.append(time).append("s ");
-        }
-        return toreturn.toString().trim();
     }
 
 }

@@ -31,7 +31,8 @@ import com.plotsquared.core.plot.PlotHandler;
 import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.PlotFlagUtil;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -110,7 +111,10 @@ public class ProjectileEventListener implements Listener {
             )) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_ROAD))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_PROJECTILE_ROAD)
+                        )
                 );
                 entity.remove();
                 event.setCancelled(true);
@@ -119,7 +123,10 @@ public class ProjectileEventListener implements Listener {
             if (!pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)
+                        )
                 );
                 entity.remove();
                 event.setCancelled(true);
@@ -129,7 +136,10 @@ public class ProjectileEventListener implements Listener {
                 if (!pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)
+                            )
                     );
                     entity.remove();
                     event.setCancelled(true);

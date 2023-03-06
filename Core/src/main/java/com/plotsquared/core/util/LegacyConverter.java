@@ -24,7 +24,9 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.plot.BlockBucket;
 import com.sk89q.worldedit.world.block.BlockState;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -112,8 +114,10 @@ public final class LegacyConverter {
         this.setString(section, key, bucket);
         ConsolePlayer.getConsole().sendMessage(
                 TranslatableCaption.of("legacyconfig.legacy_config_replaced"),
-                Template.of("value1", block),
-                Template.of("value2", bucket.toString())
+                TagResolver.builder()
+                        .tag("value1", Tag.inserting(Component.text(block)))
+                        .tag("value2", Tag.inserting(Component.text(bucket.toString())))
+                        .build()
         );
     }
 
@@ -128,8 +132,10 @@ public final class LegacyConverter {
         ConsolePlayer.getConsole()
                 .sendMessage(
                         TranslatableCaption.of("legacyconfig.legacy_config_replaced"),
-                        Template.of("value1", plotBlockArrayString(blocks)),
-                        Template.of("value2", bucket.toString())
+                        TagResolver.builder()
+                                .tag("value1", Tag.inserting(Component.text(plotBlockArrayString(blocks))))
+                                .tag("value2", Tag.inserting(Component.text(bucket.toString())))
+                                .build()
                 );
     }
 

@@ -29,7 +29,9 @@ import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -68,7 +70,9 @@ public class Condense extends SubCommand {
         if (args.length != 2 && args.length != 3) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot condense <area> <start | stop | info> [radius]")
+                    TagResolver.resolver("value", Tag.inserting(Component.text(
+                            "/plot condense <area> <start | stop | info> [radius]"
+                    )))
             );
             return false;
         }
@@ -82,7 +86,10 @@ public class Condense extends SubCommand {
                 if (args.length == 2) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.of("value", "/plot condense" + area + " start <radius>")
+                            TagResolver.resolver(
+                                    "value",
+                                    Tag.inserting(Component.text("/plot condense" + area + " start " + "<radius>"))
+                            )
                     );
                     return false;
                 }
@@ -181,8 +188,10 @@ public class Condense extends SubCommand {
                                     if (result.get()) {
                                         player.sendMessage(
                                                 TranslatableCaption.of("condense.moving"),
-                                                Template.of("origin", String.valueOf(origin)),
-                                                Template.of("possible", String.valueOf(possible))
+                                                TagResolver.builder()
+                                                        .tag("origin", Tag.inserting(Component.text(origin.toString())))
+                                                        .tag("possible", Tag.inserting(Component.text(possible.toString())))
+                                                        .build()
                                         );
                                         TaskManager.runTaskLater(task, TaskTime.ticks(1L));
                                     }
@@ -202,7 +211,7 @@ public class Condense extends SubCommand {
                         if (i >= free.size()) {
                             player.sendMessage(
                                     TranslatableCaption.of("condense.skipping"),
-                                    Template.of("plot", String.valueOf(origin))
+                                    TagResolver.resolver("plot", Tag.inserting(Component.text(origin.toString())))
                             );
                         }
                     }
@@ -223,7 +232,10 @@ public class Condense extends SubCommand {
                 if (args.length == 2) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.of("value", "/plot condense " + area + " info <radius>")
+                            TagResolver.resolver(
+                                    "value",
+                                    Tag.inserting(Component.text("/plot condense " + area + " info <radius>"))
+                            )
                     );
                     return false;
                 }
@@ -244,20 +256,20 @@ public class Condense extends SubCommand {
                 player.sendMessage(TranslatableCaption.of("condense.default_eval"));
                 player.sendMessage(
                         TranslatableCaption.of("condense.minimum_radius"),
-                        Template.of("minimumRadius", String.valueOf(minimumRadius))
+                        TagResolver.resolver("minimumRadius", Tag.inserting(Component.text(minimumRadius)))
                 );
                 player.sendMessage(
-                        TranslatableCaption.of("condense.minimum_radius"),
-                        Template.of("maxMove", String.valueOf(maxMove))
+                        TranslatableCaption.of("condense.maximum_moved"),
+                        TagResolver.resolver("maxMove", Tag.inserting(Component.text(maxMove)))
                 );
                 player.sendMessage(TranslatableCaption.of("condense.input_eval"));
                 player.sendMessage(
                         TranslatableCaption.of("condense.input_radius"),
-                        Template.of("radius", String.valueOf(radius))
+                        TagResolver.resolver("radius", Tag.inserting(Component.text(radius)))
                 );
                 player.sendMessage(
                         TranslatableCaption.of("condense.estimated_moves"),
-                        Template.of("userMove", String.valueOf(userMove))
+                        TagResolver.resolver("userMove", Tag.inserting(Component.text(userMove)))
                 );
                 player.sendMessage(TranslatableCaption.of("condense.eta"));
                 player.sendMessage(TranslatableCaption.of("condense.radius_measured"));
@@ -266,7 +278,10 @@ public class Condense extends SubCommand {
         }
         player.sendMessage(
                 TranslatableCaption.of("commandconfig.command_syntax"),
-                Template.of("value", "/plot condense " + area.getWorldName() + " <start | stop | info> [radius]")
+                TagResolver.resolver(
+                        "value",
+                        Tag.inserting(Component.text("/plot condense " + area.getWorldName() + " <start | stop | info> [radius]"))
+                )
         );
         return false;
     }

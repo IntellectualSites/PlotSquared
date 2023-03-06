@@ -34,7 +34,9 @@ import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.world.gamemode.GameModes;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
@@ -88,7 +90,7 @@ public class Deny extends SubCommand {
         if (size >= maxDenySize) {
             player.sendMessage(
                     TranslatableCaption.of("members.plot_max_members_denied"),
-                    Template.of("amount", String.valueOf(size))
+                    TagResolver.resolver("amount", Tag.inserting(Component.text(size)))
             );
             return false;
         }
@@ -99,7 +101,7 @@ public class Deny extends SubCommand {
             } else if (throwable != null || uuids.isEmpty()) {
                 player.sendMessage(
                         TranslatableCaption.of("errors.invalid_player"),
-                        Template.of("value", args[0])
+                        TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))
                 );
             } else {
                 for (UUID uuid : uuids) {
@@ -107,7 +109,7 @@ public class Deny extends SubCommand {
                             player.hasPermission(Permission.PERMISSION_DENY_EVERYONE) || player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_DENY))) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
-                                Template.of("value", args[0])
+                                TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))
                         );
                     } else if (plot.isOwner(uuid)) {
                         player.sendMessage(TranslatableCaption.of("deny.cant_remove_owner"));
@@ -115,7 +117,10 @@ public class Deny extends SubCommand {
                     } else if (plot.getDenied().contains(uuid)) {
                         player.sendMessage(
                                 TranslatableCaption.of("member.already_added"),
-                                Template.of("player", PlayerManager.resolveName(uuid).getComponent(player))
+                                TagResolver.resolver(
+                                        "player",
+                                        Tag.inserting(PlayerManager.resolveName(uuid).toComponent(player))
+                                )
                         );
                         return;
                     } else {

@@ -42,7 +42,7 @@ import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.UUID;
@@ -110,7 +110,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
     @Override
     public void sendTitle(
             final @NonNull Caption title, final @NonNull Caption subtitle,
-            final int fadeIn, final int stay, final int fadeOut, final @NonNull Template... replacements
+            final int fadeIn, final int stay, final int fadeOut, final @NonNull TagResolver... resolvers
     ) {
     }
 
@@ -144,7 +144,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
     @Override
     public void sendMessage(
             final @NonNull Caption caption,
-            final @NonNull Template... replacements
+            final @NonNull TagResolver... replacements
     ) {
         String message = caption.getComponent(this);
         if (message.isEmpty()) {
@@ -154,7 +154,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
                 .replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&')
                 .replace("<prefix>", TranslatableCaption.of("core.prefix").getComponent(this));
         // Parse the message
-        PlotSquared.platform().consoleAudience().sendMessage(MINI_MESSAGE.parse(message, replacements));
+        PlotSquared.platform().consoleAudience().sendMessage(MINI_MESSAGE.deserialize(message, replacements));
     }
 
     @Override

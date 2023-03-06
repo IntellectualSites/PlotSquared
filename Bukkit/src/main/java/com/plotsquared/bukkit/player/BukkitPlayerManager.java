@@ -54,7 +54,6 @@ public class BukkitPlayerManager extends PlayerManager<BukkitPlayer, Player> {
 
     @NonNull
     @Override
-    @SuppressWarnings("deprecation")
     public BukkitPlayer getPlayer(final @NonNull Player object) {
         if (object.getUniqueId().version() == 2) { // not a real player
             return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, object, false, this.permissionHandler);
@@ -66,13 +65,12 @@ public class BukkitPlayerManager extends PlayerManager<BukkitPlayer, Player> {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public @NonNull BukkitPlayer createPlayer(final @NonNull UUID uuid) {
         final Player player = Bukkit.getPlayer(uuid);
         if (player == null || !player.isOnline()) {
             throw new NoSuchPlayerException(uuid);
         }
-        return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, player, this.permissionHandler);
+        return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, player, false, this.permissionHandler);
     }
 
     @Nullable

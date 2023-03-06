@@ -185,30 +185,38 @@ public abstract class SquarePlotManager extends GridPlotManager {
                 return null;
             }
             switch (hash) {
-                case 8:
+                case 8 -> {
                     // north
                     return plot.isMerged(Direction.NORTH) ? id : null;
-                case 4:
+                }
+                case 4 -> {
                     // east
                     return plot.isMerged(Direction.EAST) ? id : null;
-                case 2:
+                }
+                case 2 -> {
                     // south
                     return plot.isMerged(Direction.SOUTH) ? id : null;
-                case 1:
+                }
+                case 1 -> {
                     // west
                     return plot.isMerged(Direction.WEST) ? id : null;
-                case 12:
+                }
+                case 12 -> {
                     // northeast
                     return plot.isMerged(Direction.NORTHEAST) ? id : null;
-                case 6:
+                }
+                case 6 -> {
                     // southeast
                     return plot.isMerged(Direction.SOUTHEAST) ? id : null;
-                case 3:
+                }
+                case 3 -> {
                     // southwest
                     return plot.isMerged(Direction.SOUTHWEST) ? id : null;
-                case 9:
+                }
+                case 9 -> {
                     // northwest
                     return plot.isMerged(Direction.NORTHWEST) ? id : null;
+                }
             }
         } catch (Exception ignored) {
             LOGGER.error("Invalid plot / road width in settings.yml for world: {}", squarePlotWorld.getWorldName());

@@ -20,33 +20,35 @@ package com.plotsquared.core.util.helpmenu;
 
 import com.plotsquared.core.command.Argument;
 import com.plotsquared.core.command.Command;
-import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.StringMan;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.jetbrains.annotations.NotNull;
 
-public class HelpObject {
+public class HelpObject implements ComponentLike {
 
-    static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
+    static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
-    private final String rendered;
+    private final Component rendered;
 
     public HelpObject(final Command command, final String label, final PlotPlayer<?> audience) {
-        rendered = MINI_MESSAGE.serialize(MINI_MESSAGE.parse(
+        rendered = MINI_MESSAGE.deserialize(
                 TranslatableCaption.of("help.help_item").getComponent(audience),
-                Template.of("usage", command.getUsage().replace("{label}", label)),
-                Template.of("alias", command.getAliases().isEmpty() ? "" : StringMan.join(command.getAliases(), " | ")),
-                Templates.of(audience, "desc", command.getDescription()),
-                Template.of("arguments", buildArgumentList(command.getRequiredArguments())),
-                Template.of("label", label)
-        ));
-    }
-
-    @Override
-    public String toString() {
-        return rendered;
+                TagResolver.builder()
+                        .tag("usage", Tag.inserting(Component.text(command.getUsage().replace("{label}", label))))
+                        .tag("alias", Tag.inserting(Component.text(
+                                command.getAliases().isEmpty() ? "" : StringMan.join(command.getAliases(), " | ")
+                        )))
+                        .tag("desc", Tag.inserting(command.getDescription().toComponent(audience)))
+                        .tag("arguments", Tag.inserting(Component.text(buildArgumentList(command.getRequiredArguments()))))
+                        .tag("label", Tag.inserting(Component.text(label)))
+                        .build()
+        );
     }
 
     private String buildArgumentList(final Argument<?>[] arguments) {
@@ -59,6 +61,11 @@ public class HelpObject {
                     .append(argument.getExample()).append(")],");
         }
         return arguments.length > 0 ? builder.substring(0, builder.length() - 1) : "";
+    }
+
+    @Override
+    public @NotNull Component asComponent() {
+        return this.rendered;
     }
 
 }

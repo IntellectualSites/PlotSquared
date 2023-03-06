@@ -128,4 +128,5 @@ public class FlagTest {
                 ((TranslatableCaption) exception.getErrorMessage()).getKey()
         );
     }
+
 }

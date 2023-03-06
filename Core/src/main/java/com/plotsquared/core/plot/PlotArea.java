@@ -35,7 +35,6 @@ import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.location.PlotLoc;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.MetaDataAccess;
@@ -59,12 +58,16 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -84,7 +87,7 @@ import java.util.function.Consumer;
 /**
  * @author Jesse Boyd, Alexander Söderberg
  */
-public abstract class PlotArea {
+public abstract class PlotArea implements ComponentLike {
 
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotArea.class.getSimpleName());
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
@@ -405,7 +408,7 @@ public abstract class PlotArea {
         this.getFlagContainer().addAll(parseFlags(flags));
         ConsolePlayer.getConsole().sendMessage(
                 TranslatableCaption.of("flags.area_flags"),
-                Template.of("flags", flags.toString())
+                TagResolver.resolver("flags", Tag.inserting(Component.text(flags.toString())))
         );
 
         this.spawnEggs = config.getBoolean("event.spawn.egg");
@@ -427,7 +430,7 @@ public abstract class PlotArea {
         this.getRoadFlagContainer().addAll(parseFlags(roadflags));
         ConsolePlayer.getConsole().sendMessage(
                 TranslatableCaption.of("flags.road_flags"),
-                Template.of("flags", roadflags.toString())
+                TagResolver.resolver("flags", Tag.inserting(Component.text(roadflags.toString())))
         );
 
         loadConfiguration(config);
@@ -518,6 +521,11 @@ public abstract class PlotArea {
         } else {
             return this.getWorldName() + ";" + this.getId();
         }
+    }
+
+    @Override
+    public @NotNull Component asComponent() {
+        return Component.text(toString());
     }
 
     @Override
@@ -648,8 +656,12 @@ public abstract class PlotArea {
         if (!buildRangeContainsY(y) && !player.hasPermission(Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
             player.sendMessage(
                     TranslatableCaption.of("height.height_limit"),
-                    Template.of("minHeight", String.valueOf(minBuildHeight)),
-                    Template.of("maxHeight", String.valueOf(maxBuildHeight))
+                    TagResolver.builder()
+                            .tag("minHeight", Tag.inserting(Component.text(minBuildHeight)))
+                            .tag(
+                                    "maxHeight",
+                                    Tag.inserting(Component.text(maxBuildHeight))
+                            ).build()
             );
             // Return true if "failed" as the method will always be inverted otherwise
             return true;
@@ -1007,7 +1019,7 @@ public abstract class PlotArea {
      *
      * @param plotIds     List of plot IDs to merge
      * @param removeRoads If the roads between plots should be removed
-     * @param whenDone  Task to run when any merge world changes are complete. Also runs if no changes were made. Does not
+     * @param whenDone    Task to run when any merge world changes are complete. Also runs if no changes were made. Does not
      *                    run if there was an error or if too few plots IDs were supplied.
      * @return if merges were completed successfully.
      * @since 6.9.0
@@ -1324,20 +1336,6 @@ public abstract class PlotArea {
         return this.signMaterial;
     }
 
-    /**
-     * Get the legacy plot sign material before wall signs used a "wall" stance.
-     *
-     * @return the legacy sign material.
-     * @deprecated Use {@link #signMaterial()}. This method is used for 1.13 only and
-     *         will be removed without replacement in favor of {@link #signMaterial()}
-     *         once we remove the support for 1.13.
-     * @since 6.0.3
-     */
-    @Deprecated(forRemoval = true, since = "6.0.3")
-    public String getLegacySignMaterial() {
-        return this.legacySignMaterial;
-    }
-
     public boolean isSpawnCustom() {
         return this.spawnCustom;
     }
@@ -1394,22 +1392,6 @@ public abstract class PlotArea {
      */
     public BlockLoc defaultHome() {
         return this.defaultHome;
-    }
-
-    /**
-     * @deprecated Use {@link #nonmemberHome}
-     */
-    @Deprecated(forRemoval = true, since = "6.1.4")
-    public PlotLoc getNonmemberHome() {
-        return new PlotLoc(this.defaultHome.getX(), this.defaultHome.getY(), this.defaultHome.getZ());
-    }
-
-    /**
-     * @deprecated Use {@link #defaultHome}
-     */
-    @Deprecated(forRemoval = true, since = "6.1.4")
-    public PlotLoc getDefaultHome() {
-        return new PlotLoc(this.defaultHome.getX(), this.defaultHome.getY(), this.defaultHome.getZ());
     }
 
     protected void setDefaultHome(BlockLoc defaultHome) {

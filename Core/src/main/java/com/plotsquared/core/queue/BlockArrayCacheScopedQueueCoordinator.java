@@ -18,7 +18,7 @@
  */
 package com.plotsquared.core.queue;
 
-import com.intellectualsites.annotations.DoNotUse;
+import com.intellectualsites.annotations.NotPublic;
 import com.plotsquared.core.location.Location;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.function.pattern.Pattern;
@@ -36,9 +36,11 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * The min and max points of this queue are offset according to the minimum point given in the constructor, and the offsets set
  * in {@link BlockArrayCacheScopedQueueCoordinator#setOffsetX(int)} and
  * {@link BlockArrayCacheScopedQueueCoordinator#setOffsetZ(int)}
+ * <p>
+ * Internal use only. Subject to change at any time and created for specific use cases.
  */
-@DoNotUse
-public class BlockArrayCacheScopedQueueCoordinator extends ScopedQueueCoordinator {
+@NotPublic
+public class BlockArrayCacheScopedQueueCoordinator extends ZeroedDelegateScopedQueueCoordinator {
 
     private final BlockState[][][] blockStates;
     private final int height;
@@ -52,6 +54,7 @@ public class BlockArrayCacheScopedQueueCoordinator extends ScopedQueueCoordinato
     private final int scopeMaxZ;
     private int offsetX = 0;
     private int offsetZ = 0;
+
     /**
      * Construct a new instance
      *

@@ -34,7 +34,9 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -65,7 +67,7 @@ public class Owner extends SetCommand {
         if (value == null || value.isEmpty()) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot setowner <owner>")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("/plot setowner <owner>")))
             );
             return false;
         }
@@ -77,7 +79,7 @@ public class Owner extends SetCommand {
                     && !value.equalsIgnoreCase("-")) {
                 player.sendMessage(
                         TranslatableCaption.of("errors.invalid_player"),
-                        Template.of("value", value)
+                        TagResolver.resolver("value", Tag.inserting(Component.text(value)))
                 );
                 return;
             }
@@ -91,7 +93,7 @@ public class Owner extends SetCommand {
             if (event.getEventResult() == Result.DENY) {
                 player.sendMessage(
                         TranslatableCaption.of("events.event_denied"),
-                        Template.of("value", "Owner change")
+                        TagResolver.resolver("value", Tag.inserting(Component.text("Owner change")))
                 );
                 return;
             }
@@ -114,7 +116,7 @@ public class Owner extends SetCommand {
                 if (unlinkEvent.getEventResult() == Result.DENY) {
                     player.sendMessage(
                             TranslatableCaption.of("events.event_denied"),
-                            Template.of("value", "Unlink on owner change")
+                            TagResolver.resolver("value", Tag.inserting(Component.text("Unlink on owner change")))
                     );
                     return;
                 }
@@ -134,7 +136,10 @@ public class Owner extends SetCommand {
             if (plot.isOwner(uuid)) {
                 player.sendMessage(
                         TranslatableCaption.of("member.already_owner"),
-                        Template.of("player", PlayerManager.resolveName(uuid, false).getComponent(player))
+                        TagResolver.resolver(
+                                "player",
+                                Tag.inserting(PlayerManager.resolveName(uuid, false).toComponent(player))
+                        )
                 );
                 return;
             }
@@ -142,7 +147,10 @@ public class Owner extends SetCommand {
                 if (other == null) {
                     player.sendMessage(
                             TranslatableCaption.of("errors.invalid_player_offline"),
-                            Template.of("player", PlayerManager.resolveName(uuid).getComponent(player))
+                            TagResolver.resolver(
+                                    "player",
+                                    Tag.inserting(PlayerManager.resolveName(uuid).toComponent(player))
+                            )
                     );
                     return;
                 }
@@ -178,7 +186,10 @@ public class Owner extends SetCommand {
                         if (other != null) {
                             other.sendMessage(
                                     TranslatableCaption.of("owner.now_owner"),
-                                    Template.of("plot", plot.getArea() + ";" + plot.getId())
+                                    TagResolver.resolver(
+                                            "plot",
+                                            Tag.inserting(Component.text(plot.getArea() + ";" + plot.getId()))
+                                    )
                             );
                         }
                     } else {

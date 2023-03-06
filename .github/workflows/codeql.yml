@@ -1,8 +1,11 @@
 name: "CodeQL"
 on:
+  push:
+    branches: [ v7 ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [v6]
+    branches: [ v7 ]
+
 jobs:
   analyze:
     name: Analyze
@@ -14,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ['java']
+        language: [ 'java' ]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

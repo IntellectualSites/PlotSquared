@@ -23,7 +23,6 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.caption.StaticCaption;
-import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
@@ -47,7 +46,9 @@ import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -84,7 +85,10 @@ public final class FlagCommand extends Command {
     private static boolean sendMessage(PlotPlayer<?> player) {
         player.sendMessage(
                 TranslatableCaption.of("commandconfig.command_syntax"),
-                Template.of("value", "/plot flag <set | remove | add | list | info> <flag> <value>")
+                TagResolver.resolver(
+                        "value",
+                        Tag.inserting(Component.text("/plot flag <set | remove | add | list | info> <flag> <value>"))
+                )
         );
         return true;
     }
@@ -110,9 +114,9 @@ public final class FlagCommand extends Command {
                 if (!result) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of(
+                            TagResolver.resolver(
                                     "node",
-                                    perm + "." + numeric
+                                    Tag.inserting(Component.text(perm + "." + numeric))
                             )
                     );
                 }
@@ -129,16 +133,21 @@ public final class FlagCommand extends Command {
                     );
                     final boolean result = player.hasPermission(permission);
                     if (!result) {
-                        player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", permission));
+                        player.sendMessage(
+                                TranslatableCaption.of("permission.no_permission"),
+                                TagResolver.resolver("node", Tag.inserting(Component.text(permission)))
+                        );
                         return false;
                     }
                 }
             } catch (final FlagParseException e) {
                 player.sendMessage(
                         TranslatableCaption.of("flag.flag_parse_error"),
-                        Template.of("flag_name", flag.getName()),
-                        Template.of("flag_value", e.getValue()),
-                        Template.of("error", e.getErrorMessage().getComponent(player))
+                        TagResolver.builder()
+                                .tag("flag_name", Tag.inserting(Component.text(flag.getName())))
+                                .tag("flag_value", Tag.inserting(Component.text(e.getValue())))
+                                .tag("error", Tag.inserting(e.getErrorMessage().toComponent(player)))
+                                .build()
                 );
                 return false;
             } catch (final Exception e) {
@@ -155,7 +164,10 @@ public final class FlagCommand extends Command {
             perm = basePerm;
         }
         if (!result) {
-            player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", perm));
+            player.sendMessage(
+                    TranslatableCaption.of("permission.no_permission"),
+                    TagResolver.resolver("node", Tag.inserting(Component.text(perm)))
+            );
         }
         return result;
     }
@@ -179,7 +191,7 @@ public final class FlagCommand extends Command {
         if (!plot.isOwner(player.getUUID()) && !player.hasPermission(Permission.PERMISSION_SET_FLAG_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_SET_FLAG_OTHER))
+                    TagResolver.resolver("node", Tag.inserting(Permission.PERMISSION_SET_FLAG_OTHER))
             );
             return false;
         }
@@ -214,7 +226,7 @@ public final class FlagCommand extends Command {
                     if (best != null) {
                         player.sendMessage(
                                 TranslatableCaption.of("flag.not_valid_flag_suggested"),
-                                Template.of("value", best)
+                                TagResolver.resolver("value", Tag.inserting(Component.text(best)))
                         );
                         suggested = true;
                     }
@@ -323,7 +335,7 @@ public final class FlagCommand extends Command {
         if (args.length < 2) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot flag set <flag> <value>")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("/plot flag set <flag> <value>")))
             );
             return;
         }
@@ -336,7 +348,7 @@ public final class FlagCommand extends Command {
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Flag set")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("Flag set")))
             );
             return;
         }
@@ -352,15 +364,21 @@ public final class FlagCommand extends Command {
         } catch (final FlagParseException e) {
             player.sendMessage(
                     TranslatableCaption.of("flag.flag_parse_error"),
-                    Template.of("flag_name", plotFlag.getName()),
-                    Template.of("flag_value", e.getValue()),
-                    Template.of("error", e.getErrorMessage().getComponent(player))
+                    TagResolver.builder()
+                            .tag("flag_name", Tag.inserting(Component.text(plotFlag.getName())))
+                            .tag("flag_value", Tag.inserting(Component.text(e.getValue())))
+                            .tag("error", Tag.inserting(e.getErrorMessage().toComponent(player)))
+                            .build()
             );
             return;
         }
         plot.setFlag(parsed);
-        player.sendMessage(TranslatableCaption.of("flag.flag_added"), Template.of("flag", String.valueOf(args[0])),
-                Template.of("value", String.valueOf(parsed))
+        player.sendMessage(
+                TranslatableCaption.of("flag.flag_added"),
+                TagResolver.builder()
+                        .tag("flag", Tag.inserting(Component.text(args[0])))
+                        .tag("value", Tag.inserting(Component.text(parsed.toString())))
+                        .build()
         );
     }
 
@@ -382,7 +400,7 @@ public final class FlagCommand extends Command {
         if (args.length < 2) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot flag add <flag> <values>")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("/plot flag add <flag> <values>")))
             );
             return;
         }
@@ -395,7 +413,7 @@ public final class FlagCommand extends Command {
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Flag add")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("Flag add")))
             );
             return;
         }
@@ -416,9 +434,11 @@ public final class FlagCommand extends Command {
         } catch (FlagParseException e) {
             player.sendMessage(
                     TranslatableCaption.of("flag.flag_parse_error"),
-                    Template.of("flag_name", plotFlag.getName()),
-                    Template.of("flag_value", e.getValue()),
-                    Template.of("error", e.getErrorMessage().getComponent(player))
+                    TagResolver.builder()
+                            .tag("flag_name", Tag.inserting(Component.text(plotFlag.getName())))
+                            .tag("flag_value", Tag.inserting(Component.text(e.getValue())))
+                            .tag("error", Tag.inserting(e.getErrorMessage().toComponent(player)))
+                            .build()
             );
             return;
         }
@@ -428,8 +448,12 @@ public final class FlagCommand extends Command {
             player.sendMessage(TranslatableCaption.of("flag.flag_not_added"));
             return;
         }
-        player.sendMessage(TranslatableCaption.of("flag.flag_added"), Template.of("flag", String.valueOf(args[0])),
-                Template.of("value", String.valueOf(parsed))
+        player.sendMessage(
+                TranslatableCaption.of("flag.flag_added"),
+                TagResolver.builder()
+                        .tag("flag", Tag.inserting(Component.text(args[0])))
+                        .tag("value", Tag.inserting(Component.text(parsed.toString())))
+                        .build()
         );
     }
 
@@ -451,7 +475,7 @@ public final class FlagCommand extends Command {
         if (args.length != 1 && args.length != 2) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot flag remove <flag> [values]")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("/plot flag remove <flag> [values]")))
             );
             return;
         }
@@ -465,7 +489,7 @@ public final class FlagCommand extends Command {
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Flag remove")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("Flag remove")))
             );
             return;
         }
@@ -475,7 +499,10 @@ public final class FlagCommand extends Command {
             if (args.length != 2) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Template.of("node", Permission.PERMISSION_SET_FLAG_KEY.format(args[0].toLowerCase()))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Component.text(Permission.PERMISSION_SET_FLAG_KEY.format(args[0].toLowerCase())))
+                        )
                 );
                 return;
             }
@@ -490,9 +517,11 @@ public final class FlagCommand extends Command {
             } catch (final FlagParseException e) {
                 player.sendMessage(
                         TranslatableCaption.of("flag.flag_parse_error"),
-                        Template.of("flag_name", flag.getName()),
-                        Template.of("flag_value", e.getValue()),
-                        Template.of("error", String.valueOf(e.getErrorMessage()))
+                        TagResolver.builder()
+                                .tag("flag_name", Tag.inserting(Component.text(flag.getName())))
+                                .tag("flag_value", Tag.inserting(Component.text(e.getValue())))
+                                .tag("error", Tag.inserting(e.getErrorMessage().toComponent(player)))
+                                .build()
                 );
                 return;
             }
@@ -503,10 +532,13 @@ public final class FlagCommand extends Command {
             if (list.removeAll((List) parsedFlag.getValue())) {
                 if (list.isEmpty()) {
                     if (plot.removeFlag(flag)) {
-                        player.sendMessage(TranslatableCaption.of("flag.flag_removed"), Template.of("flag", args[0]), Template.of(
-                                "value",
-                                String.valueOf(flagWithOldValue)
-                        ));
+                        player.sendMessage(
+                                TranslatableCaption.of("flag.flag_removed"),
+                                TagResolver.builder()
+                                        .tag("flag", Tag.inserting(Component.text(args[0])))
+                                        .tag("value", Tag.inserting(Component.text(flag.toString())))
+                                        .build()
+                        );
                         return;
                     } else {
                         player.sendMessage(TranslatableCaption.of("flag.flag_not_removed"));
@@ -518,7 +550,10 @@ public final class FlagCommand extends Command {
                     if (addEvent.getEventResult() == Result.DENY) {
                         player.sendMessage(
                                 TranslatableCaption.of("events.event_denied"),
-                                Template.of("value", "Re-addition of " + plotFlag.getName())
+                                TagResolver.resolver(
+                                        "value",
+                                        Tag.inserting(Component.text("Re-addition of " + plotFlag.getName()))
+                                )
                         );
                         return;
                     }
@@ -541,10 +576,13 @@ public final class FlagCommand extends Command {
                 return;
             }
         }
-        player.sendMessage(TranslatableCaption.of("flag.flag_removed"), Template.of("flag", args[0]), Template.of(
-                "value",
-                String.valueOf(flagWithOldValue)
-        ));
+        player.sendMessage(
+                TranslatableCaption.of("flag.flag_removed"),
+                TagResolver.builder()
+                        .tag("flag", Tag.inserting(Component.text(args[0])))
+                        .tag("value", Tag.inserting(Component.text(flag.toString())))
+                        .build()
+        );
     }
 
     @CommandDeclaration(command = "list",
@@ -562,34 +600,35 @@ public final class FlagCommand extends Command {
             return;
         }
 
-        final Map<String, ArrayList<String>> flags = new HashMap<>();
+        final Map<Component, ArrayList<String>> flags = new HashMap<>();
         for (PlotFlag<?, ?> plotFlag : GlobalFlagContainer.getInstance().getRecognizedPlotFlags()) {
             if (plotFlag instanceof InternalFlag) {
                 continue;
             }
-            final String category = MINI_MESSAGE.stripTokens(plotFlag.getFlagCategory().getComponent(player));
-            final Collection<String> flagList =
-                    flags.computeIfAbsent(category, k -> new ArrayList<>());
+            final Component category = plotFlag.getFlagCategory().toComponent(player);
+            final Collection<String> flagList = flags.computeIfAbsent(category, k -> new ArrayList<>());
             flagList.add(plotFlag.getName());
         }
 
-        for (final Map.Entry<String, ArrayList<String>> entry : flags.entrySet()) {
+        for (final Map.Entry<Component, ArrayList<String>> entry : flags.entrySet()) {
             Collections.sort(entry.getValue());
             Component category =
-                    MINI_MESSAGE.parse(
+                    MINI_MESSAGE.deserialize(
                             TranslatableCaption.of("flag.flag_list_categories").getComponent(player),
-                            Template.of("category", entry.getKey())
+                            TagResolver.resolver("category", Tag.inserting(entry.getKey().style(Style.empty())))
                     );
             TextComponent.Builder builder = Component.text().append(category);
             final Iterator<String> flagIterator = entry.getValue().iterator();
             while (flagIterator.hasNext()) {
                 final String flag = flagIterator.next();
                 builder.append(MINI_MESSAGE
-                        .parse(
+                        .deserialize(
                                 TranslatableCaption.of("flag.flag_list_flag").getComponent(player),
-                                Template.of("command", "/plot flag info " + flag),
-                                Template.of("flag", flag),
-                                Template.of("suffix", flagIterator.hasNext() ? ", " : "")
+                                TagResolver.builder()
+                                        .tag("command", Tag.preProcessParsed("/plot flag info " + flag))
+                                        .tag("flag", Tag.inserting(Component.text(flag)))
+                                        .tag("suffix", Tag.inserting(Component.text(flagIterator.hasNext() ? ", " : "")))
+                                        .build()
                         ));
             }
             player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(builder.build())));
@@ -613,7 +652,7 @@ public final class FlagCommand extends Command {
         if (args.length < 1) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot flag info <flag>")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("/plot flag info <flag>")))
             );
             return;
         }
@@ -621,11 +660,17 @@ public final class FlagCommand extends Command {
         if (plotFlag != null) {
             player.sendMessage(TranslatableCaption.of("flag.flag_info_header"));
             // Flag name
-            player.sendMessage(TranslatableCaption.of("flag.flag_info_name"), Template.of("flag", plotFlag.getName()));
+            player.sendMessage(
+                    TranslatableCaption.of("flag.flag_info_name"),
+                    TagResolver.resolver("flag", Tag.inserting(Component.text(plotFlag.getName())))
+            );
             // Flag category
             player.sendMessage(
                     TranslatableCaption.of("flag.flag_info_category"),
-                    Templates.of(player, "value", plotFlag.getFlagCategory())
+                    TagResolver.resolver(
+                            "value",
+                            Tag.inserting(plotFlag.getFlagCategory().toComponent(player))
+                    )
             );
             // Flag description
             // TODO maybe merge and \n instead?
@@ -634,16 +679,18 @@ public final class FlagCommand extends Command {
             // Flag example
             player.sendMessage(
                     TranslatableCaption.of("flag.flag_info_example"),
-                    Template.of("command", "/plot flag set"),
-                    Template.of("flag", plotFlag.getName()),
-                    Template.of("value", plotFlag.getExample())
+                    TagResolver.builder()
+                            .tag("command", Tag.preProcessParsed("/plot flag set"))
+                            .tag("flag", Tag.preProcessParsed(plotFlag.getName()))
+                            .tag("value", Tag.preProcessParsed(plotFlag.getExample()))
+                            .build()
             );
             // Default value
             final String defaultValue = player.getLocation().getPlotArea().getFlagContainer()
                     .getFlagErased(plotFlag.getClass()).toString();
             player.sendMessage(
                     TranslatableCaption.of("flag.flag_info_default_value"),
-                    Template.of("value", defaultValue)
+                    TagResolver.resolver("value", Tag.inserting(Component.text(defaultValue)))
             );
             // Footer. Done this way to prevent the duplicate-message-thingy from catching it
             player.sendMessage(TranslatableCaption.of("flag.flag_info_footer"));

@@ -51,7 +51,6 @@ public final class UncheckedWorldLocation extends Location {
      * @param y     Y coordinate
      * @param z     Z coordinate
      * @return New location
-     *
      * @since 6.9.0
      */
     @DoNotUse

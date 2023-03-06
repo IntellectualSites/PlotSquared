@@ -111,8 +111,8 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
         try (final PreparedStatement statement = getConnection()
                 .prepareStatement("INSERT OR REPLACE INTO `usercache` (`uuid`, `username`) VALUES(?, ?)")) {
             for (final UUIDMapping mapping : uuidWrappers) {
-                statement.setString(1, mapping.getUuid().toString());
-                statement.setString(2, mapping.getUsername());
+                statement.setString(1, mapping.uuid().toString());
+                statement.setString(2, mapping.username());
                 statement.executeUpdate();
             }
         } catch (SQLException e) {

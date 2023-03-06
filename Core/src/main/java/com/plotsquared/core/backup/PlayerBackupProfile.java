@@ -200,7 +200,7 @@ public class PlayerBackupProfile implements BackupProfile {
                                     if (value) {
                                         future.complete(null);
                                     } else {
-                                        future.completeExceptionally(new RuntimeException(MINI_MESSAGE.stripTokens(
+                                        future.completeExceptionally(new RuntimeException(MINI_MESSAGE.escapeTags(
                                                 TranslatableCaption
                                                         .of("schematics.schematic_paste_failed")
                                                         .getComponent(ConsolePlayer.getConsole()))));

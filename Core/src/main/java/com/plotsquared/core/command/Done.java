@@ -35,7 +35,9 @@ import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.task.RunnableVal;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(command = "done",
@@ -69,7 +71,7 @@ public class Done extends SubCommand {
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Done")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("Done")))
             );
             return true;
         }
@@ -89,7 +91,7 @@ public class Done extends SubCommand {
         plot.addRunning();
         player.sendMessage(
                 TranslatableCaption.of("web.generating_link"),
-                Template.of("plot", plot.getId().toString())
+                TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
         );
         final Settings.Auto_Clear doneRequirements = Settings.AUTO_CLEAR.get("done");
         if (PlotSquared.platform().expireManager() == null || doneRequirements == null) {

@@ -44,7 +44,9 @@ import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.PlotFlagUtil;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
@@ -176,59 +178,41 @@ public class PaperListener implements Listener {
         }
         CreatureSpawnEvent.SpawnReason reason = event.getReason();
         switch (reason.toString()) {
-            case "DISPENSE_EGG":
-            case "EGG":
-            case "OCELOT_BABY":
-            case "SPAWNER_EGG":
+            case "DISPENSE_EGG", "EGG", "OCELOT_BABY", "SPAWNER_EGG" -> {
                 if (!area.isSpawnEggs()) {
                     event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                     return;
                 }
-                break;
-            case "REINFORCEMENTS":
-            case "NATURAL":
-            case "MOUNT":
-            case "PATROL":
-            case "RAID":
-            case "SHEARED":
-            case "SILVERFISH_BLOCK":
-            case "ENDER_PEARL":
-            case "TRAP":
-            case "VILLAGE_DEFENSE":
-            case "VILLAGE_INVASION":
-            case "BEEHIVE":
-            case "CHUNK_GEN":
+            }
+            case "REINFORCEMENTS", "NATURAL", "MOUNT", "PATROL", "RAID", "SHEARED", "SILVERFISH_BLOCK", "ENDER_PEARL", "TRAP", "VILLAGE_DEFENSE", "VILLAGE_INVASION", "BEEHIVE", "CHUNK_GEN" -> {
                 if (!area.isMobSpawning()) {
                     event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                     return;
                 }
-                break;
-            case "BREEDING":
+            }
+            case "BREEDING" -> {
                 if (!area.isSpawnBreeding()) {
                     event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                     return;
                 }
-                break;
-            case "BUILD_IRONGOLEM":
-            case "BUILD_SNOWMAN":
-            case "BUILD_WITHER":
-            case "CUSTOM":
+            }
+            case "BUILD_IRONGOLEM", "BUILD_SNOWMAN", "BUILD_WITHER", "CUSTOM" -> {
                 if (!area.isSpawnCustom() && event.getType() != EntityType.ARMOR_STAND) {
                     event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                     return;
                 }
-                break;
-            case "SPAWNER":
+            }
+            case "SPAWNER" -> {
                 if (!area.isMobSpawnerSpawning()) {
                     event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                     return;
                 }
-                break;
+            }
         }
         Plot plot = location.getOwnedPlotAbs();
         if (plot == null) {
@@ -302,7 +286,7 @@ public class PaperListener implements Listener {
             final PlotPlayer<?> plotPlayer = BukkitUtil.adapt(event.getPlayer());
             plotPlayer.sendMessage(
                     TranslatableCaption.of("errors.tile_entity_cap_reached"),
-                    Template.of("amount", String.valueOf(Settings.Chunk_Processor.MAX_TILES))
+                    TagResolver.resolver("amount", Tag.inserting(Component.text(Settings.Chunk_Processor.MAX_TILES)))
             );
             event.setCancelled(true);
             event.setBuild(false);
@@ -339,7 +323,10 @@ public class PaperListener implements Listener {
             )) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_ROAD))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_PROJECTILE_ROAD)
+                        )
                 );
                 entity.remove();
                 event.setCancelled(true);
@@ -348,7 +335,10 @@ public class PaperListener implements Listener {
             if (!pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)
+                        )
                 );
                 entity.remove();
                 event.setCancelled(true);
@@ -358,7 +348,10 @@ public class PaperListener implements Listener {
                 if (!pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)
+                            )
                     );
                     entity.remove();
                     event.setCancelled(true);
@@ -446,9 +439,11 @@ public class PaperListener implements Listener {
         }
     }
 
-    private boolean getBooleanFlagValue(@NonNull FlagContainer container,
-                                        @NonNull Class<? extends BooleanFlag<?>> flagClass,
-                                        boolean defaultValue) {
+    private boolean getBooleanFlagValue(
+            @NonNull FlagContainer container,
+            @NonNull Class<? extends BooleanFlag<?>> flagClass,
+            boolean defaultValue
+    ) {
         BooleanFlag<?> flag = container.getFlag(flagClass);
         return flag == null ? defaultValue : flag.getValue();
     }

@@ -33,7 +33,9 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
@@ -151,7 +153,7 @@ public class Like extends SubCommand {
             if (oldRating != null) {
                 player.sendMessage(
                         TranslatableCaption.of("ratings.rating_already_exists"),
-                        Template.of("plot", plot.getId().toString())
+                        TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
                 );
                 return;
             }
@@ -169,12 +171,12 @@ public class Like extends SubCommand {
                 if (like) {
                     player.sendMessage(
                             TranslatableCaption.of("ratings.rating_liked"),
-                            Template.of("plot", plot.getId().toString())
+                            TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
                     );
                 } else {
                     player.sendMessage(
                             TranslatableCaption.of("ratings.rating_disliked"),
-                            Template.of("plot", plot.getId().toString())
+                            TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
                     );
                 }
             }

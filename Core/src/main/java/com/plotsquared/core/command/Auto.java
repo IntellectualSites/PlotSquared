@@ -35,6 +35,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.services.plots.AutoQuery;
 import com.plotsquared.core.services.plots.AutoService;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
@@ -43,7 +44,9 @@ import com.plotsquared.core.util.task.AutoClaimFinishTask;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import io.leangen.geantyref.TypeToken;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -109,13 +112,13 @@ public class Auto extends SubCommand {
                     if (diff < 0 && grantedPlots < sizeX * sizeZ) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.cant_claim_more_plots"),
-                                Template.of("amount", String.valueOf(diff + grantedPlots))
+                                TagResolver.resolver("amount", Tag.inserting(Component.text(diff + grantedPlots)))
                         );
                         return false;
                     } else if (diff >= 0 && grantedPlots + diff < sizeX * sizeZ) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.cant_claim_more_plots"),
-                                Template.of("amount", String.valueOf(diff + grantedPlots))
+                                TagResolver.resolver("amount", Tag.inserting(Component.text(diff + grantedPlots)))
                         );
                         return false;
                     } else {
@@ -127,15 +130,16 @@ public class Auto extends SubCommand {
                         }
                         player.sendMessage(
                                 TranslatableCaption.of("economy.removed_granted_plot"),
-                                Template.of("usedGrants", String.valueOf(grantedPlots - left)),
-                                Template.of("remainingGrants", String.valueOf(left))
+                                TagResolver.builder()
+                                        .tag("usedGrants", Tag.inserting(Component.text(grantedPlots - left)))
+                                        .tag("remainingGrants", Tag.inserting(Component.text(left)))
+                                        .build()
                         );
                     }
                 } else {
                     player.sendMessage(
                             TranslatableCaption.of("permission.cant_claim_more_plots"),
-                            Template.of("amount", String.valueOf(player.getAllowedPlots())
-                            )
+                            TagResolver.resolver("amount", Tag.inserting(Component.text(player.getAllowedPlots())))
                     );
                     return false;
                 }
@@ -214,7 +218,7 @@ public class Auto extends SubCommand {
                 } else {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.of("value", getUsage())
+                            TagResolver.resolver("value", Tag.inserting(Component.text(getUsage())))
                     );
                     return true;
                 }
@@ -237,7 +241,7 @@ public class Auto extends SubCommand {
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Auto claim")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("Auto claim")))
             );
             return true;
         }
@@ -248,14 +252,14 @@ public class Auto extends SubCommand {
         if (!force && mega && !player.hasPermission(Permission.PERMISSION_AUTO_MEGA)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_AUTO_MEGA))
+                    TagResolver.resolver("node", Tag.inserting(Permission.PERMISSION_AUTO_MEGA))
             );
             return false;
         }
         if (!force && sizeX * sizeZ > Settings.Claim.MAX_AUTO_AREA) {
             player.sendMessage(
                     TranslatableCaption.of("permission.cant_claim_more_plots_num"),
-                    Template.of("amount", String.valueOf(Settings.Claim.MAX_AUTO_AREA))
+                    TagResolver.resolver("amount", Tag.inserting(Component.text(Settings.Claim.MAX_AUTO_AREA)))
             );
             return false;
         }
@@ -273,8 +277,10 @@ public class Auto extends SubCommand {
             if (!plotarea.hasSchematic(schematic)) {
                 player.sendMessage(
                         TranslatableCaption.of("schematics.schematic_invalid_named"),
-                        Template.of("schemname", schematic),
-                        Template.of("reason", "non-existent")
+                        TagResolver.builder()
+                                .tag("schemname", Tag.inserting(Component.text(schematic)))
+                                .tag("reason", Tag.inserting(Component.text("non-existent")))
+                                .build()
                 );
                 return true;
             }
@@ -283,7 +289,7 @@ public class Auto extends SubCommand {
             ) && !player.hasPermission("plots.admin.command.schematic")) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Template.of("node", "plots.claim.%s0")
+                        TagResolver.resolver("node", Tag.inserting(Component.text("plots.claim.%s0")))
                 );
                 return true;
             }
@@ -302,21 +308,26 @@ public class Auto extends SubCommand {
                 if (!force && this.econHandler.getMoney(player) < cost) {
                     player.sendMessage(
                             TranslatableCaption.of("economy.cannot_afford_plot"),
-                            Template.of("money", this.econHandler.format(cost)),
-                            Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))
+                            TagResolver.builder()
+                                    .tag("money", Tag.inserting(Component.text(this.econHandler.format(cost))))
+                                    .tag(
+                                            "balance",
+                                            Tag.inserting(Component.text(this.econHandler.format(this.econHandler.getMoney(player))))
+                                    )
+                                    .build()
                     );
                     return false;
                 }
                 this.econHandler.withdrawMoney(player, cost);
                 player.sendMessage(
                         TranslatableCaption.of("economy.removed_balance"),
-                        Template.of("money", this.econHandler.format(cost))
+                        TagResolver.resolver("money", Tag.inserting(Component.text(this.econHandler.format(cost))))
                 );
             }
         }
 
         List<Plot> plots = this.servicePipeline
-                .pump(new AutoService.AutoQuery(player, null, sizeX, sizeZ, plotarea))
+                .pump(new AutoQuery(player, null, sizeX, sizeZ, plotarea))
                 .through(AutoService.class)
                 .getResult();
 
@@ -344,7 +355,7 @@ public class Auto extends SubCommand {
             if (!force && mergeEvent.getEventResult() == Result.DENY) {
                 player.sendMessage(
                         TranslatableCaption.of("events.event_denied"),
-                        Template.of("value", "Auto merge")
+                        TagResolver.resolver("value", Tag.inserting(Component.text("Auto merge")))
                 );
                 return false;
             }

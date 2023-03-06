@@ -28,7 +28,9 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.HideInfoFlag;
 import com.plotsquared.core.util.TabCompletions;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -50,8 +52,9 @@ public class Info extends SubCommand {
             arg = args[0];
             switch (arg) {
                 // TODO: (re?)implement /plot info inv. (it was never properly implemented)
-                case "trusted", "alias", "biome", "denied", "flags", "id", "size", "members", "creationdate", "seen", "owner", "rating", "likes" -> plot = Plot
-                        .getPlotFromString(player, null, false);
+                case "trusted", "alias", "biome", "denied", "flags", "id", "size", "members", "creationdate", "seen", "owner", "rating", "likes" ->
+                        plot = Plot
+                                .getPlotFromString(player, null, false);
                 default -> {
                     plot = Plot.getPlotFromString(player, arg, false);
                     if (args.length == 2) {
@@ -90,7 +93,10 @@ public class Info extends SubCommand {
                             .hasPermission(Permission.PERMISSION_AREA_INFO_FORCE.toString())) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.of("node", Permission.PERMISSION_AREA_INFO_FORCE.toString())
+                                TagResolver.resolver(
+                                        "node",
+                                        Tag.inserting(Permission.PERMISSION_AREA_INFO_FORCE)
+                                )
                         );
                         return true;
                     }
@@ -112,7 +118,10 @@ public class Info extends SubCommand {
         if (!hasOwner && !containsEveryone && !trustedEveryone) {
             player.sendMessage(
                     TranslatableCaption.of("info.plot_info_unclaimed"),
-                    Template.of("plot", plot.getId().getX() + ";" + plot.getId().getY())
+                    TagResolver.resolver(
+                            "plot",
+                            Tag.inserting(Component.text(plot.getId().getX() + ";" + plot.getId().getY()))
+                    )
             );
             return true;
         }

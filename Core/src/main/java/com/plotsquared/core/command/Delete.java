@@ -32,7 +32,9 @@ import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 
@@ -77,7 +79,7 @@ public class Delete extends SubCommand {
         if (eventResult == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Delete")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("Delete")))
             );
             return true;
         }
@@ -112,14 +114,17 @@ public class Delete extends SubCommand {
                         this.econHandler.depositMoney(player, value);
                         player.sendMessage(
                                 TranslatableCaption.of("economy.added_balance"),
-                                Template.of("money", this.econHandler.format(value))
+                                TagResolver.resolver("money", Tag.inserting(Component.text(this.econHandler.format(value))))
                         );
                     }
                 }
                 player.sendMessage(
                         TranslatableCaption.of("working.deleting_done"),
-                        Template.of("amount", String.valueOf(System.currentTimeMillis() - start)),
-                        Template.of("plot", plot.getId().toString())
+                        TagResolver.resolver(
+                                "amount",
+                                Tag.inserting(Component.text(String.valueOf(System.currentTimeMillis() - start)))
+                        ),
+                        TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
                 );
                 eventDispatcher.callPostDelete(plot);
             });

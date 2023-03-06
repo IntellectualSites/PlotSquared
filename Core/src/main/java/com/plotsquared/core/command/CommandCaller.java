@@ -19,7 +19,7 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.caption.Caption;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -34,7 +34,7 @@ public interface CommandCaller {
      * @param caption      Caption to send
      * @param replacements Variable replacements
      */
-    void sendMessage(@NonNull Caption caption, @NonNull Template... replacements);
+    void sendMessage(@NonNull Caption caption, @NonNull TagResolver... replacements);
 
     /**
      * Check the player's permissions. <i>Will be cached if permission caching is enabled.</i>

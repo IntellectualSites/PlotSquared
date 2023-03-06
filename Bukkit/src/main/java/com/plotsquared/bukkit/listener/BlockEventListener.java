@@ -61,11 +61,12 @@ import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -113,6 +114,10 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static org.bukkit.Tag.CORALS;
+import static org.bukkit.Tag.CORAL_BLOCKS;
+import static org.bukkit.Tag.WALL_CORALS;
 
 @SuppressWarnings("unused")
 public class BlockEventListener implements Listener {
@@ -276,13 +281,23 @@ public class BlockEventListener implements Listener {
         if (plot != null) {
             if (area.notifyIfOutsideBuildArea(pp, location.getY())) {
                 event.setCancelled(true);
+                pp.sendMessage(
+                        TranslatableCaption.of("height.height_limit"),
+                        TagResolver.builder()
+                                .tag("minheight", Tag.inserting(Component.text(area.getMinBuildHeight())))
+                                .tag("maxheight", Tag.inserting(Component.text(area.getMaxBuildHeight())))
+                                .build()
+                );
                 return;
             }
             if (!plot.hasOwner()) {
                 if (!pp.hasPermission(Permission.PERMISSION_ADMIN_BUILD_UNOWNED)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_UNOWNED))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_UNOWNED)
+                            )
                     );
                     event.setCancelled(true);
                     return;
@@ -299,7 +314,10 @@ public class BlockEventListener implements Listener {
                 if (!pp.hasPermission(Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_OTHER)
+                            )
                     );
                     event.setCancelled(true);
                     plot.debug(player.getName() + " could not place " + event.getBlock().getType()
@@ -326,7 +344,10 @@ public class BlockEventListener implements Listener {
         } else if (!pp.hasPermission(Permission.PERMISSION_ADMIN_BUILD_ROAD)) {
             pp.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
+                    TagResolver.resolver(
+                            "node",
+                            Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_ROAD)
+                    )
             );
             event.setCancelled(true);
         }
@@ -348,13 +369,23 @@ public class BlockEventListener implements Listener {
                 if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL)) {
                     plotPlayer.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL)
+                            )
                     );
                     event.setCancelled(true);
                     return;
                 }
             } else if (area.notifyIfOutsideBuildArea(plotPlayer, location.getY())) {
                 event.setCancelled(true);
+                plotPlayer.sendMessage(
+                        TranslatableCaption.of("height.height_limit"),
+                        TagResolver.builder()
+                                .tag("minheight", Tag.inserting(Component.text(area.getMinBuildHeight())))
+                                .tag("maxheight", Tag.inserting(Component.text(area.getMaxBuildHeight())))
+                                .build()
+                );
                 return;
             }
             if (!plot.hasOwner()) {
@@ -377,7 +408,10 @@ public class BlockEventListener implements Listener {
                 }
                 plotPlayer.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_OTHER))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_OTHER)
+                        )
                 );
                 event.setCancelled(true);
             } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
@@ -403,7 +437,10 @@ public class BlockEventListener implements Listener {
         }
         pp.sendMessage(
                 TranslatableCaption.of("permission.no_permission_event"),
-                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_ROAD))
+                TagResolver.resolver(
+                        "node",
+                        Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_ROAD)
+                )
         );
         event.setCancelled(true);
     }
@@ -536,14 +573,14 @@ public class BlockEventListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        if (SNOW.contains(event.getNewState().getType())) {
+        if (org.bukkit.Tag.SNOW.isTagged(event.getNewState().getType())) {
             if (!plot.getFlag(SnowFormFlag.class)) {
                 plot.debug("Snow could not form because snow-form = false");
                 event.setCancelled(true);
             }
             return;
         }
-        if (Tag.ICE.isTagged(event.getNewState().getType())) {
+        if (org.bukkit.Tag.ICE.isTagged(event.getNewState().getType())) {
             if (!plot.getFlag(IceFormFlag.class)) {
                 plot.debug("Ice could not form because ice-form = false");
                 event.setCancelled(true);
@@ -568,9 +605,9 @@ public class BlockEventListener implements Listener {
             return;
         }
         Class<? extends BooleanFlag<?>> flag;
-        if (SNOW.contains(event.getNewState().getType())) {
+        if (org.bukkit.Tag.SNOW.isTagged(event.getNewState().getType())) {
             flag = SnowFormFlag.class;
-        } else if (Tag.ICE.isTagged(event.getNewState().getType())) {
+        } else if (org.bukkit.Tag.ICE.isTagged(event.getNewState().getType())) {
             flag = IceFormFlag.class;
         } else {
             return;
@@ -676,14 +713,14 @@ public class BlockEventListener implements Listener {
             return;
         }
         Material blockType = block.getType();
-        if (Tag.ICE.isTagged(blockType)) {
+        if (org.bukkit.Tag.ICE.isTagged(blockType)) {
             if (!plot.getFlag(IceMeltFlag.class)) {
                 plot.debug("Ice could not melt because ice-melt = false");
                 event.setCancelled(true);
             }
             return;
         }
-        if (SNOW.contains(blockType)) {
+        if (org.bukkit.Tag.SNOW.isTagged(blockType)) {
             if (!plot.getFlag(SnowMeltFlag.class)) {
                 plot.debug("Snow could not melt because snow-melt = false");
                 event.setCancelled(true);
@@ -697,7 +734,7 @@ public class BlockEventListener implements Listener {
             }
             return;
         }
-        if (Tag.CORAL_BLOCKS.isTagged(blockType) || Tag.CORALS.isTagged(blockType) || Tag.WALL_CORALS.isTagged(blockType)) {
+        if (CORAL_BLOCKS.isTagged(blockType) || CORALS.isTagged(blockType) || WALL_CORALS.isTagged(blockType)) {
             if (!plot.getFlag(CoralDryFlag.class)) {
                 plot.debug("Coral could not dry because coral-dry = false");
                 event.setCancelled(true);
@@ -722,7 +759,9 @@ public class BlockEventListener implements Listener {
             return;
         }
 
-        if (block.getBlockData() instanceof Farmland farmland && event.getNewState().getBlockData() instanceof Farmland newFarmland) {
+        if (block.getBlockData() instanceof Farmland farmland && event
+                .getNewState()
+                .getBlockData() instanceof Farmland newFarmland) {
             int currentMoisture = farmland.getMoisture();
             int newMoisture = newFarmland.getMoisture();
 
@@ -785,7 +824,10 @@ public class BlockEventListener implements Listener {
         }
 
         if (toPlot != null) {
-            if (!toArea.contains(fromLocation.getX(), fromLocation.getZ()) || !Objects.equals(toPlot, toArea.getOwnedPlot(fromLocation))) {
+            if (!toArea.contains(fromLocation.getX(), fromLocation.getZ()) || !Objects.equals(
+                    toPlot,
+                    toArea.getOwnedPlot(fromLocation)
+            )) {
                 event.setCancelled(true);
                 return;
             }
@@ -801,7 +843,10 @@ public class BlockEventListener implements Listener {
                 toPlot.debug("Liquid could not flow because liquid-flow = disabled");
                 event.setCancelled(true);
             }
-        } else if (!toArea.contains(fromLocation.getX(), fromLocation.getZ()) || !Objects.equals(null, toArea.getOwnedPlot(fromLocation))) {
+        } else if (!toArea.contains(fromLocation.getX(), fromLocation.getZ()) || !Objects.equals(
+                null,
+                toArea.getOwnedPlot(fromLocation)
+        )) {
             event.setCancelled(true);
         } else if (event.getBlock().isLiquid()) {
             final org.bukkit.Location location = event.getBlock().getLocation();
@@ -1124,7 +1169,10 @@ public class BlockEventListener implements Listener {
                 )) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_ROAD)
+                            )
                     );
                     event.setCancelled(true);
                 }
@@ -1134,7 +1182,10 @@ public class BlockEventListener implements Listener {
                 )) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_UNOWNED))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_UNOWNED)
+                            )
                     );
                     event.setCancelled(true);
                 }
@@ -1142,7 +1193,10 @@ public class BlockEventListener implements Listener {
                 if (!pp.hasPermission(Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_OTHER)
+                            )
                     );
                     event.setCancelled(true);
                 }
@@ -1268,16 +1322,29 @@ public class BlockEventListener implements Listener {
             ) && !(Objects.equals(currentLocation.getPlot(), plot))) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
+                        TagResolver.resolver("node", Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_ROAD))
                 );
                 event.setCancelled(true);
                 break;
             }
-            if (area.notifyIfOutsideBuildArea(pp, currentLocation.getY())) {
-                event.setCancelled(true);
-                break;
+            if (pp.hasPermission(Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
+                continue;
+            }
+            if (currentLocation.getY() >= area.getMaxBuildHeight() || currentLocation.getY() < area.getMinBuildHeight()) {
+                pp.sendMessage(
+                        TranslatableCaption.of("height.height_limit"),
+                        TagResolver.builder()
+                                .tag("minheight", Tag.inserting(Component.text(area.getMinBuildHeight())))
+                                .tag("maxheight", Tag.inserting(Component.text(area.getMaxBuildHeight())))
+                                .build()
+                );
+                if (area.notifyIfOutsideBuildArea(pp, currentLocation.getY())) {
+                    event.setCancelled(true);
+                    break;
+                }
             }
         }
+
     }
 
 }

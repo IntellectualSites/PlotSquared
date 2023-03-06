@@ -76,7 +76,9 @@ import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -343,8 +345,10 @@ public class EventDispatcher {
         if (!area.buildRangeContainsY(location.getY()) && !player.hasPermission(Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
             player.sendMessage(
                     TranslatableCaption.of("height.height_limit"),
-                    Template.of("minHeight", String.valueOf(area.getMinBuildHeight())),
-                    Template.of("maxHeight", String.valueOf(area.getMaxBuildHeight()))
+                    TagResolver.builder()
+                            .tag("minheight", Tag.inserting(Component.text(area.getMinBuildHeight())))
+                            .tag("maxheight", Tag.inserting(Component.text(area.getMaxBuildHeight())))
+                            .build()
             );
             return false;
         }
@@ -355,11 +359,13 @@ public class EventDispatcher {
             }
         }
         switch (type) {
-            case TELEPORT_OBJECT:
+            case TELEPORT_OBJECT -> {
                 return false;
-            case READ:
+            }
+            case READ -> {
                 return true;
-            case INTERACT_BLOCK: {
+            }
+            case INTERACT_BLOCK -> {
                 if (plot == null) {
                     final List<BlockTypeWrapper> use = area.getRoadFlag(UseFlag.class);
                     for (final BlockTypeWrapper blockTypeWrapper : use) {
@@ -389,12 +395,12 @@ public class EventDispatcher {
                 if (notifyPerms) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.flag_tutorial_usage"),
-                            Template.of("flag", PlaceFlag.getFlagName(UseFlag.class))
+                            TagResolver.resolver("flag", Tag.inserting(PlaceFlag.getFlagNameComponent(UseFlag.class)))
                     );
                 }
                 return false;
             }
-            case TRIGGER_PHYSICAL: {
+            case TRIGGER_PHYSICAL -> {
                 if (plot == null) {
                     final List<BlockTypeWrapper> use = area.getRoadFlag(UseFlag.class);
                     for (final BlockTypeWrapper blockTypeWrapper : use) {
@@ -426,7 +432,7 @@ public class EventDispatcher {
                         false
                 );
             }
-            case SPAWN_MOB: {
+            case SPAWN_MOB -> {
                 if (plot == null) {
                     return player.hasPermission(
                             Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms
@@ -456,13 +462,19 @@ public class EventDispatcher {
                 if (notifyPerms) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.flag_tutorial_usage"),
-                            Template.of("flag", PlotFlag.getFlagName(MobPlaceFlag.class)
-                                    + '/' + PlotFlag.getFlagName(PlaceFlag.class))
+                            TagResolver.resolver(
+                                    "flag",
+                                    Tag.inserting(
+                                            PlotFlag.getFlagNameComponent(MobPlaceFlag.class)
+                                                    .append(Component.text("/"))
+                                                    .append(PlotFlag.getFlagNameComponent(PlaceFlag.class))
+                                    )
+                            )
                     );
                 }
                 return false;
             }
-            case PLACE_MISC: {
+            case PLACE_MISC -> {
                 if (plot == null) {
                     return player.hasPermission(
                             Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms
@@ -492,13 +504,19 @@ public class EventDispatcher {
                 if (notifyPerms) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.flag_tutorial_usage"),
-                            Template.of("flag", PlotFlag.getFlagName(MiscPlaceFlag.class)
-                                    + '/' + PlotFlag.getFlagName(PlaceFlag.class))
+                            TagResolver.resolver(
+                                    "flag",
+                                    Tag.inserting(
+                                            PlotFlag.getFlagNameComponent(MiscPlaceFlag.class)
+                                                    .append(Component.text("/"))
+                                                    .append(PlotFlag.getFlagNameComponent(PlaceFlag.class))
+                                    )
+                            )
                     );
                 }
                 return false;
             }
-            case PLACE_VEHICLE:
+            case PLACE_VEHICLE -> {
                 if (plot == null) {
                     return player.hasPermission(
                             Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms
@@ -510,8 +528,9 @@ public class EventDispatcher {
                     );
                 }
                 return plot.getFlag(VehiclePlaceFlag.class);
-            default:
-                break;
+            }
+            default -> {
+            }
         }
         return true;
     }

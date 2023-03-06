@@ -21,8 +21,9 @@ package com.plotsquared.core.generator;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.queue.ScopedQueueCoordinator;
+import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.plotsquared.core.setup.PlotAreaBuilder;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -42,24 +43,21 @@ public abstract class IndependentPlotGenerator {
     /**
      * Generate chunk block data
      *
-     * @param result   queue
-     * @param settings PlotArea (settings)
-     * @deprecated {@link ScopedQueueCoordinator} will be renamed in v7.
-     */
-    @Deprecated(forRemoval = true, since = "6.9.0")
-    public abstract void generateChunk(ScopedQueueCoordinator result, PlotArea settings);
-
-    /**
-     * Populates the queue representing a chunk area with tile entities and entities
-     *
      * @param result   Queue to write to
      * @param settings PlotArea (settings)
-     * @return True if any population occurred
-     * @deprecated {@link ScopedQueueCoordinator} will be renamed in v7.
+     * @param biomes   If biomes should be generated
+     * @since TODO
      */
-    @Deprecated(forRemoval = true, since = "6.9.0")
-    public boolean populateChunk(ScopedQueueCoordinator result, PlotArea settings) {
-        return false;
+    public abstract void generateChunk(ZeroedDelegateScopedQueueCoordinator result, PlotArea settings, boolean biomes);
+
+    /**
+     * Populate a chunk-queue with tile entities, entities, etc.
+     *
+     * @param result  Queue to write to
+     * @param setting PlotArea (settings)
+     * @since TODO
+     */
+    public void populateChunk(ZeroedDelegateScopedQueueCoordinator result, PlotArea setting) {
     }
 
     /**
@@ -101,6 +99,18 @@ public abstract class IndependentPlotGenerator {
     public <T> GeneratorWrapper<T> specify(final @NonNull String world) {
         return (GeneratorWrapper<T>) PlotSquared.platform().wrapPlotGenerator(world, this);
     }
+
+    /**
+     * Get the biome to be generated at a specific point
+     *
+     * @param settings PlotArea settings to provide biome
+     * @param x        World x position
+     * @param y        World y position
+     * @param z        World z position
+     * @return Biome type to be generated
+     * @since TODO
+     */
+    public abstract BiomeType getBiome(PlotArea settings, int x, int y, int z);
 
     @Override
     public String toString() {

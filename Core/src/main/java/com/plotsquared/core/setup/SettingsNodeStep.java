@@ -24,7 +24,9 @@ import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.TabCompletions;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -46,10 +48,10 @@ public class SettingsNodeStep implements SetupStep {
     ) {
         this.configurationNode = configurationNode;
         this.id = id;
-        if (wrapper.getSettingsNodes().length > id + 1) {
-            this.next = new SettingsNodeStep(wrapper.getSettingsNodes()[id + 1], id + 1, wrapper);
+        if (wrapper.settingsNodes().length > id + 1) {
+            this.next = new SettingsNodeStep(wrapper.settingsNodes()[id + 1], id + 1, wrapper);
         } else {
-            this.next = wrapper.getAfterwards();
+            this.next = wrapper.afterwards();
         }
     }
 
@@ -77,10 +79,15 @@ public class SettingsNodeStep implements SetupStep {
     public void announce(PlotPlayer<?> plotPlayer) {
         plotPlayer.sendMessage(
                 TranslatableCaption.of("setup.setup_step"),
-                Template.of("step", String.valueOf(this.getId() + 1)),
-                Template.of("description", this.configurationNode.getDescription().getComponent(plotPlayer)),
-                Template.of("type", this.configurationNode.getType().getType()),
-                Template.of("value", String.valueOf(this.configurationNode.getDefaultValue()))
+                TagResolver.builder()
+                        .tag("step", Tag.inserting(Component.text(this.getId() + 1)))
+                        .tag(
+                                "description",
+                                Tag.inserting(this.configurationNode.getDescription().toComponent(plotPlayer))
+                        )
+                        .tag("type", Tag.inserting(Component.text(this.configurationNode.getType().getType())))
+                        .tag("value", Tag.inserting(Component.text(this.configurationNode.getDefaultValue().toString())))
+                        .build()
         );
     }
 

@@ -63,7 +63,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -163,7 +162,7 @@ public class HybridUtils {
                 int relChunkZ = chunkPos.getZ() - cbz;
                 oldBlockQueue.setOffsetX(relChunkX << 4);
                 oldBlockQueue.setOffsetZ(relChunkZ << 4);
-                hpw.getGenerator().generateChunk(oldBlockQueue, hpw);
+                hpw.getGenerator().generateChunk(oldBlockQueue, hpw, false);
             });
 
             final BlockState[][][] oldBlocks = oldBlockQueue.getBlockStates();
@@ -380,26 +379,6 @@ public class HybridUtils {
         run.run();
     }
 
-    /**
-     * @deprecated Unused internally and poor implementation. Scheduled for removal in next major release.
-     */
-    @Deprecated(forRemoval = true, since = "6.11.1")
-    public int checkModified(QueueCoordinator queue, int x1, int x2, int y1, int y2, int z1, int z2, BlockState[] blocks) {
-        int count = 0;
-        for (int y = y1; y <= y2; y++) {
-            for (int x = x1; x <= x2; x++) {
-                for (int z = z1; z <= z2; z++) {
-                    BlockState block = queue.getBlock(x, y, z);
-                    boolean same = Arrays.stream(blocks).anyMatch(p -> this.worldUtil.isBlockSame(block, p));
-                    if (!same) {
-                        count++;
-                    }
-                }
-            }
-        }
-        return count;
-    }
-
     public final ArrayList<BlockVector2> getChunks(BlockVector2 region) {
         ArrayList<BlockVector2> chunks = new ArrayList<>();
         int sx = region.getX() << 5;
@@ -597,20 +576,6 @@ public class HybridUtils {
             }
         }
         return ey;
-    }
-
-    /**
-     * Regenerate the road in a chunk in a plot area.
-     *
-     * @param area   Plot area to regenerate road for
-     * @param chunk  Chunk location to regenerate
-     * @param extend How far to extend setting air above the road
-     * @return if successful
-     * @deprecated use {@link HybridUtils#regenerateRoad(PlotArea, BlockVector2, int, QueueCoordinator)}
-     */
-    @Deprecated(forRemoval = true, since = "6.6.0")
-    public boolean regenerateRoad(final PlotArea area, final BlockVector2 chunk, int extend) {
-        return regenerateRoad(area, chunk, extend, null);
     }
 
     /**

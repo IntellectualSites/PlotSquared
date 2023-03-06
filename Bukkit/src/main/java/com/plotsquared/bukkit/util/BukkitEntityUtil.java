@@ -42,7 +42,9 @@ import com.plotsquared.core.plot.flag.implementations.VehicleCapFlag;
 import com.plotsquared.core.util.EntityUtil;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
@@ -179,7 +181,10 @@ public class BukkitEntityUtil {
                 if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_DESTROY + "." + stub)) {
                     plotPlayer.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_DESTROY + "." + stub)
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Component.text(Permission.PERMISSION_ADMIN_DESTROY + "." + stub))
+                            )
                     );
                     return false;
                 }
@@ -191,7 +196,10 @@ public class BukkitEntityUtil {
                 if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_DESTROY + "." + stub)) {
                     plotPlayer.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_DESTROY + "." + stub)
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Component.text(Permission.PERMISSION_ADMIN_DESTROY + "." + stub))
+                            )
                     );
                     if (plot != null) {
                         plot.debug(player.getName()
@@ -212,7 +220,10 @@ public class BukkitEntityUtil {
                 if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
                     plotPlayer.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Component.text(Permission.PERMISSION_ADMIN_PVE + "." + stub))
+                            )
                     );
                     if (plot != null) {
                         plot.debug(player.getName() + " could not attack " + entityType
@@ -233,7 +244,10 @@ public class BukkitEntityUtil {
                 if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
                     plotPlayer.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Component.text(Permission.PERMISSION_ADMIN_PVE + "." + stub))
+                            )
                     );
                     if (plot != null) {
                         plot.debug(player.getName() + " could not attack " + entityType
@@ -246,7 +260,10 @@ public class BukkitEntityUtil {
                     if (!plot.getFlag(PvpFlag.class) && !plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_PVP + "." + stub)) {
                         plotPlayer.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
-                                Template.of("node", Permission.PERMISSION_ADMIN_PVP + "." + stub)
+                                TagResolver.resolver(
+                                        "node",
+                                        Tag.inserting(Component.text(Permission.PERMISSION_ADMIN_PVP + "." + stub))
+                                )
                         );
                         plot.debug(player.getName() + " could not attack " + entityType
                                 + " because pve = false");
@@ -260,7 +277,10 @@ public class BukkitEntityUtil {
                 if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_PVP + "." + stub)) {
                     plotPlayer.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_PVP + "." + stub)
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Component.text(Permission.PERMISSION_ADMIN_PVP + "." + stub))
+                            )
                     );
                     return false;
                 }
@@ -277,7 +297,10 @@ public class BukkitEntityUtil {
                 if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
                     plotPlayer.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Component.text(Permission.PERMISSION_ADMIN_PVE + "." + stub))
+                            )
                     );
                     if (plot != null) {
                         plot.debug(player.getName() + " could not attack " + entityType
@@ -299,7 +322,10 @@ public class BukkitEntityUtil {
                 if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
                     plotPlayer.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Component.text(Permission.PERMISSION_ADMIN_PVE + "." + stub))
+                            )
                     );
                     if (plot != null) {
                         plot.debug(player.getName() + " could not attack " + entityType

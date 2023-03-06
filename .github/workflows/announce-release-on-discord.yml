@@ -1,7 +1,7 @@
 name: Announce release on discord
 on:
   release:
-    types: [published]
+    types: [ published ]
 jobs:
   send_announcement:
     runs-on: ubuntu-latest

@@ -36,7 +36,9 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
@@ -95,7 +97,7 @@ public class DebugExec extends SubCommand {
                     if (analysis != null) {
                         player.sendMessage(
                                 TranslatableCaption.of("debugexec.changes_column"),
-                                Template.of("value", String.valueOf(analysis.changes))
+                                TagResolver.resolver("value", Tag.inserting(Component.text(analysis.changes)))
                         );
                         return true;
                     }
@@ -105,7 +107,7 @@ public class DebugExec extends SubCommand {
                         public void run(PlotAnalysis value) {
                             player.sendMessage(
                                     TranslatableCaption.of("debugexec.analyze_done"),
-                                    Template.of("command", "/plot debugexec analyze")
+                                    TagResolver.resolver("command", Tag.inserting(Component.text("/plot debugexec analyze")))
                             );
                         }
                     });
@@ -115,7 +117,10 @@ public class DebugExec extends SubCommand {
                     if (args.length != 2) {
                         player.sendMessage(
                                 TranslatableCaption.of("commandconfig.command_syntax"),
-                                Template.of("value", "/plot debugexec analyze <threshold>")
+                                TagResolver.resolver(
+                                        "value",
+                                        Tag.inserting(Component.text("/plot debugexec analyze <threshold>"))
+                                )
                         );
                         player.sendMessage(TranslatableCaption.of("debugexec.threshold_default"));
                         return false;
@@ -126,7 +131,7 @@ public class DebugExec extends SubCommand {
                     } catch (NumberFormatException ignored) {
                         player.sendMessage(
                                 TranslatableCaption.of("debugexec.invalid_threshold"),
-                                Template.of("value", args[1])
+                                TagResolver.resolver("value", Tag.inserting(Component.text(args[1])))
                         );
                         player.sendMessage(TranslatableCaption.of("debugexec.threshold_default_double"));
                         return false;
@@ -157,7 +162,7 @@ public class DebugExec extends SubCommand {
                     if (args.length != 2) {
                         player.sendMessage(
                                 TranslatableCaption.of("commandconfig.command_syntax"),
-                                Template.of("value", "/plot debugexec remove-flag <flag>")
+                                TagResolver.resolver("value", Tag.inserting(Component.text("/plot debugexec remove-flag <flag>")))
                         );
                         return false;
                     }
@@ -175,7 +180,7 @@ public class DebugExec extends SubCommand {
                     }
                     player.sendMessage(
                             TranslatableCaption.of("debugexec.cleared_flag"),
-                            Template.of("value", flag)
+                            TagResolver.resolver("value", Tag.inserting(Component.text(flag)))
                     );
                     return true;
                 }
@@ -183,7 +188,10 @@ public class DebugExec extends SubCommand {
                     if (args.length != 2) {
                         player.sendMessage(
                                 TranslatableCaption.of("commandconfig.command_syntax"),
-                                Template.of("value", "Invalid syntax: /plot debugexec start-rgar <world>")
+                                TagResolver.resolver(
+                                        "value",
+                                        Tag.inserting(Component.text("Invalid syntax: /plot debugexec start-rgar <world>"))
+                                )
                         );
                         return false;
                     }
@@ -191,7 +199,7 @@ public class DebugExec extends SubCommand {
                     if (area == null) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.not_valid_plot_world"),
-                                Template.of("value", args[1])
+                                TagResolver.resolver("value", Tag.inserting(Component.text(args[1])))
                         );
                         return false;
                     }

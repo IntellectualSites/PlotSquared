@@ -18,6 +18,8 @@
  */
 package com.plotsquared.core.configuration.caption;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -32,5 +34,14 @@ public interface Caption {
      * @return Message
      */
     @NonNull String getComponent(@NonNull LocaleHolder localeHolder);
+
+    /**
+     * Get the Adventure {@link ComponentLike} for this caption
+     *
+     * @param localeHolder Locale holder
+     * @return {@link ComponentLike}
+     * @since TODO
+     */
+    @NonNull Component toComponent(@NonNull LocaleHolder localeHolder);
 
 }

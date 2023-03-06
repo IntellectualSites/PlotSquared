@@ -35,7 +35,6 @@ import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlayerManager;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -74,8 +73,7 @@ public final class PlaceholderRegistry {
      * @return a legacy-formatted string.
      */
     private static String legacyComponent(TranslatableCaption caption, LocaleHolder localeHolder) {
-        Component component = MiniMessage.get().parse(caption.getComponent(localeHolder));
-        return PlotSquared.platform().toLegacyPlatformString(component);
+        return PlotSquared.platform().toLegacyPlatformString(caption.toComponent(localeHolder).asComponent());
     }
 
     private void registerDefault() {
@@ -104,7 +102,7 @@ public final class PlaceholderRegistry {
             return plot.getAlias();
         });
         this.createPlaceholder("currentplot_owner", (player, plot) -> {
-            if (plot.getFlag(ServerPlotFlag.class)){
+            if (plot.getFlag(ServerPlotFlag.class)) {
                 return legacyComponent(TranslatableCaption.of("info.server"), player);
             }
             final UUID plotOwner = plot.getOwnerAbs();
@@ -302,17 +300,9 @@ public final class PlaceholderRegistry {
     /**
      * Event called when a new {@link Placeholder} has been added
      */
-    public static class PlaceholderAddedEvent {
-
-        private final Placeholder placeholder;
-
-        public PlaceholderAddedEvent(Placeholder placeholder) {
-            this.placeholder = placeholder;
-        }
-
-        public Placeholder getPlaceholder() {
-            return this.placeholder;
-        }
+    public record PlaceholderAddedEvent(
+            Placeholder placeholder
+    ) {
 
     }
 

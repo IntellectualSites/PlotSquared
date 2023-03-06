@@ -18,27 +18,53 @@
  */
 package com.plotsquared.core.configuration.caption;
 
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
+/**
+ * A holder for a caption.
+ * Useful when constructing messages in multiple steps with {@link TagResolver}s.
+ */
 public class CaptionHolder {
 
     private Caption caption = StaticCaption.of("");
-    private Template[] templates = new Template[0];
+    private TagResolver[] tagResolvers = new TagResolver[0];
 
+    /**
+     * Set the {@link Caption} to send.
+     *
+     * @param caption The new caption.
+     */
     public void set(Caption caption) {
         this.caption = caption;
     }
 
+    /**
+     * Get the {@link Caption} to send.
+     *
+     * @return The caption to send.
+     */
     public Caption get() {
         return this.caption;
     }
 
-    public Template[] getTemplates() {
-        return this.templates;
+    /**
+     * Get the {@link TagResolver}s to use when resolving tags in the {@link Caption}.
+     *
+     * @return The tag resolvers to use.
+     * @since TODO
+     */
+    public TagResolver[] getTagResolvers() {
+        return this.tagResolvers;
     }
 
-    public void setTemplates(Template... templates) {
-        this.templates = templates;
+    /**
+     * Set the {@link TagResolver}s to use when resolving tags in the {@link Caption}.
+     *
+     * @param tagResolvers The tag resolvers to use.
+     * @since TODO
+     */
+    public void setTagResolvers(TagResolver... tagResolvers) {
+        this.tagResolvers = tagResolvers;
     }
 
 }

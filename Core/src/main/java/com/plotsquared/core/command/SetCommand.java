@@ -24,7 +24,9 @@ import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.StringMan;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 public abstract class SetCommand extends SubCommand {
 
@@ -40,7 +42,10 @@ public abstract class SetCommand extends SubCommand {
             if (!player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Template.of("node", Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Component.text(Permission.PERMISSION_ADMIN_COMMAND.format(getFullId())))
+                        )
                 );
                 player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
                 return false;
@@ -50,7 +55,10 @@ public abstract class SetCommand extends SubCommand {
             if (!player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Template.of("node", Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Component.text(Permission.PERMISSION_ADMIN_COMMAND.format(getFullId())))
+                        )
                 );
                 player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                 return false;

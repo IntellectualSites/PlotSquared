@@ -26,7 +26,7 @@ import com.plotsquared.core.inject.factory.HybridPlotWorldFactory;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.queue.ScopedQueueCoordinator;
+import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.plotsquared.core.util.MathMan;
 import com.sk89q.worldedit.entity.BaseEntity;
 import com.sk89q.worldedit.entity.Entity;
@@ -41,6 +41,8 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.EnumSet;
 
 public class HybridGen extends IndependentPlotGenerator {
 
@@ -59,16 +61,16 @@ public class HybridGen extends IndependentPlotGenerator {
 
     private void placeSchem(
             HybridPlotWorld world,
-            ScopedQueueCoordinator result,
+            ZeroedDelegateScopedQueueCoordinator result,
             short relativeX,
             short relativeZ,
             int x,
             int z,
-            boolean isRoad,
-            boolean isPopulating
+            EnumSet<SchematicFeature> features
     ) {
         int minY; // Math.min(world.PLOT_HEIGHT, world.ROAD_HEIGHT);
-        if ((isRoad && Settings.Schematics.PASTE_ROAD_ON_TOP) || (!isRoad && Settings.Schematics.PASTE_ON_TOP)) {
+        if ((features.contains(SchematicFeature.ROAD) && Settings.Schematics.PASTE_ROAD_ON_TOP)
+                || (!features.contains(SchematicFeature.ROAD) && Settings.Schematics.PASTE_ON_TOP)) {
             minY = world.SCHEM_Y;
         } else {
             minY = world.getMinBuildHeight();
@@ -77,11 +79,14 @@ public class HybridGen extends IndependentPlotGenerator {
         if (blocks != null) {
             for (int y = 0; y < blocks.length; y++) {
                 if (blocks[y] != null) {
-                    if (!isPopulating || blocks[y].hasNbtData()) {
+                    if (!features.contains(SchematicFeature.POPULATING) || blocks[y].hasNbtData()) {
                         result.setBlock(x, minY + y, z, blocks[y]);
                     }
                 }
             }
+        }
+        if (!features.contains(SchematicFeature.BIOMES)) {
+            return;
         }
         BiomeType biome = world.G_SCH_B.get(MathMan.pair(relativeX, relativeZ));
         if (biome != null) {
@@ -90,13 +95,15 @@ public class HybridGen extends IndependentPlotGenerator {
     }
 
     @Override
-    public void generateChunk(@NonNull ScopedQueueCoordinator result, @NonNull PlotArea settings) {
+    public void generateChunk(@NonNull ZeroedDelegateScopedQueueCoordinator result, @NonNull PlotArea settings, boolean biomes) {
         Preconditions.checkNotNull(result, "result cannot be null");
         Preconditions.checkNotNull(settings, "settings cannot be null");
 
         HybridPlotWorld hybridPlotWorld = (HybridPlotWorld) settings;
         // Biome
-        result.fillBiome(hybridPlotWorld.getPlotBiome());
+        if (biomes) {
+            result.fillBiome(hybridPlotWorld.getPlotBiome());
+        }
         // Bedrock
         if (hybridPlotWorld.PLOT_BEDROCK) {
             for (short x = 0; x < 16; x++) {
@@ -105,26 +112,25 @@ public class HybridGen extends IndependentPlotGenerator {
                 }
             }
         }
+        EnumSet<SchematicFeature> roadFeatures = EnumSet.of(SchematicFeature.ROAD);
+        EnumSet<SchematicFeature> plotFeatures = EnumSet.noneOf(SchematicFeature.class);
+        if (biomes) {
+            roadFeatures.add(SchematicFeature.BIOMES);
+            plotFeatures.add(SchematicFeature.BIOMES);
+        }
+
         // Coords
         Location min = result.getMin();
         int bx = min.getX() - hybridPlotWorld.ROAD_OFFSET_X;
         int bz = min.getZ() - hybridPlotWorld.ROAD_OFFSET_Z;
+
         // The relative X-coordinate (within the plot) of the minimum X coordinate
         // contained in the scoped queue
-        short relativeOffsetX;
-        if (bx < 0) {
-            relativeOffsetX = (short) (hybridPlotWorld.SIZE + (bx % hybridPlotWorld.SIZE));
-        } else {
-            relativeOffsetX = (short) (bx % hybridPlotWorld.SIZE);
-        }
+        short relativeOffsetX = (short) Math.floorMod(bx, hybridPlotWorld.SIZE);
         // The relative Z-coordinate (within the plot) of the minimum Z coordinate
         // contained in the scoped queue
-        short relativeOffsetZ;
-        if (bz < 0) {
-            relativeOffsetZ = (short) (hybridPlotWorld.SIZE + (bz % hybridPlotWorld.SIZE));
-        } else {
-            relativeOffsetZ = (short) (bz % hybridPlotWorld.SIZE);
-        }
+        short relativeOffsetZ = (short) Math.floorMod(bz, hybridPlotWorld.SIZE);
+
         // The X-coordinate of a given X coordinate, relative to the
         // plot (Counting from the corner with the least positive
         // coordinates)
@@ -171,7 +177,7 @@ public class HybridGen extends IndependentPlotGenerator {
                         result.setBlock(x, y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
                     }
                     if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, false);
+                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, roadFeatures);
                     }
                 }
             } else if (insideWallX[x]) {
@@ -182,7 +188,7 @@ public class HybridGen extends IndependentPlotGenerator {
                             result.setBlock(x, y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
                         }
                         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, false);
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, roadFeatures);
                         }
                     } else {
                         // wall
@@ -194,7 +200,7 @@ public class HybridGen extends IndependentPlotGenerator {
                                 result.setBlock(x, hybridPlotWorld.WALL_HEIGHT + 1, z, hybridPlotWorld.WALL_BLOCK.toPattern());
                             }
                         } else {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, false);
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, roadFeatures);
                         }
                     }
                 }
@@ -206,7 +212,7 @@ public class HybridGen extends IndependentPlotGenerator {
                             result.setBlock(x, y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
                         }
                         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, false);
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, roadFeatures);
                         }
                     } else if (insideWallZ[z]) {
                         // wall
@@ -218,7 +224,7 @@ public class HybridGen extends IndependentPlotGenerator {
                                 result.setBlock(x, hybridPlotWorld.WALL_HEIGHT + 1, z, hybridPlotWorld.WALL_BLOCK.toPattern());
                             }
                         } else {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, false);
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, roadFeatures);
                         }
                     } else {
                         // plot
@@ -227,7 +233,7 @@ public class HybridGen extends IndependentPlotGenerator {
                         }
                         result.setBlock(x, hybridPlotWorld.PLOT_HEIGHT, z, hybridPlotWorld.TOP_BLOCK.toPattern());
                         if (hybridPlotWorld.PLOT_SCHEMATIC) {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, false, false);
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, plotFeatures);
                         }
                     }
                 }
@@ -236,31 +242,26 @@ public class HybridGen extends IndependentPlotGenerator {
     }
 
     @Override
-    public boolean populateChunk(final ScopedQueueCoordinator result, final PlotArea settings) {
+    public void populateChunk(final ZeroedDelegateScopedQueueCoordinator result, final PlotArea settings) {
         HybridPlotWorld hybridPlotWorld = (HybridPlotWorld) settings;
         if (!hybridPlotWorld.populationNeeded()) {
-            return false;
+            return;
         }
+        EnumSet<SchematicFeature> roadFeatures = EnumSet.of(SchematicFeature.POPULATING, SchematicFeature.ROAD);
+        EnumSet<SchematicFeature> plotFeatures = EnumSet.of(SchematicFeature.POPULATING);
+
         // Coords
         Location min = result.getMin();
         int bx = min.getX() - hybridPlotWorld.ROAD_OFFSET_X;
         int bz = min.getZ() - hybridPlotWorld.ROAD_OFFSET_Z;
+
         // The relative X-coordinate (within the plot) of the minimum X coordinate
         // contained in the scoped queue
-        short relativeOffsetX;
-        if (bx < 0) {
-            relativeOffsetX = (short) (hybridPlotWorld.SIZE + (bx % hybridPlotWorld.SIZE));
-        } else {
-            relativeOffsetX = (short) (bx % hybridPlotWorld.SIZE);
-        }
+        short relativeOffsetX = (short) Math.floorMod(bx, hybridPlotWorld.SIZE);
         // The relative Z-coordinate (within the plot) of the minimum Z coordinate
         // contained in the scoped queue
-        short relativeOffsetZ;
-        if (bz < 0) {
-            relativeOffsetZ = (short) (hybridPlotWorld.SIZE + (bz % hybridPlotWorld.SIZE));
-        } else {
-            relativeOffsetZ = (short) (bz % hybridPlotWorld.SIZE);
-        }
+        short relativeOffsetZ = (short) Math.floorMod(bz, hybridPlotWorld.SIZE);
+
         boolean allRoad = true;
         boolean overlap = false;
 
@@ -313,17 +314,17 @@ public class HybridGen extends IndependentPlotGenerator {
             if (insideRoadX[x] || insideWallX[x]) {
                 if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
                     for (short z = 0; z < 16; z++) {
-                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, true);
+                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, roadFeatures);
                     }
                 }
             } else {
                 for (short z = 0; z < 16; z++) {
                     if (insideRoadZ[z] || insideWallZ[z]) {
                         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, true, true);
+                            placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, roadFeatures);
                         }
                     } else if (hybridPlotWorld.PLOT_SCHEMATIC) {
-                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, false, true);
+                        placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, plotFeatures);
                     }
                 }
             }
@@ -340,7 +341,10 @@ public class HybridGen extends IndependentPlotGenerator {
                 for (Entity entity : hybridPlotWorld.getPlotSchematicEntities()) {
                     if (region.contains(entity.getLocation().toVector().toBlockPoint())) {
                         Vector3 pos = (entity.getLocation().toVector()
-                                .subtract(region.getMinimumPoint().withY(hybridPlotWorld.getPlotSchematicMinPoint().getY()).toVector3()))
+                                .subtract(region
+                                        .getMinimumPoint()
+                                        .withY(hybridPlotWorld.getPlotSchematicMinPoint().getY())
+                                        .toVector3()))
                                 .add(min.getBlockVector3().withY(hybridPlotWorld.SCHEM_Y).toVector3());
                         result.setEntity(new PopulatingEntity(
                                 entity,
@@ -364,7 +368,7 @@ public class HybridGen extends IndependentPlotGenerator {
                 }
             }
         }
-        return true;
+        return;
     }
 
     @Override
@@ -375,6 +379,33 @@ public class HybridGen extends IndependentPlotGenerator {
     @Override
     public void initialize(PlotArea area) {
         // All initialization is done in the PlotArea class
+    }
+
+    @Override
+    public BiomeType getBiome(final PlotArea settings, final int worldX, final int worldY, final int worldZ) {
+        HybridPlotWorld hybridPlotWorld = (HybridPlotWorld) settings;
+        if (!hybridPlotWorld.PLOT_SCHEMATIC && !hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
+            return hybridPlotWorld.getPlotBiome();
+        }
+        int relativeX = worldX;
+        int relativeZ = worldZ;
+        if (hybridPlotWorld.ROAD_OFFSET_X != 0) {
+            relativeX -= hybridPlotWorld.ROAD_OFFSET_X;
+        }
+        if (hybridPlotWorld.ROAD_OFFSET_Z != 0) {
+            relativeZ -= hybridPlotWorld.ROAD_OFFSET_Z;
+        }
+        int size = hybridPlotWorld.PLOT_WIDTH + hybridPlotWorld.ROAD_WIDTH;
+        relativeX = Math.floorMod(relativeX, size);
+        relativeZ = Math.floorMod(relativeZ, size);
+        BiomeType biome = hybridPlotWorld.G_SCH_B.get(MathMan.pair((short) relativeX, (short) relativeZ));
+        return biome == null ? hybridPlotWorld.getPlotBiome() : biome;
+    }
+
+    private enum SchematicFeature {
+        BIOMES,
+        ROAD,
+        POPULATING
     }
 
     /**

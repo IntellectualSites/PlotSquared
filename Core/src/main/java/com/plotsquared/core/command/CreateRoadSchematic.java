@@ -25,7 +25,9 @@ import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(command = "createroadschematic",
@@ -61,7 +63,7 @@ public class CreateRoadSchematic extends SubCommand {
         this.hybridUtils.setupRoadSchematic(plot);
         player.sendMessage(
                 TranslatableCaption.of("schematics.schematic_road_created"),
-                Template.of("command", "/plot debugroadregen")
+                TagResolver.resolver("command", Tag.inserting(Component.text("/plot debugroadregen")))
         );
         return true;
     }
