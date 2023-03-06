@@ -82,10 +82,10 @@ public abstract class TimedFlag<T, F extends PlotFlag<TimedFlag.Timed<T>, F>>
     ) {
 
         @Override
-            public String toString() {
-                return String.format("%d %s", interval, value);
-            }
-
+        public String toString() {
+            return String.format("%d %s", interval, value);
         }
+
+    }
 
 }

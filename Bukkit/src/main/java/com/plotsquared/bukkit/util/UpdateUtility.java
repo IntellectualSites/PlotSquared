@@ -54,7 +54,8 @@ public class UpdateUtility implements Listener {
         internalVersion = PlotSquared.get().getVersion();
     }
 
-    @SuppressWarnings({"deprecation", "DefaultCharset"}) // Suppress Json deprecation, we can't use features from gson 2.8.1 and newer yet
+    @SuppressWarnings({"deprecation", "DefaultCharset"})
+    // Suppress Json deprecation, we can't use features from gson 2.8.1 and newer yet
     public void updateChecker() {
         task = Bukkit.getScheduler().runTaskTimerAsynchronously(this.javaPlugin, () -> {
             try {

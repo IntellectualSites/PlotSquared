@@ -1,10 +1,14 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
+  "$schema" : "https://docs.renovatebot.com/renovate-schema.json",
+  "extends" : [
     "config:base",
     ":semanticCommitsDisabled"
   ],
-  "labels": ["dependencies"],
-  "rebaseWhen": "conflicted",
-  "schedule": ["on the first day of the week"]
+  "labels" : [
+    "dependencies"
+  ],
+  "rebaseWhen" : "conflicted",
+  "schedule" : [
+    "on the first day of the week"
+  ]
 }

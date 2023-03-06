@@ -100,7 +100,7 @@ public class PlotInventory {
      * Put an item into this inventory
      *
      * @param index the index (= slot) where to place the item
-     * @param item the item to place
+     * @param item  the item to place
      * @see #setItemChecked(int, PlotItemStack)
      */
     public void setItem(int index, PlotItemStack item) {

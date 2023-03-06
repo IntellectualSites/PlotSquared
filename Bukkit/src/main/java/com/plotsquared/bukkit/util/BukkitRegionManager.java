@@ -70,7 +70,7 @@ public class BukkitRegionManager extends RegionManager {
     @Inject
     public BukkitRegionManager(
             @NonNull WorldUtil worldUtil, @NonNull GlobalBlockQueue blockQueue, @NonNull
-            ProgressSubscriberFactory subscriberFactory
+    ProgressSubscriberFactory subscriberFactory
     ) {
         super(worldUtil, blockQueue, subscriberFactory);
         this.blockQueue = blockQueue;

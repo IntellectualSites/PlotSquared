@@ -49,7 +49,8 @@ public record ComponentPreset(
     public static ComponentPreset deserialize(final @NonNull Map<String, Object> map) {
         final ClassicPlotManagerComponent classicPlotManagerComponent = ClassicPlotManagerComponent
                 .fromString(map.getOrDefault("component", "").toString()).orElseThrow(() ->
-                        new IllegalArgumentException("The preset in components.yml needs a valid target component, got: " + map.get("component")));
+                        new IllegalArgumentException("The preset in components.yml needs a valid target component, got: " + map.get(
+                                "component")));
         final String pattern = map.getOrDefault("pattern", "").toString();
         final double cost = Double.parseDouble(map.getOrDefault("cost", "0.0").toString());
         final String permission = map.getOrDefault("permission", "").toString();

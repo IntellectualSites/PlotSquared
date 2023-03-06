@@ -1,6 +1,6 @@
+import com.diffplug.gradle.spotless.SpotlessPlugin
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import java.net.URI
-import com.diffplug.gradle.spotless.SpotlessPlugin
 
 plugins {
     java

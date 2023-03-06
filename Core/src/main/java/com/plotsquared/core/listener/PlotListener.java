@@ -142,7 +142,9 @@ public class PlotListener {
                     Map.Entry<UUID, List<StatusEffect>> entry = iterator.next();
                     List<StatusEffect> effects = entry.getValue();
                     effects.removeIf(effect -> currentTime > effect.expiresAt);
-                    if (effects.isEmpty()) iterator.remove();
+                    if (effects.isEmpty()) {
+                        iterator.remove();
+                    }
                 }
             }
         }, TaskTime.seconds(1L));
@@ -486,8 +488,9 @@ public class PlotListener {
 
     /**
      * Marks an effect as a status effect that will be removed on leaving a plot
-     * @param uuid The uuid of the player the effect belongs to
-     * @param name The name of the status effect
+     *
+     * @param uuid      The uuid of the player the effect belongs to
+     * @param name      The name of the status effect
      * @param expiresAt The time when the effect expires
      * @since 6.10.0
      */
@@ -518,10 +521,10 @@ public class PlotListener {
     private record StatusEffect(@NonNull String name, long expiresAt) {
 
         private StatusEffect(@NonNull String name, long expiresAt) {
-                this.name = name;
-                this.expiresAt = expiresAt;
-            }
-
+            this.name = name;
+            this.expiresAt = expiresAt;
         }
+
+    }
 
 }

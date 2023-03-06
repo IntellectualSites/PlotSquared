@@ -27,7 +27,7 @@ public class BeaconEffectsFlag extends BooleanFlag<BeaconEffectsFlag> {
     public static final BeaconEffectsFlag BEACON_EFFECT_TRUE = new BeaconEffectsFlag(true);
     public static final BeaconEffectsFlag BEACON_EFFECT_FALSE = new BeaconEffectsFlag(false);
 
-    private BeaconEffectsFlag(boolean value){
+    private BeaconEffectsFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_beacon_effect"));
     }
 

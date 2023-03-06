@@ -759,7 +759,9 @@ public class BlockEventListener implements Listener {
             return;
         }
 
-        if (block.getBlockData() instanceof Farmland farmland && event.getNewState().getBlockData() instanceof Farmland newFarmland) {
+        if (block.getBlockData() instanceof Farmland farmland && event
+                .getNewState()
+                .getBlockData() instanceof Farmland newFarmland) {
             int currentMoisture = farmland.getMoisture();
             int newMoisture = newFarmland.getMoisture();
 

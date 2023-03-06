@@ -69,7 +69,8 @@ public class Copy extends SubCommand {
 
         plot1.getPlotModificationManager().copy(plot2, player).thenAccept(result -> {
             if (result) {
-                player.sendMessage(TranslatableCaption.of("move.copy_success"),
+                player.sendMessage(
+                        TranslatableCaption.of("move.copy_success"),
                         TagResolver.builder()
                                 .tag("origin", Tag.inserting(Component.text(plot1.toString())))
                                 .tag("target", Tag.inserting(Component.text(plot2.toString())))
