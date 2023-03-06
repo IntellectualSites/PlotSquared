@@ -73,7 +73,7 @@ public class MathMan {
     /**
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static long pairInt(int x, int y) {
         return (((long) x) << 32) | (y & 0xffffffffL);
     }
@@ -81,7 +81,7 @@ public class MathMan {
     /**
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static int unpairIntX(long pair) {
         return (int) (pair >> 32);
     }
@@ -89,7 +89,7 @@ public class MathMan {
     /**
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static int unpairIntY(long pair) {
         return (int) pair;
     }
@@ -97,7 +97,7 @@ public class MathMan {
     /**
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static byte pair16(byte x, byte y) {
         return (byte) (x + (y << 4));
     }
@@ -105,7 +105,7 @@ public class MathMan {
     /**
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static byte unpair16x(byte value) {
         return (byte) (value & 0xF);
     }
@@ -113,7 +113,7 @@ public class MathMan {
     /**
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static byte unpair16y(byte value) {
         return (byte) ((value >> 4) & 0xF);
     }
@@ -121,7 +121,7 @@ public class MathMan {
     /**
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static long inverseRound(double val) {
         long round = Math.round(val);
         return (long) (round + Math.signum(val - round));
@@ -130,7 +130,7 @@ public class MathMan {
     /**
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static int sqrt(int x) {
         int xn;
 
@@ -210,7 +210,7 @@ public class MathMan {
     /**
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static double getMean(double[] array) {
         double count = 0;
         for (double i : array) {
@@ -231,7 +231,7 @@ public class MathMan {
     /**
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static short unpairX(int hash) {
         return (short) (hash >> 16);
     }
@@ -239,7 +239,7 @@ public class MathMan {
     /**
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static short unpairY(int hash) {
         return (short) (hash & 0xFFFF);
     }
@@ -252,7 +252,7 @@ public class MathMan {
      * @return x, y, z unit vector
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static float[] getDirection(float yaw, float pitch) {
         double pitch_sin = Math.sin(pitch);
         return new float[]{(float) (pitch_sin * Math.cos(yaw)),
@@ -262,7 +262,7 @@ public class MathMan {
     /**
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static int floorMod(int x, int y) {
         int i = x % y;
         if (i < 0) {
@@ -284,7 +284,7 @@ public class MathMan {
      * @return pitch and yaw of x,y,z from 0,0,0
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static float[] getPitchAndYaw(float x, float y, float z) {
         float distance = sqrtApprox((z * z) + (x * x));
         return new float[]{atan2(y, distance), atan2(x, z)};
@@ -293,7 +293,7 @@ public class MathMan {
     /**
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static final float atan2(float y, float x) {
         float add;
         float mul;
@@ -332,7 +332,7 @@ public class MathMan {
     /**
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static float sqrtApprox(float f) {
         return f * Float.intBitsToFloat(0x5f375a86 - (Float.floatToIntBits(f) >> 1));
     }
@@ -341,7 +341,7 @@ public class MathMan {
     /**
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static double sqrtApprox(double d) {
         return Double
                 .longBitsToDouble(((Double.doubleToLongBits(d) - (1L << 52)) >> 1) + (1L << 61));
@@ -350,7 +350,7 @@ public class MathMan {
     /**
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static float invSqrt(float x) {
         float xhalf = 0.5f * x;
         int i = Float.floatToIntBits(x);
@@ -394,7 +394,7 @@ public class MathMan {
     /**
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static double getSD(double[] array, double av) {
         double sd = 0;
         for (double element : array) {
@@ -414,7 +414,7 @@ public class MathMan {
     /**
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static int mod(int x, int y) {
         if (isPowerOfTwo(y)) {
             return x & (y - 1);
@@ -425,7 +425,7 @@ public class MathMan {
     /**
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static int unsignedmod(int x, int y) {
         if (isPowerOfTwo(y)) {
             return x & (y - 1);
@@ -436,7 +436,7 @@ public class MathMan {
     /**
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static boolean isPowerOfTwo(int number) {
         return (number & (number - 1)) == 0;
     }

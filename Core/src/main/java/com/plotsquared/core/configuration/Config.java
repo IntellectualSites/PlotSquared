@@ -52,7 +52,7 @@ public class Config {
      * @return value
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     @SuppressWarnings("unchecked")
     public static <T> T get(String key, Class<?> root) {
         String[] split = key.split("\\.");
@@ -450,7 +450,7 @@ public class Config {
         /**
          * @deprecated Unused internally. Scheduled for removal in next major release.
          */
-        @Deprecated(forRemoval = true, since = "TODO")
+        @Deprecated(forRemoval = true, since = "6.11.1")
         public Collection<String> getSections() {
             return INSTANCES.keySet();
         }

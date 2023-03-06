@@ -116,7 +116,7 @@ public class ChunkUtil {
      * @return {@code true} if the region pos1-pos2 contains the chunk
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static boolean isWholeChunk(@NonNull Location pos1, @NonNull Location pos2, @NonNull BlockVector2 chunk) {
         int x1 = pos1.getX();
         int z1 = pos1.getZ();

@@ -116,7 +116,7 @@ public final class BlockUtil {
      * @return Parsed block states
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static @NonNull BlockState[] parse(final @NonNull String commaDelimited) {
         final String[] split = commaDelimited.split(",(?![^\\(\\[]*[\\]\\)])");
         final BlockState[] result = new BlockState[split.length];
@@ -134,7 +134,7 @@ public final class BlockUtil {
      *         not a properly serialized block state
      * @deprecated Unused internally. Scheduled for removal in next major release.
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public static @Nullable BlockState deserialize(final @NonNull Map<String, Object> map) {
         if (map.containsKey("material")) {
             final Object object = map.get("material");

@@ -82,7 +82,7 @@ public class PlotSettings {
     /**
      * @deprecated Unused internally. Scheduled for removal in next major release. Use {@link PlotSettings#setMerged(Direction, boolean)}
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "6.11.1")
     public boolean setMerged(int direction, boolean merged) {
         if (this.merged[direction] != merged) {
             this.merged[direction] = merged;
