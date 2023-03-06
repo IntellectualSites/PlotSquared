@@ -121,10 +121,7 @@ public class ListCmd extends SubCommand {
     }
 
     public void noArgs(PlotPlayer<?> player) {
-        player.sendMessage(
-                TranslatableCaption.of("commandconfig.subcommand_set_options_header"),
-                Templates.of("values", Arrays.toString(getArgumentList(player)))
-        );
+        onCommand(player, new String[]{"mine"});
     }
 
     @Override
