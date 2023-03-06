@@ -185,22 +185,25 @@ public class Download extends SubCommand {
         if (Settings.Web.LEGACY_WEBINTERFACE) {
             schematicHandler
                     .getCompoundTag(plot)
-                    .whenComplete((compoundTag, throwable) -> {
-                        schematicHandler.upload(compoundTag, null, null, new RunnableVal<>() {
-                            @Override
-                            public void run(URL value) {
-                                plot.removeRunning();
-                                player.sendMessage(
-                                        TranslatableCaption.of("web.generation_link_success"),
-                                        TagResolver.builder()
-                                                .tag("download", Tag.preProcessParsed(value.toString()))
-                                                .tag("delete", Tag.preProcessParsed("Not available"))
-                                                .build()
-                                );
-                                player.sendMessage(StaticCaption.of(value.toString()));
+                    .whenComplete((compoundTag, throwable) -> schematicHandler.upload(
+                            compoundTag,
+                            null,
+                            null,
+                            new RunnableVal<>() {
+                                @Override
+                                public void run(URL value) {
+                                    plot.removeRunning();
+                                    player.sendMessage(
+                                            TranslatableCaption.of("web.generation_link_success"),
+                                            TagResolver.builder()
+                                                    .tag("download", Tag.preProcessParsed(value.toString()))
+                                                    .tag("delete", Tag.preProcessParsed("Not available"))
+                                                    .build()
+                                    );
+                                    player.sendMessage(StaticCaption.of(value.toString()));
+                                }
                             }
-                        });
-                    });
+                    ));
             return;
         }
         // TODO legacy support

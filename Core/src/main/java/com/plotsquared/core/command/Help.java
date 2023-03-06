@@ -134,7 +134,8 @@ public class Help extends Command {
                                 TagResolver.builder()
                                         .tag("command", Tag.inserting(Component.text("/plot help")))
                                         .tag("category", Tag.inserting(Component.text("all")))
-                                        .tag("category_desc",
+                                        .tag(
+                                                "category_desc",
                                                 Tag.inserting(TranslatableCaption
                                                         .of("help.help_display_all_commands")
                                                         .toComponent(player))

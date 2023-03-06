@@ -1015,7 +1015,7 @@ public class PlotSquared {
 
     /**
      * Setup the configuration for a plot world based on world arguments.
-     *
+     * <p>
      *
      * <i>e.g. /mv create &lt;world&gt; normal -g PlotSquared:&lt;args&gt;</i>
      *
