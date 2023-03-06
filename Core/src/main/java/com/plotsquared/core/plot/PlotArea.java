@@ -658,8 +658,10 @@ public abstract class PlotArea implements ComponentLike {
                     TranslatableCaption.of("height.height_limit"),
                     TagResolver.builder()
                             .tag("minHeight", Tag.inserting(Component.text(minBuildHeight)))
-                            .tag("maxHeight",
-                            Tag.inserting(Component.text(maxBuildHeight))).build()
+                            .tag(
+                                    "maxHeight",
+                                    Tag.inserting(Component.text(maxBuildHeight))
+                            ).build()
             );
             // Return true if "failed" as the method will always be inverted otherwise
             return true;
@@ -1017,7 +1019,7 @@ public abstract class PlotArea implements ComponentLike {
      *
      * @param plotIds     List of plot IDs to merge
      * @param removeRoads If the roads between plots should be removed
-     * @param whenDone  Task to run when any merge world changes are complete. Also runs if no changes were made. Does not
+     * @param whenDone    Task to run when any merge world changes are complete. Also runs if no changes were made. Does not
      *                    run if there was an error or if too few plots IDs were supplied.
      * @return if merges were completed successfully.
      * @since 6.9.0

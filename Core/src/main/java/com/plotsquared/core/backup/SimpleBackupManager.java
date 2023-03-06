@@ -141,24 +141,24 @@ public class SimpleBackupManager implements BackupManager {
     ) {
 
         @Override
-            public boolean equals(final Object o) {
-                if (this == o) {
-                    return true;
-                }
-                if (o == null || getClass() != o.getClass()) {
-                    return false;
-                }
-                final PlotCacheKey that = (PlotCacheKey) o;
-                return Objects.equals(plot.getArea(), that.plot.getArea())
-                        && Objects.equals(plot.getId(), that.plot.getId())
-                        && Objects.equals(plot.getOwnerAbs(), that.plot.getOwnerAbs());
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
             }
-
-            @Override
-            public int hashCode() {
-                return Objects.hash(plot.getArea(), plot.getId(), plot.getOwnerAbs());
+            if (o == null || getClass() != o.getClass()) {
+                return false;
             }
-
+            final PlotCacheKey that = (PlotCacheKey) o;
+            return Objects.equals(plot.getArea(), that.plot.getArea())
+                    && Objects.equals(plot.getId(), that.plot.getId())
+                    && Objects.equals(plot.getOwnerAbs(), that.plot.getOwnerAbs());
         }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(plot.getArea(), plot.getId(), plot.getOwnerAbs());
+        }
+
+    }
 
 }

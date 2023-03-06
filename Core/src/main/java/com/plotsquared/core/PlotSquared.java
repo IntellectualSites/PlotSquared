@@ -270,7 +270,11 @@ public class PlotSquared {
             captionMap = this.captionLoader.loadAll(this.platform.getDirectory().toPath().resolve("lang"));
         } else {
             String fileName = "messages_" + Settings.Enabled_Components.DEFAULT_LOCALE + ".json";
-            captionMap = this.captionLoader.loadOrCreateSingle(this.platform.getDirectory().toPath().resolve("lang").resolve(fileName));
+            captionMap = this.captionLoader.loadOrCreateSingle(this.platform
+                    .getDirectory()
+                    .toPath()
+                    .resolve("lang")
+                    .resolve(fileName));
         }
         this.captionMaps.put(TranslatableCaption.DEFAULT_NAMESPACE, captionMap);
         LOGGER.info(
@@ -1011,7 +1015,7 @@ public class PlotSquared {
 
     /**
      * Setup the configuration for a plot world based on world arguments.
-     *
+     * <p>
      *
      * <i>e.g. /mv create &lt;world&gt; normal -g PlotSquared:&lt;args&gt;</i>
      *

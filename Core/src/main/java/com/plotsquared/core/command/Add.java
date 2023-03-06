@@ -70,7 +70,8 @@ public class Add extends Command {
                 plot.isOwner(player.getUUID()) || player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_TRUST),
                 TranslatableCaption.of("permission.no_plot_perms")
         );
-        checkTrue(args.length == 1,
+        checkTrue(
+                args.length == 1,
                 TranslatableCaption.of("commandconfig.command_syntax"),
                 TagResolver.resolver("value", Tag.inserting(Component.text("/plot add <player | *>")))
         );

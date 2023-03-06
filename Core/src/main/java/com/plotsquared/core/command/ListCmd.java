@@ -476,11 +476,11 @@ public class ListCmd extends SubCommand {
                         for (final UUIDMapping uuidMapping : names) {
                             PlotPlayer<?> pp = PlotSquared.platform().playerManager().getPlayerIfExists(uuidMapping.uuid());
                             TagResolver resolver = TagResolver.builder()
-                                .tag("prefix", Tag.inserting(Component.text(prefix)))
-                                .tag("player", Tag.inserting(Component.text(uuidMapping.username())))
-                                .build();
-                        if (pp != null) {
-                            builder.append(MINI_MESSAGE.deserialize(online, resolver));
+                                    .tag("prefix", Tag.inserting(Component.text(prefix)))
+                                    .tag("player", Tag.inserting(Component.text(uuidMapping.username())))
+                                    .build();
+                            if (pp != null) {
+                                builder.append(MINI_MESSAGE.deserialize(online, resolver));
                             } else if (uuidMapping.username().equalsIgnoreCase("unknown")) {
                                 TagResolver unknownResolver = TagResolver.resolver(
                                         "info.unknown",

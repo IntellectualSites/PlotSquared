@@ -225,7 +225,7 @@ public final class CaptionLoader {
      */
     public @NonNull CaptionMap loadOrCreateSingle(final @NonNull Path file) throws IOException {
         final Locale locale = this.localeExtractor.apply(file);
-        if (!Files.exists(file) ) {
+        if (!Files.exists(file)) {
             Map<String, String> map = new LinkedHashMap<>();
             patch(map, locale);
             save(file, map);

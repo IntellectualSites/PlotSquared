@@ -102,7 +102,7 @@ public final class PlaceholderRegistry {
             return plot.getAlias();
         });
         this.createPlaceholder("currentplot_owner", (player, plot) -> {
-            if (plot.getFlag(ServerPlotFlag.class)){
+            if (plot.getFlag(ServerPlotFlag.class)) {
                 return legacyComponent(TranslatableCaption.of("info.server"), player);
             }
             final UUID plotOwner = plot.getOwnerAbs();
@@ -298,8 +298,8 @@ public final class PlaceholderRegistry {
     }
 
     /**
-    * Event called when a new {@link Placeholder} has been added
-    */
+     * Event called when a new {@link Placeholder} has been added
+     */
     public record PlaceholderAddedEvent(
             Placeholder placeholder
     ) {

@@ -54,7 +54,7 @@ import java.util.Set;
 
 public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrapper<ChunkGenerator> {
 
-    private static final Logger LOGGER =  LogManager.getLogger("PlotSquared/" + BukkitPlotGenerator.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + BukkitPlotGenerator.class.getSimpleName());
 
     @SuppressWarnings("unused")
     public final boolean PAPER_ASYNC_SAFE = true;
@@ -382,7 +382,8 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         }
         PlotArea area = UncheckedWorldLocation.at(name, chunkX << 4, 0, chunkZ << 4).getPlotArea();
         if (area == null) {
-            throw new IllegalStateException(String.format("Cannot generate chunk that does not belong to a plot area. World: %s",
+            throw new IllegalStateException(String.format(
+                    "Cannot generate chunk that does not belong to a plot area. World: %s",
                     name
             ));
         }

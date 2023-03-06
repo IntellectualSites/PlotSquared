@@ -43,11 +43,10 @@ import java.util.function.Consumer;
 
 public abstract class QueueCoordinator {
 
+    private final AtomicBoolean enqueued = new AtomicBoolean();
     private boolean forceSync = false;
     @Nullable
     private Object chunkObject;
-    private final AtomicBoolean enqueued = new AtomicBoolean();
-
     @SuppressWarnings({"unused", "FieldCanBeLocal"})
     @Inject
     private GlobalBlockQueue blockQueue;

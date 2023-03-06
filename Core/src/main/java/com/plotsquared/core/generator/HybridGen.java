@@ -341,7 +341,10 @@ public class HybridGen extends IndependentPlotGenerator {
                 for (Entity entity : hybridPlotWorld.getPlotSchematicEntities()) {
                     if (region.contains(entity.getLocation().toVector().toBlockPoint())) {
                         Vector3 pos = (entity.getLocation().toVector()
-                                .subtract(region.getMinimumPoint().withY(hybridPlotWorld.getPlotSchematicMinPoint().getY()).toVector3()))
+                                .subtract(region
+                                        .getMinimumPoint()
+                                        .withY(hybridPlotWorld.getPlotSchematicMinPoint().getY())
+                                        .toVector3()))
                                 .add(min.getBlockVector3().withY(hybridPlotWorld.SCHEM_Y).toVector3());
                         result.setEntity(new PopulatingEntity(
                                 entity,
@@ -399,6 +402,12 @@ public class HybridGen extends IndependentPlotGenerator {
         return biome == null ? hybridPlotWorld.getPlotBiome() : biome;
     }
 
+    private enum SchematicFeature {
+        BIOMES,
+        ROAD,
+        POPULATING
+    }
+
     /**
      * Wrapper to allow a WorldEdit {@link Entity} to effectively have a mutable location as the location in its NBT should be changed
      * when set to the world.
@@ -451,12 +460,6 @@ public class HybridGen extends IndependentPlotGenerator {
             return parent.getFacet(cls);
         }
 
-    }
-
-    private enum SchematicFeature {
-        BIOMES,
-        ROAD,
-        POPULATING
     }
 
 }

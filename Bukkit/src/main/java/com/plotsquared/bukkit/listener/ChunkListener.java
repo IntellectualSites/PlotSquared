@@ -234,7 +234,8 @@ public class ChunkListener implements Listener {
         Chunk chunk = event.getChunk();
         if (Settings.Chunk_Processor.AUTO_TRIM) {
             String world = chunk.getWorld().getName();
-            if ((!Settings.Enabled_Components.WORLDS || !SinglePlotArea.isSinglePlotWorld(world)) && this.plotAreaManager.hasPlotArea(world)) {
+            if ((!Settings.Enabled_Components.WORLDS || !SinglePlotArea.isSinglePlotWorld(world)) && this.plotAreaManager.hasPlotArea(
+                    world)) {
                 if (unloadChunk(world, chunk, true)) {
                     return;
                 }

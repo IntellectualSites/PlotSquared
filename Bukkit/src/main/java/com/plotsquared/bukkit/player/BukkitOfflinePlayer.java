@@ -43,7 +43,7 @@ public class BukkitOfflinePlayer implements OfflinePlotPlayer {
      */
     public BukkitOfflinePlayer(
             final @NonNull OfflinePlayer player, final @NonNull
-            PermissionHandler permissionHandler
+    PermissionHandler permissionHandler
     ) {
         this.player = player;
         this.permissionProfile = permissionHandler.getPermissionProfile(this)

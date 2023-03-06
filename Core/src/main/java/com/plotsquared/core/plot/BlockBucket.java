@@ -222,13 +222,13 @@ public final class BlockBucket implements ConfigurationSerializable {
     ) {
 
         public int getWeight() {
-                return max - min;
-            }
-
-            public boolean isInRange(final int num) {
-                return num <= max && num >= min;
-            }
-
+            return max - min;
         }
+
+        public boolean isInRange(final int num) {
+            return num <= max && num >= min;
+        }
+
+    }
 
 }

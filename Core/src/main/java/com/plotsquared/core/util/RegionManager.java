@@ -272,7 +272,8 @@ public abstract class RegionManager {
         fromQueue1.addReadChunks(new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()).getChunks());
         fromQueue2.addReadChunks(new CuboidRegion(
                 swapPos.getBlockVector3(),
-                BlockVector3.at(swapPos.getX() + pos2.getX() - pos1.getX(),
+                BlockVector3.at(
+                        swapPos.getX() + pos2.getX() - pos1.getX(),
                         pos1.getY(),
                         swapPos.getZ() + pos2.getZ() - pos1.getZ()
                 )

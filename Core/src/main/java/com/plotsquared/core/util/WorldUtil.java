@@ -285,7 +285,8 @@ public abstract class WorldUtil {
                         int trz = top.getZ() >> 9;
                         Set<BlockVector2> files = getChunkChunks(bot.getWorldName());
                         for (BlockVector2 mca : files) {
-                            if (mca.getX() >= brx && mca.getX() <= trx && mca.getZ() >= brz && mca.getZ() <= trz && !added.contains(mca)) {
+                            if (mca.getX() >= brx && mca.getX() <= trx && mca.getZ() >= brz && mca.getZ() <= trz && !added.contains(
+                                    mca)) {
                                 final File file = getMcr(plot.getWorldName(), mca.getX(), mca.getZ());
                                 if (file != null) {
                                     //final String name = "r." + (x - cx) + "." + (z - cz) + ".mca";
