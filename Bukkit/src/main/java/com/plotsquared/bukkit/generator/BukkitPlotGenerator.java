@@ -185,41 +185,6 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         world.setWaterAnimalSpawnLimit(limit);
     }
 
-    /**
-     * The entire method is deprecated, but kept for compatibility with versions lower than or equal to 1.16.2.
-     * The method will be removed in future versions, because WorldEdit and FastAsyncWorldEdit only support the latest point
-     * release.
-     */
-    @Deprecated(forRemoval = true, since = "6.11.0")
-    @Override
-    public void generateNoise(
-            @NotNull final WorldInfo worldInfo,
-            @NotNull final Random random,
-            final int chunkX,
-            final int chunkZ,
-            @NotNull final ChunkData chunkData
-    ) {
-        if (this.platformGenerator != this) {
-            this.platformGenerator.generateNoise(worldInfo, random, chunkX, chunkZ, chunkData);
-            return;
-        }
-        int minY = chunkData.getMinHeight();
-        int maxY = chunkData.getMaxHeight();
-        GenChunk result = new GenChunk(minY, maxY);
-        // Set the chunk location
-        result.setChunk(new ChunkWrapper(worldInfo.getName(), chunkX, chunkZ));
-        // Set the result data
-        result.setChunkData(chunkData);
-        result.result = null;
-
-        // Catch any exceptions (as exceptions usually thrown)
-        try {
-            generate(BlockVector2.at(chunkX, chunkZ), worldInfo.getName(), result, false);
-        } catch (Throwable e) {
-            LOGGER.error("Error attempting to generate chunk.", e);
-        }
-    }
-
     @Override
     public void generateSurface(
             @NotNull final WorldInfo worldInfo,
