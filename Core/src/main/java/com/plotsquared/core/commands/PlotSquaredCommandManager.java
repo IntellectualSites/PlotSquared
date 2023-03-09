@@ -75,7 +75,8 @@ public class PlotSquaredCommandManager {
         ).map(this.injector::getInstance).forEach(this::scanClass);
         // Then we scan the commands.
         Stream.of(
-                CommandAdd.class
+                CommandAdd.class,
+                CommandClaim.class
         ).map(this.injector::getInstance).forEach(this::scanClass);
     }
 }

@@ -49,7 +49,7 @@ class CommandAdd implements PlotSquaredCommandContainer {
     @Requirement(CommandRequirement.PLAYER)
     @Requirement(CommandRequirement.IS_OWNER)
     @CommandPermission("plots.add")
-    @CommandMethod("plot add [target]")
+    @CommandMethod("${command.prefix} add [target]")
     public void commandAdd(
             final @NonNull PlotPlayer<?> sender,
             @Argument("target") final PlotMember target,

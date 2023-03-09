@@ -63,6 +63,7 @@ import com.plotsquared.bukkit.uuid.SquirrelIdUUIDService;
 import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.backup.BackupManager;
+import com.plotsquared.core.commands.PlotSquaredCommandManager;
 import com.plotsquared.core.components.ComponentPresetManager;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
@@ -215,6 +216,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     @Inject
     private PlatformWorldManager<World> worldManager;
     private Locale serverLocale;
+    @Inject
+    private PlotSquaredCommandManager commandManager;
 
     @SuppressWarnings("StringSplitter")
     @Override
@@ -382,6 +385,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         // Commands
         if (Settings.Enabled_Components.COMMANDS) {
             this.registerCommands();
+            this.commandManager.initializeCommands();
         }
 
         // Permissions
