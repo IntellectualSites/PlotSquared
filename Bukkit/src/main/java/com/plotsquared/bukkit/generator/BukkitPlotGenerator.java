@@ -186,6 +186,35 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     }
 
     @Override
+    public void generateNoise(
+            @NotNull final WorldInfo worldInfo,
+            @NotNull final Random random,
+            final int chunkX,
+            final int chunkZ,
+            @NotNull final ChunkData chunkData
+    ) {
+        if (this.platformGenerator != this) {
+            this.platformGenerator.generateNoise(worldInfo, random, chunkX, chunkZ, chunkData);
+            return;
+        }
+        int minY = chunkData.getMinHeight();
+        int maxY = chunkData.getMaxHeight();
+        GenChunk result = new GenChunk(minY, maxY);
+        // Set the chunk location
+        result.setChunk(new ChunkWrapper(worldInfo.getName(), chunkX, chunkZ));
+        // Set the result data
+        result.setChunkData(chunkData);
+        result.result = null;
+
+        // Catch any exceptions (as exceptions usually thrown)
+        try {
+            generate(BlockVector2.at(chunkX, chunkZ), worldInfo.getName(), result, false);
+        } catch (Throwable e) {
+            LOGGER.error("Error attempting to generate chunk.", e);
+        }
+    }
+
+    @Override
     public void generateSurface(
             @NotNull final WorldInfo worldInfo,
             @NotNull final Random random,
@@ -248,6 +277,11 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         return super.getBaseHeight(worldInfo, random, x, z, heightMap);
     }
 
+    /**
+     * The entire method is deprecated, but kept for compatibility with versions lower than or equal to 1.16.2.
+     * The method will be removed in future versions, because WorldEdit and FastAsyncWorldEdit only support the latest point
+     * release.
+     */
     @SuppressWarnings("deprecation") // The entire method is deprecated, but kept for compatibility with <=1.16.2
     @Override
     @Deprecated(since = "TODO")
@@ -258,8 +292,8 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
             if (this.platformGenerator != this) {
                 return this.platformGenerator.generateChunkData(world, random, x, z, biome);
             } else {
-                // Return super as it will throw an exception caught by the server that will mean this method is no longer used.
-                return super.generateChunkData(world, random, x, z, biome);
+                // Throw exception to be caught by the server that indicates the new generation API is being used.
+                throw new UnsupportedOperationException("Using new generation methods. This method is unsupported.");
             }
         }
 
