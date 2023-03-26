@@ -15,7 +15,7 @@ prtree = "2.0.1"
 aopalliance = "1.0"
 cloud-services = "1.8.3"
 arkitektonika = "2.1.2"
-squirrelid = "0.3.1"
+squirrelid = "0.3.2"
 
 # Gradle plugins
 shadow = "7.1.2"
