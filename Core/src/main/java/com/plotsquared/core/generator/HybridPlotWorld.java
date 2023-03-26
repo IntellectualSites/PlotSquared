@@ -323,7 +323,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             short w3 = (short) d3.getX();
             short l3 = (short) d3.getZ();
             short h3 = (short) d3.getY();
-            if (w3 > PLOT_WIDTH || h3 > PLOT_WIDTH) {
+            if (w3 > PLOT_WIDTH || l3 > PLOT_WIDTH) {
                 this.ROAD_SCHEMATIC_ENABLED = true;
             }
             int centerShiftZ;
@@ -378,7 +378,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         if ((schematic1 == null && schematic2 == null) || this.ROAD_WIDTH == 0) {
             if (Settings.DEBUG) {
-                LOGGER.info("- schematic: false");
+                LOGGER.info("- road schematic: false");
             }
             return;
         }
