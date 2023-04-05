@@ -24,7 +24,7 @@ dependencies {
     implementation("org.bstats:bstats-bukkit")
 
     // Paper
-    compileOnly("io.papermc.paper:paper-api")
+    compileOnly("dev.folia:folia-api:1.19.4-R0.1-SNAPSHOT")
     implementation("io.papermc:paperlib")
 
     // Plugins
