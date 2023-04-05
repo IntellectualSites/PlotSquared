@@ -15,6 +15,8 @@ plugins {
 
     eclipse
     idea
+
+    id("xyz.jpenilla.run-paper") version "2.0.2-SNAPSHOT"
 }
 
 group = "com.plotsquared"
@@ -217,4 +219,15 @@ nexusPublishing {
 
 tasks.getByName<Jar>("jar") {
     enabled = false
+}
+
+tasks {
+    register<xyz.jpenilla.runpaper.task.RunServer>("runFolia") {
+        downloadsApiService.set(xyz.jpenilla.runtask.service.DownloadsAPIService.folia(project))
+        minecraftVersion("1.19.4")
+        group = "run paper"
+        runDirectory.set(file("run-folia"))
+        pluginJars(*project(":PlotSquared-Bukkit").getTasksByName("shadowJar", false).map { (it as Jar).archiveFile }
+                .toTypedArray())
+    }
 }
