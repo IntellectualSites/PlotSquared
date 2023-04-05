@@ -19,6 +19,7 @@
 package com.plotsquared.bukkit.managers;
 
 import com.google.inject.Singleton;
+import com.plotsquared.bukkit.util.FoliaSupport;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.util.PlatformWorldManager;
 import org.bukkit.Bukkit;
@@ -48,13 +49,16 @@ public class BukkitWorldManager implements PlatformWorldManager<World> {
     @Override
     public @Nullable World handleWorldCreation(@NonNull String worldName, @Nullable String generator) {
         this.setGenerator(worldName, generator);
-        final WorldCreator wc = new WorldCreator(worldName);
-        wc.environment(World.Environment.NORMAL);
-        if (generator != null) {
-            wc.generator(generator);
-            wc.type(WorldType.FLAT);
+        if (!FoliaSupport.isFolia()) {
+            final WorldCreator wc = new WorldCreator(worldName);
+            wc.environment(World.Environment.NORMAL);
+            if (generator != null) {
+                wc.generator(generator);
+                wc.type(WorldType.FLAT);
+            }
+            return Bukkit.createWorld(wc);
         }
-        return Bukkit.createWorld(wc);
+        return null;
     }
 
     protected void setGenerator(final @Nullable String worldName, final @Nullable String generator) {
