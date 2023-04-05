@@ -420,3 +420,4 @@ permissions:
       plots.done: true
       plots.continue: true
       plots.middle: true
+folia-supported: true
