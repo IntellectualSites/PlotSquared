@@ -234,4 +234,12 @@ tasks {
             runDirectory.set(file("run-$it"))
         }
     }
+    register<xyz.jpenilla.runpaper.task.RunServer>("runFolia") {
+        downloadsApiService.set(xyz.jpenilla.runtask.service.DownloadsAPIService.folia(project))
+        minecraftVersion("1.19.4")
+        group = "run paper"
+        runDirectory.set(file("run-folia"))
+        pluginJars(*project(":PlotSquared-Bukkit").getTasksByName("shadowJar", false).map { (it as Jar).archiveFile }
+                .toTypedArray())
+    }
 }
