@@ -436,6 +436,9 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         static {
             ArrayList<Biome> biomes = new ArrayList<>(List.of(Biome.values()));
             biomes.remove(Biome.CUSTOM);
+            if (PlotSquared.platform().serverVersion()[1] <= 19) {
+                biomes.remove(Biome.CHERRY_GROVE);
+            }
             BIOMES = List.copyOf(biomes);
         }
 
