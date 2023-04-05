@@ -137,3 +137,6 @@ docs/
 build/
 
 .DS_Store
+### Run Paper
+run-folia/
+run/
