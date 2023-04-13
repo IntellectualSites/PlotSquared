@@ -288,6 +288,13 @@ public class HybridPlotManager extends ClassicPlotManager {
             queue.setCompleteTask(whenDone);
         }
         if (!canRegen) {
+            if (hybridPlotWorld.getMinBuildHeight() < hybridPlotWorld.getMinGenHeight()) {
+                queue.setCuboid(
+                        pos1.withY(hybridPlotWorld.getMinBuildHeight()),
+                        pos2.withY(hybridPlotWorld.getMinGenHeight()),
+                        BlockTypes.AIR.getDefaultState()
+                );
+            }
             queue.setCuboid(
                     pos1.withY(hybridPlotWorld.getMinGenHeight()),
                     pos2.withY(hybridPlotWorld.getMinGenHeight()),
@@ -305,6 +312,13 @@ public class HybridPlotManager extends ClassicPlotManager {
                     pos2.withY(hybridPlotWorld.getMaxGenHeight()),
                     BlockTypes.AIR.getDefaultState()
             );
+            if (hybridPlotWorld.getMaxGenHeight() < hybridPlotWorld.getMaxBuildHeight() - 1) {
+                queue.setCuboid(
+                        pos1.withY(hybridPlotWorld.getMaxGenHeight()),
+                        pos2.withY(hybridPlotWorld.getMaxBuildHeight() - 1),
+                        BlockTypes.AIR.getDefaultState()
+                );
+            }
             queue.setBiomeCuboid(pos1, pos2, biome);
         } else {
             queue.setRegenRegion(new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()));
