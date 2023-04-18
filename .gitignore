@@ -137,3 +137,5 @@ docs/
 build/
 
 .DS_Store
+# Ignore run folders
+run-[.*]/
