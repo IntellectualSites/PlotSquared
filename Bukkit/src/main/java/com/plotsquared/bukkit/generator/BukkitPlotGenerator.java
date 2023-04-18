@@ -34,8 +34,10 @@ import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector2;
+import io.papermc.lib.PaperLib;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.HeightMap;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -436,6 +438,9 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         static {
             ArrayList<Biome> biomes = new ArrayList<>(List.of(Biome.values()));
             biomes.remove(Biome.CUSTOM);
+            if (PaperLib.getMinecraftVersion() < 20) {
+                biomes.remove(Biome.CHERRY_GROVE);
+            }
             BIOMES = List.copyOf(biomes);
         }
 
