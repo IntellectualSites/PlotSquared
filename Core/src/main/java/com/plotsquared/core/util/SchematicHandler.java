@@ -62,6 +62,7 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionIntersection;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
+import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.apache.logging.log4j.LogManager;
@@ -771,6 +772,10 @@ public abstract class SchematicHandler {
                                     }
                                     BlockVector2 pt = BlockVector2.at(currentX, currentZ);
                                     BiomeType biome = aabb.getWorld().getBiome(pt);
+                                    // Replace empty biome with plains
+                                    if(biome == null) {
+                                        biome = BiomeTypes.PLAINS;
+                                    }
                                     String biomeStr = biome.getId();
                                     int biomeId;
                                     if (biomePalette.containsKey(biomeStr)) {
