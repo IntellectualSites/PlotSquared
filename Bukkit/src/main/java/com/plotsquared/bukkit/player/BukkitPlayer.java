@@ -176,6 +176,10 @@ public class BukkitPlayer extends PlotPlayer<Player> {
             final Set<PermissionAttachmentInfo> effective = player.getEffectivePermissions();
             if (!effective.isEmpty()) {
                 for (PermissionAttachmentInfo attach : effective) {
+                    // Ignore all "false" permissions
+                    if (!attach.getValue()) {
+                        continue;
+                    }
                     String permStr = attach.getPermission();
                     if (permStr.startsWith(stubPlus)) {
                         hasAny = true;
