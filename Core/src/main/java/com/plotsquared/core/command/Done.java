@@ -103,7 +103,7 @@ public class Done extends SubCommand {
                 public void run(PlotAnalysis value) {
                     plot.removeRunning();
                     boolean result =
-                            value.getComplexity(doneRequirements) <= doneRequirements.THRESHOLD;
+                            value.getComplexity(doneRequirements) >= doneRequirements.THRESHOLD;
                     finish(plot, player, result);
                 }
             });
