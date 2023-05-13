@@ -18,6 +18,8 @@
  */
 package com.plotsquared.bukkit.schematic;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.sk89q.jnbt.ByteTag;
 import com.sk89q.jnbt.CompoundTag;
@@ -28,13 +30,20 @@ import com.sk89q.jnbt.Tag;
 import com.sk89q.worldedit.blocks.BaseItemStack;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.item.ItemType;
+import io.papermc.lib.PaperLib;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.World;
+import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -45,11 +54,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.UUID;
 
 public class StateWrapper {
 
-    public org.bukkit.block.BlockState state = null;
-    public CompoundTag tag = null;
+    public CompoundTag tag;
+
+    private boolean paperErrorTextureSent = false;
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + StateWrapper.class.getSimpleName());
 
     public StateWrapper(CompoundTag tag) {
         this.tag = tag;
@@ -227,15 +240,64 @@ public class StateWrapper {
                         return true;
                     }
                     String player = skullOwner.getString("Name");
-                    if (player == null || player.isEmpty()) {
+
+                    if (player != null && !player.isEmpty()) {
+                        try {
+                            skull.setOwningPlayer(Bukkit.getOfflinePlayer(player));
+                            skull.update(true);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        return true;
+                    }
+
+                    final CompoundTag properties = (CompoundTag) skullOwner.getValue().get("Properties");
+                    if (properties == null) {
                         return false;
                     }
-                    try {
-                        skull.setOwningPlayer(Bukkit.getOfflinePlayer(player));
-                        skull.update(true);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    final ListTag textures = properties.getListTag("textures");
+                    if (textures.getValue().isEmpty()) {
+                        return false;
                     }
+                    final CompoundTag textureCompound = (CompoundTag) textures.getValue().get(0);
+                    if (textureCompound == null) {
+                        return false;
+                    }
+                    String textureValue = textureCompound.getString("Value");
+                    if (textureValue == null) {
+                        return false;
+                    }
+                    if (!PaperLib.isPaper()) {
+                        if (!paperErrorTextureSent) {
+                            paperErrorTextureSent = true;
+                            LOGGER.error("Failed to populate skull data in your road schematic - This is a Spigot limitation.");
+                        }
+                        return false;
+                    }
+                    final PlayerProfile profile = Bukkit.createProfile(UUID.randomUUID());
+                    profile.setProperty(new ProfileProperty("textures", textureValue));
+                    skull.setPlayerProfile(profile);
+                    skull.update(true);
+                    return true;
+
+                }
+                return false;
+            }
+            case "banner" -> {
+                if (state instanceof Banner banner) {
+                    List<Tag> patterns = this.tag.getListTag("Patterns").getValue();
+                    if (patterns == null || patterns.isEmpty()) {
+                        return false;
+                    }
+                    banner.setPatterns(patterns.stream().map(t -> (CompoundTag) t).map(compoundTag -> {
+                        DyeColor color = DyeColor.getByWoolData((byte) compoundTag.getInt("Color"));
+                        PatternType patternType = PatternType.getByIdentifier(compoundTag.getString("Pattern"));
+                        if (color == null || patternType == null) {
+                            return null;
+                        }
+                        return new Pattern(color, patternType);
+                    }).filter(Objects::nonNull).toList());
+                    banner.update(true);
                     return true;
                 }
                 return false;
