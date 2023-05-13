@@ -86,7 +86,6 @@ public class MainCommand extends Command {
             commands.add(CreateRoadSchematic.class);
             commands.add(DebugAllowUnsafe.class);
             commands.add(RegenAllRoads.class);
-            commands.add(Claim.class);
             commands.add(Auto.class);
             commands.add(HomeCommand.class);
             commands.add(Visit.class);
@@ -94,7 +93,6 @@ public class MainCommand extends Command {
             commands.add(Clear.class);
             commands.add(Delete.class);
             commands.add(Trust.class);
-            commands.add(Add.class);
             commands.add(Leave.class);
             commands.add(Deny.class);
             commands.add(Remove.class);
@@ -130,7 +128,6 @@ public class MainCommand extends Command {
             commands.add(Owner.class);
             commands.add(Desc.class);
             commands.add(Biome.class);
-            commands.add(Alias.class);
             commands.add(SetHome.class);
             commands.add(Cluster.class);
             commands.add(DebugImportWorlds.class);

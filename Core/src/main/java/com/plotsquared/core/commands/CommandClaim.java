@@ -4,7 +4,6 @@ import cloud.commandframework.annotations.Argument;
 import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.CommandPermission;
 import com.google.inject.Inject;
-import com.plotsquared.core.command.Claim;
 import com.plotsquared.core.commands.requirements.CommandRequirement;
 import com.plotsquared.core.commands.requirements.Requirement;
 import com.plotsquared.core.configuration.Settings;
@@ -34,7 +33,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class CommandClaim implements PlotSquaredCommandContainer {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Claim.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + CommandClaim.class.getSimpleName());
 
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
