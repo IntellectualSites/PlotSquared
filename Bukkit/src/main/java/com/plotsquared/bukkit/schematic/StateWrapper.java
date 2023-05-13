@@ -270,8 +270,7 @@ public class StateWrapper {
                     if (!PaperLib.isPaper()) {
                         if (!paperErrorTextureSent) {
                             paperErrorTextureSent = true;
-                            LOGGER.error("Failed to populate skull data in your road schematic - Please use Paper to correctly " +
-                                    "generate skulls in your road schematics!");
+                            LOGGER.error("Failed to populate skull data in your road schematic - This is a Spigot limitation."
                         }
                         return false;
                     }
