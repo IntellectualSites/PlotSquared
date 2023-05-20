@@ -18,7 +18,7 @@ arkitektonika = "2.1.2"
 squirrelid = "0.3.2"
 
 # Gradle plugins
-shadow = "7.1.2"
+shadow = "8.1.1"
 grgit = "4.1.1"
 spotless = "6.18.0"
 nexus = "1.3.0"
