@@ -2418,7 +2418,6 @@ public class Plot {
         if (!this.isMerged()) {
             Location pos1 = this.getBottomAbs().withY(getArea().getMinBuildHeight());
             Location pos2 = this.getTopAbs().withY(getArea().getMaxBuildHeight());
-            this.connectedCache = Sets.newHashSet(this);
             CuboidRegion rg = new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3());
             return Collections.singleton(rg);
         }
