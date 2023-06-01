@@ -1,6 +1,6 @@
 [versions]
 # Platform expectations
-guice = "5.1.0"
+guice = "7.0.0"
 spotbugs = "4.7.3"
 
 # Plugins
