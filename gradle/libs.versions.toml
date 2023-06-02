@@ -1,6 +1,6 @@
 [versions]
 # Platform expectations
-guice = "5.1.0"
+guice = "7.0.0"
 spotbugs = "4.7.3"
 
 # Plugins
@@ -20,7 +20,7 @@ squirrelid = "0.3.2"
 # Gradle plugins
 shadow = "7.1.2"
 grgit = "4.1.1"
-spotless = "6.17.0"
+spotless = "6.19.0"
 nexus = "1.3.0"
 
 [libraries]
