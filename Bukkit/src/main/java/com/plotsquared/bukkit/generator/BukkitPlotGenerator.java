@@ -438,7 +438,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         static {
 
             ArrayList<Biome> biomes = new ArrayList<>(Arrays.stream(Biome.values())
-                    .filter(b -> Registry.BIOME.get(b.getKey()) == null)
+                    .filter(b -> Registry.BIOME.get(b.getKey()) != null)
                     .toList());
             biomes.remove(Biome.CUSTOM);
             BIOMES = List.copyOf(biomes);
