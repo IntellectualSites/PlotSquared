@@ -62,6 +62,7 @@ tasks.processResources {
 }
 
 tasks.named<ShadowJar>("shadowJar") {
+    dependsOn(":PlotSquared-Core:shadowJar")
     dependencies {
         exclude(dependency("org.checkerframework:"))
     }
