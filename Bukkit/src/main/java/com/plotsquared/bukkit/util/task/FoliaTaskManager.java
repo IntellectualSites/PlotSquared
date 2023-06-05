@@ -49,7 +49,10 @@ public class FoliaTaskManager extends TaskManager {
 
     @Override
     public <T> T sync(final @NonNull Callable<T> function, final int timeout) throws Exception {
-        return backgroundExecutor.schedule(function, timeout, TimeUnit.MILLISECONDS).get();
+        if (PlotSquared.get().isMainThread(Thread.currentThread())) {
+            return function.call();
+        }
+        return this.callMethodSync(function).get(timeout, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -59,12 +62,10 @@ public class FoliaTaskManager extends TaskManager {
 
     @Override
     public PlotSquaredTask taskRepeat(@NonNull final Runnable runnable, @NonNull final TaskTime taskTime) {
-        var time = switch (taskTime.getUnit()) {
-            case TICKS -> timeConverter.ticksToMs(taskTime.getTime());
-            case MILLISECONDS -> taskTime.getTime();
-        };
-        backgroundExecutor.scheduleAtFixedRate(runnable, 0, time, TimeUnit.MILLISECONDS);
-        return PlotSquaredTask.nullTask();
+        final long ticks = this.timeConverter.toTicks(taskTime);
+        final FoliaPlotSquaredTask foliaPlotSquaredTask = new FoliaPlotSquaredTask(runnable, this.bukkitMain);
+        foliaPlotSquaredTask.runTaskTimer(ticks, ticks);
+        return foliaPlotSquaredTask;
     }
 
     @Override
@@ -73,27 +74,29 @@ public class FoliaTaskManager extends TaskManager {
             case TICKS -> timeConverter.ticksToMs(taskTime.getTime());
             case MILLISECONDS -> taskTime.getTime();
         };
-        Bukkit.getAsyncScheduler().runAtFixedRate(bukkitMain, scheduledTask -> runnable.run(), 0, time, TimeUnit.MILLISECONDS);
-        return PlotSquaredTask.nullTask();
+        final FoliaPlotSquaredTask foliaPlotSquaredTask = new FoliaPlotSquaredTask(runnable, this.bukkitMain);
+        foliaPlotSquaredTask.runTaskTimerAsynchronously(time, time);
+        return foliaPlotSquaredTask;
     }
 
     @Override
     public void taskAsync(@NonNull final Runnable runnable) {
-        Bukkit.getAsyncScheduler().runNow(bukkitMain, scheduledTask -> runnable.run());
+        if (this.bukkitMain.isEnabled()) {
+            new FoliaPlotSquaredTask(runnable, this.bukkitMain).runTaskAsynchronously();
+        } else {
+            runnable.run();
+        }
+
     }
 
     @Override
     public void task(@NonNull final Runnable runnable) {
-        backgroundExecutor.submit(runnable);
+        new FoliaPlotSquaredTask(runnable, this.bukkitMain).runTask();
     }
 
     @Override
     public void taskLater(@NonNull final Runnable runnable, @NonNull final TaskTime taskTime) {
-        var time = switch (taskTime.getUnit()) {
-            case TICKS -> timeConverter.ticksToMs(taskTime.getTime());
-            case MILLISECONDS -> taskTime.getTime();
-        };
-        backgroundExecutor.scheduleWithFixedDelay(runnable, 0, time, TimeUnit.MILLISECONDS);
+        new FoliaPlotSquaredTask(runnable, this.bukkitMain).runTaskLater(this.timeConverter.toTicks(taskTime));
     }
 
     @Override
@@ -102,7 +105,7 @@ public class FoliaTaskManager extends TaskManager {
             case TICKS -> timeConverter.ticksToMs(taskTime.getTime());
             case MILLISECONDS -> taskTime.getTime();
         };
-        Bukkit.getAsyncScheduler().runDelayed(this.bukkitMain, scheduledTask -> runnable.run(), time, TimeUnit.MILLISECONDS);
+        new FoliaPlotSquaredTask(runnable, this.bukkitMain).runTaskLaterAsynchronously(time);
     }
 
     private static class SchedulerAdapter {
