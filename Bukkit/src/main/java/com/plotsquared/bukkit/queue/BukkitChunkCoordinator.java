@@ -21,6 +21,7 @@ package com.plotsquared.bukkit.queue;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.bukkit.BukkitPlatform;
+import com.plotsquared.bukkit.util.FoliaSupport;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.queue.ChunkCoordinator;
 import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
@@ -160,6 +161,7 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
         }
 
         Chunk chunk = this.availableChunks.poll();
+
         if (chunk == null) {
             if (this.availableChunks.isEmpty()) {
                 if (this.requestedChunks.isEmpty() && loadingChunks.get() == 0) {
@@ -175,7 +177,20 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
         do {
             final long start = System.currentTimeMillis();
             try {
-                this.chunkConsumer.accept(BlockVector2.at(chunk.getX(), chunk.getZ()));
+                if (FoliaSupport.isFolia()) {
+                    var tempChunk = chunk;
+                    Bukkit.getRegionScheduler().run(
+                            this.plugin,
+                            this.bukkitWorld,
+                            chunk.getX(),
+                            chunk.getZ(),
+                            scheduledTask -> {
+                                this.chunkConsumer.accept(BlockVector2.at(tempChunk.getX(), tempChunk.getZ()));
+                            }
+                    );
+                } else {
+                    this.chunkConsumer.accept(BlockVector2.at(chunk.getX(), chunk.getZ()));
+                }
             } catch (final Throwable throwable) {
                 this.throwableConsumer.accept(throwable);
             }
@@ -188,6 +203,8 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
             iterationTime[0] = iterationTime[1];
             iterationTime[1] = end - start;
         } while (iterationTime[0] + iterationTime[1] < this.maxIterationTime * 2 && (chunk = availableChunks.poll()) != null);
+
+
         if (processedChunks < this.batchSize) {
             // Adjust batch size based on the amount of processed chunks per tick
             this.batchSize = processedChunks;
