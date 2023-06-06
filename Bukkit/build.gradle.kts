@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    api(projects.plotSquaredCore)
+    api(projects.plotsquaredCore)
 
     // Metrics
     implementation("org.bstats:bstats-bukkit")
@@ -62,7 +62,7 @@ tasks.processResources {
 }
 
 tasks.named<ShadowJar>("shadowJar") {
-    dependsOn(":PlotSquared-Core:shadowJar")
+    dependsOn(":plotsquared-core:shadowJar")
     dependencies {
         exclude(dependency("org.checkerframework:"))
     }

@@ -210,7 +210,7 @@ subprojects {
 }
 
 nexusPublishing {
-    repositories {
+    this.repositories {
         sonatype {
             nexusUrl.set(URI.create("https://s01.oss.sonatype.org/service/local/"))
             snapshotRepositoryUrl.set(URI.create("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
@@ -227,7 +227,7 @@ tasks {
     supportedVersions.forEach {
         register<RunServer>("runServer-$it") {
             minecraftVersion(it)
-            pluginJars(*project(":PlotSquared-Bukkit").getTasksByName("shadowJar", false).map { (it as Jar).archiveFile }
+            pluginJars(*project(":plotsquared-bukkit").getTasksByName("shadowJar", false).map { (it as Jar).archiveFile }
                     .toTypedArray())
             jvmArgs("-DPaper.IgnoreJavaVersion=true", "-Dcom.mojang.eula.agree=true")
             group = "run paper"
