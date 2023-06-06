@@ -20,7 +20,7 @@ plugins {
     id("xyz.jpenilla.run-paper") version "2.1.0"
 }
 
-group = "com.plotsquared"
+group = "com.intellectualsites.plotsquared"
 version = "7.0.0-SNAPSHOT"
 
 if (!File("$rootDir/.git").exists()) {
