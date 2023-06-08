@@ -18,57 +18,28 @@
  */
 package com.plotsquared.bukkit;
 
-import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.Singleton;
-import com.google.inject.Stage;
-import com.google.inject.TypeLiteral;
+import com.google.inject.*;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.inject.BackupModule;
 import com.plotsquared.bukkit.inject.BukkitModule;
 import com.plotsquared.bukkit.inject.PermissionModule;
 import com.plotsquared.bukkit.inject.WorldManagerModule;
-import com.plotsquared.bukkit.listener.BlockEventListener;
-import com.plotsquared.bukkit.listener.BlockEventListener117;
-import com.plotsquared.bukkit.listener.ChunkListener;
-import com.plotsquared.bukkit.listener.EntityEventListener;
-import com.plotsquared.bukkit.listener.EntitySpawnListener;
-import com.plotsquared.bukkit.listener.PaperListener;
-import com.plotsquared.bukkit.listener.PlayerEventListener;
-import com.plotsquared.bukkit.listener.ProjectileEventListener;
-import com.plotsquared.bukkit.listener.ServerListener;
-import com.plotsquared.bukkit.listener.SingleWorldListener;
-import com.plotsquared.bukkit.listener.SpigotListener;
-import com.plotsquared.bukkit.listener.WorldEvents;
+import com.plotsquared.bukkit.listener.*;
 import com.plotsquared.bukkit.placeholder.PAPIPlaceholders;
 import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
-import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.bukkit.util.BukkitWorld;
-import com.plotsquared.bukkit.util.SetGenCB;
-import com.plotsquared.bukkit.util.TranslationUpdateManager;
-import com.plotsquared.bukkit.util.UpdateUtility;
+import com.plotsquared.bukkit.util.*;
 import com.plotsquared.bukkit.util.task.BukkitTaskManager;
+import com.plotsquared.bukkit.util.task.FoliaTaskManager;
 import com.plotsquared.bukkit.util.task.PaperTimeConverter;
 import com.plotsquared.bukkit.util.task.SpigotTimeConverter;
-import com.plotsquared.bukkit.uuid.EssentialsUUIDService;
-import com.plotsquared.bukkit.uuid.LuckPermsUUIDService;
-import com.plotsquared.bukkit.uuid.OfflinePlayerUUIDService;
-import com.plotsquared.bukkit.uuid.PaperUUIDService;
-import com.plotsquared.bukkit.uuid.SQLiteUUIDService;
-import com.plotsquared.bukkit.uuid.SquirrelIdUUIDService;
+import com.plotsquared.bukkit.uuid.*;
 import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.components.ComponentPresetManager;
-import com.plotsquared.core.configuration.ConfigurationNode;
-import com.plotsquared.core.configuration.ConfigurationSection;
-import com.plotsquared.core.configuration.ConfigurationUtil;
-import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.configuration.Storage;
+import com.plotsquared.core.configuration.*;
 import com.plotsquared.core.configuration.caption.ChatFormatter;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.database.DBFunc;
@@ -77,20 +48,12 @@ import com.plotsquared.core.events.Result;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.generator.SingleWorldGenerator;
-import com.plotsquared.core.inject.annotations.BackgroundPipeline;
-import com.plotsquared.core.inject.annotations.DefaultGenerator;
-import com.plotsquared.core.inject.annotations.ImpromptuPipeline;
-import com.plotsquared.core.inject.annotations.WorldConfig;
-import com.plotsquared.core.inject.annotations.WorldFile;
+import com.plotsquared.core.inject.annotations.*;
 import com.plotsquared.core.inject.modules.PlotSquaredModule;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.listener.WESubscriber;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.plot.PlotAreaTerrainType;
-import com.plotsquared.core.plot.PlotAreaType;
-import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.plot.*;
 import com.plotsquared.core.plot.comment.CommentManager;
 import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
@@ -98,14 +61,7 @@ import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
-import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.FileUtils;
-import com.plotsquared.core.util.PlatformWorldManager;
-import com.plotsquared.core.util.PlayerManager;
-import com.plotsquared.core.util.PremiumVerification;
-import com.plotsquared.core.util.ReflectionUtils;
-import com.plotsquared.core.util.SetupUtils;
-import com.plotsquared.core.util.WorldUtil;
+import com.plotsquared.core.util.*;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import com.plotsquared.core.uuid.CacheUUIDService;
@@ -143,27 +99,13 @@ import org.incendo.serverlib.ServerLib;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import static com.plotsquared.core.util.PremiumVerification.getDownloadID;
-import static com.plotsquared.core.util.PremiumVerification.getResourceID;
-import static com.plotsquared.core.util.PremiumVerification.getUserID;
+import static com.plotsquared.core.util.PremiumVerification.*;
 import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
 @SuppressWarnings("unused")
@@ -264,7 +206,12 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
         // Stuff that needs to be created before the PlotSquared instance
         PlotPlayer.registerConverter(Player.class, BukkitUtil::adapt);
-        TaskManager.setPlatformImplementation(new BukkitTaskManager(this, timeConverter));
+        if (FoliaSupport.isFolia()) {
+            TaskManager.setPlatformImplementation(new FoliaTaskManager(this, timeConverter));
+        } else {
+            TaskManager.setPlatformImplementation(new BukkitTaskManager(this, timeConverter));
+        }
+
 
         final PlotSquared plotSquared = new PlotSquared(this, "Bukkit");
 
@@ -558,9 +505,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 e.printStackTrace();
             }
         }
-
-        // Clean up potential memory leak
-        Bukkit.getScheduler().runTaskTimer(this, () -> {
+        Runnable cleanUp = () -> {
             try {
                 for (final PlotPlayer<? extends Player> player : this.playerManager().getPlayers()) {
                     if (player.getPlatformPlayer() == null || !player.getPlatformPlayer().isOnline()) {
@@ -570,7 +515,15 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             } catch (final Exception e) {
                 getLogger().warning("Failed to clean up players: " + e.getMessage());
             }
-        }, 100L, 100L);
+        };
+        if (FoliaSupport.isFolia()) {
+            Bukkit.getGlobalRegionScheduler().runAtFixedRate(this, scheduledTask -> {
+                cleanUp.run();
+            }, 100, 100);
+        } else {
+            // Clean up potential memory leak
+            Bukkit.getScheduler().runTaskTimer(this, cleanUp, 100L, 100L);
+        }
 
         // Check if we are in a safe environment
         ServerLib.checkUnsafeForks();
@@ -728,7 +681,12 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     @Override
     public void onDisable() {
         PlotSquared.get().disable();
-        Bukkit.getScheduler().cancelTasks(this);
+        if (FoliaSupport.isFolia()) {
+            Bukkit.getAsyncScheduler().cancelTasks(this);
+            Bukkit.getGlobalRegionScheduler().cancelTasks(this);
+        } else {
+            Bukkit.getScheduler().cancelTasks(this);
+        }
     }
 
     @Override
