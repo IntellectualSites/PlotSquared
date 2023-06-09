@@ -296,10 +296,13 @@ public class Auto extends SubCommand {
         }
         if (this.econHandler != null && plotarea.useEconomy()) {
             PlotExpression costExp = plotarea.getPrices().get("claim");
+            PlotExpression mergeCostExp = plotarea.getPrices().get("merge");
+            int size = sizeX * sizeZ;
+            double mergeCost = size > 1 && mergeCostExp == null ? 0d : mergeCostExp.evaluate(size);
             double cost = costExp.evaluate(Settings.Limit.GLOBAL ?
                     player.getPlotCount() :
                     player.getPlotCount(plotarea.getWorldName()));
-            cost = (sizeX * sizeZ) * cost;
+            cost = size * cost + mergeCost;
             if (cost > 0d) {
                 if (!this.econHandler.isSupported()) {
                     player.sendMessage(TranslatableCaption.of("economy.vault_or_consumer_null"));
