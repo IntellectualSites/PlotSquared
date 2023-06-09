@@ -103,7 +103,7 @@ tasks {
         opt.links("https://jd.papermc.io/paper/1.19/")
         opt.links("https://docs.enginehub.org/javadoc/com.sk89q.worldedit/worldedit-bukkit/" + libs.worldeditBukkit.get().versionConstraint.toString())
         opt.links("https://intellectualsites.github.io/plotsquared-javadocs/core/")
-        opt.links("https://jd.advntr.dev/api/4.12.0/")
+        opt.links("https://jd.advntr.dev/api/4.14.0/")
         opt.links("https://google.github.io/guice/api-docs/" + libs.guice.get().versionConstraint.toString() + "/javadoc/")
         opt.links("https://checkerframework.org/api/")
         opt.isLinkSource = true

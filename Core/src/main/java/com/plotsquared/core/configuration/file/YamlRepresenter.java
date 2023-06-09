@@ -21,6 +21,7 @@ package com.plotsquared.core.configuration.file;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.serialization.ConfigurationSerializable;
 import com.plotsquared.core.configuration.serialization.ConfigurationSerialization;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.representer.Representer;
 
@@ -30,6 +31,7 @@ import java.util.Map;
 class YamlRepresenter extends Representer {
 
     YamlRepresenter() {
+        super(new DumperOptions());
         this.multiRepresenters.put(ConfigurationSection.class, new RepresentConfigurationSection());
         this.multiRepresenters
                 .put(ConfigurationSerializable.class, new RepresentConfigurationSerializable());
