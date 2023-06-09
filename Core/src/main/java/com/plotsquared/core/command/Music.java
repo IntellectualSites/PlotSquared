@@ -56,7 +56,7 @@ public class Music extends SubCommand {
             .asList("music_disc_13", "music_disc_cat", "music_disc_blocks", "music_disc_chirp",
                     "music_disc_far", "music_disc_mall", "music_disc_mellohi", "music_disc_stal",
                     "music_disc_strad", "music_disc_ward", "music_disc_11", "music_disc_wait", "music_disc_otherside",
-                    "music_disc_pigstep", "music_disc_5"
+                    "music_disc_pigstep", "music_disc_5", "music_disc_relic"
             );
 
     private final InventoryUtil inventoryUtil;
