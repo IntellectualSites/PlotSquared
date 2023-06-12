@@ -53,7 +53,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrapper<ChunkGenerator> {
 
@@ -439,7 +438,8 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         static {
             BIOMES = Arrays.stream(Biome.values())
                     .filter(b -> Registry.BIOME.get(b.getKey()) != null)
-                    .collect(Collectors.toList());
+                    .filter(b -> b != Biome.CUSTOM)
+                    .toList();
         }
 
         @Override
