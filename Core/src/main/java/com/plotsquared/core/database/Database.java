@@ -31,25 +31,6 @@ import java.sql.Statement;
  */
 public abstract class Database {
 
-    public abstract Connection forceConnection() throws SQLException, ClassNotFoundException;
-
-    /**
-     * Opens a connection with the database.
-     *
-     * @return Opened connection
-     * @throws SQLException           if the connection can not be opened
-     * @throws ClassNotFoundException if the driver cannot be found
-     */
-    public abstract Connection openConnection() throws SQLException, ClassNotFoundException;
-
-    /**
-     * Checks if a connection is open with the database.
-     *
-     * @return {@code true} if the connection is open
-     * @throws SQLException if the connection cannot be checked
-     */
-    public abstract boolean checkConnection() throws SQLException;
-
     /**
      * Gets the connection with the database.
      *
