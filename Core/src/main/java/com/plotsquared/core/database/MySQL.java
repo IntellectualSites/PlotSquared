@@ -19,12 +19,10 @@
 package com.plotsquared.core.database;
 
 import com.plotsquared.core.configuration.Storage;
-import com.plotsquared.core.util.StringMan;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
