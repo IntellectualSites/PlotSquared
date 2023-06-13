@@ -53,7 +53,6 @@ public abstract class Database {
      * @param query Query to be run
      * @return the results of the query
      * @throws SQLException           If the query cannot be executed
-     * @throws ClassNotFoundException If the driver cannot be found; see {@link #openConnection()}
      */
     public abstract ResultSet querySQL(String query) throws SQLException, ClassNotFoundException;
 
@@ -65,7 +64,6 @@ public abstract class Database {
      * @param query Query to be run
      * @return Result Code, see {@link Statement#executeUpdate(String)}
      * @throws SQLException           If the query cannot be executed
-     * @throws ClassNotFoundException If the driver cannot be found; see {@link #openConnection()}
      */
     public abstract int updateSQL(String query) throws SQLException, ClassNotFoundException;
 
