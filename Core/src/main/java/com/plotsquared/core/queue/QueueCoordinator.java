@@ -66,7 +66,7 @@ public abstract class QueueCoordinator {
      * @param x chunk x coordinate
      * @param z chunk z coordinate
      * @return a new {@link ZeroedDelegateScopedQueueCoordinator}
-     * @since TODO
+     * @since 7.0.0
      */
     public ZeroedDelegateScopedQueueCoordinator getForChunk(int x, int z, int minY, int maxY) {
         int bx = x << 4;

@@ -51,7 +51,7 @@ public class CaptionHolder {
      * Get the {@link TagResolver}s to use when resolving tags in the {@link Caption}.
      *
      * @return The tag resolvers to use.
-     * @since TODO
+     * @since 7.0.0
      */
     public TagResolver[] getTagResolvers() {
         return this.tagResolvers;
@@ -61,7 +61,7 @@ public class CaptionHolder {
      * Set the {@link TagResolver}s to use when resolving tags in the {@link Caption}.
      *
      * @param tagResolvers The tag resolvers to use.
-     * @since TODO
+     * @since 7.0.0
      */
     public void setTagResolvers(TagResolver... tagResolvers) {
         this.tagResolvers = tagResolvers;

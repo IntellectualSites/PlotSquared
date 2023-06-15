@@ -46,7 +46,7 @@ public abstract class IndependentPlotGenerator {
      * @param result   Queue to write to
      * @param settings PlotArea (settings)
      * @param biomes   If biomes should be generated
-     * @since TODO
+     * @since 7.0.0
      */
     public abstract void generateChunk(ZeroedDelegateScopedQueueCoordinator result, PlotArea settings, boolean biomes);
 
@@ -55,7 +55,7 @@ public abstract class IndependentPlotGenerator {
      *
      * @param result  Queue to write to
      * @param setting PlotArea (settings)
-     * @since TODO
+     * @since 7.0.0
      */
     public void populateChunk(ZeroedDelegateScopedQueueCoordinator result, PlotArea setting) {
     }
@@ -108,7 +108,7 @@ public abstract class IndependentPlotGenerator {
      * @param y        World y position
      * @param z        World z position
      * @return Biome type to be generated
-     * @since TODO
+     * @since 7.0.0
      */
     public abstract BiomeType getBiome(PlotArea settings, int x, int y, int z);
 

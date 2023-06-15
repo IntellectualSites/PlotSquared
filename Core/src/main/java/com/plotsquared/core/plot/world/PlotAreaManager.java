@@ -111,7 +111,7 @@ public interface PlotAreaManager {
      *
      * @param worldName Name of the world to add
      * @return {@code true} if successful, {@code false} if world already existed
-     * @since TODO
+     * @since 7.0.0
      */
     boolean addWorld(@NonNull String worldName);
 

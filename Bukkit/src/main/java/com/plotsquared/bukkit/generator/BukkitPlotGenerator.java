@@ -290,7 +290,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
      */
     @SuppressWarnings("deprecation") // The entire method is deprecated, but kept for compatibility with <=1.16.2
     @Override
-    @Deprecated(since = "TODO")
+    @Deprecated(since = "7.0.0")
     public @NonNull ChunkData generateChunkData(
             @NonNull World world, @NonNull Random random, int x, int z, @NonNull BiomeGrid biome
     ) {

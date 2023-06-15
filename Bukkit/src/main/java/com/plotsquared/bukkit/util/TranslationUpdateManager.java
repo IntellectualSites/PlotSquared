@@ -32,7 +32,7 @@ import java.util.stream.Stream;
  * MiniMessage changed the syntax between major releases. To warrant a smooth upgrade, we attempt to replace any occurrences
  * while loading PlotSquared.
  *
- * @since TODO
+ * @since 7.0.0
  */
 @NotPublic
 public class TranslationUpdateManager {
