@@ -32,7 +32,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * zero in the x and z directions, i.e. starting from 0,0. An offset of the minimum point of the region will then be applied to
  * x and z.
  *
- * @since TODO
+ * @since 7.0.0
  */
 public class ZeroedDelegateScopedQueueCoordinator extends DelegateQueueCoordinator {
 
@@ -50,7 +50,7 @@ public class ZeroedDelegateScopedQueueCoordinator extends DelegateQueueCoordinat
     /**
      * Create a new ScopedQueueCoordinator instance that delegates to a given QueueCoordinator. Locations are inclusive.
      *
-     * @since TODO
+     * @since 7.0.0
      */
     public ZeroedDelegateScopedQueueCoordinator(@Nullable QueueCoordinator parent, @NonNull Location min, @NonNull Location max) {
         super(parent);

@@ -40,7 +40,7 @@ public interface Caption {
      *
      * @param localeHolder Locale holder
      * @return {@link ComponentLike}
-     * @since TODO
+     * @since 7.0.0
      */
     @NonNull Component toComponent(@NonNull LocaleHolder localeHolder);
 

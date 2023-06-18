@@ -27,7 +27,7 @@ import java.util.Collection;
 /**
  * A utility class for modifying components.
  *
- * @since TODO
+ * @since 7.0.0
  */
 public class ComponentHelper {
 
@@ -37,7 +37,7 @@ public class ComponentHelper {
      * @param components The components to join
      * @param delimiter  The delimiter to use between the components
      * @return The joined components
-     * @since TODO
+     * @since 7.0.0
      */
     public static ComponentLike join(Collection<? extends ComponentLike> components, Component delimiter) {
         return join(components.toArray(ComponentLike[]::new), delimiter);
@@ -49,7 +49,7 @@ public class ComponentHelper {
      * @param components The components to join
      * @param delimiter  The delimiter to use between the components
      * @return The joined components
-     * @since TODO
+     * @since 7.0.0
      */
     public static Component join(ComponentLike[] components, Component delimiter) {
         TextComponent.Builder builder = Component.text();

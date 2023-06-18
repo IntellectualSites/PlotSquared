@@ -36,7 +36,7 @@ public abstract class ChunkManager {
     private static final Map<BlockVector2, RunnableVal<ZeroedDelegateScopedQueueCoordinator>> addChunks = new ConcurrentHashMap<>();
 
     /**
-     * @since TODO
+     * @since 7.0.0
      */
     public static void setChunkInPlotArea(
             RunnableVal<ZeroedDelegateScopedQueueCoordinator> force,
@@ -76,7 +76,7 @@ public abstract class ChunkManager {
     }
 
     /**
-     * @since TODO
+     * @since 7.0.0
      */
     public static boolean preProcessChunk(BlockVector2 loc, ZeroedDelegateScopedQueueCoordinator queue) {
         final RunnableVal<ZeroedDelegateScopedQueueCoordinator> forceChunk = forceChunks.get(loc);
@@ -89,7 +89,7 @@ public abstract class ChunkManager {
     }
 
     /**
-     * @since TODO
+     * @since 7.0.0
      */
     public static boolean postProcessChunk(BlockVector2 loc, ZeroedDelegateScopedQueueCoordinator queue) {
         final RunnableVal<ZeroedDelegateScopedQueueCoordinator> addChunk = forceChunks.get(loc);

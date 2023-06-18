@@ -37,6 +37,7 @@ import com.sk89q.worldedit.math.BlockVector2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.HeightMap;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -50,10 +51,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static java.util.function.Predicate.not;
 
 public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrapper<ChunkGenerator> {
 
@@ -287,7 +290,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
      */
     @SuppressWarnings("deprecation") // The entire method is deprecated, but kept for compatibility with <=1.16.2
     @Override
-    @Deprecated(since = "TODO")
+    @Deprecated(since = "7.0.0")
     public @NonNull ChunkData generateChunkData(
             @NonNull World world, @NonNull Random random, int x, int z, @NonNull BiomeGrid biome
     ) {
@@ -437,9 +440,16 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         private static final List<Biome> BIOMES;
 
         static {
+            Set<Biome> disabledBiomes = EnumSet.of(Biome.CUSTOM);
+            if (PlotSquared.platform().serverVersion()[1] <= 19) {
+                final Biome cherryGrove = Registry.BIOME.get(NamespacedKey.minecraft("cherry_grove"));
+                if (cherryGrove != null) {
+                    disabledBiomes.add(cherryGrove);
+                }
+            }
             BIOMES = Arrays.stream(Biome.values())
-                    .filter(b -> Registry.BIOME.get(b.getKey()) != null)
-                    .collect(Collectors.toList());
+                    .filter(not(disabledBiomes::contains))
+                    .toList();
         }
 
         @Override
