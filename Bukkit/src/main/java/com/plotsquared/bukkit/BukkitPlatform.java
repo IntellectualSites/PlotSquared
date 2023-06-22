@@ -50,7 +50,6 @@ import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.BukkitWorld;
 import com.plotsquared.bukkit.util.SetGenCB;
 import com.plotsquared.bukkit.util.TranslationUpdateManager;
-import com.plotsquared.bukkit.util.UpdateUtility;
 import com.plotsquared.bukkit.util.task.BukkitTaskManager;
 import com.plotsquared.bukkit.util.task.PaperTimeConverter;
 import com.plotsquared.bukkit.util.task.SpigotTimeConverter;
@@ -303,9 +302,11 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
         this.serverLocale = Locale.forLanguageTag(Settings.Enabled_Components.DEFAULT_LOCALE);
 
+        /* TODO Enable update checker before v7 is released to GA
         if (PremiumVerification.isPremium() && Settings.Enabled_Components.UPDATE_NOTIFICATIONS) {
             injector.getInstance(UpdateUtility.class).updateChecker();
         }
+         */
 
         if (PremiumVerification.isPremium()) {
             LOGGER.info("PlotSquared version licensed to Spigot user {}", getUserID());
