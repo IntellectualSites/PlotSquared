@@ -657,9 +657,9 @@ public abstract class PlotArea implements ComponentLike {
             player.sendMessage(
                     TranslatableCaption.of("height.height_limit"),
                     TagResolver.builder()
-                            .tag("minHeight", Tag.inserting(Component.text(minBuildHeight)))
+                            .tag("minheight", Tag.inserting(Component.text(minBuildHeight)))
                             .tag(
-                                    "maxHeight",
+                                    "maxheight",
                                     Tag.inserting(Component.text(maxBuildHeight))
                             ).build()
             );

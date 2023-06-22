@@ -28,7 +28,7 @@ import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 /**
- * This is a helper class which replaces occurrences of 'suggest_command' with 'run_command' in messages_%.json.
+ * This is a helper class which replaces older syntax no longer supported by MiniMessage with replacements in messages_%.json.
  * MiniMessage changed the syntax between major releases. To warrant a smooth upgrade, we attempt to replace any occurrences
  * while loading PlotSquared.
  *
@@ -38,14 +38,22 @@ import java.util.stream.Stream;
 public class TranslationUpdateManager {
 
     public static void upgradeTranslationFile() throws IOException {
-        String searchText = "suggest_command";
-        String replacementText = "run_command";
+        String suggestCommand = "suggest_command";
+        String suggestCommandReplacement = "run_command";
+        String minHeight = "minHeight";
+        String minheightReplacement = "minheight";
+        String maxHeight = "maxHeight";
+        String maxheightReplacement = "maxheight";
 
         try (Stream<Path> paths = Files.walk(Paths.get(PlotSquared.platform().getDirectory().toPath().resolve("lang").toUri()))) {
             paths
                     .filter(Files::isRegularFile)
                     .filter(p -> p.getFileName().toString().matches("messages_[a-z]{2}\\.json"))
-                    .forEach(p -> replaceInFile(p, searchText, replacementText));
+                    .forEach(p -> {
+                        replaceInFile(p, suggestCommand, suggestCommandReplacement);
+                        replaceInFile(p, minHeight, minheightReplacement);
+                        replaceInFile(p, maxHeight, maxheightReplacement);
+                    });
         }
     }
 
