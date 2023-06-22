@@ -1116,6 +1116,7 @@ public class BlockEventListener implements Listener {
             if (plot != null) {
                 plot.debug("Explosion was cancelled because explosion = false");
             }
+            return;
         }
         event.blockList().removeIf(blox -> !plot.equals(area.getOwnedPlot(BukkitUtil.adapt(blox.getLocation()))));
     }
