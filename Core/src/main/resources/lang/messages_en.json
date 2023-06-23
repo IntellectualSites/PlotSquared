@@ -486,7 +486,7 @@
   "single.get_position": "<prefix><gold>Go to the first corner and use: <gray><command> to create position 1.</gold>",
   "single.delete_world_region": "<prefix><red>Stop the server and delete: <world>/region.</red>",
   "single.regeneration_complete": "<prefix><gold>Regeneration complete.</gold>",
-  "single.worldcreation_location": "<prefix><gold>World creation settings may be stored in multiple locations:</gold>\n<dark_gray> - </dark_gray><gray>bukkit.yml in your server's root folder.</gray>\n<dark_gray> - </dark_gray><gray>PlotSquared's settings.yml</gray>\n<dark_gray> - </dark_gray><gray>Hyperverse's worlds.yml (or any world management plugin)</gray>\n<dark_gray> - </dark_gray><red>Stop the server and delete it from these locations.</red>",
+  "single.worldcreation_location": "<prefix><gold>World creation settings may be stored in multiple locations:</gold>\n<dark_gray> - </dark_gray><gray>bukkit.yml in your server's root folder.</gray>\n<dark_gray> - </dark_gray><gray>PlotSquared's worlds.yml</gray>\n<dark_gray> - </dark_gray><gray>Hyperverse's worlds.yml (or any world management plugin)</gray>\n<dark_gray> - </dark_gray><red>Stop the server and delete it from these locations.</red>",
   "legacyconfig.legacy_config_found": "<prefix><green>A legacy configuration file was detected. Conversion will be attempted.</green>",
   "legacyconfig.legacy_config_backup": "<prefix><gold>A copy of worlds.yml has been saved in the file worlds.yml.old</gold>.",
   "legacyconfig.legacy_config_replaced": "<prefix><gray><value1> has been replaced with <value2></gray>",
