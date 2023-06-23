@@ -298,7 +298,7 @@ public class Auto extends SubCommand {
             PlotExpression costExp = plotarea.getPrices().get("claim");
             PlotExpression mergeCostExp = plotarea.getPrices().get("merge");
             int size = sizeX * sizeZ;
-            double mergeCost = size > 1 && mergeCostExp == null ? 0d : mergeCostExp.evaluate(size);
+            double mergeCost = size <= 1 || mergeCostExp == null ? 0d : mergeCostExp.evaluate(size);
             double cost = costExp.evaluate(Settings.Limit.GLOBAL ?
                     player.getPlotCount() :
                     player.getPlotCount(plotarea.getWorldName()));
