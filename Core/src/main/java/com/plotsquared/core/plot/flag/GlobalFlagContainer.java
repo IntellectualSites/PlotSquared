@@ -91,6 +91,7 @@ import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
 import com.plotsquared.core.plot.flag.implementations.PveFlag;
 import com.plotsquared.core.plot.flag.implementations.PvpFlag;
 import com.plotsquared.core.plot.flag.implementations.RedstoneFlag;
+import com.plotsquared.core.plot.flag.implementations.SculkSensorInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
 import com.plotsquared.core.plot.flag.implementations.SnowFormFlag;
 import com.plotsquared.core.plot.flag.implementations.SnowMeltFlag;
@@ -172,6 +173,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(MobBreakFlag.MOB_BREAK_FALSE);
         this.addFlag(MobPlaceFlag.MOB_PLACE_FALSE);
         this.addFlag(MiscInteractFlag.MISC_INTERACT_FALSE);
+        this.addFlag(SculkSensorInteractFlag.SCULK_SENSOR_INTERACT_FALSE);
         this.addFlag(MiscPlaceFlag.MISC_PLACE_FALSE);
         this.addFlag(MycelGrowFlag.MYCEL_GROW_TRUE);
         this.addFlag(NotifyEnterFlag.NOTIFY_ENTER_FALSE);
