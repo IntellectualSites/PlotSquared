@@ -4,6 +4,7 @@
     "config:base",
     ":semanticCommitsDisabled"
   ],
+  "automerge": true,
   "labels": [
     "dependencies"
   ],
