@@ -119,7 +119,7 @@ public class Kick extends SubCommand {
                     }
                     if (player2.hasPermission(Permission.PERMISSION_ADMIN_ENTRY_DENIED)) {
                         player.sendMessage(
-                                TranslatableCaption.of("cluster.cannot_kick_player"),
+                                TranslatableCaption.of("kick.cannot_kick_player"),
                                 TagResolver.resolver("name", Tag.inserting(Component.text(player2.getName())))
                         );
                         return;
