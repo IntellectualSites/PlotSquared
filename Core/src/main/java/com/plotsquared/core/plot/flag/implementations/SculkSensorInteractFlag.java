@@ -28,7 +28,7 @@ public class SculkSensorInteractFlag extends BooleanFlag<SculkSensorInteractFlag
     public static final SculkSensorInteractFlag SCULK_SENSOR_INTERACT_FALSE = new SculkSensorInteractFlag(false);
 
     private SculkSensorInteractFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_misc_interact"));
+        super(value, TranslatableCaption.of("flags.flag_description_sculk_sensor_interact"));
     }
 
     @Override
