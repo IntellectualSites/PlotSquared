@@ -162,6 +162,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         } else {
             minY = hybridPlotWorld.getMinBuildHeight();
         }
+        int schemYDiff = (isRoad ? hybridPlotWorld.getRoadYStart() : hybridPlotWorld.getPlotYStart()) - minY;
         BaseBlock airBlock = BlockTypes.AIR.getDefaultState().toBaseBlock();
         for (int x = pos1.getX(); x <= pos2.getX(); x++) {
             short absX = (short) ((x - hybridPlotWorld.ROAD_OFFSET_X) % size);
@@ -178,10 +179,14 @@ public class HybridPlotManager extends ClassicPlotManager {
                     for (int y = 0; y < blocks.length; y++) {
                         if (blocks[y] != null) {
                             queue.setBlock(x, minY + y, z, blocks[y]);
-                        } else if (!isRoad) {
-                            // This is necessary, otherwise any blocks not specified in the schematic will remain after a clear
-                            //  Do not set air for road as this may cause cavernous roads when debugroadregen is used
+                        } else if (y > schemYDiff) {
+                            // This is necessary, otherwise any blocks not specified in the schematic will remain after a clear.
+                            // This should only be done where the schematic has actually "started"
                             queue.setBlock(x, minY + y, z, airBlock);
+                        } else if (isRoad) {
+                            queue.setBlock(x, minY + y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
+                        } else {
+                            queue.setBlock(x, minY + y, z, hybridPlotWorld.MAIN_BLOCK.toPattern());
                         }
                     }
                 }
