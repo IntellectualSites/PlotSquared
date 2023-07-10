@@ -34,6 +34,7 @@ import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.math.BlockVector3;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.HeightMap;
@@ -420,7 +421,11 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         if (lastPlotArea != null && name.equals(this.levelName) && chunkX == lastChunkX && chunkZ == lastChunkZ) {
             return lastPlotArea;
         }
-        PlotArea area = UncheckedWorldLocation.at(name, chunkX << 4, 0, chunkZ << 4).getPlotArea();
+        BlockVector3 loc = BlockVector3.at(chunkX << 4, 0, chunkZ << 4);
+        if (lastPlotArea != null && lastPlotArea.getRegion().contains(loc) && lastPlotArea.getRegion().contains(loc)) {
+            return lastPlotArea;
+        }
+        PlotArea area = UncheckedWorldLocation.at(name, loc).getPlotArea();
         if (area == null) {
             throw new IllegalStateException(String.format(
                     "Cannot generate chunk that does not belong to a plot area. World: %s",
