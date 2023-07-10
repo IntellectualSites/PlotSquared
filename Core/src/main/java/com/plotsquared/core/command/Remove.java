@@ -100,15 +100,17 @@ public class Remove extends SubCommand {
                             count++;
                         }
                     } else if (uuid == DBFunc.EVERYONE) {
+                        count += plot.getTrusted().size();
                         if (plot.removeTrusted(uuid)) {
                             this.eventDispatcher.callTrusted(player, plot, uuid, false);
-                            count++;
-                        } else if (plot.removeMember(uuid)) {
+                        }
+                        count += plot.getMembers().size();
+                        if (plot.removeMember(uuid)) {
                             this.eventDispatcher.callMember(player, plot, uuid, false);
-                            count++;
-                        } else if (plot.removeDenied(uuid)) {
+                        }
+                        count += plot.getDenied().size();
+                        if (plot.removeDenied(uuid)) {
                             this.eventDispatcher.callDenied(player, plot, uuid, false);
-                            count++;
                         }
                     }
                 }
