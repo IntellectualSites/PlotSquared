@@ -24,7 +24,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Collection;
-import java.util.Objects;
 
 /**
  * A world that contains plots
@@ -113,14 +112,6 @@ public abstract class PlotWorld {
     @Override
     public int hashCode() {
         return world.hashCode();
-    }
-
-    /**
-     * @deprecated This method is not meant to be invoked or overridden, with no replacement.
-     */
-    @Deprecated(forRemoval = true, since = "6.6.0")
-    protected boolean canEqual(final Object other) {
-        return other instanceof PlotWorld;
     }
 
 }

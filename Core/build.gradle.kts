@@ -54,16 +54,30 @@ tasks.processResources {
                 "date" to rootProject.grgit.head().dateTime.format(DateTimeFormatter.ofPattern("yy.MM.dd"))
         )
     }
+
+    doLast {
+        copy {
+            from(File("$rootDir/LICENSE"))
+            into("$buildDir/resources/main/")
+        }
+    }
 }
 
 tasks {
     withType<Javadoc> {
+        val isRelease = if (rootProject.version.toString().endsWith("-SNAPSHOT")) "TODO" else rootProject.version.toString()
         val opt = options as StandardJavadocDocletOptions
         opt.links("https://docs.enginehub.org/javadoc/com.sk89q.worldedit/worldedit-core/" + libs.worldeditCore.get().versionConstraint.toString())
-        opt.links("https://jd.adventure.kyori.net/api/4.9.3/")
+        opt.links("https://jd.advntr.dev/api/4.14.0/")
+        opt.links("https://jd.advntr.dev/text-minimessage/4.14.0/")
         opt.links("https://google.github.io/guice/api-docs/" + libs.guice.get().versionConstraint.toString() + "/javadoc/")
         opt.links("https://checkerframework.org/api/")
         opt.links("https://javadoc.io/doc/com.intellectualsites.informative-annotations/informative-annotations/latest/")
+        opt.isLinkSource = true
+        opt.bottom(File("$rootDir/javadocfooter.html").readText())
+        opt.isUse = true
         opt.encoding("UTF-8")
+        opt.keyWords()
+        opt.addStringOption("-since", isRelease)
     }
 }

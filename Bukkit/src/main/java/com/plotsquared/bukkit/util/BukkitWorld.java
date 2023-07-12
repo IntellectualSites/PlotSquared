@@ -24,7 +24,6 @@ import org.bukkit.Bukkit;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Map;
-import java.util.Objects;
 
 public class BukkitWorld implements World<org.bukkit.World> {
 
@@ -131,14 +130,6 @@ public class BukkitWorld implements World<org.bukkit.World> {
     @Override
     public int hashCode() {
         return world.hashCode();
-    }
-
-    /**
-     * @deprecated This method is not meant to be invoked or overridden, with no replacement.
-     */
-    @Deprecated(forRemoval = true, since = "6.6.0")
-    protected boolean canEqual(final Object other) {
-        return other instanceof BukkitWorld;
     }
 
     public String toString() {

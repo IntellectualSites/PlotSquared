@@ -37,7 +37,7 @@ import com.plotsquared.core.plot.flag.implementations.ExplosionFlag;
 import com.plotsquared.core.plot.flag.implementations.InvincibleFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlotFlagUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
 import org.bukkit.Material;
@@ -145,54 +145,37 @@ public class EntityEventListener implements Listener {
         }
         CreatureSpawnEvent.SpawnReason reason = event.getSpawnReason();
         switch (reason.toString()) {
-            case "DISPENSE_EGG":
-            case "EGG":
-            case "OCELOT_BABY":
-            case "SPAWNER_EGG":
+            case "DISPENSE_EGG", "EGG", "OCELOT_BABY", "SPAWNER_EGG" -> {
                 if (!area.isSpawnEggs()) {
                     event.setCancelled(true);
                     return;
                 }
-                break;
-            case "REINFORCEMENTS":
-            case "NATURAL":
-            case "MOUNT":
-            case "PATROL":
-            case "RAID":
-            case "SHEARED":
-            case "SILVERFISH_BLOCK":
-            case "ENDER_PEARL":
-            case "TRAP":
-            case "VILLAGE_DEFENSE":
-            case "VILLAGE_INVASION":
-            case "BEEHIVE":
-            case "CHUNK_GEN":
+            }
+            case "REINFORCEMENTS", "NATURAL", "MOUNT", "PATROL", "RAID", "SHEARED", "SILVERFISH_BLOCK", "ENDER_PEARL",
+                    "TRAP", "VILLAGE_DEFENSE", "VILLAGE_INVASION", "BEEHIVE", "CHUNK_GEN" -> {
                 if (!area.isMobSpawning()) {
                     event.setCancelled(true);
                     return;
                 }
-                break;
-            case "BREEDING":
+            }
+            case "BREEDING" -> {
                 if (!area.isSpawnBreeding()) {
                     event.setCancelled(true);
                     return;
                 }
-                break;
-            case "BUILD_IRONGOLEM":
-            case "BUILD_SNOWMAN":
-            case "BUILD_WITHER":
-            case "CUSTOM":
+            }
+            case "BUILD_IRONGOLEM", "BUILD_SNOWMAN", "BUILD_WITHER", "CUSTOM" -> {
                 if (!area.isSpawnCustom() && entity.getType() != EntityType.ARMOR_STAND) {
                     event.setCancelled(true);
                     return;
                 }
-                break;
-            case "SPAWNER":
+            }
+            case "SPAWNER" -> {
                 if (!area.isMobSpawnerSpawning()) {
                     event.setCancelled(true);
                     return;
                 }
-                break;
+            }
         }
         Plot plot = area.getOwnedPlotAbs(location);
         if (plot == null) {
@@ -261,7 +244,7 @@ public class EntityEventListener implements Listener {
         }
         Plot plot = location.getOwnedPlot();
         if (plot == null) {
-            if (area.isRoadFlags() && area.getRoadFlag(InvincibleFlag.class)) {
+            if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, InvincibleFlag.class, true)) {
                 event.setCancelled(true);
             }
             return;
@@ -370,14 +353,13 @@ public class EntityEventListener implements Listener {
             if (shooter instanceof Player) {
                 PlotPlayer<?> pp = BukkitUtil.adapt((Player) shooter);
                 if (plot == null) {
-                    if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
+                    if (!pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
                         entity.remove();
                         event.setCancelled(true);
                     }
                     return;
                 }
-                if (plot.isAdded(pp.getUUID()) || Permissions
-                        .hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
+                if (plot.isAdded(pp.getUUID()) || pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
                     return;
                 }
                 entity.remove();

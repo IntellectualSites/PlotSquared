@@ -18,6 +18,7 @@
  */
 package com.plotsquared.bukkit.listener;
 
+import com.destroystokyo.paper.event.block.BeaconEffectEvent;
 import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
 import com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent;
 import com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent;
@@ -36,11 +37,16 @@ import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.flag.FlagContainer;
+import com.plotsquared.core.plot.flag.implementations.BeaconEffectsFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
+import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.util.Permissions;
-import net.kyori.adventure.text.minimessage.Template;
+import com.plotsquared.core.util.PlotFlagUtil;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
@@ -172,72 +178,54 @@ public class PaperListener implements Listener {
         }
         CreatureSpawnEvent.SpawnReason reason = event.getReason();
         switch (reason.toString()) {
-            case "DISPENSE_EGG":
-            case "EGG":
-            case "OCELOT_BABY":
-            case "SPAWNER_EGG":
+            case "DISPENSE_EGG", "EGG", "OCELOT_BABY", "SPAWNER_EGG" -> {
                 if (!area.isSpawnEggs()) {
                     event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                     return;
                 }
-                break;
-            case "REINFORCEMENTS":
-            case "NATURAL":
-            case "MOUNT":
-            case "PATROL":
-            case "RAID":
-            case "SHEARED":
-            case "SILVERFISH_BLOCK":
-            case "ENDER_PEARL":
-            case "TRAP":
-            case "VILLAGE_DEFENSE":
-            case "VILLAGE_INVASION":
-            case "BEEHIVE":
-            case "CHUNK_GEN":
+            }
+            case "REINFORCEMENTS", "NATURAL", "MOUNT", "PATROL", "RAID", "SHEARED", "SILVERFISH_BLOCK", "ENDER_PEARL", "TRAP", "VILLAGE_DEFENSE", "VILLAGE_INVASION", "BEEHIVE", "CHUNK_GEN" -> {
                 if (!area.isMobSpawning()) {
                     event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                     return;
                 }
-                break;
-            case "BREEDING":
+            }
+            case "BREEDING" -> {
                 if (!area.isSpawnBreeding()) {
                     event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                     return;
                 }
-                break;
-            case "BUILD_IRONGOLEM":
-            case "BUILD_SNOWMAN":
-            case "BUILD_WITHER":
-            case "CUSTOM":
+            }
+            case "BUILD_IRONGOLEM", "BUILD_SNOWMAN", "BUILD_WITHER", "CUSTOM" -> {
                 if (!area.isSpawnCustom() && event.getType() != EntityType.ARMOR_STAND) {
                     event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                     return;
                 }
-                break;
-            case "SPAWNER":
+            }
+            case "SPAWNER" -> {
                 if (!area.isMobSpawnerSpawning()) {
                     event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                     return;
                 }
-                break;
+            }
         }
         Plot plot = location.getOwnedPlotAbs();
         if (plot == null) {
             EntityType type = event.getType();
+            // PreCreatureSpawnEvent **should** not be called for DROPPED_ITEM, just for the sake of consistency
+            if (type == EntityType.DROPPED_ITEM) {
+                if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
+                    event.setCancelled(true);
+                }
+                return;
+            }
             if (!area.isMobSpawning()) {
                 if (type == EntityType.PLAYER) {
-                    return;
-                }
-                if (type == EntityType.DROPPED_ITEM) {
-                    if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
-                        event.setShouldAbortSpawn(true);
-                        event.setCancelled(true);
-                    }
                     return;
                 }
                 if (type.isAlive()) {
@@ -298,7 +286,7 @@ public class PaperListener implements Listener {
             final PlotPlayer<?> plotPlayer = BukkitUtil.adapt(event.getPlayer());
             plotPlayer.sendMessage(
                     TranslatableCaption.of("errors.tile_entity_cap_reached"),
-                    Template.of("amount", String.valueOf(Settings.Chunk_Processor.MAX_TILES))
+                    TagResolver.resolver("amount", Tag.inserting(Component.text(Settings.Chunk_Processor.MAX_TILES)))
             );
             event.setCancelled(true);
             event.setBuild(false);
@@ -322,36 +310,48 @@ public class PaperListener implements Listener {
             return;
         }
         Location location = BukkitUtil.adapt(entity.getLocation());
-        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
             return;
         }
         PlotPlayer<Player> pp = BukkitUtil.adapt((Player) shooter);
         Plot plot = location.getOwnedPlot();
 
         if (plot == null) {
-            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_ROAD)) {
+            if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, ProjectilesFlag.class, true) && !pp.hasPermission(
+                    Permission.PERMISSION_ADMIN_PROJECTILE_ROAD
+            )) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_ROAD))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_PROJECTILE_ROAD)
+                        )
                 );
                 entity.remove();
                 event.setCancelled(true);
             }
         } else if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
+            if (!pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)
+                        )
                 );
                 entity.remove();
                 event.setCancelled(true);
             }
         } else if (!plot.isAdded(pp.getUUID())) {
             if (!plot.getFlag(ProjectilesFlag.class)) {
-                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
+                if (!pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)
+                            )
                     );
                     entity.remove();
                     event.setCancelled(true);
@@ -398,6 +398,54 @@ public class PaperListener implements Listener {
             event.setHandled(true);
         } catch (final Exception ignored) {
         }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBeaconEffect(final BeaconEffectEvent event) {
+        Block block = event.getBlock();
+        Location beaconLocation = BukkitUtil.adapt(block.getLocation());
+        Plot beaconPlot = beaconLocation.getPlot();
+
+        PlotArea area = beaconLocation.getPlotArea();
+        if (area == null) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+        Location playerLocation = BukkitUtil.adapt(player.getLocation());
+
+        PlotPlayer<Player> plotPlayer = BukkitUtil.adapt(player);
+        Plot playerStandingPlot = playerLocation.getPlot();
+        if (playerStandingPlot == null) {
+            FlagContainer container = area.getRoadFlagContainer();
+            if (!getBooleanFlagValue(container, BeaconEffectsFlag.class, true) ||
+                    (beaconPlot != null && Settings.Enabled_Components.DISABLE_BEACON_EFFECT_OVERFLOW)) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+
+        FlagContainer container = playerStandingPlot.getFlagContainer();
+        boolean plotBeaconEffects = getBooleanFlagValue(container, BeaconEffectsFlag.class, true);
+        if (playerStandingPlot.equals(beaconPlot)) {
+            if (!plotBeaconEffects) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+
+        if (!plotBeaconEffects || Settings.Enabled_Components.DISABLE_BEACON_EFFECT_OVERFLOW) {
+            event.setCancelled(true);
+        }
+    }
+
+    private boolean getBooleanFlagValue(
+            @NonNull FlagContainer container,
+            @NonNull Class<? extends BooleanFlag<?>> flagClass,
+            boolean defaultValue
+    ) {
+        BooleanFlag<?> flag = container.getFlag(flagClass);
+        return flag == null ? defaultValue : flag.getValue();
     }
 
 }

@@ -1,7 +1,7 @@
+import com.diffplug.gradle.spotless.SpotlessPlugin
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
-import org.cadixdev.gradle.licenser.LicenseExtension
-import org.cadixdev.gradle.licenser.Licenser
 import java.net.URI
+import xyz.jpenilla.runpaper.task.RunServer
 
 plugins {
     java
@@ -10,16 +10,28 @@ plugins {
     signing
 
     alias(libs.plugins.shadow)
-    alias(libs.plugins.licenser)
+    alias(libs.plugins.spotless)
     alias(libs.plugins.grgit)
     alias(libs.plugins.nexus)
 
     eclipse
     idea
+
+    id("xyz.jpenilla.run-paper") version "2.1.0"
 }
 
-group = "com.plotsquared"
-version = "6.9.3-SNAPSHOT"
+group = "com.intellectualsites.plotsquared"
+version = "7.0.0-SNAPSHOT"
+
+if (!File("$rootDir/.git").exists()) {
+    logger.lifecycle("""
+    **************************************************************************************
+    You need to fork and clone this repository! Don't download a .zip file.
+    If you need assistance, consult the GitHub docs: https://docs.github.com/get-started/quickstart/fork-a-repo
+    **************************************************************************************
+    """.trimIndent()
+    ).also { kotlin.system.exitProcess(1) }
+}
 
 subprojects {
     group = rootProject.group
@@ -57,7 +69,7 @@ subprojects {
         plugin<JavaLibraryPlugin>()
         plugin<MavenPublishPlugin>()
         plugin<ShadowPlugin>()
-        plugin<Licenser>()
+        plugin<SpotlessPlugin>()
         plugin<SigningPlugin>()
 
         plugin<EclipsePlugin>()
@@ -65,12 +77,12 @@ subprojects {
     }
 
     dependencies {
-        implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.11"))
+        implementation(platform("com.intellectualsites.bom:bom-newest:1.31"))
     }
 
     dependencies {
         // Tests
-        testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
+        testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
     }
 
     plugins.withId("java") {
@@ -87,10 +99,14 @@ subprojects {
         attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 17)
     }
 
-    configure<LicenseExtension> {
-        header(rootProject.file("HEADER.txt"))
-        include("**/*.java")
-        newLine.set(false)
+    spotless {
+        java {
+            licenseHeaderFile(rootProject.file("HEADER.txt"))
+            target("**/*.java")
+            endWithNewline()
+            trimTrailingWhitespace()
+            removeUnusedImports()
+        }
     }
 
     java {
@@ -142,7 +158,7 @@ subprojects {
                             id.set("NotMyFault")
                             name.set("Alexander Brandes")
                             organization.set("IntellectualSites")
-                            email.set("contact@notmyfault.dev")
+                            email.set("contact(at)notmyfault.dev")
                         }
                         developer {
                             id.set("SirYwell")
@@ -174,10 +190,7 @@ subprojects {
     tasks {
 
         compileJava {
-            options.compilerArgs.addAll(arrayOf("-Xmaxerrs", "1000"))
-            options.compilerArgs.add("-Xlint:all")
-            for (disabledLint in arrayOf("processing", "path", "fallthrough", "serial"))
-                options.compilerArgs.add("-Xlint:$disabledLint")
+            options.compilerArgs.add("-parameters")
             options.isDeprecation = true
             options.encoding = "UTF-8"
         }
@@ -197,7 +210,7 @@ subprojects {
 }
 
 nexusPublishing {
-    repositories {
+    this.repositories {
         sonatype {
             nexusUrl.set(URI.create("https://s01.oss.sonatype.org/service/local/"))
             snapshotRepositoryUrl.set(URI.create("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
@@ -207,4 +220,18 @@ nexusPublishing {
 
 tasks.getByName<Jar>("jar") {
     enabled = false
+}
+
+val supportedVersions = listOf("1.16.5", "1.17", "1.17.1", "1.18.2", "1.19", "1.19.1", "1.19.2", "1.19.3", "1.19.4", "1.20")
+tasks {
+    supportedVersions.forEach {
+        register<RunServer>("runServer-$it") {
+            minecraftVersion(it)
+            pluginJars(*project(":plotsquared-bukkit").getTasksByName("shadowJar", false).map { (it as Jar).archiveFile }
+                    .toTypedArray())
+            jvmArgs("-DPaper.IgnoreJavaVersion=true", "-Dcom.mojang.eula.agree=true")
+            group = "run paper"
+            runDirectory.set(file("run-$it"))
+        }
+    }
 }

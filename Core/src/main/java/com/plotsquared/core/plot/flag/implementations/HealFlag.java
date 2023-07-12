@@ -21,7 +21,9 @@ package com.plotsquared.core.plot.flag.implementations;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.types.TimedFlag;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class HealFlag extends TimedFlag<Integer, HealFlag> {
@@ -42,7 +44,7 @@ public class HealFlag extends TimedFlag<Integer, HealFlag> {
                     this,
                     input,
                     TranslatableCaption.of("invalid.not_a_number"),
-                    Template.of("value", input)
+                    TagResolver.resolver("value", Tag.inserting(Component.text(input)))
             );
         }
         if (parsed < 1) {
@@ -50,7 +52,7 @@ public class HealFlag extends TimedFlag<Integer, HealFlag> {
                     this,
                     input,
                     TranslatableCaption.of("invalid.number_not_positive"),
-                    Template.of("value", String.valueOf(parsed))
+                    TagResolver.resolver("value", Tag.inserting(Component.text(parsed)))
             );
         }
         return parsed;
@@ -58,7 +60,7 @@ public class HealFlag extends TimedFlag<Integer, HealFlag> {
 
     @Override
     protected Integer mergeValue(Integer other) {
-        return this.getValue().getValue() + other;
+        return this.getValue().value() + other;
     }
 
     @Override

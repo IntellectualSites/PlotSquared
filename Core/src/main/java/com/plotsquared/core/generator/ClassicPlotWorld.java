@@ -28,13 +28,18 @@ import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.GlobalBlockQueue;
+import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nullable;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class ClassicPlotWorld extends SquarePlotWorld {
+
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + ClassicPlotWorld.class.getSimpleName());
 
     public int ROAD_HEIGHT = 62;
     public int PLOT_HEIGHT = 62;
@@ -58,6 +63,21 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
             final @NonNull GlobalBlockQueue blockQueue
     ) {
         super(worldName, id, generator, min, max, worldConfiguration, blockQueue);
+    }
+
+    private static BlockBucket createCheckedBlockBucket(String input, BlockBucket def) {
+        final BlockBucket bucket = new BlockBucket(input);
+        Pattern pattern = null;
+        try {
+            pattern = bucket.toPattern();
+        } catch (Exception ignore) {
+        }
+        if (pattern == null) {
+            LOGGER.error("Failed to parse pattern '{}', check your worlds.yml", input);
+            LOGGER.error("Falling back to {}", def);
+            return def;
+        }
+        return bucket;
     }
 
     /**
@@ -121,15 +141,15 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
         super.loadConfiguration(config);
         this.PLOT_BEDROCK = config.getBoolean("plot.bedrock");
         this.PLOT_HEIGHT = Math.min(getMaxGenHeight(), config.getInt("plot.height"));
-        this.MAIN_BLOCK = new BlockBucket(config.getString("plot.filling"));
-        this.TOP_BLOCK = new BlockBucket(config.getString("plot.floor"));
-        this.WALL_BLOCK = new BlockBucket(config.getString("wall.block"));
+        this.MAIN_BLOCK = createCheckedBlockBucket(config.getString("plot.filling"), MAIN_BLOCK);
+        this.TOP_BLOCK = createCheckedBlockBucket(config.getString("plot.floor"), TOP_BLOCK);
+        this.WALL_BLOCK = createCheckedBlockBucket(config.getString("wall.block"), WALL_BLOCK);
         this.ROAD_HEIGHT = Math.min(getMaxGenHeight(), config.getInt("road.height"));
-        this.ROAD_BLOCK = new BlockBucket(config.getString("road.block"));
-        this.WALL_FILLING = new BlockBucket(config.getString("wall.filling"));
+        this.ROAD_BLOCK = createCheckedBlockBucket(config.getString("road.block"), ROAD_BLOCK);
+        this.WALL_FILLING = createCheckedBlockBucket(config.getString("wall.filling"), WALL_FILLING);
         this.PLACE_TOP_BLOCK = config.getBoolean("wall.place_top_block");
         this.WALL_HEIGHT = Math.min(getMaxGenHeight() - (PLACE_TOP_BLOCK ? 1 : 0), config.getInt("wall.height"));
-        this.CLAIMED_WALL_BLOCK = new BlockBucket(config.getString("wall.block_claimed"));
+        this.CLAIMED_WALL_BLOCK = createCheckedBlockBucket(config.getString("wall.block_claimed"), CLAIMED_WALL_BLOCK);
     }
 
     int schematicStartHeight() {

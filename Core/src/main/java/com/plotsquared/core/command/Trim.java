@@ -25,7 +25,6 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueCoordinator;
@@ -92,8 +91,8 @@ public class Trim extends SubCommand {
         }
         TranslatableCaption.of("trim.trim_starting");
         final List<Plot> plots = PlotQuery.newQuery().inWorld(world).asList();
-        if (ExpireManager.IMP != null) {
-            plots.removeAll(ExpireManager.IMP.getPendingExpired());
+        if (PlotSquared.platform().expireManager() != null) {
+            plots.removeAll(PlotSquared.platform().expireManager().getPendingExpired());
         }
         result.value1 = new HashSet<>(PlotSquared.platform().worldUtil().getChunkChunks(world));
         result.value2 = new HashSet<>();

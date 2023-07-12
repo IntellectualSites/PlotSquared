@@ -42,14 +42,12 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotCluster;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotWeather;
-import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.synchronization.LockRepository;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
@@ -59,7 +57,8 @@ import com.sk89q.worldedit.world.item.ItemType;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.title.Title;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -201,6 +200,20 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         return this.permissionProfile.hasKeyedPermission(world, permission, key);
     }
 
+    @Override
+    public final boolean hasPermission(@NonNull String permission, boolean notify) {
+        if (!hasPermission(permission)) {
+            if (notify) {
+                sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        TagResolver.resolver("node", Tag.inserting(Component.text(permission)))
+                );
+            }
+            return false;
+        }
+        return true;
+    }
+
     public abstract Actor toActor();
 
     public abstract P getPlatformPlayer();
@@ -291,7 +304,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      * @return number of allowed plots within the scope (globally, or in the player's current world as defined in the settings.yml)
      */
     public int getAllowedPlots() {
-        return Permissions.hasPermissionRange(this, "plots.plot", Settings.Limit.MAX_PLOTS);
+        return hasPermissionRange("plots.plot", Settings.Limit.MAX_PLOTS);
     }
 
     /**
@@ -618,8 +631,8 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                 LOGGER.info("Plot {} was deleted + cleared due to {} getting banned", owned.getId(), getName());
             }
         }
-        if (ExpireManager.IMP != null) {
-            ExpireManager.IMP.storeDate(getUUID(), System.currentTimeMillis());
+        if (PlotSquared.platform().expireManager() != null) {
+            PlotSquared.platform().expireManager().storeDate(getUUID(), System.currentTimeMillis());
         }
         PlotSquared.platform().playerManager().removePlayer(this);
         PlotSquared.platform().unregister(this);
@@ -837,7 +850,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      */
     public void sendTitle(
             final @NonNull Caption title, final @NonNull Caption subtitle,
-            final @NonNull Template... replacements
+            final @NonNull TagResolver... replacements
     ) {
         sendTitle(
                 title,
@@ -862,11 +875,11 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     public void sendTitle(
             final @NonNull Caption title, final @NonNull Caption subtitle,
             final int fadeIn, final int stay, final int fadeOut,
-            final @NonNull Template... replacements
+            final @NonNull TagResolver... replacements
     ) {
-        final Component titleComponent = MiniMessage.get().parse(title.getComponent(this), replacements);
+        final Component titleComponent = MiniMessage.miniMessage().deserialize(title.getComponent(this), replacements);
         final Component subtitleComponent =
-                MiniMessage.get().parse(subtitle.getComponent(this), replacements);
+                MiniMessage.miniMessage().deserialize(subtitle.getComponent(this), replacements);
         final Title.Times times = Title.Times.of(
                 Duration.of(Settings.Titles.TITLES_FADE_IN * 50L, ChronoUnit.MILLIS),
                 Duration.of(Settings.Titles.TITLES_STAY * 50L, ChronoUnit.MILLIS),
@@ -884,7 +897,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      */
     public void sendActionBar(
             final @NonNull Caption caption,
-            final @NonNull Template... replacements
+            final @NonNull TagResolver... replacements
     ) {
         String message;
         try {
@@ -904,14 +917,14 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                 .replace("<prefix>", TranslatableCaption.of("core.prefix").getComponent(this));
 
 
-        final Component component = MiniMessage.get().parse(message, replacements);
+        final Component component = MiniMessage.miniMessage().deserialize(message, replacements);
         getAudience().sendActionBar(component);
     }
 
     @Override
     public void sendMessage(
             final @NonNull Caption caption,
-            final @NonNull Template... replacements
+            final @NonNull TagResolver... replacements
     ) {
         String message;
         try {
@@ -930,7 +943,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                 .replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&')
                 .replace("<prefix>", TranslatableCaption.of("core.prefix").getComponent(this));
         // Parse the message
-        final Component component = MiniMessage.get().parse(message, replacements);
+        final Component component = MiniMessage.miniMessage().deserialize(message, replacements);
         if (!Objects.equal(component, this.getMeta("lastMessage"))
                 || System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000) {
             setMeta("lastMessage", component);
@@ -1015,6 +1028,14 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     public @NonNull LockRepository getLockRepository() {
         return this.lockRepository;
     }
+
+    /**
+     * Removes any effects present of the given type.
+     *
+     * @param name the name of the type to remove
+     * @since 6.10.0
+     */
+    public abstract void removeEffect(@NonNull String name);
 
     @FunctionalInterface
     public interface PlotPlayerConverter<BaseObject> {

@@ -106,38 +106,6 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
     }
 
     /**
-     * @deprecated for removal. Use {@link PlayerAutoPlotEvent#getSizeX()}
-     */
-    @Deprecated(forRemoval = true, since = "6.1.0")
-    public int getSize_x() {
-        return getSizeX();
-    }
-
-    /**
-     * @deprecated for removal. Use {@link PlayerAutoPlotEvent#setSizeX(int)} )}
-     */
-    @Deprecated(forRemoval = true, since = "6.1.0")
-    public void setSize_x(int sizeX) {
-        setSizeX(sizeX);
-    }
-
-    /**
-     * @deprecated for removal. Use {@link PlayerAutoPlotEvent#getSizeZ()}
-     */
-    @Deprecated(forRemoval = true, since = "6.1.0")
-    public int getSize_z() {
-        return getSizeZ();
-    }
-
-    /**
-     * @deprecated for removal. Use {@link PlayerAutoPlotEvent#setSizeZ(int)} )}
-     */
-    @Deprecated(forRemoval = true, since = "6.1.0")
-    public void setSize_z(int sizeZ) {
-        setSizeZ(sizeZ);
-    }
-
-    /**
      * Get the x size of the auto-area
      *
      * @return x size

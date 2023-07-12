@@ -46,7 +46,9 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -220,17 +222,6 @@ public final class PlotModificationManager {
         if (isDelete) {
             this.removeSign();
         }
-        PlotUnlinkEvent event = PlotSquared.get().getEventDispatcher()
-                .callUnlink(
-                        this.plot.getArea(),
-                        this.plot,
-                        true,
-                        !isDelete,
-                        isDelete ? PlotUnlinkEvent.REASON.DELETE : PlotUnlinkEvent.REASON.CLEAR
-                );
-        if (event.getEventResult() != Result.DENY && this.unlinkPlot(event.isCreateRoad(), event.isCreateSign())) {
-            PlotSquared.get().getEventDispatcher().callPostUnlink(plot, event.getReason());
-        }
         final PlotManager manager = this.plot.getArea().getPlotManager();
         Runnable run = new Runnable() {
             @Override
@@ -263,6 +254,7 @@ public final class PlotModificationManager {
                     return;
                 }
                 Plot current = queue.poll();
+                current.clearCache();
                 if (plot.getArea().getTerrain() != PlotAreaTerrainType.NONE) {
                     try {
                         PlotSquared.platform().regionManager().regenerateRegion(
@@ -280,7 +272,21 @@ public final class PlotModificationManager {
                 manager.clearPlot(current, this, actor, null);
             }
         };
-        run.run();
+        PlotUnlinkEvent event = PlotSquared.get().getEventDispatcher()
+                .callUnlink(
+                        this.plot.getArea(),
+                        this.plot,
+                        true,
+                        !isDelete,
+                        isDelete ? PlotUnlinkEvent.REASON.DELETE : PlotUnlinkEvent.REASON.CLEAR
+                );
+        if (event.getEventResult() != Result.DENY) {
+            if (this.unlinkPlot(event.isCreateRoad(), event.isCreateSign(), run)) {
+                PlotSquared.get().getEventDispatcher().callPostUnlink(plot, event.getReason());
+            }
+        } else {
+            run.run();
+        }
         return true;
     }
 
@@ -320,13 +326,30 @@ public final class PlotModificationManager {
      * @return success/!cancelled
      */
     public boolean unlinkPlot(final boolean createRoad, final boolean createSign) {
+        return unlinkPlot(createRoad, createSign, null);
+    }
+
+    /**
+     * Unlink the plot and all connected plots.
+     *
+     * @param createRoad whether to recreate road
+     * @param createSign whether to recreate signs
+     * @param whenDone   Task to run when unlink is complete
+     * @return success/!cancelled
+     * @since 6.10.9
+     */
+    public boolean unlinkPlot(final boolean createRoad, final boolean createSign, final Runnable whenDone) {
         if (!this.plot.isMerged()) {
+            if (whenDone != null) {
+                whenDone.run();
+            }
             return false;
         }
         final Set<Plot> plots = this.plot.getConnectedPlots();
         ArrayList<PlotId> ids = new ArrayList<>(plots.size());
         for (Plot current : plots) {
             current.setHome(null);
+            current.clearCache();
             ids.add(current.getId());
         }
         this.plot.clearRatings();
@@ -364,14 +387,17 @@ public final class PlotModificationManager {
                     current.getPlotModificationManager().setSign(PlayerManager.resolveName(current.getOwnerAbs()).getComponent(
                             LocaleHolder.console()));
                 }
+                if (whenDone != null) {
+                    TaskManager.runTask(whenDone);
+                }
             }));
+        } else if (whenDone != null) {
+            queue.setCompleteTask(whenDone);
         }
         if (createRoad) {
             manager.finishPlotUnlink(ids, queue);
         }
-        if (queue != null) {
-            queue.enqueue();
-        }
+        queue.enqueue();
         return true;
     }
 
@@ -391,7 +417,10 @@ public final class PlotModificationManager {
             Caption[] lines = new Caption[]{TranslatableCaption.of("signs.owner_sign_line_1"), TranslatableCaption.of(
                     "signs.owner_sign_line_2"),
                     TranslatableCaption.of("signs.owner_sign_line_3"), TranslatableCaption.of("signs.owner_sign_line_4")};
-            PlotSquared.platform().worldUtil().setSign(location, lines, Template.of("id", id), Template.of("owner", name));
+            PlotSquared.platform().worldUtil().setSign(location, lines, TagResolver.builder()
+                    .tag("id", Tag.inserting(Component.text(id)))
+                    .tag("owner", Tag.inserting(Component.text(name)))
+                    .build());
         }
     }
 
@@ -478,8 +507,7 @@ public final class PlotModificationManager {
                 this.plot.updateWorldBorder();
             }
         }
-        Plot.connected_cache = null;
-        Plot.regions_cache = null;
+        this.plot.clearCache();
         this.plot.getTrusted().clear();
         this.plot.getMembers().clear();
         this.plot.getDenied().clear();
@@ -501,7 +529,7 @@ public final class PlotModificationManager {
                         if (player != null) {
                             player.sendMessage(
                                     TranslatableCaption.of("events.event_denied"),
-                                    Template.of("value", "Auto merge on claim")
+                                    TagResolver.resolver("value", Tag.inserting(Component.text("Auto merge on claim")))
                             );
                         }
                         return;
@@ -630,6 +658,7 @@ public final class PlotModificationManager {
         if (queue.size() > 0) {
             queue.enqueue();
         }
+        visited.forEach(Plot::clearCache);
         return toReturn;
     }
 

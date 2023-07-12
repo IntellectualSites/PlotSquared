@@ -18,7 +18,8 @@
  */
 package com.plotsquared.core.plot;
 
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.Objects;
 
 public class PlotTitle {

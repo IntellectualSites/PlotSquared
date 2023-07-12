@@ -35,11 +35,12 @@ import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.InventoryUtil;
 import com.plotsquared.core.util.PatternUtil;
-import com.plotsquared.core.util.Permissions;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.item.ItemTypes;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -51,7 +52,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -153,8 +153,7 @@ public class ComponentPresetManager {
         } else if (!plot.hasOwner()) {
             player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return null;
-        } else if (!plot.isOwner(player.getUUID()) && !plot.getTrusted().contains(player.getUUID()) && !Permissions.hasPermission(
-                player,
+        } else if (!plot.isOwner(player.getUUID()) && !plot.getTrusted().contains(player.getUUID()) && !player.hasPermission(
                 Permission.PERMISSION_ADMIN_COMPONENTS_OTHER
         )) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
@@ -166,9 +165,8 @@ public class ComponentPresetManager {
 
         final List<ComponentPreset> allowedPresets = new ArrayList<>(this.presets.size());
         for (final ComponentPreset componentPreset : this.presets) {
-            if (!componentPreset.getPermission().isEmpty() && !Permissions.hasPermission(
-                    player,
-                    componentPreset.getPermission()
+            if (!componentPreset.permission().isEmpty() && !player.hasPermission(
+                    componentPreset.permission()
             )) {
                 continue;
             }
@@ -180,7 +178,8 @@ public class ComponentPresetManager {
         }
         final int size = (int) Math.ceil((double) allowedPresets.size() / 9.0D);
         final PlotInventory plotInventory = new PlotInventory(this.inventoryUtil, player, size,
-                TranslatableCaption.of("preset.title").getComponent(player)) {
+                TranslatableCaption.of("preset.title").getComponent(player)
+        ) {
             @Override
             public boolean onClick(final int index) {
                 if (!getPlayer().getCurrentPlot().equals(plot)) {
@@ -201,27 +200,31 @@ public class ComponentPresetManager {
                     return false;
                 }
 
-                final Pattern pattern = PatternUtil.parse(null, componentPreset.getPattern(), false);
+                final Pattern pattern = PatternUtil.parse(null, componentPreset.pattern(), false);
                 if (pattern == null) {
                     getPlayer().sendMessage(TranslatableCaption.of("preset.preset_invalid"));
                     return false;
                 }
 
-                if (componentPreset.getCost() > 0.0D) {
+                if (componentPreset.cost() > 0.0D) {
                     if (!econHandler.isEnabled(plot.getArea())) {
                         getPlayer().sendMessage(
                                 TranslatableCaption.of("preset.economy_disabled"),
-                                Template.of("preset", componentPreset.getDisplayName()));
+                                TagResolver.resolver("preset", Tag.inserting(Component.text(componentPreset.displayName())))
+                        );
                         return false;
                     }
-                    if (econHandler.getMoney(getPlayer()) < componentPreset.getCost()) {
+                    if (econHandler.getMoney(getPlayer()) < componentPreset.cost()) {
                         getPlayer().sendMessage(TranslatableCaption.of("preset.preset_cannot_afford"));
                         return false;
                     } else {
-                        econHandler.withdrawMoney(getPlayer(), componentPreset.getCost());
+                        econHandler.withdrawMoney(getPlayer(), componentPreset.cost());
                         getPlayer().sendMessage(
                                 TranslatableCaption.of("economy.removed_balance"),
-                                Template.of("money", econHandler.format(componentPreset.getCost()))
+                                TagResolver.resolver(
+                                        "money",
+                                        Tag.inserting(Component.text(econHandler.format(componentPreset.cost())))
+                                )
                         );
                     }
                 }
@@ -232,7 +235,7 @@ public class ComponentPresetManager {
                     queue.setCompleteTask(plot::removeRunning);
                     for (Plot current : plot.getConnectedPlots()) {
                         current.getPlotModificationManager().setComponent(
-                                componentPreset.getComponent().name(),
+                                componentPreset.component().name(),
                                 pattern,
                                 player,
                                 queue
@@ -249,30 +252,32 @@ public class ComponentPresetManager {
         for (int i = 0; i < allowedPresets.size(); i++) {
             final ComponentPreset preset = allowedPresets.get(i);
             final List<String> lore = new ArrayList<>();
-            if (preset.getCost() > 0) {
+            if (preset.cost() > 0) {
                 if (!this.econHandler.isEnabled(plot.getArea())) {
-                    lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.parse(
+                    lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.deserialize(
                             TranslatableCaption.of("preset.preset_lore_economy_disabled").getComponent(player))));
                 } else {
-                    lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.parse(
+                    lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.deserialize(
                             TranslatableCaption.of("preset.preset_lore_cost").getComponent(player),
-                            Template.of("cost", String.format("%.2f", preset.getCost()))
+                            TagResolver.resolver("cost", Tag.inserting(Component.text(String.format("%.2f", preset.cost()))))
                     )));
                 }
             }
-            lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.parse(
+            lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.deserialize(
                     TranslatableCaption.of("preset.preset_lore_component").getComponent(player),
-                    Template.of("component", preset.getComponent().name().toLowerCase()),
-                    Template.of("prefix", TranslatableCaption.of("core.prefix").getComponent(player))
+                    TagResolver.builder()
+                            .tag("component", Tag.inserting(Component.text(preset.component().name().toLowerCase())))
+                            .tag("prefix", Tag.inserting(TranslatableCaption.of("core.prefix").toComponent(player)))
+                            .build()
             )));
             lore.removeIf(String::isEmpty);
-            lore.addAll(preset.getDescription());
+            lore.addAll(preset.description());
             plotInventory.setItem(
                     i,
                     new PlotItemStack(
-                            preset.getIcon().getId().replace("minecraft:", ""),
+                            preset.icon().getId().replace("minecraft:", ""),
                             1,
-                            preset.getDisplayName(),
+                            preset.displayName(),
                             lore.toArray(new String[0])
                     )
             );

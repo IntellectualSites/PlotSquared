@@ -29,7 +29,7 @@ import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.sk89q.jnbt.CompoundTag;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -40,7 +40,7 @@ public class FaweSchematicHandler extends SchematicHandler {
     private final FaweDelegateSchematicHandler delegate = new FaweDelegateSchematicHandler();
 
     @Inject
-    public FaweSchematicHandler(@NotNull WorldUtil worldUtil, @NotNull ProgressSubscriberFactory subscriberFactory) {
+    public FaweSchematicHandler(WorldUtil worldUtil, ProgressSubscriberFactory subscriberFactory) {
         super(worldUtil, subscriberFactory);
     }
 
@@ -75,9 +75,8 @@ public class FaweSchematicHandler extends SchematicHandler {
     }
 
     @Override
-    public Schematic getSchematic(@NotNull InputStream is) {
+    public Schematic getSchematic(@NonNull InputStream is) {
         return delegate.getSchematic(is);
     }
 
 }
-

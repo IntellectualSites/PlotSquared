@@ -76,6 +76,7 @@ public class SinglePlotArea extends GridPlotWorld {
      * Returns true if the given string matches the naming system used to identify single plot worlds
      * e.g. -1_5 represents plot id *;-1;5. "*" being the plot area name given to single plot world
      * {@link com.plotsquared.core.plot.PlotArea}.
+     *
      * @since 6.1.4
      */
     public static boolean isSinglePlotWorld(String worldName) {

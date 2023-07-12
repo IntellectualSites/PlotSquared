@@ -23,8 +23,9 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.util.Permissions;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 @CommandDeclaration(command = "copy",
         permission = "plots.copy",
@@ -42,15 +43,14 @@ public class Copy extends SubCommand {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
         }
-        if (!plot1.isOwner(player.getUUID()) && !Permissions
-                .hasPermission(player, Permission.PERMISSION_ADMIN.toString())) {
+        if (!plot1.isOwner(player.getUUID()) && !player.hasPermission(Permission.PERMISSION_ADMIN.toString())) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
         if (args.length != 1) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot copy <X;Z>")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("/plot copy <X;Z>")))
             );
             return false;
         }
@@ -69,8 +69,12 @@ public class Copy extends SubCommand {
 
         plot1.getPlotModificationManager().copy(plot2, player).thenAccept(result -> {
             if (result) {
-                player.sendMessage(TranslatableCaption.of("move.copy_success"), Template.of("origin", String.valueOf(plot1)),
-                        Template.of("target", String.valueOf(plot2))
+                player.sendMessage(
+                        TranslatableCaption.of("move.copy_success"),
+                        TagResolver.builder()
+                                .tag("origin", Tag.inserting(Component.text(plot1.toString())))
+                                .tag("target", Tag.inserting(Component.text(plot2.toString())))
+                                .build()
                 );
             } else {
                 player.sendMessage(TranslatableCaption.of("move.requires_unowned"));

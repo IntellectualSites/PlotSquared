@@ -26,7 +26,9 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(command = "regenallroads",
@@ -58,18 +60,18 @@ public class RegenAllRoads extends SubCommand {
             } catch (NumberFormatException ignored) {
                 player.sendMessage(
                         TranslatableCaption.of("invalid.not_valid_number"),
-                        Template.of("value", "(0, 256)")
+                        TagResolver.resolver("value", Tag.inserting(Component.text("(0, 256)")))
                 );
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.of("value", "/plot regenallroads <world> [height]")
+                        TagResolver.resolver("value", Tag.inserting(Component.text("/plot regenallroads <world> [height]")))
                 );
                 return false;
             }
         } else if (args.length != 1) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot regenallroads <world> [height]")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("/plot regenallroads <world> [height]")))
             );
             return false;
         }
@@ -77,7 +79,7 @@ public class RegenAllRoads extends SubCommand {
         if (area == null) {
             player.sendMessage(
                     TranslatableCaption.of("errors.not_valid_plot_world"),
-                    Template.of("value", args[0])
+                    TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))
             );
             return false;
         }
@@ -88,7 +90,7 @@ public class RegenAllRoads extends SubCommand {
         }
         player.sendMessage(
                 TranslatableCaption.of("debugroadregen.schematic"),
-                Template.of("command", "/plot createroadschematic")
+                TagResolver.resolver("command", Tag.inserting(Component.text("/plot createroadschematic")))
         );
         player.sendMessage(TranslatableCaption.of("debugroadregen.regenallroads_started"));
         boolean result = this.hybridUtils.scheduleRoadUpdate(area, height);

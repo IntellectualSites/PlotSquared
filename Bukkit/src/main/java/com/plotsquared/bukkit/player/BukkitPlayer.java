@@ -47,13 +47,13 @@ import org.bukkit.event.EventException;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.RegisteredListener;
+import org.bukkit.potion.PotionEffectType;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static com.sk89q.worldedit.world.gamemode.GameModes.ADVENTURE;
 import static com.sk89q.worldedit.world.gamemode.GameModes.CREATIVE;
@@ -67,24 +67,15 @@ public class BukkitPlayer extends PlotPlayer<Player> {
     private String name;
 
     /**
-     * <p>Please do not use this method. Instead use
-     * BukkitUtil.getPlayer(Player), as it caches player objects.</p>
-     *
      * @param plotAreaManager   PlotAreaManager instance
      * @param eventDispatcher   EventDispatcher instance
      * @param player            Bukkit player instance
      * @param permissionHandler PermissionHandler instance
      */
-    public BukkitPlayer(
-            final @NonNull PlotAreaManager plotAreaManager, final @NonNull EventDispatcher eventDispatcher,
-            final @NonNull Player player, final @NonNull PermissionHandler permissionHandler
-    ) {
-        this(plotAreaManager, eventDispatcher, player, false, permissionHandler);
-    }
-
-    public BukkitPlayer(
-            final @NonNull PlotAreaManager plotAreaManager, final @NonNull
-            EventDispatcher eventDispatcher, final @NonNull Player player,
+    BukkitPlayer(
+            final @NonNull PlotAreaManager plotAreaManager,
+            final @NonNull EventDispatcher eventDispatcher,
+            final @NonNull Player player,
             final boolean realPlayer,
             final @NonNull PermissionHandler permissionHandler
     ) {
@@ -185,6 +176,10 @@ public class BukkitPlayer extends PlotPlayer<Player> {
             final Set<PermissionAttachmentInfo> effective = player.getEffectivePermissions();
             if (!effective.isEmpty()) {
                 for (PermissionAttachmentInfo attach : effective) {
+                    // Ignore all "false" permissions
+                    if (!attach.getValue()) {
+                        continue;
+                    }
                     String permStr = attach.getPermission();
                     if (permStr.startsWith(stubPlus)) {
                         hasAny = true;
@@ -346,6 +341,14 @@ public class BukkitPlayer extends PlotPlayer<Player> {
     @Override
     public @NonNull Audience getAudience() {
         return BukkitUtil.BUKKIT_AUDIENCES.player(this.player);
+    }
+
+    @Override
+    public void removeEffect(@NonNull String name) {
+        PotionEffectType type = PotionEffectType.getByName(name);
+        if (type != null) {
+            player.removePotionEffect(type);
+        }
     }
 
     @Override

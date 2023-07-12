@@ -18,46 +18,20 @@
  */
 package com.plotsquared.core.util;
 
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.caption.Caption;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 public class StringMan {
 
-    private static final Pattern STRING_SPLIT_PATTERN = Pattern.compile("(?<quoted>\"[\\w ]+\")|(?<single>\\w+)");
-
-    public static String replaceFromMap(String string, Map<String, String> replacements) {
-        StringBuilder sb = new StringBuilder(string);
-        int size = string.length();
-        for (Entry<String, String> entry : replacements.entrySet()) {
-            if (size == 0) {
-                break;
-            }
-            String key = entry.getKey();
-            String value = entry.getValue();
-            int start = sb.indexOf(key, 0);
-            while (start > -1) {
-                int end = start + key.length();
-                int nextSearchStart = start + value.length();
-                sb.replace(start, end, value);
-                size -= end - start;
-                start = sb.indexOf(key, nextSearchStart);
-            }
-        }
-        return sb.toString();
-    }
+    // Stolen from https://stackoverflow.com/a/366532/12620913 | Debug: https://regex101.com/r/DudJLb/1
+    private static final Pattern STRING_SPLIT_PATTERN = Pattern.compile("[^\\s\"]+|\"([^\"]*)\"");
 
     public static int intersection(Set<String> options, String[] toCheck) {
         int count = 0;
@@ -69,105 +43,10 @@ public class StringMan {
         return count;
     }
 
-    public static String getString(Object obj) {
-        if (obj == null) {
-            return "null";
-        }
-        if (obj instanceof String) {
-            return (String) obj;
-        }
-        if (obj instanceof Caption) {
-            return ((Caption) obj).getComponent(PlotSquared.platform());
-        }
-        if (obj.getClass().isArray()) {
-            StringBuilder result = new StringBuilder();
-            String prefix = "";
-
-            for (int i = 0; i < Array.getLength(obj); i++) {
-                result.append(prefix).append(getString(Array.get(obj, i)));
-                prefix = ",";
-            }
-            return "( " + result + " )";
-        } else if (obj instanceof Collection<?>) {
-            StringBuilder result = new StringBuilder();
-            String prefix = "";
-            for (Object element : (Collection<?>) obj) {
-                result.append(prefix).append(getString(element));
-                prefix = ",";
-            }
-            return "[ " + result + " ]";
-        } else {
-            return obj.toString();
-        }
-    }
-
-    public static String replaceFirst(char c, String s) {
-        if (s == null) {
-            return "";
-        }
-        if (s.isEmpty()) {
-            return s;
-        }
-        char[] chars = s.toCharArray();
-        char[] newChars = new char[chars.length];
-        int used = 0;
-        boolean found = false;
-        for (char cc : chars) {
-            if (!found && (c == cc)) {
-                found = true;
-            } else {
-                newChars[used++] = cc;
-            }
-        }
-        if (found) {
-            chars = new char[newChars.length - 1];
-            System.arraycopy(newChars, 0, chars, 0, chars.length);
-            return String.valueOf(chars);
-        }
-        return s;
-    }
-
-    public static String replaceAll(String string, Object... pairs) {
-        StringBuilder sb = new StringBuilder(string);
-        for (int i = 0; i < pairs.length; i += 2) {
-            String key = pairs[i] + "";
-            String value = pairs[i + 1] + "";
-            int start = sb.indexOf(key, 0);
-            while (start > -1) {
-                int end = start + key.length();
-                int nextSearchStart = start + value.length();
-                sb.replace(start, end, value);
-                start = sb.indexOf(key, nextSearchStart);
-            }
-        }
-        return sb.toString();
-    }
-
-    public static boolean isAlphanumeric(String str) {
-        for (int i = 0; i < str.length(); i++) {
-            char c = str.charAt(i);
-            if ((c < 0x30) || ((c >= 0x3a) && (c <= 0x40)) || ((c > 0x5a) && (c <= 0x60)) || (c
-                    > 0x7a)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public static boolean isAlphanumericUnd(String str) {
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
             if (c < 0x30 || (c >= 0x3a) && (c <= 0x40) || (c > 0x5a) && (c <= 0x60) || (c > 0x7a)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static boolean isAlpha(String str) {
-        for (int i = 0; i < str.length(); i++) {
-            char c = str.charAt(i);
-            if ((c <= 0x40) || ((c > 0x5a) && (c <= 0x60)) || (c > 0x7a)) {
                 return false;
             }
         }
@@ -182,23 +61,6 @@ public class StringMan {
         Object[] array = collection.toArray();
         Arrays.sort(array, Comparator.comparingInt(Object::hashCode));
         return join(array, delimiter);
-    }
-
-    public static String join(Collection<?> collection, char delimiter) {
-        return join(collection.toArray(), delimiter + "");
-    }
-
-    public static boolean isAsciiPrintable(char c) {
-        return (c >= ' ') && (c < '');
-    }
-
-    public static boolean isAsciiPrintable(String s) {
-        for (char c : s.toCharArray()) {
-            if (!isAsciiPrintable(c)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public static int getLevenshteinDistance(String s, String t) {
@@ -248,23 +110,6 @@ public class StringMan {
         return result.toString();
     }
 
-    public static String join(int[] array, String delimiter) {
-        Integer[] wrapped = new Integer[array.length];
-        for (int i = 0; i < array.length; i++) {
-            wrapped[i] = array[i];
-        }
-        return join(wrapped, delimiter);
-    }
-
-    public static boolean isEqualToAny(String a, String... args) {
-        for (String arg : args) {
-            if (StringMan.isEqual(a, arg)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static boolean isEqualIgnoreCaseToAny(@NonNull String a, String... args) {
         for (String arg : args) {
             if (a.equalsIgnoreCase(arg)) {
@@ -283,39 +128,10 @@ public class StringMan {
         return a.equals(b);
     }
 
-    public static boolean isEqualIgnoreCase(String a, String b) {
-        return a.equals(b) || ((a != null) && (b != null) && (a.length() == b.length()) && a
-                .equalsIgnoreCase(b));
-    }
-
     public static String repeat(String s, int n) {
         StringBuilder sb = new StringBuilder();
         sb.append(String.valueOf(s).repeat(Math.max(0, n)));
         return sb.toString();
-    }
-
-    public static boolean contains(String name, char c) {
-        for (char current : name.toCharArray()) {
-            if (c == current) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public <T> Collection<T> match(Collection<T> col, String startsWith) {
-        if (col == null) {
-            return null;
-        }
-        startsWith = startsWith.toLowerCase();
-        Iterator<?> iterator = col.iterator();
-        while (iterator.hasNext()) {
-            Object item = iterator.next();
-            if (item == null || !item.toString().toLowerCase().startsWith(startsWith)) {
-                iterator.remove();
-            }
-        }
-        return col;
     }
 
     /**
@@ -355,7 +171,7 @@ public class StringMan {
         var matcher = StringMan.STRING_SPLIT_PATTERN.matcher(message);
         List<String> splitMessages = new ArrayList<>();
         while (matcher.find()) {
-            splitMessages.add(matcher.group(0).replaceAll("\"", ""));
+            splitMessages.add(matcher.group(matcher.groupCount() - 1).replaceAll("\"", ""));
         }
         return splitMessages;
     }

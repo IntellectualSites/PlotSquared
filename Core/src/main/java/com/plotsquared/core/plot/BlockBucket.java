@@ -110,54 +110,62 @@ public final class BlockBucket implements ConfigurationSerializable {
         if (isCompiled()) {
             return;
         }
-        this.compiled = true;
-        String string = this.input.toString();
-        if (string.isEmpty()) {
-            this.single = null;
-            this.pattern = null;
-            return;
-        }
-        // Convert legacy format
-        boolean legacy = false;
-        String[] blocksStr = string.split(",(?![^\\(\\[]*[\\]\\)])");
-        if (blocksStr.length == 1) {
-            try {
-                Matcher matcher = regex.matcher(string);
+        // Synchronized as BlockBuckets may require compilation asynchronously due to async chunk generation on Paper servers
+        synchronized (this) {
+            if (isCompiled()) {
+                return;
+            }
+            String string = this.input.toString();
+            if (string.isEmpty()) {
+                this.single = null;
+                this.pattern = null;
+                this.compiled = true;
+                return;
+            }
+            // Convert legacy format
+            boolean legacy = false;
+            String[] blocksStr = string.split(",(?![^\\(\\[]*[\\]\\)])");
+            if (blocksStr.length == 1) {
+                try {
+                    Matcher matcher = regex.matcher(string);
+                    if (matcher.find()) {
+                        String chanceStr = matcher.group("chance");
+                        String block = matcher.group("block");
+                        //noinspection PointlessNullCheck
+                        if (chanceStr != null && block != null && !MathMan.isInteger(block) && MathMan
+                                .isInteger(chanceStr)) {
+                            String namespace = matcher.group("namespace");
+                            string = (namespace == null ? "" : namespace + ":") + block;
+                        }
+                    }
+                    this.single = BlockUtil.get(string);
+                    this.pattern = new BlockPattern(single);
+                    this.compiled = true;
+                    return;
+                } catch (Exception ignore) {
+                }
+            }
+            for (int i = 0; i < blocksStr.length; i++) {
+                String entry = blocksStr[i];
+                Matcher matcher = regex.matcher(entry);
                 if (matcher.find()) {
                     String chanceStr = matcher.group("chance");
-                    String block = matcher.group("block");
                     //noinspection PointlessNullCheck
-                    if (chanceStr != null && block != null && !MathMan.isInteger(block) && MathMan
-                            .isInteger(chanceStr)) {
-                        String namespace = matcher.group("namespace");
-                        string = (namespace == null ? "" : namespace + ":") + block;
+                    if (chanceStr != null && MathMan.isInteger(chanceStr)) {
+                        String[] parts = entry.split(":");
+                        parts = Arrays.copyOf(parts, parts.length - 1);
+                        entry = chanceStr + "%" + StringMan.join(parts, ":");
+                        blocksStr[i] = entry;
+                        legacy = true;
                     }
                 }
-                this.single = BlockUtil.get(string);
-                this.pattern = new BlockPattern(single);
-                return;
-            } catch (Exception ignore) {
             }
-        }
-        for (int i = 0; i < blocksStr.length; i++) {
-            String entry = blocksStr[i];
-            Matcher matcher = regex.matcher(entry);
-            if (matcher.find()) {
-                String chanceStr = matcher.group("chance");
-                //noinspection PointlessNullCheck
-                if (chanceStr != null && MathMan.isInteger(chanceStr)) {
-                    String[] parts = entry.split(":");
-                    parts = Arrays.copyOf(parts, parts.length - 1);
-                    entry = chanceStr + "%" + StringMan.join(parts, ":");
-                    blocksStr[i] = entry;
-                    legacy = true;
-                }
+            if (legacy) {
+                string = StringMan.join(blocksStr, ",");
             }
+            pattern = PatternUtil.parse(null, string);
+            this.compiled = true;
         }
-        if (legacy) {
-            string = StringMan.join(blocksStr, ",");
-        }
-        pattern = PatternUtil.parse(null, string);
     }
 
     public boolean isCompiled() {
@@ -207,17 +215,11 @@ public final class BlockBucket implements ConfigurationSerializable {
         return result;
     }
 
-    private static final class Range {
-
-        private final int min;
-        private final int max;
-        private final boolean automatic;
-
-        public Range(int min, int max, boolean automatic) {
-            this.min = min;
-            this.max = max;
-            this.automatic = automatic;
-        }
+    private record Range(
+            int min,
+            int max,
+            boolean automatic
+    ) {
 
         public int getWeight() {
             return max - min;
@@ -225,46 +227,6 @@ public final class BlockBucket implements ConfigurationSerializable {
 
         public boolean isInRange(final int num) {
             return num <= max && num >= min;
-        }
-
-        public int getMin() {
-            return this.min;
-        }
-
-        public int getMax() {
-            return this.max;
-        }
-
-        public boolean equals(final Object o) {
-            if (o == this) {
-                return true;
-            }
-            if (!(o instanceof final Range other)) {
-                return false;
-            }
-            if (this.getMin() != other.getMin()) {
-                return false;
-            }
-            if (this.getMax() != other.getMax()) {
-                return false;
-            }
-            if (this.isAutomatic() != other.isAutomatic()) {
-                return false;
-            }
-            return true;
-        }
-
-        public int hashCode() {
-            final int PRIME = 59;
-            int result = 1;
-            result = result * PRIME + this.getMin();
-            result = result * PRIME + this.getMax();
-            result = result * PRIME + (this.isAutomatic() ? 79 : 97);
-            return result;
-        }
-
-        public boolean isAutomatic() {
-            return this.automatic;
         }
 
     }

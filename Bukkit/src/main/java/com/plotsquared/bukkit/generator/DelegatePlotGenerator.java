@@ -24,9 +24,10 @@ import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.queue.ScopedQueueCoordinator;
+import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.plotsquared.core.util.MathMan;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
@@ -50,6 +51,11 @@ final class DelegatePlotGenerator extends IndependentPlotGenerator {
     }
 
     @Override
+    public BiomeType getBiome(final PlotArea settings, final int x, final int y, final int z) {
+        return null;
+    }
+
+    @Override
     public String getName() {
         return this.chunkGenerator.getClass().getName();
     }
@@ -60,7 +66,7 @@ final class DelegatePlotGenerator extends IndependentPlotGenerator {
     }
 
     @Override
-    public void generateChunk(final ScopedQueueCoordinator result, PlotArea settings) {
+    public void generateChunk(final ZeroedDelegateScopedQueueCoordinator result, PlotArea settings, boolean biomes) {
         World world = BukkitUtil.getWorld(this.world);
         Location min = result.getMin();
         int chunkX = min.getX() >> 4;

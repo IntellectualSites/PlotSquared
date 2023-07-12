@@ -27,7 +27,9 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.DescriptionFlag;
 import com.plotsquared.core.util.EventDispatcher;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(command = "setdescription",
@@ -54,7 +56,7 @@ public class Desc extends SetCommand {
             if (event.getEventResult() == Result.DENY) {
                 player.sendMessage(
                         TranslatableCaption.of("events.event_denied"),
-                        Template.of("value", "Description removal")
+                        TagResolver.resolver("value", Tag.inserting(Component.text("Description removal")))
                 );
                 return false;
             }
@@ -69,7 +71,7 @@ public class Desc extends SetCommand {
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Description set")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("Description set")))
             );
             return false;
         }

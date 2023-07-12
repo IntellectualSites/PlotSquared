@@ -29,8 +29,9 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Permissions;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(command = "continue",
@@ -53,11 +54,12 @@ public class Continue extends SubCommand {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions
-                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_CONTINUE)) {
+        if (!plot.isOwner(player.getUUID()) && !player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_CONTINUE)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", TranslatableCaption.of("permission.no_plot_perms").getComponent(player))
+                    TagResolver.resolver("node", Tag.inserting(
+                            TranslatableCaption.of("permission.no_plot_perms").toComponent(player)
+                    ))
             );
             return false;
         }
@@ -70,7 +72,7 @@ public class Continue extends SubCommand {
                 < player.getPlotCount() + size)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.cant_claim_more_plots"),
-                    Template.of("amount", String.valueOf(player.getAllowedPlots()))
+                    TagResolver.resolver("amount", Tag.inserting(Component.text(player.getAllowedPlots())))
             );
             return false;
         }
@@ -84,7 +86,7 @@ public class Continue extends SubCommand {
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Done flag removal")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("Done flag removal")))
             );
             return true;
         }

@@ -27,14 +27,15 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlotUploader;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.net.URL;
@@ -87,13 +88,11 @@ public class Download extends SubCommand {
             player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return false;
         }
-        if ((Settings.Done.REQUIRED_FOR_DOWNLOAD && !DoneFlag.isDone(plot)) && !Permissions
-                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DOWNLOAD)) {
+        if ((Settings.Done.REQUIRED_FOR_DOWNLOAD && !DoneFlag.isDone(plot)) && !player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_DOWNLOAD)) {
             player.sendMessage(TranslatableCaption.of("done.done_not_done"));
             return false;
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions
-                .hasPermission(player, Permission.PERMISSION_ADMIN.toString())) {
+        if (!plot.isOwner(player.getUUID()) && !player.hasPermission(Permission.PERMISSION_ADMIN.toString())) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
@@ -111,10 +110,13 @@ public class Download extends SubCommand {
             upload(player, plot);
         } else if (args.length == 1 && StringMan
                 .isEqualIgnoreCaseToAny(args[0], "mcr", "world", "mca")) {
-            if (!Permissions.hasPermission(player, Permission.PERMISSION_DOWNLOAD_WORLD)) {
+            if (!player.hasPermission(Permission.PERMISSION_DOWNLOAD_WORLD)) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Template.of("node", Permission.PERMISSION_DOWNLOAD_WORLD.toString())
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_DOWNLOAD_WORLD)
+                        )
                 );
                 return false;
             }
@@ -128,18 +130,24 @@ public class Download extends SubCommand {
                     if (url == null) {
                         player.sendMessage(
                                 TranslatableCaption.of("web.generating_link_failed"),
-                                Template.of("plot", plot.getId().toString())
+                                TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
                         );
                         return;
                     }
-                    player.sendMessage(TranslatableCaption.of("web.generation_link_success_legacy_world"), Template.of("url", url.toString()));
+                    player.sendMessage(
+                            TranslatableCaption.of("web.generation_link_success_legacy_world"),
+                            TagResolver.resolver("url", Tag.inserting(Component.text(url.toString())))
+                    );
                 }
             });
         } else {
             sendUsage(player);
             return false;
         }
-        player.sendMessage(TranslatableCaption.of("web.generating_link"), Template.of("plot", plot.getId().toString()));
+        player.sendMessage(
+                TranslatableCaption.of("web.generating_link"),
+                TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
+        );
         return true;
     }
 
@@ -147,10 +155,10 @@ public class Download extends SubCommand {
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
             final List<String> completions = new LinkedList<>();
-            if (Permissions.hasPermission(player, Permission.PERMISSION_DOWNLOAD)) {
+            if (player.hasPermission(Permission.PERMISSION_DOWNLOAD)) {
                 completions.add("schem");
             }
-            if (Permissions.hasPermission(player, Permission.PERMISSION_DOWNLOAD_WORLD)) {
+            if (player.hasPermission(Permission.PERMISSION_DOWNLOAD_WORLD)) {
                 completions.add("world");
             }
             final List<Command> commands = completions.stream().filter(completion -> completion
@@ -165,7 +173,7 @@ public class Download extends SubCommand {
                             CommandCategory.ADMINISTRATION
                     ) {
                     }).collect(Collectors.toCollection(LinkedList::new));
-            if (Permissions.hasPermission(player, Permission.PERMISSION_DOWNLOAD) && args[0].length() > 0) {
+            if (player.hasPermission(Permission.PERMISSION_DOWNLOAD) && args[0].length() > 0) {
                 commands.addAll(TabCompletions.completePlayers(player, args[0], Collections.emptyList()));
             }
             return commands;
@@ -177,19 +185,25 @@ public class Download extends SubCommand {
         if (Settings.Web.LEGACY_WEBINTERFACE) {
             schematicHandler
                     .getCompoundTag(plot)
-                    .whenComplete((compoundTag, throwable) -> {
-                        schematicHandler.upload(compoundTag, null, null, new RunnableVal<>() {
-                            @Override
-                            public void run(URL value) {
-                                player.sendMessage(
-                                        TranslatableCaption.of("web.generation_link_success"),
-                                        Template.of("download", value.toString()),
-                                        Template.of("delete", "Not available")
-                                );
-                                player.sendMessage(StaticCaption.of(value.toString()));
+                    .whenComplete((compoundTag, throwable) -> schematicHandler.upload(
+                            compoundTag,
+                            null,
+                            null,
+                            new RunnableVal<>() {
+                                @Override
+                                public void run(URL value) {
+                                    plot.removeRunning();
+                                    player.sendMessage(
+                                            TranslatableCaption.of("web.generation_link_success"),
+                                            TagResolver.builder()
+                                                    .tag("download", Tag.preProcessParsed(value.toString()))
+                                                    .tag("delete", Tag.preProcessParsed("Not available"))
+                                                    .build()
+                                    );
+                                    player.sendMessage(StaticCaption.of(value.toString()));
+                                }
                             }
-                        });
-                    });
+                    ));
             return;
         }
         // TODO legacy support
@@ -198,13 +212,15 @@ public class Download extends SubCommand {
                     if (throwable != null || !result.isSuccess()) {
                         player.sendMessage(
                                 TranslatableCaption.of("web.generating_link_failed"),
-                                Template.of("plot", plot.getId().toString())
+                                TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
                         );
                     } else {
                         player.sendMessage(
                                 TranslatableCaption.of("web.generation_link_success"),
-                                Template.of("download", result.getDownloadUrl()),
-                                Template.of("delete", result.getDeletionUrl())
+                                TagResolver.builder()
+                                        .tag("download", Tag.preProcessParsed(result.getDownloadUrl()))
+                                        .tag("delete", Tag.preProcessParsed(result.getDeletionUrl()))
+                                        .build()
                         );
                     }
                 });

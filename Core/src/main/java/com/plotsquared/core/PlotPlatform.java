@@ -32,6 +32,7 @@ import com.plotsquared.core.inject.annotations.DefaultGenerator;
 import com.plotsquared.core.location.World;
 import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
@@ -74,6 +75,11 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * Completely shuts down the plugin.
      */
     void shutdown();
+
+    /**
+     * Completely shuts down the server.
+     */
+    void shutdownServer();
 
     /**
      * Get the name of the plugin
@@ -277,6 +283,16 @@ public interface PlotPlatform<P> extends LocaleHolder {
      */
     default @NonNull ChunkManager chunkManager() {
         return injector().getInstance(ChunkManager.class);
+    }
+
+    /**
+     * Get the {@link ExpireManager} implementation for the platform
+     *
+     * @return Expire manager
+     * @since 6.10.2
+     */
+    default @NonNull ExpireManager expireManager() {
+        return injector().getInstance(ExpireManager.class);
     }
 
     /**

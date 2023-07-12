@@ -32,11 +32,12 @@ import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -79,7 +80,7 @@ public class Clear extends Command {
         if (eventResult == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Clear")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("Clear")))
             );
             return CompletableFuture.completedFuture(true);
         }
@@ -89,13 +90,14 @@ public class Clear extends Command {
         }
         boolean force = eventResult == Result.FORCE;
         checkTrue(
-                force || plot.isOwner(player.getUUID()) || Permissions
-                        .hasPermission(player, "plots.admin.command.clear"),
+                force || plot.isOwner(player.getUUID()) || player.hasPermission("plots.admin.command.clear"),
                 TranslatableCaption.of("permission.no_plot_perms")
         );
         checkTrue(plot.getRunning() == 0, TranslatableCaption.of("errors.wait_for_timer"));
-        checkTrue(force || !Settings.Done.RESTRICT_BUILDING || !DoneFlag.isDone(plot) || Permissions
-                .hasPermission(player, "plots.continue"), TranslatableCaption.of("done.done_already_done"));
+        checkTrue(
+                force || !Settings.Done.RESTRICT_BUILDING || !DoneFlag.isDone(plot) || player.hasPermission("plots.continue"),
+                TranslatableCaption.of("done.done_already_done")
+        );
         confirm.run(this, () -> {
             if (Settings.Teleport.ON_CLEAR) {
                 plot.getPlayersInPlot().forEach(playerInPlot -> plot.teleportPlayer(playerInPlot, TeleportCause.COMMAND_CLEAR,
@@ -105,36 +107,35 @@ public class Clear extends Command {
             }
             BackupManager.backup(player, plot, () -> {
                 final long start = System.currentTimeMillis();
-                boolean result = plot.getPlotModificationManager().clear(true, false, player, () -> {
-                    plot.getPlotModificationManager().unlink();
-                    TaskManager.runTask(() -> {
-                        plot.removeRunning();
-                        // If the state changes, then mark it as no longer done
-                        if (DoneFlag.isDone(plot)) {
-                            PlotFlag<?, ?> plotFlag =
-                                    plot.getFlagContainer().getFlag(DoneFlag.class);
-                            PlotFlagRemoveEvent event = this.eventDispatcher
-                                    .callFlagRemove(plotFlag, plot);
-                            if (event.getEventResult() != Result.DENY) {
-                                plot.removeFlag(event.getFlag());
-                            }
+                boolean result = plot.getPlotModificationManager().clear(true, false, player, () -> TaskManager.runTask(() -> {
+                    plot.removeRunning();
+                    // If the state changes, then mark it as no longer done
+                    if (DoneFlag.isDone(plot)) {
+                        PlotFlag<?, ?> plotFlag =
+                                plot.getFlagContainer().getFlag(DoneFlag.class);
+                        PlotFlagRemoveEvent event = this.eventDispatcher
+                                .callFlagRemove(plotFlag, plot);
+                        if (event.getEventResult() != Result.DENY) {
+                            plot.removeFlag(event.getFlag());
                         }
-                        if (!plot.getFlag(AnalysisFlag.class).isEmpty()) {
-                            PlotFlag<?, ?> plotFlag =
-                                    plot.getFlagContainer().getFlag(AnalysisFlag.class);
-                            PlotFlagRemoveEvent event = this.eventDispatcher
-                                    .callFlagRemove(plotFlag, plot);
-                            if (event.getEventResult() != Result.DENY) {
-                                plot.removeFlag(event.getFlag());
-                            }
+                    }
+                    if (!plot.getFlag(AnalysisFlag.class).isEmpty()) {
+                        PlotFlag<?, ?> plotFlag =
+                                plot.getFlagContainer().getFlag(AnalysisFlag.class);
+                        PlotFlagRemoveEvent event = this.eventDispatcher
+                                .callFlagRemove(plotFlag, plot);
+                        if (event.getEventResult() != Result.DENY) {
+                            plot.removeFlag(event.getFlag());
                         }
-                        player.sendMessage(
-                                TranslatableCaption.of("working.clearing_done"),
-                                Template.of("amount", String.valueOf(System.currentTimeMillis() - start)),
-                                Template.of("plot", plot.getId().toString())
-                        );
-                    });
-                });
+                    }
+                    player.sendMessage(
+                            TranslatableCaption.of("working.clearing_done"),
+                            TagResolver.builder()
+                                    .tag("amount", Tag.inserting(Component.text(System.currentTimeMillis() - start)))
+                                    .tag("plot", Tag.inserting(Component.text(plot.getId().toString())))
+                                    .build()
+                    );
+                }));
                 if (!result) {
                     player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
                 } else {

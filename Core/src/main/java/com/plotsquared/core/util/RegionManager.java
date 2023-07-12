@@ -272,7 +272,8 @@ public abstract class RegionManager {
         fromQueue1.addReadChunks(new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()).getChunks());
         fromQueue2.addReadChunks(new CuboidRegion(
                 swapPos.getBlockVector3(),
-                BlockVector3.at(swapPos.getX() + pos2.getX() - pos1.getX(),
+                BlockVector3.at(
+                        swapPos.getX() + pos2.getX() - pos1.getX(),
                         pos1.getY(),
                         swapPos.getZ() + pos2.getZ() - pos1.getZ()
                 )
@@ -370,17 +371,6 @@ public abstract class RegionManager {
                 }
             }
         });
-    }
-
-    @Deprecated(forRemoval = true, since = "6.6.0")
-    public void setBiome(
-            final CuboidRegion region,
-            final int extendBiome,
-            final BiomeType biome,
-            final String world,
-            final Runnable whenDone
-    ) {
-        setBiome(region, extendBiome, biome, PlotSquared.get().getPlotAreaManager().getPlotAreas(world, region)[0], whenDone);
     }
 
     /**

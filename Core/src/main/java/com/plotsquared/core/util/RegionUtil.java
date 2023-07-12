@@ -19,13 +19,10 @@
 package com.plotsquared.core.util;
 
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
-import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -69,11 +66,6 @@ public class RegionUtil {
         return new CuboidRegion(min, max);
     }
 
-    @Deprecated(forRemoval = true, since = "6.6.0")
-    public static CuboidRegion createRegion(int pos1x, int pos2x, int pos1z, int pos2z) {
-        return createRegion(pos1x, pos2x, 0, 255, pos1z, pos2z);
-    }
-
     public static CuboidRegion createRegion(
             int pos1x, int pos2x, int pos1y, int pos2y, int pos1z,
             int pos2z
@@ -94,12 +86,6 @@ public class RegionUtil {
         BlockVector3 max = region.getMaximumPoint();
         return x >= min.getX() && x <= max.getX() && z >= min.getZ() && z <= max.getZ() && y >= min
                 .getY() && y <= max.getY();
-    }
-
-    public static @NonNull Rectangle2D toRectangle(final @NonNull CuboidRegion region) {
-        final BlockVector2 min = region.getMinimumPoint().toBlockVector2();
-        final BlockVector2 max = region.getMaximumPoint().toBlockVector2();
-        return new Rectangle2D.Double(min.getX(), min.getZ(), max.getX(), max.getZ());
     }
 
     // Because WorldEdit (not FastAsyncWorldEdit) lack this for CuboidRegion

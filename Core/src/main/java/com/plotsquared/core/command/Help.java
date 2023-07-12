@@ -28,7 +28,8 @@ import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,9 +60,10 @@ public class Help extends Command {
             RunnableVal2<Command, CommandResult> whenDone
     ) {
         switch (args.length) {
-            case 0:
+            case 0 -> {
                 return displayHelp(player, null, 0);
-            case 1:
+            }
+            case 1 -> {
                 if (MathMan.isInteger(args[0])) {
                     try {
                         return displayHelp(player, null, Integer.parseInt(args[0]));
@@ -71,7 +73,8 @@ public class Help extends Command {
                 } else {
                     return displayHelp(player, args[0], 1);
                 }
-            case 2:
+            }
+            case 2 -> {
                 if (MathMan.isInteger(args[1])) {
                     try {
                         return displayHelp(player, args[0], Integer.parseInt(args[1]));
@@ -80,8 +83,8 @@ public class Help extends Command {
                     }
                 }
                 return CompletableFuture.completedFuture(false);
-            default:
-                sendUsage(player);
+            }
+            default -> sendUsage(player);
         }
         return CompletableFuture.completedFuture(true);
     }
@@ -110,27 +113,36 @@ public class Help extends Command {
             }
             if (cat == null && page == 0) {
                 TextComponent.Builder builder = Component.text();
-                builder.append(MINI_MESSAGE.parse(TranslatableCaption.of("help.help_header").getComponent(player)));
+                builder.append(MINI_MESSAGE.deserialize(TranslatableCaption.of("help.help_header").getComponent(player)));
                 for (CommandCategory c : CommandCategory.values()) {
                     if (!c.canAccess(player)) {
                         continue;
                     }
                     builder.append(Component.newline()).append(MINI_MESSAGE
-                            .parse(
+                            .deserialize(
                                     TranslatableCaption.of("help.help_info_item").getComponent(player),
-                                    Template.of("command", "/plot help"),
-                                    Template.of("category", c.name().toLowerCase()),
-                                    Template.of("category_desc", c.getComponent(player))
+                                    TagResolver.builder()
+                                            .tag("command", Tag.inserting(Component.text("/plot help")))
+                                            .tag("category", Tag.inserting(Component.text(c.name().toLowerCase())))
+                                            .tag("category_desc", Tag.inserting(c.toComponent(player)))
+                                            .build()
                             ));
                 }
                 builder.append(Component.newline()).append(MINI_MESSAGE
-                        .parse(
+                        .deserialize(
                                 TranslatableCaption.of("help.help_info_item").getComponent(player),
-                                Template.of("command", "/plot help"),
-                                Template.of("category", "all"),
-                                Template.of("category_desc", "Display all commands")
+                                TagResolver.builder()
+                                        .tag("command", Tag.inserting(Component.text("/plot help")))
+                                        .tag("category", Tag.inserting(Component.text("all")))
+                                        .tag(
+                                                "category_desc",
+                                                Tag.inserting(TranslatableCaption
+                                                        .of("help.help_display_all_commands")
+                                                        .toComponent(player))
+                                        )
+                                        .build()
                         ));
-                builder.append(Component.newline()).append(MINI_MESSAGE.parse(TranslatableCaption
+                builder.append(Component.newline()).append(MINI_MESSAGE.deserialize(TranslatableCaption
                         .of("help.help_footer")
                         .getComponent(player)));
                 player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(builder.asComponent())));

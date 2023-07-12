@@ -43,11 +43,10 @@ import java.util.function.Consumer;
 
 public abstract class QueueCoordinator {
 
+    private final AtomicBoolean enqueued = new AtomicBoolean();
     private boolean forceSync = false;
     @Nullable
     private Object chunkObject;
-    private final AtomicBoolean enqueued = new AtomicBoolean();
-
     @SuppressWarnings({"unused", "FieldCanBeLocal"})
     @Inject
     private GlobalBlockQueue blockQueue;
@@ -62,35 +61,17 @@ public abstract class QueueCoordinator {
     }
 
     /**
-     * Get a {@link ScopedQueueCoordinator} limited to the chunk at the specific chunk Coordinates
+     * Get a {@link ZeroedDelegateScopedQueueCoordinator} limited to the chunk at the specific chunk Coordinates
      *
      * @param x chunk x coordinate
      * @param z chunk z coordinate
-     * @return a new {@link ScopedQueueCoordinator}
-     * @deprecated Use {@link ScopedQueueCoordinator#getForChunk(int, int, int, int)}
+     * @return a new {@link ZeroedDelegateScopedQueueCoordinator}
+     * @since 7.0.0
      */
-    @Deprecated(forRemoval = true, since = "6.6.0")
-    public ScopedQueueCoordinator getForChunk(int x, int z) {
-        if (getWorld() == null) {
-            return getForChunk(x, z, PlotSquared.platform().versionMinHeight(), PlotSquared.platform().versionMaxHeight());
-        }
-        return getForChunk(x, z, getWorld().getMinY(), getWorld().getMaxY());
-    }
-
-    /**
-     * Get a {@link ScopedQueueCoordinator} limited to the chunk at the specific chunk Coordinates
-     *
-     * @param x chunk x coordinate
-     * @param z chunk z coordinate
-     * @return a new {@link ScopedQueueCoordinator}
-     * @since 6.6.0
-     * @deprecated {@link ScopedQueueCoordinator} will be renamed in v7.
-     */
-    @Deprecated(forRemoval = true, since = "6.9.0")
-    public ScopedQueueCoordinator getForChunk(int x, int z, int minY, int maxY) {
+    public ZeroedDelegateScopedQueueCoordinator getForChunk(int x, int z, int minY, int maxY) {
         int bx = x << 4;
         int bz = z << 4;
-        return new ScopedQueueCoordinator(this, Location.at(getWorld().getName(), bx, minY, bz),
+        return new ZeroedDelegateScopedQueueCoordinator(this, Location.at(getWorld().getName(), bx, minY, bz),
                 Location.at(getWorld().getName(), bx + 15, maxY, bz + 15)
         );
     }
@@ -221,7 +202,7 @@ public abstract class QueueCoordinator {
      * @return success or not
      * @deprecated Biomes now take XYZ, see {@link #setBiome(int, int, int, BiomeType)}
      *         <br>
-     *         Scheduled for removal once we drop the support for versions not supporting 3D biomes.
+     *         Scheduled for removal once we drop the support for versions not supporting 3D biomes, 1.18 and earlier.
      */
     @Deprecated(forRemoval = true, since = "6.0.0")
     public abstract boolean setBiome(int x, int z, @NonNull BiomeType biome);

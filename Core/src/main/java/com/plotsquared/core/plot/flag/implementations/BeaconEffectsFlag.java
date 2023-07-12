@@ -16,19 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.util;
+package com.plotsquared.core.plot.flag.implementations;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.plot.flag.types.BooleanFlag;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-@Deprecated(since = "6.6.2", forRemoval = true)
-public class RegExUtil {
+public class BeaconEffectsFlag extends BooleanFlag<BeaconEffectsFlag> {
 
-    public static Map<String, Pattern> compiledPatterns;
+    public static final BeaconEffectsFlag BEACON_EFFECT_TRUE = new BeaconEffectsFlag(true);
+    public static final BeaconEffectsFlag BEACON_EFFECT_FALSE = new BeaconEffectsFlag(false);
 
-    static {
-        compiledPatterns = new HashMap<>();
+    private BeaconEffectsFlag(boolean value) {
+        super(value, TranslatableCaption.of("flags.flag_description_beacon_effect"));
+    }
+
+    @Override
+    protected BeaconEffectsFlag flagOf(@NonNull final Boolean value) {
+        return value ? BEACON_EFFECT_TRUE : BEACON_EFFECT_FALSE;
     }
 
 }

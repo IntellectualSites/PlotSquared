@@ -270,7 +270,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
             if (getChunkObject() instanceof Chunk chunkObject) {
                 existing = chunkObject.getBlock(x & 15, y, z & 15);
             } else {
-                 existing = getBukkitWorld().getBlockAt(x, y, z);
+                existing = getBukkitWorld().getBlockAt(x, y, z);
             }
             final BlockState existingBaseBlock = BukkitAdapter.adapt(existing.getBlockData());
             if (BukkitBlockUtil.get(existing).equals(existingBaseBlock) && existing.getBlockData().matches(blockData)) {

@@ -31,8 +31,6 @@ import com.sk89q.worldedit.world.registry.LegacyMapper;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.Map;
-
 /**
  * {@link BlockState} related utility methods
  */
@@ -107,36 +105,6 @@ public final class BlockUtil {
         } catch (InputParseException e) {
             return null;
         }
-    }
-
-    /**
-     * Parse a comma delimited list of block states
-     *
-     * @param commaDelimited List of block states
-     * @return Parsed block states
-     */
-    public static @NonNull BlockState[] parse(final @NonNull String commaDelimited) {
-        final String[] split = commaDelimited.split(",(?![^\\(\\[]*[\\]\\)])");
-        final BlockState[] result = new BlockState[split.length];
-        for (int i = 0; i < split.length; i++) {
-            result[i] = get(split[i]);
-        }
-        return result;
-    }
-
-    /**
-     * Deserialize a serialized {@link BlockState}
-     *
-     * @param map Serialized block state
-     * @return Deserialized block state, or {@code null} if the map is
-     *         not a properly serialized block state
-     */
-    public static @Nullable BlockState deserialize(final @NonNull Map<String, Object> map) {
-        if (map.containsKey("material")) {
-            final Object object = map.get("material");
-            return get(object.toString());
-        }
-        return null;
     }
 
 }

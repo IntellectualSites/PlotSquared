@@ -26,12 +26,13 @@ import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
@@ -58,19 +59,21 @@ public class Add extends Command {
 
     @Override
     public CompletableFuture<Boolean> execute(
-            final PlotPlayer<?> player, String[] args,
+            final PlotPlayer<?> player,
+            String[] args,
             RunnableVal3<Command, Runnable, Runnable> confirm,
             RunnableVal2<Command, CommandResult> whenDone
     ) throws CommandException {
         final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.of("errors.not_in_plot"));
         checkTrue(plot.hasOwner(), TranslatableCaption.of("info.plot_unowned"));
         checkTrue(
-                plot.isOwner(player.getUUID()) || Permissions
-                        .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST),
+                plot.isOwner(player.getUUID()) || player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_TRUST),
                 TranslatableCaption.of("permission.no_plot_perms")
         );
-        checkTrue(args.length == 1, TranslatableCaption.of("commandconfig.command_syntax"),
-                Template.of("value", "/plot add <player | *>")
+        checkTrue(
+                args.length == 1,
+                TranslatableCaption.of("commandconfig.command_syntax"),
+                TagResolver.resolver("value", Tag.inserting(Component.text("/plot add <player | *>")))
         );
         final CompletableFuture<Boolean> future = new CompletableFuture<>();
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
@@ -80,7 +83,7 @@ public class Add extends Command {
                 } else {
                     player.sendMessage(
                             TranslatableCaption.of("errors.invalid_player"),
-                            Template.of("value", args[0])
+                            TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))
                     );
                 }
                 future.completeExceptionally(throwable);
@@ -88,18 +91,19 @@ public class Add extends Command {
             } else {
                 try {
                     checkTrue(!uuids.isEmpty(), TranslatableCaption.of("errors.invalid_player"),
-                            Template.of("value", args[0])
+                            TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))
                     );
                     Iterator<UUID> iterator = uuids.iterator();
                     int size = plot.getTrusted().size() + plot.getMembers().size();
                     while (iterator.hasNext()) {
                         UUID uuid = iterator.next();
-                        if (uuid == DBFunc.EVERYONE && !(
-                                Permissions.hasPermission(player, Permission.PERMISSION_TRUST_EVERYONE) || Permissions
-                                        .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST))) {
+                        if (uuid == DBFunc.EVERYONE && !(player.hasPermission(Permission.PERMISSION_TRUST_EVERYONE) || player.hasPermission(
+                                Permission.PERMISSION_ADMIN_COMMAND_TRUST))) {
                             player.sendMessage(
                                     TranslatableCaption.of("errors.invalid_player"),
-                                    Template.of("value", PlayerManager.resolveName(uuid).getComponent(player))
+                                    TagResolver.resolver("value", Tag.inserting(
+                                            PlayerManager.resolveName(uuid).toComponent(player)
+                                    ))
                             );
                             iterator.remove();
                             continue;
@@ -107,7 +111,9 @@ public class Add extends Command {
                         if (plot.isOwner(uuid)) {
                             player.sendMessage(
                                     TranslatableCaption.of("member.already_added"),
-                                    Template.of("player", PlayerManager.resolveName(uuid).getComponent(player))
+                                    TagResolver.resolver("player", Tag.inserting(
+                                            PlayerManager.resolveName(uuid).toComponent(player)
+                                    ))
                             );
                             iterator.remove();
                             continue;
@@ -115,7 +121,9 @@ public class Add extends Command {
                         if (plot.getMembers().contains(uuid)) {
                             player.sendMessage(
                                     TranslatableCaption.of("member.already_added"),
-                                    Template.of("player", PlayerManager.resolveName(uuid).getComponent(player))
+                                    TagResolver.resolver("player", Tag.inserting(
+                                            PlayerManager.resolveName(uuid).toComponent(player)
+                                    ))
                             );
                             iterator.remove();
                             continue;
@@ -124,11 +132,11 @@ public class Add extends Command {
                     }
                     checkTrue(!uuids.isEmpty(), null);
                     int localAddSize = plot.getMembers().size();
-                    int maxAddSize = Permissions.hasPermissionRange(player, Permission.PERMISSION_ADD, Settings.Limit.MAX_PLOTS);
+                    int maxAddSize = player.hasPermissionRange(Permission.PERMISSION_ADD, Settings.Limit.MAX_PLOTS);
                     if (localAddSize >= maxAddSize) {
                         player.sendMessage(
                                 TranslatableCaption.of("members.plot_max_members_added"),
-                                Template.of("amount", String.valueOf(localAddSize))
+                                TagResolver.resolver("amount", Tag.inserting(Component.text(localAddSize)))
                         );
                         return;
                     }

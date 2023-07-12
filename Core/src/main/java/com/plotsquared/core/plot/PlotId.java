@@ -107,15 +107,6 @@ public final class PlotId {
     }
 
     /**
-     * Get a copy of the plot ID
-     *
-     * @return Plot ID copy
-     */
-    public @NonNull PlotId copy() {
-        return of(this.getX(), this.getY());
-    }
-
-    /**
      * Get the ID X component
      *
      * @return X component

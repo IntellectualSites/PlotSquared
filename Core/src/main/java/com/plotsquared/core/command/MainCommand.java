@@ -32,10 +32,12 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.util.EconHandler;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -72,7 +74,6 @@ public class MainCommand extends Command {
             commands.add(Buy.class);
             if (Settings.Web.LEGACY_WEBINTERFACE) {
                 LOGGER.warn("Legacy webinterface is used. Please note that it will be removed in future.");
-                commands.add(Save.class);
             }
             commands.add(Load.class);
             commands.add(Confirm.class);
@@ -121,7 +122,6 @@ public class MainCommand extends Command {
             commands.add(Move.class);
             commands.add(Condense.class);
             commands.add(Copy.class);
-            commands.add(Chat.class);
             commands.add(Trim.class);
             commands.add(Done.class);
             commands.add(Continue.class);
@@ -244,8 +244,8 @@ public class MainCommand extends Command {
             PlotArea area = player.getApplicablePlotArea();
             Plot newPlot = Plot.fromString(area, args[0]);
             if (newPlot != null && (player instanceof ConsolePlayer || newPlot.getArea()
-                    .equals(area) || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN)
-                    || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_AREA_SUDO))
+                    .equals(area) || player.hasPermission(Permission.PERMISSION_ADMIN)
+                    || player.hasPermission(Permission.PERMISSION_ADMIN_AREA_SUDO))
                     && !newPlot.isDenied(player.getUUID())) {
                 final Location newLoc;
                 if (newPlot.getArea() instanceof SinglePlotArea) {
@@ -311,7 +311,7 @@ public class MainCommand extends Command {
             if (message != null) {
                 player.sendMessage(
                         TranslatableCaption.of("errors.error"),
-                        net.kyori.adventure.text.minimessage.Template.of("value", message)
+                        TagResolver.resolver("value", Tag.inserting(Component.text(message)))
                 );
             } else {
                 player.sendMessage(

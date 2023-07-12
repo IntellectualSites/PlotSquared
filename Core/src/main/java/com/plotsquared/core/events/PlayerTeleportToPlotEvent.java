@@ -32,15 +32,6 @@ public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements Cancel
     private Result eventResult;
 
     /**
-     * @deprecated use {@link PlayerTeleportToPlotEvent#PlayerTeleportToPlotEvent(PlotPlayer, Location, Plot, TeleportCause)}.
-     * You should not be creating events in the first place.
-     */
-    @Deprecated(forRemoval = true, since = "6.1.0")
-    public PlayerTeleportToPlotEvent(PlotPlayer<?> player, Location from, Plot plot) {
-        this(player, from, plot, TeleportCause.UNKNOWN);
-    }
-
-    /**
      * PlayerTeleportToPlotEvent: Called when a player teleports to a plot
      *
      * @param player That was teleported

@@ -63,7 +63,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -163,7 +162,7 @@ public class HybridUtils {
                 int relChunkZ = chunkPos.getZ() - cbz;
                 oldBlockQueue.setOffsetX(relChunkX << 4);
                 oldBlockQueue.setOffsetZ(relChunkZ << 4);
-                hpw.getGenerator().generateChunk(oldBlockQueue, hpw);
+                hpw.getGenerator().generateChunk(oldBlockQueue, hpw, false);
             });
 
             final BlockState[][][] oldBlocks = oldBlockQueue.getBlockStates();
@@ -234,44 +233,52 @@ public class HybridUtils {
                         Set<BlockType> types = new HashSet<>();
                         for (int yIndex = 0; yIndex < height; yIndex++) {
                             BlockState old = oldBlocks[yIndex][x][z]; // Nullable
-                            try {
-                                BlockState now = newBlocks[yIndex][x][z]; // Not null
-                                if (!now.equals(old) && !(old == null && now.getBlockType().equals(BlockTypes.AIR))) {
-                                    changes[i]++;
-                                }
-                                if (now.getBlockType().getMaterial().isAir()) {
-                                    air[i]++;
-                                } else {
-                                    // check vertices
-                                    // modifications_adjacent
-                                    if (x > 0 && z > 0 && yIndex > 0 && x < width - 1 && z < length - 1 && yIndex < (height - 1)) {
-                                        if (newBlocks[yIndex - 1][x][z].getBlockType().getMaterial().isAir()) {
-                                            faces[i]++;
-                                        }
-                                        if (newBlocks[yIndex][x - 1][z].getBlockType().getMaterial().isAir()) {
-                                            faces[i]++;
-                                        }
-                                        if (newBlocks[yIndex][x][z - 1].getBlockType().getMaterial().isAir()) {
-                                            faces[i]++;
-                                        }
-                                        if (newBlocks[yIndex + 1][x][z].getBlockType().getMaterial().isAir()) {
-                                            faces[i]++;
-                                        }
-                                        if (newBlocks[yIndex][x + 1][z].getBlockType().getMaterial().isAir()) {
-                                            faces[i]++;
-                                        }
-                                        if (newBlocks[yIndex][x][z + 1].getBlockType().getMaterial().isAir()) {
-                                            faces[i]++;
-                                        }
+                            BlockState now = newBlocks[yIndex][x][z]; // Not null
+                            if (now == null) {
+                                throw new NullPointerException(String.format(
+                                        "\"now\" block null attempting to perform plot analysis. Indexes: x=%d of %d, yIndex=%d" +
+                                                " of %d, z=%d of %d",
+                                        x,
+                                        width,
+                                        yIndex,
+                                        height,
+                                        z,
+                                        length
+                                ));
+                            }
+                            if (!now.equals(old) && !(old == null && now.getBlockType().equals(BlockTypes.AIR))) {
+                                changes[i]++;
+                            }
+                            if (now.getBlockType().getMaterial().isAir()) {
+                                air[i]++;
+                            } else {
+                                // check vertices
+                                // modifications_adjacent
+                                if (x > 0 && z > 0 && yIndex > 0 && x < width - 1 && z < length - 1 && yIndex < (height - 1)) {
+                                    if (newBlocks[yIndex - 1][x][z].getBlockType().getMaterial().isAir()) {
+                                        faces[i]++;
                                     }
+                                    if (newBlocks[yIndex][x - 1][z].getBlockType().getMaterial().isAir()) {
+                                        faces[i]++;
+                                    }
+                                    if (newBlocks[yIndex][x][z - 1].getBlockType().getMaterial().isAir()) {
+                                        faces[i]++;
+                                    }
+                                    if (newBlocks[yIndex + 1][x][z].getBlockType().getMaterial().isAir()) {
+                                        faces[i]++;
+                                    }
+                                    if (newBlocks[yIndex][x + 1][z].getBlockType().getMaterial().isAir()) {
+                                        faces[i]++;
+                                    }
+                                    if (newBlocks[yIndex][x][z + 1].getBlockType().getMaterial().isAir()) {
+                                        faces[i]++;
+                                    }
+                                }
 
-                                    if (!now.equals(now.getBlockType().getDefaultState())) {
-                                        data[i]++;
-                                    }
-                                    types.add(now.getBlockType());
+                                if (!now.equals(now.getBlockType().getDefaultState())) {
+                                    data[i]++;
                                 }
-                            } catch (NullPointerException e) {
-                                e.printStackTrace();
+                                types.add(now.getBlockType());
                             }
                         }
                         variety[i] = types.size();
@@ -370,22 +377,6 @@ public class HybridUtils {
             }
         };
         run.run();
-    }
-
-    public int checkModified(QueueCoordinator queue, int x1, int x2, int y1, int y2, int z1, int z2, BlockState[] blocks) {
-        int count = 0;
-        for (int y = y1; y <= y2; y++) {
-            for (int x = x1; x <= x2; x++) {
-                for (int z = z1; z <= z2; z++) {
-                    BlockState block = queue.getBlock(x, y, z);
-                    boolean same = Arrays.stream(blocks).anyMatch(p -> this.worldUtil.isBlockSame(block, p));
-                    if (!same) {
-                        count++;
-                    }
-                }
-            }
-        }
-        return count;
     }
 
     public final ArrayList<BlockVector2> getChunks(BlockVector2 region) {
@@ -590,20 +581,6 @@ public class HybridUtils {
     /**
      * Regenerate the road in a chunk in a plot area.
      *
-     * @param area   Plot area to regenerate road for
-     * @param chunk  Chunk location to regenerate
-     * @param extend How far to extend setting air above the road
-     * @return if successful
-     * @deprecated use {@link HybridUtils#regenerateRoad(PlotArea, BlockVector2, int, QueueCoordinator)}
-     */
-    @Deprecated(forRemoval = true, since = "6.6.0")
-    public boolean regenerateRoad(final PlotArea area, final BlockVector2 chunk, int extend) {
-        return regenerateRoad(area, chunk, extend, null);
-    }
-
-    /**
-     * Regenerate the road in a chunk in a plot area.
-     *
      * @param area             Plot area to regenerate road for
      * @param chunk            Chunk location to regenerate
      * @param extend           How far to extend setting air above the road
@@ -691,7 +668,7 @@ public class HybridUtils {
                     }
                     if (condition) {
                         BaseBlock[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
-                        int minY = Settings.Schematics.PASTE_ROAD_ON_TOP ? plotWorld.SCHEM_Y : area.getMinGenHeight() + 1;
+                        int minY = plotWorld.getRoadYStart();
                         int maxDy = Math.max(extend, blocks.length);
                         for (int dy = 0; dy < maxDy; dy++) {
                             if (dy > blocks.length - 1) {

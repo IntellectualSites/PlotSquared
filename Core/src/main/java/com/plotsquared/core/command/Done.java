@@ -19,6 +19,7 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotDoneEvent;
@@ -29,14 +30,14 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.expiration.PlotAnalysis;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(command = "done",
@@ -70,13 +71,12 @@ public class Done extends SubCommand {
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Done")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("Done")))
             );
             return true;
         }
         boolean force = event.getEventResult() == Result.FORCE;
-        if (!force && !plot.isOwner(player.getUUID()) && !Permissions
-                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DONE)) {
+        if (!force && !plot.isOwner(player.getUUID()) && !player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_DONE)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
@@ -91,10 +91,10 @@ public class Done extends SubCommand {
         plot.addRunning();
         player.sendMessage(
                 TranslatableCaption.of("web.generating_link"),
-                Template.of("plot", plot.getId().toString())
+                TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
         );
         final Settings.Auto_Clear doneRequirements = Settings.AUTO_CLEAR.get("done");
-        if (ExpireManager.IMP == null || doneRequirements == null) {
+        if (PlotSquared.platform().expireManager() == null || doneRequirements == null) {
             finish(plot, player, true);
             plot.removeRunning();
         } else {
@@ -103,7 +103,7 @@ public class Done extends SubCommand {
                 public void run(PlotAnalysis value) {
                     plot.removeRunning();
                     boolean result =
-                            value.getComplexity(doneRequirements) <= doneRequirements.THRESHOLD;
+                            value.getComplexity(doneRequirements) >= doneRequirements.THRESHOLD;
                     finish(plot, player, result);
                 }
             });

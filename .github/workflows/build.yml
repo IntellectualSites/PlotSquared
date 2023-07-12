@@ -1,15 +1,16 @@
 name: build
-
-on: [ pull_request, push ]
-
+on:
+  push:
+    branches:
+      - main
 jobs:
   build:
-    if: ${{ github.event_name != 'pull_request' || github.repository != github.event.pull_request.head.repo.full_name }}
+    if: github.repository_owner == 'IntellectualSites'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-      - name: Validate Gradle Wrapper"
+      - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -27,7 +28,7 @@ jobs:
             echo "STATUS=release" >> $GITHUB_ENV
           fi
       - name: Publish Release
-        if: ${{ runner.os == 'Linux' && env.STATUS == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/v6'}}
+        if: ${{ runner.os == 'Linux' && env.STATUS == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/main'}}
         run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
         env:
           ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
@@ -35,13 +36,13 @@ jobs:
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
       - name: Publish Snapshot
-        if: ${{ runner.os == 'Linux' && env.STATUS != 'release' && github.event_name == 'push' && github.ref == 'refs/heads/v6' }}
+        if: ${{ runner.os == 'Linux' && env.STATUS != 'release' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         run: ./gradlew publishToSonatype
         env:
           ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
           ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
       - name: Publish core javadoc
-        if: ${{ runner.os == 'Linux' && env.STATUS == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/v6'}}
+       # if: ${{ runner.os == 'Linux' && env.STATUS == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/main'}}
         uses: cpina/github-action-push-to-another-repository@main
         env:
           SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
@@ -51,9 +52,9 @@ jobs:
           destination-repository-name: 'plotsquared-javadocs'
           user-email: ${{ secrets.USER_EMAIL }}
           target-branch: main
-          target-directory: core
+          target-directory: v7/core
       - name: Publish bukkit javadoc
-        if: ${{ runner.os == 'Linux' && env.STATUS == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/v6'}}
+      #  if: ${{ runner.os == 'Linux' && env.STATUS == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/main'}}
         uses: cpina/github-action-push-to-another-repository@main
         env:
           SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
@@ -63,4 +64,4 @@ jobs:
           destination-repository-name: 'plotsquared-javadocs'
           user-email: ${{ secrets.USER_EMAIL }}
           target-branch: main
-          target-directory: bukkit
+          target-directory: v7/bukkit

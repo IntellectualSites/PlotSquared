@@ -26,9 +26,10 @@ import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MathMan;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.query.PlotQuery;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -92,7 +93,10 @@ public class Alias extends SubCommand {
                 } else {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ALIAS_SET))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ALIAS_SET)
+                            )
                     );
                 }
             }
@@ -108,7 +112,10 @@ public class Alias extends SubCommand {
                 } else {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ALIAS_REMOVE))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ALIAS_REMOVE)
+                            )
                     );
                 }
             }
@@ -149,13 +156,16 @@ public class Alias extends SubCommand {
                     .anyMatch()) {
                 player.sendMessage(
                         TranslatableCaption.of("alias.alias_is_taken"),
-                        Template.of("alias", alias)
+                        TagResolver.resolver("alias", Tag.inserting(Component.text(alias)))
                 );
                 return;
             }
             if (Settings.UUID.OFFLINE) {
                 plot.setAlias(alias);
-                player.sendMessage(TranslatableCaption.of("alias.alias_set_to"), Template.of("alias", alias));
+                player.sendMessage(
+                        TranslatableCaption.of("alias.alias_set_to"),
+                        TagResolver.resolver("alias", Tag.inserting(Component.text(alias)))
+                );
                 return;
             }
             PlotSquared.get().getImpromptuUUIDPipeline().getSingle(alias, ((uuid, throwable) -> {
@@ -164,13 +174,13 @@ public class Alias extends SubCommand {
                 } else if (uuid != null) {
                     player.sendMessage(
                             TranslatableCaption.of("alias.alias_is_taken"),
-                            Template.of("alias", alias)
+                            TagResolver.resolver("alias", Tag.inserting(Component.text(alias)))
                     );
                 } else {
                     plot.setAlias(alias);
                     player.sendMessage(
                             TranslatableCaption.of("alias.alias_set_to"),
-                            Template.of("alias", alias)
+                            TagResolver.resolver("alias", Tag.inserting(Component.text(alias)))
                     );
                 }
             }));
@@ -182,7 +192,7 @@ public class Alias extends SubCommand {
         if (!plot.getAlias().isEmpty()) {
             player.sendMessage(
                     TranslatableCaption.of("alias.alias_removed"),
-                    Template.of("alias", alias)
+                    TagResolver.resolver("alias", Tag.inserting(Component.text(alias)))
             );
         } else {
             player.sendMessage(
@@ -194,7 +204,7 @@ public class Alias extends SubCommand {
     }
 
     private boolean isPermitted(PlotPlayer<?> player, Permission permission) {
-        return Permissions.hasPermission(player, permission);
+        return player.hasPermission(permission);
     }
 
 }

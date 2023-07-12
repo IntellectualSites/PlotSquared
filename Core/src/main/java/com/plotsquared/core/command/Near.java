@@ -24,8 +24,11 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "near",
@@ -48,9 +51,13 @@ public class Near extends Command {
         final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.of("errors.not_in_plot"));
         player.sendMessage(
                 TranslatableCaption.of("near.plot_near"),
-                Template.of("list", StringMan.join(plot.getPlayersInPlot(), ", "))
+                TagResolver.resolver("list", Tag.inserting(Component.text(StringMan.join(plot.getPlayersInPlot(), ", "))))
         );
         return CompletableFuture.completedFuture(true);
+    }
+
+    private List<PlotPlayer<?>> getPlayersInPlotVisible(Plot plot, PlotPlayer<?> executor) {
+        return plot.getPlayersInPlot().stream().filter(executor::canSee).toList();
     }
 
 }

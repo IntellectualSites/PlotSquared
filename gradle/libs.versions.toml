@@ -1,34 +1,29 @@
 [versions]
 # Platform expectations
-paper = "1.18.1-R0.1-SNAPSHOT"
-guice = "5.1.0"
-spotbugs = "4.7.1"
+guice = "7.0.0"
+spotbugs = "4.7.3"
 
 # Plugins
-worldedit = "7.2.10"
-placeholderapi = "2.11.2"
+worldedit = "7.2.15"
+placeholderapi = "2.11.3"
 luckperms = "5.4"
-essentialsx = "2.19.4"
+essentialsx = "2.20.0"
 mvdwapi = "3.1.1"
 
 # Third party
-prtree = "2.0.0"
+prtree = "2.0.1"
 aopalliance = "1.0"
-cloud-services = "1.7.0"
-arkitektonika = "2.1.1"
-squirrelid = "0.3.1"
-http4j = "1.3"
+cloud-services = "1.8.3"
+arkitektonika = "2.1.2"
+squirrelid = "0.3.2"
 
 # Gradle plugins
-shadow = "7.1.2"
+shadow = "8.1.1"
 grgit = "4.1.1"
-licenser = "0.6.1"
-nexus = "1.1.0"
+spotless = "6.19.0"
+nexus = "1.3.0"
 
 [libraries]
-# Platform expectations
-paper = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper" }
-
 # Platform expectations
 guice = { group = "com.google.inject", name = "guice", version.ref = "guice" }
 guiceassistedinject = { group = "com.google.inject.extensions", name = "guice-assistedinject", version.ref = "guice" }
@@ -48,10 +43,9 @@ cloudServices = { group = "cloud.commandframework", name = "cloud-services", ver
 mvdwapi = { group = "com.intellectualsites.mvdwplaceholderapi", name = "MVdWPlaceholderAPI", version.ref = "mvdwapi" }
 squirrelid = { group = "org.enginehub", name = "squirrelid", version.ref = "squirrelid" }
 arkitektonika = { group = "com.intellectualsites.arkitektonika", name = "Arkitektonika-Client", version.ref = "arkitektonika" }
-http4j = { group = "com.intellectualsites.http", name = "HTTP4J", version.ref = "http4j" }
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
 grgit = { id = "org.ajoberstar.grgit", version.ref = "grgit" }
-licenser = { id = "org.cadixdev.licenser", version.ref = "licenser" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 nexus = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus" }

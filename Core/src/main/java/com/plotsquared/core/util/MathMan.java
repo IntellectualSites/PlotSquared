@@ -70,114 +70,9 @@ public class MathMan {
         return result;
     }
 
-    public static long pairInt(int x, int y) {
-        return (((long) x) << 32) | (y & 0xffffffffL);
-    }
-
-    public static int unpairIntX(long pair) {
-        return (int) (pair >> 32);
-    }
-
-    public static int unpairIntY(long pair) {
-        return (int) pair;
-    }
-
-    public static byte pair16(byte x, byte y) {
-        return (byte) (x + (y << 4));
-    }
-
-    public static byte unpair16x(byte value) {
-        return (byte) (value & 0xF);
-    }
-
-    public static byte unpair16y(byte value) {
-        return (byte) ((value >> 4) & 0xF);
-    }
-
-    public static long inverseRound(double val) {
-        long round = Math.round(val);
-        return (long) (round + Math.signum(val - round));
-    }
-
-    public static int sqrt(int x) {
-        int xn;
-
-        if (x >= 0x10000) {
-            if (x >= 0x1000000) {
-                if (x >= 0x10000000) {
-                    if (x >= 0x40000000) {
-                        xn = table[x >> 24] << 8;
-                    } else {
-                        xn = table[x >> 22] << 7;
-                    }
-                } else {
-                    if (x >= 0x4000000) {
-                        xn = table[x >> 20] << 6;
-                    } else {
-                        xn = table[x >> 18] << 5;
-                    }
-                }
-
-                xn = (xn + 1 + (x / xn)) >> 1;
-                xn = (xn + 1 + (x / xn)) >> 1;
-                return ((xn * xn) > x) ? --xn : xn;
-            } else {
-                if (x >= 0x100000) {
-                    if (x >= 0x400000) {
-                        xn = table[x >> 16] << 4;
-                    } else {
-                        xn = table[x >> 14] << 3;
-                    }
-                } else {
-                    if (x >= 0x40000) {
-                        xn = table[x >> 12] << 2;
-                    } else {
-                        xn = table[x >> 10] << 1;
-                    }
-                }
-
-                xn = (xn + 1 + (x / xn)) >> 1;
-
-                return ((xn * xn) > x) ? --xn : xn;
-            }
-        } else {
-            if (x >= 0x100) {
-                if (x >= 0x1000) {
-                    if (x >= 0x4000) {
-                        xn = (table[x >> 8]) + 1;
-                    } else {
-                        xn = (table[x >> 6] >> 1) + 1;
-                    }
-                } else {
-                    if (x >= 0x400) {
-                        xn = (table[x >> 4] >> 2) + 1;
-                    } else {
-                        xn = (table[x >> 2] >> 3) + 1;
-                    }
-                }
-
-                return ((xn * xn) > x) ? --xn : xn;
-            } else {
-                if (x >= 0) {
-                    return table[x] >> 4;
-                }
-            }
-        }
-        throw new IllegalArgumentException("Invalid number:" + x);
-    }
-
-
     public static double getMean(int[] array) {
         double count = 0;
         for (int i : array) {
-            count += i;
-        }
-        return count / array.length;
-    }
-
-    public static double getMean(double[] array) {
-        double count = 0;
-        for (double i : array) {
             count += i;
         }
         return count / array.length;
@@ -191,103 +86,8 @@ public class MathMan {
         return (a & b) + (a ^ b) / 2;
     }
 
-    public static short unpairX(int hash) {
-        return (short) (hash >> 16);
-    }
-
-    public static short unpairY(int hash) {
-        return (short) (hash & 0xFFFF);
-    }
-
-    /**
-     * get the x,y,z unit vector from pitch and yaw specified
-     *
-     * @param yaw   yaw
-     * @param pitch pitch
-     * @return x, y, z unit vector
-     */
-    public static float[] getDirection(float yaw, float pitch) {
-        double pitch_sin = Math.sin(pitch);
-        return new float[]{(float) (pitch_sin * Math.cos(yaw)),
-                (float) (pitch_sin * Math.sin(yaw)), (float) Math.cos(pitch)};
-    }
-
-    public static int floorMod(int x, int y) {
-        int i = x % y;
-        if (i < 0) {
-            i += y;
-        }
-        return i;
-    }
-
     public static int roundInt(double value) {
         return (int) (value < 0 ? (value == (int) value) ? value : value - 1 : value);
-    }
-
-    /**
-     * Returns [ pitch, yaw ]
-     *
-     * @param x x
-     * @param y y
-     * @param z z
-     * @return pitch and yaw of x,y,z from 0,0,0
-     */
-    public static float[] getPitchAndYaw(float x, float y, float z) {
-        float distance = sqrtApprox((z * z) + (x * x));
-        return new float[]{atan2(y, distance), atan2(x, z)};
-    }
-
-    public static final float atan2(float y, float x) {
-        float add;
-        float mul;
-
-        if (x < 0.0f) {
-            if (y < 0.0f) {
-                x = -x;
-                y = -y;
-
-                mul = 1.0f;
-            } else {
-                x = -x;
-                mul = -1.0f;
-            }
-
-            add = -3.141592653f;
-        } else {
-            if (y < 0.0f) {
-                y = -y;
-                mul = -1.0f;
-            } else {
-                mul = 1.0f;
-            }
-
-            add = 0.0f;
-        }
-
-        float invDiv = 1.0f / (((x < y) ? y : x) * INV_ATAN2_DIM_MINUS_1);
-
-        int xi = (int) (x * invDiv);
-        int yi = (int) (y * invDiv);
-
-        return (atan2[(yi * ATAN2_DIM) + xi] + add) * mul;
-    }
-
-    public static float sqrtApprox(float f) {
-        return f * Float.intBitsToFloat(0x5f375a86 - (Float.floatToIntBits(f) >> 1));
-    }
-
-    public static double sqrtApprox(double d) {
-        return Double
-                .longBitsToDouble(((Double.doubleToLongBits(d) - (1L << 52)) >> 1) + (1L << 61));
-    }
-
-    public static float invSqrt(float x) {
-        float xhalf = 0.5f * x;
-        int i = Float.floatToIntBits(x);
-        i = 0x5f3759df - (i >> 1);
-        x = Float.intBitsToFloat(i);
-        x = x * (1.5f - (xhalf * x * x));
-        return x;
     }
 
     public static int getPositiveId(int i) {
@@ -321,38 +121,12 @@ public class MathMan {
         return true;
     }
 
-    public static double getSD(double[] array, double av) {
-        double sd = 0;
-        for (double element : array) {
-            sd += Math.pow(Math.abs(element - av), 2);
-        }
-        return Math.sqrt(sd / array.length);
-    }
-
     public static double getSD(int[] array, double av) {
         double sd = 0;
         for (int element : array) {
             sd += Math.pow(Math.abs(element - av), 2);
         }
         return Math.sqrt(sd / array.length);
-    }
-
-    public static int mod(int x, int y) {
-        if (isPowerOfTwo(y)) {
-            return x & (y - 1);
-        }
-        return x % y;
-    }
-
-    public static int unsignedmod(int x, int y) {
-        if (isPowerOfTwo(y)) {
-            return x & (y - 1);
-        }
-        return x % y;
-    }
-
-    public static boolean isPowerOfTwo(int number) {
-        return (number & (number - 1)) == 0;
     }
 
 }

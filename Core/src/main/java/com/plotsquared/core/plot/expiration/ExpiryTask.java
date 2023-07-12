@@ -18,6 +18,7 @@
  */
 package com.plotsquared.core.plot.expiration;
 
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -72,8 +73,9 @@ public class ExpiryTask {
                         min = false;
                         diff = plots.size() - settings.REQUIRED_PLOTS;
                     }
+                    ExpireManager expireManager = PlotSquared.platform().expireManager();
                     List<Long> entireList =
-                            plots.stream().map(plot -> ExpireManager.IMP.getAge(plot, settings.DELETE_IF_OWNER_IS_UNKNOWN))
+                            plots.stream().map(plot -> expireManager.getAge(plot, settings.DELETE_IF_OWNER_IS_UNKNOWN))
                                     .collect(Collectors.toList());
                     List<Long> top = new ArrayList<>(diff + 1);
                     if (diff > 1000) {
@@ -152,6 +154,7 @@ public class ExpiryTask {
 
     /**
      * Returns {@code true} if this task respects unknown owners
+     *
      * @return {@code true} if unknown owners should be counted as never online
      * @since 6.4.0
      */
