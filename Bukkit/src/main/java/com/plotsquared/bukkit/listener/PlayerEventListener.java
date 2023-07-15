@@ -1167,7 +1167,7 @@ public class PlayerEventListener implements Listener {
                     }
                 }
                 if (type.isEdible()) {
-                    //Allow all players to eat while also allowing the block place event ot be fired
+                    //Allow all players to eat while also allowing the block place event to be fired
                     return;
                 }
                 if (type == Material.ARMOR_STAND) {
