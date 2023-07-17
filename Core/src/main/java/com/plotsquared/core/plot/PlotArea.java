@@ -180,8 +180,7 @@ public abstract class PlotArea implements ComponentLike {
         this.worldConfiguration = worldConfiguration;
     }
 
-    private static Collection<PlotFlag<?, ?>> parseFlags(List<String> flagStrings) {
-        final Collection<PlotFlag<?, ?>> flags = new ArrayList<>();
+    private static void parseFlags(FlagContainer flagContainer, List<String> flagStrings) {
         for (final String key : flagStrings) {
             final String[] split;
             if (key.contains(";")) {
@@ -193,7 +192,7 @@ public abstract class PlotArea implements ComponentLike {
                     GlobalFlagContainer.getInstance().getFlagFromString(split[0]);
             if (flagInstance != null) {
                 try {
-                    flags.add(flagInstance.parse(split[1]));
+                    flagContainer.addFlag(flagInstance.parse(split[1]));
                 } catch (final FlagParseException e) {
                     LOGGER.warn(
                             "Failed to parse default flag with key '{}' and value '{}'. "
@@ -204,9 +203,10 @@ public abstract class PlotArea implements ComponentLike {
                     );
                     e.printStackTrace();
                 }
+            } else {
+                flagContainer.addUnknownFlag(split[0], split[1]);
             }
         }
-        return flags;
     }
 
     @NonNull
@@ -405,7 +405,7 @@ public abstract class PlotArea implements ComponentLike {
                 }
             }
         }
-        this.getFlagContainer().addAll(parseFlags(flags));
+        parseFlags(this.getFlagContainer(), flags);
         ConsolePlayer.getConsole().sendMessage(
                 TranslatableCaption.of("flags.area_flags"),
                 TagResolver.resolver("flags", Tag.inserting(Component.text(flags.toString())))
@@ -427,7 +427,7 @@ public abstract class PlotArea implements ComponentLike {
             }
         }
         this.roadFlags = roadflags.size() > 0;
-        this.getRoadFlagContainer().addAll(parseFlags(roadflags));
+        parseFlags(this.getRoadFlagContainer(), roadflags);
         ConsolePlayer.getConsole().sendMessage(
                 TranslatableCaption.of("flags.road_flags"),
                 TagResolver.resolver("flags", Tag.inserting(Component.text(roadflags.toString())))
