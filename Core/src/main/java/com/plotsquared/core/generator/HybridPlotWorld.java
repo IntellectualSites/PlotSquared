@@ -562,7 +562,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
      * Get the y value where the plot schematic should be pasted from.
      *
      * @return plot schematic y start value
-     * @since TODO
+     * @since 7.0.0
      */
     public int getPlotYStart() {
         return SCHEM_Y + plotY;
@@ -572,7 +572,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
      * Get the y value where the road schematic should be pasted from.
      *
      * @return road schematic y start value
-     * @since TODO
+     * @since 7.0.0
      */
     public int getRoadYStart() {
         return SCHEM_Y + roadY;
