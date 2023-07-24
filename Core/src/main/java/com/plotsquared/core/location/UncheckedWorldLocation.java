@@ -66,7 +66,7 @@ public final class UncheckedWorldLocation extends Location {
      * @param world World
      * @param loc   Coordinates
      * @return New location
-     * @since 6.9.0
+     * @since TODO
      */
     @DoNotUse
     public static @NonNull UncheckedWorldLocation at(final @NonNull String world, BlockVector3 loc) {
