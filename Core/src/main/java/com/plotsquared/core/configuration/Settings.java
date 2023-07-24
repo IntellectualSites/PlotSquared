@@ -194,7 +194,7 @@ public class Settings extends Config {
         public List<String> WORLDS = new ArrayList<>(Collections.singletonList("*"));
 
 
-        @Comment("See: https://intellectualsites.github.io/plotsquared-documentation/optimization/plot-analysis for a description of each value.")
+        @Comment("See: https://intellectualsites.gitbook.io/plotsquared/optimization/plot-analysis for a description of each value.")
         public static final class CALIBRATION {
 
             public int VARIETY = 0;
@@ -214,7 +214,7 @@ public class Settings extends Config {
 
 
     @Comment({"Chunk processor related settings",
-            "See https://intellectualsites.github.io/plotsquared-documentation/optimization/chunk-processor for more information."})
+            "See https://intellectualsites.gitbook.io/plotsquared/optimization/chunk-processor for more information."})
     public static class Chunk_Processor {
 
         @Comment("Auto trim will not save chunks which aren't claimed")
@@ -280,7 +280,7 @@ public class Settings extends Config {
         @Comment("Always show explosion Particles, even if explosion flag is set to false")
         public static boolean ALWAYS_SHOW_EXPLOSIONS = false;
         @Comment({"Blocks that may not be used in plot components",
-                "Checkout the wiki article regarding plot components before modifying: https://intellectualsites.github.io/plotsquared-documentation/customization/plot-components"})
+                "Checkout the wiki article regarding plot components before modifying: https://intellectualsites.gitbook.io/plotsquared/customization/plot-components"})
         public static List<String>
                 INVALID_BLOCKS = Arrays.asList(
                 // Acacia Stuff
@@ -402,7 +402,7 @@ public class Settings extends Config {
 
 
     @Comment({"Schematic Settings",
-            "See https://intellectualsites.github.io/plotsquared-documentation/schematics/schematic-on-claim for more information."})
+            "See https://intellectualsites.gitbook.io/plotsquared/schematics/schematic-on-claim for more information."})
     public static final class Schematics {
 
         @Comment(
@@ -531,7 +531,7 @@ public class Settings extends Config {
 
 
     @Comment({"Backup related settings",
-            "See https://intellectualsites.github.io/plotsquared-documentation/plot-backups for more information."})
+            "See https://intellectualsites.gitbook.io/plotsquared/plot-backups for more information."})
     public static final class Backup {
 
         @Comment("Automatically backup plots when destructive commands are performed, e.g. /plot clear")
@@ -783,7 +783,7 @@ public class Settings extends Config {
         public static boolean
                 PERSISTENT_ROAD_REGEN = true;
         @Comment({"Enable the `/plot component` preset GUI",
-                "Read more about components here: https://intellectualsites.github.io/plotsquared-documentation/customization/plot-components"})
+                "Read more about components here: https://intellectualsites.gitbook.io/plotsquared/customization/plot-components"})
         public static boolean COMPONENT_PRESETS = true;
         @Comment("Enable per user locale")
         public static boolean PER_USER_LOCALE = false;
