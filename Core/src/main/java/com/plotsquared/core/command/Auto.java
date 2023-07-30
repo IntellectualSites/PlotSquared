@@ -294,7 +294,7 @@ public class Auto extends SubCommand {
                 return true;
             }
         }
-        if (this.econHandler != null && plotarea.useEconomy()) {
+        if (this.econHandler != null && plotarea.useEconomy() && !player.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_ECON)) {
             PlotExpression costExp = plotarea.getPrices().get("claim");
             PlotExpression mergeCostExp = plotarea.getPrices().get("merge");
             int size = sizeX * sizeZ;
