@@ -265,7 +265,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
         int worldGenHeight = getMaxGenHeight() - getMinGenHeight() + 1;
 
-        int maxSchematicHeight = 0;
         int plotSchemHeight = 0;
 
         // SCHEM_Y should be normalised to the plot "start" height
@@ -278,18 +277,16 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 SCHEM_Y = getMinGenHeight();
                 plotY = 0;
             }
-            maxSchematicHeight = plotY + plotSchemHeight;
         }
 
-        int roadSchemHeight;
+        int roadSchemHeight = 0;
 
         if (schematic1 != null) {
             roadSchemHeight = Math.max(
                     schematic1.getClipboard().getDimensions().getY(),
                     schematic2.getClipboard().getDimensions().getY()
             );
-            maxSchematicHeight = Math.max(roadSchemHeight, maxSchematicHeight);
-            if (maxSchematicHeight == worldGenHeight) {
+            if (roadSchemHeight == worldGenHeight) {
                 SCHEM_Y = getMinGenHeight();
                 roadY = 0; // Road is the lowest schematic
                 if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() != worldGenHeight) {
@@ -306,13 +303,12 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                         // Road is the lowest schematic. Normalize plotY to it.
                         plotY = PLOT_HEIGHT - SCHEM_Y;
                     }
-                    maxSchematicHeight = Math.max(maxSchematicHeight, plotY + plotSchemHeight);
                 }
             } else {
                 roadY = minRoadWall - SCHEM_Y;
-                maxSchematicHeight = Math.max(maxSchematicHeight, roadY + roadSchemHeight);
             }
         }
+        int maxSchematicHeight = Math.max(plotY + plotSchemHeight, roadY + roadSchemHeight);
 
         if (schematic3 != null) {
             this.PLOT_SCHEMATIC = true;
