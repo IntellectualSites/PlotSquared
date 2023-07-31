@@ -45,6 +45,7 @@ public enum Permission implements ComponentLike {
     PERMISSION_ADMIN_ENTRY_FORCEFIELD("plots.admin.entry.forcefield"),
     PERMISSION_ADMIN_COMMANDS_CHATSPY("plots.admin.command.chatspy"),
     PERMISSION_MERGE("plots.merge"),
+    PERMISSION_MERGE_ALL("plots.merge.all"),
     PERMISSION_MERGE_OTHER("plots.merge.other"),
     PERMISSION_MERGE_KEEP_ROAD("plots.merge.keeproad"),
     PERMISSION_ADMIN_CAPS_OTHER("plots.admin.caps.other"),

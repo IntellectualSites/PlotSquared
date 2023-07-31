@@ -109,7 +109,7 @@ public class Merge extends SubCommand {
                 }
             }
             if (direction == null && (args[0].equalsIgnoreCase("all") || args[0]
-                    .equalsIgnoreCase("auto"))) {
+                    .equalsIgnoreCase("auto")) && player.hasPermission(Permission.PERMISSION_MERGE_ALL)) {
                 direction = Direction.ALL;
             }
         }
