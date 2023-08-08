@@ -17,7 +17,7 @@ plugins {
     eclipse
     idea
 
-    id("xyz.jpenilla.run-paper") version "2.1.0"
+    alias(libs.plugins.runPaper)
 }
 
 group = "com.intellectualsites.plotsquared"
@@ -74,10 +74,6 @@ subprojects {
 
         plugin<EclipsePlugin>()
         plugin<IdeaPlugin>()
-    }
-
-    dependencies {
-        implementation(platform("com.intellectualsites.bom:bom-newest:1.34"))
     }
 
     dependencies {
