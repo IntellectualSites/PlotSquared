@@ -235,11 +235,12 @@ tasks {
         project.ext["faweArtifact"] = artifact
     }
 
-    supportedVersions.forEach {
-        register<RunServer>("runServer-$it") {
+    supportedVersions.forEach { version ->
+        register<RunServer>("runServer-$version") {
             dependsOn(getByName("cacheLatestFaweArtifact"))
-            minecraftVersion(it)
-            pluginJars(*project(":plotsquared-bukkit").getTasksByName("shadowJar", false)
+            minecraftVersion(version)
+            pluginJars(*project(":plotsquared-bukkit")
+                    .getTasksByName("shadowJar", false)
                     .map { task -> (task as Jar).archiveFile }
                     .toTypedArray())
             jvmArgs("-DPaper.IgnoreJavaVersion=true", "-Dcom.mojang.eula.agree=true")
@@ -247,7 +248,7 @@ tasks {
                 url("https://ci.athion.net/job/FastAsyncWorldEdit/lastSuccessfulBuild/artifact/artifacts/${project.ext["faweArtifact"]}")
             }
             group = "run paper"
-            runDirectory.set(file("run-$it"))
+            runDirectory.set(file("run-$version"))
         }
     }
 }

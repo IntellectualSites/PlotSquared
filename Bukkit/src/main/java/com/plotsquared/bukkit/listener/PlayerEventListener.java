@@ -50,6 +50,7 @@ import com.plotsquared.core.plot.flag.implementations.DenyPortalsFlag;
 import com.plotsquared.core.plot.flag.implementations.DenyTeleportFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.DropProtectionFlag;
+import com.plotsquared.core.plot.flag.implementations.EditSignFlag;
 import com.plotsquared.core.plot.flag.implementations.HangingBreakFlag;
 import com.plotsquared.core.plot.flag.implementations.HangingPlaceFlag;
 import com.plotsquared.core.plot.flag.implementations.HostileInteractFlag;
@@ -87,6 +88,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.ArmorStand;
@@ -131,6 +133,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerSignOpenEvent;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
@@ -1876,4 +1879,28 @@ public class PlayerEventListener implements Listener {
         }
     }
 
+    @EventHandler(ignoreCancelled = true)
+    @SuppressWarnings({"removal", "UnstableApiUsage"}) // thanks Paper, thanks Spigot
+    public void onPlayerSignOpenEvent(PlayerSignOpenEvent event) {
+        Sign sign = event.getSign();
+        Location location = BukkitUtil.adapt(sign.getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = location.getOwnedPlot();
+        if (plot == null) {
+            if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, EditSignFlag.class, false)) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+        if (plot.isAdded(event.getPlayer().getUniqueId())) {
+            return; // allow for added players
+        }
+        if (!plot.getFlag(EditSignFlag.class)) {
+            plot.debug(event.getPlayer().getName() + " could not edit the sign because of edit-sign = false");
+            event.setCancelled(true);
+        }
+    }
 }
