@@ -131,8 +131,8 @@ public class Auto extends SubCommand {
                         player.sendMessage(
                                 TranslatableCaption.of("economy.removed_granted_plot"),
                                 TagResolver.builder()
-                                        .tag("usedGrants", Tag.inserting(Component.text(grantedPlots - left)))
-                                        .tag("remainingGrants", Tag.inserting(Component.text(left)))
+                                        .tag("used_grants", Tag.inserting(Component.text(grantedPlots - left)))
+                                        .tag("remaining_grants", Tag.inserting(Component.text(left)))
                                         .build()
                         );
                     }

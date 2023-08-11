@@ -124,7 +124,7 @@
   "economy.cannot_afford_merge": "<prefix><red>You cannot afford to merge the plots. It costs <gold><money></gold>.</red>",
   "economy.added_balance": "<prefix><gold><money> </gold><gray>has been added to your balance.</gray>",
   "economy.removed_balance": "<prefix><gold><money> </gold><gray>has been taken from your balance.</gray>",
-  "economy.removed_granted_plot": "<prefix><gray>You used <usedGrants> plot grant(s), you've got </gray><gold><remainingGrants></gold> <gray>left.</gray>",
+  "economy.removed_granted_plot": "<prefix><gray>You used <used_grants> plot grant(s), you've got </gray><gold><remaining_grants></gold> <gray>left.</gray>",
   "setup.choose_generator": "<gold>What generator do you want?</gold>",
   "setup.setup_not_started": "<prefix><gold>No setup started.</gold>",
   "setup.setup_init": "<prefix><gold>Usage: </gold><gray>/plot setup <value></gray>",

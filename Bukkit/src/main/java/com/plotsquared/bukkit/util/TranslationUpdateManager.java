@@ -44,6 +44,10 @@ public class TranslationUpdateManager {
         String minheightReplacement = "minheight";
         String maxHeight = "maxHeight";
         String maxheightReplacement = "maxheight";
+        String usedGrants = "usedGrants";
+        String usedGrantsReplacement = "used_grants";
+        String remainingGrants = "remainingGrants";
+        String rremainingGrantsReplacement = "remaining_grants";
 
         try (Stream<Path> paths = Files.walk(Paths.get(PlotSquared.platform().getDirectory().toPath().resolve("lang").toUri()))) {
             paths
@@ -53,6 +57,8 @@ public class TranslationUpdateManager {
                         replaceInFile(p, suggestCommand, suggestCommandReplacement);
                         replaceInFile(p, minHeight, minheightReplacement);
                         replaceInFile(p, maxHeight, maxheightReplacement);
+                        replaceInFile(p, usedGrants, usedGrantsReplacement);
+                        replaceInFile(p, remainingGrants, rremainingGrantsReplacement);
                     });
         }
     }

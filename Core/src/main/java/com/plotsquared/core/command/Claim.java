@@ -186,8 +186,8 @@ public class Claim extends SubCommand {
                 player.sendMessage(
                         TranslatableCaption.of("economy.removed_granted_plot"),
                         TagResolver.builder()
-                                .tag("usedGrants", Tag.inserting(Component.text(grants - 1)))
-                                .tag("remainingGrants", Tag.inserting(Component.text(grants)))
+                                .tag("used_grants", Tag.inserting(Component.text(grants - 1)))
+                                .tag("remaining_grants", Tag.inserting(Component.text(grants)))
                                 .build()
                 );
             }
