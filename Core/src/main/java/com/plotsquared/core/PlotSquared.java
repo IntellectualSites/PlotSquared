@@ -1281,7 +1281,7 @@ public class PlotSquared {
     }
 
     /**
-     * Setup the database connection.
+     * Set up the database connection.
      */
     public void setupDatabase() {
         try {
