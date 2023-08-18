@@ -2,18 +2,18 @@ import java.time.format.DateTimeFormatter
 
 dependencies {
     // Expected everywhere.
-    compileOnlyApi("org.checkerframework:checker-qual")
+    compileOnlyApi(libs.checkerqual)
 
     // Minecraft expectations
-    compileOnlyApi("com.google.code.gson:gson")
-    compileOnly("com.google.guava:guava")
+    compileOnlyApi(libs.gson)
+    compileOnly(libs.guava)
 
     // Platform expectations
-    compileOnlyApi("org.yaml:snakeyaml")
+    compileOnlyApi(libs.snakeyaml)
 
     // Adventure
-    api("net.kyori:adventure-api")
-    api("net.kyori:adventure-text-minimessage")
+    api(libs.adventureApi)
+    api(libs.adventureMiniMessage)
 
     // Guice
     api(libs.guice) {
@@ -31,19 +31,19 @@ dependencies {
         exclude(group = "dummypermscompat")
     }
     testImplementation(libs.worldeditCore)
-    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core") { isTransitive = false }
-    testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Core") { isTransitive = false }
+    compileOnly(libs.faweBukkit) { isTransitive = false }
+    testImplementation(libs.faweCore) { isTransitive = false }
 
     // Logging
-    compileOnlyApi("org.apache.logging.log4j:log4j-api")
+    compileOnlyApi(libs.log4j)
 
     // Other libraries
     api(libs.prtree)
     api(libs.aopalliance)
     api(libs.cloudServices)
     api(libs.arkitektonika)
-    api("com.intellectualsites.paster:Paster")
-    api("com.intellectualsites.informative-annotations:informative-annotations")
+    api(libs.paster)
+    api(libs.informativeAnnotations)
 }
 
 tasks.processResources {

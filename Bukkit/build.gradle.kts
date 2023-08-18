@@ -21,20 +21,20 @@ dependencies {
     api(projects.plotsquaredCore)
 
     // Metrics
-    implementation("org.bstats:bstats-bukkit")
+    implementation(libs.bstatsBukkit)
 
     // Paper
-    compileOnly("io.papermc.paper:paper-api")
-    implementation("io.papermc:paperlib")
+    compileOnly(libs.paper)
+    implementation(libs.paperlib)
 
     // Plugins
     compileOnly(libs.worldeditBukkit) {
         exclude(group = "org.bukkit")
         exclude(group = "org.spigotmc")
     }
-    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit") { isTransitive = false }
-    testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit") { isTransitive = false }
-    compileOnly("com.github.MilkBowl:VaultAPI") {
+    compileOnly(libs.faweBukkit) { isTransitive = false }
+    testImplementation(libs.faweBukkit) { isTransitive = false }
+    compileOnly(libs.vault) {
         exclude(group = "org.bukkit")
     }
     compileOnly(libs.placeholderapi)
@@ -44,15 +44,15 @@ dependencies {
 
     // Other libraries
     implementation(libs.squirrelid) { isTransitive = false }
-    implementation("dev.notmyfault.serverlib:ServerLib")
+    implementation(libs.serverlib)
 
     // Our libraries
     implementation(libs.arkitektonika)
-    implementation("com.intellectualsites.paster:Paster")
-    implementation("com.intellectualsites.informative-annotations:informative-annotations")
+    implementation(libs.paster)
+    implementation(libs.informativeAnnotations)
 
     // Adventure
-    implementation("net.kyori:adventure-platform-bukkit")
+    implementation(libs.adventureBukkit)
 }
 
 tasks.processResources {

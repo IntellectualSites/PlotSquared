@@ -1,13 +1,22 @@
 [versions]
 # Platform expectations
+paper = "1.20.1-R0.1-SNAPSHOT"
 guice = "7.0.0"
 spotbugs = "4.7.3"
+checkerqual = "3.37.0"
+gson = "2.10"
+guava = "31.1-jre"
+snakeyaml = "2.0"
+adventure = "4.14.0"
+adventure-bukkit = "4.3.0"
+log4j = "2.19.0"
 
 # Plugins
 worldedit = "7.2.15"
+fawe = "2.7.0"
 placeholderapi = "2.11.3"
 luckperms = "5.4"
-essentialsx = "2.20.0"
+essentialsx = "2.20.1"
 mvdwapi = "3.1.1"
 
 # Third party
@@ -16,18 +25,34 @@ aopalliance = "1.0"
 cloud-services = "1.8.3"
 arkitektonika = "2.1.2"
 squirrelid = "0.3.2"
+paster = "1.1.5"
+bstats = "3.0.2"
+paperlib = "1.0.8"
+informative-annotations = "1.3"
+vault = "1.7.1"
+serverlib = "2.3.1"
 
 # Gradle plugins
 shadow = "8.1.1"
 grgit = "4.1.1"
-spotless = "6.19.0"
+spotless = "6.20.0"
 nexus = "1.3.0"
+runPaper = "2.1.0"
 
 [libraries]
 # Platform expectations
+paper = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper" }
 guice = { group = "com.google.inject", name = "guice", version.ref = "guice" }
 guiceassistedinject = { group = "com.google.inject.extensions", name = "guice-assistedinject", version.ref = "guice" }
 spotbugs = { group = "com.github.spotbugs", name = "spotbugs-annotations", version.ref = "spotbugs" }
+checkerqual = { group = "org.checkerframework", name = "checker-qual", version.ref = "checkerqual" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
+snakeyaml = { group = "org.yaml", name = "snakeyaml", version.ref = "snakeyaml" }
+adventureApi = { group = "net.kyori", name = "adventure-api", version.ref = "adventure" }
+adventureMiniMessage = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "adventure" }
+adventureBukkit = { group = "net.kyori", name = "adventure-platform-bukkit", version.ref = "adventure-bukkit" }
+log4j = { group = "org.apache.logging.log4j", name = "log4j-api", version.ref = "log4j" }
 
 # Plugins
 worldeditCore = { group = "com.sk89q.worldedit", name = "worldedit-core", version.ref = "worldedit" }
@@ -35,6 +60,8 @@ worldeditBukkit = { group = "com.sk89q.worldedit", name = "worldedit-bukkit", ve
 placeholderapi = { group = "me.clip", name = "placeholderapi", version.ref = "placeholderapi" }
 luckperms = { group = "net.luckperms", name = "api", version.ref = "luckperms" }
 essentialsx = { group = "net.essentialsx", name = "EssentialsX", version.ref = "essentialsx" }
+faweCore = { group = "com.fastasyncworldedit", name = "FastAsyncWorldEdit-Core", version.ref = "fawe" }
+faweBukkit = { group = "com.fastasyncworldedit", name = "FastAsyncWorldEdit-Bukkit", version.ref = "fawe" }
 
 # Third party
 prtree = { group = "com.intellectualsites.prtree", name = "PRTree", version.ref = "prtree" }
@@ -43,9 +70,17 @@ cloudServices = { group = "cloud.commandframework", name = "cloud-services", ver
 mvdwapi = { group = "com.intellectualsites.mvdwplaceholderapi", name = "MVdWPlaceholderAPI", version.ref = "mvdwapi" }
 squirrelid = { group = "org.enginehub", name = "squirrelid", version.ref = "squirrelid" }
 arkitektonika = { group = "com.intellectualsites.arkitektonika", name = "Arkitektonika-Client", version.ref = "arkitektonika" }
+paster = { group = "com.intellectualsites.paster", name = "Paster", version.ref = "paster" }
+bstatsBase = { group = "org.bstats", name = "bstats-base", version.ref = "bstats" }
+bstatsBukkit = { group = "org.bstats", name = "bstats-bukkit", version.ref = "bstats" }
+informativeAnnotations = { group = "com.intellectualsites.informative-annotations", name = "informative-annotations", version.ref = "informative-annotations" }
+paperlib = { group = "io.papermc", name = "paperlib", version.ref = "paperlib" }
+vault = { group = "com.github.MilkBowl", name = "VaultAPI", version.ref = "vault" }
+serverlib = { group = "dev.notmyfault.serverlib", name = "ServerLib", version.ref = "serverlib" }
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
 grgit = { id = "org.ajoberstar.grgit", version.ref = "grgit" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 nexus = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus" }
+runPaper = { id = "xyz.jpenilla.run-paper", version.ref = "runPaper" }

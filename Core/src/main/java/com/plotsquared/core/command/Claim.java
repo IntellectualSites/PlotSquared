@@ -141,7 +141,7 @@ public class Claim extends SubCommand {
                     }
                 }
             }
-            if (this.econHandler.isEnabled(area) && !force) {
+            if (this.econHandler.isEnabled(area) && !force && !player.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_ECON)) {
                 PlotExpression costExr = area.getPrices().get("claim");
                 double cost = costExr.evaluate(currentPlots);
                 if (cost > 0d) {
@@ -186,8 +186,8 @@ public class Claim extends SubCommand {
                 player.sendMessage(
                         TranslatableCaption.of("economy.removed_granted_plot"),
                         TagResolver.builder()
-                                .tag("usedGrants", Tag.inserting(Component.text(grants - 1)))
-                                .tag("remainingGrants", Tag.inserting(Component.text(grants)))
+                                .tag("used_grants", Tag.inserting(Component.text(grants - 1)))
+                                .tag("remaining_grants", Tag.inserting(Component.text(grants)))
                                 .build()
                 );
             }

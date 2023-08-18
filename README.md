@@ -27,16 +27,16 @@ is to provide a lag-free and smooth experience.
 
 * [Download](https://www.spigotmc.org/resources/77506/)
 * [Discord](https://discord.gg/intellectualsites)
-* [Wiki](https://intellectualsites.github.io/plotsquared-documentation/)
+* [Wiki](https://intellectualsites.gitbook.io/plotsquared/)
 * [Issues](https://github.com/IntellectualSites/PlotSquared/issues)
 * [Translations](https://intellectualsites.crowdin.com/plotsquared/)
 * [Contributing](https://github.com/IntellectualSites/.github/blob/main/CONTRIBUTING.md)
 
 ### Developer Resources
 
-* [API Documentation](https://intellectualsites.github.io/plotsquared-documentation/api/api-documentation)
-* [Event API](https://intellectualsites.github.io/plotsquared-documentation/api/event-api)
-* [Flag API](https://intellectualsites.github.io/plotsquared-documentation/api/flag-api)
+* [API Documentation](https://intellectualsites.gitbook.io/plotsquared/api/api-documentation)
+* [Event API](https://intellectualsites.gitbook.io/plotsquared/api/event-api)
+* [Flag API](https://intellectualsites.gitbook.io/plotsquared/api/flag-api)
 
 # Official Addons
 

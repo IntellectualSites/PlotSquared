@@ -31,45 +31,39 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
 public class SingleWorldListener implements Listener {
 
-    private final Method methodGetHandleChunk;
-    private Field shouldSave = null;
+    private final Method methodSetUnsaved;
+    private Method methodGetHandleChunk;
+    private Object objChunkStatusFull = null;
 
     public SingleWorldListener() throws Exception {
         ReflectionUtils.RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
-        this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle").getRealMethod();
+        ReflectionUtils.RefClass classChunkAccess = getRefClass("net.minecraft.world.level.chunk.IChunkAccess");
+        this.methodSetUnsaved = classChunkAccess.getMethod("a", boolean.class).getRealMethod();
         try {
-            if (PlotSquared.platform().serverVersion()[1] < 17) {
-                ReflectionUtils.RefClass classChunk = getRefClass("{nms}.Chunk");
-                if (PlotSquared.platform().serverVersion()[1] == 13) {
-                    this.shouldSave = classChunk.getField("mustSave").getRealField();
-                } else {
-                    this.shouldSave = classChunk.getField("s").getRealField();
-                }
-            } else if (PlotSquared.platform().serverVersion()[1] == 17) {
-                ReflectionUtils.RefClass classChunk = getRefClass("net.minecraft.world.level.chunk.Chunk");
-                this.shouldSave = classChunk.getField("r").getRealField();
-            } else if (PlotSquared.platform().serverVersion()[1] == 18) {
-                ReflectionUtils.RefClass classChunk = getRefClass("net.minecraft.world.level.chunk.IChunkAccess");
-                this.shouldSave = classChunk.getField("b").getRealField();
+            this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle").getRealMethod();
+        } catch (NoSuchMethodException ignored) {
+            try {
+                ReflectionUtils.RefClass classChunkStatus = getRefClass("net.minecraft.world.level.chunk.ChunkStatus");
+                this.objChunkStatusFull = classChunkStatus.getRealClass().getField("n").get(null);
+                this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle", classChunkStatus.getRealClass()).getRealMethod();
+            } catch (NoSuchMethodException ex) {
+                throw new RuntimeException(ex);
             }
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
         }
     }
 
     public void markChunkAsClean(Chunk chunk) {
         try {
-            Object nmsChunk = methodGetHandleChunk.invoke(chunk);
-            if (shouldSave != null) {
-                this.shouldSave.set(nmsChunk, false);
-            }
+            Object nmsChunk = objChunkStatusFull != null
+                    ? this.methodGetHandleChunk.invoke(chunk, objChunkStatusFull)
+                    : this.methodGetHandleChunk.invoke(chunk);
+            methodSetUnsaved.invoke(nmsChunk, false);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -85,7 +79,12 @@ public class SingleWorldListener implements Listener {
         if (!SinglePlotArea.isSinglePlotWorld(name)) {
             return;
         }
-
+        int x = event.getChunk().getX();
+        int z = event.getChunk().getZ();
+        if (x < 16 && x > -16 && z < 16 && z > -16) {
+            // Allow spawn to generate
+            return;
+        }
         markChunkAsClean(event.getChunk());
     }
 

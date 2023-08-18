@@ -17,7 +17,7 @@ plugins {
     eclipse
     idea
 
-    id("xyz.jpenilla.run-paper") version "2.1.0"
+    alias(libs.plugins.runPaper)
 }
 
 group = "com.intellectualsites.plotsquared"
@@ -77,12 +77,8 @@ subprojects {
     }
 
     dependencies {
-        implementation(platform("com.intellectualsites.bom:bom-newest:1.31"))
-    }
-
-    dependencies {
         // Tests
-        testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
+        testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
     }
 
     plugins.withId("java") {

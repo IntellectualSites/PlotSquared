@@ -206,7 +206,7 @@ public class ComponentPresetManager {
                     return false;
                 }
 
-                if (componentPreset.cost() > 0.0D) {
+                if (componentPreset.cost() > 0.0D && !player.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_ECON)) {
                     if (!econHandler.isEnabled(plot.getArea())) {
                         getPlayer().sendMessage(
                                 TranslatableCaption.of("preset.economy_disabled"),
