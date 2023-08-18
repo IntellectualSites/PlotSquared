@@ -77,6 +77,10 @@ public class HybridUtils {
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + HybridUtils.class.getSimpleName());
     private static final BlockState AIR = BlockTypes.AIR.getDefaultState();
 
+    /**
+     * Deprecated and likely to be removed in a future release.
+     */
+    @Deprecated(forRemoval = true, since = "7.0.0")
     public static HybridUtils manager;
     public static Set<BlockVector2> regions;
     public static int height;
