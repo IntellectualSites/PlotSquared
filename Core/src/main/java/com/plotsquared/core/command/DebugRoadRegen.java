@@ -96,6 +96,7 @@ public class DebugRoadRegen extends SubCommand {
         PlotArea area = location.getPlotArea();
         if (area == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
+            return false;
         }
         Plot plot = player.getCurrentPlot();
         if (plot == null) {
