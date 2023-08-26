@@ -891,7 +891,6 @@ public final class PlotModificationManager {
     }
 
     /**
-     * /**
      * Sets components such as border, wall, floor.
      * (components are generator specific)
      *
