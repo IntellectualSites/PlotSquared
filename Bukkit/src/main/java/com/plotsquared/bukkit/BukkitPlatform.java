@@ -550,7 +550,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         this.startMetrics();
 
         if (Settings.Enabled_Components.WORLDS) {
-            TaskManager.getPlatformImplementation().taskRepeat(this::unload, TaskTime.seconds(1L));
+            TaskManager.getPlatformImplementation().taskRepeat(this::unload, TaskTime.seconds(60L));
             try {
                 singleWorldListener = injector().getInstance(SingleWorldListener.class);
                 Bukkit.getPluginManager().registerEvents(singleWorldListener, this);
