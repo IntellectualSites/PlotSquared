@@ -199,6 +199,8 @@ public final class PlotId {
     /**
      * Returns a string representation of this Plot ID in the format "x;y".
      *
+     * <p> The format is {@code x + ";" + y}
+     * 
      * @return a string representation of this Plot ID
      */
     @Override
