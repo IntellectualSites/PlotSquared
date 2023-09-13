@@ -18,9 +18,6 @@
  */
 package com.plotsquared.core.plot;
 
-Used to specify the type of weather condition within the world.
-
-
 /**
  * The different types of weather that can be set for a Plot.
  */
