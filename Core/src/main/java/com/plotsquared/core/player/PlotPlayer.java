@@ -273,8 +273,9 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         return this.meta == null ? null : this.meta.remove(key);
     }
 
+
     /**
-     * This player's name.
+     * Returns the name of the player.
      *
      * @return the name of the player
      */

@@ -67,14 +67,25 @@ public class PlotItemStack {
         return this.type;
     }
 
+    /**
+     * Returns the number of items in this stack.
+     * Valid values range from 1-255.
+     *
+     * @return the amount of items in this stack
+     */
     public int getAmount() {
         return amount;
     }
 
+    /**
+     * Returns the given name of this stack of items. The name is displayed when
+     * hovering over the item.
+     *
+     * @return the given name of this stack of items
+     */
     public String getName() {
         return name;
     }
-
     public String[] getLore() {
         return lore;
     }
