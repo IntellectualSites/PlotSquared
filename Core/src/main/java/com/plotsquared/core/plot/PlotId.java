@@ -26,8 +26,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * Plot (X,Y) tuples for plot locations
- * within a plot area
+ * The PlotId class represents a Plot's x and y coordinates within a {@link PlotArea}. PlotId x,y values do not correspond to Block locations.
+ * A PlotId instance can be created using the {@link #of(int, int)} method or parsed from a string using the {@link #fromString(String)} method.
  */
 public final class PlotId {
 
@@ -36,10 +36,10 @@ public final class PlotId {
     private final int hash;
 
     /**
-     * PlotId class (PlotId x,y values do not correspond to Block locations)
+     * Constructs a new PlotId with the given x and y coordinates.
      *
-     * @param x The plot x coordinate
-     * @param y The plot y coordinate
+     * @param x the x-coordinate of the plot
+     * @param y the y-coordinate of the plot
      */
     private PlotId(final int x, final int y) {
         this.x = x;
@@ -48,11 +48,11 @@ public final class PlotId {
     }
 
     /**
-     * Create a new plot ID instance
+     * Returns a new PlotId instance with the specified x and y coordinates.
      *
-     * @param x The plot x coordinate
-     * @param y The plot y coordinate
-     * @return a new PlotId at x,y
+     * @param x the x-coordinate of the plot
+     * @param y the y-coordinate of the plot
+     * @return a new PlotId instance with the specified x and y coordinates
      */
     public static @NonNull PlotId of(final int x, final int y) {
         return new PlotId(x, y);
@@ -74,10 +74,13 @@ public final class PlotId {
     }
 
     /**
-     * Attempt to parse a plot ID from a string
+     * Returns a PlotId object from the given string, or null if the string is invalid.
+     * The string should be in the format "x;y" where x and y are integers.
+     * The string can also contain any combination of the characters ";_,."
+     * as delimiters.
      *
-     * @param string ID string
-     * @return Plot ID, or {@code null} if none could be parsed
+     * @param string the string to parse
+     * @return a PlotId object parsed from the given string, or null if the string is invalid
      */
     public static @Nullable PlotId fromStringOrNull(final @NonNull String string) {
         final String[] parts = string.split("[;_,.]");
@@ -95,39 +98,39 @@ public final class PlotId {
         return of(x, y);
     }
 
+
     /**
-     * Gets the PlotId from the HashCode<br>
-     * Note: Only accurate for small x,z values (short)
+     * Returns a new PlotId instance from the given hash.
      *
-     * @param hash ID hash
-     * @return Plot ID
+     * @param hash the hash to unpair
+     * @return a new PlotId instance
      */
     public static @NonNull PlotId unpair(final int hash) {
         return PlotId.of(hash >> 16, hash & 0xFFFF);
     }
 
     /**
-     * Get the ID X component
+     * Returns the x-coordinate of this Plot ID.
      *
-     * @return X component
+     * @return the x-coordinate of this Plot ID
      */
     public int getX() {
         return this.x;
     }
 
     /**
-     * Get the ID Y component
+     * Returns the y-coordinate of this Plot ID.
      *
-     * @return Y component
+     * @return the y-coordinate of this Plot ID
      */
     public int getY() {
         return this.y;
     }
 
     /**
-     * Get the next plot ID for claiming purposes
+     * Returns the next Plot ID for claiming purposes based on the current Plot ID.
      *
-     * @return Next plot ID
+     * @return the next Plot ID
      */
     public @NonNull PlotId getNextId() {
         final int absX = Math.abs(x);
@@ -159,10 +162,11 @@ public final class PlotId {
     }
 
     /**
-     * Get the PlotId in a relative direction
+     * Returns a new Plot ID in the specified relative direction based on the
+     * current Plot ID.
      *
-     * @param direction Direction
-     * @return Relative plot ID
+     * @param direction the direction in which to get the relative Plot ID
+     * @return the relative Plot ID
      */
     public @NonNull PlotId getRelative(final @NonNull Direction direction) {
         return switch (direction) {
@@ -193,10 +197,11 @@ public final class PlotId {
     }
 
     /**
-     * Get a String representation of the plot ID where the
-     * components are separated by ";"
+     * Returns a string representation of this Plot ID in the format "x;y".
      *
-     * @return {@code x + ";" + y}
+     * <p> The format is {@code x + ";" + y}
+     *
+     * @return a string representation of this Plot ID
      */
     @Override
     public @NonNull String toString() {
@@ -204,41 +209,40 @@ public final class PlotId {
     }
 
     /**
-     * Get a String representation of the plot ID where the
-     * components are separated by a specified string
+     * Returns a string representation of this Plot ID with the specified separator.
+     * <p>
+     * The format is {@code x + separator + y}
      *
-     * @param separator Separator
-     * @return {@code x + separator + y}
+     * @param separator the separator to use between the X and Y coordinates
+     * @return a string representation of this Plot ID with the specified separator
      */
     public @NonNull String toSeparatedString(String separator) {
         return this.getX() + separator + this.getY();
     }
 
     /**
-     * Get a String representation of the plot ID where the
-     * components are separated by ","
+     * Returns a string representation of this Plot ID in the format "x,y".
      *
-     * @return {@code x + "," + y}
+     * @return a string representation of this Plot ID
      */
     public @NonNull String toCommaSeparatedString() {
         return this.getX() + "," + this.getY();
     }
 
     /**
-     * Get a String representation of the plot ID where the
-     * components are separated by "_"
+     * Returns a string representation of this Plot ID in the format "x_y".
      *
-     * @return {@code x + "_" + y}
+     * @return a string representation of this Plot ID
      */
+
     public @NonNull String toUnderscoreSeparatedString() {
         return this.getX() + "_" + this.getY();
     }
 
     /**
-     * Get a String representation of the plot ID where the
-     * components are separated by "-"
+     * Returns a string representation of this Plot ID in the format "x-y".
      *
-     * @return {@code x + "-" + y}
+     * @return a string representation of this Plot ID
      */
     public @NonNull String toDashSeparatedString() {
         return this.getX() + "-" + this.getY();
@@ -250,6 +254,10 @@ public final class PlotId {
     }
 
 
+    /**
+     * An iterator that iterates over a range of {@link PlotId}s.
+     * The range is defined by a start and end {@link PlotId}.
+     */
     public static final class PlotRangeIterator implements Iterator<PlotId>, Iterable<PlotId> {
 
         private final PlotId start;
@@ -265,6 +273,13 @@ public final class PlotId {
             this.y = this.start.getY();
         }
 
+        /**
+         * Returns a new {@link PlotRangeIterator} that iterates over the range of Plots between the specified start and end Plots (inclusive).
+         *
+         * @param start the starting Plot of the range
+         * @param end the ending Plot of the range
+         * @return a new {@link PlotRangeIterator} that iterates over the range of Plots between the specified start and end Plots (inclusive)
+         */
         public static PlotRangeIterator range(final @NonNull PlotId start, final @NonNull PlotId end) {
             return new PlotRangeIterator(start, end);
         }
