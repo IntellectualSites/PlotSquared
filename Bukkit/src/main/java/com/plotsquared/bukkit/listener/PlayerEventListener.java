@@ -369,6 +369,7 @@ public class PlayerEventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @SuppressWarnings("deprecation") // Paper deprecation
     public void onConnect(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
         PlotSquared.platform().playerManager().removePlayer(player.getUniqueId());
@@ -733,6 +734,7 @@ public class PlayerEventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
+    @SuppressWarnings("deprecation") // Paper deprecation
     public void onChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled()) {
             return;
@@ -1063,6 +1065,7 @@ public class PlayerEventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
+    @SuppressWarnings("deprecation") // Paper deprecation
     public void onCancelledInteract(PlayerInteractEvent event) {
         if (event.isCancelled() && event.getAction() == Action.RIGHT_CLICK_AIR) {
             Player player = event.getPlayer();

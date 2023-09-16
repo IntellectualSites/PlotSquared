@@ -252,6 +252,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     }
 
     @Override
+    @SuppressWarnings("deprecation") // Paper deprecation
     public void onEnable() {
         this.pluginName = getDescription().getName();
 
@@ -1160,6 +1161,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         return new BukkitPlotGenerator(world, generator, this.plotAreaManager);
     }
 
+    @SuppressWarnings("deprecation") // Paper deprecation
     @Override
     public @NonNull String pluginsFormatted() {
         StringBuilder msg = new StringBuilder();
@@ -1181,7 +1183,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     }
 
     @Override
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings({"ConstantConditions", "deprecation"}) // Paper deprecation
     public @NonNull String worldEditImplementations() {
         StringBuilder msg = new StringBuilder();
         if (Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null) {

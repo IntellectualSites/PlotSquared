@@ -74,6 +74,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
     private HorseStats horse;
     private boolean noGravity;
 
+    @SuppressWarnings("deprecation") // Deprecation exists since 1.20, while we support 1.16 onwards
     public ReplicatingEntityWrapper(Entity entity, short depth) {
         super(entity);
 
