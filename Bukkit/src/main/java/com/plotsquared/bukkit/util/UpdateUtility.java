@@ -60,7 +60,7 @@ public class UpdateUtility implements Listener {
         task = Bukkit.getScheduler().runTaskTimerAsynchronously(this.javaPlugin, () -> {
             try {
                 HttpsURLConnection connection = (HttpsURLConnection) new URL(
-                        "https://api.spigotmc.org/simple/0.1/index.php?action=getResource&id=77506")
+                        "https://api.spigotmc.org/simple/0.2/index.php?action=getResource&id=77506")
                         .openConnection();
                 connection.setRequestMethod("GET");
                 JsonObject result = new JsonParser()
