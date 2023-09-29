@@ -37,7 +37,7 @@ shadow = "8.1.1"
 grgit = "4.1.1"
 spotless = "6.21.0"
 nexus = "1.3.0"
-runPaper = "2.1.0"
+runPaper = "2.2.0"
 
 [libraries]
 # Platform expectations
