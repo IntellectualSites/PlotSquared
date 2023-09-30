@@ -171,8 +171,9 @@ subprojects {
 
                     scm {
                         url.set("https://github.com/IntellectualSites/PlotSquared")
-                        connection.set("scm:https://IntellectualSites@github.com/IntellectualSites/PlotSquared.git")
-                        developerConnection.set("scm:git://github.com/IntellectualSites/PlotSquared.git")
+                        connection.set("scm:git:https://github.com/IntellectualSites/PlotSquared.git")
+                        developerConnection.set("scm:git:git@github.com:IntellectualSites/PlotSquared.git")
+                        tag.set("${project.version}")
                     }
 
                     issueManagement {
