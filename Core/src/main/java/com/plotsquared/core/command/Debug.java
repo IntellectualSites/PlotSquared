@@ -85,16 +85,6 @@ public class Debug extends SubCommand {
                 return true;
             }
         }
-        if (args.length > 0 && "loadedchunks".equalsIgnoreCase(args[0])) {
-            final long start = System.currentTimeMillis();
-            player.sendMessage(TranslatableCaption.of("debug.fetching_loaded_chunks"));
-            TaskManager.runTaskAsync(() -> player.sendMessage(StaticCaption
-                    .of("Loaded chunks: " + this.worldUtil
-                            .getChunkChunks(player.getLocation().getWorldName())
-                            .size() + " (" + (System.currentTimeMillis()
-                            - start) + "ms) using thread: " + Thread.currentThread().getName())));
-            return true;
-        }
         if (args.length > 0 && "uuids".equalsIgnoreCase(args[0])) {
             final Collection<UUIDMapping> mappings = PlotSquared.get().getImpromptuUUIDPipeline().getAllImmediately();
             player.sendMessage(
