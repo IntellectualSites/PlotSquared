@@ -40,6 +40,7 @@ import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -130,8 +131,7 @@ public class SchematicCmd extends SubCommand {
                     if (location.startsWith("url:")) {
                         try {
                             UUID uuid = UUID.fromString(location.substring(4));
-                            URL base = new URL(Settings.Web.URL);
-                            URL url = new URL(base, "uploads/" + uuid + ".schematic");
+                            URL url = URI.create(Settings.Web.URL + "uploads/" + uuid + ".schematic").toURL();
                             schematic = this.schematicHandler.getSchematic(url);
                         } catch (Exception e) {
                             e.printStackTrace();

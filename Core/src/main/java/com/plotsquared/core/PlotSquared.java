@@ -84,7 +84,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -210,9 +210,10 @@ public class PlotSquared {
             try {
                 URL logurl = PlotSquared.class.getProtectionDomain().getCodeSource().getLocation();
                 this.jarFile = new File(
-                        new URL(logurl.toURI().toString().split("\\!")[0].replaceAll("jar:file", "file"))
-                                .toURI().getPath());
-            } catch (MalformedURLException | URISyntaxException | SecurityException e) {
+                        URI.create(
+                                logurl.toURI().toString().split("\\!")[0].replaceAll("jar:file", "file"))
+                                .getPath());
+            } catch (URISyntaxException | SecurityException e) {
                 e.printStackTrace();
                 this.jarFile = new File(this.platform.getDirectory().getParentFile(), "PlotSquared.jar");
                 if (!this.jarFile.exists()) {
