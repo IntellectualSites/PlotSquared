@@ -33,6 +33,7 @@ import org.bukkit.entity.Ageable;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Bat;
 import org.bukkit.entity.Boat;
+import org.bukkit.entity.Breedable;
 import org.bukkit.entity.ChestedHorse;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
@@ -382,7 +383,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         }
     }
 
-    private void restoreAgeable(Ageable entity) {
+    private void restoreAgeable(Breedable entity) {
         if (!this.aged.adult) {
             entity.setBaby();
         }
@@ -392,7 +393,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         }
     }
 
-    public void storeAgeable(Ageable aged) {
+    public void storeAgeable(Breedable aged) {
         this.aged = new AgeableStats();
         this.aged.age = aged.getAge();
         this.aged.locked = aged.getAgeLock();
@@ -510,7 +511,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             // END INVENTORY HOLDER //
             case "WOLF", "OCELOT" -> {
                 restoreTameable((Tameable) entity);
-                restoreAgeable((Ageable) entity);
+                restoreAgeable((Breedable) entity);
                 restoreLiving((LivingEntity) entity);
                 return entity;
             }
@@ -528,7 +529,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 return sheep;
             }
             case "VILLAGER", "CHICKEN", "COW", "TURTLE", "POLAR_BEAR", "MUSHROOM_COW", "PIG" -> {
-                restoreAgeable((Ageable) entity);
+                restoreAgeable((Breedable) entity);
                 restoreLiving((LivingEntity) entity);
                 return entity;
             }
@@ -537,7 +538,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 if (this.dataByte != 0) {
                     ((Rabbit) entity).setRabbitType(Rabbit.Type.values()[this.dataByte]);
                 }
-                restoreAgeable((Ageable) entity);
+                restoreAgeable((Breedable) entity);
                 restoreLiving((LivingEntity) entity);
                 return entity;
             }
