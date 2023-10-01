@@ -51,6 +51,8 @@ import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.RegionUtil;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -391,47 +393,62 @@ public abstract class PlotArea implements ComponentLike {
             }
         }
 
-        List<String> flags = config.getStringList("flags.default");
-        if (flags.isEmpty()) {
-            flags = config.getStringList("flags");
-            if (flags.isEmpty()) {
-                flags = new ArrayList<>();
-                ConfigurationSection section = config.getConfigurationSection("flags");
-                Set<String> keys = section.getKeys(false);
-                for (String key : keys) {
-                    if (!"default".equals(key)) {
-                        flags.add(key + ';' + section.get(key));
-                    }
-                }
-            }
-        }
-        parseFlags(this.getFlagContainer(), flags);
-        ConsolePlayer.getConsole().sendMessage(
-                TranslatableCaption.of("flags.area_flags"),
-                TagResolver.resolver("flags", Tag.inserting(Component.text(flags.toString())))
-        );
-
         this.spawnEggs = config.getBoolean("event.spawn.egg");
         this.spawnCustom = config.getBoolean("event.spawn.custom");
         this.spawnBreeding = config.getBoolean("event.spawn.breeding");
 
-        List<String> roadflags = config.getStringList("road.flags");
-        if (roadflags.isEmpty()) {
-            roadflags = new ArrayList<>();
-            ConfigurationSection section = config.getConfigurationSection("road.flags");
-            Set<String> keys = section.getKeys(false);
-            for (String key : keys) {
-                if (!"default".equals(key)) {
-                    roadflags.add(key + ';' + section.get(key));
+        Runnable loadFlags = () -> {
+            ConsolePlayer.getConsole().sendMessage(
+                    TranslatableCaption.of("flags.loading_area_flags"),
+                    TagResolver.resolver("area", Tag.inserting(Component.text(this.id == null ? this.worldName : this.id)))
+            );
+            List<String> flags = config.getStringList("flags.default");
+            if (flags.isEmpty()) {
+                flags = config.getStringList("flags");
+                if (flags.isEmpty()) {
+                    flags = new ArrayList<>();
+                    ConfigurationSection section = config.getConfigurationSection("flags");
+                    Set<String> keys = section.getKeys(false);
+                    for (String key : keys) {
+                        if (!"default".equals(key)) {
+                            flags.add(key + ';' + section.get(key));
+                        }
+                    }
                 }
             }
+            parseFlags(this.getFlagContainer(), flags);
+            ConsolePlayer.getConsole().sendMessage(
+                    TranslatableCaption.of("flags.area_flags"),
+                    TagResolver.resolver("flags", Tag.inserting(Component.text(flags.toString())))
+            );
+
+            List<String> roadflags = config.getStringList("road.flags");
+            if (roadflags.isEmpty()) {
+                roadflags = new ArrayList<>();
+                ConfigurationSection section = config.getConfigurationSection("road.flags");
+                Set<String> keys = section.getKeys(false);
+                for (String key : keys) {
+                    if (!"default".equals(key)) {
+                        roadflags.add(key + ';' + section.get(key));
+                    }
+                }
+            }
+            this.roadFlags = roadflags.size() > 0;
+            parseFlags(this.getRoadFlagContainer(), roadflags);
+            ConsolePlayer.getConsole().sendMessage(
+                    TranslatableCaption.of("flags.road_flags"),
+                    TagResolver.resolver("flags", Tag.inserting(Component.text(roadflags.toString())))
+            );
+        };
+        if (PlotSquared.get().isWeInitialised()) {
+            loadFlags.run();
+        } else {
+            ConsolePlayer.getConsole().sendMessage(
+                    TranslatableCaption.of("flags.delaying_loading_area_flags"),
+                    TagResolver.resolver("area", Tag.inserting(Component.text(this.id == null ? this.worldName : this.id)))
+            );
+            TaskManager.runTaskLater(loadFlags, TaskTime.ticks(1));
         }
-        this.roadFlags = roadflags.size() > 0;
-        parseFlags(this.getRoadFlagContainer(), roadflags);
-        ConsolePlayer.getConsole().sendMessage(
-                TranslatableCaption.of("flags.road_flags"),
-                TagResolver.resolver("flags", Tag.inserting(Component.text(roadflags.toString())))
-        );
 
         loadConfiguration(config);
     }

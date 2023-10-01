@@ -631,6 +631,8 @@
   "flags.flag_error_double": "Flag value must be a decimal number.",
   "flags.flag_error_music": "Flag value must be a valid music disc ID.",
   "flags.flag_error_title": "Flag value must be in the format </red><grey>\"A title\" \"The subtitle\"</grey><red>.",
+  "flags.delaying_loading_area_flags": "<prefix><gray>Delaying loading flags for area `</gray><dark_aqua><area></dark_aqua><gray>` as WorldEdit is not initialised yet.</gray>",
+  "flags.loading_area_flags": "<prefix><gray>Loading flags for area: </gray><dark_aqua><area></dark_aqua>",
   "flags.area_flags": "<prefix><gray>Area flags: </gray><dark_aqua><flags></dark_aqua>",
   "flags.road_flags": "<prefix><gray>Road flags: </gray><dark_aqua><flags></dark_aqua>",
   "commands.description.add": "<gray>Allow a user to build in a plot while the plot owner is online.</gray>",
