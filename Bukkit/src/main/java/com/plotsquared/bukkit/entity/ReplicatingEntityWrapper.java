@@ -166,7 +166,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 //this.horse.style = horse.getStyle();
                 //this.horse.color = horse.getColor();
                 storeTameable(horse);
-                storeAgeable(horse);
+                storeBreedable(horse);
                 storeLiving(horse);
                 storeInventory(horse);
                 return;
@@ -174,7 +174,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             // END INVENTORY HOLDER //
             case "WOLF", "OCELOT" -> {
                 storeTameable((Tameable) entity);
-                storeAgeable((Ageable) entity);
+                storeBreedable((Breedable) entity);
                 storeLiving((LivingEntity) entity);
                 return;
             }
@@ -188,18 +188,18 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                     this.dataByte = (byte) 0;
                 }
                 this.dataByte2 = sheep.getColor().getDyeData();
-                storeAgeable(sheep);
+                storeBreedable(sheep);
                 storeLiving(sheep);
                 return;
             }
             case "VILLAGER", "CHICKEN", "COW", "MUSHROOM_COW", "PIG", "TURTLE", "POLAR_BEAR" -> {
-                storeAgeable((Ageable) entity);
+                storeBreedable((Breedable) entity);
                 storeLiving((LivingEntity) entity);
                 return;
             }
             case "RABBIT" -> {
                 this.dataByte = getOrdinal(Rabbit.Type.values(), ((Rabbit) entity).getRabbitType());
-                storeAgeable((Ageable) entity);
+                storeBreedable((Breedable) entity);
                 storeLiving((LivingEntity) entity);
                 return;
             }
@@ -383,7 +383,11 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         }
     }
 
-    private void restoreAgeable(Breedable entity) {
+    /**
+     * @deprecated Use {@link #restoreBreedable(Breedable)} instead
+     */
+    @Deprecated(forRemoval = true)
+    private void restoreAgeable(Ageable entity) {
         if (!this.aged.adult) {
             entity.setBaby();
         }
@@ -393,11 +397,32 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         }
     }
 
-    public void storeAgeable(Breedable aged) {
+    /**
+     * @deprecated Use {@link #storeBreedable(Breedable)} instead
+     */
+    @Deprecated(forRemoval = true)
+    public void storeAgeable(Ageable aged) {
         this.aged = new AgeableStats();
         this.aged.age = aged.getAge();
         this.aged.locked = aged.getAgeLock();
         this.aged.adult = aged.isAdult();
+    }
+
+    private void restoreBreedable(Breedable entity) {
+        if (!this.aged.adult) {
+            entity.setBaby();
+        }
+        entity.setAgeLock(this.aged.locked);
+        if (this.aged.age > 0) {
+            entity.setAge(this.aged.age);
+        }
+    }
+
+    public void storeBreedable(Breedable breedable) {
+        this.aged = new AgeableStats();
+        this.aged.age = breedable.getAge();
+        this.aged.locked = breedable.getAgeLock();
+        this.aged.adult = breedable.isAdult();
     }
 
     public void storeTameable(Tameable tamed) {
@@ -503,7 +528,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 //horse.setStyle(this.horse.style);
                 //horse.setColor(this.horse.color);
                 restoreTameable(horse);
-                restoreAgeable(horse);
+                restoreBreedable(horse);
                 restoreLiving(horse);
                 restoreInventory(horse);
                 return entity;
@@ -511,7 +536,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             // END INVENTORY HOLDER //
             case "WOLF", "OCELOT" -> {
                 restoreTameable((Tameable) entity);
-                restoreAgeable((Breedable) entity);
+                restoreBreedable((Breedable) entity);
                 restoreLiving((LivingEntity) entity);
                 return entity;
             }
@@ -524,12 +549,12 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 if (this.dataByte2 != 0) {
                     sheep.setColor(DyeColor.getByDyeData(this.dataByte2));
                 }
-                restoreAgeable(sheep);
+                restoreBreedable(sheep);
                 restoreLiving(sheep);
                 return sheep;
             }
             case "VILLAGER", "CHICKEN", "COW", "TURTLE", "POLAR_BEAR", "MUSHROOM_COW", "PIG" -> {
-                restoreAgeable((Breedable) entity);
+                restoreBreedable((Breedable) entity);
                 restoreLiving((LivingEntity) entity);
                 return entity;
             }
@@ -538,7 +563,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 if (this.dataByte != 0) {
                     ((Rabbit) entity).setRabbitType(Rabbit.Type.values()[this.dataByte]);
                 }
-                restoreAgeable((Breedable) entity);
+                restoreBreedable((Breedable) entity);
                 restoreLiving((LivingEntity) entity);
                 return entity;
             }
