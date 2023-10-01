@@ -57,8 +57,8 @@ tasks.processResources {
 
     doLast {
         copy {
-            from(File("$rootDir/LICENSE"))
-            into("$buildDir/resources/main/")
+            from(layout.buildDirectory.file("$rootDir/LICENSE"))
+            into(layout.buildDirectory.dir("resources/main"))
         }
     }
 }
