@@ -385,6 +385,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
 
     /**
      * @deprecated Use {@link #restoreBreedable(Breedable)} instead
+     * @since 7.0.1
      */
     @Deprecated(forRemoval = true)
     private void restoreAgeable(Ageable entity) {
@@ -399,6 +400,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
 
     /**
      * @deprecated Use {@link #storeBreedable(Breedable)} instead
+     * @since 7.0.1
      */
     @Deprecated(forRemoval = true)
     public void storeAgeable(Ageable aged) {
@@ -408,6 +410,9 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         this.aged.adult = aged.isAdult();
     }
 
+    /**
+     * @since 7.0.1
+     */
     private void restoreBreedable(Breedable entity) {
         if (!this.aged.adult) {
             entity.setBaby();
@@ -418,6 +423,9 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         }
     }
 
+    /**
+     * @since 7.0.1
+     */
     public void storeBreedable(Breedable breedable) {
         this.aged = new AgeableStats();
         this.aged.age = breedable.getAge();
