@@ -71,7 +71,7 @@ public class Debug extends SubCommand {
                     TranslatableCaption.of("commandconfig.command_syntax"),
                     TagResolver.resolver(
                             "value",
-                            Tag.inserting(Component.text("/plot debug <loadedchunks | player | debug-players | entitytypes | msg>"))
+                            Tag.inserting(Component.text("/plot debug <player | debug-players | entitytypes | msg>"))
                     )
             );
         }
@@ -186,7 +186,7 @@ public class Debug extends SubCommand {
 
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, String[] args, boolean space) {
-        return Stream.of("loadedchunks", "debug-players", "entitytypes")
+        return Stream.of("debug-players", "entitytypes")
                 .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
                 .map(value -> new Command(null, false, value, "plots.admin", RequiredType.NONE, null) {
                 }).collect(Collectors.toList());
