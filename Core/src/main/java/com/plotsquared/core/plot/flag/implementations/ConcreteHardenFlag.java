@@ -28,7 +28,7 @@ public class ConcreteHardenFlag extends BooleanFlag<ConcreteHardenFlag> {
     public static final ConcreteHardenFlag CONCRETE_HARDEN_FALSE = new ConcreteHardenFlag(false);
 
     private ConcreteHardenFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_ice_form"));
+        super(value, TranslatableCaption.of("flags.flag_description_concrete_harden"));
     }
 
     @Override
