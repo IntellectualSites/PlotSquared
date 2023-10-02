@@ -25,6 +25,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -130,6 +131,11 @@ public final class TranslatableCaption implements NamespacedCaption {
     @Override
     public int hashCode() {
         return Objects.hashCode(this.getNamespace(), this.getKey());
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return "TranslatableCaption(" + getNamespace() + ":" + getKey() + ")";
     }
 
 }

@@ -44,4 +44,6 @@ public interface Caption {
      */
     @NonNull Component toComponent(@NonNull LocaleHolder localeHolder);
 
+    @NonNull String toString();
+
 }

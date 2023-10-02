@@ -19,6 +19,7 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
@@ -103,10 +104,11 @@ public class Trust extends Command {
                             player.hasPermission(Permission.PERMISSION_TRUST_EVERYONE) || player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_TRUST))) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
-                                TagResolver.resolver(
+                                PlotSquared.platform().playerManager().getUsernameCaption(uuid)
+                                        .thenApply(caption -> TagResolver.resolver(
                                         "value",
-                                        Tag.inserting(PlayerManager.resolveName(uuid).toComponent(player))
-                                )
+                                        Tag.inserting(caption.toComponent(player))
+                                ))
                         );
                         iterator.remove();
                         continue;
@@ -114,10 +116,11 @@ public class Trust extends Command {
                     if (currentPlot.isOwner(uuid)) {
                         player.sendMessage(
                                 TranslatableCaption.of("member.already_added"),
-                                TagResolver.resolver(
-                                        "value",
-                                        Tag.inserting(PlayerManager.resolveName(uuid).toComponent(player))
-                                )
+                                PlotSquared.platform().playerManager().getUsernameCaption(uuid)
+                                        .thenApply(caption -> TagResolver.resolver(
+                                        "player",
+                                        Tag.inserting(caption.toComponent(player))
+                                ))
                         );
                         iterator.remove();
                         continue;
@@ -125,10 +128,11 @@ public class Trust extends Command {
                     if (currentPlot.getTrusted().contains(uuid)) {
                         player.sendMessage(
                                 TranslatableCaption.of("member.already_added"),
-                                TagResolver.resolver(
-                                        "value",
-                                        Tag.inserting(PlayerManager.resolveName(uuid).toComponent(player))
-                                )
+                                PlotSquared.platform().playerManager().getUsernameCaption(uuid)
+                                        .thenApply(caption -> TagResolver.resolver(
+                                        "player",
+                                        Tag.inserting(caption.toComponent(player))
+                                ))
                         );
                         iterator.remove();
                         continue;
