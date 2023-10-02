@@ -187,6 +187,7 @@ public final class PlaceholderRegistry {
             }
         });
         this.createPlaceholder("currentplot_biome", (player, plot) -> plot.getBiomeSynchronous().toString());
+        this.createPlaceholder("currentplot_size", (player, plot) -> String.valueOf(plot.getConnectedPlots().size()));
     }
 
     /**
