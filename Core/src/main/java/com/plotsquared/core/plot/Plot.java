@@ -29,6 +29,7 @@ import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.events.PlayerTeleportToPlotEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.generator.ClassicPlotWorld;
@@ -2614,16 +2615,17 @@ public class Plot {
      */
     public void teleportPlayer(final PlotPlayer<?> player, TeleportCause cause, Consumer<Boolean> resultConsumer) {
         Plot plot = this.getBasePlot(false);
-        Result result = this.eventDispatcher.callTeleport(player, player.getLocation(), plot, cause).getEventResult();
-        if (result == Result.DENY) {
-            player.sendMessage(
-                    TranslatableCaption.of("events.event_denied"),
-                    TagResolver.resolver("value", Tag.inserting(Component.text("Teleport")))
-            );
-            resultConsumer.accept(false);
-            return;
-        }
-        final Consumer<Location> locationConsumer = location -> {
+        final Consumer<Location> locationConsumer = calculatedLocation -> {
+            PlayerTeleportToPlotEvent event = this.eventDispatcher.callTeleport(player, player.getLocation(), calculatedLocation, plot, cause);
+            if (event.getEventResult() == Result.DENY) {
+                player.sendMessage(
+                        TranslatableCaption.of("events.event_denied"),
+                        TagResolver.resolver("value", Tag.inserting(Component.text("Teleport")))
+                );
+                resultConsumer.accept(false);
+                return;
+            }
+            Location location = event.getLocation();
             if (Settings.Teleport.DELAY == 0 || player.hasPermission("plots.teleport.delay.bypass")) {
                 player.sendMessage(TranslatableCaption.of("teleport.teleported_to_plot"));
                 player.teleport(location, cause);
