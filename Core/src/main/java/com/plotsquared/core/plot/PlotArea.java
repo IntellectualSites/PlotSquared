@@ -397,60 +397,61 @@ public abstract class PlotArea implements ComponentLike {
         this.spawnCustom = config.getBoolean("event.spawn.custom");
         this.spawnBreeding = config.getBoolean("event.spawn.breeding");
 
-        Runnable loadFlags = () -> {
-            ConsolePlayer.getConsole().sendMessage(
-                    TranslatableCaption.of("flags.loading_area_flags"),
-                    TagResolver.resolver("area", Tag.inserting(Component.text(this.id == null ? this.worldName : this.id)))
-            );
-            List<String> flags = config.getStringList("flags.default");
-            if (flags.isEmpty()) {
-                flags = config.getStringList("flags");
-                if (flags.isEmpty()) {
-                    flags = new ArrayList<>();
-                    ConfigurationSection section = config.getConfigurationSection("flags");
-                    Set<String> keys = section.getKeys(false);
-                    for (String key : keys) {
-                        if (!"default".equals(key)) {
-                            flags.add(key + ';' + section.get(key));
-                        }
-                    }
-                }
-            }
-            parseFlags(this.getFlagContainer(), flags);
-            ConsolePlayer.getConsole().sendMessage(
-                    TranslatableCaption.of("flags.area_flags"),
-                    TagResolver.resolver("flags", Tag.inserting(Component.text(flags.toString())))
-            );
-
-            List<String> roadflags = config.getStringList("road.flags");
-            if (roadflags.isEmpty()) {
-                roadflags = new ArrayList<>();
-                ConfigurationSection section = config.getConfigurationSection("road.flags");
-                Set<String> keys = section.getKeys(false);
-                for (String key : keys) {
-                    if (!"default".equals(key)) {
-                        roadflags.add(key + ';' + section.get(key));
-                    }
-                }
-            }
-            this.roadFlags = roadflags.size() > 0;
-            parseFlags(this.getRoadFlagContainer(), roadflags);
-            ConsolePlayer.getConsole().sendMessage(
-                    TranslatableCaption.of("flags.road_flags"),
-                    TagResolver.resolver("flags", Tag.inserting(Component.text(roadflags.toString())))
-            );
-        };
         if (PlotSquared.get().isWeInitialised()) {
-            loadFlags.run();
+            loadFlags(config);
         } else {
             ConsolePlayer.getConsole().sendMessage(
                     TranslatableCaption.of("flags.delaying_loading_area_flags"),
                     TagResolver.resolver("area", Tag.inserting(Component.text(this.id == null ? this.worldName : this.id)))
             );
-            TaskManager.runTaskLater(loadFlags, TaskTime.ticks(1));
+            TaskManager.runTaskLater(() -> loadFlags(config), TaskTime.ticks(1));
         }
 
         loadConfiguration(config);
+    }
+
+    private void loadFlags(ConfigurationSection config) {
+        ConsolePlayer.getConsole().sendMessage(
+                TranslatableCaption.of("flags.loading_area_flags"),
+                TagResolver.resolver("area", Tag.inserting(Component.text(this.id == null ? this.worldName : this.id)))
+        );
+        List<String> flags = config.getStringList("flags.default");
+        if (flags.isEmpty()) {
+            flags = config.getStringList("flags");
+            if (flags.isEmpty()) {
+                flags = new ArrayList<>();
+                ConfigurationSection section = config.getConfigurationSection("flags");
+                Set<String> keys = section.getKeys(false);
+                for (String key : keys) {
+                    if (!"default".equals(key)) {
+                        flags.add(key + ';' + section.get(key));
+                    }
+                }
+            }
+        }
+        parseFlags(this.getFlagContainer(), flags);
+        ConsolePlayer.getConsole().sendMessage(
+                TranslatableCaption.of("flags.area_flags"),
+                TagResolver.resolver("flags", Tag.inserting(Component.text(flags.toString())))
+        );
+
+        List<String> roadflags = config.getStringList("road.flags");
+        if (roadflags.isEmpty()) {
+            roadflags = new ArrayList<>();
+            ConfigurationSection section = config.getConfigurationSection("road.flags");
+            Set<String> keys = section.getKeys(false);
+            for (String key : keys) {
+                if (!"default".equals(key)) {
+                    roadflags.add(key + ';' + section.get(key));
+                }
+            }
+        }
+        this.roadFlags = !roadflags.isEmpty();
+        parseFlags(this.getRoadFlagContainer(), roadflags);
+        ConsolePlayer.getConsole().sendMessage(
+                TranslatableCaption.of("flags.road_flags"),
+                TagResolver.resolver("flags", Tag.inserting(Component.text(roadflags.toString())))
+        );
     }
 
     public abstract void loadConfiguration(ConfigurationSection config);
