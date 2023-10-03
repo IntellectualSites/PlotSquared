@@ -158,9 +158,8 @@ public class EventDispatcher {
         return event;
     }
 
-    public PlayerTeleportToPlotEvent callTeleport(PlotPlayer<?> player, Location from, Location location, Plot plot,
-                                                  TeleportCause cause) {
-        PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, location, plot, cause);
+    public PlayerTeleportToPlotEvent callTeleport(PlotPlayer<?> player, Location from, Plot plot, TeleportCause cause) {
+        PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, plot, cause);
         callEvent(event);
         return event;
     }

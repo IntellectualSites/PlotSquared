@@ -2615,17 +2615,20 @@ public class Plot {
      */
     public void teleportPlayer(final PlotPlayer<?> player, TeleportCause cause, Consumer<Boolean> resultConsumer) {
         Plot plot = this.getBasePlot(false);
+
+        PlayerTeleportToPlotEvent event = this.eventDispatcher.callTeleport(player, player.getLocation(), plot, cause);
+        if (event.getEventResult() == Result.DENY) {
+            player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    TagResolver.resolver("value", Tag.inserting(Component.text("Teleport")))
+            );
+            resultConsumer.accept(false);
+            return;
+        }
+
         final Consumer<Location> locationConsumer = calculatedLocation -> {
-            PlayerTeleportToPlotEvent event = this.eventDispatcher.callTeleport(player, player.getLocation(), calculatedLocation, plot, cause);
-            if (event.getEventResult() == Result.DENY) {
-                player.sendMessage(
-                        TranslatableCaption.of("events.event_denied"),
-                        TagResolver.resolver("value", Tag.inserting(Component.text("Teleport")))
-                );
-                resultConsumer.accept(false);
-                return;
-            }
-            Location location = event.getLocation();
+            Location location = event.getLocationTransformer() == null ?
+                    calculatedLocation : event.getLocationTransformer().transform(calculatedLocation);
             if (Settings.Teleport.DELAY == 0 || player.hasPermission("plots.teleport.delay.bypass")) {
                 player.sendMessage(TranslatableCaption.of("teleport.teleported_to_plot"));
                 player.teleport(location, cause);

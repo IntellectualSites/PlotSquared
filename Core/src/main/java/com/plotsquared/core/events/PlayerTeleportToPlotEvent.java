@@ -21,10 +21,7 @@ package com.plotsquared.core.events;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
-import java.util.function.Consumer;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Called when a player teleports to a plot
@@ -34,23 +31,21 @@ public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements Cancel
     private final TeleportCause cause;
     private Result eventResult;
     private final Location from;
-    private Location location;
+    private LocationTransformer locationTransformer;
 
 
     /**
      * PlayerTeleportToPlotEvent: Called when a player teleports to a plot
      *
-     * @param player   That was teleported
-     * @param from     The origin location, from where the teleport was triggered (players location most likely)
-     * @param location The initial location where the player will be teleported to
-     * @param plot     Plot to which the player was teleported
-     * @param cause    Why the teleport is being completed
+     * @param player That was teleported
+     * @param from   The origin location, from where the teleport was triggered (players location most likely)
+     * @param plot   Plot to which the player was teleported
+     * @param cause  Why the teleport is being completed
      * @since 6.1.0
      */
-    public PlayerTeleportToPlotEvent(PlotPlayer<?> player, Location from, Location location, Plot plot, TeleportCause cause) {
+    public PlayerTeleportToPlotEvent(PlotPlayer<?> player, Location from, Plot plot, TeleportCause cause) {
         super(player, plot);
         this.from = from;
-        this.location = location;
         this.cause = cause;
     }
 
@@ -75,26 +70,24 @@ public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements Cancel
     }
 
     /**
-     * Get the current location where the player will be teleported to.
-     * Defaults to {@link Plot#getHome(Consumer)} or {@link Plot#getDefaultHome(boolean, Consumer)}
+     * Gets the currently applied {@link LocationTransformer} or null, if none was set
      *
-     * @return Location
+     * @return LocationTransformer
      * @since TODO
      */
-    public Location getLocation() {
-        return this.location;
+    public @Nullable LocationTransformer getLocationTransformer() {
+        return this.locationTransformer;
     }
 
     /**
-     * Set the new location where the player should be teleported to.
-     * <b>Must</b> be not-null. If your intention is to cancel this teleport, see {@link #setEventResult(Result)}
-     * @param location The new location
+     * Sets the {@link LocationTransformer} to mutate the location where the player will be teleported to.
+     * May be {@code null}, if any previous set transformations should be discarded.
+     *
+     * @param locationTransformer The new transformer
      * @since TODO
      */
-    public void setLocation(@NotNull Location location) {
-        Objects.requireNonNull(location, "PlayerTeleportToPlotEvent#location may never be null. " +
-                "If you intend to cancel the teleport, use PlayerTeleportToPlotEvent#setEventResult");
-        this.location = location;
+    public void setLocationTransformer(@Nullable LocationTransformer locationTransformer) {
+        this.locationTransformer = locationTransformer;
     }
 
     @Override
@@ -105,6 +98,19 @@ public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements Cancel
     @Override
     public void setEventResult(Result e) {
         this.eventResult = e;
+    }
+
+    public interface LocationTransformer {
+
+        /**
+         * Transforms an input location {@code origin} to a new location
+         *
+         * @param origin The origin location which should be transformed
+         * @return The transformed location
+         * @since TODO
+         */
+        Location transform(Location origin);
+
     }
 
 }
