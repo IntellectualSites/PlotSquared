@@ -42,7 +42,7 @@ public class EntityUtil {
     }
 
     private static int capNumeral(final @NonNull String flagName) {
-        int i = switch (flagName) {
+        return switch (flagName) {
             case "mob-cap" -> CAP_MOB;
             case "hostile-cap" -> CAP_MONSTER;
             case "animal-cap" -> CAP_ANIMAL;
@@ -50,7 +50,6 @@ public class EntityUtil {
             case "misc-cap" -> CAP_MISC;
             default -> CAP_ENTITY;
         };
-        return i;
     }
 
     @SuppressWarnings("unchecked")
