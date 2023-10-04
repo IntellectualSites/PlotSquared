@@ -33,6 +33,7 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.BlockBurnFlag;
 import com.plotsquared.core.plot.flag.implementations.BlockIgnitionFlag;
 import com.plotsquared.core.plot.flag.implementations.BreakFlag;
+import com.plotsquared.core.plot.flag.implementations.ConcreteHardenFlag;
 import com.plotsquared.core.plot.flag.implementations.CoralDryFlag;
 import com.plotsquared.core.plot.flag.implementations.CropGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.DisablePhysicsFlag;
@@ -583,6 +584,12 @@ public class BlockEventListener implements Listener {
         if (org.bukkit.Tag.ICE.isTagged(event.getNewState().getType())) {
             if (!plot.getFlag(IceFormFlag.class)) {
                 plot.debug("Ice could not form because ice-form = false");
+                event.setCancelled(true);
+            }
+        }
+        if (event.getNewState().getType().toString().endsWith("CONCRETE")) {
+            if (!plot.getFlag(ConcreteHardenFlag.class)) {
+                plot.debug("Concrete powder could not harden because concrete-harden = false");
                 event.setCancelled(true);
             }
         }

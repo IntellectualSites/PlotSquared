@@ -183,7 +183,7 @@ public class ChunkCoordinatorBuilder {
      * Set whether the chunks should be allow to unload after being accessed. This should only be used where the chunks are read from
      * and then written to from a separate queue where they're consequently unloaded.
      *
-     * @param unloadAfter if to unload chuns afterwards
+     * @param unloadAfter if to unload chunks afterwards
      * @return this ChunkCoordinatorBuilder instance
      */
     public @NonNull ChunkCoordinatorBuilder unloadAfter(final boolean unloadAfter) {

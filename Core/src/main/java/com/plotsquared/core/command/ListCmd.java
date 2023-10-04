@@ -517,6 +517,7 @@ public class ListCmd extends SubCommand {
                     }
                 }
                 finalResolver.tag("players", Tag.inserting(builder.asComponent()));
+                finalResolver.tag("size", Tag.inserting(Component.text(plot.getConnectedPlots().size())));
                 caption.set(TranslatableCaption.of("info.plot_list_item"));
                 caption.setTagResolvers(finalResolver.build());
             }
