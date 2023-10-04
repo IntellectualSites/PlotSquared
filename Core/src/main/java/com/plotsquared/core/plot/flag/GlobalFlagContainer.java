@@ -29,6 +29,7 @@ import com.plotsquared.core.plot.flag.implementations.BlockIgnitionFlag;
 import com.plotsquared.core.plot.flag.implementations.BlockedCmdsFlag;
 import com.plotsquared.core.plot.flag.implementations.BreakFlag;
 import com.plotsquared.core.plot.flag.implementations.ChatFlag;
+import com.plotsquared.core.plot.flag.implementations.ConcreteHardenFlag;
 import com.plotsquared.core.plot.flag.implementations.CopperOxideFlag;
 import com.plotsquared.core.plot.flag.implementations.CoralDryFlag;
 import com.plotsquared.core.plot.flag.implementations.CropGrowFlag;
@@ -142,6 +143,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(BeaconEffectsFlag.BEACON_EFFECT_TRUE);
         this.addFlag(BlockIgnitionFlag.BLOCK_IGNITION_TRUE);
         this.addFlag(ChatFlag.CHAT_FLAG_TRUE);
+        this.addFlag(ConcreteHardenFlag.CONCRETE_HARDEN_TRUE);
         this.addFlag(CopperOxideFlag.COPPER_OXIDE_FALSE);
         this.addFlag(CoralDryFlag.CORAL_DRY_FALSE);
         this.addFlag(CropGrowFlag.CROP_GROW_TRUE);
