@@ -174,7 +174,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @since 6.4.0
      * @deprecated Don't unnecessarily block threads and utilize playerMap - see {@link #getUsernameCaption(UUID)}
      */
-    @Deprecated
+    @Deprecated(since = "TODO")
     public static @NonNull Caption resolveName(final @Nullable UUID owner) {
         return resolveName(owner, true);
     }
@@ -188,7 +188,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @since 6.4.0
      * @deprecated Don't unnecessarily block threads and utilize playerMap - see {@link #getUsernameCaption(UUID)}
      */
-    @Deprecated
+    @Deprecated(since = "TODO")
     public static @NonNull Caption resolveName(final @Nullable UUID owner, final boolean blocking) {
         if (owner == null) {
             return TranslatableCaption.of("info.none");
