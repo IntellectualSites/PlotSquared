@@ -25,6 +25,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * CommandCategory.
@@ -82,7 +83,7 @@ public enum CommandCategory implements Caption {
     // TODO this method shouldn't be invoked
     @Deprecated
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return this.caption.getComponent(LocaleHolder.console());
     }
 
@@ -107,5 +108,6 @@ public enum CommandCategory implements Caption {
     boolean canAccess(PlotPlayer<?> player) {
         return !MainCommand.getInstance().getCommands(this, player).isEmpty();
     }
+
 
 }

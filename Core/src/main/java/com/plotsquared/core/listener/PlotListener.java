@@ -55,7 +55,6 @@ import com.plotsquared.core.plot.flag.implementations.TitlesFlag;
 import com.plotsquared.core.plot.flag.implementations.WeatherFlag;
 import com.plotsquared.core.plot.flag.types.TimedFlag;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.world.gamemode.GameMode;
@@ -63,7 +62,6 @@ import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -77,6 +75,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class PlotListener {
 
@@ -321,22 +320,27 @@ public class PlotListener {
                         }
                         if ((lastPlot != null) && plot.getId().equals(lastPlot.getId()) && plot.hasOwner()) {
                             final UUID plotOwner = plot.getOwnerAbs();
-                            ComponentLike owner = PlayerManager.resolveName(plotOwner, true).toComponent(player);
                             Caption header = fromFlag ? StaticCaption.of(title) : TranslatableCaption.of("titles" +
                                     ".title_entered_plot");
                             Caption subHeader = fromFlag ? StaticCaption.of(subtitle) : TranslatableCaption.of("titles" +
                                     ".title_entered_plot_sub");
-                            TagResolver resolver = TagResolver.builder()
-                                    .tag("plot", Tag.inserting(Component.text(lastPlot.getId().toString())))
-                                    .tag("world", Tag.inserting(Component.text(player.getLocation().getWorldName())))
-                                    .tag("owner", Tag.inserting(owner))
-                                    .tag("alias", Tag.inserting(Component.text(plot.getAlias())))
-                                    .build();
-                            if (Settings.Titles.TITLES_AS_ACTIONBAR) {
-                                player.sendActionBar(header, resolver);
-                            } else {
-                                player.sendTitle(header, subHeader, resolver);
-                            }
+
+                            CompletableFuture<TagResolver> future = PlotSquared.platform().playerManager()
+                                    .getUsernameCaption(plotOwner).thenApply(caption -> TagResolver.builder()
+                                            .tag("owner", Tag.inserting(caption.toComponent(player)))
+                                            .tag("plot", Tag.inserting(Component.text(lastPlot.getId().toString())))
+                                            .tag("world", Tag.inserting(Component.text(player.getLocation().getWorldName())))
+                                            .tag("alias", Tag.inserting(Component.text(plot.getAlias())))
+                                            .build()
+                                    );
+
+                            future.whenComplete((tagResolver, throwable) -> {
+                                if (Settings.Titles.TITLES_AS_ACTIONBAR) {
+                                    player.sendActionBar(header, tagResolver);
+                                } else {
+                                    player.sendTitle(header, subHeader, tagResolver);
+                                }
+                            });
                         }
                     }, TaskTime.seconds(1L));
                 }
