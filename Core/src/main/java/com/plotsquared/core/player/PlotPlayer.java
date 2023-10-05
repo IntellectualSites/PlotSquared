@@ -80,6 +80,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -951,6 +952,54 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
             setMeta("lastMessageTime", System.currentTimeMillis());
             getAudience().sendMessage(component);
         }
+    }
+
+    /**
+     * Sends a message to the command caller, when the future is resolved
+     *
+     * @param caption          Caption to send
+     * @param asyncReplacement Async variable replacement
+     * @return A Future to be resolved, after the message was sent
+     * @since TODO
+     */
+    public final CompletableFuture<Void> sendMessage(
+            @NonNull Caption caption,
+            CompletableFuture<@NonNull TagResolver> asyncReplacement
+    ) {
+        return sendMessage(caption, new CompletableFuture[]{asyncReplacement});
+    }
+
+    /**
+     * Sends a message to the command caller, when all futures are resolved
+     *
+     * @param caption           Caption to send
+     * @param asyncReplacements Async variable replacements
+     * @param replacements      Sync variable replacements
+     * @return A Future to be resolved, after the message was sent
+     * @since TODO
+     */
+    public final CompletableFuture<Void> sendMessage(
+            @NonNull Caption caption,
+            CompletableFuture<@NonNull TagResolver>[] asyncReplacements,
+            @NonNull TagResolver... replacements
+    ) {
+        return CompletableFuture.allOf(asyncReplacements).whenComplete((unused, throwable) -> {
+            Set<TagResolver> resolvers = new HashSet<>(Arrays.asList(replacements));
+            if (throwable != null) {
+                sendMessage(
+                        TranslatableCaption.of("errors.error"),
+                        TagResolver.resolver("value", Tag.inserting(
+                                Component.text("Failed to resolve asynchronous caption replacements")
+                        ))
+                );
+                LOGGER.error("Failed to resolve asynchronous tagresolver(s) for " + caption, throwable);
+            } else {
+                for (final CompletableFuture<TagResolver> asyncReplacement : asyncReplacements) {
+                    resolvers.add(asyncReplacement.join());
+                }
+            }
+            sendMessage(caption, resolvers.toArray(TagResolver[]::new));
+        });
     }
 
     // Redefine from PermissionHolder as it's required from CommandCaller
