@@ -426,7 +426,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
     /**
      * @since TODO
      */
-    public void storeBreedable(Breedable breedable) {
+    private void storeBreedable(Breedable breedable) {
         this.aged = new AgeableStats();
         this.aged.age = breedable.getAge();
         this.aged.locked = breedable.getAgeLock();
