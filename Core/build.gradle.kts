@@ -72,7 +72,7 @@ tasks {
         opt.links("https://jd.advntr.dev/text-minimessage/4.14.0/")
         opt.links("https://google.github.io/guice/api-docs/" + libs.guice.get().versionConstraint.toString() + "/javadoc/")
         opt.links("https://checkerframework.org/api/")
-        opt.links("https://javadoc.io/doc/com.intellectualsites.informative-annotations/informative-annotations/latest/")
+        opt.links("https://javadocs.dev/com.intellectualsites.informative-annotations/informative-annotations/1.4/")
         opt.isLinkSource = true
         opt.bottom(File("$rootDir/javadocfooter.html").readText())
         opt.isUse = true

@@ -150,22 +150,26 @@ subprojects {
                             id.set("Sauilitired")
                             name.set("Alexander Söderberg")
                             organization.set("IntellectualSites")
+                            organizationUrl.set("https://github.com/IntellectualSites")
                         }
                         developer {
                             id.set("NotMyFault")
                             name.set("Alexander Brandes")
                             organization.set("IntellectualSites")
+                            organizationUrl.set("https://github.com/IntellectualSites")
                             email.set("contact(at)notmyfault.dev")
                         }
                         developer {
                             id.set("SirYwell")
                             name.set("Hannes Greule")
                             organization.set("IntellectualSites")
+                            organizationUrl.set("https://github.com/IntellectualSites")
                         }
                         developer {
                             id.set("dordsor21")
                             name.set("dordsor21")
                             organization.set("IntellectualSites")
+                            organizationUrl.set("https://github.com/IntellectualSites")
                         }
                     }
 

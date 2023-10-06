@@ -31,7 +31,6 @@ import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.Component;
@@ -136,10 +135,11 @@ public class Owner extends SetCommand {
             if (plot.isOwner(uuid)) {
                 player.sendMessage(
                         TranslatableCaption.of("member.already_owner"),
-                        TagResolver.resolver(
+                        PlotSquared.platform().playerManager().getUsernameCaption(uuid)
+                                .thenApply(caption -> TagResolver.resolver(
                                 "player",
-                                Tag.inserting(PlayerManager.resolveName(uuid, false).toComponent(player))
-                        )
+                                Tag.inserting(caption.toComponent(player))
+                        ))
                 );
                 return;
             }
@@ -147,10 +147,11 @@ public class Owner extends SetCommand {
                 if (other == null) {
                     player.sendMessage(
                             TranslatableCaption.of("errors.invalid_player_offline"),
-                            TagResolver.resolver(
+                            PlotSquared.platform().playerManager().getUsernameCaption(uuid)
+                                    .thenApply(caption -> TagResolver.resolver(
                                     "player",
-                                    Tag.inserting(PlayerManager.resolveName(uuid).toComponent(player))
-                            )
+                                    Tag.inserting(caption.toComponent(player))
+                            ))
                     );
                     return;
                 }
