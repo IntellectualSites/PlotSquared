@@ -155,7 +155,8 @@ public class SQLManager implements AbstractDB {
         this.worldConfiguration = worldConfiguration;
         this.database = database;
         this.connection = database.openConnection();
-        this.supportsGetGeneratedKeys = this.connection.getMetaData().supportsGetGeneratedKeys();
+        final DatabaseMetaData databaseMetaData = this.connection.getMetaData();
+        this.supportsGetGeneratedKeys = databaseMetaData.supportsGetGeneratedKeys();
         this.mySQL = database instanceof MySQL;
         this.globalTasks = new ConcurrentLinkedQueue<>();
         this.notifyTasks = new ConcurrentLinkedQueue<>();
@@ -165,8 +166,10 @@ public class SQLManager implements AbstractDB {
         this.prefix = prefix;
 
         if (mySQL && !supportsGetGeneratedKeys) {
+            String driver = databaseMetaData.getDriverName();
+            String driverVersion = databaseMetaData.getDriverVersion();
             throw new SQLException("Database Driver for MySQL does not support Statement#getGeneratedKeys - which breaks " +
-                    "PlotSquared functionality");
+                    "PlotSquared functionality (Using " + driver + ":" + driverVersion + ")");
         }
 
         this.SET_OWNER = "UPDATE `" + this.prefix
