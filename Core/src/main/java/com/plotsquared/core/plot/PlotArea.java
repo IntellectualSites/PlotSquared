@@ -51,6 +51,8 @@ import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.RegionUtil;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -391,6 +393,28 @@ public abstract class PlotArea implements ComponentLike {
             }
         }
 
+        this.spawnEggs = config.getBoolean("event.spawn.egg");
+        this.spawnCustom = config.getBoolean("event.spawn.custom");
+        this.spawnBreeding = config.getBoolean("event.spawn.breeding");
+
+        if (PlotSquared.get().isWeInitialised()) {
+            loadFlags(config);
+        } else {
+            ConsolePlayer.getConsole().sendMessage(
+                    TranslatableCaption.of("flags.delaying_loading_area_flags"),
+                    TagResolver.resolver("area", Tag.inserting(Component.text(this.id == null ? this.worldName : this.id)))
+            );
+            TaskManager.runTaskLater(() -> loadFlags(config), TaskTime.ticks(1));
+        }
+
+        loadConfiguration(config);
+    }
+
+    private void loadFlags(ConfigurationSection config) {
+        ConsolePlayer.getConsole().sendMessage(
+                TranslatableCaption.of("flags.loading_area_flags"),
+                TagResolver.resolver("area", Tag.inserting(Component.text(this.id == null ? this.worldName : this.id)))
+        );
         List<String> flags = config.getStringList("flags.default");
         if (flags.isEmpty()) {
             flags = config.getStringList("flags");
@@ -411,10 +435,6 @@ public abstract class PlotArea implements ComponentLike {
                 TagResolver.resolver("flags", Tag.inserting(Component.text(flags.toString())))
         );
 
-        this.spawnEggs = config.getBoolean("event.spawn.egg");
-        this.spawnCustom = config.getBoolean("event.spawn.custom");
-        this.spawnBreeding = config.getBoolean("event.spawn.breeding");
-
         List<String> roadflags = config.getStringList("road.flags");
         if (roadflags.isEmpty()) {
             roadflags = new ArrayList<>();
@@ -426,14 +446,12 @@ public abstract class PlotArea implements ComponentLike {
                 }
             }
         }
-        this.roadFlags = roadflags.size() > 0;
+        this.roadFlags = !roadflags.isEmpty();
         parseFlags(this.getRoadFlagContainer(), roadflags);
         ConsolePlayer.getConsole().sendMessage(
                 TranslatableCaption.of("flags.road_flags"),
                 TagResolver.resolver("flags", Tag.inserting(Component.text(roadflags.toString())))
         );
-
-        loadConfiguration(config);
     }
 
     public abstract void loadConfiguration(ConfigurationSection config);
