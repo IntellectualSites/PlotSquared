@@ -960,7 +960,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      * @param caption          Caption to send
      * @param asyncReplacement Async variable replacement
      * @return A Future to be resolved, after the message was sent
-     * @since TODO
+     * @since 7.1.0
      */
     public final CompletableFuture<Void> sendMessage(
             @NonNull Caption caption,
@@ -976,7 +976,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      * @param asyncReplacements Async variable replacements
      * @param replacements      Sync variable replacements
      * @return A Future to be resolved, after the message was sent
-     * @since TODO
+     * @since 7.1.0
      */
     public final CompletableFuture<Void> sendMessage(
             @NonNull Caption caption,
