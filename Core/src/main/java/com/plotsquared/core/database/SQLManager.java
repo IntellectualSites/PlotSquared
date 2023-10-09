@@ -130,6 +130,7 @@ public class SQLManager implements AbstractDB {
     public volatile ConcurrentHashMap<PlotCluster, Queue<UniqueStatement>> clusterTasks;
     // Private
     private Connection connection;
+    private boolean supportsGetGeneratedKeys;
     private boolean closed = false;
 
     /**
@@ -154,6 +155,8 @@ public class SQLManager implements AbstractDB {
         this.worldConfiguration = worldConfiguration;
         this.database = database;
         this.connection = database.openConnection();
+        final DatabaseMetaData databaseMetaData = this.connection.getMetaData();
+        this.supportsGetGeneratedKeys = databaseMetaData.supportsGetGeneratedKeys();
         this.mySQL = database instanceof MySQL;
         this.globalTasks = new ConcurrentLinkedQueue<>();
         this.notifyTasks = new ConcurrentLinkedQueue<>();
@@ -161,6 +164,14 @@ public class SQLManager implements AbstractDB {
         this.playerTasks = new ConcurrentHashMap<>();
         this.clusterTasks = new ConcurrentHashMap<>();
         this.prefix = prefix;
+
+        if (mySQL && !supportsGetGeneratedKeys) {
+            String driver = databaseMetaData.getDriverName();
+            String driverVersion = databaseMetaData.getDriverVersion();
+            throw new SQLException("Database Driver for MySQL does not support Statement#getGeneratedKeys - which breaks " +
+                    "PlotSquared functionality (Using " + driver + ":" + driverVersion + ")");
+        }
+
         this.SET_OWNER = "UPDATE `" + this.prefix
                 + "plot` SET `owner` = ? WHERE `plot_id_x` = ? AND `plot_id_z` = ? AND `world` = ?";
         this.GET_ALL_PLOTS =
@@ -171,20 +182,32 @@ public class SQLManager implements AbstractDB {
                 "INSERT INTO `" + this.prefix + "plot_settings` (`plot_plot_id`) values ";
         this.CREATE_TIERS =
                 "INSERT INTO `" + this.prefix + "plot_%tier%` (`plot_plot_id`, `user_uuid`) values ";
-        this.CREATE_PLOT = "INSERT INTO `" + this.prefix
+        String tempCreatePlot = "INSERT INTO `" + this.prefix
                 + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp`) VALUES(?, ?, ?, ?, ?)";
-
+        if (!supportsGetGeneratedKeys) {
+            tempCreatePlot += " RETURNING `id`";
+        }
+        this.CREATE_PLOT = tempCreatePlot;
         if (mySQL) {
             this.CREATE_PLOT_SAFE = "INSERT IGNORE INTO `" + this.prefix
                     + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp`) SELECT ?, ?, ?, ?, ? FROM DUAL WHERE NOT EXISTS (SELECT null FROM `"
                     + this.prefix + "plot` WHERE `world` = ? AND `plot_id_x` = ? AND `plot_id_z` = ?)";
         } else {
-            this.CREATE_PLOT_SAFE = "INSERT INTO `" + this.prefix
+            String tempCreatePlotSafe = "INSERT INTO `" + this.prefix
                     + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp`) SELECT ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT null FROM `"
                     + this.prefix + "plot` WHERE `world` = ? AND `plot_id_x` = ? AND `plot_id_z` = ?)";
+            if (!supportsGetGeneratedKeys) {
+                tempCreatePlotSafe += " RETURNING `id`";
+            }
+            this.CREATE_PLOT_SAFE = tempCreatePlotSafe;
         }
-        this.CREATE_CLUSTER = "INSERT INTO `" + this.prefix
+        String tempCreateCluster = "INSERT INTO `" + this.prefix
                 + "cluster`(`pos1_x`, `pos1_z`, `pos2_x`, `pos2_z`, `owner`, `world`) VALUES(?, ?, ?, ?, ?, ?)";
+        if (!supportsGetGeneratedKeys) {
+            tempCreateCluster += " RETURNING `id`";
+        }
+        this.CREATE_CLUSTER = tempCreateCluster;
+
         try {
             createTables();
         } catch (SQLException e) {
@@ -1073,9 +1096,8 @@ public class SQLManager implements AbstractDB {
 
             @Override
             public void addBatch(PreparedStatement statement) throws SQLException {
-                int inserted = statement.executeUpdate();
-                if (inserted > 0) {
-                    try (ResultSet keys = statement.getGeneratedKeys()) {
+                if (statement.execute() || statement.getUpdateCount() > 0) {
+                    try (ResultSet keys = supportsGetGeneratedKeys ? statement.getGeneratedKeys() : statement.getResultSet()) {
                         if (keys.next()) {
                             plot.temp = keys.getInt(1);
                             addPlotTask(plot, new UniqueStatement(
@@ -1145,8 +1167,8 @@ public class SQLManager implements AbstractDB {
 
             @Override
             public void addBatch(PreparedStatement statement) throws SQLException {
-                statement.executeUpdate();
-                try (ResultSet keys = statement.getGeneratedKeys()) {
+                statement.execute();
+                try (ResultSet keys = supportsGetGeneratedKeys ? statement.getGeneratedKeys() : statement.getResultSet()) {
                     if (keys.next()) {
                         plot.temp = keys.getInt(1);
                     }
@@ -3058,8 +3080,8 @@ public class SQLManager implements AbstractDB {
 
             @Override
             public void addBatch(PreparedStatement statement) throws SQLException {
-                statement.executeUpdate();
-                try (ResultSet keys = statement.getGeneratedKeys()) {
+                statement.execute();
+                try (ResultSet keys = supportsGetGeneratedKeys ? statement.getGeneratedKeys() : statement.getResultSet()) {
                     if (keys.next()) {
                         cluster.temp = keys.getInt(1);
                     }
