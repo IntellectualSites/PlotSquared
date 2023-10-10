@@ -29,7 +29,6 @@ import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.entity.EntityCategory;
 import com.plotsquared.core.util.query.PlotQuery;
-import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.sk89q.worldedit.world.entity.EntityType;
 import net.kyori.adventure.text.Component;
@@ -71,7 +70,7 @@ public class Debug extends SubCommand {
                     TranslatableCaption.of("commandconfig.command_syntax"),
                     TagResolver.resolver(
                             "value",
-                            Tag.inserting(Component.text("/plot debug <loadedchunks | player | debug-players | entitytypes | msg>"))
+                            Tag.inserting(Component.text("/plot debug <player | debug-players | entitytypes | msg>"))
                     )
             );
         }
@@ -84,16 +83,6 @@ public class Debug extends SubCommand {
                 }
                 return true;
             }
-        }
-        if (args.length > 0 && "loadedchunks".equalsIgnoreCase(args[0])) {
-            final long start = System.currentTimeMillis();
-            player.sendMessage(TranslatableCaption.of("debug.fetching_loaded_chunks"));
-            TaskManager.runTaskAsync(() -> player.sendMessage(StaticCaption
-                    .of("Loaded chunks: " + this.worldUtil
-                            .getChunkChunks(player.getLocation().getWorldName())
-                            .size() + " (" + (System.currentTimeMillis()
-                            - start) + "ms) using thread: " + Thread.currentThread().getName())));
-            return true;
         }
         if (args.length > 0 && "uuids".equalsIgnoreCase(args[0])) {
             final Collection<UUIDMapping> mappings = PlotSquared.get().getImpromptuUUIDPipeline().getAllImmediately();
@@ -196,7 +185,7 @@ public class Debug extends SubCommand {
 
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, String[] args, boolean space) {
-        return Stream.of("loadedchunks", "debug-players", "entitytypes")
+        return Stream.of("debug-players", "entitytypes")
                 .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
                 .map(value -> new Command(null, false, value, "plots.admin", RequiredType.NONE, null) {
                 }).collect(Collectors.toList());
