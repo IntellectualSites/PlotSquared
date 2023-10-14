@@ -2627,8 +2627,8 @@ public class Plot {
         }
 
         final Consumer<Location> locationConsumer = calculatedLocation -> {
-            Location location = event.getLocationTransformer() == null ?
-                    calculatedLocation : event.getLocationTransformer().transform(calculatedLocation);
+            Location location = event.getLocationTransformer() == null ? calculatedLocation :
+                    Objects.requireNonNullElse(event.getLocationTransformer().apply(calculatedLocation), calculatedLocation);
             if (Settings.Teleport.DELAY == 0 || player.hasPermission("plots.teleport.delay.bypass")) {
                 player.sendMessage(TranslatableCaption.of("teleport.teleported_to_plot"));
                 player.teleport(location, cause);

@@ -23,6 +23,8 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.function.UnaryOperator;
+
 /**
  * Called when a player teleports to a plot
  */
@@ -31,7 +33,7 @@ public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements Cancel
     private final TeleportCause cause;
     private Result eventResult;
     private final Location from;
-    private LocationTransformer locationTransformer;
+    private UnaryOperator<Location> locationTransformer;
 
 
     /**
@@ -70,23 +72,23 @@ public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements Cancel
     }
 
     /**
-     * Gets the currently applied {@link LocationTransformer} or null, if none was set
+     * Gets the currently applied {@link UnaryOperator<Location> transformer} or null, if none was set
      *
      * @return LocationTransformer
      * @since TODO
      */
-    public @Nullable LocationTransformer getLocationTransformer() {
+    public @Nullable UnaryOperator<Location> getLocationTransformer() {
         return this.locationTransformer;
     }
 
     /**
-     * Sets the {@link LocationTransformer} to mutate the location where the player will be teleported to.
+     * Sets the {@link UnaryOperator<Location> transformer} to mutate the location where the player will be teleported to.
      * May be {@code null}, if any previous set transformations should be discarded.
      *
      * @param locationTransformer The new transformer
      * @since TODO
      */
-    public void setLocationTransformer(@Nullable LocationTransformer locationTransformer) {
+    public void setLocationTransformer(@Nullable UnaryOperator<Location> locationTransformer) {
         this.locationTransformer = locationTransformer;
     }
 
@@ -98,19 +100,6 @@ public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements Cancel
     @Override
     public void setEventResult(Result e) {
         this.eventResult = e;
-    }
-
-    public interface LocationTransformer {
-
-        /**
-         * Transforms an input location {@code origin} to a new location
-         *
-         * @param origin The origin location which should be transformed
-         * @return The transformed location
-         * @since TODO
-         */
-        Location transform(Location origin);
-
     }
 
 }
