@@ -882,7 +882,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         final Component titleComponent = MiniMessage.miniMessage().deserialize(title.getComponent(this), replacements);
         final Component subtitleComponent =
                 MiniMessage.miniMessage().deserialize(subtitle.getComponent(this), replacements);
-        final Title.Times times = Title.Times.of(
+        final Title.Times times = Title.Times.times(
                 Duration.of(Settings.Titles.TITLES_FADE_IN * 50L, ChronoUnit.MILLIS),
                 Duration.of(Settings.Titles.TITLES_STAY * 50L, ChronoUnit.MILLIS),
                 Duration.of(Settings.Titles.TITLES_FADE_OUT * 50L, ChronoUnit.MILLIS)
