@@ -226,20 +226,25 @@ tasks.getByName<Jar>("jar") {
 
 val supportedVersions = listOf("1.16.5", "1.17.1", "1.18.2", "1.19.4", "1.20.1", "1.20.2")
 tasks {
-    val lastSuccessfulBuildUrl = uri("https://ci.athion.net/job/FastAsyncWorldEdit/lastSuccessfulBuild/api/json").toURL()
-    val artifact = ((JsonSlurper().parse(lastSuccessfulBuildUrl) as Map<*, *>)["artifacts"] as List<*>)
-            .map { it as Map<*, *> }
-            .map { it["fileName"] as String }
-            .first { it.contains("Bukkit") }
+    register("cacheLatestFaweArtifact") {
+        val lastSuccessfulBuildUrl = uri("https://ci.athion.net/job/FastAsyncWorldEdit/lastSuccessfulBuild/api/json").toURL()
+        val artifact = ((JsonSlurper().parse(lastSuccessfulBuildUrl) as Map<*, *>)["artifacts"] as List<*>)
+                .map { it as Map<*, *> }
+                .map { it["fileName"] as String }
+                .first { it -> it.contains("Bukkit") }
+        project.ext["faweArtifact"] = artifact
+    }
 
     supportedVersions.forEach {
         register<RunServer>("runServer-$it") {
+            dependsOn(getByName("cacheLatestFaweArtifact"))
             minecraftVersion(it)
-            pluginJars(*project(":plotsquared-bukkit").getTasksByName("shadowJar", false).map { (it as Jar).archiveFile }
+            pluginJars(*project(":plotsquared-bukkit").getTasksByName("shadowJar", false)
+                    .map { task -> (task as Jar).archiveFile }
                     .toTypedArray())
             jvmArgs("-DPaper.IgnoreJavaVersion=true", "-Dcom.mojang.eula.agree=true")
             downloadPlugins {
-                url("https://ci.athion.net/job/FastAsyncWorldEdit/lastSuccessfulBuild/artifact/artifacts/$artifact")
+                url("https://ci.athion.net/job/FastAsyncWorldEdit/lastSuccessfulBuild/artifact/artifacts/${project.ext["faweArtifact"]}")
             }
             group = "run paper"
             runDirectory.set(file("run-$it"))
