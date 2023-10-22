@@ -2355,6 +2355,9 @@ public class Plot {
             Plot current, Direction
             direction, Set<Plot> queueCache, Set<Plot> tmpSet, Deque<Plot> frontier
     ) {
+        if (!current.isMerged(direction)) {
+            return;
+        }
         Plot tmp = current.area.getPlotAbs(current.id.getRelative(direction));
         if (tmp != null && !queueCache.contains(tmp) && !tmpSet.contains(tmp)) {
             queueCache.add(tmp);
