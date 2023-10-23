@@ -85,6 +85,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -2283,8 +2284,8 @@ public class Plot {
     }
 
     /**
-     * Gets a set of plots connected (and including) this plot<br>
-     * - This result is cached globally
+     * Gets a set of plots connected (and including) this plot.
+     * The returned set is immutable.
      *
      * @return a Set of Plots connected to this Plot
      */
@@ -2295,115 +2296,73 @@ public class Plot {
         if (!this.isMerged()) {
             return Collections.singleton(this);
         }
+        Plot basePlot = getBasePlot(false);
+        if (this.connectedCache == null && this != basePlot) {
+            // share cache between connected plots
+            Set<Plot> connectedPlots = basePlot.getConnectedPlots();
+            this.connectedCache = connectedPlots;
+            return connectedPlots;
+        }
         if (this.connectedCache != null && this.connectedCache.contains(this)) {
             return this.connectedCache;
         }
 
-        HashSet<Plot> tmpSet = new HashSet<>();
+        Set<Plot> tmpSet = new HashSet<>();
         tmpSet.add(this);
-        Plot tmp;
-        HashSet<Object> queuecache = new HashSet<>();
+        HashSet<Plot> queueCache = new HashSet<>();
         ArrayDeque<Plot> frontier = new ArrayDeque<>();
-        if (this.isMerged(Direction.NORTH)) {
-            tmp = this.area.getPlotAbs(this.id.getRelative(Direction.NORTH));
-            if (!tmp.isMerged(Direction.SOUTH)) {
-                // invalid merge
-                if (tmp.isOwnerAbs(this.getOwnerAbs())) {
-                    tmp.getSettings().setMerged(Direction.SOUTH, true);
-                    DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
-                } else {
-                    this.getSettings().setMerged(Direction.NORTH, false);
-                    DBFunc.setMerged(this, this.getSettings().getMerged());
-                }
-            }
-            queuecache.add(tmp);
-            frontier.add(tmp);
-        }
-        if (this.isMerged(Direction.EAST)) {
-            tmp = this.area.getPlotAbs(this.id.getRelative(Direction.EAST));
-            assert tmp != null;
-            if (!tmp.isMerged(Direction.WEST)) {
-                // invalid merge
-                if (tmp.isOwnerAbs(this.getOwnerAbs())) {
-                    tmp.getSettings().setMerged(Direction.WEST, true);
-                    DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
-                } else {
-                    this.getSettings().setMerged(Direction.EAST, false);
-                    DBFunc.setMerged(this, this.getSettings().getMerged());
-                }
-            }
-            queuecache.add(tmp);
-            frontier.add(tmp);
-        }
-        if (this.isMerged(Direction.SOUTH)) {
-            tmp = this.area.getPlotAbs(this.id.getRelative(Direction.SOUTH));
-            assert tmp != null;
-            if (!tmp.isMerged(Direction.NORTH)) {
-                // invalid merge
-                if (tmp.isOwnerAbs(this.getOwnerAbs())) {
-                    tmp.getSettings().setMerged(Direction.NORTH, true);
-                    DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
-                } else {
-                    this.getSettings().setMerged(Direction.SOUTH, false);
-                    DBFunc.setMerged(this, this.getSettings().getMerged());
-                }
-            }
-            queuecache.add(tmp);
-            frontier.add(tmp);
-        }
-        if (this.isMerged(Direction.WEST)) {
-            tmp = this.area.getPlotAbs(this.id.getRelative(Direction.WEST));
-            if (!tmp.isMerged(Direction.EAST)) {
-                // invalid merge
-                if (tmp.isOwnerAbs(this.getOwnerAbs())) {
-                    tmp.getSettings().setMerged(Direction.EAST, true);
-                    DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
-                } else {
-                    this.getSettings().setMerged(Direction.WEST, false);
-                    DBFunc.setMerged(this, this.getSettings().getMerged());
-                }
-            }
-            queuecache.add(tmp);
-            frontier.add(tmp);
-        }
+        computeDirectMerged(queueCache, frontier, Direction.NORTH);
+        computeDirectMerged(queueCache, frontier, Direction.EAST);
+        computeDirectMerged(queueCache, frontier, Direction.SOUTH);
+        computeDirectMerged(queueCache, frontier, Direction.WEST);
         Plot current;
         while ((current = frontier.poll()) != null) {
             if (!current.hasOwner() || current.settings == null) {
                 continue;
             }
             tmpSet.add(current);
-            queuecache.remove(current);
-            if (current.isMerged(Direction.NORTH)) {
-                tmp = current.area.getPlotAbs(current.id.getRelative(Direction.NORTH));
-                if (tmp != null && !queuecache.contains(tmp) && !tmpSet.contains(tmp)) {
-                    queuecache.add(tmp);
-                    frontier.add(tmp);
-                }
-            }
-            if (current.isMerged(Direction.EAST)) {
-                tmp = current.area.getPlotAbs(current.id.getRelative(Direction.EAST));
-                if (tmp != null && !queuecache.contains(tmp) && !tmpSet.contains(tmp)) {
-                    queuecache.add(tmp);
-                    frontier.add(tmp);
-                }
-            }
-            if (current.isMerged(Direction.SOUTH)) {
-                tmp = current.area.getPlotAbs(current.id.getRelative(Direction.SOUTH));
-                if (tmp != null && !queuecache.contains(tmp) && !tmpSet.contains(tmp)) {
-                    queuecache.add(tmp);
-                    frontier.add(tmp);
-                }
-            }
-            if (current.isMerged(Direction.WEST)) {
-                tmp = current.area.getPlotAbs(current.id.getRelative(Direction.WEST));
-                if (tmp != null && !queuecache.contains(tmp) && !tmpSet.contains(tmp)) {
-                    queuecache.add(tmp);
-                    frontier.add(tmp);
-                }
-            }
+            queueCache.remove(current);
+            addIfIncluded(current, Direction.NORTH, queueCache, tmpSet, frontier);
+            addIfIncluded(current, Direction.EAST, queueCache, tmpSet, frontier);
+            addIfIncluded(current, Direction.SOUTH, queueCache, tmpSet, frontier);
+            addIfIncluded(current, Direction.WEST, queueCache, tmpSet, frontier);
         }
+        tmpSet = Set.copyOf(tmpSet);
         this.connectedCache = tmpSet;
         return tmpSet;
+    }
+
+    private void computeDirectMerged(Set<Plot> queueCache, Deque<Plot> frontier, Direction direction) {
+        if (this.isMerged(direction)) {
+            Plot tmp = this.area.getPlotAbs(this.id.getRelative(direction));
+            assert tmp != null;
+            if (!tmp.isMerged(direction.opposite())) {
+                // invalid merge
+                if (tmp.isOwnerAbs(this.getOwnerAbs())) {
+                    tmp.getSettings().setMerged(direction.opposite(), true);
+                    DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
+                } else {
+                    this.getSettings().setMerged(direction, false);
+                    DBFunc.setMerged(this, this.getSettings().getMerged());
+                }
+            }
+            queueCache.add(tmp);
+            frontier.add(tmp);
+        }
+    }
+
+    private void addIfIncluded(
+            Plot current, Direction
+            direction, Set<Plot> queueCache, Set<Plot> tmpSet, Deque<Plot> frontier
+    ) {
+        if (!current.isMerged(direction)) {
+            return;
+        }
+        Plot tmp = current.area.getPlotAbs(current.id.getRelative(direction));
+        if (tmp != null && !queueCache.contains(tmp) && !tmpSet.contains(tmp)) {
+            queueCache.add(tmp);
+            frontier.add(tmp);
+        }
     }
 
     /**

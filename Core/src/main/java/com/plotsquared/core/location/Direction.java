@@ -55,6 +55,25 @@ public enum Direction {
         return NORTH;
     }
 
+    /**
+     * {@return the opposite direction}
+     * If this is {@link Direction#ALL}, then {@link Direction#ALL} is returned.
+     * @since TODO
+     */
+    public Direction opposite() {
+        return switch (this) {
+            case ALL -> ALL;
+            case NORTH -> SOUTH;
+            case EAST -> WEST;
+            case SOUTH -> NORTH;
+            case WEST -> EAST;
+            case NORTHEAST -> SOUTHWEST;
+            case SOUTHEAST -> NORTHWEST;
+            case SOUTHWEST -> NORTHEAST;
+            case NORTHWEST -> SOUTHEAST;
+        };
+    }
+
     public int getIndex() {
         return index;
     }
