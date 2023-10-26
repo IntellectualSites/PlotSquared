@@ -105,7 +105,7 @@ public final class FlagCommand extends Command {
                 int numeric = Integer.parseInt(value);
                 perm = perm.substring(0, perm.length() - value.length() - 1);
                 boolean result = false;
-                if (numeric > 0) {
+                if (numeric >= 0) {
                     int checkRange = PlotSquared.get().getPlatform().equalsIgnoreCase("bukkit") ?
                             numeric :
                             Settings.Limit.MAX_PLOTS;
