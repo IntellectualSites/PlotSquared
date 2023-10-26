@@ -103,6 +103,7 @@ public final class FlagCommand extends Command {
         if (flag instanceof IntegerFlag && MathMan.isInteger(value)) {
             try {
                 int numeric = Integer.parseInt(value);
+                // Getting full permission without ".<amount>" at the end
                 perm = perm.substring(0, perm.length() - value.length() - 1);
                 boolean result = false;
                 if (numeric >= 0) {
