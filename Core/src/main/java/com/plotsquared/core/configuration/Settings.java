@@ -522,7 +522,7 @@ public class Settings extends Config {
         @Comment("Should the limit be global (over multiple worlds)")
         public static boolean GLOBAL =
                 false;
-        @Comment({"The max range of permissions to check for, e.g. plots.plot.127",
+        @Comment({"The max range of integer permissions to check for, e.g. 'plots.plot.127' or 'plots.set.flag.mob-cap.127'",
                 "The value covers the permission range to check, you need to assign the permission to players/groups still",
                 "Modifying the value does NOT change the amount of plots players can claim"})
         public static int MAX_PLOTS = 127;
