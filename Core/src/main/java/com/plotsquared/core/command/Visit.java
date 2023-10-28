@@ -77,6 +77,12 @@ public class Visit extends Command {
             query.whereBasePlot();
         }
 
+        // "last" or "n" argument
+        if (page == Integer.MAX_VALUE) {
+            page = unsorted.size();
+        }
+
+        // without specified argument
         if (page == Integer.MIN_VALUE) {
             page = 1;
         }
@@ -190,32 +196,20 @@ public class Visit extends Command {
         switch (args.length) {
             // /p v <user> <area> <page>
             case 3:
-                if (!MathMan.isInteger(args[2])) {
-                    player.sendMessage(
-                            TranslatableCaption.of("invalid.not_valid_number"),
-                            TagResolver.resolver("value", Tag.inserting(Component.text("(1, ∞)")))
-                    );
-                    player.sendMessage(
-                            TranslatableCaption.of("commandconfig.command_syntax"),
-                            TagResolver.resolver("value", Tag.inserting(Component.text(getUsage())))
-                    );
+                if (isInvalidPageNr(args[2])) {
+                    sendInvalidPageNrMsg(player);
                     return CompletableFuture.completedFuture(false);
                 }
-                page = Integer.parseInt(args[2]);
-                // /p v <name> <area> [page]
-                // /p v <name> [page]
+                page = getPageNr(args[2]);
+                // /p v <player> <area> [page]
+                // /p v <player> [page]
             case 2:
-                if (page != Integer.MIN_VALUE || !MathMan.isInteger(args[1])) {
+                // If "case 3" is already through or the argument is not a page number:
+                // -> /p v <player> <area> [page]
+                if (page != Integer.MIN_VALUE || isInvalidPageNr(args[1])) {
                     sortByArea = this.plotAreaManager.getPlotAreaByString(args[1]);
                     if (sortByArea == null) {
-                        player.sendMessage(
-                                TranslatableCaption.of("invalid.not_valid_number"),
-                                TagResolver.resolver("value", Tag.inserting(Component.text("(1, ∞)")))
-                        );
-                        player.sendMessage(
-                                TranslatableCaption.of("commandconfig.command_syntax"),
-                                TagResolver.resolver("value", Tag.inserting(Component.text(getUsage())))
-                        );
+                        sendInvalidPageNrMsg(player);
                         return CompletableFuture.completedFuture(false);
                     }
 
@@ -249,16 +243,13 @@ public class Visit extends Command {
                     });
                     break;
                 }
-                try {
-                    page = Integer.parseInt(args[1]);
-                } catch (NumberFormatException ignored) {
-                    player.sendMessage(
-                            TranslatableCaption.of("invalid.not_a_number"),
-                            TagResolver.resolver("value", Tag.inserting(Component.text(args[1])))
-                    );
+                // -> /p v <player> <page>
+                if (isInvalidPageNr(args[1])) {
+                    sendInvalidPageNrMsg(player);
                     return CompletableFuture.completedFuture(false);
                 }
-                // /p v <name> [page]
+                page = getPageNr(args[1]);
+                // /p v <player> [page]
                 // /p v <uuid> [page]
                 // /p v <plot> [page]
                 // /p v <alias>
@@ -326,6 +317,29 @@ public class Visit extends Command {
         return CompletableFuture.completedFuture(true);
     }
 
+    private boolean isInvalidPageNr(String arg) {
+        if (MathMan.isInteger(arg)) return false;
+        if (arg.equals("last") || arg.equals("n")) return false;
+        return true;
+    }
+
+    private int getPageNr(String arg) {
+        if (MathMan.isInteger(arg)) return Integer.parseInt(arg);
+        if (arg.equals("last") || arg.equals("n")) return Integer.MAX_VALUE;
+        return Integer.MIN_VALUE;
+    }
+
+    private void sendInvalidPageNrMsg(PlotPlayer<?> player) {
+        player.sendMessage(
+                TranslatableCaption.of("invalid.not_valid_number"),
+                TagResolver.resolver("value", Tag.inserting(Component.text("(1, ∞)")))
+        );
+        player.sendMessage(
+                TranslatableCaption.of("commandconfig.command_syntax"),
+                TagResolver.resolver("value", Tag.inserting(Component.text(getUsage())))
+        );
+    }
+
     @Override
     public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         final List<Command> completions = new ArrayList<>();
@@ -337,7 +351,7 @@ public class Visit extends Command {
                 if (args[1].isEmpty()) {
                     // if no input is given, only suggest 1 - 3
                     completions.addAll(
-                            TabCompletions.asCompletions("1", "2", "3"));
+                            TabCompletions.asCompletions("1", "2", "3", "last"));
                     break;
                 }
                 completions.addAll(
@@ -347,7 +361,7 @@ public class Visit extends Command {
                 if (args[2].isEmpty()) {
                     // if no input is given, only suggest 1 - 3
                     completions.addAll(
-                            TabCompletions.asCompletions("1", "2", "3"));
+                            TabCompletions.asCompletions("1", "2", "3", "last"));
                     break;
                 }
                 completions.addAll(
