@@ -21,9 +21,14 @@ package com.plotsquared.bukkit.listener;
 import com.google.inject.Inject;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.placeholder.MVdWPlaceholders;
+import com.plotsquared.bukkit.util.BukkitEconHandler;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.ConsolePlayer;
+import com.plotsquared.core.util.EconHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,6 +36,8 @@ import org.bukkit.event.server.ServerLoadEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class ServerListener implements Listener {
+
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + ServerListener.class.getSimpleName());
 
     private final BukkitPlatform plugin;
 
@@ -45,6 +52,29 @@ public class ServerListener implements Listener {
             new MVdWPlaceholders(this.plugin, this.plugin.placeholderRegistry());
             ConsolePlayer.getConsole().sendMessage(TranslatableCaption.of("placeholder.hooked"));
         }
+        if (Settings.Enabled_Components.ECONOMY && Bukkit.getPluginManager().isPluginEnabled("Vault")) {
+            EconHandler econHandler = new BukkitEconHandler();
+            try {
+                if (!econHandler.init()) {
+                    LOGGER.warn("Economy is enabled but no plugin is providing an economy service. Falling back...");
+                    econHandler = EconHandler.nullEconHandler();
+                }
+            } catch (final Exception ignored) {
+                econHandler = EconHandler.nullEconHandler();
+            }
+            if (PlotSquared.platform().econHandler() instanceof MutableEconHandler meh) {
+                meh.setImplementation(econHandler);
+            }
+        }
+    }
+
+    /**
+     * Internal use only. Required to implement lazy econ loading using Guice.
+     *
+     * @since TODO
+     */
+    public interface MutableEconHandler {
+        void setImplementation(EconHandler econHandler);
     }
 
 }
