@@ -71,7 +71,7 @@ public class ServerListener implements Listener {
     /**
      * Internal use only. Required to implement lazy econ loading using Guice.
      *
-     * @since TODO
+     * @since 7.2.0
      */
     public interface MutableEconHandler {
         void setImplementation(EconHandler econHandler);

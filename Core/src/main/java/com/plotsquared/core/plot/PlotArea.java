@@ -942,7 +942,7 @@ public abstract class PlotArea implements ComponentLike {
      * @return The border distance or Integer.MAX_VALUE if no border is set
      * @deprecated Use {@link PlotArea#getBorder(boolean)}
      */
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "7.2.0")
     public int getBorder() {
         final Integer meta = (Integer) getMeta("worldBorder");
         if (meta != null) {
@@ -962,7 +962,7 @@ public abstract class PlotArea implements ComponentLike {
      *
      * @param getExtended If the extra border given by world.border-size should be included
      * @return Border distance of Integer.MAX_VALUE if no border is set
-     * @since TODO
+     * @since 7.2.0
      */
     public int getBorder(boolean getExtended) {
         final Integer meta = (Integer) getMeta("worldBorder");
@@ -1240,7 +1240,7 @@ public abstract class PlotArea implements ComponentLike {
      * Get the "extra border" size of the plot area.
      *
      * @return Plot area extra border size
-     * @since TODO
+     * @since 7.2.0
      */
     public int getBorderSize() {
         return borderSize;
