@@ -74,6 +74,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Dispenser;
 import org.bukkit.block.data.type.Farmland;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
@@ -104,6 +105,7 @@ import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.MoistureChangeEvent;
 import org.bukkit.event.block.SpongeAbsorbEvent;
 import org.bukkit.event.world.StructureGrowEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -547,6 +549,20 @@ public class BlockEventListener implements Listener {
             default -> {
                 // Bucket empty, Bucket fill, Bottle empty, Bottle fill are already handled in PlayerInteract event
                 // Evaporation or Unknown reasons do not need to be cancelled as they are considered natural causes
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onFrostWalker(EntityBlockFormEvent event) {
+        if (event.getEntity() instanceof Player player) {
+            ItemStack item = player.getInventory().getBoots();
+            if (item != null && item.containsEnchantment(Enchantment.FROST_WALKER)) {
+                Block block = event.getBlock();
+                Plot plot = BukkitUtil.adapt(block.getLocation()).getPlot();
+                if (plot != null && !plot.isAdded(player.getUniqueId())) {
+                    event.setCancelled(true);
+                }
             }
         }
     }
