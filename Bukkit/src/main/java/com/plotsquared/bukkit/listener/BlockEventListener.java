@@ -612,6 +612,20 @@ public class BlockEventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onEntityBlockFormEvent(EntityBlockFormEvent event) {
+        if (event.getEntity() instanceof Player player) {
+            ItemStack item = player.getInventory().getBoots();
+            if (item != null && item.containsEnchantment(Enchantment.FROST_WALKER)) {
+                Block block = event.getBlock();
+                Plot plot = BukkitUtil.adapt(block.getLocation()).getPlot();
+                if (plot != null && !plot.isAdded(player.getUniqueId())) {
+                    event.setCancelled(true);
+                }
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityBlockForm(EntityBlockFormEvent event) {
         String world = event.getBlock().getWorld().getName();
         if (!this.plotAreaManager.hasPlotArea(world)) {
