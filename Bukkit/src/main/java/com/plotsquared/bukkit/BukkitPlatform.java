@@ -814,6 +814,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         case "MINECART_MOB_SPAWNER":
                         case "ENDER_CRYSTAL":
                         case "MINECART_TNT":
+                        case "CHEST_BOAT":
                         case "BOAT":
                             if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
                                 com.plotsquared.core.location.Location location = BukkitUtil.adapt(entity.getLocation());
