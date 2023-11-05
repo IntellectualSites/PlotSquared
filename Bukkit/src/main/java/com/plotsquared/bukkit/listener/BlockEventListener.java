@@ -554,20 +554,6 @@ public class BlockEventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onFrostWalker(EntityBlockFormEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            ItemStack item = player.getInventory().getBoots();
-            if (item != null && item.containsEnchantment(Enchantment.FROST_WALKER)) {
-                Block block = event.getBlock();
-                Plot plot = BukkitUtil.adapt(block.getLocation()).getPlot();
-                if (plot != null && !plot.isAdded(player.getUniqueId())) {
-                    event.setCancelled(true);
-                }
-            }
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockForm(BlockFormEvent event) {
         if (event instanceof EntityBlockFormEvent) {
             return; // handled below
@@ -607,20 +593,6 @@ public class BlockEventListener implements Listener {
             if (!plot.getFlag(ConcreteHardenFlag.class)) {
                 plot.debug("Concrete powder could not harden because concrete-harden = false");
                 event.setCancelled(true);
-            }
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onEntityBlockFormEvent(EntityBlockFormEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            ItemStack item = player.getInventory().getBoots();
-            if (item != null && item.containsEnchantment(Enchantment.FROST_WALKER)) {
-                Block block = event.getBlock();
-                Plot plot = BukkitUtil.adapt(block.getLocation()).getPlot();
-                if (plot != null && !plot.isAdded(player.getUniqueId())) {
-                    event.setCancelled(true);
-                }
             }
         }
     }
