@@ -18,19 +18,20 @@
  */
 package com.plotsquared.bukkit.listener;
 
-import org.bukkit.block.Sign;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerSignOpenEvent;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.EditSignFlag;
 import com.plotsquared.core.util.PlotFlagUtil;
+import org.bukkit.block.Sign;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerSignOpenEvent;
 
 /**
  * For events since 1.20.1
+ * @since TODO
  */
 public class PlayerEventListener120 implements Listener {
 

@@ -22,6 +22,9 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+/**
+ * @since TODO
+ */
 public class EditSignFlag extends BooleanFlag<EditSignFlag> {
     public static final EditSignFlag EDIT_SIGN_TRUE = new EditSignFlag(true);
     public static final EditSignFlag EDIT_SIGN_FALSE = new EditSignFlag(false);
