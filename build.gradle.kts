@@ -1,8 +1,8 @@
 import com.diffplug.gradle.spotless.SpotlessPlugin
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import groovy.json.JsonSlurper
-import java.net.URI
 import xyz.jpenilla.runpaper.task.RunServer
+import java.net.URI
 
 plugins {
     java
@@ -235,12 +235,11 @@ tasks {
         project.ext["faweArtifact"] = artifact
     }
 
-    supportedVersions.forEach { version ->
-        register<RunServer>("runServer-$version") {
+    supportedVersions.forEach {
+        register<RunServer>("runServer-$it") {
             dependsOn(getByName("cacheLatestFaweArtifact"))
-            minecraftVersion(version)
-            pluginJars(*project(":plotsquared-bukkit")
-                    .getTasksByName("shadowJar", false)
+            minecraftVersion(it)
+            pluginJars(*project(":plotsquared-bukkit").getTasksByName("shadowJar", false)
                     .map { task -> (task as Jar).archiveFile }
                     .toTypedArray())
             jvmArgs("-DPaper.IgnoreJavaVersion=true", "-Dcom.mojang.eula.agree=true")
@@ -248,7 +247,7 @@ tasks {
                 url("https://ci.athion.net/job/FastAsyncWorldEdit/lastSuccessfulBuild/artifact/artifacts/${project.ext["faweArtifact"]}")
             }
             group = "run paper"
-            runDirectory.set(file("run-$version"))
+            runDirectory.set(file("run-$it"))
         }
     }
 }
