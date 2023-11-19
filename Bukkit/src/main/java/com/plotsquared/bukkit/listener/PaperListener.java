@@ -124,7 +124,7 @@ public class PaperListener implements Listener {
         }
         Slime slime = event.getEntity();
 
-        Block b = slime.getTargetBlock(4);
+        Block b = slime.getTargetBlockExact(4);
         if (b == null) {
             return;
         }
@@ -166,12 +166,16 @@ public class PaperListener implements Listener {
         }
         Location location = BukkitUtil.adapt(event.getSpawnLocation());
         PlotArea area = location.getPlotArea();
-        if (!location.isPlotArea()) {
+        if (area == null) {
             return;
         }
-        //If entities are spawning... the chunk should be loaded?
+        // Armour-stands are handled elsewhere and should not be handled by area-wide entity-spawn options
+        if (event.getType() == EntityType.ARMOR_STAND) {
+            return;
+        }
+        // If entities are spawning... the chunk should be loaded?
         Entity[] entities = event.getSpawnLocation().getChunk().getEntities();
-        if (entities.length > Settings.Chunk_Processor.MAX_ENTITIES) {
+        if (entities.length >= Settings.Chunk_Processor.MAX_ENTITIES) {
             event.setShouldAbortSpawn(true);
             event.setCancelled(true);
             return;
@@ -200,7 +204,7 @@ public class PaperListener implements Listener {
                 }
             }
             case "BUILD_IRONGOLEM", "BUILD_SNOWMAN", "BUILD_WITHER", "CUSTOM" -> {
-                if (!area.isSpawnCustom() && event.getType() != EntityType.ARMOR_STAND) {
+                if (!area.isSpawnCustom()) {
                     event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                     return;

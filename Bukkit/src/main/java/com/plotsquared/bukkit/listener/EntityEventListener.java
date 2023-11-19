@@ -143,6 +143,10 @@ public class EntityEventListener implements Listener {
         if (area == null) {
             return;
         }
+        // Armour-stands are handled elsewhere and should not be handled by area-wide entity-spawn options
+        if (entity.getType() == EntityType.ARMOR_STAND) {
+            return;
+        }
         CreatureSpawnEvent.SpawnReason reason = event.getSpawnReason();
         switch (reason.toString()) {
             case "DISPENSE_EGG", "EGG", "OCELOT_BABY", "SPAWNER_EGG" -> {
@@ -153,7 +157,7 @@ public class EntityEventListener implements Listener {
             }
             case "REINFORCEMENTS", "NATURAL", "MOUNT", "PATROL", "RAID", "SHEARED", "SILVERFISH_BLOCK", "ENDER_PEARL",
                     "TRAP", "VILLAGE_DEFENSE", "VILLAGE_INVASION", "BEEHIVE", "CHUNK_GEN", "NETHER_PORTAL",
-                    "DUPLICATION", "FROZEN", "SPELL" -> {
+                    "DUPLICATION", "FROZEN", "SPELL", "DEFAULT" -> {
                 if (!area.isMobSpawning()) {
                     event.setCancelled(true);
                     return;
@@ -166,7 +170,7 @@ public class EntityEventListener implements Listener {
                 }
             }
             case "BUILD_IRONGOLEM", "BUILD_SNOWMAN", "BUILD_WITHER", "CUSTOM" -> {
-                if (!area.isSpawnCustom() && entity.getType() != EntityType.ARMOR_STAND) {
+                if (!area.isSpawnCustom()) {
                     event.setCancelled(true);
                     return;
                 }
