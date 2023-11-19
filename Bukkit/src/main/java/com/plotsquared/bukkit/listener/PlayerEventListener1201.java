@@ -33,7 +33,7 @@ import org.bukkit.event.player.PlayerSignOpenEvent;
  * For events since 1.20.1
  * @since TODO
  */
-public class PlayerEventListener120 implements Listener {
+public class PlayerEventListener1201 implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     @SuppressWarnings({"removal", "UnstableApiUsage"}) // thanks Paper, thanks Spigot
