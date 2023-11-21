@@ -100,6 +100,7 @@ public interface PermissionHolder {
         }
         String[] nodes = stub.split("\\.");
         StringBuilder builder = new StringBuilder();
+        // Wildcard check from less specific permission to more specific permission
         for (int i = 0; i < (nodes.length - 1); i++) {
             builder.append(nodes[i]).append(".");
             if (!stub.equals(builder + Permission.PERMISSION_STAR.toString())) {
@@ -108,6 +109,7 @@ public interface PermissionHolder {
                 }
             }
         }
+        // Wildcard check for the full permission
         if (hasPermission(stub + ".*")) {
             return Integer.MAX_VALUE;
         }
