@@ -42,6 +42,7 @@ import com.plotsquared.core.plot.flag.implementations.DeviceInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.DisablePhysicsFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.DropProtectionFlag;
+import com.plotsquared.core.plot.flag.implementations.EditSignFlag;
 import com.plotsquared.core.plot.flag.implementations.EntityCapFlag;
 import com.plotsquared.core.plot.flag.implementations.EntityChangeBlockFlag;
 import com.plotsquared.core.plot.flag.implementations.ExplosionFlag;
@@ -153,6 +154,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(DeviceInteractFlag.DEVICE_INTERACT_FALSE);
         this.addFlag(DisablePhysicsFlag.DISABLE_PHYSICS_FALSE);
         this.addFlag(DropProtectionFlag.DROP_PROTECTION_FALSE);
+        this.addFlag(EditSignFlag.EDIT_SIGN_FALSE);
         this.addFlag(EntityChangeBlockFlag.ENTITY_CHANGE_BLOCK_FALSE);
         this.addFlag(ExplosionFlag.EXPLOSION_FALSE);
         this.addFlag(ForcefieldFlag.FORCEFIELD_FALSE);

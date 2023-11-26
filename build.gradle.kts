@@ -1,8 +1,8 @@
 import com.diffplug.gradle.spotless.SpotlessPlugin
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import groovy.json.JsonSlurper
-import java.net.URI
 import xyz.jpenilla.runpaper.task.RunServer
+import java.net.URI
 
 plugins {
     java
