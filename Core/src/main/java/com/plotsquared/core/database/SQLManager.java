@@ -154,7 +154,6 @@ public class SQLManager implements AbstractDB {
         this.plotListener = plotListener;
         this.worldConfiguration = worldConfiguration;
         this.database = database;
-        this.connection = database.openConnection();
         final DatabaseMetaData databaseMetaData = this.connection.getMetaData();
         this.supportsGetGeneratedKeys = databaseMetaData.supportsGetGeneratedKeys();
         this.mySQL = database instanceof MySQL;
