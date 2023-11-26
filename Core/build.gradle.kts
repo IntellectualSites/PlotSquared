@@ -46,7 +46,7 @@ dependencies {
     api(libs.informativeAnnotations)
 
     // Database
-    implementation("com.zaxxer:HikariCP:5.0.1")
+    implementation(libs.hikaricp)
 }
 
 tasks.processResources {
