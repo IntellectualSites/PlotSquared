@@ -109,7 +109,7 @@ public class Merge extends SubCommand {
                 }
             }
             if (direction == null && (args[0].equalsIgnoreCase("all") || args[0]
-                    .equalsIgnoreCase("auto"))) {
+                    .equalsIgnoreCase("auto")) && player.hasPermission(Permission.PERMISSION_MERGE_ALL)) {
                 direction = Direction.ALL;
             }
         }
@@ -178,7 +178,7 @@ public class Merge extends SubCommand {
                 return true;
             }
             if (plot.getPlotModificationManager().autoMerge(Direction.ALL, maxSize, uuid, player, terrain)) {
-                if (this.econHandler.isEnabled(plotArea) && price > 0d) {
+                if (this.econHandler.isEnabled(plotArea) && !player.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_ECON) && price > 0d) {
                     this.econHandler.withdrawMoney(player, price);
                     player.sendMessage(
                             TranslatableCaption.of("economy.removed_balance"),
@@ -196,8 +196,8 @@ public class Merge extends SubCommand {
             player.sendMessage(TranslatableCaption.of("merge.no_available_automerge"));
             return false;
         }
-        if (!force && this.econHandler.isEnabled(plotArea) && price > 0d
-                && this.econHandler.getMoney(player) < price) {
+        if (!force && this.econHandler.isEnabled(plotArea) && !player.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_ECON) && price > 0d && this.econHandler.getMoney(
+                player) < price) {
             player.sendMessage(
                     TranslatableCaption.of("economy.cannot_afford_merge"),
                     TagResolver.resolver("money", Tag.inserting(Component.text(this.econHandler.format(price))))
@@ -218,7 +218,7 @@ public class Merge extends SubCommand {
             return true;
         }
         if (plot.getPlotModificationManager().autoMerge(direction, maxSize - size, uuid, player, terrain)) {
-            if (this.econHandler.isEnabled(plotArea) && price > 0d) {
+            if (this.econHandler.isEnabled(plotArea) && !player.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_ECON) && price > 0d) {
                 this.econHandler.withdrawMoney(player, price);
                 player.sendMessage(
                         TranslatableCaption.of("economy.removed_balance"),
@@ -259,7 +259,7 @@ public class Merge extends SubCommand {
                     accepter.sendMessage(TranslatableCaption.of("merge.merge_not_valid"));
                     return;
                 }
-                if (this.econHandler.isEnabled(plotArea) && price > 0d) {
+                if (this.econHandler.isEnabled(plotArea) && !player.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_ECON) && price > 0d) {
                     if (!force && this.econHandler.getMoney(player) < price) {
                         player.sendMessage(
                                 TranslatableCaption.of("economy.cannot_afford_merge"),
@@ -303,7 +303,7 @@ public class Merge extends SubCommand {
                         player,
                         terrain
                 )) {
-                    if (this.econHandler.isEnabled(plotArea) && price > 0d) {
+                    if (this.econHandler.isEnabled(plotArea) && !player.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_ECON) && price > 0d) {
                         if (!force && this.econHandler.getMoney(player) < price) {
                             player.sendMessage(
                                     TranslatableCaption.of("economy.cannot_afford_merge"),

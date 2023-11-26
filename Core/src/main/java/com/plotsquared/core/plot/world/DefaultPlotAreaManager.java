@@ -29,17 +29,17 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Singleton
 public class DefaultPlotAreaManager implements PlotAreaManager {
 
     final PlotArea[] noPlotAreas = new PlotArea[0];
-    private final Map<String, PlotWorld> plotWorlds = new HashMap<>();
+    private final Map<String, PlotWorld> plotWorlds = new ConcurrentHashMap<>();
 
     @Override
     public @NonNull PlotArea[] getAllPlotAreas() {

@@ -51,4 +51,9 @@ public final class StaticCaption implements Caption {
         return MiniMessage.miniMessage().deserialize(this.value);
     }
 
+    @Override
+    public @NonNull String toString() {
+        return "StaticCaption(" + value + ")";
+    }
+
 }

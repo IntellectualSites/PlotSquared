@@ -112,15 +112,15 @@ public class Kick extends SubCommand {
                 for (PlotPlayer<?> player2 : players) {
                     if (!plot.equals(player2.getCurrentPlot())) {
                         player.sendMessage(
-                                TranslatableCaption.of("errors.invalid_player"),
-                                TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))
+                                TranslatableCaption.of("kick.player_not_in_plot"),
+                                TagResolver.resolver("player", Tag.inserting(Component.text(player2.getName())))
                         );
                         return;
                     }
                     if (player2.hasPermission(Permission.PERMISSION_ADMIN_ENTRY_DENIED)) {
                         player.sendMessage(
-                                TranslatableCaption.of("cluster.cannot_kick_player"),
-                                TagResolver.resolver("name", Tag.inserting(Component.text(player2.getName())))
+                                TranslatableCaption.of("kick.cannot_kick_player"),
+                                TagResolver.resolver("player", Tag.inserting(Component.text(player2.getName())))
                         );
                         return;
                     }

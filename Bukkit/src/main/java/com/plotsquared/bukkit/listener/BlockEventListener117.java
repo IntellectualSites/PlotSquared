@@ -26,6 +26,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.CopperOxideFlag;
 import com.plotsquared.core.plot.flag.implementations.MiscInteractFlag;
+import com.plotsquared.core.plot.flag.implementations.SculkSensorInteractFlag;
 import com.plotsquared.core.util.PlotFlagUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -96,12 +97,12 @@ public class BlockEventListener117 implements Listener {
                 area,
                 MiscInteractFlag.class,
                 true
-        ) || plot != null && !plot.getFlag(
-                MiscInteractFlag.class)) {
+        ) || plot != null && (!plot.getFlag(MiscInteractFlag.class) || !plot.getFlag(SculkSensorInteractFlag.class))) {
             if (plotPlayer != null) {
                 if (plot != null) {
                     if (!plot.isAdded(plotPlayer.getUUID())) {
-                        plot.debug(plotPlayer.getName() + " couldn't trigger sculk sensors because misc-interact = false");
+                        plot.debug(plotPlayer.getName() + " couldn't trigger sculk sensors because both " +
+                                "sculk-sensor-interact and misc-interact = false");
                         event.setCancelled(true);
                     }
                 }
@@ -112,13 +113,15 @@ public class BlockEventListener117 implements Listener {
                 if (plot != null) {
                     if (itemThrower == null && (itemThrower = item.getOwner()) == null) {
                         plot.debug(
-                                "A thrown item couldn't trigger sculk sensors because misc-interact = false and the item's owner could not be resolved.");
+                                "A thrown item couldn't trigger sculk sensors because both sculk-sensor-interact and " +
+                                        "misc-interact = false and the item's owner could not be resolved.");
                         event.setCancelled(true);
                         return;
                     }
                     if (!plot.isAdded(itemThrower)) {
                         if (!plot.isAdded(itemThrower)) {
-                            plot.debug("A thrown item couldn't trigger sculk sensors because misc-interact = false");
+                            plot.debug("A thrown item couldn't trigger sculk sensors because both sculk-sensor-interact and " +
+                                    "misc-interact = false");
                             event.setCancelled(true);
                         }
                     }
@@ -137,7 +140,6 @@ public class BlockEventListener117 implements Listener {
         if (area == null) {
             for (int i = blocks.size() - 1; i >= 0; i--) {
                 Location blockLocation = BukkitUtil.adapt(blocks.get(i).getLocation());
-                blockLocation = BukkitUtil.adapt(blocks.get(i).getLocation());
                 if (blockLocation.isPlotArea()) {
                     blocks.remove(i);
                 }

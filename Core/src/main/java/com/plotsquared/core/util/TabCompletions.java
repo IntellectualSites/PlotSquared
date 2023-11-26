@@ -173,7 +173,7 @@ public final class TabCompletions {
             return Collections.emptyList();
         }
         final List<String> commands = new ArrayList<>();
-        for (int i = offset; i < highestLimit && (offset - i + amountLimit) > 0; i++) {
+        for (int i = offset; i <= highestLimit && (offset - i + amountLimit) > 0; i++) {
             commands.add(String.valueOf(i));
         }
         return asCompletions(commands.toArray(new String[0]));

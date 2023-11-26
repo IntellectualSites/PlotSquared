@@ -4,9 +4,16 @@
     "config:base",
     ":semanticCommitsDisabled"
   ],
+  "automerge": true,
   "labels": [
     "dependencies"
   ],
   "rebaseWhen": "conflicted",
-  "schedule": ["on the first day of the month"]
+  "schedule": ["on the first day of the month"],
+  "ignoreDeps": [
+    "com.google.code.gson:gson",
+    "com.google.guava:guava",
+    "org.yaml:snakeyaml",
+    "org.apache.logging.log4j:log4j-api"
+  ]
 }

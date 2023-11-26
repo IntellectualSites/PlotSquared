@@ -369,6 +369,7 @@ public class PlayerEventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @SuppressWarnings("deprecation") // Paper deprecation
     public void onConnect(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
         PlotSquared.platform().playerManager().removePlayer(player.getUniqueId());
@@ -607,7 +608,7 @@ public class PlayerEventListener implements Listener {
                 this.tmpTeleport = true;
                 return;
             }
-            int border = area.getBorder();
+            int border = area.getBorder(true);
             int x1;
             if (x2 > border && this.tmpTeleport) {
                 if (!pp.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
@@ -702,7 +703,7 @@ public class PlayerEventListener implements Listener {
                 this.tmpTeleport = true;
                 return;
             }
-            int border = area.getBorder();
+            int border = area.getBorder(true);
             int z1;
             if (z2 > border && this.tmpTeleport) {
                 if (!pp.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
@@ -733,6 +734,7 @@ public class PlayerEventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
+    @SuppressWarnings("deprecation") // Paper deprecation
     public void onChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled()) {
             return;
@@ -1063,6 +1065,7 @@ public class PlayerEventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
+    @SuppressWarnings("deprecation") // Paper deprecation
     public void onCancelledInteract(PlayerInteractEvent event) {
         if (event.isCancelled() && event.getAction() == Action.RIGHT_CLICK_AIR) {
             Player player = event.getPlayer();
@@ -1167,7 +1170,7 @@ public class PlayerEventListener implements Listener {
                     }
                 }
                 if (type.isEdible()) {
-                    //Allow all players to eat while also allowing the block place event ot be fired
+                    //Allow all players to eat while also allowing the block place event to be fired
                     return;
                 }
                 if (type == Material.ARMOR_STAND) {

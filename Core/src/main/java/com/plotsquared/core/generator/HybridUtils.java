@@ -77,6 +77,10 @@ public class HybridUtils {
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + HybridUtils.class.getSimpleName());
     private static final BlockState AIR = BlockTypes.AIR.getDefaultState();
 
+    /**
+     * Deprecated and likely to be removed in a future release.
+     */
+    @Deprecated(forRemoval = true, since = "7.0.0")
     public static HybridUtils manager;
     public static Set<BlockVector2> regions;
     public static int height;
@@ -529,7 +533,7 @@ public class HybridUtils {
                 Math.min(plotworld.PLOT_HEIGHT, Math.min(plotworld.WALL_HEIGHT, plotworld.ROAD_HEIGHT)) : plotworld.ROAD_HEIGHT;
         int sx = bot.getX() - plotworld.ROAD_WIDTH + 1;
         int sz = bot.getZ() + 1;
-        int sy = Settings.Schematics.PASTE_ROAD_ON_TOP ? schemY : plot.getArea().getMinBuildHeight();
+        int sy = Settings.Schematics.PASTE_ROAD_ON_TOP ? schemY : plot.getArea().getMinGenHeight();
         int ex = bot.getX();
         int ez = top.getZ();
         int ey = get_ey(plotworld, queue, sx, ex, sz, ez, sy);
@@ -668,7 +672,7 @@ public class HybridUtils {
                     }
                     if (condition) {
                         BaseBlock[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
-                        int minY = Settings.Schematics.PASTE_ROAD_ON_TOP ? plotWorld.SCHEM_Y : area.getMinGenHeight() + 1;
+                        int minY = plotWorld.getRoadYStart();
                         int maxDy = Math.max(extend, blocks.length);
                         for (int dy = 0; dy < maxDy; dy++) {
                             if (dy > blocks.length - 1) {

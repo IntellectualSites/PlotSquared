@@ -158,6 +158,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
         final String[] nodes = stub.split("\\.");
         final StringBuilder n = new StringBuilder();
+        // Wildcard check from less specific permission to more specific permission
         for (int i = 0; i < (nodes.length - 1); i++) {
             n.append(nodes[i]).append(".");
             if (!stub.equals(n + Permission.PERMISSION_STAR.toString())) {
@@ -166,9 +167,11 @@ public class BukkitPlayer extends PlotPlayer<Player> {
                 }
             }
         }
+        // Wildcard check for the full permission
         if (hasPermission(stub + ".*")) {
             return Integer.MAX_VALUE;
         }
+        // Permission value cache for iterative check
         int max = 0;
         if (CHECK_EFFECTIVE) {
             boolean hasAny = false;

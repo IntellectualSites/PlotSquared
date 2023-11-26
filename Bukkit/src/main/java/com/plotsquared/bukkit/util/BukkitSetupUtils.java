@@ -67,6 +67,7 @@ public class BukkitSetupUtils extends SetupUtils {
         this.worldFile = worldFile;
     }
 
+    @SuppressWarnings("deprecation") // Paper deprecation
     @Override
     public void updateGenerators(final boolean force) {
         if (loaded && !SetupUtils.generators.isEmpty() && !force) {

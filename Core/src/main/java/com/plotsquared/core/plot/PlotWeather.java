@@ -18,9 +18,25 @@
  */
 package com.plotsquared.core.plot;
 
+/**
+ * The different types of weather that can be set for a Plot.
+ */
 public enum PlotWeather {
+
+    /**
+     * Rainy weather conditions
+     */
     RAIN,
+    /**
+     * Clear weather conditions
+     */
     CLEAR,
+    /**
+     * Use the weather of the world the plot is in
+     */
     WORLD,
+    /**
+     * Turn off weather for the plot
+     */
     OFF
 }

@@ -183,7 +183,7 @@ public class MainCommand extends Command {
                     if (cmd.hasConfirmation(player)) {
                         CmdConfirm.addPending(player, cmd.getUsage(), () -> {
                             PlotArea area = player.getApplicablePlotArea();
-                            if (area != null && econHandler.isEnabled(area)) {
+                            if (area != null && econHandler.isEnabled(area) && !player.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_ECON)) {
                                 PlotExpression priceEval =
                                         area.getPrices().get(cmd.getFullId());
                                 double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
@@ -201,7 +201,7 @@ public class MainCommand extends Command {
                         return;
                     }
                     PlotArea area = player.getApplicablePlotArea();
-                    if (area != null && econHandler.isEnabled(area)) {
+                    if (area != null && econHandler.isEnabled(area) && !player.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_ECON)) {
                         PlotExpression priceEval = area.getPrices().get(cmd.getFullId());
                         double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
                         if (price != 0d && econHandler.getMoney(player) < price) {

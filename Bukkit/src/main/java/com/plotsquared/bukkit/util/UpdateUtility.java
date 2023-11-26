@@ -35,7 +35,7 @@ import org.bukkit.scheduler.BukkitTask;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URL;
+import java.net.URI;
 
 public class UpdateUtility implements Listener {
 
@@ -59,8 +59,9 @@ public class UpdateUtility implements Listener {
     public void updateChecker() {
         task = Bukkit.getScheduler().runTaskTimerAsynchronously(this.javaPlugin, () -> {
             try {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(
-                        "https://api.spigotmc.org/simple/0.1/index.php?action=getResource&id=77506")
+                HttpsURLConnection connection = (HttpsURLConnection) URI.create(
+                        "https://api.spigotmc.org/simple/0.2/index.php?action=getResource&id=77506")
+                        .toURL()
                         .openConnection();
                 connection.setRequestMethod("GET");
                 JsonObject result = new JsonParser()

@@ -117,10 +117,11 @@ public class Deny extends SubCommand {
                     } else if (plot.getDenied().contains(uuid)) {
                         player.sendMessage(
                                 TranslatableCaption.of("member.already_added"),
-                                TagResolver.resolver(
+                                PlotSquared.platform().playerManager().getUsernameCaption(uuid)
+                                        .thenApply(caption -> TagResolver.resolver(
                                         "player",
-                                        Tag.inserting(PlayerManager.resolveName(uuid).toComponent(player))
-                                )
+                                        Tag.inserting(caption.toComponent(player))
+                                ))
                         );
                         return;
                     } else {

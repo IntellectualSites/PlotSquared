@@ -26,6 +26,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
+import com.plotsquared.core.util.ReflectionUtils;
 import com.plotsquared.core.util.ReflectionUtils.RefClass;
 import com.plotsquared.core.util.ReflectionUtils.RefField;
 import com.plotsquared.core.util.ReflectionUtils.RefMethod;
@@ -64,9 +65,11 @@ public class ChunkListener implements Listener {
     private final PlotAreaManager plotAreaManager;
     private final int version;
 
+    private RefMethod methodSetUnsaved;
     private RefMethod methodGetHandleChunk;
     private RefMethod methodGetHandleWorld;
-    private RefField mustSave;
+    private RefField mustNotSave;
+    private Object objChunkStatusFull = null;
     /*
     private RefMethod methodGetFullChunk;
     private RefMethod methodGetBukkitChunk;
@@ -79,7 +82,6 @@ public class ChunkListener implements Listener {
     */
     private Chunk lastChunk;
     private boolean ignoreUnload = false;
-    private boolean isTrueForNotSave = true;
 
     @Inject
     public ChunkListener(final @NonNull PlotAreaManager plotAreaManager) {
@@ -90,22 +92,27 @@ public class ChunkListener implements Listener {
         }
         try {
             RefClass classCraftWorld = getRefClass("{cb}.CraftWorld");
-            this.methodGetHandleWorld = classCraftWorld.getMethod("getHandle");
             RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
-            this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
+            ReflectionUtils.RefClass classChunkAccess = getRefClass("net.minecraft.world.level.chunk.IChunkAccess");
+            this.methodSetUnsaved = classChunkAccess.getMethod("a", boolean.class);
+            try {
+                this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
+            } catch (NoSuchMethodException ignored) {
+                try {
+                    RefClass classChunkStatus = getRefClass("net.minecraft.world.level.chunk.ChunkStatus");
+                    this.objChunkStatusFull = classChunkStatus.getRealClass().getField("n").get(null);
+                    this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle", classChunkStatus.getRealClass());
+                } catch (NoSuchMethodException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
             try {
                 if (version < 17) {
                     RefClass classChunk = getRefClass("{nms}.Chunk");
-                    if (version == 13) {
-                        this.mustSave = classChunk.getField("mustSave");
-                        this.isTrueForNotSave = false;
-                    } else {
-                        this.mustSave = classChunk.getField("mustNotSave");
-                    }
+                    this.mustNotSave = classChunk.getField("mustNotSave");
                 } else {
                     RefClass classChunk = getRefClass("net.minecraft.world.level.chunk.Chunk");
-                    this.mustSave = classChunk.getField("mustNotSave");
-
+                    this.mustNotSave = classChunk.getField("mustNotSave");
                 }
             } catch (NoSuchFieldException e) {
                 e.printStackTrace();
@@ -167,10 +174,13 @@ public class ChunkListener implements Listener {
         if (safe && shouldSave(world, chunk.getX(), chunk.getZ())) {
             return false;
         }
-        Object c = this.methodGetHandleChunk.of(chunk).call();
-        RefField.RefExecutor field = this.mustSave.of(c);
-        if ((Boolean) field.get() != isTrueForNotSave) {
-            field.set(isTrueForNotSave);
+        Object c = objChunkStatusFull != null
+                ? this.methodGetHandleChunk.of(chunk).call(objChunkStatusFull)
+                : this.methodGetHandleChunk.of(chunk).call();
+        RefField.RefExecutor field = this.mustNotSave.of(c);
+        methodSetUnsaved.of(c).call(false);
+        if (!((Boolean) field.get())) {
+            field.set(true);
             if (chunk.isLoaded()) {
                 ignoreUnload = true;
                 chunk.unload(false);

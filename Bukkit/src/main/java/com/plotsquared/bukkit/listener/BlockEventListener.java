@@ -33,6 +33,7 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.BlockBurnFlag;
 import com.plotsquared.core.plot.flag.implementations.BlockIgnitionFlag;
 import com.plotsquared.core.plot.flag.implementations.BreakFlag;
+import com.plotsquared.core.plot.flag.implementations.ConcreteHardenFlag;
 import com.plotsquared.core.plot.flag.implementations.CoralDryFlag;
 import com.plotsquared.core.plot.flag.implementations.CropGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.DisablePhysicsFlag;
@@ -586,6 +587,12 @@ public class BlockEventListener implements Listener {
                 event.setCancelled(true);
             }
         }
+        if (event.getNewState().getType().toString().endsWith("CONCRETE")) {
+            if (!plot.getFlag(ConcreteHardenFlag.class)) {
+                plot.debug("Concrete powder could not harden because concrete-harden = false");
+                event.setCancelled(true);
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -1116,6 +1123,7 @@ public class BlockEventListener implements Listener {
             if (plot != null) {
                 plot.debug("Explosion was cancelled because explosion = false");
             }
+            return;
         }
         event.blockList().removeIf(blox -> !plot.equals(area.getOwnedPlot(BukkitUtil.adapt(blox.getLocation()))));
     }

@@ -69,8 +69,8 @@ public class HybridGen extends IndependentPlotGenerator {
             EnumSet<SchematicFeature> features
     ) {
         int minY; // Math.min(world.PLOT_HEIGHT, world.ROAD_HEIGHT);
-        if ((features.contains(SchematicFeature.ROAD) && Settings.Schematics.PASTE_ROAD_ON_TOP)
-                || (!features.contains(SchematicFeature.ROAD) && Settings.Schematics.PASTE_ON_TOP)) {
+        boolean isRoad = features.contains(SchematicFeature.ROAD);
+        if ((isRoad && Settings.Schematics.PASTE_ROAD_ON_TOP) || (!isRoad && Settings.Schematics.PASTE_ON_TOP)) {
             minY = world.SCHEM_Y;
         } else {
             minY = world.getMinBuildHeight();

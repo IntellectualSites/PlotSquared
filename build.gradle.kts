@@ -1,7 +1,8 @@
 import com.diffplug.gradle.spotless.SpotlessPlugin
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
-import java.net.URI
+import groovy.json.JsonSlurper
 import xyz.jpenilla.runpaper.task.RunServer
+import java.net.URI
 
 plugins {
     java
@@ -17,11 +18,11 @@ plugins {
     eclipse
     idea
 
-    id("xyz.jpenilla.run-paper") version "2.1.0"
+    alias(libs.plugins.runPaper)
 }
 
 group = "com.intellectualsites.plotsquared"
-version = "7.0.0-SNAPSHOT"
+version = "7.2.1-SNAPSHOT"
 
 if (!File("$rootDir/.git").exists()) {
     logger.lifecycle("""
@@ -77,12 +78,8 @@ subprojects {
     }
 
     dependencies {
-        implementation(platform("com.intellectualsites.bom:bom-newest:1.29"))
-    }
-
-    dependencies {
         // Tests
-        testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
+        testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
     }
 
     plugins.withId("java") {
@@ -153,29 +150,34 @@ subprojects {
                             id.set("Sauilitired")
                             name.set("Alexander Söderberg")
                             organization.set("IntellectualSites")
+                            organizationUrl.set("https://github.com/IntellectualSites")
                         }
                         developer {
                             id.set("NotMyFault")
                             name.set("Alexander Brandes")
                             organization.set("IntellectualSites")
+                            organizationUrl.set("https://github.com/IntellectualSites")
                             email.set("contact(at)notmyfault.dev")
                         }
                         developer {
                             id.set("SirYwell")
                             name.set("Hannes Greule")
                             organization.set("IntellectualSites")
+                            organizationUrl.set("https://github.com/IntellectualSites")
                         }
                         developer {
                             id.set("dordsor21")
                             name.set("dordsor21")
                             organization.set("IntellectualSites")
+                            organizationUrl.set("https://github.com/IntellectualSites")
                         }
                     }
 
                     scm {
                         url.set("https://github.com/IntellectualSites/PlotSquared")
-                        connection.set("scm:https://IntellectualSites@github.com/IntellectualSites/PlotSquared.git")
-                        developerConnection.set("scm:git://github.com/IntellectualSites/PlotSquared.git")
+                        connection.set("scm:git:https://github.com/IntellectualSites/PlotSquared.git")
+                        developerConnection.set("scm:git:git@github.com:IntellectualSites/PlotSquared.git")
+                        tag.set("${project.version}")
                     }
 
                     issueManagement {
@@ -222,14 +224,28 @@ tasks.getByName<Jar>("jar") {
     enabled = false
 }
 
-val supportedVersions = listOf("1.16.5", "1.17", "1.17.1", "1.18.2", "1.19", "1.19.1", "1.19.2", "1.19.3", "1.19.4", "1.20")
+val supportedVersions = listOf("1.16.5", "1.17.1", "1.18.2", "1.19.4", "1.20.1", "1.20.2")
 tasks {
+    register("cacheLatestFaweArtifact") {
+        val lastSuccessfulBuildUrl = uri("https://ci.athion.net/job/FastAsyncWorldEdit/lastSuccessfulBuild/api/json").toURL()
+        val artifact = ((JsonSlurper().parse(lastSuccessfulBuildUrl) as Map<*, *>)["artifacts"] as List<*>)
+                .map { it as Map<*, *> }
+                .map { it["fileName"] as String }
+                .first { it -> it.contains("Bukkit") }
+        project.ext["faweArtifact"] = artifact
+    }
+
     supportedVersions.forEach {
         register<RunServer>("runServer-$it") {
+            dependsOn(getByName("cacheLatestFaweArtifact"))
             minecraftVersion(it)
-            pluginJars(*project(":plotsquared-bukkit").getTasksByName("shadowJar", false).map { (it as Jar).archiveFile }
+            pluginJars(*project(":plotsquared-bukkit").getTasksByName("shadowJar", false)
+                    .map { task -> (task as Jar).archiveFile }
                     .toTypedArray())
             jvmArgs("-DPaper.IgnoreJavaVersion=true", "-Dcom.mojang.eula.agree=true")
+            downloadPlugins {
+                url("https://ci.athion.net/job/FastAsyncWorldEdit/lastSuccessfulBuild/artifact/artifacts/${project.ext["faweArtifact"]}")
+            }
             group = "run paper"
             runDirectory.set(file("run-$it"))
         }

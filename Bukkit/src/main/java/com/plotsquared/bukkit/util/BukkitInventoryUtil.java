@@ -44,6 +44,7 @@ import java.util.stream.IntStream;
 @Singleton
 public class BukkitInventoryUtil extends InventoryUtil {
 
+    @SuppressWarnings("deprecation") // Paper deprecation
     private static @Nullable ItemStack getItem(PlotItemStack item) {
         if (item == null) {
             return null;

@@ -76,6 +76,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
      * The Y level at which schematic generation will start, lowest of either road or plot schematic generation.
      */
     public int SCHEM_Y;
+
+    private int plotY;
+    private int roadY;
     private Location SIGN_LOCATION;
     private File root = null;
     private int lastOverlayHeightError = Integer.MIN_VALUE;
@@ -186,7 +189,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 }
                 Object value;
                 try {
-                    final boolean accessible = field.isAccessible();
+                    final boolean accessible = field.canAccess(this);
                     field.setAccessible(true);
                     value = field.get(this);
                     field.setAccessible(accessible);
@@ -252,68 +255,60 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
         SCHEM_Y = schematicStartHeight();
 
-        // plotY and roadY are important to allow plot and/or road schematic "overflow" into each other without causing AIOOB
-        //  exceptions when attempting either to set blocks to, or get block from G_SCH
+        // plotY and roadY are important to allow plot and/or road schematic "overflow" into each other
+        // without causing AIOOB exceptions when attempting either to set blocks to, or get block from G_SCH
         // Default plot schematic start height, normalized to the minimum height schematics are pasted from.
-        int plotY = PLOT_HEIGHT - SCHEM_Y;
+        plotY = PLOT_HEIGHT - SCHEM_Y;
         int minRoadWall = Settings.Schematics.USE_WALL_IN_ROAD_SCHEM_HEIGHT ? Math.min(ROAD_HEIGHT, WALL_HEIGHT) : ROAD_HEIGHT;
         // Default road schematic start height, normalized to the minimum height schematics are pasted from.
-        int roadY = minRoadWall - SCHEM_Y;
+        roadY = minRoadWall - SCHEM_Y;
 
         int worldGenHeight = getMaxGenHeight() - getMinGenHeight() + 1;
 
-        int maxSchematicHeight = 0;
         int plotSchemHeight = 0;
 
         // SCHEM_Y should be normalised to the plot "start" height
         if (schematic3 != null) {
-            plotSchemHeight = maxSchematicHeight = schematic3.getClipboard().getDimensions().getY();
-            if (maxSchematicHeight == worldGenHeight) {
+            plotSchemHeight = schematic3.getClipboard().getDimensions().getY();
+            if (plotSchemHeight == worldGenHeight) {
                 SCHEM_Y = getMinGenHeight();
                 plotY = 0;
             } else if (!Settings.Schematics.PASTE_ON_TOP) {
-                SCHEM_Y = getMinBuildHeight();
+                SCHEM_Y = getMinGenHeight();
                 plotY = 0;
             }
         }
 
-        int roadSchemHeight;
+        int roadSchemHeight = 0;
 
         if (schematic1 != null) {
             roadSchemHeight = Math.max(
                     schematic1.getClipboard().getDimensions().getY(),
                     schematic2.getClipboard().getDimensions().getY()
             );
-            maxSchematicHeight = Math.max(roadSchemHeight, maxSchematicHeight);
-            if (maxSchematicHeight == worldGenHeight) {
+            if (roadSchemHeight == worldGenHeight) {
                 SCHEM_Y = getMinGenHeight();
                 roadY = 0; // Road is the lowest schematic
                 if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() != worldGenHeight) {
                     // Road is the lowest schematic. Normalize plotY to it.
                     if (Settings.Schematics.PASTE_ON_TOP) {
                         plotY = PLOT_HEIGHT - getMinGenHeight();
-                    } else {
-                        plotY = getMinBuildHeight() - getMinGenHeight();
                     }
                 }
             } else if (!Settings.Schematics.PASTE_ROAD_ON_TOP) {
-                if (SCHEM_Y == getMinGenHeight()) { // Only possible if plot schematic is enabled
-                    // Plot is still the lowest schematic, normalize roadY to it
-                    roadY = getMinBuildHeight() - getMinGenHeight();
-                } else if (schematic3 != null) {
-                    SCHEM_Y = getMinBuildHeight();
-                    roadY = 0;// Road is the lowest schematic
+                roadY = 0;
+                SCHEM_Y = getMinGenHeight();
+                if (schematic3 != null) {
                     if (Settings.Schematics.PASTE_ON_TOP) {
                         // Road is the lowest schematic. Normalize plotY to it.
-                        plotY = PLOT_HEIGHT - getMinBuildHeight();
+                        plotY = PLOT_HEIGHT - SCHEM_Y;
                     }
-                    maxSchematicHeight = Math.max(maxSchematicHeight, plotY + plotSchemHeight);
                 }
             } else {
                 roadY = minRoadWall - SCHEM_Y;
-                maxSchematicHeight = Math.max(maxSchematicHeight, roadY + roadSchemHeight);
             }
         }
+        int maxSchematicHeight = Math.max(plotY + plotSchemHeight, roadY + roadSchemHeight);
 
         if (schematic3 != null) {
             this.PLOT_SCHEMATIC = true;
@@ -552,6 +547,26 @@ public class HybridPlotWorld extends ClassicPlotWorld {
      */
     public @Nullable File getSchematicRoot() {
         return this.root;
+    }
+
+    /**
+     * Get the y value where the plot schematic should be pasted from.
+     *
+     * @return plot schematic y start value
+     * @since 7.0.0
+     */
+    public int getPlotYStart() {
+        return SCHEM_Y + plotY;
+    }
+
+    /**
+     * Get the y value where the road schematic should be pasted from.
+     *
+     * @return road schematic y start value
+     * @since 7.0.0
+     */
+    public int getRoadYStart() {
+        return SCHEM_Y + roadY;
     }
 
 }

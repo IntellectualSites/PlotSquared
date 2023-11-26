@@ -41,6 +41,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -116,7 +117,7 @@ public class Load extends SubCommand {
                     }
                     final URL url;
                     try {
-                        url = new URL(Settings.Web.URL + "saves/" + player.getUUID() + '/' + schematic);
+                        url = URI.create(Settings.Web.URL + "saves/" + player.getUUID() + '/' + schematic).toURL();
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
                         player.sendMessage(TranslatableCaption.of("web.load_failed"));

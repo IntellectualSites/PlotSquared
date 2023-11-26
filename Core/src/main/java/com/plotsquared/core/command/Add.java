@@ -19,6 +19,7 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
@@ -101,9 +102,14 @@ public class Add extends Command {
                                 Permission.PERMISSION_ADMIN_COMMAND_TRUST))) {
                             player.sendMessage(
                                     TranslatableCaption.of("errors.invalid_player"),
-                                    TagResolver.resolver("value", Tag.inserting(
-                                            PlayerManager.resolveName(uuid).toComponent(player)
-                                    ))
+                                    PlotSquared
+                                            .platform()
+                                            .playerManager()
+                                            .getUsernameCaption(uuid)
+                                            .thenApply(caption -> TagResolver.resolver(
+                                                    "value",
+                                                    Tag.inserting(caption.toComponent(player))
+                                            ))
                             );
                             iterator.remove();
                             continue;
@@ -111,9 +117,11 @@ public class Add extends Command {
                         if (plot.isOwner(uuid)) {
                             player.sendMessage(
                                     TranslatableCaption.of("member.already_added"),
-                                    TagResolver.resolver("player", Tag.inserting(
-                                            PlayerManager.resolveName(uuid).toComponent(player)
-                                    ))
+                                    PlotSquared.platform().playerManager().getUsernameCaption(uuid)
+                                            .thenApply(caption -> TagResolver.resolver(
+                                                    "player",
+                                                    Tag.inserting(caption.toComponent(player))
+                                            ))
                             );
                             iterator.remove();
                             continue;
@@ -121,9 +129,11 @@ public class Add extends Command {
                         if (plot.getMembers().contains(uuid)) {
                             player.sendMessage(
                                     TranslatableCaption.of("member.already_added"),
-                                    TagResolver.resolver("player", Tag.inserting(
-                                            PlayerManager.resolveName(uuid).toComponent(player)
-                                    ))
+                                    PlotSquared.platform().playerManager().getUsernameCaption(uuid)
+                                            .thenApply(caption -> TagResolver.resolver(
+                                                    "player",
+                                                    Tag.inserting(caption.toComponent(player))
+                                            ))
                             );
                             iterator.remove();
                             continue;

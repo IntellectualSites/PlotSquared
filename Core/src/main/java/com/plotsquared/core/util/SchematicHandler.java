@@ -83,6 +83,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
@@ -144,7 +145,7 @@ public abstract class SchematicHandler {
         }
         final URL url;
         try {
-            url = new URL(Settings.Web.URL + "?key=" + uuid + "&type=" + extension);
+            url = URI.create(Settings.Web.URL + "?key=" + uuid + "&type=" + extension).toURL();
         } catch (MalformedURLException e) {
             e.printStackTrace();
             whenDone.run();
@@ -153,7 +154,7 @@ public abstract class SchematicHandler {
         TaskManager.runTaskAsync(() -> {
             try {
                 String boundary = Long.toHexString(System.currentTimeMillis());
-                URLConnection con = new URL(website).openConnection();
+                URLConnection con = URI.create(website).toURL().openConnection();
                 con.setDoOutput(true);
                 con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
                 try (OutputStream output = con.getOutputStream();
@@ -498,9 +499,10 @@ public abstract class SchematicHandler {
     public List<String> getSaves(UUID uuid) {
         String rawJSON;
         try {
-            String website = Settings.Web.URL + "list.php?" + uuid.toString();
-            URL url = new URL(website);
-            URLConnection connection = new URL(url.toString()).openConnection();
+            URLConnection connection = URI.create(
+                    Settings.Web.URL + "list.php?" + uuid.toString())
+                    .toURL()
+                    .openConnection();
             connection.setRequestProperty("User-Agent", "Mozilla/5.0");
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
                 rawJSON = reader.lines().collect(Collectors.joining());
