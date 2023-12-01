@@ -234,7 +234,7 @@ public class PlayerEventListener implements Listener {
         ItemStack itemStack = event.getItem();
         Block block = event.getClickedBlock();
         if (block != null && block.getState() instanceof Sign) {
-            if(itemStack == null) {
+            if (itemStack == null) {
                 return;
             }
             if (DYES.contains(itemStack.getType())) {
