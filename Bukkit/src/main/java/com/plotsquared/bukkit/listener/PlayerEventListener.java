@@ -232,11 +232,11 @@ public class PlayerEventListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerDyeSign(PlayerInteractEvent event) {
         ItemStack itemStack = event.getItem();
+        if (itemStack == null) {
+            return;
+        }
         Block block = event.getClickedBlock();
         if (block != null && block.getState() instanceof Sign) {
-            if (itemStack == null) {
-                return;
-            }
             if (DYES.contains(itemStack.getType())) {
                 Location location = BukkitUtil.adapt(block.getLocation());
                 PlotArea area = location.getPlotArea();
