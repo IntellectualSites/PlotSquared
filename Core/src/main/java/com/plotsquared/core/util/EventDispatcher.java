@@ -375,14 +375,10 @@ public class EventDispatcher {
                             return true;
                         }
                     }
-                    return player.hasPermission(
-                            Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms
-                    );
+                    return player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_ROAD, notifyPerms);
                 }
                 if (!plot.hasOwner()) {
-                    return player.hasPermission(
-                            Permission.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms
-                    );
+                    return player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_UNOWNED, notifyPerms);
                 }
                 final List<BlockTypeWrapper> use = plot.getFlag(UseFlag.class);
                 for (final BlockTypeWrapper blockTypeWrapper : use) {
@@ -391,7 +387,7 @@ public class EventDispatcher {
                         return true;
                     }
                 }
-                if (player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString(), false)) {
+                if (player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER, false)) {
                     return true;
                 }
                 // we check for the EditSignFlag in the PlayerSignOpenEvent again, but we must not cancel the interact event
@@ -416,14 +412,10 @@ public class EventDispatcher {
                             return true;
                         }
                     }
-                    return player.hasPermission(
-                            Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), false
-                    );
+                    return player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_ROAD, false);
                 }
                 if (!plot.hasOwner()) {
-                    return player.hasPermission(
-                            Permission.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), false
-                    );
+                    return player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_UNOWNED, false);
                 }
                 if (plot.getFlag(DeviceInteractFlag.class)) {
                     return true;
@@ -435,21 +427,14 @@ public class EventDispatcher {
                         return true;
                     }
                 }
-                return player.hasPermission(
-                        Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
-                        false
-                );
+                return player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER,false);
             }
             case SPAWN_MOB -> {
                 if (plot == null) {
-                    return player.hasPermission(
-                            Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms
-                    );
+                    return player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_ROAD, notifyPerms);
                 }
                 if (!plot.hasOwner()) {
-                    return player.hasPermission(
-                            Permission.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms
-                    );
+                    return player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_UNOWNED, notifyPerms);
                 }
                 if (plot.getFlag(MobPlaceFlag.class)) {
                     return true;
@@ -461,10 +446,7 @@ public class EventDispatcher {
                         return true;
                     }
                 }
-                if (player.hasPermission(
-                        Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
-                        false
-                )) {
+                if (player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER,false)) {
                     return true;
                 }
                 if (notifyPerms) {
@@ -484,14 +466,10 @@ public class EventDispatcher {
             }
             case PLACE_MISC -> {
                 if (plot == null) {
-                    return player.hasPermission(
-                            Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms
-                    );
+                    return player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_ROAD, notifyPerms);
                 }
                 if (!plot.hasOwner()) {
-                    return player.hasPermission(
-                            Permission.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms
-                    );
+                    return player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_UNOWNED, notifyPerms);
                 }
                 if (plot.getFlag(MiscPlaceFlag.class)) {
                     return true;
@@ -503,10 +481,7 @@ public class EventDispatcher {
                         return true;
                     }
                 }
-                if (player.hasPermission(
-                        Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
-                        false
-                )) {
+                if (player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER,false)) {
                     return true;
                 }
                 if (notifyPerms) {
@@ -526,16 +501,28 @@ public class EventDispatcher {
             }
             case PLACE_VEHICLE -> {
                 if (plot == null) {
-                    return player.hasPermission(
-                            Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms
-                    );
+                    return player.hasPermission(Permission.PERMISSION_ADMIN_PLACE_VEHICLE_ROAD, notifyPerms);
                 }
                 if (!plot.hasOwner()) {
-                    return player.hasPermission(
-                            Permission.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms
+                    return player.hasPermission(Permission.PERMISSION_ADMIN_PLACE_VEHICLE_UNOWNED, notifyPerms);
+                }
+                if (plot.getFlag(VehiclePlaceFlag.class)) {
+                    return true;
+                }
+                if (player.hasPermission(Permission.PERMISSION_ADMIN_PLACE_VEHICLE_OTHER, false)) {
+                    return true;
+                }
+                if (notifyPerms) {
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.flag_tutorial_usage"),
+                            TagResolver.resolver(
+                                    "flag",
+                                    Tag.inserting(
+                                            PlotFlag.getFlagNameComponent(VehiclePlaceFlag.class)
+                                    )
+                            )
                     );
                 }
-                return plot.getFlag(VehiclePlaceFlag.class);
             }
             default -> {
             }
