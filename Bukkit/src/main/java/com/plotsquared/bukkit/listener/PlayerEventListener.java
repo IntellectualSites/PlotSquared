@@ -177,26 +177,32 @@ public class PlayerEventListener implements Listener {
             Material.WRITABLE_BOOK,
             Material.WRITTEN_BOOK
     );
-    private static final Set<Material> DYES = Set.of(
-            Material.WHITE_DYE,
-            Material.LIGHT_GRAY_DYE,
-            Material.GRAY_DYE,
-            Material.BLACK_DYE,
-            Material.BROWN_DYE,
-            Material.RED_DYE,
-            Material.ORANGE_DYE,
-            Material.YELLOW_DYE,
-            Material.LIME_DYE,
-            Material.GREEN_DYE,
-            Material.CYAN_DYE,
-            Material.LIGHT_BLUE_DYE,
-            Material.BLUE_DYE,
-            Material.PURPLE_DYE,
-            Material.MAGENTA_DYE,
-            Material.PINK_DYE,
-            Material.GLOW_INK_SAC,
-            Material.HONEYCOMB
-    );
+    private final Set<String> DYES;
+    {
+        DYES = new HashSet<>(Set.of(
+                "WHITE_DYE",
+                "LIGHT_GRAY_DYE",
+                "GRAY_DYE",
+                "BLACK_DYE",
+                "BROWN_DYE",
+                "RED_DYE",
+                "ORANGE_DYE",
+                "YELLOW_DYE",
+                "LIME_DYE",
+                "GREEN_DYE",
+                "CYAN_DYE",
+                "LIGHT_BLUE_DYE",
+                "BLUE_DYE",
+                "PURPLE_DYE",
+                "MAGENTA_DYE",
+                "PINK_DYE",
+                "GLOW_INK_SAC"
+        ));
+        int[] version = PlotSquared.platform().serverVersion();
+        if (version[1] >= 20 && version[2] >= 1) {
+            DYES.add("HONEYCOMB");
+        }
+    }
     private final EventDispatcher eventDispatcher;
     private final WorldEdit worldEdit;
     private final PlotAreaManager plotAreaManager;
@@ -237,7 +243,7 @@ public class PlayerEventListener implements Listener {
         }
         Block block = event.getClickedBlock();
         if (block != null && block.getState() instanceof Sign) {
-            if (DYES.contains(itemStack.getType())) {
+            if (DYES.contains(itemStack.getType().toString())) {
                 Location location = BukkitUtil.adapt(block.getLocation());
                 PlotArea area = location.getPlotArea();
                 if (area == null) {
