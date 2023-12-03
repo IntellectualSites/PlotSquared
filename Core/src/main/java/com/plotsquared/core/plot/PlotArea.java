@@ -51,6 +51,8 @@ import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.RegionUtil;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -145,6 +147,7 @@ public abstract class PlotArea implements ComponentLike {
     private Map<String, PlotExpression> prices = new HashMap<>();
     private List<String> schematics = new ArrayList<>();
     private boolean worldBorder = false;
+    private int borderSize = 1;
     private boolean useEconomy = false;
     private int hash;
     private CuboidRegion region;
@@ -354,6 +357,7 @@ public abstract class PlotArea implements ComponentLike {
         this.plotChat = config.getBoolean("chat.enabled");
         this.forcingPlotChat = config.getBoolean("chat.forced");
         this.worldBorder = config.getBoolean("world.border");
+        this.borderSize = config.getInt("world.border_size");
         this.maxBuildHeight = config.getInt("world.max_height");
         this.minBuildHeight = config.getInt("world.min_height");
         this.minGenHeight = config.getInt("world.min_gen_height");
@@ -391,6 +395,28 @@ public abstract class PlotArea implements ComponentLike {
             }
         }
 
+        this.spawnEggs = config.getBoolean("event.spawn.egg");
+        this.spawnCustom = config.getBoolean("event.spawn.custom");
+        this.spawnBreeding = config.getBoolean("event.spawn.breeding");
+
+        if (PlotSquared.get().isWeInitialised()) {
+            loadFlags(config);
+        } else {
+            ConsolePlayer.getConsole().sendMessage(
+                    TranslatableCaption.of("flags.delaying_loading_area_flags"),
+                    TagResolver.resolver("area", Tag.inserting(Component.text(this.id == null ? this.worldName : this.id)))
+            );
+            TaskManager.runTaskLater(() -> loadFlags(config), TaskTime.ticks(1));
+        }
+
+        loadConfiguration(config);
+    }
+
+    private void loadFlags(ConfigurationSection config) {
+        ConsolePlayer.getConsole().sendMessage(
+                TranslatableCaption.of("flags.loading_area_flags"),
+                TagResolver.resolver("area", Tag.inserting(Component.text(this.id == null ? this.worldName : this.id)))
+        );
         List<String> flags = config.getStringList("flags.default");
         if (flags.isEmpty()) {
             flags = config.getStringList("flags");
@@ -411,10 +437,6 @@ public abstract class PlotArea implements ComponentLike {
                 TagResolver.resolver("flags", Tag.inserting(Component.text(flags.toString())))
         );
 
-        this.spawnEggs = config.getBoolean("event.spawn.egg");
-        this.spawnCustom = config.getBoolean("event.spawn.custom");
-        this.spawnBreeding = config.getBoolean("event.spawn.breeding");
-
         List<String> roadflags = config.getStringList("road.flags");
         if (roadflags.isEmpty()) {
             roadflags = new ArrayList<>();
@@ -426,14 +448,12 @@ public abstract class PlotArea implements ComponentLike {
                 }
             }
         }
-        this.roadFlags = roadflags.size() > 0;
+        this.roadFlags = !roadflags.isEmpty();
         parseFlags(this.getRoadFlagContainer(), roadflags);
         ConsolePlayer.getConsole().sendMessage(
                 TranslatableCaption.of("flags.road_flags"),
                 TagResolver.resolver("flags", Tag.inserting(Component.text(roadflags.toString())))
         );
-
-        loadConfiguration(config);
     }
 
     public abstract void loadConfiguration(ConfigurationSection config);
@@ -471,6 +491,7 @@ public abstract class PlotArea implements ComponentLike {
         options.put("event.spawn.custom", this.isSpawnCustom());
         options.put("event.spawn.breeding", this.isSpawnBreeding());
         options.put("world.border", this.hasWorldBorder());
+        options.put("world.border_size", this.getBorderSize());
         options.put("home.default", "side");
         String position = config.getString(
                 "home.nonmembers",
@@ -919,7 +940,9 @@ public abstract class PlotArea implements ComponentLike {
      * Get the plot border distance for a world<br>
      *
      * @return The border distance or Integer.MAX_VALUE if no border is set
+     * @deprecated Use {@link PlotArea#getBorder(boolean)}
      */
+    @Deprecated(forRemoval = true, since = "7.2.0")
     public int getBorder() {
         final Integer meta = (Integer) getMeta("worldBorder");
         if (meta != null) {
@@ -928,6 +951,27 @@ public abstract class PlotArea implements ComponentLike {
                 return Integer.MAX_VALUE;
             } else {
                 return border;
+            }
+        }
+        return Integer.MAX_VALUE;
+    }
+
+    /**
+     * Get the plot border distance for a world, specifying whether the returned value should include the world.border-size
+     * value. This is a player-traversable area, where plots cannot be claimed
+     *
+     * @param getExtended If the extra border given by world.border-size should be included
+     * @return Border distance of Integer.MAX_VALUE if no border is set
+     * @since 7.2.0
+     */
+    public int getBorder(boolean getExtended) {
+        final Integer meta = (Integer) getMeta("worldBorder");
+        if (meta != null) {
+            int border = meta + 1;
+            if (border == 0) {
+                return Integer.MAX_VALUE;
+            } else {
+                return getExtended ? border + borderSize : border;
             }
         }
         return Integer.MAX_VALUE;
@@ -1190,6 +1234,16 @@ public abstract class PlotArea implements ComponentLike {
      */
     public boolean hasWorldBorder() {
         return worldBorder;
+    }
+
+    /**
+     * Get the "extra border" size of the plot area.
+     *
+     * @return Plot area extra border size
+     * @since 7.2.0
+     */
+    public int getBorderSize() {
+        return borderSize;
     }
 
     /**

@@ -38,7 +38,6 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.queue.QueueCoordinator;
-import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.function.pattern.Pattern;
@@ -59,6 +58,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -383,13 +383,17 @@ public final class PlotModificationManager {
         }
         if (createSign) {
             queue.setCompleteTask(() -> TaskManager.runTaskAsync(() -> {
-                for (Plot current : plots) {
-                    current.getPlotModificationManager().setSign(PlayerManager.resolveName(current.getOwnerAbs()).getComponent(
-                            LocaleHolder.console()));
-                }
-                if (whenDone != null) {
-                    TaskManager.runTask(whenDone);
-                }
+                List<CompletableFuture<Void>> tasks = plots.stream().map(current -> PlotSquared.platform().playerManager()
+                                .getUsernameCaption(current.getOwnerAbs())
+                                .thenAccept(caption -> current
+                                        .getPlotModificationManager()
+                                        .setSign(caption.getComponent(LocaleHolder.console()))))
+                        .toList();
+                CompletableFuture.allOf(tasks.toArray(CompletableFuture[]::new)).whenComplete((unused, throwable) -> {
+                    if (whenDone != null) {
+                        TaskManager.runTask(whenDone);
+                    }
+                });
             }));
         } else if (whenDone != null) {
             queue.setCompleteTask(whenDone);

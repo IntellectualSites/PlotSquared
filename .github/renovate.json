@@ -14,6 +14,6 @@
     "com.google.code.gson:gson",
     "com.google.guava:guava",
     "org.yaml:snakeyaml",
-    "org.apache.logging.log4j:log4j-api",
+    "org.apache.logging.log4j:log4j-api"
   ]
 }

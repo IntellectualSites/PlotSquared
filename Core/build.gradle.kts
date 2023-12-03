@@ -57,8 +57,8 @@ tasks.processResources {
 
     doLast {
         copy {
-            from(File("$rootDir/LICENSE"))
-            into("$buildDir/resources/main/")
+            from(layout.buildDirectory.file("$rootDir/LICENSE"))
+            into(layout.buildDirectory.dir("resources/main"))
         }
     }
 }
@@ -72,7 +72,6 @@ tasks {
         opt.links("https://jd.advntr.dev/text-minimessage/4.14.0/")
         opt.links("https://google.github.io/guice/api-docs/" + libs.guice.get().versionConstraint.toString() + "/javadoc/")
         opt.links("https://checkerframework.org/api/")
-        opt.links("https://javadoc.io/doc/com.intellectualsites.informative-annotations/informative-annotations/latest/")
         opt.isLinkSource = true
         opt.bottom(File("$rootDir/javadocfooter.html").readText())
         opt.isUse = true

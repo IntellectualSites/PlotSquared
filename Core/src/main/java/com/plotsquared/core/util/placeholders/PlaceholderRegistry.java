@@ -47,6 +47,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 
 /**
@@ -109,9 +110,9 @@ public final class PlaceholderRegistry {
             if (plotOwner == null) {
                 return legacyComponent(TranslatableCaption.of("generic.generic_unowned"), player);
             }
-
             try {
-                return PlayerManager.resolveName(plotOwner, false).getComponent(player);
+                return PlotSquared.platform().playerManager().getUsernameCaption(plotOwner)
+                        .get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS).getComponent(player);
             } catch (final Exception ignored) {
             }
             return legacyComponent(TranslatableCaption.of("info.unknown"), player);
@@ -187,6 +188,7 @@ public final class PlaceholderRegistry {
             }
         });
         this.createPlaceholder("currentplot_biome", (player, plot) -> plot.getBiomeSynchronous().toString());
+        this.createPlaceholder("currentplot_size", (player, plot) -> String.valueOf(plot.getConnectedPlots().size()));
     }
 
     /**

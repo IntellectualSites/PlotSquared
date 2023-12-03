@@ -63,6 +63,7 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.Rating;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DeviceInteractFlag;
+import com.plotsquared.core.plot.flag.implementations.EditSignFlag;
 import com.plotsquared.core.plot.flag.implementations.MiscPlaceFlag;
 import com.plotsquared.core.plot.flag.implementations.MobPlaceFlag;
 import com.plotsquared.core.plot.flag.implementations.PlaceFlag;
@@ -74,6 +75,7 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.world.block.BlockCategories;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import net.kyori.adventure.text.Component;
@@ -390,6 +392,12 @@ public class EventDispatcher {
                     }
                 }
                 if (player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString(), false)) {
+                    return true;
+                }
+                // we check for the EditSignFlag in the PlayerSignOpenEvent again, but we must not cancel the interact event
+                // or send a message if the flag is true
+                if (BlockCategories.ALL_SIGNS != null && BlockCategories.ALL_SIGNS.contains(blockType)
+                        && plot.getFlag(EditSignFlag.class)) {
                     return true;
                 }
                 if (notifyPerms) {

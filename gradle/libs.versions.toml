@@ -1,9 +1,9 @@
 [versions]
 # Platform expectations
-paper = "1.20.1-R0.1-SNAPSHOT"
+paper = "1.20.2-R0.1-SNAPSHOT"
 guice = "7.0.0"
-spotbugs = "4.7.3"
-checkerqual = "3.37.0"
+spotbugs = "4.8.2"
+checkerqual = "3.40.0"
 gson = "2.10"
 guava = "31.1-jre"
 snakeyaml = "2.0"
@@ -12,9 +12,9 @@ adventure-bukkit = "4.3.1"
 log4j = "2.19.0"
 
 # Plugins
-worldedit = "7.2.16"
-fawe = "2.7.1"
-placeholderapi = "2.11.4"
+worldedit = "7.2.17"
+fawe = "2.8.2"
+placeholderapi = "2.11.5"
 luckperms = "5.4"
 essentialsx = "2.20.1"
 mvdwapi = "3.1.1"
@@ -28,16 +28,16 @@ squirrelid = "0.3.2"
 paster = "1.1.5"
 bstats = "3.0.2"
 paperlib = "1.0.8"
-informative-annotations = "1.3"
+informative-annotations = "1.4"
 vault = "1.7.1"
 serverlib = "2.3.4"
 
 # Gradle plugins
 shadow = "8.1.1"
 grgit = "4.1.1"
-spotless = "6.21.0"
+spotless = "6.23.2"
 nexus = "1.3.0"
-runPaper = "2.2.0"
+runPaper = "2.2.2"
 
 [libraries]
 # Platform expectations

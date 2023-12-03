@@ -21,21 +21,26 @@ package com.plotsquared.core.events;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.function.UnaryOperator;
 
 /**
  * Called when a player teleports to a plot
  */
 public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements CancellablePlotEvent {
 
-    private final Location from;
     private final TeleportCause cause;
     private Result eventResult;
+    private final Location from;
+    private UnaryOperator<Location> locationTransformer;
+
 
     /**
      * PlayerTeleportToPlotEvent: Called when a player teleports to a plot
      *
      * @param player That was teleported
-     * @param from   Start location
+     * @param from   The origin location, from where the teleport was triggered (players location most likely)
      * @param plot   Plot to which the player was teleported
      * @param cause  Why the teleport is being completed
      * @since 6.1.0
@@ -57,12 +62,34 @@ public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements Cancel
     }
 
     /**
-     * Get the from location
+     * Get the location, from where the teleport was triggered
+     * (the players current location when executing the home command for example)
      *
      * @return Location
      */
     public Location getFrom() {
         return this.from;
+    }
+
+    /**
+     * Gets the currently applied {@link UnaryOperator<Location> transformer} or null, if none was set
+     *
+     * @return LocationTransformer
+     * @since TODO
+     */
+    public @Nullable UnaryOperator<Location> getLocationTransformer() {
+        return this.locationTransformer;
+    }
+
+    /**
+     * Sets the {@link UnaryOperator<Location> transformer} to mutate the location where the player will be teleported to.
+     * May be {@code null}, if any previous set transformations should be discarded.
+     *
+     * @param locationTransformer The new transformer
+     * @since TODO
+     */
+    public void setLocationTransformer(@Nullable UnaryOperator<Location> locationTransformer) {
+        this.locationTransformer = locationTransformer;
     }
 
     @Override
