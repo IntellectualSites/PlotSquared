@@ -261,7 +261,10 @@ public class BlockEventListener implements Listener {
                 final BlockFace facing = piston.getFacing();
                 location = location.add(facing.getModX(), facing.getModY(), facing.getModZ());
                 Plot newPlot = area.getOwnedPlotAbs(location);
-                if (!plot.equals(newPlot)) {
+                if (plot.equals(newPlot)) {
+                    return;
+                }
+                if (!plot.isMerged() || !plot.getConnectedPlots().contains(newPlot)) {
                     event.setCancelled(true);
                     plot.debug("Prevented piston update because of invalid edge piston detection");
                 }
