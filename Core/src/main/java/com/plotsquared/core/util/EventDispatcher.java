@@ -30,6 +30,7 @@ import com.plotsquared.core.events.PlayerEnterPlotEvent;
 import com.plotsquared.core.events.PlayerLeavePlotEvent;
 import com.plotsquared.core.events.PlayerPlotDeniedEvent;
 import com.plotsquared.core.events.PlayerPlotHelperEvent;
+import com.plotsquared.core.events.PlayerPlotLimitEvent;
 import com.plotsquared.core.events.PlayerPlotTrustedEvent;
 import com.plotsquared.core.events.PlayerTeleportToPlotEvent;
 import com.plotsquared.core.events.PlotAutoMergeEvent;
@@ -304,6 +305,12 @@ public class EventDispatcher {
 
     public RemoveRoadEntityEvent callRemoveRoadEntity(Entity entity) {
         RemoveRoadEntityEvent event = new RemoveRoadEntityEvent(entity);
+        eventBus.post(event);
+        return event;
+    }
+
+    public PlayerPlotLimitEvent callPlayerPlotLimit(PlotPlayer<?> player, int calculatedLimit) {
+        PlayerPlotLimitEvent event = new PlayerPlotLimitEvent(player, calculatedLimit);
         eventBus.post(event);
         return event;
     }
