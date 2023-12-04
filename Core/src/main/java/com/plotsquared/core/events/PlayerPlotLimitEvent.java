@@ -46,7 +46,7 @@ public class PlayerPlotLimitEvent {
      * @param limit The amount of plots a player may claim. Must be {@code 0} or greater.
      * @since TODO
      */
-    public void setLimit(@NonNegative final int limit) {
+    public void limit(@NonNegative final int limit) {
         if (limit < 0) {
             throw new IllegalArgumentException("Player plot limit must be greater or equal 0");
         }
