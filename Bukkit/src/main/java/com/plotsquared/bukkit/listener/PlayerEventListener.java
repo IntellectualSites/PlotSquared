@@ -177,9 +177,9 @@ public class PlayerEventListener implements Listener {
             Material.WRITABLE_BOOK,
             Material.WRITTEN_BOOK
     );
-    private final Set<String> DYES;
-    {
-        DYES = new HashSet<>(Set.of(
+    private static final Set<String> DYES;
+    static {
+        Set<String> mutableDyes = new HashSet<>(Set.of(
                 "WHITE_DYE",
                 "LIGHT_GRAY_DYE",
                 "GRAY_DYE",
@@ -200,8 +200,9 @@ public class PlayerEventListener implements Listener {
         ));
         int[] version = PlotSquared.platform().serverVersion();
         if (version[1] >= 20 && version[2] >= 1) {
-            DYES.add("HONEYCOMB");
+            mutableDyes.add("HONEYCOMB");
         }
+        DYES = Set.copyOf(mutableDyes);
     }
     private final EventDispatcher eventDispatcher;
     private final WorldEdit worldEdit;
