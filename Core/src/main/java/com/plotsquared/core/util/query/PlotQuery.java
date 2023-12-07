@@ -219,13 +219,13 @@ public final class PlotQuery implements Iterable<Plot> {
         return this.addFilter(new OwnersIncludeFilter(owner.getUUID()));
     }
 
-
     /**
      * Query only for plots that have an owner
      *
      * @return The query instance
      * @since TODO
      */
+
     public @NonNull PlotQuery hasOwner() {
         return this.addFilter(new HasOwnerFilter());
     }
