@@ -225,7 +225,7 @@ tasks.getByName<Jar>("jar") {
     enabled = false
 }
 
-val supportedVersions = listOf("1.16.5", "1.17.1", "1.18.2", "1.19.4", "1.20.1", "1.20.2")
+val supportedVersions = listOf("1.16.5", "1.17.1", "1.18.2", "1.19.4", "1.20.1", "1.20.4")
 tasks {
     register("cacheLatestFaweArtifact") {
         val lastSuccessfulBuildUrl = uri("https://ci.athion.net/job/FastAsyncWorldEdit/lastSuccessfulBuild/api/json").toURL()
