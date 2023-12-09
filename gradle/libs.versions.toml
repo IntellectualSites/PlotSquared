@@ -35,7 +35,7 @@ serverlib = "2.3.4"
 # Gradle plugins
 shadow = "8.1.1"
 grgit = "4.1.1"
-spotless = "6.23.2"
+spotless = "6.23.3"
 nexus = "1.3.0"
 runPaper = "2.2.2"
 
