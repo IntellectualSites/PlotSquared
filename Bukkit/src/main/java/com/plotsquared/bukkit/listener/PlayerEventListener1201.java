@@ -31,7 +31,7 @@ import org.bukkit.event.player.PlayerSignOpenEvent;
 
 /**
  * For events since 1.20.1
- * @since TODO
+ * @since 7.2.1
  */
 public class PlayerEventListener1201 implements Listener {
 

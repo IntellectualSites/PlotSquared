@@ -223,7 +223,7 @@ public final class PlotQuery implements Iterable<Plot> {
      * Query only for plots that have an owner
      *
      * @return The query instance
-     * @since TODO
+     * @since 7.2.1
      */
 
     public @NonNull PlotQuery hasOwner() {

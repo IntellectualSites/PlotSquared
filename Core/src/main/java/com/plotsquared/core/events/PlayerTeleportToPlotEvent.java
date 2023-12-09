@@ -75,7 +75,7 @@ public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements Cancel
      * Gets the currently applied {@link UnaryOperator<Location> transformer} or null, if none was set
      *
      * @return LocationTransformer
-     * @since TODO
+     * @since 7.2.1
      */
     public @Nullable UnaryOperator<Location> getLocationTransformer() {
         return this.locationTransformer;
@@ -86,7 +86,7 @@ public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements Cancel
      * May be {@code null}, if any previous set transformations should be discarded.
      *
      * @param locationTransformer The new transformer
-     * @since TODO
+     * @since 7.2.1
      */
     public void setLocationTransformer(@Nullable UnaryOperator<Location> locationTransformer) {
         this.locationTransformer = locationTransformer;
