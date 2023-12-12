@@ -589,6 +589,7 @@
   "flags.flag_description_place": "<gray>Define a list of materials players should be able to place in the plot.</gray>",
   "flags.flag_description_player_interact": "<gray>Set to `true` to allow guests to interact with players in the plot.</gray>",
   "flags.flag_description_price": "<gray>Set a price for a plot. Must be a positive decimal number.</gray>",
+  "flags.flag_description_projectile_change_block": "<gray>Set to `true` to allow projectiles to change blocks (tnt, etc.) on the plot.</gray>",
   "flags.flag_description_pve": "<gray>Set to `true` to enable PVE inside the plot.</gray>",
   "flags.flag_description_pvp": "<gray>Set to `true` to enable PVP inside the plot.</gray>",
   "flags.flag_description_redstone": "<gray>Set to `false` to disable redstone in the plot.</gray>",

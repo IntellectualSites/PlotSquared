@@ -89,6 +89,7 @@ import com.plotsquared.core.plot.flag.implementations.PlayerInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.PlotTitleFlag;
 import com.plotsquared.core.plot.flag.implementations.PreventCreativeCopyFlag;
 import com.plotsquared.core.plot.flag.implementations.PriceFlag;
+import com.plotsquared.core.plot.flag.implementations.ProjectileChangeBlockFlag;
 import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
 import com.plotsquared.core.plot.flag.implementations.PveFlag;
 import com.plotsquared.core.plot.flag.implementations.PvpFlag;
@@ -185,6 +186,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(NoWorldeditFlag.NO_WORLDEDIT_FALSE);
         this.addFlag(PlayerInteractFlag.PLAYER_INTERACT_FALSE);
         this.addFlag(PreventCreativeCopyFlag.PREVENT_CREATIVE_COPY_FALSE);
+        this.addFlag(ProjectileChangeBlockFlag.PROJECTILE_CHANGE_BLOCK_FALSE);
         this.addFlag(PveFlag.PVE_FALSE);
         this.addFlag(PvpFlag.PVP_FALSE);
         this.addFlag(RedstoneFlag.REDSTONE_TRUE);

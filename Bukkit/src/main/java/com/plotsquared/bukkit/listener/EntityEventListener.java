@@ -35,6 +35,7 @@ import com.plotsquared.core.plot.flag.implementations.DisablePhysicsFlag;
 import com.plotsquared.core.plot.flag.implementations.EntityChangeBlockFlag;
 import com.plotsquared.core.plot.flag.implementations.ExplosionFlag;
 import com.plotsquared.core.plot.flag.implementations.InvincibleFlag;
+import com.plotsquared.core.plot.flag.implementations.ProjectileChangeBlockFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlotFlagUtil;
@@ -358,13 +359,13 @@ public class EntityEventListener implements Listener {
             if (shooter instanceof Player) {
                 PlotPlayer<?> pp = BukkitUtil.adapt((Player) shooter);
                 if (plot == null) {
-                    if (!pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
+                    if (area.isRoadFlags() && !area.getRoadFlag(ProjectileChangeBlockFlag.class) && !pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
                         entity.remove();
                         event.setCancelled(true);
                     }
                     return;
                 }
-                if (plot.isAdded(pp.getUUID()) || pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
+                if (plot.isAdded(pp.getUUID()) || plot.getFlag(ProjectileChangeBlockFlag.class) || pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
                     return;
                 }
                 entity.remove();
