@@ -159,8 +159,8 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
 
     @Override
     public int getMinComponentHeight() {
-        return COMPONENT_BELOW_BEDROCK && PLOT_BEDROCK && getMinGenHeight() >= getMinBuildHeight()
-                ? getMinGenHeight() + 1
+        return COMPONENT_BELOW_BEDROCK && getMinGenHeight() >= getMinBuildHeight()
+                ? getMinGenHeight() + (PLOT_BEDROCK ? 1 : 0)
                 : getMinBuildHeight();
     }
 
