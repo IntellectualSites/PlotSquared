@@ -165,6 +165,7 @@
   "setup.wall_height": "<gold>Wall height</gold>",
   "setup.min_gen_height": "<gold>Minimum height from which to generate (for 1.18+ can be negative).</gold>",
   "setup.bedrock_boolean": "<gold>Whether a bedrock layer under the plot should be generated or not</gold>",
+  "setup.component_below_bedrock_boolean": "<gold>Whether a component change e.g. /plot set walls should edit the bedrock layer or below</gold>",
   "setup.singleplotarea_void_world": "<gold>Void world</gold>",
   "plotareatype.plot_area_type_normal": "<gray>Standard plot generation</gray>",
   "plotareatype.plot_area_type_augmented": "<gray>Plot generation with vanilla terrain</gray>",
