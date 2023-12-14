@@ -94,7 +94,7 @@ public class Done extends SubCommand {
                 TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
         );
         final Settings.Auto_Clear doneRequirements = Settings.AUTO_CLEAR.get("done");
-        if (PlotSquared.platform().expireManager() == null || doneRequirements == null) {
+        if (PlotSquared.platform().expireManager() == null || doneRequirements == null || player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_DONE)) {
             finish(plot, player, true);
             plot.removeRunning();
         } else {
