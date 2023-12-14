@@ -25,11 +25,11 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotId;
 
 /**
- * Called after a {@link Plot} was deleted.
+ * Called after a {@link Plot} was cleared.
+ *
+ * @since 7.2.1
  */
-public class PostPlotClearEvent extends PlotEvent implements CancellablePlotEvent {
-
-    private Result eventResult;
+public class PostPlotClearEvent extends PlotEvent {
 
     public PostPlotClearEvent(Plot plot) {
         super(plot);
@@ -51,16 +51,6 @@ public class PostPlotClearEvent extends PlotEvent implements CancellablePlotEven
      */
     public String getWorld() {
         return getPlot().getWorldName();
-    }
-
-    @Override
-    public Result getEventResult() {
-        return eventResult;
-    }
-
-    @Override
-    public void setEventResult(Result e) {
-        this.eventResult = e;
     }
 
 }
