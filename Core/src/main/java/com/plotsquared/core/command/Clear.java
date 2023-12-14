@@ -135,6 +135,7 @@ public class Clear extends Command {
                                     .tag("plot", Tag.inserting(Component.text(plot.getId().toString())))
                                     .build()
                     );
+                    this.eventDispatcher.callPostClear(plot);
                 }));
                 if (!result) {
                     player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));

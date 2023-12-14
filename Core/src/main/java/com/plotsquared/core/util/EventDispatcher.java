@@ -178,6 +178,12 @@ public class EventDispatcher {
         return event;
     }
 
+    public PlotClearEvent callPostClear(Plot plot) {
+        PlotClearEvent event = new PlotClearEvent(plot);
+        callEvent(event);
+        return event;
+    }
+
     public PlotDeleteEvent callDelete(Plot plot) {
         PlotDeleteEvent event = new PlotDeleteEvent(plot);
         callEvent(event);
