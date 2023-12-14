@@ -50,6 +50,7 @@ import com.plotsquared.core.plot.flag.implementations.DenyPortalsFlag;
 import com.plotsquared.core.plot.flag.implementations.DenyTeleportFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.DropProtectionFlag;
+import com.plotsquared.core.plot.flag.implementations.EditSignFlag;
 import com.plotsquared.core.plot.flag.implementations.HangingBreakFlag;
 import com.plotsquared.core.plot.flag.implementations.HangingPlaceFlag;
 import com.plotsquared.core.plot.flag.implementations.HostileInteractFlag;
@@ -87,6 +88,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.ArmorStand;
@@ -175,6 +177,33 @@ public class PlayerEventListener implements Listener {
             Material.WRITABLE_BOOK,
             Material.WRITTEN_BOOK
     );
+    private static final Set<String> DYES;
+    static {
+        Set<String> mutableDyes = new HashSet<>(Set.of(
+                "WHITE_DYE",
+                "LIGHT_GRAY_DYE",
+                "GRAY_DYE",
+                "BLACK_DYE",
+                "BROWN_DYE",
+                "RED_DYE",
+                "ORANGE_DYE",
+                "YELLOW_DYE",
+                "LIME_DYE",
+                "GREEN_DYE",
+                "CYAN_DYE",
+                "LIGHT_BLUE_DYE",
+                "BLUE_DYE",
+                "PURPLE_DYE",
+                "MAGENTA_DYE",
+                "PINK_DYE",
+                "GLOW_INK_SAC"
+        ));
+        int[] version = PlotSquared.platform().serverVersion();
+        if (version[1] >= 20 && version[2] >= 1) {
+            mutableDyes.add("HONEYCOMB");
+        }
+        DYES = Set.copyOf(mutableDyes);
+    }
     private final EventDispatcher eventDispatcher;
     private final WorldEdit worldEdit;
     private final PlotAreaManager plotAreaManager;
@@ -205,6 +234,38 @@ public class PlayerEventListener implements Listener {
         this.worldEdit = worldEdit;
         this.plotAreaManager = plotAreaManager;
         this.plotListener = plotListener;
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPlayerDyeSign(PlayerInteractEvent event) {
+        ItemStack itemStack = event.getItem();
+        if (itemStack == null) {
+            return;
+        }
+        Block block = event.getClickedBlock();
+        if (block != null && block.getState() instanceof Sign) {
+            if (DYES.contains(itemStack.getType().toString())) {
+                Location location = BukkitUtil.adapt(block.getLocation());
+                PlotArea area = location.getPlotArea();
+                if (area == null) {
+                    return;
+                }
+                Plot plot = location.getOwnedPlot();
+                if (plot == null) {
+                    if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, EditSignFlag.class, false)) {
+                        event.setCancelled(true);
+                    }
+                    return;
+                }
+                if (plot.isAdded(event.getPlayer().getUniqueId())) {
+                    return; // allow for added players
+                }
+                if (!plot.getFlag(EditSignFlag.class)) {
+                    plot.debug(event.getPlayer().getName() + " could not color the sign because of edit-sign = false");
+                    event.setCancelled(true);
+                }
+            }
+        }
     }
 
     @EventHandler(ignoreCancelled = true)

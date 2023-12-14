@@ -136,7 +136,9 @@ public class Download extends SubCommand {
                     }
                     player.sendMessage(
                             TranslatableCaption.of("web.generation_link_success_legacy_world"),
-                            TagResolver.resolver("url", Tag.inserting(Component.text(url.toString())))
+                            TagResolver.builder()
+                                    .tag("url", Tag.preProcessParsed(url.toString()))
+                                    .build()
                     );
                 }
             });

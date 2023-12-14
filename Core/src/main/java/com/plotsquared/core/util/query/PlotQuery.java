@@ -220,6 +220,16 @@ public final class PlotQuery implements Iterable<Plot> {
     }
 
     /**
+     * Query only for plots that have an owner
+     *
+     * @return The query instance
+     * @since 7.2.1
+     */
+
+    public @NonNull PlotQuery hasOwner() {
+        return this.addFilter(new HasOwnerFilter());
+    }
+    /**
      * Query for plots with a specific alias
      *
      * @param alias Plot alias

@@ -37,6 +37,7 @@ import com.plotsquared.bukkit.listener.EntityEventListener;
 import com.plotsquared.bukkit.listener.EntitySpawnListener;
 import com.plotsquared.bukkit.listener.PaperListener;
 import com.plotsquared.bukkit.listener.PlayerEventListener;
+import com.plotsquared.bukkit.listener.PlayerEventListener1201;
 import com.plotsquared.bukkit.listener.ProjectileEventListener;
 import com.plotsquared.bukkit.listener.ServerListener;
 import com.plotsquared.bukkit.listener.SingleWorldListener;
@@ -359,6 +360,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
         if (Settings.Enabled_Components.EVENTS) {
             getServer().getPluginManager().registerEvents(injector().getInstance(PlayerEventListener.class), this);
+            if ((serverVersion()[1] == 20 && serverVersion()[2] >= 1) || serverVersion()[1] > 20) {
+                getServer().getPluginManager().registerEvents(injector().getInstance(PlayerEventListener1201.class), this);
+            }
             getServer().getPluginManager().registerEvents(injector().getInstance(BlockEventListener.class), this);
             if (serverVersion()[1] >= 17) {
                 getServer().getPluginManager().registerEvents(injector().getInstance(BlockEventListener117.class), this);
