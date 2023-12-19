@@ -105,7 +105,7 @@ tasks {
         opt.links("https://intellectualsites.github.io/plotsquared-javadocs/core/")
         opt.links("https://jd.advntr.dev/api/4.14.0/")
         opt.links("https://google.github.io/guice/api-docs/" + libs.guice.get().versionConstraint.toString() + "/javadoc/")
-   //     opt.links("https://checkerframework.org/api/")
+        opt.links("https://checkerframework.org/api/")
         opt.isLinkSource = true
         opt.bottom(File("$rootDir/javadocfooter.html").readText())
         opt.isUse = true

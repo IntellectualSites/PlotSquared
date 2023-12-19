@@ -306,7 +306,8 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      * @return number of allowed plots within the scope (globally, or in the player's current world as defined in the settings.yml)
      */
     public int getAllowedPlots() {
-        return hasPermissionRange("plots.plot", Settings.Limit.MAX_PLOTS);
+        final int calculatedLimit = hasPermissionRange("plots.plot", Settings.Limit.MAX_PLOTS);
+        return this.eventDispatcher.callPlayerPlotLimit(this, calculatedLimit).limit();
     }
 
     /**
