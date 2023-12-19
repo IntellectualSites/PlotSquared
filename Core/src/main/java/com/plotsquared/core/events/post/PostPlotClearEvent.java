@@ -18,21 +18,27 @@
  */
 package com.plotsquared.core.events.post;
 
-import com.plotsquared.core.events.CancellablePlotEvent;
-import com.plotsquared.core.events.PlotEvent;
-import com.plotsquared.core.events.Result;
+import com.plotsquared.core.events.PlotPlayerEvent;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotId;
 
 /**
  * Called after a {@link Plot} was cleared.
  *
- * @since 7.2.1
+ * @since TODO
  */
-public class PostPlotClearEvent extends PlotEvent {
+public class PostPlotClearEvent extends PlotPlayerEvent {
 
-    public PostPlotClearEvent(Plot plot) {
-        super(plot);
+
+    /**
+     * Instantiate a new PostPlotClearEvent.
+     *
+     * @param plotPlayer The {@link PlotPlayer} that initiated the clear.
+     * @param plot       The clearing plot.
+     */
+    public PostPlotClearEvent(final PlotPlayer<?> plotPlayer, final Plot plot) {
+        super(plotPlayer, plot);
     }
 
     /**
@@ -51,6 +57,15 @@ public class PostPlotClearEvent extends PlotEvent {
      */
     public String getWorld() {
         return getPlot().getWorldName();
+    }
+
+    /**
+     * Get the PlotPlayer.
+     *
+     * @return PlotPlayer
+     */
+    public PlotPlayer<?> getPlotPlayer() {
+        return super.getPlotPlayer();
     }
 
 }

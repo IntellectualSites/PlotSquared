@@ -179,8 +179,8 @@ public class EventDispatcher {
         return event;
     }
 
-    public PostPlotClearEvent callPostPlotClear(Plot plot) {
-        PostPlotClearEvent event = new PostPlotClearEvent(plot);
+    public PostPlotClearEvent callPostPlotClear(PlotPlayer<?> player, Plot plot) {
+        PostPlotClearEvent event = new PostPlotClearEvent(player, plot);
         callEvent(event);
         return event;
     }
