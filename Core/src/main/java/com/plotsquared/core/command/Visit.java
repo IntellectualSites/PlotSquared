@@ -348,20 +348,22 @@ public class Visit extends Command {
             case 1 -> {
                 completions.addAll(
                         TabCompletions.completeAreas(args[1]));
+                completions.addAll(TabCompletions.asCompletions("last"));
                 if (args[1].isEmpty()) {
                     // if no input is given, only suggest 1 - 3
                     completions.addAll(
-                            TabCompletions.asCompletions("1", "2", "3", "last"));
+                            TabCompletions.asCompletions("1", "2", "3"));
                     break;
                 }
                 completions.addAll(
                         TabCompletions.completeNumbers(args[1], 10, 999));
             }
             case 2 -> {
+                completions.addAll(TabCompletions.asCompletions("last"));
                 if (args[2].isEmpty()) {
                     // if no input is given, only suggest 1 - 3
                     completions.addAll(
-                            TabCompletions.asCompletions("1", "2", "3", "last"));
+                            TabCompletions.asCompletions("1", "2", "3"));
                     break;
                 }
                 completions.addAll(
