@@ -59,13 +59,4 @@ public class PostPlotClearEvent extends PlotPlayerEvent {
         return getPlot().getWorldName();
     }
 
-    /**
-     * Get the PlotPlayer.
-     *
-     * @return PlotPlayer
-     */
-    public PlotPlayer<?> getPlotPlayer() {
-        return super.getPlotPlayer();
-    }
-
 }
