@@ -77,11 +77,6 @@ public class Visit extends Command {
             query.whereBasePlot();
         }
 
-        // "last" or "n" argument
-        if (page == Integer.MAX_VALUE) {
-            page = unsorted.size();
-        }
-
         // without specified argument
         if (page == Integer.MIN_VALUE) {
             page = 1;
@@ -100,10 +95,15 @@ public class Visit extends Command {
 
         final List<Plot> plots = query.asList();
 
+        // Conversion of reversed page argument
+        if (page < 0) {
+            page = (plots.size() + 1) + page;
+        }
+
         if (plots.isEmpty()) {
             player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
             return;
-        } else if (plots.size() < page || page < 1) {
+        } else if (page > plots.size() || page < 1) {
             player.sendMessage(
                     TranslatableCaption.of("invalid.number_not_in_range"),
                     TagResolver.builder()
@@ -194,7 +194,7 @@ public class Visit extends Command {
         int page = Integer.MIN_VALUE;
 
         switch (args.length) {
-            // /p v <user> <area> <page>
+            // /p v <player> <area> <page>
             case 3:
                 if (isInvalidPageNr(args[2])) {
                     sendInvalidPageNrMsg(player);
@@ -325,7 +325,7 @@ public class Visit extends Command {
 
     private int getPageNr(String arg) {
         if (MathMan.isInteger(arg)) return Integer.parseInt(arg);
-        if (arg.equals("last") || arg.equals("n")) return Integer.MAX_VALUE;
+        if (arg.equals("last") || arg.equals("n")) return -1;
         return Integer.MIN_VALUE;
     }
 
