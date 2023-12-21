@@ -427,7 +427,7 @@ public class EventDispatcher {
                         return true;
                     }
                 }
-                return player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER,false);
+                return player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER, false);
             }
             case SPAWN_MOB -> {
                 if (plot == null) {
@@ -446,7 +446,7 @@ public class EventDispatcher {
                         return true;
                     }
                 }
-                if (player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER,false)) {
+                if (player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER, false)) {
                     return true;
                 }
                 if (notifyPerms) {
@@ -481,7 +481,7 @@ public class EventDispatcher {
                         return true;
                     }
                 }
-                if (player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER,false)) {
+                if (player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER, false)) {
                     return true;
                 }
                 if (notifyPerms) {
