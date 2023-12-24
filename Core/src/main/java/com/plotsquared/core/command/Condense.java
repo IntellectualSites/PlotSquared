@@ -256,11 +256,11 @@ public class Condense extends SubCommand {
                 player.sendMessage(TranslatableCaption.of("condense.default_eval"));
                 player.sendMessage(
                         TranslatableCaption.of("condense.minimum_radius"),
-                        TagResolver.resolver("minimumRadius", Tag.inserting(Component.text(minimumRadius)))
+                        TagResolver.resolver("minimum_radius", Tag.inserting(Component.text(minimumRadius)))
                 );
                 player.sendMessage(
                         TranslatableCaption.of("condense.maximum_moved"),
-                        TagResolver.resolver("maxMove", Tag.inserting(Component.text(maxMove)))
+                        TagResolver.resolver("maximum_moves", Tag.inserting(Component.text(maxMove)))
                 );
                 player.sendMessage(TranslatableCaption.of("condense.input_eval"));
                 player.sendMessage(
@@ -269,7 +269,7 @@ public class Condense extends SubCommand {
                 );
                 player.sendMessage(
                         TranslatableCaption.of("condense.estimated_moves"),
-                        TagResolver.resolver("userMove", Tag.inserting(Component.text(userMove)))
+                        TagResolver.resolver("user_move", Tag.inserting(Component.text(userMove)))
                 );
                 player.sendMessage(TranslatableCaption.of("condense.eta"));
                 player.sendMessage(TranslatableCaption.of("condense.radius_measured"));
