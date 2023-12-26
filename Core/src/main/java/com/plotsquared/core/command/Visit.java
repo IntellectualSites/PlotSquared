@@ -318,14 +318,20 @@ public class Visit extends Command {
     }
 
     private boolean isInvalidPageNr(String arg) {
-        if (MathMan.isInteger(arg)) return false;
-        if (arg.equals("last") || arg.equals("n")) return false;
+        if (MathMan.isInteger(arg)) {
+            return false;
+        } else if (arg.equals("last") || arg.equals("n")) {
+            return false;
+        }
         return true;
     }
 
     private int getPageNr(String arg) {
-        if (MathMan.isInteger(arg)) return Integer.parseInt(arg);
-        if (arg.equals("last") || arg.equals("n")) return -1;
+        if (MathMan.isInteger(arg)) {
+            return Integer.parseInt(arg);
+        } else if (arg.equals("last") || arg.equals("n")) {
+            return -1;
+        }
         return Integer.MIN_VALUE;
     }
 
