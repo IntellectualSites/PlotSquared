@@ -31,6 +31,7 @@ paperlib = "1.0.8"
 informative-annotations = "1.4"
 vault = "1.7.1"
 serverlib = "2.3.4"
+cloud = "2.0.0-SNAPSHOT"
 
 # Gradle plugins
 shadow = "8.1.1"
@@ -77,6 +78,9 @@ informativeAnnotations = { group = "com.intellectualsites.informative-annotation
 paperlib = { group = "io.papermc", name = "paperlib", version.ref = "paperlib" }
 vault = { group = "com.github.MilkBowl", name = "VaultAPI", version.ref = "vault" }
 serverlib = { group = "dev.notmyfault.serverlib", name = "ServerLib", version.ref = "serverlib" }
+cloud = { group = "cloud.commandframework", name = "cloud-core", version.ref = "cloud" }
+cloudPaper = { group = "cloud.commandframework", name = "cloud-paper", version.ref = "cloud" }
+cloudMinecraftExtras = { group = "cloud.commandframework", name = "cloud-minecraft-extras", version.ref = "cloud" }
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }

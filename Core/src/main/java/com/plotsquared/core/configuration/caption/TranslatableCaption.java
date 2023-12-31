@@ -18,6 +18,7 @@
  */
 package com.plotsquared.core.configuration.caption;
 
+import cloud.commandframework.captions.Caption;
 import com.google.common.base.Objects;
 import com.plotsquared.core.PlotSquared;
 import net.kyori.adventure.text.Component;
@@ -33,7 +34,7 @@ import java.util.regex.Pattern;
 /**
  * Caption that is user modifiable
  */
-public final class TranslatableCaption implements NamespacedCaption {
+public final class TranslatableCaption implements NamespacedCaption, Caption {
 
     /**
      * Default caption namespace
@@ -70,6 +71,11 @@ public final class TranslatableCaption implements NamespacedCaption {
                 namespace.toLowerCase(Locale.ENGLISH),
                 key.toLowerCase(Locale.ENGLISH)
         );
+    }
+
+    @Override
+    public @NonNull String key() {
+        return this.getKey();
     }
 
     /**

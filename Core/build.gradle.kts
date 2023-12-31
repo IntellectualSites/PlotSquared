@@ -15,6 +15,10 @@ dependencies {
     api(libs.adventureApi)
     api(libs.adventureMiniMessage)
 
+    // Cloud
+    api(libs.cloud)
+    api(libs.cloudMinecraftExtras)
+
     // Guice
     api(libs.guice) {
         exclude(group = "com.google.guava")
