@@ -25,6 +25,19 @@ public abstract class PlotSquaredCommandBean extends CommandBean<PlotPlayer<?>> 
      */
     public abstract @NonNull Set<@NonNull CommandRequirement> requirements();
 
+    /**
+     * Prepares the given {@code builder}.
+     *
+     * <p>This should be implemented by abstract classes that extend {@link PlotSquaredCommandBean} to offer shared behavior
+     * for a subset of plot commands.</p>
+     *
+     * @param builder the builder
+     * @return the prepared builder
+     */
+    protected Command.@NonNull Builder<PlotPlayer<?>> prepare(final Command.@NonNull Builder<PlotPlayer<?>> builder) {
+        return builder;
+    }
+
     @Override
     protected final @NonNull CommandProperties properties() {
         return CommandProperties.of("platsquared", "plat");
@@ -33,8 +46,7 @@ public abstract class PlotSquaredCommandBean extends CommandBean<PlotPlayer<?>> 
     @Override
     protected final Command.@NonNull Builder<PlotPlayer<?>> configure(final Command.@NonNull Builder<PlotPlayer<?>> builder) {
         Command.@NonNull Builder<PlotPlayer<?>> intermediaryBuilder =
-                this.configurePlotCommand(builder.meta(PlotSquaredCommandMeta.META_CATEGORY,
-                this.category()));
+                this.configurePlotCommand(this.prepare(builder.meta(PlotSquaredCommandMeta.META_CATEGORY, this.category())));
         for (final CommandRequirement requirement : this.requirements()) {
             intermediaryBuilder = intermediaryBuilder.meta(requirement.key(), true);
         }

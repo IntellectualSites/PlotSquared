@@ -4,6 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 import com.google.inject.multibindings.Multibinder;
 import com.plotsquared.core.commands.PlotSquaredCommandBean;
+import com.plotsquared.core.commands.command.setting.flag.FlagRemoveCommand;
 import com.plotsquared.core.commands.command.setting.flag.FlagSetCommand;
 
 public final class CommandModule extends AbstractModule {
@@ -16,5 +17,6 @@ public final class CommandModule extends AbstractModule {
         );
 
         commands.addBinding().to(FlagSetCommand.class).in(Scopes.SINGLETON);
+        commands.addBinding().to(FlagRemoveCommand.class).in(Scopes.SINGLETON);
     }
 }
