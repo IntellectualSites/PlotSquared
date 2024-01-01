@@ -19,15 +19,17 @@
 package com.plotsquared.core.commands;
 
 import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.keys.CloudKeyHolder;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Something that is required for a command to be executed.
  */
-public interface CommandRequirement extends CloudKeyHolder<Boolean> {
+public interface CommandRequirement {
 
     /**
      * Returns the caption sent when the requirement is not met.
@@ -43,4 +45,42 @@ public interface CommandRequirement extends CloudKeyHolder<Boolean> {
      * @return {@code true} if the requirement is met, else {@code false}
      */
     boolean evaluate(final @NonNull CommandContext<PlotPlayer<?>> context);
+
+    /**
+     * Returns the placeholder values.
+     *
+     * @return placeholder values
+     */
+    default @NonNull TagResolver @NonNull[] tagResolvers() {
+        return new TagResolver[0];
+    }
+
+    /**
+     * Returns a requirement that evaluates to {@code true} if the sender has the given {@code permission} or if
+     * this requirement evaluates to {@code true}.
+     *
+     * @param permission the override permission
+     * @return the new requirement
+     */
+    default @NonNull CommandRequirement withPermissionOverride(final @NonNull Permission permission) {
+        final CommandRequirement thisRequirement = this;
+        return new CommandRequirement() {
+            @Override
+            public @NonNull TranslatableCaption failureCaption() {
+                return TranslatableCaption.of("permission.no_permission");
+            }
+
+            @Override
+            public @NonNull TagResolver @NonNull [] tagResolvers() {
+                return new TagResolver[] {
+                        TagResolver.resolver("node", Tag.inserting(Permission.PERMISSION_SET_FLAG_OTHER))
+                };
+            }
+
+            @Override
+            public boolean evaluate(final @NonNull CommandContext<PlotPlayer<?>> context) {
+                return context.sender().hasPermission(permission) || thisRequirement.evaluate(context);
+            }
+        };
+    }
 }

@@ -130,8 +130,11 @@ public abstract class FlagCommandBean extends PlotSquaredCommandBean {
 
     @Override
     public @NonNull Set<@NonNull CommandRequirement> requirements() {
-        // TODO: Figure out how to handle the override permission check :)
-        return Set.of(CommonCommandRequirement.REQUIRES_PLOT, CommonCommandRequirement.REQUIRES_OWNER);
+        return Set.of(
+                CommonCommandRequirement.REQUIRES_PLOT,
+                CommonCommandRequirement.REQUIRES_OWNER,
+                CommonCommandRequirement.IS_OWNER.withPermissionOverride(Permission.PERMISSION_SET_FLAG_OTHER)
+        );
     }
 
     @Override

@@ -28,7 +28,6 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.core.commands.CommonCommandRequirement;
 import com.plotsquared.core.commands.PlotSquaredCaptionProvider;
 import com.plotsquared.core.commands.processing.CommandRequirementPostprocessor;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -83,7 +82,6 @@ public class CloudModule extends AbstractModule {
             }
 
             final CommandRequirementPostprocessor requirementPostprocessor = new CommandRequirementPostprocessor();
-            requirementPostprocessor.registerRequirements(CommonCommandRequirement.values());
             commandManager.registerCommandPostProcessor(requirementPostprocessor);
 
             // TODO(City): Override parsing errors using MM parsing.

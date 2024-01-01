@@ -19,7 +19,6 @@
 package com.plotsquared.core.commands;
 
 import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.keys.CloudKey;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -39,7 +38,14 @@ public enum CommonCommandRequirement implements CommandRequirement {
      */
     REQUIRES_OWNER(TranslatableCaption.of("working.plot_not_claimed"),
             ctx -> ctx.sender().getCurrentPlot() != null && ctx.sender().getCurrentPlot().hasOwner()
-    );
+    ),
+    /**
+     * Requires that the command sender is the plot owner.
+     */
+    IS_OWNER(TranslatableCaption.of("permission.no_plot_perms"),
+            ctx -> ctx.sender().getCurrentPlot() != null && ctx.sender().getCurrentPlot().isOwner(ctx.sender().getUUID())
+    )
+    ;
 
     private final TranslatableCaption failureCaption;
     private final Predicate<CommandContext<PlotPlayer<?>>> predicate;
@@ -59,10 +65,5 @@ public enum CommonCommandRequirement implements CommandRequirement {
     @Override
     public boolean evaluate(final @NonNull CommandContext<PlotPlayer<?>> context) {
         return this.predicate.test(context);
-    }
-
-    @Override
-    public @NonNull CloudKey<Boolean> key() {
-        return CloudKey.of(String.format("requirement_%s", this.name()), Boolean.class);
     }
 }

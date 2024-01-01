@@ -63,12 +63,8 @@ public abstract class PlotSquaredCommandBean extends CommandBean<PlotPlayer<?>> 
 
     @Override
     protected final Command.@NonNull Builder<PlotPlayer<?>> configure(final Command.@NonNull Builder<PlotPlayer<?>> builder) {
-        Command.@NonNull Builder<PlotPlayer<?>> intermediaryBuilder =
-                this.configurePlotCommand(this.prepare(builder.meta(PlotSquaredCommandMeta.META_CATEGORY, this.category())));
-        for (final CommandRequirement requirement : this.requirements()) {
-            intermediaryBuilder = intermediaryBuilder.meta(requirement.key(), true);
-        }
-        return intermediaryBuilder;
+        return this.configurePlotCommand(this.prepare(builder.meta(PlotSquaredCommandMeta.META_CATEGORY, this.category())))
+                .meta(CommandRequirements.REQUIREMENTS_KEY, CommandRequirements.create(this.requirements()));
     }
 
     protected abstract Command.@NonNull Builder<PlotPlayer<?>> configurePlotCommand(
