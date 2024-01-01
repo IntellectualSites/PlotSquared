@@ -42,7 +42,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import static cloud.commandframework.arguments.standard.StringParser.greedyStringParser;
 import static com.plotsquared.core.commands.parser.PlotFlagParser.plotFlagParser;
 
-public final class FlagSetCommand extends FlagCommandBean {
+public final class FlagAddCommand extends FlagCommandBean {
 
     private static final CloudKey<PlotFlag<?, ?>> COMPONENT_FLAG = CloudKey.of("flag", new TypeToken<PlotFlag<?, ?>>() {});
     private static final CloudKey<String> COMPONENT_VALUE = CloudKey.of("value", String.class);
@@ -50,7 +50,7 @@ public final class FlagSetCommand extends FlagCommandBean {
     private final EventDispatcher eventDispatcher;
 
     @Inject
-    public FlagSetCommand(final @NonNull EventDispatcher eventDispatcher) {
+    public FlagAddCommand(final @NonNull EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
 
@@ -58,7 +58,7 @@ public final class FlagSetCommand extends FlagCommandBean {
     protected Command.@NonNull Builder<PlotPlayer<?>> configurePlotCommand(
             final Command.@NonNull Builder<PlotPlayer<?>> builder
     ) {
-        return builder.literal("set")
+        return builder.literal("add")
                 .required(COMPONENT_FLAG, plotFlagParser(PlotFlagParser.FlagSource.GLOBAL))
                 .required(COMPONENT_VALUE, greedyStringParser(), new FlagValueSuggestionProvider(COMPONENT_FLAG));
     }
@@ -78,8 +78,13 @@ public final class FlagSetCommand extends FlagCommandBean {
             );
             return;
         }
-        if (event.getEventResult() != Result.FORCE && !checkPermValue(player, flag, flag.getName(), flagValue)) {
-            return;
+        if (event.getEventResult() != Result.FORCE) {
+            final String[] split = flagValue.split(",");
+            for (final String entry : split) {
+                if (!checkPermValue(player, flag, flag.getName(), entry)) {
+                    return;
+                }
+            }
         }
 
         final String sanitizedValue = CaptionUtility.stripClickEvents(flag, flagValue);
@@ -98,7 +103,12 @@ public final class FlagSetCommand extends FlagCommandBean {
             return;
         }
 
-        plot.setFlag(parsedFlag);
+        final boolean result = plot.setFlag(plot.getFlagContainer().getFlag(flag.getClass()).merge(parsedFlag.getValue()));
+        if (!result) {
+            player.sendMessage(TranslatableCaption.of("flag.flag_not_added"));
+            return;
+        }
+
         player.sendMessage(
                 TranslatableCaption.of("flag.flag_added"),
                 TagResolver.builder()
