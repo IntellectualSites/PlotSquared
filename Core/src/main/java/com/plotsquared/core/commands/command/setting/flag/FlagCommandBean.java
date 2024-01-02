@@ -39,7 +39,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.List;
-import java.util.Set;
 
 public abstract class FlagCommandBean extends PlotSquaredCommandBean {
 
@@ -129,12 +128,8 @@ public abstract class FlagCommandBean extends PlotSquaredCommandBean {
     }
 
     @Override
-    public @NonNull Set<@NonNull CommandRequirement> requirements() {
-        return Set.of(
-                CommonCommandRequirement.REQUIRES_PLOT,
-                CommonCommandRequirement.REQUIRES_OWNER,
-                CommonCommandRequirement.IS_OWNER.withPermissionOverride(Permission.PERMISSION_SET_FLAG_OTHER)
-        );
+    public @NonNull List<@NonNull CommandRequirement> requirements() {
+        return List.of(CommonCommandRequirement.IS_OWNER.withPermissionOverride(Permission.PERMISSION_SET_FLAG_OTHER));
     }
 
     @Override

@@ -23,6 +23,8 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -37,29 +39,39 @@ public enum CommonCommandRequirement implements CommandRequirement {
      * Requires that the command sender is in a claimed plot.
      */
     REQUIRES_OWNER(TranslatableCaption.of("working.plot_not_claimed"),
-            ctx -> ctx.sender().getCurrentPlot() != null && ctx.sender().getCurrentPlot().hasOwner()
+            ctx -> ctx.sender().getCurrentPlot().hasOwner(),
+            REQUIRES_PLOT
     ),
     /**
      * Requires that the command sender is the plot owner.
      */
     IS_OWNER(TranslatableCaption.of("permission.no_plot_perms"),
-            ctx -> ctx.sender().getCurrentPlot() != null && ctx.sender().getCurrentPlot().isOwner(ctx.sender().getUUID())
+            ctx -> ctx.sender().getCurrentPlot().isOwner(ctx.sender().getUUID()),
+            REQUIRES_OWNER
     )
     ;
 
     private final TranslatableCaption failureCaption;
     private final Predicate<CommandContext<PlotPlayer<?>>> predicate;
+    private final List<@NonNull CommandRequirement> parents;
 
     CommonCommandRequirement(
             final @NonNull TranslatableCaption failureCaption,
-            final @NonNull Predicate<CommandContext<PlotPlayer<?>>> predicate
+            final @NonNull Predicate<CommandContext<PlotPlayer<?>>> predicate,
+            final @NonNull CommandRequirement @NonNull... parents
     ) {
         this.failureCaption = failureCaption;
         this.predicate = predicate;
+        this.parents = Arrays.asList(parents);
     }
 
     public @NonNull TranslatableCaption failureCaption() {
         return this.failureCaption;
+    }
+
+    @Override
+    public @NonNull List<@NonNull CommandRequirement> parents() {
+        return this.parents;
     }
 
     @Override

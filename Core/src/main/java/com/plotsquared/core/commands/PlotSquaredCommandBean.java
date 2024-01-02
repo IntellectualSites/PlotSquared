@@ -25,7 +25,7 @@ import com.plotsquared.core.command.CommandCategory;
 import com.plotsquared.core.player.PlotPlayer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.Set;
+import java.util.List;
 
 public abstract class PlotSquaredCommandBean extends CommandBean<PlotPlayer<?>> {
 
@@ -41,7 +41,7 @@ public abstract class PlotSquaredCommandBean extends CommandBean<PlotPlayer<?>> 
      *
      * @return the requirements
      */
-    public abstract @NonNull Set<@NonNull CommandRequirement> requirements();
+    public abstract @NonNull List<@NonNull CommandRequirement> requirements();
 
     /**
      * Prepares the given {@code builder}.

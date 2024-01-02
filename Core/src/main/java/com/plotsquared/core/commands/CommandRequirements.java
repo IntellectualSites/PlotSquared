@@ -21,7 +21,7 @@ package com.plotsquared.core.commands;
 import cloud.commandframework.keys.CloudKey;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -44,14 +44,25 @@ public final class CommandRequirements implements Iterable<@NonNull CommandRequi
      * @param requirements the requirements
      * @return the instance
      */
-    public static @NonNull CommandRequirements create(final @NonNull Collection<@NonNull CommandRequirement> requirements) {
+    public static @NonNull CommandRequirements create(final @NonNull List<@NonNull CommandRequirement> requirements) {
         return new CommandRequirements(requirements);
+    }
+
+    private static @NonNull List<@NonNull CommandRequirement> extractRequirements(
+            final @NonNull List<@NonNull CommandRequirement> requirements
+    ) {
+        final List<CommandRequirement> extractedRequirements = new ArrayList<>();
+        for (final CommandRequirement requirement : requirements) {
+            extractedRequirements.addAll(extractRequirements(requirement.parents()));
+            extractedRequirements.add(requirement);
+        }
+        return extractedRequirements;
     }
 
     private final List<CommandRequirement> requirements;
 
-    private CommandRequirements(final @NonNull Collection<@NonNull CommandRequirement> requirements) {
-        this.requirements = List.copyOf(requirements);
+    private CommandRequirements(final @NonNull List<@NonNull CommandRequirement> requirements) {
+        this.requirements = List.copyOf(extractRequirements(requirements));
     }
 
     @Override

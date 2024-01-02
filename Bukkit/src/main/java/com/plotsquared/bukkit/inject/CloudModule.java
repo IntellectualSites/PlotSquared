@@ -27,6 +27,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.plotsquared.bukkit.BukkitPlatform;
+import com.plotsquared.bukkit.commands.BukkitSenderMapper;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.commands.PlotSquaredCaptionProvider;
 import com.plotsquared.core.commands.processing.CommandRequirementPostprocessor;
@@ -66,35 +67,30 @@ public class CloudModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        try {
-            final PaperCommandManager<PlotPlayer<?>> commandManager = new PaperCommandManager<PlotPlayer<?>>(
-                    this.bukkitPlatform,
-                    ExecutionCoordinator.asyncCoordinator(),
-                    CloudModule::convert,
-                    CloudModule::convert
-            );
-            commandManager.captionRegistry().registerProvider(new PlotSquaredCaptionProvider());
-            if (commandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
-                commandManager.registerAsynchronousCompletions();
-            }
-            if (commandManager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
-                commandManager.registerBrigadier();
-            }
-
-            final CommandRequirementPostprocessor requirementPostprocessor = new CommandRequirementPostprocessor();
-            commandManager.registerCommandPostProcessor(requirementPostprocessor);
-
-            // TODO(City): Override parsing errors using MM parsing.
-            MinecraftExceptionHandler.<PlotPlayer<?>>create(PlotPlayer::getAudience)
-                    .defaultHandlers()
-                    .decorator((ctx, component) -> TranslatableCaption.of("core.prefix").
-                            toComponent(ctx.context().sender())
-                            .append(component))
-                    .registerTo(commandManager);
-
-            bind(Key.get(new TypeLiteral<CommandManager<PlotPlayer<?>>>() {})).toInstance(commandManager);
-        } catch (final Exception e) {
-            LOGGER.error("Failed to configure command manager", e);
+        final PaperCommandManager<PlotPlayer<?>> commandManager = new PaperCommandManager<PlotPlayer<?>>(
+                this.bukkitPlatform,
+                ExecutionCoordinator.asyncCoordinator(),
+                new BukkitSenderMapper()
+        );
+        commandManager.captionRegistry().registerProvider(new PlotSquaredCaptionProvider());
+        if (commandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
+            commandManager.registerAsynchronousCompletions();
         }
+        if (commandManager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
+            commandManager.registerBrigadier();
+        }
+
+        final CommandRequirementPostprocessor requirementPostprocessor = new CommandRequirementPostprocessor();
+        commandManager.registerCommandPostProcessor(requirementPostprocessor);
+
+        // TODO(City): Override parsing errors using MM parsing.
+        MinecraftExceptionHandler.<PlotPlayer<?>>create(PlotPlayer::getAudience)
+                .defaultHandlers()
+                .decorator((ctx, component) -> TranslatableCaption.of("core.prefix").
+                        toComponent(ctx.context().sender())
+                        .append(component))
+                .registerTo(commandManager);
+
+        bind(Key.get(new TypeLiteral<CommandManager<PlotPlayer<?>>>() {})).toInstance(commandManager);
     }
 }

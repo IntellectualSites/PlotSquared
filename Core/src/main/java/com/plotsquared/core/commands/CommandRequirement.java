@@ -26,6 +26,8 @@ import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.List;
+
 /**
  * Something that is required for a command to be executed.
  */
@@ -56,6 +58,15 @@ public interface CommandRequirement {
     }
 
     /**
+     * Returns the list of parent requirements that should be evaluated before this requirement.
+     *
+     * @return the requirements
+     */
+    default @NonNull List<@NonNull CommandRequirement> parents() {
+        return List.of();
+    }
+
+    /**
      * Returns a requirement that evaluates to {@code true} if the sender has the given {@code permission} or if
      * this requirement evaluates to {@code true}.
      *
@@ -75,6 +86,11 @@ public interface CommandRequirement {
                 return new TagResolver[] {
                         TagResolver.resolver("node", Tag.inserting(Permission.PERMISSION_SET_FLAG_OTHER))
                 };
+            }
+
+            @Override
+            public @NonNull List<@NonNull CommandRequirement> parents() {
+                return thisRequirement.parents();
             }
 
             @Override
