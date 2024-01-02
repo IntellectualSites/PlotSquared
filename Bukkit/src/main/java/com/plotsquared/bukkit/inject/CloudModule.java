@@ -73,11 +73,11 @@ public class CloudModule extends AbstractModule {
                 new BukkitSenderMapper()
         );
         commandManager.captionRegistry().registerProvider(new PlotSquaredCaptionProvider());
-        if (commandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
-            commandManager.registerAsynchronousCompletions();
-        }
+
         if (commandManager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
             commandManager.registerBrigadier();
+        } else if (commandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
+            commandManager.registerAsynchronousCompletions();
         }
 
         final CommandRequirementPostprocessor requirementPostprocessor = new CommandRequirementPostprocessor();
