@@ -24,10 +24,15 @@ import cloud.commandframework.CommandProperties;
 import com.plotsquared.core.command.CommandCategory;
 import com.plotsquared.core.player.PlotPlayer;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.requirement.RequirementApplicable;
+import org.incendo.cloud.requirement.Requirements;
 
 import java.util.List;
 
 public abstract class PlotSquaredCommandBean extends CommandBean<PlotPlayer<?>> {
+
+    private final RequirementApplicable.RequirementApplicableFactory<PlotPlayer<?>, CommandRequirement>
+            requirementApplicableFactory = RequirementApplicable.factory(CommandRequirement.REQUIREMENTS_KEY);
 
     /**
      * Returns the category of the command.
@@ -64,7 +69,7 @@ public abstract class PlotSquaredCommandBean extends CommandBean<PlotPlayer<?>> 
     @Override
     protected final Command.@NonNull Builder<PlotPlayer<?>> configure(final Command.@NonNull Builder<PlotPlayer<?>> builder) {
         return this.configurePlotCommand(this.prepare(builder.meta(PlotSquaredCommandMeta.META_CATEGORY, this.category())))
-                .meta(CommandRequirements.REQUIREMENTS_KEY, CommandRequirements.create(this.requirements()));
+                .apply(this.requirementApplicableFactory.create(Requirements.of(this.requirements())));
     }
 
     protected abstract Command.@NonNull Builder<PlotPlayer<?>> configurePlotCommand(

@@ -75,7 +75,7 @@ public enum CommonCommandRequirement implements CommandRequirement {
     }
 
     @Override
-    public boolean evaluate(final @NonNull CommandContext<PlotPlayer<?>> context) {
+    public boolean evaluateRequirement(final @NonNull CommandContext<PlotPlayer<?>> context) {
         return this.predicate.test(context);
     }
 }

@@ -18,6 +18,7 @@ dependencies {
     // Cloud
     api(libs.cloud)
     api(libs.cloudMinecraftExtras)
+    api(libs.cloudRequirements)
 
     // Guice
     api(libs.guice) {

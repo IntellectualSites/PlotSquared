@@ -19,19 +19,32 @@
 package com.plotsquared.core.commands;
 
 import cloud.commandframework.context.CommandContext;
+import cloud.commandframework.keys.CloudKey;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
+import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.requirement.Requirement;
+import org.incendo.cloud.requirement.Requirements;
 
 import java.util.List;
 
 /**
  * Something that is required for a command to be executed.
  */
-public interface CommandRequirement {
+public interface CommandRequirement extends Requirement<PlotPlayer<?>, CommandRequirement> {
+
+    /**
+     * The key used to store the requirements in the {@link cloud.commandframework.meta.CommandMeta}.
+     */
+    CloudKey<Requirements<PlotPlayer<?>, CommandRequirement>> REQUIREMENTS_KEY = CloudKey.of(
+            "requirements",
+            new TypeToken<Requirements<PlotPlayer<?>, CommandRequirement>>() {
+            }
+    );
 
     /**
      * Returns the caption sent when the requirement is not met.
@@ -41,29 +54,12 @@ public interface CommandRequirement {
     @NonNull TranslatableCaption failureCaption();
 
     /**
-     * Evaluates whether the requirement is met.
-     *
-     * @param context command context to evaluate
-     * @return {@code true} if the requirement is met, else {@code false}
-     */
-    boolean evaluate(final @NonNull CommandContext<PlotPlayer<?>> context);
-
-    /**
      * Returns the placeholder values.
      *
      * @return placeholder values
      */
     default @NonNull TagResolver @NonNull[] tagResolvers() {
         return new TagResolver[0];
-    }
-
-    /**
-     * Returns the list of parent requirements that should be evaluated before this requirement.
-     *
-     * @return the requirements
-     */
-    default @NonNull List<@NonNull CommandRequirement> parents() {
-        return List.of();
     }
 
     /**
@@ -94,8 +90,8 @@ public interface CommandRequirement {
             }
 
             @Override
-            public boolean evaluate(final @NonNull CommandContext<PlotPlayer<?>> context) {
-                return context.sender().hasPermission(permission) || thisRequirement.evaluate(context);
+            public boolean evaluateRequirement(final @NonNull CommandContext<PlotPlayer<?>> context) {
+                return context.sender().hasPermission(permission) || thisRequirement.evaluateRequirement(context);
             }
         };
     }

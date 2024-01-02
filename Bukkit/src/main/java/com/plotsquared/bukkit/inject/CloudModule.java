@@ -29,8 +29,9 @@ import com.google.inject.TypeLiteral;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.commands.BukkitSenderMapper;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.core.commands.CommandRequirement;
 import com.plotsquared.core.commands.PlotSquaredCaptionProvider;
-import com.plotsquared.core.commands.processing.CommandRequirementPostprocessor;
+import com.plotsquared.core.commands.PlotSquaredRequirementFailureHandler;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
@@ -40,6 +41,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.requirement.RequirementPostprocessor;
 
 public class CloudModule extends AbstractModule {
 
@@ -80,7 +82,8 @@ public class CloudModule extends AbstractModule {
             commandManager.registerAsynchronousCompletions();
         }
 
-        final CommandRequirementPostprocessor requirementPostprocessor = new CommandRequirementPostprocessor();
+        final RequirementPostprocessor<PlotPlayer<?>, CommandRequirement> requirementPostprocessor =
+                RequirementPostprocessor.of(CommandRequirement.REQUIREMENTS_KEY, new PlotSquaredRequirementFailureHandler());
         commandManager.registerCommandPostProcessor(requirementPostprocessor);
 
         // TODO(City): Override parsing errors using MM parsing.
