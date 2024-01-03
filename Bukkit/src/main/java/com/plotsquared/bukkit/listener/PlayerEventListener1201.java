@@ -20,6 +20,7 @@ package com.plotsquared.bukkit.listener;
 
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.EditSignFlag;
@@ -46,7 +47,8 @@ public class PlayerEventListener1201 implements Listener {
         }
         Plot plot = location.getOwnedPlot();
         if (plot == null) {
-            if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, EditSignFlag.class, false)) {
+            if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, EditSignFlag.class, false)
+                    && !event.getPlayer().hasPermission(Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString())) {
                 event.setCancelled(true);
             }
             return;
@@ -54,7 +56,8 @@ public class PlayerEventListener1201 implements Listener {
         if (plot.isAdded(event.getPlayer().getUniqueId())) {
             return; // allow for added players
         }
-        if (!plot.getFlag(EditSignFlag.class)) {
+        if (!plot.getFlag(EditSignFlag.class)
+                && !event.getPlayer().hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString())) {
             plot.debug(event.getPlayer().getName() + " could not edit the sign because of edit-sign = false");
             event.setCancelled(true);
         }
