@@ -24,8 +24,8 @@ import cloud.commandframework.CommandProperties;
 import com.plotsquared.core.command.CommandCategory;
 import com.plotsquared.core.player.PlotPlayer;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.cloud.requirement.RequirementApplicable;
-import org.incendo.cloud.requirement.Requirements;
+import org.incendo.cloud.processors.requirements.RequirementApplicable;
+import org.incendo.cloud.processors.requirements.Requirements;
 
 import java.util.List;
 

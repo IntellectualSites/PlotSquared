@@ -27,8 +27,8 @@ import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.cloud.requirement.Requirement;
-import org.incendo.cloud.requirement.Requirements;
+import org.incendo.cloud.processors.requirements.Requirement;
+import org.incendo.cloud.processors.requirements.Requirements;
 
 import java.util.List;
 

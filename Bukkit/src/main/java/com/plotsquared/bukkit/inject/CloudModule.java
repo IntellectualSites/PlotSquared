@@ -41,7 +41,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.cloud.requirement.RequirementPostprocessor;
+import org.incendo.cloud.processors.requirements.RequirementPostprocessor;
 
 public class CloudModule extends AbstractModule {
 

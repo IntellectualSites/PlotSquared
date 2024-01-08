@@ -82,7 +82,7 @@ serverlib = { group = "dev.notmyfault.serverlib", name = "ServerLib", version.re
 cloud = { group = "cloud.commandframework", name = "cloud-core", version.ref = "cloud" }
 cloudPaper = { group = "cloud.commandframework", name = "cloud-paper", version.ref = "cloud" }
 cloudMinecraftExtras = { group = "cloud.commandframework", name = "cloud-minecraft-extras", version.ref = "cloud" }
-cloudRequirements = { group = "org.incendo", name = "cloud-requirements", version.ref = "cloudRequirements" }
+cloudRequirements = { group = "org.incendo", name = "cloud-processors-requirements", version.ref = "cloudRequirements" }
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
