@@ -41,22 +41,4 @@ public class PostPlotClearEvent extends PlotPlayerEvent {
         super(plotPlayer, plot);
     }
 
-    /**
-     * Get the PlotId.
-     *
-     * @return PlotId
-     */
-    public PlotId getPlotId() {
-        return getPlot().getId();
-    }
-
-    /**
-     * Get the world name.
-     *
-     * @return String
-     */
-    public String getWorld() {
-        return getPlot().getWorldName();
-    }
-
 }
