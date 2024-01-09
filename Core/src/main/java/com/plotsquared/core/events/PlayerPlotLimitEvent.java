@@ -27,7 +27,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * <p>
  * May be used to grant a player more plots based on another rank or bought feature.
  *
- * @since TODO
+ * @since 7.3.0
  */
 public class PlayerPlotLimitEvent {
 
@@ -44,7 +44,7 @@ public class PlayerPlotLimitEvent {
      * Overrides the previously calculated or set plot limit for {@link #player()}.
      *
      * @param limit The amount of plots a player may claim. Must be {@code 0} or greater.
-     * @since TODO
+     * @since 7.3.0
      */
     public void limit(@NonNegative final int limit) {
         if (limit < 0) {
@@ -58,7 +58,7 @@ public class PlayerPlotLimitEvent {
      * permissions node is returned.
      *
      * @return The currently defined plot limit of this player.
-     * @since TODO
+     * @since 7.3.0
      */
     public @NonNegative int limit() {
         return limit;
@@ -68,7 +68,7 @@ public class PlayerPlotLimitEvent {
      * The player for which the limit is queried.
      *
      * @return the player.
-     * @since TODO
+     * @since 7.3.0
      */
     public @NonNull PlotPlayer<?> player() {
         return player;
