@@ -21,7 +21,6 @@ package com.plotsquared.core.events.post;
 import com.plotsquared.core.events.PlotPlayerEvent;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.plot.PlotId;
 
 /**
  * Called after a {@link Plot} was cleared.
