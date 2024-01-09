@@ -67,6 +67,7 @@ tasks.named<ShadowJar>("shadowJar") {
         exclude(dependency("org.checkerframework:"))
     }
 
+    relocate("net.kyori.option", "com.plotsquared.core.configuration.option")
     relocate("net.kyori.adventure", "com.plotsquared.core.configuration.adventure")
     relocate("net.kyori.examination", "com.plotsquared.core.configuration.examination")
     relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")

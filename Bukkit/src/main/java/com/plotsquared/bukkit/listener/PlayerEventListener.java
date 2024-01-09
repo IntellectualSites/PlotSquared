@@ -252,7 +252,8 @@ public class PlayerEventListener implements Listener {
                 }
                 Plot plot = location.getOwnedPlot();
                 if (plot == null) {
-                    if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, EditSignFlag.class, false)) {
+                    if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, EditSignFlag.class, false)
+                            && !event.getPlayer().hasPermission(Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString())) {
                         event.setCancelled(true);
                     }
                     return;
@@ -260,7 +261,8 @@ public class PlayerEventListener implements Listener {
                 if (plot.isAdded(event.getPlayer().getUniqueId())) {
                     return; // allow for added players
                 }
-                if (!plot.getFlag(EditSignFlag.class)) {
+                if (!plot.getFlag(EditSignFlag.class)
+                        && !event.getPlayer().hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString())) {
                     plot.debug(event.getPlayer().getName() + " could not color the sign because of edit-sign = false");
                     event.setCancelled(true);
                 }

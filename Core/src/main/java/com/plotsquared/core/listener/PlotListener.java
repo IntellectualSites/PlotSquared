@@ -364,7 +364,6 @@ public class PlotListener {
     public boolean plotExit(final PlotPlayer<?> player, Plot plot) {
         try (final MetaDataAccess<Plot> lastPlot = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
             final Plot previous = lastPlot.remove();
-            this.eventDispatcher.callLeave(player, plot);
 
             List<StatusEffect> effects = playerEffects.remove(player.getUUID());
             if (effects != null) {
@@ -467,6 +466,8 @@ public class PlotListener {
                 feedRunnable.remove(player.getUUID());
                 healRunnable.remove(player.getUUID());
             }
+        } finally {
+            this.eventDispatcher.callLeave(player, plot);
         }
         return true;
     }
