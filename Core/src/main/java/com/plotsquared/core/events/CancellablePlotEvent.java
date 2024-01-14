@@ -18,17 +18,24 @@
  */
 package com.plotsquared.core.events;
 
+
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * PlotSquared event with {@link Result} to cancel, force, or allow.
  */
 public interface CancellablePlotEvent {
 
-    Result getEventResult();
+    @Nullable Result getEventResult();
 
-    void setEventResult(Result eventResult);
+    void setEventResult(@Nullable Result eventResult);
 
+    /**
+     * @deprecated No usage and not null-safe
+     */
+    @Deprecated(since = "TODO")
     default int getEventResultRaw() {
-        return getEventResult().getValue();
+        return getEventResult() != null ? getEventResult().getValue() : -1;
     }
 
 }
