@@ -26,8 +26,18 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 public interface CancellablePlotEvent {
 
+    /**
+     * The currently set {@link Result} for this event (as set by potential previous event listeners).
+     *
+     * @return the current result.
+     */
     @Nullable Result getEventResult();
 
+    /**
+     * Set the {@link Result} for this event.
+     *
+     * @param eventResult the new result.
+     */
     void setEventResult(@Nullable Result eventResult);
 
     /**
