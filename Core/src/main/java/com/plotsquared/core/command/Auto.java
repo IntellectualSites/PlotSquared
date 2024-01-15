@@ -332,7 +332,7 @@ public class Auto extends SubCommand {
         List<Plot> plots = this.servicePipeline
                 .pump(new AutoQuery(player, null, sizeX, sizeZ, plotarea))
                 .through(AutoService.class)
-                .getResult();
+                .complete();
 
         plots = this.eventDispatcher.callAutoPlotsChosen(player, plots).getPlots();
 

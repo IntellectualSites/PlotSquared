@@ -39,7 +39,6 @@ subprojects {
     version = rootProject.version
 
     repositories {
-        mavenLocal() // TODO(City): Remove once Cloud 2 is on central.
         mavenCentral()
 
         maven {
