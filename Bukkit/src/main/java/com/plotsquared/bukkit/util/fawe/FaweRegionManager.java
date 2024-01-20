@@ -37,6 +37,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.Set;
@@ -115,7 +116,7 @@ public class FaweRegionManager extends BukkitRegionManager {
     }
 
     @Override
-    public boolean regenerateRegion(final Location pos1, final Location pos2, boolean ignore, final Runnable whenDone) {
+    public boolean regenerateRegion(final @NotNull Location pos1, final @NotNull Location pos2, boolean ignore, final Runnable whenDone) {
         return delegate.regenerateRegion(pos1, pos2, ignore, whenDone);
     }
 
