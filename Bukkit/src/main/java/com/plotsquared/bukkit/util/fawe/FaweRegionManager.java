@@ -38,6 +38,7 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.Objects;
 import java.util.Set;
 
 public class FaweRegionManager extends BukkitRegionManager {
@@ -59,7 +60,10 @@ public class FaweRegionManager extends BukkitRegionManager {
             @Nullable PlotPlayer<?> actor,
             @Nullable QueueCoordinator queue
     ) {
-        return delegate.setCuboids(area, regions, blocks, minY, maxY, queue.getCompleteTask());
+        return delegate.setCuboids(
+                area, regions, blocks, minY, maxY,
+                Objects.requireNonNullElseGet(queue, area::getQueue).getCompleteTask()
+        );
     }
 
     @Override
