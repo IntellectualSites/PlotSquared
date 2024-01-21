@@ -21,8 +21,9 @@ package com.plotsquared.core.command;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.events.PlotFlagRemoveEvent;
+import com.plotsquared.core.events.PlayerBuyPlotEvent;
 import com.plotsquared.core.events.Result;
+import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -88,22 +89,30 @@ public class Buy extends Command {
                 TranslatableCaption.of("permission.cant_claim_more_plots"),
                 TagResolver.resolver("amount", Tag.inserting(Component.text(player.getAllowedPlots())))
         );
-        double price = plot.getFlag(PriceFlag.class);
-        if (price <= 0) {
+        double priceFlag = plot.getFlag(PriceFlag.class);
+        if (priceFlag <= 0) {
             throw new CommandException(TranslatableCaption.of("economy.not_for_sale"));
         }
         checkTrue(
                 this.econHandler.isSupported(),
                 TranslatableCaption.of("economy.vault_or_consumer_null")
         );
-        checkTrue(
-                this.econHandler.getMoney(player) >= price,
-                TranslatableCaption.of("economy.cannot_afford_plot"),
-                TagResolver.builder()
-                        .tag("money", Tag.inserting(Component.text(this.econHandler.format(price))))
-                        .tag("balance", Tag.inserting(Component.text(this.econHandler.format(this.econHandler.getMoney(player)))))
-                        .build()
-        );
+
+        PlayerBuyPlotEvent event = this.eventDispatcher.callPlayerBuyPlot(player, plot, priceFlag);
+        if (event.getEventResult() == Result.DENY) {
+            throw new CommandException(TranslatableCaption.of("economy.cannot_buy_blocked"));
+        }
+
+        double price = event.getEventResult() == Result.FORCE ? 0 : event.price();
+        if (this.econHandler.getMoney(player) < price) {
+            throw new CommandException(
+                    TranslatableCaption.of("economy.cannot_afford_plot"),
+                    TagResolver.builder()
+                            .tag("money", Tag.inserting(Component.text(this.econHandler.format(price))))
+                            .tag("balance", Tag.inserting(Component.text(this.econHandler.format(this.econHandler.getMoney(player)))))
+                            .build()
+            );
+        }
         this.econHandler.withdrawMoney(player, price);
         // Failure
         // Success
@@ -113,7 +122,8 @@ public class Buy extends Command {
                     TagResolver.resolver("money", Tag.inserting(Component.text(this.econHandler.format(price))))
             );
 
-            this.econHandler.depositMoney(PlotSquared.platform().playerManager().getOfflinePlayer(plot.getOwnerAbs()), price);
+            OfflinePlotPlayer previousOwner = PlotSquared.platform().playerManager().getOfflinePlayer(plot.getOwnerAbs());
+            this.econHandler.depositMoney(previousOwner, price);
 
             PlotPlayer<?> owner = PlotSquared.platform().playerManager().getPlayerIfExists(plot.getOwnerAbs());
             if (owner != null) {
@@ -127,9 +137,8 @@ public class Buy extends Command {
                 );
             }
             PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(PriceFlag.class);
-            PlotFlagRemoveEvent event = this.eventDispatcher.callFlagRemove(plotFlag, plot);
-            if (event.getEventResult() != Result.DENY) {
-                plot.removeFlag(event.getFlag());
+            if (this.eventDispatcher.callFlagRemove(plotFlag, plot).getEventResult() != Result.DENY) {
+                plot.removeFlag(plotFlag);
             }
             plot.setOwner(player.getUUID());
             plot.getPlotModificationManager().setSign(player.getName());
@@ -137,6 +146,7 @@ public class Buy extends Command {
                     TranslatableCaption.of("working.claimed"),
                     TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
             );
+            this.eventDispatcher.callPostPlayerBuyPlot(player, previousOwner, plot, price);
             whenDone.run(Buy.this, CommandResult.SUCCESS);
         }, () -> {
             this.econHandler.depositMoney(player, price);
