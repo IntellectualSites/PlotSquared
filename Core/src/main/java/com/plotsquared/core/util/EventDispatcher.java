@@ -52,6 +52,7 @@ import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.events.post.PostPlayerAutoPlotEvent;
 import com.plotsquared.core.events.post.PostPlayerBuyPlotEvent;
 import com.plotsquared.core.events.post.PostPlotChangeOwnerEvent;
+import com.plotsquared.core.events.post.PostPlotClearEvent;
 import com.plotsquared.core.events.post.PostPlotDeleteEvent;
 import com.plotsquared.core.events.post.PostPlotMergeEvent;
 import com.plotsquared.core.events.post.PostPlotUnlinkEvent;
@@ -178,6 +179,12 @@ public class EventDispatcher {
 
     public PlotClearEvent callClear(Plot plot) {
         PlotClearEvent event = new PlotClearEvent(plot);
+        callEvent(event);
+        return event;
+    }
+
+    public PostPlotClearEvent callPostPlotClear(PlotPlayer<?> player, Plot plot) {
+        PostPlotClearEvent event = new PostPlotClearEvent(player, plot);
         callEvent(event);
         return event;
     }
