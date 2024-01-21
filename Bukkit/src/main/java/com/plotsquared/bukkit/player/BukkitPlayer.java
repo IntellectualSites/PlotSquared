@@ -40,6 +40,7 @@ import io.papermc.lib.PaperLib;
 import net.kyori.adventure.audience.Audience;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.WeatherType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -51,7 +52,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
 
@@ -309,18 +309,21 @@ public class BukkitPlayer extends PlotPlayer<Player> {
     @Override
     public void playMusic(final @NonNull Location location, final @NonNull ItemType id) {
         if (id == ItemTypes.AIR) {
-            // Let's just stop all the discs because why not?
-            for (final Sound sound : Arrays.stream(Sound.values())
-                    .filter(sound -> sound.name().contains("DISC")).toList()) {
-                player.stopSound(sound);
+            if (PlotSquared.platform().serverVersion()[1] >= 19) {
+                player.stopSound(SoundCategory.MUSIC);
+                return;
             }
-            // this.player.playEffect(BukkitUtil.getLocation(location), Effect.RECORD_PLAY, Material.AIR);
-        } else {
-            // this.player.playEffect(BukkitUtil.getLocation(location), Effect.RECORD_PLAY, id.to(Material.class));
-            this.player.playSound(BukkitUtil.adapt(location),
-                    Sound.valueOf(BukkitAdapter.adapt(id).name()), Float.MAX_VALUE, 1f
-            );
+            // 1.18 and downwards require a specific Sound to stop (even tho the packet does not??)
+            for (final Sound sound : Sound.values()) {
+                if (sound.name().startsWith("MUSIC_DISC")) {
+                    this.player.stopSound(sound, SoundCategory.MUSIC);
+                }
+            }
+            return;
         }
+        this.player.playSound(BukkitUtil.adapt(location), Sound.valueOf(BukkitAdapter.adapt(id).name()),
+                SoundCategory.MUSIC, 1f, 1f
+        );
     }
 
     @SuppressWarnings("deprecation") // Needed for Spigot compatibility
