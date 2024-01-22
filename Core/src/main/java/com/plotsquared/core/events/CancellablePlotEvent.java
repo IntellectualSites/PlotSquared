@@ -43,7 +43,7 @@ public interface CancellablePlotEvent {
     /**
      * @deprecated No usage and not null-safe
      */
-    @Deprecated(since = "TODO")
+    @Deprecated(since = "7.3.2")
     default int getEventResultRaw() {
         return getEventResult() != null ? getEventResult().getValue() : -1;
     }

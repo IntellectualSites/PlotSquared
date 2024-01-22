@@ -25,7 +25,7 @@ import com.plotsquared.core.plot.Plot;
 /**
  * Called after a {@link Plot} was cleared.
  *
- * @since TODO
+ * @since 7.3.2
  */
 public class PostPlotClearEvent extends PlotPlayerEvent {
 

@@ -32,7 +32,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>
  * Setting the {@link #setPrice(double) price} to {@code 0} makes the plot practically free.
  *
- * @since TODO
+ * @since 7.3.2
  */
 public class PlayerBuyPlotEvent extends PlotPlayerEvent implements CancellablePlotEvent {
 
@@ -49,7 +49,7 @@ public class PlayerBuyPlotEvent extends PlotPlayerEvent implements CancellablePl
      * Sets the price required to buy the plot.
      *
      * @param price the new price.
-     * @since TODO
+     * @since 7.3.2
      */
     public void setPrice(@NonNegative final double price) {
         //noinspection ConstantValue - the annotation does not ensure a non-negative runtime value
@@ -63,7 +63,7 @@ public class PlayerBuyPlotEvent extends PlotPlayerEvent implements CancellablePl
      * Returns the currently set price required to buy the plot.
      *
      * @return the price.
-     * @since TODO
+     * @since 7.3.2
      */
     public @NonNegative double price() {
         return price;

@@ -27,7 +27,7 @@ import org.checkerframework.checker.index.qual.NonNegative;
 /**
  * Called after a player has successfully bought a plot.
  *
- * @since TODO
+ * @since 7.3.2
  */
 public class PostPlayerBuyPlotEvent extends PlotPlayerEvent {
 
