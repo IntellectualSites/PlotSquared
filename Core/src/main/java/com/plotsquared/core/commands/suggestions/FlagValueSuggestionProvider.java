@@ -18,16 +18,20 @@
  */
 package com.plotsquared.core.commands.suggestions;
 
-import cloud.commandframework.arguments.suggestion.BlockingSuggestionProvider;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.CommandInput;
-import cloud.commandframework.keys.CloudKey;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.types.ListFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.key.CloudKey;
+import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**

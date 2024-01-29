@@ -18,9 +18,9 @@
  */
 package com.plotsquared.core.commands;
 
-import cloud.commandframework.context.CommandContext;
 import com.plotsquared.core.player.PlotPlayer;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.processors.requirements.RequirementFailureHandler;
 
 public final class PlotSquaredRequirementFailureHandler implements RequirementFailureHandler<PlotPlayer<?>, CommandRequirement> {

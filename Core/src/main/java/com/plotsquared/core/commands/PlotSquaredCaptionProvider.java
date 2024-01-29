@@ -18,8 +18,6 @@
  */
 package com.plotsquared.core.commands;
 
-import cloud.commandframework.captions.Caption;
-import cloud.commandframework.captions.CaptionProvider;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.CaptionMap;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -28,6 +26,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.caption.Caption;
+import org.incendo.cloud.caption.CaptionProvider;
 
 /**
  * {@link CaptionProvider} that retrieves caption values from the {@link CaptionMap caption map}.

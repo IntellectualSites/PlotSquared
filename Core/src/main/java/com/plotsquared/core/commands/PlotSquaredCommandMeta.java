@@ -18,11 +18,11 @@
  */
 package com.plotsquared.core.commands;
 
-import cloud.commandframework.keys.CloudKey;
 import com.plotsquared.core.command.CommandCategory;
+import org.incendo.cloud.key.CloudKey;
 
 /**
- * Shared {@link cloud.commandframework.meta.CommandMeta command meta} keys.
+ * Shared {@link org.incendo.cloud.meta.CommandMeta command meta} keys.
  */
 public final class PlotSquaredCommandMeta {
 

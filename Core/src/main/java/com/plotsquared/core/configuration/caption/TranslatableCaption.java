@@ -18,7 +18,6 @@
  */
 package com.plotsquared.core.configuration.caption;
 
-import cloud.commandframework.captions.Caption;
 import com.google.common.base.Objects;
 import com.plotsquared.core.PlotSquared;
 import net.kyori.adventure.text.Component;
@@ -26,6 +25,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.caption.Caption;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;

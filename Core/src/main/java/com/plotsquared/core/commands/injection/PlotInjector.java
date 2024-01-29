@@ -18,13 +18,13 @@
  */
 package com.plotsquared.core.commands.injection;
 
-import cloud.commandframework.annotations.AnnotationAccessor;
-import cloud.commandframework.annotations.injection.ParameterInjector;
-import cloud.commandframework.context.CommandContext;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.injection.ParameterInjector;
+import org.incendo.cloud.util.annotation.AnnotationAccessor;
 
 /**
  * {@link ParameterInjector} that returns the current plot of the player.

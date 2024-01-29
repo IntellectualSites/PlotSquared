@@ -18,10 +18,10 @@
  */
 package com.plotsquared.core.commands;
 
-import cloud.commandframework.context.CommandContext;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.context.CommandContext;
 
 import java.util.Arrays;
 import java.util.List;

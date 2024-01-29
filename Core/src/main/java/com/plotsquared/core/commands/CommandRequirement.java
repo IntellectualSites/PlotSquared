@@ -18,8 +18,6 @@
  */
 package com.plotsquared.core.commands;
 
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.keys.CloudKey;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
@@ -27,6 +25,8 @@ import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.key.CloudKey;
 import org.incendo.cloud.processors.requirements.Requirement;
 import org.incendo.cloud.processors.requirements.Requirements;
 
@@ -38,7 +38,7 @@ import java.util.List;
 public interface CommandRequirement extends Requirement<PlotPlayer<?>, CommandRequirement> {
 
     /**
-     * The key used to store the requirements in the {@link cloud.commandframework.meta.CommandMeta}.
+     * The key used to store the requirements in the {@link org.incendo.cloud.meta.CommandMeta}.
      */
     CloudKey<Requirements<PlotPlayer<?>, CommandRequirement>> REQUIREMENTS_KEY = CloudKey.of(
             "requirements",

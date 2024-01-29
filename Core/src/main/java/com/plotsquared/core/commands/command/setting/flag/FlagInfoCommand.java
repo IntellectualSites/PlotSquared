@@ -18,9 +18,6 @@
  */
 package com.plotsquared.core.commands.command.setting.flag;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.keys.CloudKey;
 import com.plotsquared.core.commands.parser.PlotFlagParser;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
@@ -30,6 +27,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.key.CloudKey;
 
 import static com.plotsquared.core.commands.parser.PlotFlagParser.plotFlagParser;
 

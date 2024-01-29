@@ -18,12 +18,12 @@
  */
 package com.plotsquared.core.commands;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.CommandBean;
-import cloud.commandframework.CommandProperties;
 import com.plotsquared.core.command.CommandCategory;
 import com.plotsquared.core.player.PlotPlayer;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.bean.CommandBean;
+import org.incendo.cloud.bean.CommandProperties;
 import org.incendo.cloud.processors.requirements.RequirementApplicable;
 import org.incendo.cloud.processors.requirements.Requirements;
 

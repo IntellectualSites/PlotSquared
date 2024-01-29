@@ -18,7 +18,6 @@
  */
 package com.plotsquared.core.commands.command.setting.flag;
 
-import cloud.commandframework.Command;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.CommandCategory;
 import com.plotsquared.core.commands.CommandRequirement;
@@ -37,6 +36,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.Command;
 
 import java.util.List;
 

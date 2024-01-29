@@ -18,14 +18,6 @@
  */
 package com.plotsquared.core.commands.parser;
 
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.arguments.parser.ArgumentParser;
-import cloud.commandframework.arguments.parser.ParserDescriptor;
-import cloud.commandframework.arguments.suggestion.BlockingSuggestionProvider;
-import cloud.commandframework.arguments.suggestion.Suggestion;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.CommandInput;
-import cloud.commandframework.exceptions.parsing.ParserException;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
@@ -38,6 +30,14 @@ import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.util.ComponentMessageThrowable;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.exception.parsing.ParserException;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.ParserDescriptor;
+import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
+import org.incendo.cloud.suggestion.Suggestion;
 
 import java.util.Collection;
 import java.util.function.Function;

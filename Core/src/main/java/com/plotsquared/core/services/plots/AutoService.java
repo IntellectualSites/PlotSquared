@@ -18,7 +18,6 @@
  */
 package com.plotsquared.core.services.plots;
 
-import cloud.commandframework.services.types.Service;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.plotsquared.core.plot.Plot;
@@ -26,6 +25,7 @@ import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.services.type.Service;
 
 import java.util.Collections;
 import java.util.List;

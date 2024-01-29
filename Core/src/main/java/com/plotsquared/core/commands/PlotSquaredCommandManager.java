@@ -18,8 +18,6 @@
  */
 package com.plotsquared.core.commands;
 
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.annotations.injection.GuiceInjectionService;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -29,6 +27,8 @@ import com.plotsquared.core.commands.injection.PlotInjector;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.injection.GuiceInjectionService;
 
 import java.util.Set;
 
