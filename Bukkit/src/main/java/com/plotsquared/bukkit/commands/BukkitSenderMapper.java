@@ -18,7 +18,6 @@
  */
 package com.plotsquared.bukkit.commands;
 
-import cloud.commandframework.SenderMapper;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
@@ -26,6 +25,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.SenderMapper;
 
 /**
  * Mapper between {@link CommandSender} and {@link PlotPlayer}.
