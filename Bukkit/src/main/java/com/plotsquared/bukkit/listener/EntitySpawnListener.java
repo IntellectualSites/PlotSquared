@@ -123,8 +123,10 @@ public class EntitySpawnListener implements Listener {
         if (!location.isPlotArea() || area == null) {
             return;
         }
-        if (area.isSpawnCustom() && "CUSTOM".equals(entity.getEntitySpawnReason().name())) {
-            return;
+        if (PaperLib.isPaper()) {
+            if (area.isSpawnCustom() && "CUSTOM".equals(entity.getEntitySpawnReason().name())) {
+                return;
+            }
         }
         Plot plot = location.getOwnedPlotAbs();
         EntityType type = entity.getType();

@@ -19,6 +19,7 @@
 package com.plotsquared.bukkit.listener;
 
 import com.google.inject.Inject;
+import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitEntityUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -41,6 +42,7 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlotFlagUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
+import io.papermc.lib.PaperLib;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -78,15 +80,18 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class EntityEventListener implements Listener {
 
+    private final BukkitPlatform platform;
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
     private float lastRadius;
 
     @Inject
     public EntityEventListener(
+            final @NonNull BukkitPlatform platform,
             final @NonNull PlotAreaManager plotAreaManager,
             final @NonNull EventDispatcher eventDispatcher
     ) {
+        this.platform = platform;
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
     }
@@ -170,7 +175,18 @@ public class EntityEventListener implements Listener {
                     return;
                 }
             }
-            case "BUILD_IRONGOLEM", "BUILD_SNOWMAN", "BUILD_WITHER", "CUSTOM" -> {
+            case "CUSTOM" -> {
+                if (!area.isSpawnCustom()) {
+                    event.setCancelled(true);
+                    return;
+                }
+                // No need to clutter metadata if running paper
+                if (!PaperLib.isPaper()) {
+                    entity.setMetadata("ps_custom_spawned", new FixedMetadataValue(this.platform, true));
+                }
+                return; // Don't cancel if mob spawning is disabled
+            }
+            case "BUILD_IRONGOLEM", "BUILD_SNOWMAN", "BUILD_WITHER" -> {
                 if (!area.isSpawnCustom()) {
                     event.setCancelled(true);
                     return;
