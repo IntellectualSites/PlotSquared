@@ -143,7 +143,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                     classicPlotWorld,
                     plot.getRegions(),
                     blocks,
-                    classicPlotWorld.getMinBuildHeight(),
+                    classicPlotWorld.getMinComponentHeight(),
                     classicPlotWorld.getMaxBuildHeight() - 1,
                     actor,
                     queue
@@ -204,7 +204,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                     classicPlotWorld,
                     plot.getRegions(),
                     blocks,
-                    classicPlotWorld.getMinBuildHeight(),
+                    classicPlotWorld.getMinComponentHeight(),
                     classicPlotWorld.PLOT_HEIGHT - 1,
                     actor,
                     queue
@@ -379,7 +379,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             }
         }
 
-        int yStart = classicPlotWorld.getMinBuildHeight() + (classicPlotWorld.PLOT_BEDROCK ? 1 : 0);
+        int yStart = classicPlotWorld.getMinComponentHeight();
         if (!plot.isMerged(Direction.NORTH)) {
             int z = bot.getZ();
             for (int x = bot.getX(); x < top.getX(); x++) {
