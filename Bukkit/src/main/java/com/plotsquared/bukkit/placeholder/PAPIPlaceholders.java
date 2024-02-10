@@ -20,6 +20,8 @@ package com.plotsquared.bukkit.placeholder;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.flag.implementations.DoneFlag;
+import com.plotsquared.core.util.query.PlotQuery;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
@@ -81,6 +83,20 @@ public class PAPIPlaceholders extends PlaceholderExpansion {
             }
 
             return String.valueOf(pl.getPlotCount(identifier));
+        }
+
+        if (identifier.startsWith("base_plot_count_")) {
+            identifier = identifier.substring("base_plot_count_".length());
+            if (identifier.isEmpty()) {
+                return "";
+            }
+
+            return String.valueOf(PlotQuery.newQuery()
+                    .ownedBy(pl)
+                    .inWorld(identifier)
+                    .whereBasePlot()
+                    .thatPasses(plot -> !DoneFlag.isDone(plot))
+                    .count());
         }
 
         // PlotSquared placeholders
