@@ -31,9 +31,11 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlayerManager;
+import com.plotsquared.core.util.query.PlotQuery;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -95,6 +97,12 @@ public final class PlaceholderRegistry {
             }
             return Integer.toString(player.getAllowedPlots());
         });
+        this.createPlaceholder("base_plot_count", player -> Integer.toString(PlotQuery.newQuery()
+                .ownedBy(player)
+                .whereBasePlot()
+                .thatPasses(plot -> !DoneFlag.isDone(plot))
+                .count())
+        );
         this.createPlaceholder("plot_count", player -> Integer.toString(player.getPlotCount()));
         this.createPlaceholder("currentplot_alias", (player, plot) -> {
             if (plot.getAlias().isEmpty()) {
