@@ -163,13 +163,13 @@ public class EntityEventListener implements Listener {
             }
             case "REINFORCEMENTS", "NATURAL", "MOUNT", "PATROL", "RAID", "SHEARED", "SILVERFISH_BLOCK", "ENDER_PEARL",
                     "TRAP", "VILLAGE_DEFENSE", "VILLAGE_INVASION", "BEEHIVE", "CHUNK_GEN", "NETHER_PORTAL",
-                    "DUPLICATION", "FROZEN", "SPELL", "DEFAULT" -> {
+                    "FROZEN", "SPELL", "DEFAULT" -> {
                 if (!area.isMobSpawning()) {
                     event.setCancelled(true);
                     return;
                 }
             }
-            case "BREEDING" -> {
+            case "BREEDING", "DUPLICATION" -> {
                 if (!area.isSpawnBreeding()) {
                     event.setCancelled(true);
                     return;
