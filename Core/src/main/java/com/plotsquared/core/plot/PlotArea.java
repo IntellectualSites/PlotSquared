@@ -1455,7 +1455,7 @@ public abstract class PlotArea implements ComponentLike {
     /**
      * Get the maximum height that changes to plot components (wall filling, air, all etc.) may operate to
      *
-     * @since TODO
+     * @since 7.3.4
      */
     public int getMaxComponentHeight() {
         return this.maxBuildHeight;
@@ -1464,7 +1464,7 @@ public abstract class PlotArea implements ComponentLike {
     /**
      * Get the minimum height that changes to plot components (wall filling, air, all etc.) may operate to
      *
-     * @since TODO
+     * @since 7.3.4
      */
     public int getMinComponentHeight() {
         return this.minBuildHeight;
