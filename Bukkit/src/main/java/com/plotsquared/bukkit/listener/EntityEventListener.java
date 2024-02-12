@@ -56,6 +56,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.entity.Vehicle;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -98,37 +99,25 @@ public class EntityEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityCombustByEntity(EntityCombustByEntityEvent event) {
-        EntityDamageByEntityEvent eventChange =
-                new EntityDamageByEntityEvent(
-                        event.getCombuster(),
-                        event.getEntity(),
-                        EntityDamageEvent.DamageCause.FIRE_TICK,
-                        event.getDuration()
-                );
-        onEntityDamageByEntityEvent(eventChange);
-        if (eventChange.isCancelled()) {
-            event.setCancelled(true);
-        }
+        onEntityDamageByEntityCommon(event.getCombuster(), event.getEntity(), EntityDamageEvent.DamageCause.FIRE_TICK, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
-        Entity damager = event.getDamager();
+        onEntityDamageByEntityCommon(event.getDamager(), event.getEntity(), event.getCause(), event);
+    }
+
+    private void onEntityDamageByEntityCommon(
+            final Entity damager,
+            final Entity victim,
+            final EntityDamageEvent.DamageCause cause,
+            final Cancellable event
+    ) {
         Location location = BukkitUtil.adapt(damager.getLocation());
         if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
             return;
         }
-        Entity victim = event.getEntity();
-/*
-        if (victim.getType().equals(EntityType.ITEM_FRAME)) {
-            Plot plot = BukkitUtil.getLocation(victim).getPlot();
-            if (plot != null && !plot.isAdded(damager.getUniqueId())) {
-                event.setCancelled(true);
-                return;
-            }
-        }
-*/
-        if (!BukkitEntityUtil.entityDamage(damager, victim, event.getCause())) {
+        if (!BukkitEntityUtil.entityDamage(damager, victim, cause)) {
             if (event.isCancelled()) {
                 if (victim instanceof Ageable ageable) {
                     if (ageable.getAge() == -24000) {
