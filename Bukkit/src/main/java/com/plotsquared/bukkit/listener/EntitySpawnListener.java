@@ -124,7 +124,8 @@ public class EntitySpawnListener implements Listener {
             return;
         }
         if (PaperLib.isPaper()) {
-            if (area.isSpawnCustom() && "CUSTOM".equals(entity.getEntitySpawnReason().name())) {
+            //noinspection ConstantValue - getEntitySpawnReason annotated as NotNull, but is not NotNull. lol.
+            if (area.isSpawnCustom() && entity.getEntitySpawnReason() != null && "CUSTOM".equals(entity.getEntitySpawnReason().name())) {
                 return;
             }
         }
