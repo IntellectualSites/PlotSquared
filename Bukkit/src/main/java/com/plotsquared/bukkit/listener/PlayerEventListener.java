@@ -1921,7 +1921,9 @@ public class PlayerEventListener implements Listener {
 
     @EventHandler
     public void onPlayerTakeLecternBook(PlayerTakeLecternBookEvent event) {
-        Location location = BukkitUtil.adapt(event.getPlayer().getLocation());
+        Player player = event.getPlayer();
+        BukkitPlayer pp = BukkitUtil.adapt(player);
+        Location location = pp.getLocation();
         PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
@@ -1933,9 +1935,11 @@ public class PlayerEventListener implements Listener {
             }
             return;
         }
-        if (plot.getFlag(LecternReadBookFlag.class)) {
-            plot.debug(event.getPlayer().getName() + " could not take the book because of lectern-read-book = true");
-            event.setCancelled(true);
+        if (!plot.isAdded(pp.getUUID())) {
+            if (plot.getFlag(LecternReadBookFlag.class)) {
+                plot.debug(event.getPlayer().getName() + " could not take the book because of lectern-read-book = true");
+                event.setCancelled(true);
+            }
         }
     }
 
