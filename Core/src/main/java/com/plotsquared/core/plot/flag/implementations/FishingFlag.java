@@ -28,7 +28,7 @@ public class FishingFlag extends BooleanFlag<FishingFlag> {
     public static final FishingFlag FISHING_FALSE = new FishingFlag(false);
 
     private FishingFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_projectiles"));
+        super(value, TranslatableCaption.of("flags.flag_description_fishing"));
     }
 
     @Override
