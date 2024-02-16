@@ -20,7 +20,6 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
@@ -202,7 +201,6 @@ public class Download extends SubCommand {
                                                     .tag("delete", Tag.preProcessParsed("Not available"))
                                                     .build()
                                     );
-                                    player.sendMessage(StaticCaption.of(value.toString()));
                                 }
                             }
                     ));
