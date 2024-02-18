@@ -1422,9 +1422,10 @@ public class Plot {
             Location location = toHomeLocation(bottom, home);
             if (!this.worldUtil.getBlockSynchronous(location).getBlockType().getMaterial().isAir()) {
                 location = location.withY(
-                        Math.max(1 + this.worldUtil.getHighestBlockSynchronous(
+                        Math.max(1 + this.worldUtil.getNextHighestBlockSynchronous(
                                 this.getWorldName(),
                                 location.getX(),
+                                location.getY(),
                                 location.getZ()
                         ), bottom.getY()));
             }
@@ -1455,8 +1456,8 @@ public class Plot {
             Location location = toHomeLocation(bottom, home);
             this.worldUtil.getBlock(location, block -> {
                 if (!block.getBlockType().getMaterial().isAir()) {
-                    this.worldUtil.getHighestBlock(this.getWorldName(), location.getX(), location.getZ(),
-                            y -> result.accept(location.withY(Math.max(1 + y, bottom.getY())))
+                    this.worldUtil.getNextHighestBlock(this.getWorldName(), location.getX(), location.getY(), location.getZ(),
+                            y -> result.accept(location.withY(Math.max(y, bottom.getY())))
                     );
                 } else {
                     result.accept(location);

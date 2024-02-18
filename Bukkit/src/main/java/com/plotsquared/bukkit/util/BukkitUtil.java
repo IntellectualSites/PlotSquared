@@ -288,6 +288,43 @@ public class BukkitUtil extends WorldUtil {
     }
 
     @Override
+    public int getNextHighestBlockSynchronous(
+            @NonNull final String world,
+            final int x,
+            final int y,
+            final int z
+    ) {
+        final World bukkitWorld = Objects.requireNonNull(getWorld(world));
+        int maxY = com.plotsquared.bukkit.util.BukkitWorld.getMaxWorldHeight(bukkitWorld);
+        for (int current = y - 1; current <= maxY; current++) {
+            Block block = bukkitWorld.getBlockAt(x, current, z);
+            Material type = block.getType();
+            if (type.isAir()) {
+                return current;
+            }
+        }
+        return bukkitWorld.getMaxHeight() - 1;
+    }
+
+    @Override
+    public void getNextHighestBlock(final @NonNull String world, final int x, final int y, final int z,
+                                    @NonNull IntConsumer result) {
+        ensureLoaded(world, x, z, chunk -> {
+            final World bukkitWorld = Objects.requireNonNull(getWorld(world));
+            int maxY = com.plotsquared.bukkit.util.BukkitWorld.getMaxWorldHeight(bukkitWorld);
+            for (int current = y - 1; current <= maxY; current++) {
+                Block block = bukkitWorld.getBlockAt(x, current, z);
+                Material type = block.getType();
+                if (type.isAir()) {
+                    result.accept(current);
+                    return;
+                }
+            }
+            result.accept(bukkitWorld.getMaxHeight() - 1);
+        });
+    }
+
+    @Override
     public @NonNull String[] getSignSynchronous(final @NonNull Location location) {
         Block block = Objects.requireNonNull(getWorld(location.getWorldName())).getBlockAt(
                 location.getX(),

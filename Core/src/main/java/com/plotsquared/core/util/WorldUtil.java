@@ -203,6 +203,29 @@ public abstract class WorldUtil {
     public abstract int getHighestBlockSynchronous(@NonNull String world, int x, int z);
 
     /**
+     * Get the Y coordinate of the next highest non-air block in the world, asynchronously
+     *
+     * @param world  World name
+     * @param x      X coordinate
+     * @param y      Y coordinate
+     * @param z      Z coordinate
+     * @param result Result consumer
+     */
+    public abstract void getNextHighestBlock(@NonNull String world, int x, int y, int z, @NonNull IntConsumer result);
+
+    /**
+     * Get the Y coordinate of the next highest non-air block in the world, synchronously
+     *
+     * @param world  World name
+     * @param x      X coordinate
+     * @param y      Y coordinate
+     * @param z      Z coordinate
+     * @return Result
+     */
+    public abstract int getNextHighestBlockSynchronous(@NonNull String world, int x, int y, int z);
+
+
+    /**
      * Set the biome in a region
      *
      * @param worldName World name
