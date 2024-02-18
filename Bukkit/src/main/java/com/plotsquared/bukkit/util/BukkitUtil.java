@@ -299,7 +299,7 @@ public class BukkitUtil extends WorldUtil {
         for (int current = y - 1; current <= maxY; current++) {
             Block block = bukkitWorld.getBlockAt(x, current, z);
             Material type = block.getType();
-            if (type.isAir()) {
+            if (!type.isSolid() || block.isLiquid()) {
                 return current;
             }
         }
@@ -315,7 +315,7 @@ public class BukkitUtil extends WorldUtil {
             for (int current = y - 1; current <= maxY; current++) {
                 Block block = bukkitWorld.getBlockAt(x, current, z);
                 Material type = block.getType();
-                if (type.isAir()) {
+                if (!type.isSolid() || block.isLiquid()) {
                     result.accept(current);
                     return;
                 }
