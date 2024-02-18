@@ -2401,7 +2401,8 @@ public class SQLManager implements AbstractDB {
         addPlotTask(plot, new UniqueStatement("setPosition") {
             @Override
             public void set(PreparedStatement statement) throws SQLException {
-                statement.setString(1, position == null ? "" : position);
+                // Please see the table creation statement. There is the default value of "default"
+                statement.setString(1, position == null ? "DEFAULT" : position);
                 statement.setInt(2, getId(plot));
             }
 

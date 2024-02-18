@@ -47,7 +47,21 @@ public class TranslationUpdateManager {
         String usedGrants = "usedGrants";
         String usedGrantsReplacement = "used_grants";
         String remainingGrants = "remainingGrants";
-        String rremainingGrantsReplacement = "remaining_grants";
+        String remainingGrantsReplacement = "remaining_grants";
+        String minimumRadius = "minimumRadius";
+        String minimumRadiusReplacement = "minimum_radius";
+        String maximumMoves = "maximumMoves";
+        String maximumMovesReplacement = "maximum_moves";
+        String userMove = "userMove";
+        String userMoveReplacement = "user_move";
+
+        // tag opening / closing characters are important, as the locale keys exist as well, which should not be replaced
+        String listInfoUnknown = "<info.unknown>";
+        String listInfoUnknownReplacement = "<unknown>";
+        String listInfoServer = "<info.server>";
+        String listInfoServerReplacement = "<server>";
+        String listInfoEveryone = "<info.everyone>";
+        String listInfoEveryoneReplacement = "<everyone>";
 
         try (Stream<Path> paths = Files.walk(Paths.get(PlotSquared.platform().getDirectory().toPath().resolve("lang").toUri()))) {
             paths
@@ -58,7 +72,13 @@ public class TranslationUpdateManager {
                         replaceInFile(p, minHeight, minheightReplacement);
                         replaceInFile(p, maxHeight, maxheightReplacement);
                         replaceInFile(p, usedGrants, usedGrantsReplacement);
-                        replaceInFile(p, remainingGrants, rremainingGrantsReplacement);
+                        replaceInFile(p, remainingGrants, remainingGrantsReplacement);
+                        replaceInFile(p, minimumRadius, minimumRadiusReplacement);
+                        replaceInFile(p, maximumMoves, maximumMovesReplacement);
+                        replaceInFile(p, userMove, userMoveReplacement);
+                        replaceInFile(p, listInfoUnknown, listInfoUnknownReplacement);
+                        replaceInFile(p, listInfoServer, listInfoServerReplacement);
+                        replaceInFile(p, listInfoEveryone, listInfoEveryoneReplacement);
                     });
         }
     }

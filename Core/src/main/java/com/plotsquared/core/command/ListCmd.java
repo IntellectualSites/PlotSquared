@@ -465,7 +465,7 @@ public class ListCmd extends SubCommand {
                 TextComponent.Builder builder = Component.text();
                 if (plot.getFlag(ServerPlotFlag.class)) {
                     TagResolver serverResolver = TagResolver.resolver(
-                            "info.server",
+                            "server",
                             Tag.inserting(TranslatableCaption.of("info.server").toComponent(player))
                     );
                     builder.append(MINI_MESSAGE.deserialize(server, serverResolver));
@@ -483,13 +483,13 @@ public class ListCmd extends SubCommand {
                                 builder.append(MINI_MESSAGE.deserialize(online, resolver));
                             } else if (uuidMapping.username().equalsIgnoreCase("unknown")) {
                                 TagResolver unknownResolver = TagResolver.resolver(
-                                        "info.unknown",
+                                        "unknown",
                                         Tag.inserting(TranslatableCaption.of("info.unknown").toComponent(player))
                                 );
                                 builder.append(MINI_MESSAGE.deserialize(unknown, unknownResolver));
                             } else if (uuidMapping.uuid().equals(DBFunc.EVERYONE)) {
                                 TagResolver everyoneResolver = TagResolver.resolver(
-                                        "info.everyone",
+                                        "everyone",
                                         Tag.inserting(TranslatableCaption.of("info.everyone").toComponent(player))
                                 );
                                 builder.append(MINI_MESSAGE.deserialize(everyone, everyoneResolver));

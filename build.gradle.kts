@@ -22,7 +22,7 @@ plugins {
 }
 
 group = "com.intellectualsites.plotsquared"
-version = "7.2.2-SNAPSHOT"
+version = "7.3.6-SNAPSHOT"
 
 if (!File("$rootDir/.git").exists()) {
     logger.lifecycle("""
@@ -79,8 +79,8 @@ subprojects {
 
     dependencies {
         // Tests
-        testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
-        testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.1")
+        testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.2")
     }
 
     plugins.withId("java") {

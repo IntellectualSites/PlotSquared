@@ -1483,7 +1483,7 @@ public class Plot {
      */
     public void setHome(BlockLoc location) {
         Plot plot = this.getBasePlot(false);
-        if (BlockLoc.ZERO.equals(location) || BlockLoc.MINY.equals(location)) {
+        if (location != null && (BlockLoc.ZERO.equals(location) || BlockLoc.MINY.equals(location))) {
             return;
         }
         plot.getSettings().setPosition(location);

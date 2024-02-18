@@ -120,8 +120,14 @@ public class EntitySpawnListener implements Listener {
         Entity entity = event.getEntity();
         Location location = BukkitUtil.adapt(entity.getLocation());
         PlotArea area = location.getPlotArea();
-        if (!location.isPlotArea()) {
+        if (!location.isPlotArea() || area == null) {
             return;
+        }
+        if (PaperLib.isPaper()) {
+            //noinspection ConstantValue - getEntitySpawnReason annotated as NotNull, but is not NotNull. lol.
+            if (area.isSpawnCustom() && entity.getEntitySpawnReason() != null && "CUSTOM".equals(entity.getEntitySpawnReason().name())) {
+                return;
+            }
         }
         Plot plot = location.getOwnedPlotAbs();
         EntityType type = entity.getType();

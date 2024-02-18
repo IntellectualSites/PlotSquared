@@ -16,36 +16,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.events;
+package com.plotsquared.core.events.post;
 
-
-import org.checkerframework.checker.nullness.qual.Nullable;
+import com.plotsquared.core.events.PlotPlayerEvent;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 
 /**
- * PlotSquared event with {@link Result} to cancel, force, or allow.
+ * Called after a {@link Plot} was cleared.
+ *
+ * @since 7.3.2
  */
-public interface CancellablePlotEvent {
+public class PostPlotClearEvent extends PlotPlayerEvent {
+
 
     /**
-     * The currently set {@link Result} for this event (as set by potential previous event listeners).
+     * Instantiate a new PostPlotClearEvent.
      *
-     * @return the current result.
+     * @param plotPlayer The {@link PlotPlayer} that initiated the clear.
+     * @param plot       The clearing plot.
      */
-    @Nullable Result getEventResult();
-
-    /**
-     * Set the {@link Result} for this event.
-     *
-     * @param eventResult the new result.
-     */
-    void setEventResult(@Nullable Result eventResult);
-
-    /**
-     * @deprecated No usage and not null-safe
-     */
-    @Deprecated(since = "7.3.2")
-    default int getEventResultRaw() {
-        return getEventResult() != null ? getEventResult().getValue() : -1;
+    public PostPlotClearEvent(final PlotPlayer<?> plotPlayer, final Plot plot) {
+        super(plotPlayer, plot);
     }
 
 }

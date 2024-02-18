@@ -779,6 +779,14 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 Iterator<Entity> iterator = entities.iterator();
                 while (iterator.hasNext()) {
                     Entity entity = iterator.next();
+                    //noinspection ConstantValue - getEntitySpawnReason annotated as NotNull, but is not NotNull. lol.
+                    if (PaperLib.isPaper() && entity.getEntitySpawnReason() != null && "CUSTOM".equals(entity.getEntitySpawnReason().name())) {
+                        continue;
+                    }
+                    // Fallback for Spigot not having Entity#getEntitySpawnReason
+                    if (entity.getMetadata("ps_custom_spawned").stream().anyMatch(MetadataValue::asBoolean)) {
+                        continue;
+                    }
                     switch (entity.getType().toString()) {
                         case "EGG":
                         case "FISHING_HOOK":
@@ -867,8 +875,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                     if (livingEntity.isLeashed() && !Settings.Enabled_Components.KILL_OWNED_ROAD_MOBS) {
                                         continue;
                                     }
-                                    List<MetadataValue> keep = entity.getMetadata("keep");
-                                    if (!keep.isEmpty()) {
+                                    if (entity.hasMetadata("keep")) {
                                         continue;
                                     }
 

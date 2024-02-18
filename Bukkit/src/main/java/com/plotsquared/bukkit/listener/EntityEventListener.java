@@ -19,6 +19,7 @@
 package com.plotsquared.bukkit.listener;
 
 import com.google.inject.Inject;
+import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitEntityUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -41,6 +42,7 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlotFlagUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
+import io.papermc.lib.PaperLib;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -54,6 +56,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.entity.Vehicle;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -78,52 +81,43 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class EntityEventListener implements Listener {
 
+    private final BukkitPlatform platform;
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
     private float lastRadius;
 
     @Inject
     public EntityEventListener(
+            final @NonNull BukkitPlatform platform,
             final @NonNull PlotAreaManager plotAreaManager,
             final @NonNull EventDispatcher eventDispatcher
     ) {
+        this.platform = platform;
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityCombustByEntity(EntityCombustByEntityEvent event) {
-        EntityDamageByEntityEvent eventChange =
-                new EntityDamageByEntityEvent(
-                        event.getCombuster(),
-                        event.getEntity(),
-                        EntityDamageEvent.DamageCause.FIRE_TICK,
-                        event.getDuration()
-                );
-        onEntityDamageByEntityEvent(eventChange);
-        if (eventChange.isCancelled()) {
-            event.setCancelled(true);
-        }
+        onEntityDamageByEntityCommon(event.getCombuster(), event.getEntity(), EntityDamageEvent.DamageCause.FIRE_TICK, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
-        Entity damager = event.getDamager();
+        onEntityDamageByEntityCommon(event.getDamager(), event.getEntity(), event.getCause(), event);
+    }
+
+    private void onEntityDamageByEntityCommon(
+            final Entity damager,
+            final Entity victim,
+            final EntityDamageEvent.DamageCause cause,
+            final Cancellable event
+    ) {
         Location location = BukkitUtil.adapt(damager.getLocation());
         if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
             return;
         }
-        Entity victim = event.getEntity();
-/*
-        if (victim.getType().equals(EntityType.ITEM_FRAME)) {
-            Plot plot = BukkitUtil.getLocation(victim).getPlot();
-            if (plot != null && !plot.isAdded(damager.getUniqueId())) {
-                event.setCancelled(true);
-                return;
-            }
-        }
-*/
-        if (!BukkitEntityUtil.entityDamage(damager, victim, event.getCause())) {
+        if (!BukkitEntityUtil.entityDamage(damager, victim, cause)) {
             if (event.isCancelled()) {
                 if (victim instanceof Ageable ageable) {
                     if (ageable.getAge() == -24000) {
@@ -158,19 +152,30 @@ public class EntityEventListener implements Listener {
             }
             case "REINFORCEMENTS", "NATURAL", "MOUNT", "PATROL", "RAID", "SHEARED", "SILVERFISH_BLOCK", "ENDER_PEARL",
                     "TRAP", "VILLAGE_DEFENSE", "VILLAGE_INVASION", "BEEHIVE", "CHUNK_GEN", "NETHER_PORTAL",
-                    "DUPLICATION", "FROZEN", "SPELL", "DEFAULT" -> {
+                    "FROZEN", "SPELL", "DEFAULT" -> {
                 if (!area.isMobSpawning()) {
                     event.setCancelled(true);
                     return;
                 }
             }
-            case "BREEDING" -> {
+            case "BREEDING", "DUPLICATION" -> {
                 if (!area.isSpawnBreeding()) {
                     event.setCancelled(true);
                     return;
                 }
             }
-            case "BUILD_IRONGOLEM", "BUILD_SNOWMAN", "BUILD_WITHER", "CUSTOM" -> {
+            case "CUSTOM" -> {
+                if (!area.isSpawnCustom()) {
+                    event.setCancelled(true);
+                    return;
+                }
+                // No need to clutter metadata if running paper
+                if (!PaperLib.isPaper()) {
+                    entity.setMetadata("ps_custom_spawned", new FixedMetadataValue(this.platform, true));
+                }
+                return; // Don't cancel if mob spawning is disabled
+            }
+            case "BUILD_IRONGOLEM", "BUILD_SNOWMAN", "BUILD_WITHER" -> {
                 if (!area.isSpawnCustom()) {
                     event.setCancelled(true);
                     return;
