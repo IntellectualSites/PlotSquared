@@ -224,7 +224,6 @@ public abstract class WorldUtil {
      */
     public abstract int getNextHighestBlockSynchronous(@NonNull String world, int x, int y, int z);
 
-
     /**
      * Set the biome in a region
      *
