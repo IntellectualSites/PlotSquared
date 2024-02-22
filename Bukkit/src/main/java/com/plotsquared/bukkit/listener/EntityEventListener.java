@@ -195,7 +195,7 @@ public class EntityEventListener implements Listener {
             }
             return;
         }
-        if (BukkitEntityUtil.checkEntity(entity, plot.getBasePlot(false))) {
+        if (BukkitEntityUtil.checkEntity(entity, plot)) {
             event.setCancelled(true);
         }
     }

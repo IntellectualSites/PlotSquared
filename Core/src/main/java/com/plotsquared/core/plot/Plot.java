@@ -1220,15 +1220,13 @@ public class Plot {
      */
     public int[] countEntities() {
         int[] count = new int[6];
-        for (Plot current : this.getConnectedPlots()) {
-            int[] result = this.regionManager.countEntities(current);
-            count[CAP_ENTITY] += result[CAP_ENTITY];
-            count[CAP_ANIMAL] += result[CAP_ANIMAL];
-            count[CAP_MONSTER] += result[CAP_MONSTER];
-            count[CAP_MOB] += result[CAP_MOB];
-            count[CAP_VEHICLE] += result[CAP_VEHICLE];
-            count[CAP_MISC] += result[CAP_MISC];
-        }
+        int[] result = this.regionManager.countEntities(this);
+        count[CAP_ENTITY] += result[CAP_ENTITY];
+        count[CAP_ANIMAL] += result[CAP_ANIMAL];
+        count[CAP_MONSTER] += result[CAP_MONSTER];
+        count[CAP_MOB] += result[CAP_MOB];
+        count[CAP_VEHICLE] += result[CAP_VEHICLE];
+        count[CAP_MISC] += result[CAP_MISC];
         return count;
     }
 
