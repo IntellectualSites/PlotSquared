@@ -42,6 +42,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -91,30 +92,30 @@ public class BukkitRegionManager extends RegionManager {
         }
         PlotArea area = plot.getArea();
         World world = BukkitUtil.getWorld(area.getWorldName());
-        if(world == null) {
+        if (world == null) {
             return count;
         }
 
         for (final CuboidRegion region : plot.getRegions()) {
             for (int x = region.getMinimumPoint().getX() >> 4; x <= region.getMaximumPoint().getX() >> 4; x++) {
                 for (int z = region.getMinimumPoint().getZ() >> 4; z <= region.getMaximumPoint().getZ() >> 4; z++) {
-                    world.getChunkAtAsync(x, z).thenAccept(chunk -> {
-                        final Entity[] entities = chunk.getEntities();
-                        for (Entity entity : entities) {
-                            if (entity instanceof Player) {
-                                continue;
-                            }
-
-                            org.bukkit.Location location = entity.getLocation();
-                            Plot other = area.getPlot(BukkitUtil.adapt(location));
-                            if(plot.equals(other)) {
-                                count(count, entity);
-                            }
+                    Chunk chunk = world.getChunkAt(x, z);
+                    final Entity[] entities = chunk.getEntities();
+                    for (Entity entity : entities) {
+                        if (entity instanceof Player) {
+                            continue;
                         }
-                    });
+
+                        org.bukkit.Location location = entity.getLocation();
+                        Plot other = area.getPlot(BukkitUtil.adapt(location));
+                        if (plot.equals(other)) {
+                            count(count, entity);
+                        }
+                    }
                 }
             }
         }
+
         return count;
     }
 
