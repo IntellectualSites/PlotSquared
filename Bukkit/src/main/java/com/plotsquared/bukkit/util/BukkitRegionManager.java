@@ -104,7 +104,12 @@ public class BukkitRegionManager extends RegionManager {
                             if (entity instanceof Player) {
                                 continue;
                             }
-                            count(count, entity);
+
+                            org.bukkit.Location location = entity.getLocation();
+                            Plot other = area.getPlot(BukkitUtil.adapt(location));
+                            if(plot.equals(other)) {
+                                count(count, entity);
+                            }
                         }
                     });
                 }
