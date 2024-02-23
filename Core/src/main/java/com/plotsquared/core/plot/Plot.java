@@ -106,6 +106,7 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_MISC;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_MOB;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_MONSTER;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
+import static com.plotsquared.core.util.entity.EntityCategories.CAP_VILLAGER;
 
 /**
  * The plot class<br>
@@ -1219,7 +1220,7 @@ public class Plot {
      * @see RegionManager#countEntities(Plot)
      */
     public int[] countEntities() {
-        int[] count = new int[6];
+        int[] count = new int[7];
         for (Plot current : this.getConnectedPlots()) {
             int[] result = this.regionManager.countEntities(current);
             count[CAP_ENTITY] += result[CAP_ENTITY];
@@ -1228,6 +1229,7 @@ public class Plot {
             count[CAP_MOB] += result[CAP_MOB];
             count[CAP_VEHICLE] += result[CAP_VEHICLE];
             count[CAP_MISC] += result[CAP_MISC];
+            count[CAP_VILLAGER] += result[CAP_VILLAGER];
         }
         return count;
     }
