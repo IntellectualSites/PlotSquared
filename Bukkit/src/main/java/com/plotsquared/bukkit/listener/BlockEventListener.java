@@ -670,7 +670,7 @@ public class BlockEventListener implements Listener {
                 BlockBreakEvent call = new BlockBreakEvent(block, player);
                 Bukkit.getServer().getPluginManager().callEvent(call);
                 if (!call.isCancelled()) {
-                    event.getBlock().breakNaturally();
+                    event.getBlock().breakNaturally(event.getItemInHand());
                 }
             }
             // == rather than <= as we only care about the "ground level" not being destroyed
