@@ -64,14 +64,15 @@ public class Caps extends SubCommand {
             player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
             return false;
         }
-        player.sendMessage(TranslatableCaption.of("info.plot_caps_header"));
-        final int[] countedEntities = plot.countEntities();
-        sendFormatted(plot, player, MobCapFlag.class, countedEntities, "mobs", CAP_MOB);
-        sendFormatted(plot, player, HostileCapFlag.class, countedEntities, "hostile", CAP_MONSTER);
-        sendFormatted(plot, player, AnimalCapFlag.class, countedEntities, "animals", CAP_ANIMAL);
-        sendFormatted(plot, player, VehicleCapFlag.class, countedEntities, "vehicle", CAP_VEHICLE);
-        sendFormatted(plot, player, MiscCapFlag.class, countedEntities, "misc", CAP_MISC);
-        sendFormatted(plot, player, EntityCapFlag.class, countedEntities, "entities", CAP_ENTITY);
+        plot.countEntitiesAsync().thenAccept(countedEntities -> {
+            player.sendMessage(TranslatableCaption.of("info.plot_caps_header"));
+            sendFormatted(plot, player, MobCapFlag.class, countedEntities, "mobs", CAP_MOB);
+            sendFormatted(plot, player, HostileCapFlag.class, countedEntities, "hostile", CAP_MONSTER);
+            sendFormatted(plot, player, AnimalCapFlag.class, countedEntities, "animals", CAP_ANIMAL);
+            sendFormatted(plot, player, VehicleCapFlag.class, countedEntities, "vehicle", CAP_VEHICLE);
+            sendFormatted(plot, player, MiscCapFlag.class, countedEntities, "misc", CAP_MISC);
+            sendFormatted(plot, player, EntityCapFlag.class, countedEntities, "entities", CAP_ENTITY);
+        });
         return true;
     }
 

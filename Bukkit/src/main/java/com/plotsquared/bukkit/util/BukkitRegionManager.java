@@ -45,12 +45,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ANIMAL;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ENTITY;
@@ -102,7 +104,7 @@ public class BukkitRegionManager extends RegionManager {
                     Chunk chunk = world.getChunkAt(x, z);
                     final Entity[] entities = chunk.getEntities();
                     for (Entity entity : entities) {
-                        if (entity instanceof Player) {
+                        if (entity instanceof Player || entity instanceof Item) {
                             continue;
                         }
 
@@ -117,6 +119,11 @@ public class BukkitRegionManager extends RegionManager {
         }
 
         return count;
+    }
+
+    @Override
+    public CompletableFuture<int[]> countEntitiesAsync(final Plot plot) {
+        return CompletableFuture.supplyAsync(() -> countEntities(plot));
     }
 
     @Override

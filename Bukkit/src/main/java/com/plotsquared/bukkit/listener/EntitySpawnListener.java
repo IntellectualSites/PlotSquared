@@ -18,6 +18,7 @@
  */
 package com.plotsquared.bukkit.listener;
 
+import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.util.BukkitEntityUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
@@ -27,6 +28,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import io.papermc.lib.PaperLib;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -155,9 +157,11 @@ public class EntitySpawnListener implements Listener {
             event.setCancelled(true);
         }
         if (type == EntityType.ENDER_CRYSTAL) {
-            if (BukkitEntityUtil.checkEntity(entity, plot)) {
-                event.setCancelled(true);
-            }
+            BukkitEntityUtil.checkEntityAsync(entity, plot).thenAcceptAsync(toRemove -> {
+                if (toRemove) {
+                    entity.remove();
+                }
+            }, Bukkit.getScheduler().getMainThreadExecutor(BukkitPlatform.getPlugin(BukkitPlatform.class)));
             return;
         }
         if (type == EntityType.SHULKER) {

@@ -56,6 +56,7 @@ import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 public class BukkitEntityUtil {
 
@@ -397,6 +398,10 @@ public class BukkitEntityUtil {
         }
 
         return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED);
+    }
+
+    public static CompletableFuture<Boolean> checkEntityAsync(Entity entity, Plot plot) {
+        return CompletableFuture.supplyAsync(() -> checkEntity(entity, plot));
     }
 
 }

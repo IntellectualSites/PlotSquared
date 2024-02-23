@@ -21,6 +21,7 @@ package com.plotsquared.bukkit.listener;
 import com.destroystokyo.paper.MaterialTags;
 import com.google.common.base.Charsets;
 import com.google.inject.Inject;
+import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitEntityUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -1502,10 +1503,13 @@ public class PlayerEventListener implements Listener {
                     return;
                 }
             }
-            if (BukkitEntityUtil.checkEntity(event.getEntity(), plot)) {
-                event.setCancelled(true);
-            }
 
+            Entity entity = event.getEntity();
+            BukkitEntityUtil.checkEntityAsync(entity, plot.getBasePlot(false)).thenAcceptAsync(toRemove -> {
+                if (toRemove) {
+                    entity.remove();
+                }
+            }, Bukkit.getScheduler().getMainThreadExecutor(BukkitPlatform.getPlugin(BukkitPlatform.class)));
         }
     }
 

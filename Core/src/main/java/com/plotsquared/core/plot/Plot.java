@@ -1215,6 +1215,10 @@ public class Plot {
         return this.regionManager.countEntities(this);
     }
 
+    public CompletableFuture<int[]> countEntitiesAsync() {
+        return this.regionManager.countEntitiesAsync(this);
+    }
+
     /**
      * Returns true if a previous task was running
      *

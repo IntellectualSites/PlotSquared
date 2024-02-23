@@ -48,6 +48,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.io.File;
 import java.util.Collection;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class RegionManager {
 
@@ -87,6 +88,8 @@ public abstract class RegionManager {
      * @return array of counts of entity types
      */
     public abstract int[] countEntities(Plot plot);
+
+    public abstract CompletableFuture<int[]> countEntitiesAsync(Plot plot);
 
     public void deleteRegionFiles(final String world, final Collection<BlockVector2> chunks, final Runnable whenDone) {
         TaskManager.runTaskAsync(() -> {
