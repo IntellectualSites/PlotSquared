@@ -669,14 +669,13 @@ public class BlockEventListener implements Listener {
                 Block block = event.getBlock();
                 BlockBreakEvent call = new BlockBreakEvent(block, player);
                 Bukkit.getServer().getPluginManager().callEvent(call);
-                if (call.isCancelled()) {
-                    return;
+                if (!call.isCancelled()) {
+                    if (Settings.Flags.INSTABREAK_CONSIDER_TOOL) {
+                        block.breakNaturally(event.getItemInHand());
+                    } else {
+                        block.breakNaturally();
+                    }
                 }
-                if (Settings.Flags.INSTABREAK_CONSIDER_TOOL) {
-                    block.breakNaturally(event.getItemInHand());
-                    return;
-                }
-                block.breakNaturally();
             }
             // == rather than <= as we only care about the "ground level" not being destroyed
             if (location.getY() == area.getMinGenHeight()) {
