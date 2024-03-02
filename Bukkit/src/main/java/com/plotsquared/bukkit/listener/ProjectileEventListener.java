@@ -28,12 +28,14 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotHandler;
+import com.plotsquared.core.plot.flag.implementations.FishingFlag;
 import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.PlotFlagUtil;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -132,6 +134,11 @@ public class ProjectileEventListener implements Listener {
                 event.setCancelled(true);
             }
         } else if (!plot.isAdded(pp.getUUID())) {
+            if (entity.getType().equals(EntityType.FISHING_HOOK)) {
+                if (plot.getFlag(FishingFlag.class)) {
+                    return;
+                }
+            }
             if (!plot.getFlag(ProjectilesFlag.class)) {
                 if (!pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
                     pp.sendMessage(
@@ -187,7 +194,8 @@ public class ProjectileEventListener implements Listener {
                 return;
             }
             if (plot.isAdded(pp.getUUID()) || pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER) || plot.getFlag(
-                    ProjectilesFlag.class)) {
+                    ProjectilesFlag.class) || (entity.getType().equals(EntityType.FISHING_HOOK) && plot.getFlag(
+                    FishingFlag.class))) {
                 return;
             }
             entity.remove();
