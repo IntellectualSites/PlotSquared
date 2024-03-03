@@ -48,6 +48,7 @@ import com.plotsquared.core.plot.flag.implementations.EntityChangeBlockFlag;
 import com.plotsquared.core.plot.flag.implementations.ExplosionFlag;
 import com.plotsquared.core.plot.flag.implementations.FarewellFlag;
 import com.plotsquared.core.plot.flag.implementations.FeedFlag;
+import com.plotsquared.core.plot.flag.implementations.FishingFlag;
 import com.plotsquared.core.plot.flag.implementations.FlyFlag;
 import com.plotsquared.core.plot.flag.implementations.ForcefieldFlag;
 import com.plotsquared.core.plot.flag.implementations.GamemodeFlag;
@@ -158,6 +159,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(EditSignFlag.EDIT_SIGN_FALSE);
         this.addFlag(EntityChangeBlockFlag.ENTITY_CHANGE_BLOCK_FALSE);
         this.addFlag(ExplosionFlag.EXPLOSION_FALSE);
+        this.addFlag(FishingFlag.FISHING_FALSE);
         this.addFlag(ForcefieldFlag.FORCEFIELD_FALSE);
         this.addFlag(GrassGrowFlag.GRASS_GROW_TRUE);
         this.addFlag(HangingBreakFlag.HANGING_BREAK_FALSE);

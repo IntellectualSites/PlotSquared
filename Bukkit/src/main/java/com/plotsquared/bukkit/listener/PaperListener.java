@@ -40,6 +40,7 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.FlagContainer;
 import com.plotsquared.core.plot.flag.implementations.BeaconEffectsFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
+import com.plotsquared.core.plot.flag.implementations.FishingFlag;
 import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
@@ -348,6 +349,11 @@ public class PaperListener implements Listener {
                 event.setCancelled(true);
             }
         } else if (!plot.isAdded(pp.getUUID())) {
+            if (entity.getType().equals(EntityType.FISHING_HOOK)) {
+                if (plot.getFlag(FishingFlag.class)) {
+                    return;
+                }
+            }
             if (!plot.getFlag(ProjectilesFlag.class)) {
                 if (!pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
                     pp.sendMessage(

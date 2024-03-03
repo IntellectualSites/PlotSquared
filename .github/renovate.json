@@ -9,7 +9,6 @@
     "dependencies"
   ],
   "rebaseWhen": "conflicted",
-  "schedule": ["on the first day of the month"],
   "ignoreDeps": [
     "com.google.code.gson:gson",
     "com.google.guava:guava",
