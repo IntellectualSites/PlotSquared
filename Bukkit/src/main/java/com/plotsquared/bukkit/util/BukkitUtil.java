@@ -296,7 +296,7 @@ public class BukkitUtil extends WorldUtil {
     ) {
         final World bukkitWorld = Objects.requireNonNull(getWorld(world));
         int maxY = com.plotsquared.bukkit.util.BukkitWorld.getMaxWorldHeight(bukkitWorld);
-        for (int current = y - 1; current <= maxY; current++) {
+        for (int current = y; current <= maxY; current++) {
             Block block = bukkitWorld.getBlockAt(x, current, z);
             Material type = block.getType();
             if (!type.isSolid() || block.isLiquid()) {
@@ -312,7 +312,7 @@ public class BukkitUtil extends WorldUtil {
         ensureLoaded(world, x, z, chunk -> {
             final World bukkitWorld = Objects.requireNonNull(getWorld(world));
             int maxY = com.plotsquared.bukkit.util.BukkitWorld.getMaxWorldHeight(bukkitWorld);
-            for (int current = y - 1; current <= maxY; current++) {
+            for (int current = y; current <= maxY; current++) {
                 Block block = bukkitWorld.getBlockAt(x, current, z);
                 Material type = block.getType();
                 if (!type.isSolid() || block.isLiquid()) {
