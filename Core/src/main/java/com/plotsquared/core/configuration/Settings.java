@@ -723,6 +723,12 @@ public class Settings extends Config {
 
     }
 
+    @Comment("Settings related to flags")
+    public static final class Flags {
+
+        @Comment("If \"instabreak\" should consider the used tool.")
+        public static boolean INSTABREAK_CONSIDER_TOOL = false;
+    }
 
     @Comment({"Enable or disable parts of the plugin",
             "Note: A cache will use some memory if enabled"})
