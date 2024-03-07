@@ -62,6 +62,10 @@ import java.util.zip.ZipOutputStream;
 
 public abstract class WorldUtil {
 
+    public static boolean isValidLocation(Location location) {
+        return Math.abs(location.getX()) < 30000000 && Math.abs(location.getZ()) < 30000000;
+    }
+
     /**
      * Set the biome in a region
      *
