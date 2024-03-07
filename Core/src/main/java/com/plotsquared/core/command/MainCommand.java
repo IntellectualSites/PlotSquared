@@ -268,6 +268,7 @@ public class MainCommand extends Command {
                     tp = true;
                 } else {
                     player.sendMessage(TranslatableCaption.of("border.denied"));
+                    return CompletableFuture.completedFuture(false);
                 }
                 // Trim command
                 args = Arrays.copyOfRange(args, 1, args.length);
