@@ -19,6 +19,7 @@
 package com.plotsquared.bukkit.listener;
 
 import com.destroystokyo.paper.event.block.BeaconEffectEvent;
+import com.destroystokyo.paper.event.block.BlockDestroyEvent;
 import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
 import com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent;
 import com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent;
@@ -42,6 +43,7 @@ import com.plotsquared.core.plot.flag.implementations.BeaconEffectsFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.FishingFlag;
 import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
+import com.plotsquared.core.plot.flag.implementations.TileDropsFlag;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.PlotFlagUtil;
@@ -59,6 +61,7 @@ import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.projectiles.ProjectileSource;
@@ -82,6 +85,32 @@ public class PaperListener implements Listener {
     @Inject
     public PaperListener(final @NonNull PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockBreak(final BlockBreakEvent event) {
+        Location location = BukkitUtil.adapt(event.getBlock().getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = area.getPlot(location);
+        if (plot != null) {
+            event.setDropItems(!plot.getFlag(TileDropsFlag.class));
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockDestroy(final BlockDestroyEvent event) {
+        Location location = BukkitUtil.adapt(event.getBlock().getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = area.getPlot(location);
+        if (plot != null) {
+            event.setWillDrop(!plot.getFlag(TileDropsFlag.class));
+        }
     }
 
     @EventHandler
