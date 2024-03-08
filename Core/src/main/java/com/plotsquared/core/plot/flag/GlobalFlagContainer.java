@@ -102,7 +102,7 @@ import com.plotsquared.core.plot.flag.implementations.SnowMeltFlag;
 import com.plotsquared.core.plot.flag.implementations.SoilDryFlag;
 import com.plotsquared.core.plot.flag.implementations.TamedAttackFlag;
 import com.plotsquared.core.plot.flag.implementations.TamedInteractFlag;
-import com.plotsquared.core.plot.flag.implementations.TileDropsFlag;
+import com.plotsquared.core.plot.flag.implementations.TileDropFlag;
 import com.plotsquared.core.plot.flag.implementations.TimeFlag;
 import com.plotsquared.core.plot.flag.implementations.TitlesFlag;
 import com.plotsquared.core.plot.flag.implementations.UntrustedVisitFlag;
@@ -199,7 +199,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(SoilDryFlag.SOIL_DRY_FALSE);
         this.addFlag(TamedAttackFlag.TAMED_ATTACK_FALSE);
         this.addFlag(TamedInteractFlag.TAMED_INTERACT_FALSE);
-        this.addFlag(TileDropsFlag.TILE_DROP_FALSE);
+        this.addFlag(TileDropFlag.TILE_DROP_TRUE);
         this.addFlag(UntrustedVisitFlag.UNTRUSTED_VISIT_FLAG_TRUE);
         this.addFlag(VehicleBreakFlag.VEHICLE_BREAK_FALSE);
         this.addFlag(VehiclePlaceFlag.VEHICLE_PLACE_FALSE);

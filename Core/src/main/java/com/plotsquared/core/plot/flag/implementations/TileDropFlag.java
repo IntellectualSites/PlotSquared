@@ -23,20 +23,20 @@ import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * @Since TODO
+ * @since TODO
  */
 
-public class TileDropsFlag extends BooleanFlag<TileDropsFlag> {
+public class TileDropFlag extends BooleanFlag<TileDropFlag> {
 
-    public static final TileDropsFlag TILE_DROP_TRUE = new TileDropsFlag(true);
-    public static final TileDropsFlag TILE_DROP_FALSE = new TileDropsFlag(false);
+    public static final TileDropFlag TILE_DROP_TRUE = new TileDropFlag(true);
+    public static final TileDropFlag TILE_DROP_FALSE = new TileDropFlag(false);
 
-    private TileDropsFlag(boolean value) {
-        super(value, TranslatableCaption.of("flags.flag_description_tile_drops"));
+    private TileDropFlag(boolean value) {
+        super(value, TranslatableCaption.of("flags.flag_description_tile_drop"));
     }
 
     @Override
-    protected TileDropsFlag flagOf(@NonNull Boolean value) {
+    protected TileDropFlag flagOf(@NonNull Boolean value) {
         return value ? TILE_DROP_TRUE : TILE_DROP_FALSE;
     }
 

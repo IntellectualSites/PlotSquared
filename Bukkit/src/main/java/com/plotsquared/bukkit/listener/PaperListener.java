@@ -43,7 +43,7 @@ import com.plotsquared.core.plot.flag.implementations.BeaconEffectsFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.FishingFlag;
 import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
-import com.plotsquared.core.plot.flag.implementations.TileDropsFlag;
+import com.plotsquared.core.plot.flag.implementations.TileDropFlag;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.PlotFlagUtil;
@@ -88,9 +88,9 @@ public class PaperListener implements Listener {
     }
 
     /**
-     * @Since TODO
+     * @since TODO
      */
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onBlockBreak(final BlockBreakEvent event) {
         Location location = BukkitUtil.adapt(event.getBlock().getLocation());
         PlotArea area = location.getPlotArea();
@@ -99,14 +99,14 @@ public class PaperListener implements Listener {
         }
         Plot plot = area.getPlot(location);
         if (plot != null) {
-            event.setDropItems(!plot.getFlag(TileDropsFlag.class));
+            event.setDropItems(plot.getFlag(TileDropFlag.class));
         }
     }
 
     /**
-     * @Since TODO
+     * @since TODO
      */
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onBlockDestroy(final BlockDestroyEvent event) {
         Location location = BukkitUtil.adapt(event.getBlock().getLocation());
         PlotArea area = location.getPlotArea();
@@ -115,7 +115,7 @@ public class PaperListener implements Listener {
         }
         Plot plot = area.getPlot(location);
         if (plot != null) {
-            event.setWillDrop(!plot.getFlag(TileDropsFlag.class));
+            event.setWillDrop(plot.getFlag(TileDropFlag.class));
         }
     }
 
