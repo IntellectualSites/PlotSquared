@@ -65,7 +65,7 @@ public abstract class WorldUtil {
     /**
      * {@return whether the given location is valid in the world}
      * @param location the location to check
-     * @since TODO
+     * @since 7.3.6
      */
     public static boolean isValidLocation(Location location) {
         return Math.abs(location.getX()) < 30000000 && Math.abs(location.getZ()) < 30000000;
