@@ -77,6 +77,7 @@ public class Visit extends Command {
             query.whereBasePlot();
         }
 
+        // without specified argument
         if (page == Integer.MIN_VALUE) {
             page = 1;
         }
@@ -94,10 +95,15 @@ public class Visit extends Command {
 
         final List<Plot> plots = query.asList();
 
+        // Conversion of reversed page argument
+        if (page < 0) {
+            page = (plots.size() + 1) + page;
+        }
+
         if (plots.isEmpty()) {
             player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
             return;
-        } else if (plots.size() < page || page < 1) {
+        } else if (page > plots.size() || page < 1) {
             player.sendMessage(
                     TranslatableCaption.of("invalid.number_not_in_range"),
                     TagResolver.builder()
@@ -188,34 +194,22 @@ public class Visit extends Command {
         int page = Integer.MIN_VALUE;
 
         switch (args.length) {
-            // /p v <user> <area> <page>
+            // /p v <player> <area> <page>
             case 3:
-                if (!MathMan.isInteger(args[2])) {
-                    player.sendMessage(
-                            TranslatableCaption.of("invalid.not_valid_number"),
-                            TagResolver.resolver("value", Tag.inserting(Component.text("(1, ∞)")))
-                    );
-                    player.sendMessage(
-                            TranslatableCaption.of("commandconfig.command_syntax"),
-                            TagResolver.resolver("value", Tag.inserting(Component.text(getUsage())))
-                    );
+                if (isInvalidPageNr(args[2])) {
+                    sendInvalidPageNrMsg(player);
                     return CompletableFuture.completedFuture(false);
                 }
-                page = Integer.parseInt(args[2]);
-                // /p v <name> <area> [page]
-                // /p v <name> [page]
+                page = getPageNr(args[2]);
+                // /p v <player> <area> [page]
+                // /p v <player> [page]
             case 2:
-                if (page != Integer.MIN_VALUE || !MathMan.isInteger(args[1])) {
+                // If "case 3" is already through or the argument is not a page number:
+                // -> /p v <player> <area> [page]
+                if (page != Integer.MIN_VALUE || isInvalidPageNr(args[1])) {
                     sortByArea = this.plotAreaManager.getPlotAreaByString(args[1]);
                     if (sortByArea == null) {
-                        player.sendMessage(
-                                TranslatableCaption.of("invalid.not_valid_number"),
-                                TagResolver.resolver("value", Tag.inserting(Component.text("(1, ∞)")))
-                        );
-                        player.sendMessage(
-                                TranslatableCaption.of("commandconfig.command_syntax"),
-                                TagResolver.resolver("value", Tag.inserting(Component.text(getUsage())))
-                        );
+                        sendInvalidPageNrMsg(player);
                         return CompletableFuture.completedFuture(false);
                     }
 
@@ -249,16 +243,13 @@ public class Visit extends Command {
                     });
                     break;
                 }
-                try {
-                    page = Integer.parseInt(args[1]);
-                } catch (NumberFormatException ignored) {
-                    player.sendMessage(
-                            TranslatableCaption.of("invalid.not_a_number"),
-                            TagResolver.resolver("value", Tag.inserting(Component.text(args[1])))
-                    );
+                // -> /p v <player> <page>
+                if (isInvalidPageNr(args[1])) {
+                    sendInvalidPageNrMsg(player);
                     return CompletableFuture.completedFuture(false);
                 }
-                // /p v <name> [page]
+                page = getPageNr(args[1]);
+                // /p v <player> [page]
                 // /p v <uuid> [page]
                 // /p v <plot> [page]
                 // /p v <alias>
@@ -326,6 +317,35 @@ public class Visit extends Command {
         return CompletableFuture.completedFuture(true);
     }
 
+    private boolean isInvalidPageNr(String arg) {
+        if (MathMan.isInteger(arg)) {
+            return false;
+        } else if (arg.equals("last") || arg.equals("n")) {
+            return false;
+        }
+        return true;
+    }
+
+    private int getPageNr(String arg) {
+        if (MathMan.isInteger(arg)) {
+            return Integer.parseInt(arg);
+        } else if (arg.equals("last") || arg.equals("n")) {
+            return -1;
+        }
+        return Integer.MIN_VALUE;
+    }
+
+    private void sendInvalidPageNrMsg(PlotPlayer<?> player) {
+        player.sendMessage(
+                TranslatableCaption.of("invalid.not_valid_number"),
+                TagResolver.resolver("value", Tag.inserting(Component.text("(1, ∞)")))
+        );
+        player.sendMessage(
+                TranslatableCaption.of("commandconfig.command_syntax"),
+                TagResolver.resolver("value", Tag.inserting(Component.text(getUsage())))
+        );
+    }
+
     @Override
     public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         final List<Command> completions = new ArrayList<>();
@@ -334,6 +354,7 @@ public class Visit extends Command {
             case 1 -> {
                 completions.addAll(
                         TabCompletions.completeAreas(args[1]));
+                completions.addAll(TabCompletions.asCompletions("last"));
                 if (args[1].isEmpty()) {
                     // if no input is given, only suggest 1 - 3
                     completions.addAll(
@@ -344,6 +365,7 @@ public class Visit extends Command {
                         TabCompletions.completeNumbers(args[1], 10, 999));
             }
             case 2 -> {
+                completions.addAll(TabCompletions.asCompletions("last"));
                 if (args[2].isEmpty()) {
                     // if no input is given, only suggest 1 - 3
                     completions.addAll(
