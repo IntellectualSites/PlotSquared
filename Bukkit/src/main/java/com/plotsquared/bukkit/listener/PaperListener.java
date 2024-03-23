@@ -61,7 +61,6 @@ import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.projectiles.ProjectileSource;
@@ -87,25 +86,6 @@ public class PaperListener implements Listener {
         this.plotAreaManager = plotAreaManager;
     }
 
-    /**
-     * @since TODO
-     */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    public void onBlockBreak(final BlockBreakEvent event) {
-        Location location = BukkitUtil.adapt(event.getBlock().getLocation());
-        PlotArea area = location.getPlotArea();
-        if (area == null) {
-            return;
-        }
-        Plot plot = area.getPlot(location);
-        if (plot != null) {
-            event.setDropItems(plot.getFlag(TileDropFlag.class));
-        }
-    }
-
-    /**
-     * @since TODO
-     */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onBlockDestroy(final BlockDestroyEvent event) {
         Location location = BukkitUtil.adapt(event.getBlock().getLocation());
