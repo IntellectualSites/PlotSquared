@@ -19,6 +19,7 @@
 package com.plotsquared.bukkit.listener;
 
 import com.destroystokyo.paper.event.block.BeaconEffectEvent;
+import com.destroystokyo.paper.event.block.BlockDestroyEvent;
 import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
 import com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent;
 import com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent;
@@ -42,6 +43,7 @@ import com.plotsquared.core.plot.flag.implementations.BeaconEffectsFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.FishingFlag;
 import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
+import com.plotsquared.core.plot.flag.implementations.TileDropFlag;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.PlotFlagUtil;
@@ -82,6 +84,19 @@ public class PaperListener implements Listener {
     @Inject
     public PaperListener(final @NonNull PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    public void onBlockDestroy(final BlockDestroyEvent event) {
+        Location location = BukkitUtil.adapt(event.getBlock().getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = area.getPlot(location);
+        if (plot != null) {
+            event.setWillDrop(plot.getFlag(TileDropFlag.class));
+        }
     }
 
     @EventHandler
