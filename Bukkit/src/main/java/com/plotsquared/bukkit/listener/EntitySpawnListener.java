@@ -154,7 +154,7 @@ public class EntitySpawnListener implements Listener {
         if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
             event.setCancelled(true);
         }
-        if (type == EntityType.ENDER_CRYSTAL) {
+        if (type == EntityType.ENDER_CRYSTAL || type == EntityType.ARMOR_STAND) {
             if (BukkitEntityUtil.checkEntity(entity, plot)) {
                 event.setCancelled(true);
             }
