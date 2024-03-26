@@ -18,7 +18,6 @@
  */
 package com.plotsquared.core.inject.modules;
 
-import cloud.commandframework.services.ServicePipeline;
 import com.google.inject.AbstractModule;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
@@ -31,6 +30,7 @@ import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.sk89q.worldedit.WorldEdit;
+import org.incendo.cloud.services.ServicePipeline;
 
 import java.io.File;
 

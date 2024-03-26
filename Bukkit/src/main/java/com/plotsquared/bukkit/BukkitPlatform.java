@@ -28,6 +28,7 @@ import com.google.inject.TypeLiteral;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.inject.BackupModule;
 import com.plotsquared.bukkit.inject.BukkitModule;
+import com.plotsquared.bukkit.inject.CloudModule;
 import com.plotsquared.bukkit.inject.PermissionModule;
 import com.plotsquared.bukkit.inject.WorldManagerModule;
 import com.plotsquared.bukkit.listener.BlockEventListener;
@@ -64,6 +65,7 @@ import com.plotsquared.bukkit.uuid.SquirrelIdUUIDService;
 import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.backup.BackupManager;
+import com.plotsquared.core.commands.PlotSquaredCommandManager;
 import com.plotsquared.core.components.ComponentPresetManager;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
@@ -83,6 +85,7 @@ import com.plotsquared.core.inject.annotations.DefaultGenerator;
 import com.plotsquared.core.inject.annotations.ImpromptuPipeline;
 import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.inject.annotations.WorldFile;
+import com.plotsquared.core.inject.modules.CommandModule;
 import com.plotsquared.core.inject.modules.PlotSquaredModule;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.listener.WESubscriber;
@@ -293,6 +296,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         new PermissionModule(),
                         new WorldManagerModule(),
                         new PlotSquaredModule(),
+                        new CommandModule(),
+                        new CloudModule(this),
                         new BukkitModule(this),
                         new BackupModule()
                 );
@@ -388,6 +393,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         // Commands
         if (Settings.Enabled_Components.COMMANDS) {
             this.registerCommands();
+            // Register the commands.
+            this.injector().getInstance(PlotSquaredCommandManager.class).registerDefaultCommands();
         }
 
         // Permissions

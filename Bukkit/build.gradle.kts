@@ -53,6 +53,9 @@ dependencies {
 
     // Adventure
     implementation(libs.adventureBukkit)
+
+    // Cloud
+    implementation(libs.cloudPaper)
 }
 
 tasks.processResources {
@@ -77,6 +80,7 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("com.google.inject", "com.plotsquared.google")
     relocate("org.aopalliance", "com.plotsquared.core.aopalliance")
     relocate("cloud.commandframework.services", "com.plotsquared.core.services")
+    relocate("cloud.commandframework", "com.plotsquared.commands")
     relocate("io.leangen.geantyref", "com.plotsquared.core.geantyref")
     relocate("com.intellectualsites.arkitektonika", "com.plotsquared.core.arkitektonika")
     relocate("com.intellectualsites.http", "com.plotsquared.core.http")

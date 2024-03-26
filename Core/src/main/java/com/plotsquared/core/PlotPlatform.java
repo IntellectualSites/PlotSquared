@@ -18,7 +18,6 @@
  */
 package com.plotsquared.core;
 
-import cloud.commandframework.services.ServicePipeline;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
@@ -47,6 +46,7 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.services.ServicePipeline;
 
 import java.io.File;
 
