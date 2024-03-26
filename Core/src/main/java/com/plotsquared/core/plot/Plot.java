@@ -100,13 +100,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-import static com.plotsquared.core.util.entity.EntityCategories.CAP_ANIMAL;
-import static com.plotsquared.core.util.entity.EntityCategories.CAP_ENTITY;
-import static com.plotsquared.core.util.entity.EntityCategories.CAP_MISC;
-import static com.plotsquared.core.util.entity.EntityCategories.CAP_MOB;
-import static com.plotsquared.core.util.entity.EntityCategories.CAP_MONSTER;
-import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
-
 /**
  * The plot class<br>
  * [IMPORTANT]
@@ -1219,17 +1212,11 @@ public class Plot {
      * @see RegionManager#countEntities(Plot)
      */
     public int[] countEntities() {
-        int[] count = new int[6];
-        for (Plot current : this.getConnectedPlots()) {
-            int[] result = this.regionManager.countEntities(current);
-            count[CAP_ENTITY] += result[CAP_ENTITY];
-            count[CAP_ANIMAL] += result[CAP_ANIMAL];
-            count[CAP_MONSTER] += result[CAP_MONSTER];
-            count[CAP_MOB] += result[CAP_MOB];
-            count[CAP_VEHICLE] += result[CAP_VEHICLE];
-            count[CAP_MISC] += result[CAP_MISC];
-        }
-        return count;
+        return this.regionManager.countEntities(this);
+    }
+
+    public CompletableFuture<int[]> countEntitiesAsync() {
+        return this.regionManager.countEntitiesAsync(this);
     }
 
     /**

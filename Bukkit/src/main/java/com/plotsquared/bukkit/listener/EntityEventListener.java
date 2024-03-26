@@ -43,6 +43,7 @@ import com.plotsquared.core.util.PlotFlagUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
 import io.papermc.lib.PaperLib;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -195,9 +196,12 @@ public class EntityEventListener implements Listener {
             }
             return;
         }
-        if (BukkitEntityUtil.checkEntity(entity, plot.getBasePlot(false))) {
-            event.setCancelled(true);
-        }
+
+        BukkitEntityUtil.checkEntityAsync(entity, plot.getBasePlot(false)).thenAcceptAsync(toRemove -> {
+            if(toRemove) {
+                entity.remove();
+            }
+        }, Bukkit.getScheduler().getMainThreadExecutor(BukkitPlatform.getPlugin(BukkitPlatform.class)));
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -421,13 +425,17 @@ public class EntityEventListener implements Listener {
             return;
         }
         Plot plot = area.getOwnedPlotAbs(location);
-        if (plot == null || BukkitEntityUtil.checkEntity(entity, plot)) {
-            entity.remove();
+        if (plot == null) {
             return;
         }
-        if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
-            entity.setMetadata("plot", new FixedMetadataValue((Plugin) PlotSquared.platform(), plot));
-        }
+
+        BukkitEntityUtil.checkEntityAsync(entity, plot.getBasePlot(false)).thenAcceptAsync(toRemove -> {
+            if (toRemove) {
+                entity.remove();
+            } else if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
+                entity.setMetadata("plot", new FixedMetadataValue((Plugin) PlotSquared.platform(), plot));
+            }
+        }, Bukkit.getScheduler().getMainThreadExecutor(BukkitPlatform.getPlugin(BukkitPlatform.class)));
     }
 
 }

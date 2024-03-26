@@ -41,19 +41,18 @@ import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ANIMAL;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ENTITY;
@@ -88,77 +87,43 @@ public class BukkitRegionManager extends RegionManager {
 
     @Override
     public int[] countEntities(@NonNull Plot plot) {
+        int[] count = new int[6];
         int[] existing = (int[]) plot.getMeta("EntityCount");
         if (existing != null && (System.currentTimeMillis() - (long) plot.getMeta("EntityCountTime") < 1000)) {
             return existing;
         }
         PlotArea area = plot.getArea();
         World world = BukkitUtil.getWorld(area.getWorldName());
-        Location bot = plot.getBottomAbs();
-        Location top = plot.getTopAbs();
-        int bx = bot.getX() >> 4;
-        int bz = bot.getZ() >> 4;
-
-        int tx = top.getX() >> 4;
-        int tz = top.getZ() >> 4;
-
-        int size = tx - bx << 4;
-
-        Set<Chunk> chunks = new HashSet<>();
-        for (int X = bx; X <= tx; X++) {
-            for (int Z = bz; Z <= tz; Z++) {
-                if (world.isChunkLoaded(X, Z)) {
-                    chunks.add(world.getChunkAt(X, Z));
-                }
-            }
+        if (world == null) {
+            return count;
         }
 
-        boolean doWhole = false;
-        List<Entity> entities = null;
-        if (size > 200 && chunks.size() > 200) {
-            entities = world.getEntities();
-            if (entities.size() < 16 + size / 8) {
-                doWhole = true;
-            }
-        }
-
-        int[] count = new int[6];
-        if (doWhole) {
-            for (Entity entity : entities) {
-                org.bukkit.Location location = entity.getLocation();
-                PaperLib.getChunkAtAsync(location).thenAccept(chunk -> {
-                    if (chunks.contains(chunk)) {
-                        int X = chunk.getX();
-                        int Z = chunk.getZ();
-                        if (X > bx && X < tx && Z > bz && Z < tz) {
-                            count(count, entity);
-                        } else {
-                            Plot other = area.getPlot(BukkitUtil.adapt(location));
-                            if (plot.equals(other)) {
-                                count(count, entity);
-                            }
+        for (final CuboidRegion region : plot.getRegions()) {
+            for (int x = region.getMinimumPoint().getX() >> 4; x <= region.getMaximumPoint().getX() >> 4; x++) {
+                for (int z = region.getMinimumPoint().getZ() >> 4; z <= region.getMaximumPoint().getZ() >> 4; z++) {
+                    Chunk chunk = world.getChunkAt(x, z);
+                    final Entity[] entities = chunk.getEntities();
+                    for (Entity entity : entities) {
+                        if (entity instanceof Player || entity instanceof Item) {
+                            continue;
                         }
-                    }
-                });
-            }
-        } else {
-            for (Chunk chunk : chunks) {
-                int X = chunk.getX();
-                int Z = chunk.getZ();
-                Entity[] entities1 = chunk.getEntities();
-                for (Entity entity : entities1) {
-                    if (X == bx || X == tx || Z == bz || Z == tz) {
-                        Plot other = area.getPlot(BukkitUtil.adapt(entity.getLocation()));
+
+                        org.bukkit.Location location = entity.getLocation();
+                        Plot other = area.getPlot(BukkitUtil.adapt(location));
                         if (plot.equals(other)) {
                             count(count, entity);
                         }
-                    } else {
-                        count(count, entity);
                     }
                 }
             }
         }
+
         return count;
+    }
+
+    @Override
+    public CompletableFuture<int[]> countEntitiesAsync(final Plot plot) {
+        return CompletableFuture.supplyAsync(() -> countEntities(plot));
     }
 
     @Override
