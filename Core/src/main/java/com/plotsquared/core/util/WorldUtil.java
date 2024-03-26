@@ -178,6 +178,13 @@ public abstract class WorldUtil {
     public abstract void getBlock(@NonNull Location location, @NonNull Consumer<BlockState> result);
 
     /**
+     * Checks if the block smaller as a slab
+     * @param location Block location
+     * @return true if it smaller as a slab
+     */
+    public abstract boolean isSmallBlock(@NonNull Location location);
+
+    /**
      * Get the block at a given location (synchronously)
      *
      * @param location Block location
