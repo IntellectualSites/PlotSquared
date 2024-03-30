@@ -200,8 +200,9 @@ public final class PlaceholderRegistry {
         this.createPlaceholder("currentplot_biome", (player, plot) -> plot.getBiomeSynchronous().toString());
         this.createPlaceholder("currentplot_size", (player, plot) -> String.valueOf(plot.getConnectedPlots().size()));
         this.createPlaceholder("total_grants", player -> {
-            final MetaDataAccess<Integer> metaDataAccess = player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS);
-            return Integer.toString(metaDataAccess.get().orElse(0));
+            try (final MetaDataAccess<Integer> metaDataAccess = player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
+                return Integer.toString(metaDataAccess.get().orElse(0));
+            }
         });
     }
 
