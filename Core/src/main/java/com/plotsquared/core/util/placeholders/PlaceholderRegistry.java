@@ -27,6 +27,8 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
@@ -197,6 +199,11 @@ public final class PlaceholderRegistry {
         });
         this.createPlaceholder("currentplot_biome", (player, plot) -> plot.getBiomeSynchronous().toString());
         this.createPlaceholder("currentplot_size", (player, plot) -> String.valueOf(plot.getConnectedPlots().size()));
+        this.createPlaceholder("total_grants", player -> {
+            try (final MetaDataAccess<Integer> metaDataAccess = player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
+                return Integer.toString(metaDataAccess.get().orElse(0));
+            }
+        });
     }
 
     /**
