@@ -23,7 +23,7 @@ import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * @since TODO
+ * @since 7.3.7
  */
 
 public class TileDropFlag extends BooleanFlag<TileDropFlag> {
