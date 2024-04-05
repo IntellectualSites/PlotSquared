@@ -2574,7 +2574,7 @@ public class Plot {
      */
     public void teleportPlayer(final PlotPlayer<?> player, TeleportCause cause, Consumer<Boolean> resultConsumer) {
         Plot plot = this.getBasePlot(false);
-        if (!WorldUtil.isValidLocation(plot.getBottomAbs())) {
+        if ((getArea() == null || !(getArea() instanceof SinglePlotArea)) && !WorldUtil.isValidLocation(plot.getBottomAbs())) {
             // prevent from teleporting into unsafe regions
             player.sendMessage(TranslatableCaption.of("border.denied"));
             resultConsumer.accept(false);
