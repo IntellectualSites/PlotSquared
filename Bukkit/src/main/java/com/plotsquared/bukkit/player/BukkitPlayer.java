@@ -326,7 +326,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
             return;
         }
         this.player.playSound(BukkitUtil.adapt(location), Sound.valueOf(BukkitAdapter.adapt(id).name()),
-                SoundCategory.MUSIC, 1f, 1f
+                SoundCategory.MUSIC, Float.MAX_VALUE, 1f
         );
     }
 
