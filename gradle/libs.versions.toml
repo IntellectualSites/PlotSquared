@@ -30,7 +30,7 @@ bstats = "3.0.2"
 paperlib = "1.0.8"
 informative-annotations = "1.4"
 vault = "1.7.1"
-serverlib = "2.3.4"
+serverlib = "2.3.5"
 
 # Gradle plugins
 shadow = "8.1.1"
