@@ -209,6 +209,11 @@ subprojects {
         test {
             useJUnitPlatform()
         }
+
+        withType<AbstractArchiveTask>().configureEach {
+            isPreserveFileTimestamps = false
+            isReproducibleFileOrder = true
+        }
     }
 }
 

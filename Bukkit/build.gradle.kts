@@ -113,5 +113,6 @@ tasks {
         opt.encoding("UTF-8")
         opt.keyWords()
         opt.addStringOption("-since", isRelease)
+        opt.noTimestamp()
     }
 }
