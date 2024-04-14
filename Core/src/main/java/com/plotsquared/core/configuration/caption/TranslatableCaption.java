@@ -25,6 +25,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.caption.Caption;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
@@ -33,7 +34,7 @@ import java.util.regex.Pattern;
 /**
  * Caption that is user modifiable
  */
-public final class TranslatableCaption implements NamespacedCaption {
+public final class TranslatableCaption implements NamespacedCaption, Caption {
 
     /**
      * Default caption namespace
@@ -70,6 +71,11 @@ public final class TranslatableCaption implements NamespacedCaption {
                 namespace.toLowerCase(Locale.ENGLISH),
                 key.toLowerCase(Locale.ENGLISH)
         );
+    }
+
+    @Override
+    public @NonNull String key() {
+        return this.getKey();
     }
 
     /**

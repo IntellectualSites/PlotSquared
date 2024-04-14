@@ -18,7 +18,6 @@
  */
 package com.plotsquared.core.command;
 
-import cloud.commandframework.services.ServicePipeline;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -49,6 +48,7 @@ import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.services.ServicePipeline;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -332,7 +332,7 @@ public class Auto extends SubCommand {
         List<Plot> plots = this.servicePipeline
                 .pump(new AutoQuery(player, null, sizeX, sizeZ, plotarea))
                 .through(AutoService.class)
-                .getResult();
+                .complete();
 
         plots = this.eventDispatcher.callAutoPlotsChosen(player, plots).getPlots();
 

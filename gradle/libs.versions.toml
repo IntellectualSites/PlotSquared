@@ -31,6 +31,8 @@ paperlib = "1.0.8"
 informative-annotations = "1.4"
 vault = "1.7.1"
 serverlib = "2.3.4"
+cloud = "2.0.0-beta.1"
+cloudRequirements = "1.0.0-beta.1"
 
 # Gradle plugins
 shadow = "8.1.1"
@@ -66,7 +68,7 @@ faweBukkit = { group = "com.fastasyncworldedit", name = "FastAsyncWorldEdit-Bukk
 # Third party
 prtree = { group = "com.intellectualsites.prtree", name = "PRTree", version.ref = "prtree" }
 aopalliance = { group = "aopalliance", name = "aopalliance", version.ref = "aopalliance" }
-cloudServices = { group = "cloud.commandframework", name = "cloud-services", version.ref = "cloud-services" }
+cloudServices = { group = "org.incendo", name = "cloud-services", version.ref = "cloud-services" }
 mvdwapi = { group = "com.intellectualsites.mvdwplaceholderapi", name = "MVdWPlaceholderAPI", version.ref = "mvdwapi" }
 squirrelid = { group = "org.enginehub", name = "squirrelid", version.ref = "squirrelid" }
 arkitektonika = { group = "com.intellectualsites.arkitektonika", name = "Arkitektonika-Client", version.ref = "arkitektonika" }
@@ -77,6 +79,10 @@ informativeAnnotations = { group = "com.intellectualsites.informative-annotation
 paperlib = { group = "io.papermc", name = "paperlib", version.ref = "paperlib" }
 vault = { group = "com.github.MilkBowl", name = "VaultAPI", version.ref = "vault" }
 serverlib = { group = "dev.notmyfault.serverlib", name = "ServerLib", version.ref = "serverlib" }
+cloud = { group = "org.incendo", name = "cloud-core", version.ref = "cloud" }
+cloudPaper = { group = "org.incendo", name = "cloud-paper", version.ref = "cloud" }
+cloudMinecraftExtras = { group = "org.incendo", name = "cloud-minecraft-extras", version.ref = "cloud" }
+cloudRequirements = { group = "org.incendo", name = "cloud-processors-requirements", version.ref = "cloudRequirements" }
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
