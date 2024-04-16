@@ -45,7 +45,7 @@ public class Settings extends Config {
 
     @Comment({"The activity of high-frequency event listener can be deactivated here to improve the server performance. ",
             "Affected settings: 'redstone' settings here below. Affected flags: 'disable-physics', 'redstone'. ",
-            "Only set the setting to 'false' if you do not need any of the above settings and flags."})
+            "Only deactivate this setting if you do not need any of the mentioned settings or flags."})
     public static boolean HIGH_FREQUENCY_LISTENER = true;
 
     @Create // This value will be generated automatically
