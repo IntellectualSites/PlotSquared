@@ -24,7 +24,6 @@ import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
@@ -48,7 +47,6 @@ import com.plotsquared.core.plot.flag.implementations.LeafDecayFlag;
 import com.plotsquared.core.plot.flag.implementations.LiquidFlowFlag;
 import com.plotsquared.core.plot.flag.implementations.MycelGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.PlaceFlag;
-import com.plotsquared.core.plot.flag.implementations.RedstoneFlag;
 import com.plotsquared.core.plot.flag.implementations.SnowFormFlag;
 import com.plotsquared.core.plot.flag.implementations.SnowMeltFlag;
 import com.plotsquared.core.plot.flag.implementations.SoilDryFlag;
@@ -92,11 +90,9 @@ import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockGrowEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.CauldronLevelChangeEvent;
 import org.bukkit.event.block.EntityBlockFormEvent;
@@ -112,7 +108,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -123,14 +118,6 @@ import static org.bukkit.Tag.WALL_CORALS;
 @SuppressWarnings("unused")
 public class BlockEventListener implements Listener {
 
-    private static final Set<Material> PISTONS = Set.of(
-            Material.PISTON,
-            Material.STICKY_PISTON
-    );
-    private static final Set<Material> PHYSICS_BLOCKS = Set.of(
-            Material.TURTLE_EGG,
-            Material.TURTLE_SPAWN_EGG
-    );
     private static final Set<Material> SNOW = Stream.of(Material.values()) // needed as Tag.SNOW isn't present in 1.16.5
             .filter(material -> material.name().contains("SNOW"))
             .filter(Material::isBlock)
@@ -162,114 +149,6 @@ public class BlockEventListener implements Listener {
                 }
             }
         }, TaskTime.ticks(3L));
-    }
-
-    @EventHandler
-    public void onRedstoneEvent(BlockRedstoneEvent event) {
-        Block block = event.getBlock();
-        Location location = BukkitUtil.adapt(block.getLocation());
-        PlotArea area = location.getPlotArea();
-        if (area == null) {
-            return;
-        }
-        Plot plot = location.getOwnedPlot();
-        if (plot == null) {
-            if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, RedstoneFlag.class, false)) {
-                event.setNewCurrent(0);
-            }
-            return;
-        }
-        if (!plot.getFlag(RedstoneFlag.class)) {
-            event.setNewCurrent(0);
-            plot.debug("Redstone event was cancelled because redstone = false");
-            return;
-        }
-        if (Settings.Redstone.DISABLE_OFFLINE) {
-            boolean disable = false;
-            if (!DBFunc.SERVER.equals(plot.getOwner())) {
-                if (plot.isMerged()) {
-                    disable = true;
-                    for (UUID owner : plot.getOwners()) {
-                        if (PlotSquared.platform().playerManager().getPlayerIfExists(owner) != null) {
-                            disable = false;
-                            break;
-                        }
-                    }
-                } else {
-                    disable = PlotSquared.platform().playerManager().getPlayerIfExists(plot.getOwnerAbs()) == null;
-                }
-            }
-            if (disable) {
-                for (UUID trusted : plot.getTrusted()) {
-                    if (PlotSquared.platform().playerManager().getPlayerIfExists(trusted) != null) {
-                        disable = false;
-                        break;
-                    }
-                }
-                if (disable) {
-                    event.setNewCurrent(0);
-                    plot.debug("Redstone event was cancelled because no trusted player was in the plot");
-                    return;
-                }
-            }
-        }
-        if (Settings.Redstone.DISABLE_UNOCCUPIED) {
-            for (final PlotPlayer<?> player : PlotSquared.platform().playerManager().getPlayers()) {
-                if (plot.equals(player.getCurrentPlot())) {
-                    return;
-                }
-            }
-            event.setNewCurrent(0);
-        }
-    }
-
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    public void onPhysicsEvent(BlockPhysicsEvent event) {
-        Block block = event.getBlock();
-        Location location = BukkitUtil.adapt(block.getLocation());
-        PlotArea area = location.getPlotArea();
-        if (area == null) {
-            return;
-        }
-        Plot plot = area.getOwnedPlotAbs(location);
-        if (plot == null) {
-            return;
-        }
-        if (event.getChangedType().hasGravity() && plot.getFlag(DisablePhysicsFlag.class)) {
-            event.setCancelled(true);
-            sendBlockChange(event.getBlock().getLocation(), event.getBlock().getBlockData());
-            plot.debug("Prevented block physics and resent block change because disable-physics = true");
-            return;
-        }
-        if (event.getChangedType() == Material.COMPARATOR) {
-            if (!plot.getFlag(RedstoneFlag.class)) {
-                event.setCancelled(true);
-                plot.debug("Prevented comparator update because redstone = false");
-            }
-            return;
-        }
-        if (PHYSICS_BLOCKS.contains(event.getChangedType())) {
-            if (plot.getFlag(DisablePhysicsFlag.class)) {
-                event.setCancelled(true);
-                plot.debug("Prevented block physics because disable-physics = true");
-            }
-            return;
-        }
-        if (Settings.Redstone.DETECT_INVALID_EDGE_PISTONS) {
-            if (PISTONS.contains(block.getType())) {
-                org.bukkit.block.data.Directional piston = (org.bukkit.block.data.Directional) block.getBlockData();
-                final BlockFace facing = piston.getFacing();
-                location = location.add(facing.getModX(), facing.getModY(), facing.getModZ());
-                Plot newPlot = area.getOwnedPlotAbs(location);
-                if (plot.equals(newPlot)) {
-                    return;
-                }
-                if (!plot.isMerged() || !plot.getConnectedPlots().contains(newPlot)) {
-                    event.setCancelled(true);
-                    plot.debug("Prevented piston update because of invalid edge piston detection");
-                }
-            }
-        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

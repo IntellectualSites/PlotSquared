@@ -35,6 +35,7 @@ import com.plotsquared.bukkit.listener.BlockEventListener117;
 import com.plotsquared.bukkit.listener.ChunkListener;
 import com.plotsquared.bukkit.listener.EntityEventListener;
 import com.plotsquared.bukkit.listener.EntitySpawnListener;
+import com.plotsquared.bukkit.listener.HighFreqBlockEventListener;
 import com.plotsquared.bukkit.listener.PaperListener;
 import com.plotsquared.bukkit.listener.PlayerEventListener;
 import com.plotsquared.bukkit.listener.PlayerEventListener1201;
@@ -364,6 +365,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 getServer().getPluginManager().registerEvents(injector().getInstance(PlayerEventListener1201.class), this);
             }
             getServer().getPluginManager().registerEvents(injector().getInstance(BlockEventListener.class), this);
+            if (Settings.HIGH_FREQUENCY_LISTENER) {
+                getServer().getPluginManager().registerEvents(injector().getInstance(HighFreqBlockEventListener.class), this);
+            }
             if (serverVersion()[1] >= 17) {
                 getServer().getPluginManager().registerEvents(injector().getInstance(BlockEventListener117.class), this);
             }
