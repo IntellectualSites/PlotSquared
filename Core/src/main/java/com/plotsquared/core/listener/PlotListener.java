@@ -106,6 +106,10 @@ public class PlotListener {
                             iterator.remove();
                             continue;
                         }
+                        // Don't attempt to heal dead players - they will get stuck in the abyss (#4406)
+                        if (PlotSquared.platform().worldUtil().getHealth(player) <= 0) {
+                            continue;
+                        }
                         double level = PlotSquared.platform().worldUtil().getHealth(player);
                         if (level != value.max) {
                             PlotSquared.platform().worldUtil().setHealth(player, Math.min(level + value.amount, value.max));
