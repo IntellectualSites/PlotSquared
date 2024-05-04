@@ -651,9 +651,6 @@ public class Plot {
      * @return Immutable set of plot owners
      */
     public @NonNull Set<UUID> getOwners() {
-        if (this.getOwner() == null) {
-            return ImmutableSet.of();
-        }
         ImmutableSet.Builder<UUID> owners = ImmutableSet.builder();
         for (Plot plot : getConnectedPlots()) {
             UUID owner = plot.getOwner();
