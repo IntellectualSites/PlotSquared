@@ -331,12 +331,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      */
     public @NonNull P getPlayer(final @NonNull UUID uuid) {
         synchronized (playerLock) {
-            P player = this.playerMap.get(uuid);
-            if (player == null) {
-                player = createPlayer(uuid);
-                this.playerMap.put(uuid, player);
-            }
-            return player;
+            return this.playerMap.computeIfAbsent(uuid, this::createPlayer);
         }
     }
 
