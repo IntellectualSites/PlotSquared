@@ -24,7 +24,6 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Singleton;
 import com.google.inject.Stage;
-import com.google.inject.TypeLiteral;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.inject.BackupModule;
 import com.plotsquared.bukkit.inject.BukkitModule;
@@ -45,7 +44,6 @@ import com.plotsquared.bukkit.listener.SpigotListener;
 import com.plotsquared.bukkit.listener.WorldEvents;
 import com.plotsquared.bukkit.placeholder.PAPIPlaceholders;
 import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
-import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.BukkitWorld;
@@ -1271,15 +1269,13 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
     @Override
     public @NonNull PlatformWorldManager<?> worldManager() {
-        return injector().getInstance(Key.get(new TypeLiteral<PlatformWorldManager<World>>() {
-        }));
+        return this.worldManager;
     }
 
     @Override
     @NonNull
-    @SuppressWarnings("unchecked")
     public PlayerManager<? extends PlotPlayer<Player>, ? extends Player> playerManager() {
-        return (PlayerManager<BukkitPlayer, Player>) injector().getInstance(PlayerManager.class);
+        return this.playerManager;
     }
 
     @Override
