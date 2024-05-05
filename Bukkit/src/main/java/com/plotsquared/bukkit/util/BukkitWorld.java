@@ -18,16 +18,16 @@
  */
 package com.plotsquared.bukkit.util;
 
-import com.google.common.collect.Maps;
 import com.plotsquared.core.location.World;
 import org.bukkit.Bukkit;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 public class BukkitWorld implements World<org.bukkit.World> {
 
-    private static final Map<String, BukkitWorld> worldMap = Maps.newHashMap();
+    private static final Map<org.bukkit.World, BukkitWorld> worldMap = new IdentityHashMap<>();
     private static final boolean HAS_MIN_Y;
 
     static {
@@ -68,13 +68,7 @@ public class BukkitWorld implements World<org.bukkit.World> {
      * @return World instance
      */
     public static @NonNull BukkitWorld of(final org.bukkit.World world) {
-        BukkitWorld bukkitWorld = worldMap.get(world.getName());
-        if (bukkitWorld != null && bukkitWorld.getPlatformWorld().equals(world)) {
-            return bukkitWorld;
-        }
-        bukkitWorld = new BukkitWorld(world);
-        worldMap.put(world.getName(), bukkitWorld);
-        return bukkitWorld;
+        return worldMap.computeIfAbsent(world, BukkitWorld::new);
     }
 
     /**
