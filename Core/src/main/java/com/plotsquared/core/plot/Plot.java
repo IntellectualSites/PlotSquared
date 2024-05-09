@@ -643,35 +643,22 @@ public class Plot {
     }
 
     /**
-     * Gets a immutable set of owner UUIDs for a plot (supports multi-owner mega-plots).
+     * Gets an immutable set of owner UUIDs for a plot (supports multi-owner mega-plots).
      * <p>
      * This method cannot be used to add or remove owners from a plot.
      * </p>
      *
-     * @return Immutable view of plot owners
+     * @return Immutable set of plot owners
      */
     public @NonNull Set<UUID> getOwners() {
-        if (this.getOwner() == null) {
-            return ImmutableSet.of();
-        }
-        if (isMerged()) {
-            Set<Plot> plots = getConnectedPlots();
-            Plot[] array = plots.toArray(new Plot[0]);
-            ImmutableSet.Builder<UUID> owners = ImmutableSet.builder();
-            UUID last = this.getOwner();
-            owners.add(this.getOwner());
-            for (final Plot current : array) {
-                if (current.getOwner() == null) {
-                    continue;
-                }
-                if (last == null || current.getOwner().getMostSignificantBits() != last.getMostSignificantBits()) {
-                    owners.add(current.getOwner());
-                    last = current.getOwner();
-                }
+        ImmutableSet.Builder<UUID> owners = ImmutableSet.builder();
+        for (Plot plot : getConnectedPlots()) {
+            UUID owner = plot.getOwner();
+            if (owner != null) {
+                owners.add(owner);
             }
-            return owners.build();
         }
-        return ImmutableSet.of(this.getOwner());
+        return owners.build();
     }
 
     /**
