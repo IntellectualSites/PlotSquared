@@ -95,7 +95,8 @@ public class SingleWorldListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChunkLoad(ChunkLoadEvent event) {
-        handle(event);
+        // disable this for now, should address https://github.com/IntellectualSites/PlotSquared/issues/4413
+        // handle(event);
     }
 
 }
