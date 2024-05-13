@@ -43,6 +43,11 @@ public class Settings extends Config {
             "Leave it off if you don't need it, it can spam your console."})
     public static boolean DEBUG = true;
 
+    @Comment({"The activity of high-frequency event listener can be deactivated here to improve the server performance. ",
+            "Affected settings: 'redstone' settings here below. Affected flags: 'disable-physics', 'redstone'. ",
+            "Only deactivate this setting if you do not need any of the mentioned settings or flags."})
+    public static boolean HIGH_FREQUENCY_LISTENER = true;
+
     @Create // This value will be generated automatically
     public static ConfigBlock<Auto_Clear> AUTO_CLEAR = null;
     // A ConfigBlock is a section that can have multiple instances e.g. multiple expiry tasks
