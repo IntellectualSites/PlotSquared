@@ -1210,18 +1210,9 @@ public class BlockEventListener implements Listener {
             if (pp.hasPermission(Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 continue;
             }
-            if (currentLocation.getY() >= area.getMaxBuildHeight() || currentLocation.getY() < area.getMinBuildHeight()) {
-                pp.sendMessage(
-                        TranslatableCaption.of("height.height_limit"),
-                        TagResolver.builder()
-                                .tag("minheight", Tag.inserting(Component.text(area.getMinBuildHeight())))
-                                .tag("maxheight", Tag.inserting(Component.text(area.getMaxBuildHeight())))
-                                .build()
-                );
-                if (area.notifyIfOutsideBuildArea(pp, currentLocation.getY())) {
-                    event.setCancelled(true);
-                    break;
-                }
+            if (area.notifyIfOutsideBuildArea(pp, currentLocation.getY())) {
+                event.setCancelled(true);
+                break;
             }
         }
 
