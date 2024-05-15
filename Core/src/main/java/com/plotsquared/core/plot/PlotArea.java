@@ -679,10 +679,8 @@ public abstract class PlotArea implements ComponentLike {
                     TranslatableCaption.of("height.height_limit"),
                     TagResolver.builder()
                             .tag("minheight", Tag.inserting(Component.text(minBuildHeight)))
-                            .tag(
-                                    "maxheight",
-                                    Tag.inserting(Component.text(maxBuildHeight))
-                            ).build()
+                            .tag("maxheight", Tag.inserting(Component.text(maxBuildHeight)))
+                            .build()
             );
             // Return true if "failed" as the method will always be inverted otherwise
             return true;
