@@ -164,13 +164,6 @@ public class BlockEventListener implements Listener {
         if (plot != null) {
             if (area.notifyIfOutsideBuildArea(pp, location.getY())) {
                 event.setCancelled(true);
-                pp.sendMessage(
-                        TranslatableCaption.of("height.height_limit"),
-                        TagResolver.builder()
-                                .tag("minheight", Tag.inserting(Component.text(area.getMinBuildHeight())))
-                                .tag("maxheight", Tag.inserting(Component.text(area.getMaxBuildHeight())))
-                                .build()
-                );
                 return;
             }
             if (!plot.hasOwner()) {
@@ -262,13 +255,6 @@ public class BlockEventListener implements Listener {
                 }
             } else if (area.notifyIfOutsideBuildArea(plotPlayer, location.getY())) {
                 event.setCancelled(true);
-                plotPlayer.sendMessage(
-                        TranslatableCaption.of("height.height_limit"),
-                        TagResolver.builder()
-                                .tag("minheight", Tag.inserting(Component.text(area.getMinBuildHeight())))
-                                .tag("maxheight", Tag.inserting(Component.text(area.getMaxBuildHeight())))
-                                .build()
-                );
                 return;
             }
             if (!plot.hasOwner()) {
