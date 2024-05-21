@@ -32,7 +32,7 @@ public class PermissionModule extends AbstractModule {
     @Singleton
     PermissionHandler providePermissionHandler() {
         try {
-            if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
+            if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
                 return new VaultPermissionHandler();
             }
         } catch (final Exception ignored) {
