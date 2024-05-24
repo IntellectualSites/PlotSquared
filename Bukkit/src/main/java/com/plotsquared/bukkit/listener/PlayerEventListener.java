@@ -533,11 +533,9 @@ public class PlayerEventListener implements Listener {
                     // to is identical to the plot's home location, and untrusted-visit is true
                     // i.e. untrusted-visit can override deny-teleport
                     // this is acceptable, because otherwise it wouldn't make sense to have both flags set
-                    if (result) {
+                    if (result || (plot.getFlag(UntrustedVisitFlag.class) && plot.getHomeSynchronous().equals(BukkitUtil.adaptComplete(to)))) {
                         plotListener.plotEntry(pp, plot);
-                    } else if (!(plot.getFlag(UntrustedVisitFlag.class) && plot
-                            .getHomeSynchronous()
-                            .equals(BukkitUtil.adaptComplete(to)))) {
+                    } else {
                         pp.sendMessage(
                                 TranslatableCaption.of("deny.no_enter"),
                                 TagResolver.resolver("plot", Tag.inserting(Component.text(plot.toString())))
