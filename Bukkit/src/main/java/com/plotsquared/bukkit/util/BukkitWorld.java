@@ -75,7 +75,7 @@ public class BukkitWorld implements World<org.bukkit.World> {
     public static @NonNull BukkitWorld of(final org.bukkit.World world) {
         WeakReference<BukkitWorld> bukkitWorldRef = worldMap.get(world.getName());
         BukkitWorld bukkitWorld;
-        if ((bukkitWorld = bukkitWorldRef.get()) != null && world.equals(bukkitWorld.world.get())) {
+        if (bukkitWorldRef != null && (bukkitWorld = bukkitWorldRef.get()) != null && world.equals(bukkitWorld.world.get())) {
             return bukkitWorld;
         }
         bukkitWorld = new BukkitWorld(world);
