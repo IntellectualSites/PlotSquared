@@ -533,9 +533,9 @@ public class PlayerEventListener implements Listener {
                     // to is identical to the plot's home location, and untrusted-visit is true
                     // i.e. untrusted-visit can override deny-teleport
                     // this is acceptable, because otherwise it wouldn't make sense to have both flags set
-                    if (!result && !(plot.getFlag(UntrustedVisitFlag.class) && plot
-                            .getHomeSynchronous()
-                            .equals(BukkitUtil.adaptComplete(to)))) {
+                    if (result || (plot.getFlag(UntrustedVisitFlag.class) && plot.getHomeSynchronous().equals(BukkitUtil.adaptComplete(to)))) {
+                        plotListener.plotEntry(pp, plot);
+                    } else {
                         pp.sendMessage(
                                 TranslatableCaption.of("deny.no_enter"),
                                 TagResolver.resolver("plot", Tag.inserting(Component.text(plot.toString())))
@@ -546,6 +546,19 @@ public class PlayerEventListener implements Listener {
             }
         }
         playerMove(event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onWorldChanged(PlayerChangedWorldEvent event) {
+        Player player = event.getPlayer();
+        BukkitPlayer pp = BukkitUtil.adapt(player);
+        if (this.worldEdit != null) {
+            if (!pp.hasPermission(Permission.PERMISSION_WORLDEDIT_BYPASS)) {
+                if (pp.getAttribute("worldedit")) {
+                    pp.removeAttribute("worldedit");
+                }
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -884,40 +897,6 @@ public class PlayerEventListener implements Listener {
                     spymsg,
                     builder.tag("message", Tag.inserting(Component.text(message))).build()
             );
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onWorldChanged(PlayerChangedWorldEvent event) {
-        Player player = event.getPlayer();
-        BukkitPlayer pp = BukkitUtil.adapt(player);
-        // Delete last location
-        Plot plot;
-        try (final MetaDataAccess<Plot> lastPlotAccess =
-                     pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
-            plot = lastPlotAccess.remove();
-        }
-        try (final MetaDataAccess<Location> lastLocationAccess =
-                     pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
-            lastLocationAccess.remove();
-        }
-        if (plot != null) {
-            plotListener.plotExit(pp, plot);
-        }
-        if (this.worldEdit != null) {
-            if (!pp.hasPermission(Permission.PERMISSION_WORLDEDIT_BYPASS)) {
-                if (pp.getAttribute("worldedit")) {
-                    pp.removeAttribute("worldedit");
-                }
-            }
-        }
-        Location location = pp.getLocation();
-        PlotArea area = location.getPlotArea();
-        if (location.isPlotArea()) {
-            plot = location.getPlot();
-            if (plot != null) {
-                plotListener.plotEntry(pp, plot);
-            }
         }
     }
 
