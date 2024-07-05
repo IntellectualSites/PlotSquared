@@ -31,6 +31,8 @@ import com.sk89q.worldedit.world.registry.LegacyMapper;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.List;
+
 /**
  * {@link BlockState} related utility methods
  */
@@ -43,7 +45,8 @@ public final class BlockUtil {
         PARSER_CONTEXT.setRestricted(false);
         PARSER_CONTEXT.setPreferringWildcard(false);
         PARSER_CONTEXT.setTryLegacy(true);
-        PARSER = WorldEdit.getInstance().getBlockFactory().getParsers().get(0);
+        List<InputParser<BaseBlock>> parsers = WorldEdit.getInstance().getBlockFactory().getParsers();
+        PARSER = parsers.get(parsers.size() - 1); // Default parser is always at the end
     }
 
     private BlockUtil() {
