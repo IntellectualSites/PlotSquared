@@ -1,6 +1,6 @@
 [versions]
 # Platform expectations
-paper = "1.20.2-R0.1-SNAPSHOT"
+paper = "1.20.4-R0.1-SNAPSHOT"
 guice = "7.0.0"
 spotbugs = "4.8.6"
 checkerqual = "3.46.0"
@@ -71,7 +71,6 @@ mvdwapi = { group = "com.intellectualsites.mvdwplaceholderapi", name = "MVdWPlac
 squirrelid = { group = "org.enginehub", name = "squirrelid", version.ref = "squirrelid" }
 arkitektonika = { group = "com.intellectualsites.arkitektonika", name = "Arkitektonika-Client", version.ref = "arkitektonika" }
 paster = { group = "com.intellectualsites.paster", name = "Paster", version.ref = "paster" }
-bstatsBase = { group = "org.bstats", name = "bstats-base", version.ref = "bstats" }
 bstatsBukkit = { group = "org.bstats", name = "bstats-bukkit", version.ref = "bstats" }
 informativeAnnotations = { group = "com.intellectualsites.informative-annotations", name = "informative-annotations", version.ref = "informative-annotations" }
 paperlib = { group = "io.papermc", name = "paperlib", version.ref = "paperlib" }

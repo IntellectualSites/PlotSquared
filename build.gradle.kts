@@ -22,7 +22,7 @@ plugins {
 }
 
 group = "com.intellectualsites.plotsquared"
-version = "7.3.9"
+version = "7.3.10-SNAPSHOT"
 
 if (!File("$rootDir/.git").exists()) {
     logger.lifecycle("""
@@ -230,7 +230,7 @@ tasks.getByName<Jar>("jar") {
     enabled = false
 }
 
-val supportedVersions = listOf("1.18.2", "1.19.4", "1.20.1", "1.20.4")
+val supportedVersions = listOf("1.18.2", "1.19.4", "1.20.6", "1.21.1")
 tasks {
     register("cacheLatestFaweArtifact") {
         val lastSuccessfulBuildUrl = uri("https://ci.athion.net/job/FastAsyncWorldEdit/lastSuccessfulBuild/api/json").toURL()
