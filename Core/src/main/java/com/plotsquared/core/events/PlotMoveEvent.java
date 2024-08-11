@@ -20,13 +20,14 @@ package com.plotsquared.core.events;
 
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.PlotId;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Objects;
 
 /**
  * Called when a {@link PlotPlayer} attempts to move a {@link Plot} to another {@link Plot}.
- * The Event-Result {@link Result#FORCE} does have no effect on the outcome. Only supported results are {@link Result#DENY} and
- * {@link Result#ACCEPT}.
+ *
  * <br>
  * <ul>
  * <li>{@link #getPlotPlayer()} is the initiator of the move action (most likely the command executor)</li>
@@ -38,7 +39,7 @@ import java.util.Objects;
  */
 public class PlotMoveEvent extends PlotPlayerEvent implements CancellablePlotEvent {
 
-    private final Plot destination;
+    private Plot destination;
     private Result result = Result.ACCEPT;
 
     public PlotMoveEvent(final PlotPlayer<?> initiator, final Plot plot, final Plot destination) {
@@ -54,6 +55,28 @@ public class PlotMoveEvent extends PlotPlayerEvent implements CancellablePlotEve
         return destination;
     }
 
+    /**
+     * Set the new {@link Plot} to where the plot should be moved to.
+     *
+     * @param destination The plot representing the new location.
+     * @since TODO
+     */
+    public void setDestination(@NonNull final Plot destination) {
+        this.destination = Objects.requireNonNull(destination);
+    }
+
+    /**
+     * Set the new destination based off their X and Y coordinates. Calls {@link #setDestination(Plot)} while using the
+     * {@link com.plotsquared.core.plot.PlotArea} provided by the current {@link #destination()}.
+     * <p>
+     * <b>Note:</b> the coordinates are not minecraft world coordinates, but the underlying {@link PlotId}s coordinates.
+     *
+     * @param x The X coordinate of the {@link PlotId}
+     * @param y The Y coordinate of the {@link PlotId}
+     */
+    public void setDestination(final int x, final int y) {
+        this.destination = Objects.requireNonNull(this.destination.getArea()).getPlot(PlotId.of(x, y));
+    }
 
     @Override
     public Result getEventResult() {
