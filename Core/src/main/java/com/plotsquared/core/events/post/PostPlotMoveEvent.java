@@ -18,7 +18,7 @@
  */
 package com.plotsquared.core.events.post;
 
-import com.plotsquared.core.events.PlotEvent;
+import com.plotsquared.core.events.PlotPlayerEvent;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotId;
@@ -29,23 +29,13 @@ import com.plotsquared.core.plot.PlotId;
  * @see com.plotsquared.core.events.PlotMoveEvent
  * @since TODO
  */
-public class PostPlotMoveEvent extends PlotEvent {
+public class PostPlotMoveEvent extends PlotPlayerEvent {
 
-    private final PlotPlayer<?> initiator;
     private final PlotId oldPlot;
 
     public PostPlotMoveEvent(final PlotPlayer<?> initiator, final PlotId oldPlot, final Plot plot) {
-        super(plot);
-        this.initiator = initiator;
+        super(initiator, plot);
         this.oldPlot = oldPlot;
-    }
-
-    /**
-     * @return The player who initiated the plot move.
-     * @since TODO
-     */
-    public PlotPlayer<?> initiator() {
-        return initiator;
     }
 
     /**

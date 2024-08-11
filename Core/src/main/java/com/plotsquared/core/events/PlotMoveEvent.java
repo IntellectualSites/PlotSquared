@@ -35,24 +35,18 @@ import java.util.Objects;
  * <li>{@link #destination()} is the plot, where the plot will be moved to.</li>
  * </ul>
  *
+ * @see com.plotsquared.core.command.Move
  * @since TODO
  */
 public class PlotMoveEvent extends PlotPlayerEvent implements CancellablePlotEvent {
 
     private Plot destination;
+    private boolean sendErrorMessage = true;
     private Result result = Result.ACCEPT;
 
     public PlotMoveEvent(final PlotPlayer<?> initiator, final Plot plot, final Plot destination) {
         super(initiator, plot);
         this.destination = destination;
-    }
-
-    /**
-     * @return The destination for the plot to be moved to.
-     * @since TODO
-     */
-    public Plot destination() {
-        return destination;
     }
 
     /**
@@ -73,16 +67,50 @@ public class PlotMoveEvent extends PlotPlayerEvent implements CancellablePlotEve
      *
      * @param x The X coordinate of the {@link PlotId}
      * @param y The Y coordinate of the {@link PlotId}
+     * @since TODO
      */
     public void setDestination(final int x, final int y) {
         this.destination = Objects.requireNonNull(this.destination.getArea()).getPlot(PlotId.of(x, y));
     }
 
+    /**
+     * Set whether to send a generic message to the user ({@code Move was cancelled by an external plugin}). If set to {@code
+     * false}, make sure to send a message to the player yourself to avoid confusion.
+     *
+     * @param sendErrorMessage {@code true} if PlotSquared should send a generic error message to the player.
+     * @since TODO
+     */
+    public void setSendErrorMessage(final boolean sendErrorMessage) {
+        this.sendErrorMessage = sendErrorMessage;
+    }
+
+    /**
+     * @return The destination for the plot to be moved to.
+     * @since TODO
+     */
+    public Plot destination() {
+        return destination;
+    }
+
+    /**
+     * @return {@code true} if PlotSquared should send a generic error message to the player.
+     * @since TODO
+     */
+    public boolean sendErrorMessage() {
+        return sendErrorMessage;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Result getEventResult() {
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setEventResult(Result eventResult) {
         this.result = Objects.requireNonNull(eventResult);

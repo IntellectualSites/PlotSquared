@@ -92,22 +92,27 @@ public class Move extends SubCommand {
         }
         final PlotMoveEvent moveEvent = this.eventDispatcher.callMove(player, plot1, tmpTargetPlot);
         final Plot targetPlot = moveEvent.destination();
+        if (!override) {
+            override = moveEvent.getEventResult() == Result.FORCE;
+        }
+
+        if (moveEvent.getEventResult() == Result.DENY) {
+            if (moveEvent.sendErrorMessage()) {
+                player.sendMessage(TranslatableCaption.of("move.event_cancelled"));
+            }
+            return CompletableFuture.completedFuture(false);
+        }
 
         if (plot1.equals(targetPlot)) {
             player.sendMessage(TranslatableCaption.of("invalid.origin_cant_be_target"));
             return CompletableFuture.completedFuture(false);
         }
-        if (!plot1.getArea().isCompatible(targetPlot.getArea()) && (!override || moveEvent.getEventResult() != Result.FORCE)) {
+        if (!plot1.getArea().isCompatible(targetPlot.getArea()) && !override) {
             player.sendMessage(TranslatableCaption.of("errors.plotworld_incompatible"));
             return CompletableFuture.completedFuture(false);
         }
         if (plot1.isMerged() || targetPlot.isMerged()) {
             player.sendMessage(TranslatableCaption.of("move.move_merged"));
-            return CompletableFuture.completedFuture(false);
-        }
-
-        if (moveEvent.getEventResult() == Result.DENY) {
-            player.sendMessage(TranslatableCaption.of("move.event_cancelled"));
             return CompletableFuture.completedFuture(false);
         }
 
