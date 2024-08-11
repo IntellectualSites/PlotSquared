@@ -106,9 +106,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.bukkit.Tag.CORALS;
 import static org.bukkit.Tag.CORAL_BLOCKS;
@@ -116,12 +113,6 @@ import static org.bukkit.Tag.WALL_CORALS;
 
 @SuppressWarnings("unused")
 public class BlockEventListener implements Listener {
-
-    private static final Set<Material> SNOW = Stream.of(Material.values()) // needed as Tag.SNOW isn't present in 1.16.5
-            .filter(material -> material.name().contains("SNOW"))
-            .filter(Material::isBlock)
-            .collect(Collectors.toUnmodifiableSet());
-
     private final PlotAreaManager plotAreaManager;
     private final WorldEdit worldEdit;
 
