@@ -158,7 +158,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Player Events involving plots.
@@ -214,7 +213,7 @@ public class PlayerEventListener implements Listener {
         // @formatter:off
         // "temporary" fix for https://hub.spigotmc.org/jira/browse/SPIGOT-7813
         // can (and should) be removed when 1.21 support is dropped
-        // List of all interactable 1.21 materials - therefor filtered (in case of 1.20.6)
+        // List of all interactable 1.21 materials
         INTERACTABLE_MATERIALS = Material.CHEST.isInteractable() ? null :  Set.of(
                 "REDSTONE_ORE", "DEEPSLATE_REDSTONE_ORE", "CHISELED_BOOKSHELF", "DECORATED_POT", "CHEST", "CRAFTING_TABLE",
                 "FURNACE", "JUKEBOX", "OAK_FENCE", "SPRUCE_FENCE", "BIRCH_FENCE", "JUNGLE_FENCE", "ACACIA_FENCE", "CHERRY_FENCE",
@@ -268,7 +267,7 @@ public class PlayerEventListener implements Listener {
                 "LIGHT_GRAY_CANDLE_CAKE", "CYAN_CANDLE_CAKE", "PURPLE_CANDLE_CAKE", "BLUE_CANDLE_CAKE", "BROWN_CANDLE_CAKE",
                 "GREEN_CANDLE_CAKE", "RED_CANDLE_CAKE", "BLACK_CANDLE_CAKE", "CAVE_VINES", "CAVE_VINES_PLANT",
                 "POTTED_AZALEA_BUSH", "POTTED_FLOWERING_AZALEA_BUSH"
-        ).stream().filter(name -> Material.getMaterial(name) != null).collect(Collectors.toSet());
+        );
         // @formatter:on
     }
 
