@@ -201,7 +201,7 @@ public class PlayerEventListener implements Listener {
                 "GLOW_INK_SAC"
         ));
         int[] version = PlotSquared.platform().serverVersion();
-        if (version[1] >= 20 && version[2] >= 1) {
+        if (version[1] >= 20) {
             mutableDyes.add("HONEYCOMB");
         }
         DYES = Set.copyOf(mutableDyes);
