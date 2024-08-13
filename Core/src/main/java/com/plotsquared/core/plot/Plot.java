@@ -2182,6 +2182,9 @@ public class Plot {
      * @return if the given player can claim the plot
      */
     public boolean canClaim(@NonNull PlotPlayer<?> player) {
+        if (!WorldUtil.isValidLocation(getBottomAbs())) {
+            return false;
+        }
         PlotCluster cluster = this.getCluster();
         if (cluster != null) {
             if (!cluster.isAdded(player.getUUID()) && !player.hasPermission("plots.admin.command.claim")) {
