@@ -107,6 +107,7 @@ public final class TabCompletions {
     }
 
     public static @NonNull List<Command> completePlayersInPlot(
+            final @NonNull PlotPlayer<?> issuer,
             final @NonNull Plot plot,
             final @NonNull String input, final @NonNull List<String> existing
     ) {
@@ -115,7 +116,9 @@ public final class TabCompletions {
             final List<PlotPlayer<?>> inPlot = plot.getPlayersInPlot();
             players = new ArrayList<>(inPlot.size());
             for (PlotPlayer<?> player : inPlot) {
-                players.add(player.getName());
+                if (issuer.canSee(player)) {
+                    players.add(player.getName());
+                }
             }
             cachedCompletionValues.put("inPlot" + plot, players);
         }

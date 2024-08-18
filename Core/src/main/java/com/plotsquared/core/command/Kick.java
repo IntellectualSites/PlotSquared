@@ -153,7 +153,7 @@ public class Kick extends SubCommand {
         if (plot == null) {
             return Collections.emptyList();
         }
-        return TabCompletions.completePlayersInPlot(plot, String.join(",", args).trim(),
+        return TabCompletions.completePlayersInPlot(player, plot, String.join(",", args).trim(),
                 Collections.singletonList(player.getName())
         );
     }
