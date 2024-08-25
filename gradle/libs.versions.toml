@@ -33,7 +33,7 @@ vault = "1.7.1"
 serverlib = "2.3.6"
 
 # Gradle plugins
-shadow = "8.1.1"
+shadow = "8.3.0"
 grgit = "4.1.1"
 spotless = "6.25.0"
 nexus = "2.0.0"
@@ -78,7 +78,7 @@ vault = { group = "com.github.MilkBowl", name = "VaultAPI", version.ref = "vault
 serverlib = { group = "dev.notmyfault.serverlib", name = "ServerLib", version.ref = "serverlib" }
 
 [plugins]
-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 grgit = { id = "org.ajoberstar.grgit", version.ref = "grgit" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 nexus = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus" }
