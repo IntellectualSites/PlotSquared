@@ -822,12 +822,18 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                             // Temporarily classify as vehicle
                         case "MINECART":
                         case "MINECART_CHEST":
+                        case "CHEST_MINECART":
                         case "MINECART_COMMAND":
+                        case "COMMAND_BLOCK_MINECART":
                         case "MINECART_FURNACE":
+                        case "FURNACE_MINECART":
                         case "MINECART_HOPPER":
+                        case "HOPPER_MINECART":
                         case "MINECART_MOB_SPAWNER":
+                        case "SPAWNER_MINECART":
                         case "ENDER_CRYSTAL":
                         case "MINECART_TNT":
+                        case "TNT_MINECART":
                         case "CHEST_BOAT":
                         case "BOAT":
                             if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
