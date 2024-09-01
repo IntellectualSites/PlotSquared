@@ -184,6 +184,7 @@ public class Area extends SubCommand {
                         CuboidRegion.makeCuboid(playerSelectedRegion)
                 ).length != 0) {
                     player.sendMessage(TranslatableCaption.of("single.single_area_overlapping"));
+                    return false;
                 }
                 // Alter the region
                 final BlockVector3 playerSelectionMin = playerSelectedRegion.getMinimumPoint();
