@@ -795,9 +795,8 @@ public class PlotSquared {
         if (world.equals("CheckingPlotSquaredGenerator")) {
             return;
         }
-        if (!this.getPlotAreaManager().addWorld(world)) {
-            return;
-        }
+        // Don't check the return result -> breaks runtime loading of single plot areas on creation
+        this.getPlotAreaManager().addWorld(world);
         Set<String> worlds;
         if (this.worldConfiguration.contains("worlds")) {
             worlds = this.worldConfiguration.getConfigurationSection("worlds").getKeys(false);
