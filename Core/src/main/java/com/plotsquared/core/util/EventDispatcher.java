@@ -371,7 +371,10 @@ public class EventDispatcher {
             Location location, BlockType blockType, boolean notifyPerms
     ) {
         PlotArea area = location.getPlotArea();
-        assert area != null;
+        // the interaction target location might be outside a plot area
+        if (area == null) {
+            return true;
+        }
         if (!area.buildRangeContainsY(location.getY()) && !player.hasPermission(Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
             player.sendMessage(
                     TranslatableCaption.of("height.height_limit"),
