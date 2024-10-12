@@ -261,7 +261,7 @@ public class EntityEventListener implements Listener {
             }
             return;
         }
-        if (plot.getFlag(WeavingDeathPlace.class)) {
+        if (!plot.getFlag(WeavingDeathPlace.class)) {
             plot.debug(event.getTo() + " could not spawn because weaving-death-place = false");
             event.setCancelled(true);
         }
