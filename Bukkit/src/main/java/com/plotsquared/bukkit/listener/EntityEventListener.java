@@ -32,11 +32,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotHandler;
-import com.plotsquared.core.plot.flag.implementations.DisablePhysicsFlag;
-import com.plotsquared.core.plot.flag.implementations.EntityChangeBlockFlag;
-import com.plotsquared.core.plot.flag.implementations.ExplosionFlag;
-import com.plotsquared.core.plot.flag.implementations.InvincibleFlag;
-import com.plotsquared.core.plot.flag.implementations.ProjectileChangeBlockFlag;
+import com.plotsquared.core.plot.flag.implementations.*;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlotFlagUtil;
@@ -240,6 +236,32 @@ public class EntityEventListener implements Listener {
             }
         } else if (event.getTo() == Material.AIR) {
             event.getEntity().setMetadata("plot", new FixedMetadataValue((Plugin) PlotSquared.platform(), plot));
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onWeavingEffect(EntityChangeBlockEvent event) {
+        if (event.getTo() != Material.COBWEB) {
+            return;
+        }
+        Block block = event.getBlock();
+        World world = block.getWorld();
+        String worldName = world.getName();
+        if (!this.plotAreaManager.hasPlotArea(worldName)) {
+            return;
+        }
+        Location location = BukkitUtil.adapt(block.getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = area.getOwnedPlotAbs(location);
+
+        if (plot == null || !plot.getFlag(WeavingDeathPlace.class)) {
+            event.setCancelled(true);
+            if (plot != null) {
+                plot.debug("Falling block event was cancelled because weaving-death-place = false");
+            }
         }
     }
 
