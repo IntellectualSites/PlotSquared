@@ -244,24 +244,21 @@ public class EntityEventListener implements Listener {
         if (event.getTo() != Material.COBWEB) {
             return;
         }
-        Block block = event.getBlock();
-        World world = block.getWorld();
-        String worldName = world.getName();
-        if (!this.plotAreaManager.hasPlotArea(worldName)) {
-            return;
-        }
-        Location location = BukkitUtil.adapt(block.getLocation());
+        Location location = BukkitUtil.adapt(event.getBlock().getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
         }
-        Plot plot = area.getOwnedPlotAbs(location);
-
-        if (plot == null || !plot.getFlag(WeavingDeathPlace.class)) {
-            event.setCancelled(true);
-            if (plot != null) {
-                plot.debug("Falling block event was cancelled because weaving-death-place = false");
+        Plot plot = location.getOwnedPlot();
+        if (plot == null) {
+            if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, WeavingDeathPlace.class, false)) {
+                event.setCancelled(true);
             }
+            return;
+        }
+        if (plot.getFlag(WeavingDeathPlace.class)) {
+            plot.debug(event.getTo() + " could not spawn because weaving-death-place = false");
+            event.setCancelled(true);
         }
     }
 
