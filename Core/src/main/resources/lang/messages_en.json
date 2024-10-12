@@ -628,7 +628,7 @@
   "flags.flag_description_prevent_creative_copy": "<gray>Prevents people from copying item NBT data in the plot unless they're added as members.</gray>",
   "flags.flag_description_leaf_decay": "<gray>Set to `false` to prevent leaves from decaying.",
   "flags.flag_description_projectiles": "<gray>Prevents guests from shooting projectiles on the plot when set to false.</gray>",
-  "flags.flag_description_weaving_death_place": "<gray>Set to `false` to prevent spawning of cobwebs by the Weaving status effect on death of any entity.</gray>",
+  "flags.flag_description_weaving_death_place": "<gray>Set to `false` to prevent spawning of cobwebs by the Weaving status effect on the death of an entity.</gray>",
   "flags.flag_description_beacon_effect": "<gray>Enables beacon effects on the plot.</gray>",
   "flags.flag_error_boolean": "Flag value must be a boolean (true | false).",
   "flags.flag_error_enum": "Must be one of: <list>",
