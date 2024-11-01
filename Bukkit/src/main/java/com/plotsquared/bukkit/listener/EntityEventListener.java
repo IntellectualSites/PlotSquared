@@ -37,6 +37,7 @@ import com.plotsquared.core.plot.flag.implementations.EntityChangeBlockFlag;
 import com.plotsquared.core.plot.flag.implementations.ExplosionFlag;
 import com.plotsquared.core.plot.flag.implementations.InvincibleFlag;
 import com.plotsquared.core.plot.flag.implementations.ProjectileChangeBlockFlag;
+import com.plotsquared.core.plot.flag.implementations.WeavingDeathPlace;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlotFlagUtil;
@@ -240,6 +241,29 @@ public class EntityEventListener implements Listener {
             }
         } else if (event.getTo() == Material.AIR) {
             event.getEntity().setMetadata("plot", new FixedMetadataValue((Plugin) PlotSquared.platform(), plot));
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onWeavingEffect(EntityChangeBlockEvent event) {
+        if (event.getTo() != Material.COBWEB) {
+            return;
+        }
+        Location location = BukkitUtil.adapt(event.getBlock().getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = location.getOwnedPlot();
+        if (plot == null) {
+            if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, WeavingDeathPlace.class, false)) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+        if (!plot.getFlag(WeavingDeathPlace.class)) {
+            plot.debug(event.getTo() + " could not spawn because weaving-death-place = false");
+            event.setCancelled(true);
         }
     }
 
