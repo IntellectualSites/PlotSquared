@@ -52,7 +52,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -445,7 +445,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         private static final List<Biome> BIOMES;
 
         static {
-            Set<Biome> disabledBiomes = EnumSet.of(Biome.CUSTOM);
+            Set<Biome> disabledBiomes = new HashSet<>(List.of(Biome.CUSTOM));
             if (PlotSquared.platform().serverVersion()[1] <= 19) {
                 final Biome cherryGrove = Registry.BIOME.get(NamespacedKey.minecraft("cherry_grove"));
                 if (cherryGrove != null) {
