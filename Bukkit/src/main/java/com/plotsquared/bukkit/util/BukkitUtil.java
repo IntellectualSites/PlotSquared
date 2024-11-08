@@ -471,7 +471,12 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(Firework.class);
             }
             case "player" -> allowedInterfaces.add(Player.class);
-            case "interaction" -> allowedInterfaces.add(Interaction.class);
+            case "interaction" -> {
+                final int[] version = PlotSquared.platform().serverVersion();
+                if (version[1] >= 19 && version[2] >= 4) {
+                    allowedInterfaces.add(Interaction.class);
+                }
+            }
             default -> LOGGER.error("Unknown entity category requested: {}", category);
         }
         final Set<com.sk89q.worldedit.world.entity.EntityType> types = new HashSet<>();
