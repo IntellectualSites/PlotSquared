@@ -75,6 +75,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Ghast;
 import org.bukkit.entity.Hanging;
+import org.bukkit.entity.Interaction;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LightningStrike;
@@ -470,6 +471,7 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(Firework.class);
             }
             case "player" -> allowedInterfaces.add(Player.class);
+            case "interaction" -> allowedInterfaces.add(Interaction.class);
             default -> LOGGER.error("Unknown entity category requested: {}", category);
         }
         final Set<com.sk89q.worldedit.world.entity.EntityType> types = new HashSet<>();
