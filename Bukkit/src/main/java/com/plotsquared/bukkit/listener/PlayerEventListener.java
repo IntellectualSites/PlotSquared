@@ -54,6 +54,7 @@ import com.plotsquared.core.plot.flag.implementations.EditSignFlag;
 import com.plotsquared.core.plot.flag.implementations.HangingBreakFlag;
 import com.plotsquared.core.plot.flag.implementations.HangingPlaceFlag;
 import com.plotsquared.core.plot.flag.implementations.HostileInteractFlag;
+import com.plotsquared.core.plot.flag.implementations.InteractionInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.ItemDropFlag;
 import com.plotsquared.core.plot.flag.implementations.KeepInventoryFlag;
 import com.plotsquared.core.plot.flag.implementations.LecternReadBookFlag;
@@ -1734,6 +1735,11 @@ public class PlayerEventListener implements Listener {
 
             if (EntityCategories.PLAYER.contains(entityType) && flagContainer
                     .getFlag(PlayerInteractFlag.class).getValue()) {
+                return;
+            }
+
+            if (EntityCategories.INTERACTION.contains(entityType) && flagContainer
+                    .getFlag(InteractionInteractFlag.class).getValue()) {
                 return;
             }
 

@@ -572,6 +572,7 @@
   "flags.flag_description_ice_form": "<gray>Set to `true` to allow ice to form in the plot.</gray>",
   "flags.flag_description_ice_melt": "<gray>Set to `false` to disable ice melting in the plot.</gray>",
   "flags.flag_description_instabreak": "<gray>Set to `true` to allow blocks to be instantaneously broken in survival mode.</gray>",
+  "flags.flag_description_interaction_interact": "<gray>Set to `true` to allow guests to interact with interaction entities in the plot.</gray>",
   "flags.flag_description_invincible": "<gray>Set to `true` to prevent players from taking damage inside the plot.</gray>",
   "flags.flag_description_item_drop": "<gray>Set to `false` to prevent items from being dropped inside the plot.</gray>",
   "flags.flag_description_kelp_grow": "<gray>Set to `false` to prevent kelp from growing in the plot.</gray>",

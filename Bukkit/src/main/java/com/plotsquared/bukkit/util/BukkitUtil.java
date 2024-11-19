@@ -75,6 +75,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Ghast;
 import org.bukkit.entity.Hanging;
+import org.bukkit.entity.Interaction;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LightningStrike;
@@ -432,6 +433,7 @@ public class BukkitUtil extends WorldUtil {
     @Override
     public @NonNull Set<com.sk89q.worldedit.world.entity.EntityType> getTypesInCategory(final @NonNull String category) {
         final Collection<Class<?>> allowedInterfaces = new HashSet<>();
+        final int[] version = PlotSquared.platform().serverVersion();
         switch (category) {
             case "animal" -> {
                 allowedInterfaces.add(IronGolem.class);
@@ -439,7 +441,7 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(Animals.class);
                 allowedInterfaces.add(WaterMob.class);
                 allowedInterfaces.add(Ambient.class);
-                if (PlotSquared.platform().serverVersion()[1] >= 19) {
+                if (version[1] >= 19) {
                     allowedInterfaces.add(Allay.class);
                 }
             }
@@ -470,6 +472,11 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(Firework.class);
             }
             case "player" -> allowedInterfaces.add(Player.class);
+            case "interaction" -> {
+                if ((version[1] > 19) || (version[1] == 19 && version[2] >= 4)) {
+                    allowedInterfaces.add(Interaction.class);
+                }
+            }
             default -> LOGGER.error("Unknown entity category requested: {}", category);
         }
         final Set<com.sk89q.worldedit.world.entity.EntityType> types = new HashSet<>();

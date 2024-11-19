@@ -65,6 +65,7 @@ import com.plotsquared.core.plot.flag.implementations.HostileInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.IceFormFlag;
 import com.plotsquared.core.plot.flag.implementations.IceMeltFlag;
 import com.plotsquared.core.plot.flag.implementations.InstabreakFlag;
+import com.plotsquared.core.plot.flag.implementations.InteractionInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.InvincibleFlag;
 import com.plotsquared.core.plot.flag.implementations.ItemDropFlag;
 import com.plotsquared.core.plot.flag.implementations.KeepFlag;
@@ -172,6 +173,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(IceFormFlag.ICE_FORM_FALSE);
         this.addFlag(IceMeltFlag.ICE_MELT_FALSE);
         this.addFlag(InstabreakFlag.INSTABREAK_FALSE);
+        this.addFlag(InteractionInteractFlag.INTERACTION_INTERACT_FALSE);
         this.addFlag(InvincibleFlag.INVINCIBLE_FALSE);
         this.addFlag(ItemDropFlag.ITEM_DROP_TRUE);
         this.addFlag(KeepInventoryFlag.KEEP_INVENTORY_FALSE);
