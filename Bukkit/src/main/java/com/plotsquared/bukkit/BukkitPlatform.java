@@ -1171,7 +1171,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     @Override
     public @NonNull String serverNativePackage() {
         final String name = Bukkit.getServer().getClass().getPackage().getName();
-        return name.substring(name.lastIndexOf('.') + 1);
+        String ver = name.substring(name.lastIndexOf('.') + 1);
+        // org.bukkit.craftbukkit is no longer suffixed by a version
+        return ver.equals("craftbukkit") ? "" : ver;
     }
 
     @Override
