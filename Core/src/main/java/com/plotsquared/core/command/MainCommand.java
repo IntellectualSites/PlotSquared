@@ -151,8 +151,7 @@ public class MainCommand extends Command {
                 try {
                     injector.getInstance(command);
                 } catch (final Exception e) {
-                    LOGGER.error("Failed to register command {}", command.getCanonicalName());
-                    e.printStackTrace();
+                    LOGGER.error(() -> "Failed to register command %s".formatted(command.getCanonicalName()), e);
                 }
             }
 
@@ -251,7 +250,7 @@ public class MainCommand extends Command {
                     } catch (CommandException e) {
                         throw e;
                     } catch (Throwable e) {
-                        e.printStackTrace();
+                        LOGGER.error("A error occurred while executing plot command", e);
                         String message = e.getMessage();
                         if (message != null) {
                             data.player().sendMessage(
