@@ -41,6 +41,7 @@ dependencies {
     compileOnly(libs.luckperms)
     compileOnly(libs.essentialsx)
     compileOnly(libs.mvdwapi) { isTransitive = false }
+    compileOnly(libs.miniplaceholders) { isTransitive = false }
 
     // Other libraries
     implementation(libs.squirrelid) { isTransitive = false }
