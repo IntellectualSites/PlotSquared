@@ -263,6 +263,11 @@ public class BukkitUtil extends WorldUtil {
     }
 
     @Override
+    public boolean isSmallBlock(Location location) {
+        return adapt(location).getBlock().getBoundingBox().getHeight() < 0.25;
+    }
+
+    @Override
     @NonNegative
     public int getHighestBlockSynchronous(final @NonNull String world, final int x, final int z) {
         final World bukkitWorld = Objects.requireNonNull(getWorld(world));
