@@ -651,6 +651,8 @@ public class Settings extends Config {
         public static boolean PAPER_LISTENERS = true;
         @Comment("Prevent entities from leaving plots")
         public static boolean ENTITY_PATHING = true;
+        @Comment("Prevent entities from leaving plots, even by pushing or pulling")
+        public static boolean ENTITY_MOVEMENT = false;
         @Comment(
                 "Cancel entity spawns when the chunk is loaded if the PlotArea's mob spawning is off")
         public static boolean CANCEL_CHUNK_SPAWN = true;

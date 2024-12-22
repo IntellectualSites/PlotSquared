@@ -26,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -372,6 +373,7 @@ public class Config {
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.TYPE})
+    @Documented
     public @interface Comment {
 
         String[] value();
