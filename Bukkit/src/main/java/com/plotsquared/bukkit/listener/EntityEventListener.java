@@ -37,6 +37,7 @@ import com.plotsquared.core.plot.flag.implementations.EntityChangeBlockFlag;
 import com.plotsquared.core.plot.flag.implementations.ExplosionFlag;
 import com.plotsquared.core.plot.flag.implementations.InvincibleFlag;
 import com.plotsquared.core.plot.flag.implementations.ProjectileChangeBlockFlag;
+import com.plotsquared.core.plot.flag.implementations.WeavingDeathPlace;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlotFlagUtil;
@@ -243,6 +244,29 @@ public class EntityEventListener implements Listener {
         }
     }
 
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onWeavingEffect(EntityChangeBlockEvent event) {
+        if (event.getTo() != Material.COBWEB) {
+            return;
+        }
+        Location location = BukkitUtil.adapt(event.getBlock().getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = location.getOwnedPlot();
+        if (plot == null) {
+            if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, WeavingDeathPlace.class, false)) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+        if (!plot.getFlag(WeavingDeathPlace.class)) {
+            plot.debug(event.getTo() + " could not spawn because weaving-death-place = false");
+            event.setCancelled(true);
+        }
+    }
+
     @EventHandler(priority = EventPriority.HIGH)
     public void onDamage(EntityDamageEvent event) {
         if (event.getEntityType() != EntityType.PLAYER) {
@@ -401,7 +425,13 @@ public class EntityEventListener implements Listener {
         }
 
         Plot plot = area.getOwnedPlot(location);
-        if (plot != null && !plot.getFlag(EntityChangeBlockFlag.class)) {
+        if (plot == null) {
+            if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, EntityChangeBlockFlag.class, false)) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+        if (!plot.getFlag(EntityChangeBlockFlag.class)) {
             plot.debug(e.getType() + " could not change block because entity-change-block = false");
             event.setCancelled(true);
         }

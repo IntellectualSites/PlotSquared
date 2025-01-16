@@ -49,9 +49,14 @@ public class SingleWorldListener implements Listener {
             this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle").getRealMethod();
         } catch (NoSuchMethodException ignored) {
             try {
-                ReflectionUtils.RefClass classChunkStatus = getRefClass("net.minecraft.world.level.chunk.ChunkStatus");
+                String chunkStatus = PlotSquared.platform().serverVersion()[1] < 21
+                        ? "net.minecraft.world.level.chunk" + ".ChunkStatus"
+                        : "net.minecraft.world.level.chunk.status.ChunkStatus";
+                ReflectionUtils.RefClass classChunkStatus = getRefClass(chunkStatus);
                 this.objChunkStatusFull = classChunkStatus.getRealClass().getField("n").get(null);
-                this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle", classChunkStatus.getRealClass()).getRealMethod();
+                this.methodGetHandleChunk = classCraftChunk
+                        .getMethod("getHandle", classChunkStatus.getRealClass())
+                        .getRealMethod();
             } catch (NoSuchMethodException ex) {
                 throw new RuntimeException(ex);
             }
