@@ -28,6 +28,7 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Chunk;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
@@ -53,6 +54,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.List;
 
 public class EntitySpawnListener implements Listener {
+
+    private static final NamespacedKey ITEM = NamespacedKey.minecraft("item");
+    private static final NamespacedKey END_CRYSTAL = NamespacedKey.minecraft("end_crystal");
 
     private static final String KEY = "P2";
     private static boolean ignoreTP = false;
@@ -132,7 +136,7 @@ public class EntitySpawnListener implements Listener {
         Plot plot = location.getOwnedPlotAbs();
         EntityType type = entity.getType();
         if (plot == null) {
-            if (type == EntityType.DROPPED_ITEM) {
+            if (type.getKey().equals(ITEM)) {
                 if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
                     event.setCancelled(true);
                 }
@@ -154,7 +158,7 @@ public class EntitySpawnListener implements Listener {
         if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
             event.setCancelled(true);
         }
-        if (type == EntityType.ENDER_CRYSTAL || type == EntityType.ARMOR_STAND) {
+        if (type.getKey().equals(END_CRYSTAL) || type == EntityType.ARMOR_STAND) {
             if (BukkitEntityUtil.checkEntity(entity, plot)) {
                 event.setCancelled(true);
             }

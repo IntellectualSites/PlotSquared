@@ -34,6 +34,7 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.PlotFlagUtil;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -53,6 +54,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 @SuppressWarnings("unused")
 public class ProjectileEventListener implements Listener {
+
+    private static final NamespacedKey FISHING_BOBBER = NamespacedKey.minecraft("fishing_bobber");
 
     private final PlotAreaManager plotAreaManager;
 
@@ -134,7 +137,7 @@ public class ProjectileEventListener implements Listener {
                 event.setCancelled(true);
             }
         } else if (!plot.isAdded(pp.getUUID())) {
-            if (entity.getType().equals(EntityType.FISHING_HOOK)) {
+            if (entity.getType().getKey().equals(FISHING_BOBBER)) {
                 if (plot.getFlag(FishingFlag.class)) {
                     return;
                 }
@@ -194,7 +197,7 @@ public class ProjectileEventListener implements Listener {
                 return;
             }
             if (plot.isAdded(pp.getUUID()) || pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER) || plot.getFlag(
-                    ProjectilesFlag.class) || (entity.getType().equals(EntityType.FISHING_HOOK) && plot.getFlag(
+                    ProjectilesFlag.class) || (entity.getType().getKey().equals(FISHING_BOBBER) && plot.getFlag(
                     FishingFlag.class))) {
                 return;
             }

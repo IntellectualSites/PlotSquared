@@ -42,9 +42,11 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlotFlagUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.util.Enums;
 import com.sk89q.worldedit.world.block.BlockType;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -78,9 +80,13 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 @SuppressWarnings("unused")
 public class EntityEventListener implements Listener {
+
+    private static final NamespacedKey TNT_MINECART = NamespacedKey.minecraft("tnt_minecart");
+    private static final Particle EXPLOSION_HUGE = Objects.requireNonNull(Enums.findByValue(Particle.class, "EXPLOSION_EMITTER", "EXPLOSION_HUGE"));
 
     private final BukkitPlatform platform;
     private final PlotAreaManager plotAreaManager;
@@ -152,8 +158,8 @@ public class EntityEventListener implements Listener {
                 }
             }
             case "REINFORCEMENTS", "NATURAL", "MOUNT", "PATROL", "RAID", "SHEARED", "SILVERFISH_BLOCK", "ENDER_PEARL",
-                    "TRAP", "VILLAGE_DEFENSE", "VILLAGE_INVASION", "BEEHIVE", "CHUNK_GEN", "NETHER_PORTAL",
-                    "FROZEN", "SPELL", "DEFAULT" -> {
+                 "TRAP", "VILLAGE_DEFENSE", "VILLAGE_INVASION", "BEEHIVE", "CHUNK_GEN", "NETHER_PORTAL",
+                 "FROZEN", "SPELL", "DEFAULT" -> {
                 if (!area.isMobSpawning()) {
                     event.setCancelled(true);
                     return;
@@ -314,7 +320,7 @@ public class EntityEventListener implements Listener {
                 if (this.lastRadius != 0) {
                     List<Entity> nearby = event.getEntity().getNearbyEntities(this.lastRadius, this.lastRadius, this.lastRadius);
                     for (Entity near : nearby) {
-                        if (near instanceof TNTPrimed || near.getType().equals(EntityType.MINECART_TNT)) {
+                        if (near instanceof TNTPrimed || near.getType().getKey().equals(TNT_MINECART)) {
                             if (!near.hasMetadata("plot")) {
                                 near.setMetadata("plot", new FixedMetadataValue((Plugin) PlotSquared.platform(), plot));
                             }
@@ -338,7 +344,7 @@ public class EntityEventListener implements Listener {
         event.setCancelled(true);
         //Spawn Explosion Particles when enabled in settings
         if (Settings.General.ALWAYS_SHOW_EXPLOSIONS) {
-            event.getLocation().getWorld().spawnParticle(Particle.EXPLOSION_HUGE, event.getLocation(), 0);
+            event.getLocation().getWorld().spawnParticle(EXPLOSION_HUGE, event.getLocation(), 0);
         }
     }
 
@@ -365,7 +371,8 @@ public class EntityEventListener implements Listener {
                 // Burning player evaporating powder snow. Use same checks as
                 // trampling farmland
                 BlockType blockType = BukkitAdapter.asBlockType(type);
-                if (!this.eventDispatcher.checkPlayerBlockEvent(pp,
+                if (!this.eventDispatcher.checkPlayerBlockEvent(
+                        pp,
                         PlayerBlockEventType.TRIGGER_PHYSICAL, location, blockType, true
                 )) {
                     event.setCancelled(true);
