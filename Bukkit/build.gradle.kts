@@ -39,7 +39,9 @@ dependencies {
     }
     compileOnly(libs.placeholderapi)
     compileOnly(libs.luckperms)
-    compileOnly(libs.essentialsx)
+    compileOnly(libs.essentialsx) {
+        exclude(group = "org.spigotmc")
+    }
     compileOnly(libs.mvdwapi) { isTransitive = false }
 
     // Other libraries
