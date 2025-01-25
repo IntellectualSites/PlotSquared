@@ -60,6 +60,9 @@ public class Music extends SubCommand {
                     "music_disc_creator_music_box", "music_disc_precipice"
             );
 
+    // make sure all discs and the bedrock ("cancel") fit into the inventory
+    private static final int INVENTORY_ROWS = (int) Math.ceil((DISCS.size() + 1) / 9.0);
+
     private final InventoryUtil inventoryUtil;
     private final EventDispatcher eventDispatcher;
 
@@ -94,7 +97,7 @@ public class Music extends SubCommand {
         PlotInventory inv = new PlotInventory(
                 this.inventoryUtil,
                 player,
-                2,
+                INVENTORY_ROWS,
                 TranslatableCaption.of("plotjukebox.jukebox_header").getComponent(player)
         ) {
             @Override
