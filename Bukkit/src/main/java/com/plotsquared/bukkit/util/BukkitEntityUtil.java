@@ -45,11 +45,11 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -59,8 +59,6 @@ import org.bukkit.projectiles.ProjectileSource;
 import java.util.Objects;
 
 public class BukkitEntityUtil {
-
-    private static final NamespacedKey FIREWORK_ROCKET = NamespacedKey.minecraft("firework_rocket");
 
     public static final com.sk89q.worldedit.world.entity.EntityType FAKE_ENTITY_TYPE =
             new com.sk89q.worldedit.world.entity.EntityType("plotsquared:fake");
@@ -344,8 +342,7 @@ public class BukkitEntityUtil {
         }
         //disable the firework damage. too much of a headache to support at the moment.
         if (vplot != null) {
-            if (EntityDamageEvent.DamageCause.ENTITY_EXPLOSION == cause
-                    && damager.getType().getKey().equals(FIREWORK_ROCKET)) {
+            if (EntityDamageEvent.DamageCause.ENTITY_EXPLOSION == cause && damager instanceof Firework) {
                 return false;
             }
         }

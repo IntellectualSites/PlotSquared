@@ -95,7 +95,6 @@ import org.bukkit.block.data.Waterlogged;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Boat;
-import org.bukkit.entity.ChestBoat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
@@ -377,8 +376,7 @@ public class PlayerEventListener implements Listener {
 
     @EventHandler
     public void onVehicleEntityCollision(VehicleEntityCollisionEvent e) {
-        final Class<? extends Entity> clazz = e.getVehicle().getType().getEntityClass();
-        if (clazz != null && (Boat.class.isAssignableFrom(clazz) || ChestBoat.class.isAssignableFrom(clazz))) {
+        if (e.getEntity() instanceof Boat) {
             Location location = BukkitUtil.adapt(e.getEntity().getLocation());
             if (location.isPlotArea()) {
                 if (e.getEntity() instanceof Player) {

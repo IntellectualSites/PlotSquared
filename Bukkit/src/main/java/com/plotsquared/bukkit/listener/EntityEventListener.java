@@ -46,7 +46,6 @@ import com.sk89q.worldedit.util.Enums;
 import com.sk89q.worldedit.world.block.BlockType;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -59,6 +58,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.minecart.ExplosiveMinecart;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -85,8 +85,11 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public class EntityEventListener implements Listener {
 
-    private static final NamespacedKey TNT_MINECART = NamespacedKey.minecraft("tnt_minecart");
-    private static final Particle EXPLOSION_HUGE = Objects.requireNonNull(Enums.findByValue(Particle.class, "EXPLOSION_EMITTER", "EXPLOSION_HUGE"));
+    private static final Particle EXPLOSION_HUGE = Objects.requireNonNull(Enums.findByValue(
+            Particle.class,
+            "EXPLOSION_EMITTER",
+            "EXPLOSION_HUGE"
+    ));
 
     private final BukkitPlatform platform;
     private final PlotAreaManager plotAreaManager;
@@ -320,7 +323,7 @@ public class EntityEventListener implements Listener {
                 if (this.lastRadius != 0) {
                     List<Entity> nearby = event.getEntity().getNearbyEntities(this.lastRadius, this.lastRadius, this.lastRadius);
                     for (Entity near : nearby) {
-                        if (near instanceof TNTPrimed || near.getType().getKey().equals(TNT_MINECART)) {
+                        if (near instanceof TNTPrimed || near instanceof ExplosiveMinecart) {
                             if (!near.hasMetadata("plot")) {
                                 near.setMetadata("plot", new FixedMetadataValue((Plugin) PlotSquared.platform(), plot));
                             }
@@ -371,8 +374,7 @@ public class EntityEventListener implements Listener {
                 // Burning player evaporating powder snow. Use same checks as
                 // trampling farmland
                 BlockType blockType = BukkitAdapter.asBlockType(type);
-                if (!this.eventDispatcher.checkPlayerBlockEvent(
-                        pp,
+                if (!this.eventDispatcher.checkPlayerBlockEvent(pp,
                         PlayerBlockEventType.TRIGGER_PHYSICAL, location, blockType, true
                 )) {
                     event.setCancelled(true);
