@@ -65,6 +65,7 @@ import com.plotsquared.core.plot.flag.implementations.HostileInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.IceFormFlag;
 import com.plotsquared.core.plot.flag.implementations.IceMeltFlag;
 import com.plotsquared.core.plot.flag.implementations.InstabreakFlag;
+import com.plotsquared.core.plot.flag.implementations.InteractionInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.InvincibleFlag;
 import com.plotsquared.core.plot.flag.implementations.ItemDropFlag;
 import com.plotsquared.core.plot.flag.implementations.KeepFlag;
@@ -92,6 +93,7 @@ import com.plotsquared.core.plot.flag.implementations.PreventCreativeCopyFlag;
 import com.plotsquared.core.plot.flag.implementations.PriceFlag;
 import com.plotsquared.core.plot.flag.implementations.ProjectileChangeBlockFlag;
 import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
+import com.plotsquared.core.plot.flag.implementations.WeavingDeathPlace;
 import com.plotsquared.core.plot.flag.implementations.PveFlag;
 import com.plotsquared.core.plot.flag.implementations.PvpFlag;
 import com.plotsquared.core.plot.flag.implementations.RedstoneFlag;
@@ -171,6 +173,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(IceFormFlag.ICE_FORM_FALSE);
         this.addFlag(IceMeltFlag.ICE_MELT_FALSE);
         this.addFlag(InstabreakFlag.INSTABREAK_FALSE);
+        this.addFlag(InteractionInteractFlag.INTERACTION_INTERACT_FALSE);
         this.addFlag(InvincibleFlag.INVINCIBLE_FALSE);
         this.addFlag(ItemDropFlag.ITEM_DROP_TRUE);
         this.addFlag(KeepInventoryFlag.KEEP_INVENTORY_FALSE);
@@ -207,6 +210,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(VillagerInteractFlag.VILLAGER_INTERACT_FALSE);
         this.addFlag(VineGrowFlag.VINE_GROW_TRUE);
         this.addFlag(ProjectilesFlag.PROJECTILES_FALSE);
+        this.addFlag(WeavingDeathPlace.WEAVING_DEATH_PLACE_FALSE);
 
         // Double flags
         this.addFlag(PriceFlag.PRICE_NOT_BUYABLE);

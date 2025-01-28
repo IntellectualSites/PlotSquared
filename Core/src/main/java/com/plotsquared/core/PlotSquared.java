@@ -206,7 +206,8 @@ public class PlotSquared {
         GlobalFlagContainer.setup();
 
         try {
-            new ReflectionUtils(this.platform.serverNativePackage());
+            String ver = this.platform.serverNativePackage();
+            new ReflectionUtils(ver.isEmpty() ? null : ver);
             try {
                 URL logurl = PlotSquared.class.getProtectionDomain().getCodeSource().getLocation();
                 this.jarFile = new File(
@@ -214,7 +215,7 @@ public class PlotSquared {
                                 logurl.toURI().toString().split("\\!")[0].replaceAll("jar:file", "file"))
                                 .getPath());
             } catch (URISyntaxException | SecurityException e) {
-                e.printStackTrace();
+                LOGGER.error(e);
                 this.jarFile = new File(this.platform.getDirectory().getParentFile(), "PlotSquared.jar");
                 if (!this.jarFile.exists()) {
                     this.jarFile = new File(
@@ -238,7 +239,7 @@ public class PlotSquared {
             copyFile("skyblock.template", Settings.Paths.TEMPLATES);
             showDebug();
         } catch (Throwable e) {
-            e.printStackTrace();
+            LOGGER.error(e);
         }
     }
 
