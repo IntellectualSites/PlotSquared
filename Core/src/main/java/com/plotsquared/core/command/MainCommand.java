@@ -40,8 +40,6 @@ import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -49,6 +47,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * PlotSquared command class.
@@ -283,7 +284,7 @@ public class MainCommand extends Command {
     }
 
     private CompletableFuture<Optional<CommandExecutionData>> preparePlotArgument(@Nullable Plot newPlot,
-                                                                        @NotNull CommandExecutionData data,
+                                                                        @Nonnull CommandExecutionData data,
                                                                                   @Nullable PlotArea area) {
         if (newPlot != null && (data.player() instanceof ConsolePlayer
                 || (area != null && area.equals(newPlot.getArea()))
@@ -310,7 +311,7 @@ public class MainCommand extends Command {
         return CompletableFuture.completedFuture(Optional.of(data));
     }
 
-    private Optional<CommandExecutionData> prepareFlagArgument(@NotNull CommandExecutionData data, @NotNull PlotArea area) {
+    private Optional<CommandExecutionData> prepareFlagArgument(@Nonnull CommandExecutionData data, @Nonnull PlotArea area) {
         if (data.args().length >= 2 && !data.args()[0].isEmpty() && data.args()[0].charAt(0) == '-') {
             if ("f".equals(data.args()[0].substring(1))) {
                 return Optional.of(new CommandExecutionData(
@@ -337,7 +338,7 @@ public class MainCommand extends Command {
         return future;
     }
 
-    private @NotNull RunnableVal3<Command, Runnable, Runnable> createForcedConfirmation(@NotNull PlotPlayer<?> player,
+    private @Nonnull RunnableVal3<Command, Runnable, Runnable> createForcedConfirmation(@Nonnull PlotPlayer<?> player,
                                                                                         @Nullable PlotArea area) {
         return new RunnableVal3<>() {
             @Override
@@ -360,7 +361,7 @@ public class MainCommand extends Command {
         };
     }
 
-    private @NotNull TemporaryCommandMeta setCommandScope(@NotNull PlotPlayer<?> player, @NotNull TemporaryCommandMeta commandMeta) {
+    private @Nonnull TemporaryCommandMeta setCommandScope(@Nonnull PlotPlayer<?> player, @Nonnull TemporaryCommandMeta commandMeta) {
         Objects.requireNonNull(commandMeta.location());
         Objects.requireNonNull(commandMeta.plot());
         Location location;
@@ -378,7 +379,7 @@ public class MainCommand extends Command {
         return new TemporaryCommandMeta(location, plot);
     }
 
-    private void resetCommandScope(@NotNull PlotPlayer<?> player, @NotNull TemporaryCommandMeta commandMeta) {
+    private void resetCommandScope(@Nonnull PlotPlayer<?> player, @Nonnull TemporaryCommandMeta commandMeta) {
         try (final MetaDataAccess<Location> locationMetaDataAccess
                      = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
             if (commandMeta.location() == null) {
@@ -397,9 +398,9 @@ public class MainCommand extends Command {
         }
     }
 
-    private record CommandExecutionData(@NotNull PlotPlayer<?> player, @NotNull String[] args,
-                    @NotNull RunnableVal3<Command, Runnable, Runnable> confirm,
-                    @NotNull RunnableVal2<Command, CommandResult> whenDone,
+    private record CommandExecutionData(@Nonnull PlotPlayer<?> player, @Nonnull String[] args,
+                    @Nonnull RunnableVal3<Command, Runnable, Runnable> confirm,
+                    @Nonnull RunnableVal2<Command, CommandResult> whenDone,
                     @Nullable TemporaryCommandMeta postCommandData) {}
 
     private record TemporaryCommandMeta(@Nullable Location location, @Nullable Plot plot) {}
