@@ -33,7 +33,7 @@ vault = "1.7.1"
 serverlib = "2.3.6"
 
 # Gradle plugins
-shadow = "8.3.5"
+shadow = "8.3.6"
 grgit = "4.1.1"
 spotless = "7.0.2"
 nexus = "2.0.0"
