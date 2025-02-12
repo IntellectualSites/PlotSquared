@@ -117,8 +117,8 @@ public class Remove extends SubCommand {
             }
             if (count == 0) {
                 player.sendMessage(
-                        TranslatableCaption.of("errors.invalid_player"),
-                        TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))
+                        TranslatableCaption.of("member.player_not_removed"),
+                        TagResolver.resolver("player", Tag.inserting(Component.text(args[0])))
                 );
             } else {
                 player.sendMessage(
