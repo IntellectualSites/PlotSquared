@@ -38,15 +38,15 @@ import org.bukkit.projectiles.ProjectileSource;
  * @since TODO
  */
 public class ProjectileLaunchEvent1211 implements Listener {
-    
+
     @EventHandler(ignoreCancelled = true)
     public void onWindCharge(ProjectileLaunchEvent event) {
-        
+
         Projectile entity = event.getEntity();
         if ((entity.getType() != EntityType.WIND_CHARGE) && (entity.getType() != EntityType.BREEZE_WIND_CHARGE)) {
             return;
         }
-        
+
         ProjectileSource shooter = entity.getShooter();
         if (!(shooter instanceof Player)) {
             return;
@@ -66,13 +66,13 @@ public class ProjectileLaunchEvent1211 implements Listener {
             }
             return;
         }
-        
+
         if (!plot.hasOwner()) {
             entity.remove();
             event.setCancelled(true);
             return;
         }
-        
+
         if (!plot.isAdded(pp.getUUID())) {
             if (!plot.getFlag(WindChargeFlag.class)) {
                 plot.debug("Could not update blocks by wind charge because wind-charge = false");
@@ -80,7 +80,7 @@ public class ProjectileLaunchEvent1211 implements Listener {
                 event.setCancelled(true);
             }
         }
-        
+
     }
 
 }
