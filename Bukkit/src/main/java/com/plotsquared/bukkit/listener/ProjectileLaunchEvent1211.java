@@ -20,39 +20,67 @@ package com.plotsquared.bukkit.listener;
 
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.WindChargeFlag;
 import com.plotsquared.core.util.PlotFlagUtil;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.projectiles.ProjectileSource;
 
 /**
  * For events since 1.21.1
  * @since TODO
  */
-public class EntityEventListener1211 implements Listener {
-
+public class ProjectileLaunchEvent1211 implements Listener {
+    
     @EventHandler(ignoreCancelled = true)
-    public void onWindCharge(EntityExplodeEvent event) {
-        // TODO Use "ExplosionResult" for this check after building the plugin with 1.21.1+
-        Location location = BukkitUtil.adapt(event.getEntity().getLocation());
+    public void onWindCharge(ProjectileLaunchEvent event) {
+        
+        Projectile entity = event.getEntity();
+        if ((entity.getType() != EntityType.WIND_CHARGE) && (entity.getType() != EntityType.BREEZE_WIND_CHARGE)) {
+            return;
+        }
+        
+        ProjectileSource shooter = entity.getShooter();
+        if (!(shooter instanceof Player)) {
+            return;
+        }
+        Location location = BukkitUtil.adapt(entity.getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
         }
+        PlotPlayer<Player> pp = BukkitUtil.adapt((Player) shooter);
         Plot plot = location.getOwnedPlot();
+
         if (plot == null) {
             if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, WindChargeFlag.class, false)) {
+                entity.remove();
                 event.setCancelled(true);
             }
             return;
         }
-        if (!plot.getFlag(WindChargeFlag.class)) {
-            plot.debug("Could not update blocks by wind charge because wind-charge = false");
+        
+        if (!plot.hasOwner()) {
+            entity.remove();
             event.setCancelled(true);
+            return;
         }
+        
+        if (!plot.isAdded(pp.getUUID())) {
+            if (!plot.getFlag(WindChargeFlag.class)) {
+                plot.debug("Could not update blocks by wind charge because wind-charge = false");
+                entity.remove();
+                event.setCancelled(true);
+            }
+        }
+        
     }
 
 }
