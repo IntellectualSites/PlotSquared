@@ -582,6 +582,8 @@ public class Settings extends Config {
         public static boolean PER_WORLD_VISIT = false;
         @Comment("Search merged plots for having multiple owners when using the visit command")
         public static boolean VISIT_MERGED_OWNERS = true;
+        @Comment("Allows to teleport based on block size instead to spawn on the highest block at the home command")
+        public static boolean SIZED_BASED = true;
 
     }
 
@@ -651,6 +653,8 @@ public class Settings extends Config {
         public static boolean PAPER_LISTENERS = true;
         @Comment("Prevent entities from leaving plots")
         public static boolean ENTITY_PATHING = true;
+        @Comment("Prevent entities from leaving plots, even by pushing or pulling")
+        public static boolean ENTITY_MOVEMENT = false;
         @Comment(
                 "Cancel entity spawns when the chunk is loaded if the PlotArea's mob spawning is off")
         public static boolean CANCEL_CHUNK_SPAWN = true;

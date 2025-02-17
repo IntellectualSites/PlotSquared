@@ -47,6 +47,7 @@ import com.plotsquared.core.plot.flag.implementations.TileDropFlag;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.PlotFlagUtil;
+import io.papermc.paper.event.entity.EntityMoveEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -58,6 +59,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Slime;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -104,33 +106,7 @@ public class PaperListener implements Listener {
         if (!Settings.Paper_Components.ENTITY_PATHING) {
             return;
         }
-        Location toLoc = BukkitUtil.adapt(event.getLoc());
-        Location fromLoc = BukkitUtil.adapt(event.getEntity().getLocation());
-        PlotArea tarea = toLoc.getPlotArea();
-        if (tarea == null) {
-            return;
-        }
-        PlotArea farea = fromLoc.getPlotArea();
-        if (farea == null) {
-            return;
-        }
-        if (tarea != farea) {
-            event.setCancelled(true);
-            return;
-        }
-        Plot tplot = toLoc.getPlot();
-        Plot fplot = fromLoc.getPlot();
-        if (tplot == null ^ fplot == null) {
-            event.setCancelled(true);
-            return;
-        }
-        if (tplot == null || tplot.getId().hashCode() == fplot.getId().hashCode()) {
-            return;
-        }
-        if (fplot.isMerged() && fplot.getConnectedPlots().contains(fplot)) {
-            return;
-        }
-        event.setCancelled(true);
+        handleEntityMovement(event, event.getEntity().getLocation(), event.getLoc());
     }
 
     @EventHandler
@@ -145,8 +121,23 @@ public class PaperListener implements Listener {
             return;
         }
 
-        Location toLoc = BukkitUtil.adapt(b.getLocation());
-        Location fromLoc = BukkitUtil.adapt(event.getEntity().getLocation());
+        handleEntityMovement(event, event.getEntity().getLocation(),  b.getLocation());
+    }
+
+    @EventHandler
+    public void onEntityMove(EntityMoveEvent event) {
+        if (!Settings.Paper_Components.ENTITY_MOVEMENT) {
+            return;
+        }
+        if (!event.hasExplicitlyChangedBlock()) {
+            return;
+        }
+        handleEntityMovement(event, event.getFrom(), event.getTo());
+    }
+
+    private static void handleEntityMovement(Cancellable event, org.bukkit.Location from, org.bukkit.Location target) {
+        Location toLoc = BukkitUtil.adapt(target);
+        Location fromLoc = BukkitUtil.adapt(from);
         PlotArea tarea = toLoc.getPlotArea();
         if (tarea == null) {
             return;
@@ -155,7 +146,6 @@ public class PaperListener implements Listener {
         if (farea == null) {
             return;
         }
-
         if (tarea != farea) {
             event.setCancelled(true);
             return;
@@ -166,10 +156,10 @@ public class PaperListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        if (tplot == null || tplot.getId().hashCode() == fplot.getId().hashCode()) {
+        if (tplot == null || tplot.getId().equals(fplot.getId())) {
             return;
         }
-        if (fplot.isMerged() && fplot.getConnectedPlots().contains(fplot)) {
+        if (fplot.isMerged() && fplot.getConnectedPlots().contains(tplot)) {
             return;
         }
         event.setCancelled(true);
