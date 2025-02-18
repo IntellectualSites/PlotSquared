@@ -38,7 +38,7 @@ import org.bukkit.projectiles.ProjectileSource;
  * For events since 1.21.1
  * @since TODO
  */
-public class ProjectileLaunchEvent1211 implements Listener {
+public class ProjectileEventListener1211 implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onWindCharge(ProjectileHitEvent event) {
