@@ -29,8 +29,9 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
 /**
@@ -39,8 +40,8 @@ import org.bukkit.projectiles.ProjectileSource;
  */
 public class ProjectileLaunchEvent1211 implements Listener {
 
-    @EventHandler(ignoreCancelled = true)
-    public void onWindCharge(ProjectileLaunchEvent event) {
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onWindCharge(ProjectileHitEvent event) {
 
         Projectile entity = event.getEntity();
         if ((entity.getType() != EntityType.WIND_CHARGE) && (entity.getType() != EntityType.BREEZE_WIND_CHARGE)) {
