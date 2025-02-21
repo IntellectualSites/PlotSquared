@@ -34,6 +34,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Bat;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Breedable;
+import org.bukkit.entity.ChestBoat;
 import org.bukkit.entity.ChestedHorse;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
@@ -103,10 +104,18 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             this.noGravity = true;
         }
         switch (entity.getType().toString()) {
-            case "BOAT" -> {
+            case "BOAT", "ACACIA_BOAT", "BIRCH_BOAT", "CHERRY_BOAT", "DARK_OAK_BOAT", "JUNGLE_BOAT", "MANGROVE_BOAT",
+                 "OAK_BOAT", "PALE_OAK_BOAT", "SPRUCE_BOAT", "BAMBOO_RAFT" -> {
                 Boat boat = (Boat) entity;
-                this.dataByte = getOrdinal(TreeSpecies.values(), boat.getWoodType());
+                this.dataByte = getOrdinal(Boat.Type.values(), boat.getBoatType());
                 return;
+            }
+            case "ACACIA_CHEST_BOAT", "BIRCH_CHEST_BOAT", "CHERRY_CHEST_BOAT", "DARK_OAK_CHEST_BOAT",
+                 "JUNGLE_CHEST_BOAT", "MANGROVE_CHEST_BOAT", "OAK_CHEST_BOAT", "PALE_OAK_CHEST_BOAT",
+                 "SPRUCE_CHEST_BOAT", "BAMBOO_CHEST_RAFT" -> {
+                ChestBoat boat = (ChestBoat) entity;
+                this.dataByte = getOrdinal(Boat.Type.values(), boat.getBoatType());
+                storeInventory(boat);
             }
             case "ARROW", "EGG", "ENDER_CRYSTAL", "ENDER_PEARL", "ENDER_SIGNAL", "EXPERIENCE_ORB", "FALLING_BLOCK", "FIREBALL",
                     "FIREWORK", "FISHING_HOOK", "LEASH_HITCH", "LIGHTNING", "MINECART", "MINECART_COMMAND", "MINECART_MOB_SPAWNER",
@@ -117,7 +126,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 return;
             }
             // MISC //
-            case "DROPPED_ITEM" -> {
+            case "DROPPED_ITEM", "ITEM" -> {
                 Item item = (Item) entity;
                 this.stack = item.getItemStack();
                 return;
@@ -147,14 +156,14 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             }
             // END MISC //
             // INVENTORY HOLDER //
-            case "MINECART_CHEST", "MINECART_HOPPER" -> {
+            case "MINECART_CHEST", "CHEST_MINECART", "MINECART_HOPPER", "HOPPER_MINECART" -> {
                 storeInventory((InventoryHolder) entity);
                 return;
             }
             // START LIVING ENTITY //
             // START AGEABLE //
             // START TAMEABLE //
-            case "HORSE", "DONKEY", "LLAMA", "MULE", "SKELETON_HORSE" -> {
+            case "CAMEL", "HORSE", "DONKEY", "LLAMA", "TRADER_LLAMA", "MULE", "SKELETON_HORSE", "ZOMBIE_HORSE" -> {
                 AbstractHorse horse = (AbstractHorse) entity;
                 this.horse = new HorseStats();
                 this.horse.jump = horse.getJumpStrength();
@@ -172,14 +181,13 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 return;
             }
             // END INVENTORY HOLDER //
-            case "WOLF", "OCELOT" -> {
+            case "WOLF", "OCELOT", "CAT", "PARROT" -> {
                 storeTameable((Tameable) entity);
                 storeBreedable((Breedable) entity);
                 storeLiving((LivingEntity) entity);
                 return;
             }
             // END TAMEABLE //
-            //todo fix sheep
             case "SHEEP" -> {
                 Sheep sheep = (Sheep) entity;
                 if (sheep.isSheared()) {
@@ -187,7 +195,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 } else {
                     this.dataByte = (byte) 0;
                 }
-                this.dataByte2 = sheep.getColor().getDyeData();
+                this.dataByte2 = getOrdinal(DyeColor.values(), sheep.getColor());
                 storeBreedable(sheep);
                 storeLiving(sheep);
                 return;
@@ -268,7 +276,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             }
             case "SKELETON", "WITHER_SKELETON", "GUARDIAN", "ELDER_GUARDIAN", "GHAST", "MAGMA_CUBE", "SQUID", "PIG_ZOMBIE", "HOGLIN",
                     "ZOMBIFIED_PIGLIN", "PIGLIN", "PIGLIN_BRUTE", "ZOMBIE", "WITHER", "WITCH", "SPIDER", "CAVE_SPIDER", "SILVERFISH",
-                    "GIANT", "ENDERMAN", "CREEPER", "BLAZE", "SHULKER", "SNOWMAN" -> {
+                    "GIANT", "ENDERMAN", "CREEPER", "BLAZE", "SHULKER", "SNOWMAN", "SNOW_GOLEM" -> {
                 storeLiving((LivingEntity) entity);
                 return;
             }
@@ -450,7 +458,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         }
         Entity entity;
         switch (this.getType().toString()) {
-            case "DROPPED_ITEM" -> {
+            case "DROPPED_ITEM", "ITEM" -> {
                 return world.dropItem(location, this.stack);
             }
             case "PLAYER", "LEASH_HITCH" -> {
@@ -518,14 +526,14 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             }
             // END MISC //
             // INVENTORY HOLDER //
-            case "MINECART_CHEST", "MINECART_HOPPER" -> {
+            case "MINECART_CHEST", "CHEST_MINECART", "MINECART_HOPPER", "HOPPER_MINECART" -> {
                 restoreInventory((InventoryHolder) entity);
                 return entity;
             }
             // START LIVING ENTITY //
             // START AGEABLE //
             // START TAMEABLE //
-            case "HORSE", "LLAMA", "SKELETON_HORSE", "DONKEY", "MULE" -> {
+            case "CAMEL", "HORSE", "DONKEY", "LLAMA", "TRADER_LLAMA", "MULE", "SKELETON_HORSE", "ZOMBIE_HORSE" -> {
                 AbstractHorse horse = (AbstractHorse) entity;
                 horse.setJumpStrength(this.horse.jump);
                 if (horse instanceof ChestedHorse) {
@@ -542,7 +550,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 return entity;
             }
             // END INVENTORY HOLDER //
-            case "WOLF", "OCELOT" -> {
+            case "WOLF", "OCELOT", "CAT", "PARROT" -> {
                 restoreTameable((Tameable) entity);
                 restoreBreedable((Breedable) entity);
                 restoreLiving((LivingEntity) entity);
@@ -555,7 +563,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                     sheep.setSheared(true);
                 }
                 if (this.dataByte2 != 0) {
-                    sheep.setColor(DyeColor.getByDyeData(this.dataByte2));
+                    sheep.setColor(DyeColor.values()[this.dataByte2]);
                 }
                 restoreBreedable(sheep);
                 restoreLiving(sheep);
