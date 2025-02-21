@@ -494,15 +494,25 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             entity.setGravity(false);
         }
         switch (entity.getType().toString()) {
-            case "BOAT" -> {
+            case "BOAT", "ACACIA_BOAT", "BIRCH_BOAT", "CHERRY_BOAT", "DARK_OAK_BOAT", "JUNGLE_BOAT", "MANGROVE_BOAT",
+                 "OAK_BOAT", "PALE_OAK_BOAT", "SPRUCE_BOAT", "BAMBOO_RAFT" -> {
                 Boat boat = (Boat) entity;
-                boat.setWoodType(TreeSpecies.values()[dataByte]);
+                boat.setBoatType(Boat.Type.values()[dataByte]);
                 return entity;
             }
-            case "SLIME" -> {
+            case "ACACIA_CHEST_BOAT", "BIRCH_CHEST_BOAT", "CHERRY_CHEST_BOAT", "DARK_OAK_CHEST_BOAT",
+                 "JUNGLE_CHEST_BOAT", "MANGROVE_CHEST_BOAT", "OAK_CHEST_BOAT", "PALE_OAK_CHEST_BOAT",
+                 "SPRUCE_CHEST_BOAT", "BAMBOO_CHEST_RAFT" -> {
+                ChestBoat boat = (ChestBoat) entity;
+                boat.setBoatType(Boat.Type.values()[dataByte]);
+                restoreInventory(boat);
+                return entity;
+            }
+            // SLIME is not even stored
+            /* case "SLIME" -> {
                 ((Slime) entity).setSize(this.dataByte);
                 return entity;
-            }
+            } */
             case "ARROW", "EGG", "ENDER_CRYSTAL", "ENDER_PEARL", "ENDER_SIGNAL", "DROPPED_ITEM", "EXPERIENCE_ORB", "FALLING_BLOCK",
                     "FIREBALL", "FIREWORK", "FISHING_HOOK", "LEASH_HITCH", "LIGHTNING", "MINECART", "MINECART_COMMAND",
                     "MINECART_MOB_SPAWNER", "MINECART_TNT", "PLAYER", "PRIMED_TNT", "SMALL_FIREBALL", "SNOWBALL",
