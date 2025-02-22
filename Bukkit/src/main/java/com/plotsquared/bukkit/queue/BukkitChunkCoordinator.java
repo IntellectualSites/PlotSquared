@@ -30,6 +30,8 @@ import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.world.World;
 import io.papermc.lib.PaperLib;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.plugin.Plugin;
@@ -41,6 +43,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -54,6 +57,8 @@ import java.util.function.Consumer;
  * </p>
  **/
 public final class BukkitChunkCoordinator extends ChunkCoordinator {
+
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + BukkitChunkCoordinator.class.getSimpleName());
 
     private final List<ProgressSubscriber> progressSubscribers = new LinkedList<>();
 
@@ -70,6 +75,7 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
     private final AtomicInteger expectedSize;
     private final AtomicInteger loadingChunks = new AtomicInteger();
     private final boolean forceSync;
+    private final boolean shouldGen;
 
     private int batchSize;
     private PlotSquaredTask task;
@@ -87,7 +93,8 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
             @Assisted final @NonNull Consumer<Throwable> throwableConsumer,
             @Assisted("unloadAfter") final boolean unloadAfter,
             @Assisted final @NonNull Collection<ProgressSubscriber> progressSubscribers,
-            @Assisted("forceSync") final boolean forceSync
+            @Assisted("forceSync") final boolean forceSync,
+            @Assisted("shouldGen") final boolean shouldGen
     ) {
         this.requestedChunks = new LinkedBlockingQueue<>(requestedChunks);
         this.availableChunks = new LinkedBlockingQueue<>();
@@ -103,6 +110,7 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
         this.bukkitWorld = Bukkit.getWorld(world.getName());
         this.progressSubscribers.addAll(progressSubscribers);
         this.forceSync = forceSync;
+        this.shouldGen = shouldGen;
     }
 
     @Override
@@ -212,18 +220,22 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
      * Requests a batch of chunks to be loaded
      */
     private void requestBatch() {
-        BlockVector2 chunk;
-        for (int i = 0; i < this.batchSize && (chunk = this.requestedChunks.poll()) != null; i++) {
+        for (int i = 0; i < this.batchSize && this.requestedChunks.peek() != null; i++) {
             // This required PaperLib to be bumped to version 1.0.4 to mark the request as urgent
+            final BlockVector2 chunk = this.requestedChunks.poll();
             loadingChunks.incrementAndGet();
             PaperLib
-                    .getChunkAtAsync(this.bukkitWorld, chunk.getX(), chunk.getZ(), true, true)
+                    .getChunkAtAsync(this.bukkitWorld, chunk.getX(), chunk.getZ(), shouldGen, true)
+                    .completeOnTimeout(null, 10L, TimeUnit.SECONDS)
                     .whenComplete((chunkObject, throwable) -> {
                         loadingChunks.decrementAndGet();
                         if (throwable != null) {
-                            throwable.printStackTrace();
+                            LOGGER.error("Failed to load chunk {}", chunk, throwable);
                             // We want one less because this couldn't be processed
                             this.expectedSize.decrementAndGet();
+                        } else if (chunkObject == null) {
+                            LOGGER.warn("Timed out awaiting chunk load {}", chunk);
+                            this.requestedChunks.offer(chunk);
                         } else if (PlotSquared.get().isMainThread(Thread.currentThread())) {
                             this.processChunk(chunkObject);
                         } else {

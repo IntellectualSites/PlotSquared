@@ -51,6 +51,7 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
 
         if (parent != null) {
             this.setForceSync(parent.isForceSync());
+            this.setShouldGen(parent.isShouldGen());
         }
     }
 
