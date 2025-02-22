@@ -152,7 +152,7 @@ public class MainCommand extends Command {
                 try {
                     injector.getInstance(command);
                 } catch (final Exception e) {
-                    LOGGER.error(() -> "Failed to register command %s".formatted(command.getCanonicalName()), e);
+                    LOGGER.error("Failed to register command {}", command.getCanonicalName(), e);
                 }
             }
 
