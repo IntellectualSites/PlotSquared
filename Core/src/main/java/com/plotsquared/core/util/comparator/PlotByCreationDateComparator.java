@@ -1,7 +1,6 @@
 package com.plotsquared.core.util.comparator;
 
 import com.plotsquared.core.plot.Plot;
-import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Comparator;
 
@@ -9,10 +8,8 @@ import java.util.Comparator;
  * Sort plots by {@link Plot#temp} (being the auto increment id in database) in natural order for {@code temp > 0}.
  * For {@code temp < 1} sort by {@link Plot#hashCode()}
  */
-@ApiStatus.Internal
 public class PlotByCreationDateComparator implements Comparator<Plot> {
 
-    @ApiStatus.Internal
     public static final Comparator<Plot> INSTANCE = new PlotByCreationDateComparator();
 
     private PlotByCreationDateComparator() {
