@@ -44,7 +44,7 @@ interface PlotProvider {
             @Override
             public boolean hasNext() {
                 if (currentAreaPlots == null || !currentAreaPlots.hasNext()) {
-                    if (areaIndex >= areas.length) {
+                    if (areaIndex >= areas.length - 1) {
                         return false;
                     }
                     currentAreaPlots = areas[++areaIndex].getPlots().iterator();
