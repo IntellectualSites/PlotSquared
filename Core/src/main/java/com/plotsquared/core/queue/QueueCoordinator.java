@@ -117,7 +117,7 @@ public abstract class QueueCoordinator {
      * depending on server implementation. (i.e. setting to false may not actually disable generation as part of this operation
      * - this is just a catch-all in case of future differing server implementations; the option will work on Spigot/Paper).
      *
-     * @since TODO
+     * @since 7.5.0
      */
     public boolean isShouldGen() {
         return shouldGen;
@@ -129,7 +129,7 @@ public abstract class QueueCoordinator {
      * - this is just a catch-all in case of future differing server implementations; the option will work on Spigot/Paper).
      *
      * @param shouldGen should generate new chunks or not
-     * @since TODO
+     * @since 7.5.0
      */
     public void setShouldGen(boolean shouldGen) {
         this.shouldGen = shouldGen;

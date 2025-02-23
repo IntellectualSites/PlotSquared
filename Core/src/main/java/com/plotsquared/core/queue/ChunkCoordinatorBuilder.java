@@ -210,7 +210,7 @@ public class ChunkCoordinatorBuilder {
      * - this is just a catch-all in case of future differing server implementations; the option will work on Spigot/Paper).
      *
      * @param shouldGen should generate new chunks or not
-     * @since TODO
+     * @since 7.5.0
      */
     public @NonNull ChunkCoordinatorBuilder shouldGen(final boolean shouldGen) {
         this.shouldGen = shouldGen;
