@@ -54,9 +54,6 @@ interface PlotProvider {
 
             @Override
             public Plot next() {
-                if (currentAreaPlots == null) {
-                    currentAreaPlots = areas[++areaIndex].getPlots().iterator();
-                }
                 return currentAreaPlots.next();
             }
         }, Spliterator.IMMUTABLE), false);

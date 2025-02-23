@@ -23,10 +23,11 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.plot.Rating;
-import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.comparator.PlotByDoneComparator;
+import com.plotsquared.core.util.comparator.PlotByRatingComparator;
+import com.plotsquared.core.util.comparator.PlotByCreationDateComparator;
+import com.plotsquared.core.util.comparator.PlotInPrioritizedAreaComparator;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -37,7 +38,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -308,7 +308,15 @@ public final class PlotQuery implements Iterable<Plot> {
      * @return Matching plots
      */
     public @NonNull Stream<Plot> asStream() {
-        return this.asList().stream(); // TODO: use stream functionality from PlotProvider?
+        Stream<Plot> stream = this.plotProvider.streamPlots().filter(testPlotAgainstFilters());
+        if (this.sortingStrategy == SortingStrategy.NO_SORTING) {
+            return stream;
+        }
+        stream = stream.sorted(getConfiguredComparator());
+        if (this.priorityArea != null) {
+            stream = stream.sorted(new PlotInPrioritizedAreaComparator(this.priorityArea));
+        }
+        return stream;
     }
 
     /**
@@ -335,49 +343,10 @@ public final class PlotQuery implements Iterable<Plot> {
         }
         if (this.sortingStrategy == SortingStrategy.NO_SORTING) {
             return result;
-        } else if (this.sortingStrategy == SortingStrategy.SORT_BY_TEMP) {
-            return PlotSquared.get().sortPlotsByTemp(result);
-        } else if (this.sortingStrategy == SortingStrategy.SORT_BY_DONE) {
-            result.sort((a, b) -> {
-                String va = a.getFlag(DoneFlag.class);
-                String vb = b.getFlag(DoneFlag.class);
-                if (MathMan.isInteger(va)) {
-                    if (MathMan.isInteger(vb)) {
-                        return Integer.parseInt(vb) - Integer.parseInt(va);
-                    }
-                    return -1;
-                }
-                return 1;
-            });
-        } else if (this.sortingStrategy == SortingStrategy.SORT_BY_RATING) {
-            result.sort((p1, p2) -> {
-                double v1 = 0;
-                int p1s = p1.getSettings().getRatings().size();
-                int p2s = p2.getRatings().size();
-                if (!p1.getSettings().getRatings().isEmpty()) {
-                    v1 = p1.getRatings().values().stream().mapToDouble(Rating::getAverageRating)
-                            .map(av -> av * av).sum();
-                    v1 /= p1s;
-                    v1 += p1s;
-                }
-                double v2 = 0;
-                if (!p2.getSettings().getRatings().isEmpty()) {
-                    for (Map.Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
-                        double av = entry.getValue().getAverageRating();
-                        v2 += av * av;
-                    }
-                    v2 /= p2s;
-                    v2 += p2s;
-                }
-                if (v2 == v1 && v2 != 0) {
-                    return p2s - p1s;
-                }
-                return (int) Math.signum(v2 - v1);
-            });
-        } else if (this.sortingStrategy == SortingStrategy.SORT_BY_CREATION) {
-            return PlotSquared.get().sortPlots(result, PlotSquared.SortType.CREATION_DATE, this.priorityArea);
-        } else if (this.sortingStrategy == SortingStrategy.COMPARATOR) {
-            result.sort(this.plotComparator);
+        }
+        result.sort(getConfiguredComparator());
+        if (this.priorityArea != null) {
+            result.sort(new PlotInPrioritizedAreaComparator(this.priorityArea));
         }
         return result;
     }
@@ -443,14 +412,13 @@ public final class PlotQuery implements Iterable<Plot> {
      * @since TODO
      */
     public boolean hasMinimumMatches(int minimum) {
-        return this.plotProvider.streamPlots().filter(plot -> {
-            for (final PlotFilter filter : filters) {
-                if (!filter.accepts(plot)) {
-                    return false;
-                }
-            }
-            return true;
-        }).limit(minimum).count() == minimum;
+        return this.plotProvider.streamPlots().filter(testPlotAgainstFilters()).limit(minimum).count() == minimum;
+    }
+
+    @NonNull
+    @Override
+    public Iterator<Plot> iterator() {
+        return this.asCollection().iterator();
     }
 
     @NonNull
@@ -459,10 +427,28 @@ public final class PlotQuery implements Iterable<Plot> {
         return this;
     }
 
-    @NonNull
-    @Override
-    public Iterator<Plot> iterator() {
-        return this.asCollection().iterator();
+    private Comparator<Plot> getConfiguredComparator() {
+        return switch (sortingStrategy) {
+            case NO_SORTING -> (p1, p2) -> 0;
+            case SORT_BY_TEMP, SORT_BY_CREATION -> PlotByCreationDateComparator.INSTANCE;
+            case SORT_BY_DONE -> PlotByDoneComparator.INSTANCE;
+            case SORT_BY_RATING -> PlotByRatingComparator.INSTANCE;
+            case COMPARATOR -> plotComparator;
+        };
+    }
+
+    private Predicate<Plot> testPlotAgainstFilters() {
+        if (this.filters.isEmpty()) {
+            return plot -> true;
+        }
+        return plot -> {
+            for (final PlotFilter filter : filters) {
+                if (!filter.accepts(plot)) {
+                    return false;
+                }
+            }
+            return true;
+        };
     }
 
 }
