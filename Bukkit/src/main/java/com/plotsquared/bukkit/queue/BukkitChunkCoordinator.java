@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -226,16 +227,22 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
             loadingChunks.incrementAndGet();
             PaperLib
                     .getChunkAtAsync(this.bukkitWorld, chunk.getX(), chunk.getZ(), shouldGen, true)
-                    .completeOnTimeout(null, 10L, TimeUnit.SECONDS)
+                    .orTimeout(10L, TimeUnit.SECONDS)
                     .whenComplete((chunkObject, throwable) -> {
                         loadingChunks.decrementAndGet();
                         if (throwable != null) {
-                            LOGGER.error("Failed to load chunk {}", chunk, throwable);
-                            // We want one less because this couldn't be processed
-                            this.expectedSize.decrementAndGet();
+                            if (throwable instanceof TimeoutException) {
+                                LOGGER.warn("Timed out awaiting chunk load {}", chunk);
+                                this.requestedChunks.offer(chunk);
+                            } else {
+                                LOGGER.error("Failed to load chunk {}", chunk, throwable);
+                                // We want one less because this couldn't be processed
+                                this.expectedSize.decrementAndGet();
+                            }
                         } else if (chunkObject == null) {
-                            LOGGER.warn("Timed out awaiting chunk load {}", chunk);
-                            this.requestedChunks.offer(chunk);
+                            if (shouldGen) {
+                                LOGGER.error("Null chunk returned for chunk at {}", chunk);
+                            }
                         } else if (PlotSquared.get().isMainThread(Thread.currentThread())) {
                             this.processChunk(chunkObject);
                         } else {
