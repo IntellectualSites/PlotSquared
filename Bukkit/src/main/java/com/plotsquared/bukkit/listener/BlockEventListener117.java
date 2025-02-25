@@ -134,7 +134,7 @@ public class BlockEventListener117 implements Listener {
     public void onBlockFertilize(BlockFertilizeEvent event) {
         Block block = event.getBlock();
         List<org.bukkit.block.BlockState> blocks = event.getBlocks();
-        Location location = BukkitUtil.adapt(blocks.get(0).getLocation());
+        Location location = BukkitUtil.adapt(block.getLocation());
 
         PlotArea area = location.getPlotArea();
         if (area == null) {
