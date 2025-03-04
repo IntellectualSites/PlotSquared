@@ -432,6 +432,7 @@ public class HybridUtils {
                 if (!UPDATE) {
                     Iterator<BlockVector2> iter = chunks.iterator();
                     QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(area.getWorldName()));
+                    queue.setShouldGen(false);
                     while (iter.hasNext()) {
                         BlockVector2 chunk = iter.next();
                         iter.remove();
@@ -474,6 +475,7 @@ public class HybridUtils {
                                     Iterator<BlockVector2> iterator = chunks.iterator();
                                     if (chunks.size() >= 32) {
                                         QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(area.getWorldName()));
+                                        queue.setShouldGen(false);
                                         for (int i = 0; i < 32; i++) {
                                             final BlockVector2 chunk = iterator.next();
                                             iterator.remove();
@@ -487,6 +489,7 @@ public class HybridUtils {
                                         return null;
                                     }
                                     QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(area.getWorldName()));
+                                    queue.setShouldGen(false);
                                     while (!chunks.isEmpty()) {
                                         final BlockVector2 chunk = iterator.next();
                                         iterator.remove();
@@ -502,7 +505,6 @@ public class HybridUtils {
                                 return;
                             }
                         } catch (Exception e) {
-                            e.printStackTrace();
                             Iterator<BlockVector2> iterator = HybridUtils.regions.iterator();
                             BlockVector2 loc = iterator.next();
                             iterator.remove();
@@ -510,7 +512,8 @@ public class HybridUtils {
                                     "Error! Could not update '{}/region/r.{}.{}.mca' (Corrupt chunk?)",
                                     area.getWorldHash(),
                                     loc.getX(),
-                                    loc.getZ()
+                                    loc.getZ(),
+                                    e
                             );
                         }
                         TaskManager.runTaskLater(task, TaskTime.seconds(1L));
@@ -558,7 +561,7 @@ public class HybridUtils {
                                 try {
                                     plotworld.setupSchematics();
                                 } catch (SchematicHandler.UnsupportedFormatException e) {
-                                    e.printStackTrace();
+                                    LOGGER.error(e);
                                 }
                             });
                 });

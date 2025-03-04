@@ -789,22 +789,23 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                     if (entity.getMetadata("ps_custom_spawned").stream().anyMatch(MetadataValue::asBoolean)) {
                         continue;
                     }
+                    // TODO: use (type) pattern matching when targeting java 21
                     switch (entity.getType().toString()) {
                         case "EGG":
-                        case "FISHING_HOOK":
-                        case "ENDER_SIGNAL":
+                        case "FISHING_HOOK", "FISHING_BOBBER":
+                        case "ENDER_SIGNAL", "EYE_OF_ENDER":
                         case "AREA_EFFECT_CLOUD":
                         case "EXPERIENCE_ORB":
-                        case "LEASH_HITCH":
-                        case "FIREWORK":
-                        case "LIGHTNING":
+                        case "LEASH_HITCH", "LEASH_KNOT":
+                        case "FIREWORK", "FIREWORK_ROCKET":
+                        case "LIGHTNING", "LIGHTNING_BOLT":
                         case "WITHER_SKULL":
                         case "UNKNOWN":
                         case "PLAYER":
                             // non moving / unmovable
                             continue;
-                        case "THROWN_EXP_BOTTLE":
-                        case "SPLASH_POTION":
+                        case "THROWN_EXP_BOTTLE", "EXPERIENCE_BOTTLE":
+                        case "SPLASH_POTION", "POTION":
                         case "SNOWBALL":
                         case "SHULKER_BULLET":
                         case "SPECTRAL_ARROW":
@@ -836,6 +837,11 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         case "TNT_MINECART":
                         case "CHEST_BOAT":
                         case "BOAT":
+                        case "ACACIA_BOAT", "BIRCH_BOAT", "CHERRY_BOAT", "DARK_OAK_BOAT", "JUNGLE_BOAT", "MANGROVE_BOAT",
+                             "OAK_BOAT", "PALE_OAK_BOAT", "SPRUCE_BOAT", "BAMBOO_RAFT":
+                        case "ACACIA_CHEST_BOAT", "BIRCH_CHEST_BOAT", "CHERRY_CHEST_BOAT", "DARK_OAK_CHEST_BOAT",
+                             "JUNGLE_CHEST_BOAT", "MANGROVE_CHEST_BOAT", "OAK_CHEST_BOAT", "PALE_OAK_CHEST_BOAT",
+                             "SPRUCE_CHEST_BOAT", "BAMBOO_CHEST_RAFT":
                             if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
                                 com.plotsquared.core.location.Location location = BukkitUtil.adapt(entity.getLocation());
                                 Plot plot = location.getPlot();
@@ -864,14 +870,14 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         case "SMALL_FIREBALL":
                         case "FIREBALL":
                         case "DRAGON_FIREBALL":
-                        case "DROPPED_ITEM":
+                        case "DROPPED_ITEM", "ITEM":
                             if (Settings.Enabled_Components.KILL_ROAD_ITEMS
                                     && plotArea.getOwnedPlotAbs(BukkitUtil.adapt(entity.getLocation())) == null) {
                                 this.removeRoadEntity(entity, iterator);
                             }
                             // dropped item
                             continue;
-                        case "PRIMED_TNT":
+                        case "PRIMED_TNT", "TNT":
                         case "FALLING_BLOCK":
                             // managed elsewhere
                             continue;
@@ -949,7 +955,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         case "HORSE":
                         case "IRON_GOLEM":
                         case "MAGMA_CUBE":
-                        case "MUSHROOM_COW":
+                        case "MUSHROOM_COW", "MOOSHROOM":
                         case "OCELOT":
                         case "PIG":
                         case "PIG_ZOMBIE":
@@ -958,7 +964,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         case "SILVERFISH":
                         case "SKELETON":
                         case "SLIME":
-                        case "SNOWMAN":
+                        case "SNOWMAN", "SNOW_GOLEM":
                         case "SPIDER":
                         case "SQUID":
                         case "VILLAGER":

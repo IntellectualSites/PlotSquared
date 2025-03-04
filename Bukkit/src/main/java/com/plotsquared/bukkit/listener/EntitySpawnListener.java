@@ -31,8 +31,10 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -132,7 +134,7 @@ public class EntitySpawnListener implements Listener {
         Plot plot = location.getOwnedPlotAbs();
         EntityType type = entity.getType();
         if (plot == null) {
-            if (type == EntityType.DROPPED_ITEM) {
+            if (entity instanceof Item) {
                 if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
                     event.setCancelled(true);
                 }
@@ -154,7 +156,7 @@ public class EntitySpawnListener implements Listener {
         if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
             event.setCancelled(true);
         }
-        if (type == EntityType.ENDER_CRYSTAL || type == EntityType.ARMOR_STAND) {
+        if (entity instanceof EnderCrystal || type == EntityType.ARMOR_STAND) {
             if (BukkitEntityUtil.checkEntity(entity, plot)) {
                 event.setCancelled(true);
             }

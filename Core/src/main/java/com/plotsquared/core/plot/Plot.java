@@ -1407,6 +1407,9 @@ public class Plot {
                 );
             }
             Location location = toHomeLocation(bottom, home);
+            if (Settings.Teleport.SIZED_BASED && this.worldUtil.isSmallBlock(location) && this.worldUtil.isSmallBlock(location.add(0,1,0))) {
+                return location;
+            }
             if (!this.worldUtil.getBlockSynchronous(location).getBlockType().getMaterial().isAir()) {
                 location = location.withY(
                         Math.max(1 + this.worldUtil.getHighestBlockSynchronous(
@@ -1440,15 +1443,21 @@ public class Plot {
             }
             Location bottom = this.getBottomAbs();
             Location location = toHomeLocation(bottom, home);
-            this.worldUtil.getBlock(location, block -> {
-                if (!block.getBlockType().getMaterial().isAir()) {
-                    this.worldUtil.getHighestBlock(this.getWorldName(), location.getX(), location.getZ(),
-                            y -> result.accept(location.withY(Math.max(1 + y, bottom.getY())))
-                    );
-                } else {
-                    result.accept(location);
-                }
-            });
+            if (Settings.Teleport.SIZED_BASED && this.worldUtil.isSmallBlock(location) && this.worldUtil.isSmallBlock(location.add(0,1,0))) {
+                result.accept(location);
+            } else {
+                this.worldUtil.getBlock(location, block -> {
+
+                    if (!block.getBlockType().getMaterial().isAir()) {
+                        this.worldUtil.getHighestBlock(this.getWorldName(), location.getX(), location.getZ(),
+                                y -> result.accept(location.withY(Math.max(1 + y, bottom.getY())))
+                        );
+                    } else {
+                        result.accept(location);
+                    }
+                });
+            }
+
         }
     }
 

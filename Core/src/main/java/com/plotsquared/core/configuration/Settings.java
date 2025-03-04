@@ -582,6 +582,8 @@ public class Settings extends Config {
         public static boolean PER_WORLD_VISIT = false;
         @Comment("Search merged plots for having multiple owners when using the visit command")
         public static boolean VISIT_MERGED_OWNERS = true;
+        @Comment("Allows to teleport based on block size instead to spawn on the highest block at the home command")
+        public static boolean SIZED_BASED = true;
 
     }
 

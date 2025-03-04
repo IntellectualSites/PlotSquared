@@ -45,6 +45,7 @@ public abstract class QueueCoordinator {
 
     private final AtomicBoolean enqueued = new AtomicBoolean();
     private boolean forceSync = false;
+    private boolean shouldGen = true;
     @Nullable
     private Object chunkObject;
     @SuppressWarnings({"unused", "FieldCanBeLocal"})
@@ -108,6 +109,30 @@ public abstract class QueueCoordinator {
      */
     public void setForceSync(boolean forceSync) {
         this.forceSync = forceSync;
+    }
+
+
+    /**
+     * Get whether chunks should be generated as part of this operation. Default is true. Disabling this may not be supported
+     * depending on server implementation. (i.e. setting to false may not actually disable generation as part of this operation
+     * - this is just a catch-all in case of future differing server implementations; the option will work on Spigot/Paper).
+     *
+     * @since 7.5.0
+     */
+    public boolean isShouldGen() {
+        return shouldGen;
+    }
+
+    /**
+     * Set whether chunks should be generated as part of this operation. Default is true. Disabling this may not be supported
+     * depending on server implementation. (i.e. setting to false may not actually disable generation as part of this operation
+     * - this is just a catch-all in case of future differing server implementations; the option will work on Spigot/Paper).
+     *
+     * @param shouldGen should generate new chunks or not
+     * @since 7.5.0
+     */
+    public void setShouldGen(boolean shouldGen) {
+        this.shouldGen = shouldGen;
     }
 
     /**
