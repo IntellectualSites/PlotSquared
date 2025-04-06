@@ -444,7 +444,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
 
     /**
      * Get this player's UUID.
-     * === !IMPORTANT ===<br>
+     * <p>=== !IMPORTANT ===</p>
      * The UUID is dependent on the mode chosen in the settings.yml and may not be the same as Bukkit has
      * (especially if using an old version of Bukkit that does not support UUIDs)
      *
