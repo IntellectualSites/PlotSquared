@@ -2,7 +2,7 @@ name: build
 on:
   push:
     branches:
-      - main
+      - central-publish
 jobs:
   build:
     if: github.repository_owner == 'IntellectualSites'
