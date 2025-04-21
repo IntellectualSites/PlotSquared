@@ -3,7 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 repositories {
     maven {
         name = "PlaceholderAPI"
-        url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+        url = uri("https://repo.extendedclip.com/releases/")
     }
 
     maven {
