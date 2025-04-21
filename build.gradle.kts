@@ -42,16 +42,6 @@ subprojects {
         mavenCentral()
 
         maven {
-            name = "Sonatype OSS"
-            url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-        }
-
-        maven {
-            name = "Sonatype OSS (S01)"
-            url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-        }
-
-        maven {
             name = "Jitpack"
             url = uri("https://jitpack.io")
             content {
