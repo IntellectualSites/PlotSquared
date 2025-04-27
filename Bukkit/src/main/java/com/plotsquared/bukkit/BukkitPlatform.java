@@ -253,6 +253,11 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     }
 
     @Override
+    public @NonNull String serverBrand() {
+        return Bukkit.getName();
+    }
+
+    @Override
     @SuppressWarnings("deprecation") // Paper deprecation
     public void onEnable() {
         this.pluginName = getDescription().getName();

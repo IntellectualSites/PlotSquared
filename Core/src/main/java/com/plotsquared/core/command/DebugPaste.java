@@ -86,7 +86,8 @@ public class DebugPaste extends SubCommand {
                 b.append("# WorldEdit implementation:\n");
                 b.append(PlotSquared.platform().worldEditImplementations()).append("\n\n");
                 b.append("# Server Information\n");
-                b.append("Server Version: ").append(PlotSquared.platform().serverImplementation())
+                b.append("Server Version: ").append(PlotSquared.platform().serverBrand()).append(": ")
+                        .append(PlotSquared.platform().serverImplementation()).append("\n")
                         .append("\n");
                 b.append("online_mode: ").append(!Settings.UUID.OFFLINE).append(';')
                         .append(!Settings.UUID.OFFLINE).append('\n');
