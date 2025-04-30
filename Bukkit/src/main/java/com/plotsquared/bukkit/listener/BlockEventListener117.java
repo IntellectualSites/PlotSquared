@@ -48,25 +48,6 @@ import java.util.UUID;
 @SuppressWarnings("unused")
 public class BlockEventListener117 implements Listener {
 
-    private static final Set<Material> COPPER_OXIDIZING = Set.of(
-            Material.COPPER_BLOCK,
-            Material.EXPOSED_COPPER,
-            Material.WEATHERED_COPPER,
-            Material.OXIDIZED_COPPER,
-            Material.CUT_COPPER,
-            Material.EXPOSED_CUT_COPPER,
-            Material.WEATHERED_CUT_COPPER,
-            Material.OXIDIZED_CUT_COPPER,
-            Material.CUT_COPPER_STAIRS,
-            Material.EXPOSED_CUT_COPPER_STAIRS,
-            Material.WEATHERED_CUT_COPPER_STAIRS,
-            Material.OXIDIZED_CUT_COPPER_STAIRS,
-            Material.CUT_COPPER_SLAB,
-            Material.EXPOSED_CUT_COPPER_SLAB,
-            Material.WEATHERED_CUT_COPPER_SLAB,
-            Material.OXIDIZED_CUT_COPPER_SLAB
-    );
-
     @Inject
     public BlockEventListener117() {
     }
@@ -184,7 +165,7 @@ public class BlockEventListener117 implements Listener {
         if (plot == null) {
             return;
         }
-        if (COPPER_OXIDIZING.contains(event.getNewState().getType())) {
+        if (event.getNewState().getType().name().contains("COPPER")) {
             if (!plot.getFlag(CopperOxideFlag.class)) {
                 plot.debug("Copper could not oxide because copper-oxide = false");
                 event.setCancelled(true);
