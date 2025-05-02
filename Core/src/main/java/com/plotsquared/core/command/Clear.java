@@ -131,6 +131,7 @@ public class Clear extends Command {
                     player.sendMessage(
                             TranslatableCaption.of("working.clearing_done"),
                             TagResolver.builder()
+                                    .tag("world", Tag.inserting(Component.text(plot.getArea().getWorldName())))
                                     .tag("amount", Tag.inserting(Component.text(System.currentTimeMillis() - start)))
                                     .tag("plot", Tag.inserting(Component.text(plot.getId().toString())))
                                     .build()

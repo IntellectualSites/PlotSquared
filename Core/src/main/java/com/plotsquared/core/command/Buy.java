@@ -144,6 +144,7 @@ public class Buy extends Command {
             plot.getPlotModificationManager().setSign(player.getName());
             player.sendMessage(
                     TranslatableCaption.of("working.claimed"),
+                    TagResolver.resolver("world", Tag.inserting(Component.text(plot.getArea().getWorldName()))),
                     TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
             );
             this.eventDispatcher.callPostPlayerBuyPlot(player, previousOwner, plot, price);
