@@ -8,7 +8,7 @@ gson = "2.10"
 guava = "31.1-jre"
 snakeyaml = "2.0"
 adventure = "4.21.0"
-adventure-bukkit = "4.3.4"
+adventure-bukkit = "4.4.0"
 log4j = "2.19.0"
 
 # Plugins
