@@ -36,7 +36,7 @@ serverlib = "2.3.7"
 shadow = "8.3.6"
 grgit = "4.1.1"
 spotless = "7.0.3"
-publish = "0.31.0"
+publish = "0.32.0"
 runPaper = "2.3.1"
 
 [libraries]
