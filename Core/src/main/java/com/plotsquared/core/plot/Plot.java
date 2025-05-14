@@ -1717,6 +1717,7 @@ public class Plot {
         }
         player.sendMessage(
                 TranslatableCaption.of("working.claimed"),
+                TagResolver.resolver("world", Tag.inserting(Component.text(this.getWorldName()))),
                 TagResolver.resolver("plot", Tag.inserting(Component.text(this.getId().toString())))
         );
         if (teleport) {
