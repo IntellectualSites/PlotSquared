@@ -16,38 +16,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.util.query;
+package com.plotsquared.core.util.comparator;
 
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.plot.world.PlotAreaManager;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Stream;
+import javax.annotation.Nullable;
+import java.util.Comparator;
 
-class GlobalPlotProvider implements PlotProvider {
+public class PlotInPrioritizedAreaComparator implements Comparator<Plot> {
 
-    private final PlotAreaManager plotAreaManager;
+    private final PlotArea priorityArea;
 
-    GlobalPlotProvider(final @NonNull PlotAreaManager plotAreaManager) {
-        this.plotAreaManager = plotAreaManager;
+    public PlotInPrioritizedAreaComparator(@Nullable final PlotArea area) {
+        this.priorityArea = area;
     }
 
     @Override
-    public Collection<Plot> getPlots() {
-        final List<Plot> plots = new ArrayList<>();
-        for (final PlotArea plotArea : this.plotAreaManager.getAllPlotAreas()) {
-            plots.addAll(plotArea.getPlots());
+    public int compare(final Plot first, final Plot second) {
+        if (this.priorityArea == null) {
+            return 0; // no defined priority? don't sort
         }
-        return plots;
-    }
-
-    @Override
-    public Stream<Plot> streamPlots() {
-        return streamPlotsInPlotAreas(this.plotAreaManager.getAllPlotAreas());
+        if (this.priorityArea.equals(first.getArea())) {
+            return -1;
+        }
+        if (this.priorityArea.equals(second.getArea())) {
+            return 1;
+        }
+        return 0; // same area, don't sort
     }
 
 }
