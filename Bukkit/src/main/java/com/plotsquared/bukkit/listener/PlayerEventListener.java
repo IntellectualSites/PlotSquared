@@ -598,7 +598,11 @@ public class PlayerEventListener implements Listener {
                     // i.e. untrusted-visit can override deny-teleport
                     // this is acceptable, because otherwise it wouldn't make sense to have both flags set
                     if (result || (plot.getFlag(UntrustedVisitFlag.class) && plot.getHomeSynchronous().equals(BukkitUtil.adaptComplete(to)))) {
-                        plotListener.plotEntry(pp, plot);
+                        // returns false if the player is not allowed to enter the plot (if they are denied, for example)
+                        // don't let the move event cancel the entry after teleport, but rather catch and cancel early (#4647)
+                        if (!plotListener.plotEntry(pp, plot)) {
+                            event.setCancelled(true);
+                        }
                     } else {
                         pp.sendMessage(
                                 TranslatableCaption.of("deny.no_enter"),

@@ -206,14 +206,14 @@ tasks.getByName<Jar>("jar") {
     enabled = false
 }
 
-val supportedVersions = listOf("1.19.4", "1.20.6", "1.21.1", "1.21.3", "1.21.4")
+val supportedVersions = listOf("1.19.4", "1.20.6", "1.21.1", "1.21.3", "1.21.4", "1.21.5")
 tasks {
     register("cacheLatestFaweArtifact") {
         val lastSuccessfulBuildUrl = uri("https://ci.athion.net/job/FastAsyncWorldEdit/lastSuccessfulBuild/api/json").toURL()
         val artifact = ((JsonSlurper().parse(lastSuccessfulBuildUrl) as Map<*, *>)["artifacts"] as List<*>)
                 .map { it as Map<*, *> }
                 .map { it["fileName"] as String }
-                .first { it -> it.contains("Bukkit") }
+                .first { it -> it.contains("Paper") }
         project.ext["faweArtifact"] = artifact
     }
 
