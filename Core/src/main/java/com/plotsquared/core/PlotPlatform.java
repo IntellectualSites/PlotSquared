@@ -124,7 +124,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * Gets the server brand name
      *
      * @return server brand
-     * @since TODO
+     * @since 7.5.3
      */
     @NonNull String serverBrand();
 
