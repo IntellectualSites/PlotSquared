@@ -113,38 +113,34 @@ public class Help extends Command {
             }
             if (cat == null && page == 0) {
                 TextComponent.Builder builder = Component.text();
-                builder.append(MINI_MESSAGE.deserialize(TranslatableCaption.of("help.help_header").getComponent(player)));
+                builder.append(TranslatableCaption.of("help.help_header").toComponent(player));
                 for (CommandCategory c : CommandCategory.values()) {
                     if (!c.canAccess(player)) {
                         continue;
                     }
-                    builder.append(Component.newline()).append(MINI_MESSAGE
-                            .deserialize(
-                                    TranslatableCaption.of("help.help_info_item").getComponent(player),
-                                    TagResolver.builder()
-                                            .tag("command", Tag.inserting(Component.text("/plot help")))
-                                            .tag("category", Tag.inserting(Component.text(c.name().toLowerCase())))
-                                            .tag("category_desc", Tag.inserting(c.toComponent(player)))
-                                            .build()
-                            ));
+                    builder.append(Component.newline());
+                    builder.append(TranslatableCaption.of("help.help_info_item").toComponent(
+                            player, TagResolver.builder()
+                                    .tag("command", Tag.inserting(Component.text("/plot help")))
+                                    .tag("category", Tag.inserting(Component.text(c.name().toLowerCase())))
+                                    .tag("category_desc", Tag.inserting(c.toComponent(player)))
+                                    .build()
+                    ));
                 }
-                builder.append(Component.newline()).append(MINI_MESSAGE
-                        .deserialize(
-                                TranslatableCaption.of("help.help_info_item").getComponent(player),
-                                TagResolver.builder()
-                                        .tag("command", Tag.inserting(Component.text("/plot help")))
-                                        .tag("category", Tag.inserting(Component.text("all")))
-                                        .tag(
-                                                "category_desc",
-                                                Tag.inserting(TranslatableCaption
-                                                        .of("help.help_display_all_commands")
-                                                        .toComponent(player))
-                                        )
-                                        .build()
-                        ));
-                builder.append(Component.newline()).append(MINI_MESSAGE.deserialize(TranslatableCaption
-                        .of("help.help_footer")
-                        .getComponent(player)));
+                builder.append(Component.newline());
+                builder.append(TranslatableCaption.of("help.help_info_item").toComponent(
+                        player, TagResolver.builder()
+                                .tag("command", Tag.inserting(Component.text("/plot help")))
+                                .tag("category", Tag.inserting(Component.text("all")))
+                                .tag(
+                                        "category_desc", Tag.inserting(TranslatableCaption
+                                                .of("help.help_display_all_commands")
+                                                .toComponent(player))
+                                )
+                                .build()
+                ));
+                builder.append(Component.newline());
+                builder.append(TranslatableCaption.of("help.help_footer").toComponent(player));
                 player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(builder.asComponent())));
                 return true;
             }

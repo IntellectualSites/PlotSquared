@@ -25,30 +25,24 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.StringMan;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.jetbrains.annotations.NotNull;
 
 public class HelpObject implements ComponentLike {
 
-    static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
-
     private final Component rendered;
 
     public HelpObject(final Command command, final String label, final PlotPlayer<?> audience) {
-        rendered = MINI_MESSAGE.deserialize(
-                TranslatableCaption.of("help.help_item").getComponent(audience),
-                TagResolver.builder()
-                        .tag("usage", Tag.inserting(Component.text(command.getUsage().replace("{label}", label))))
-                        .tag("alias", Tag.inserting(Component.text(
-                                command.getAliases().isEmpty() ? "" : StringMan.join(command.getAliases(), " | ")
-                        )))
-                        .tag("desc", Tag.inserting(command.getDescription().toComponent(audience)))
-                        .tag("arguments", Tag.inserting(Component.text(buildArgumentList(command.getRequiredArguments()))))
-                        .tag("label", Tag.inserting(Component.text(label)))
-                        .build()
-        );
+        this.rendered = TranslatableCaption.of("help.help_item").toComponent(audience, TagResolver.builder()
+                .tag("usage", Tag.inserting(Component.text(command.getUsage().replace("{label}", label))))
+                .tag("alias", Tag.inserting(Component.text(
+                        command.getAliases().isEmpty() ? "" : StringMan.join(command.getAliases(), " | ")
+                )))
+                .tag("desc", Tag.inserting(command.getDescription().toComponent(audience)))
+                .tag("arguments", Tag.inserting(Component.text(buildArgumentList(command.getRequiredArguments()))))
+                .tag("label", Tag.inserting(Component.text(label)))
+                .build());
     }
 
     private String buildArgumentList(final Argument<?>[] arguments) {

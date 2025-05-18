@@ -27,6 +27,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -96,13 +97,23 @@ public final class TranslatableCaption implements NamespacedCaption {
 
     @Override
     public @NonNull Component toComponent(@NonNull final LocaleHolder localeHolder) {
+        return this.toComponent(localeHolder, new TagResolver[0]);
+    }
+
+    @Override
+    public @NonNull Component toComponent(
+            @NonNull final LocaleHolder localeHolder,
+            final @NonNull TagResolver @NonNull ... tagResolvers
+    ) {
         if (getKey().equals("core.prefix")) {
             return MiniMessage.miniMessage().deserialize(getComponent(localeHolder));
         }
-        return MiniMessage.miniMessage().deserialize(getComponent(localeHolder), TagResolver.resolver(
+        TagResolver[] finalResolvers = Arrays.copyOf(tagResolvers, tagResolvers.length + 1);
+        finalResolvers[finalResolvers.length - 1] = TagResolver.resolver(
                 "prefix",
                 Tag.inserting(TranslatableCaption.of("core.prefix").toComponent(localeHolder))
-        ));
+        );
+        return MiniMessage.miniMessage().deserialize(getComponent(localeHolder), finalResolvers);
     }
 
     @Override
