@@ -88,10 +88,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
-import org.bukkit.block.data.Waterlogged;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Boat;
@@ -1370,22 +1368,7 @@ public class PlayerEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketEmpty(PlayerBucketEmptyEvent event) {
-        BlockFace bf = event.getBlockFace();
-        // Note: a month after Bukkit 1.14.4 released, they added the API method
-        // PlayerBucketEmptyEvent#getBlock(), which returns the block the
-        // bucket contents is going to be placed at. Currently we determine this
-        // block ourselves to retain compatibility with 1.13.
-        final Block block;
-        // if the block can be waterlogged, the event might waterlog the block
-        // sometimes
-        if (event.getBlockClicked().getBlockData() instanceof Waterlogged waterlogged
-                && !waterlogged.isWaterlogged() && event.getBucket() != Material.LAVA_BUCKET) {
-            block = event.getBlockClicked();
-        } else {
-            block = event.getBlockClicked().getLocation()
-                    .add(bf.getModX(), bf.getModY(), bf.getModZ())
-                    .getBlock();
-        }
+        final Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
