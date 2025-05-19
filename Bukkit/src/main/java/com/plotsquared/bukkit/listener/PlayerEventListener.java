@@ -1298,6 +1298,16 @@ public class PlayerEventListener implements Listener {
                     //Allow all players to eat while also allowing the block place event to be fired
                     return;
                 }
+                // Process creature spawning of armor stands & end crystals here instead of EntitySpawnListener to be able to
+                // reset the player's in hand item if they need to be cancelled.
+                if (type == Material.ARMOR_STAND || type == Material.END_CRYSTAL) {
+                    Plot plot = location.getOwnedPlotAbs();
+                    if (BukkitEntityUtil.checkEntity(type == Material.END_CRYSTAL ? EntityType.ENDER_CRYSTAL : EntityType.ARMOR_STAND, plot)) {
+                        event.setCancelled(true);
+                        break;
+                    }
+                }
+                // Continue with normal place event checks
                 if (type == Material.ARMOR_STAND) {
                     location = BukkitUtil.adapt(block.getRelative(event.getBlockFace()).getLocation());
                     eventType = PlayerBlockEventType.PLACE_MISC;
