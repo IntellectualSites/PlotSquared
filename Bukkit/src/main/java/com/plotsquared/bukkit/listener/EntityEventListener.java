@@ -347,7 +347,7 @@ public class EntityEventListener implements Listener {
         event.setCancelled(true);
         //Spawn Explosion Particles when enabled in settings
         if (Settings.General.ALWAYS_SHOW_EXPLOSIONS) {
-            event.getLocation().getWorld().spawnParticle(Particle.EXPLOSION_EMITTER, event.getLocation(), 0);
+            event.getLocation().getWorld().spawnParticle(EXPLOSION_HUGE, event.getLocation(), 0);
         }
     }
 
