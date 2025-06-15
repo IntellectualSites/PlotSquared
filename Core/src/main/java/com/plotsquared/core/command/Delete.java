@@ -124,6 +124,7 @@ public class Delete extends SubCommand {
                                 "amount",
                                 Tag.inserting(Component.text(String.valueOf(System.currentTimeMillis() - start)))
                         ),
+                        TagResolver.resolver("world", Tag.inserting(Component.text(plotArea.getWorldName()))),
                         TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
                 );
                 eventDispatcher.callPostDelete(plot);

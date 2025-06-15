@@ -3,7 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 repositories {
     maven {
         name = "PlaceholderAPI"
-        url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+        url = uri("https://repo.extendedclip.com/releases/")
     }
 
     maven {
@@ -39,7 +39,9 @@ dependencies {
     }
     compileOnly(libs.placeholderapi)
     compileOnly(libs.luckperms)
-    compileOnly(libs.essentialsx)
+    compileOnly(libs.essentialsx) {
+        exclude(group = "org.spigotmc")
+    }
     compileOnly(libs.mvdwapi) { isTransitive = false }
 
     // Other libraries

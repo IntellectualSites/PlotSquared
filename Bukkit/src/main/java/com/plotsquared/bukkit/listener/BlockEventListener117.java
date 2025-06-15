@@ -28,7 +28,6 @@ import com.plotsquared.core.plot.flag.implementations.CopperOxideFlag;
 import com.plotsquared.core.plot.flag.implementations.MiscInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.SculkSensorInteractFlag;
 import com.plotsquared.core.util.PlotFlagUtil;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -42,30 +41,10 @@ import org.bukkit.event.block.BlockReceiveGameEvent;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
 public class BlockEventListener117 implements Listener {
-
-    private static final Set<Material> COPPER_OXIDIZING = Set.of(
-            Material.COPPER_BLOCK,
-            Material.EXPOSED_COPPER,
-            Material.WEATHERED_COPPER,
-            Material.OXIDIZED_COPPER,
-            Material.CUT_COPPER,
-            Material.EXPOSED_CUT_COPPER,
-            Material.WEATHERED_CUT_COPPER,
-            Material.OXIDIZED_CUT_COPPER,
-            Material.CUT_COPPER_STAIRS,
-            Material.EXPOSED_CUT_COPPER_STAIRS,
-            Material.WEATHERED_CUT_COPPER_STAIRS,
-            Material.OXIDIZED_CUT_COPPER_STAIRS,
-            Material.CUT_COPPER_SLAB,
-            Material.EXPOSED_CUT_COPPER_SLAB,
-            Material.WEATHERED_CUT_COPPER_SLAB,
-            Material.OXIDIZED_CUT_COPPER_SLAB
-    );
 
     @Inject
     public BlockEventListener117() {
@@ -134,7 +113,7 @@ public class BlockEventListener117 implements Listener {
     public void onBlockFertilize(BlockFertilizeEvent event) {
         Block block = event.getBlock();
         List<org.bukkit.block.BlockState> blocks = event.getBlocks();
-        Location location = BukkitUtil.adapt(blocks.get(0).getLocation());
+        Location location = BukkitUtil.adapt(block.getLocation());
 
         PlotArea area = location.getPlotArea();
         if (area == null) {
@@ -184,7 +163,7 @@ public class BlockEventListener117 implements Listener {
         if (plot == null) {
             return;
         }
-        if (COPPER_OXIDIZING.contains(event.getNewState().getType())) {
+        if (event.getNewState().getType().name().contains("COPPER")) {
             if (!plot.getFlag(CopperOxideFlag.class)) {
                 plot.debug("Copper could not oxide because copper-oxide = false");
                 event.setCancelled(true);

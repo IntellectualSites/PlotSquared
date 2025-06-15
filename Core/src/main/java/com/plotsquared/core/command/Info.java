@@ -20,7 +20,6 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
-import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.permissions.Permission;
@@ -131,13 +130,9 @@ public class Info extends SubCommand {
             info = getCaption(arg);
             if (info == null) {
                 if (Settings.Ratings.USE_LIKES) {
-                    player.sendMessage(StaticCaption.of(
-                            "&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &aseen&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, "
-                                    + "&aowner&7, " + " &alikes"));
+                    player.sendMessage(TranslatableCaption.of("info.plot_info_categories.use_likes"));
                 } else {
-                    player.sendMessage(StaticCaption.of(
-                            "&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &aseen&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, "
-                                    + "&aowner&7, " + " &arating"));
+                    player.sendMessage(TranslatableCaption.of("info.plot_info_categories.use_rating"));
                 }
                 return false;
             }

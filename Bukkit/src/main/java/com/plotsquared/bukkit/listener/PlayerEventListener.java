@@ -88,10 +88,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
-import org.bukkit.block.data.Waterlogged;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Boat;
@@ -376,7 +374,7 @@ public class PlayerEventListener implements Listener {
 
     @EventHandler
     public void onVehicleEntityCollision(VehicleEntityCollisionEvent e) {
-        if (e.getVehicle().getType() == EntityType.BOAT) {
+        if (e.getVehicle() instanceof Boat) {
             Location location = BukkitUtil.adapt(e.getEntity().getLocation());
             if (location.isPlotArea()) {
                 if (e.getEntity() instanceof Player) {
@@ -593,14 +591,18 @@ public class PlayerEventListener implements Listener {
                     return;
                 }
                 Plot plot = area.getPlot(location);
-                if (plot != null) {
+                if (plot != null && !plot.equals(lastPlot)) {
                     final boolean result = DenyTeleportFlag.allowsTeleport(pp, plot);
                     // there is one possibility to still allow teleportation:
                     // to is identical to the plot's home location, and untrusted-visit is true
                     // i.e. untrusted-visit can override deny-teleport
                     // this is acceptable, because otherwise it wouldn't make sense to have both flags set
                     if (result || (plot.getFlag(UntrustedVisitFlag.class) && plot.getHomeSynchronous().equals(BukkitUtil.adaptComplete(to)))) {
-                        plotListener.plotEntry(pp, plot);
+                        // returns false if the player is not allowed to enter the plot (if they are denied, for example)
+                        // don't let the move event cancel the entry after teleport, but rather catch and cancel early (#4647)
+                        if (!plotListener.plotEntry(pp, plot)) {
+                            event.setCancelled(true);
+                        }
                     } else {
                         pp.sendMessage(
                                 TranslatableCaption.of("deny.no_enter"),
@@ -1370,22 +1372,7 @@ public class PlayerEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketEmpty(PlayerBucketEmptyEvent event) {
-        BlockFace bf = event.getBlockFace();
-        // Note: a month after Bukkit 1.14.4 released, they added the API method
-        // PlayerBucketEmptyEvent#getBlock(), which returns the block the
-        // bucket contents is going to be placed at. Currently we determine this
-        // block ourselves to retain compatibility with 1.13.
-        final Block block;
-        // if the block can be waterlogged, the event might waterlog the block
-        // sometimes
-        if (event.getBlockClicked().getBlockData() instanceof Waterlogged waterlogged
-                && !waterlogged.isWaterlogged() && event.getBucket() != Material.LAVA_BUCKET) {
-            block = event.getBlockClicked();
-        } else {
-            block = event.getBlockClicked().getLocation()
-                    .add(bf.getModX(), bf.getModY(), bf.getModZ())
-                    .getBlock();
-        }
+        final Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {

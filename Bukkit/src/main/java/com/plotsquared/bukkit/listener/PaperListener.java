@@ -29,6 +29,7 @@ import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
 import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
 import com.google.inject.Inject;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.Command;
 import com.plotsquared.core.command.MainCommand;
 import com.plotsquared.core.configuration.Settings;
@@ -38,6 +39,7 @@ import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.flag.FlagContainer;
 import com.plotsquared.core.plot.flag.implementations.BeaconEffectsFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
@@ -48,10 +50,12 @@ import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.PlotFlagUtil;
 import io.papermc.paper.event.entity.EntityMoveEvent;
+import io.papermc.paper.event.world.StructuresLocateEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Chunk;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.Entity;
@@ -79,6 +83,9 @@ import java.util.regex.Pattern;
  */
 @SuppressWarnings("unused")
 public class PaperListener implements Listener {
+
+    private static final NamespacedKey ITEM = NamespacedKey.minecraft("item");
+    private static final NamespacedKey FISHING_BOBBER = NamespacedKey.minecraft("fishing_bobber");
 
     private final PlotAreaManager plotAreaManager;
     private Chunk lastChunk;
@@ -228,7 +235,7 @@ public class PaperListener implements Listener {
         if (plot == null) {
             EntityType type = event.getType();
             // PreCreatureSpawnEvent **should** not be called for DROPPED_ITEM, just for the sake of consistency
-            if (type == EntityType.ITEM) {
+            if (type.getKey().equals(ITEM)) {
                 if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
                     event.setCancelled(true);
                 }
@@ -354,7 +361,7 @@ public class PaperListener implements Listener {
                 event.setCancelled(true);
             }
         } else if (!plot.isAdded(pp.getUUID())) {
-            if (entity.getType().equals(EntityType.FISHING_BOBBER)) {
+            if (entity.getType().getKey().equals(FISHING_BOBBER)) {
                 if (plot.getFlag(FishingFlag.class)) {
                     return;
                 }
@@ -450,6 +457,21 @@ public class PaperListener implements Listener {
         }
 
         if (!plotBeaconEffects || Settings.Enabled_Components.DISABLE_BEACON_EFFECT_OVERFLOW) {
+            event.setCancelled(true);
+        }
+    }
+
+    /**
+     * Don't let the server die when populating cartographers (villager offering maps) in classic plot worlds
+     * (as those don't generate POIs)
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onStructuresLocate(StructuresLocateEvent event) {
+        if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(event.getWorld().getName())) {
+            return;
+        }
+        final PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(event.getWorld().getName());
+        if (area != null && area.getType() == PlotAreaType.NORMAL) {
             event.setCancelled(true);
         }
     }
