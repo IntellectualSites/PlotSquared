@@ -69,7 +69,7 @@ subprojects {
 
     dependencies {
         // Tests
-        testImplementation("org.junit.jupiter:junit-jupiter:5.13.1")
+        testImplementation("org.junit.jupiter:junit-jupiter:5.13.2")
         testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.2")
     }
 
