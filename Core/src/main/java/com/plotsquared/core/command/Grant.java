@@ -101,6 +101,10 @@ public class Grant extends Command {
                                     );
                                 } else {
                                     access.set(access.get().orElse(0) + 1);
+                                    player.sendMessage(
+                                            TranslatableCaption.of("grants.added"),
+                                            TagResolver.resolver("grants", Tag.inserting(Component.text(access.get().orElse(0))))
+                                    );
                                 }
                             }
                         } else {
@@ -130,10 +134,6 @@ public class Grant extends Command {
                                         String key = "grantedPlots";
                                         byte[] rawData = Ints.toByteArray(amount);
                                         DBFunc.addPersistentMeta(uuid, key, rawData, replace);
-                                        player.sendMessage(
-                                                TranslatableCaption.of("grants.added"),
-                                                TagResolver.resolver("grants", Tag.inserting(Component.text(amount)))
-                                        );
                                     }
                                 }
                             });
