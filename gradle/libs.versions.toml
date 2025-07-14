@@ -12,7 +12,7 @@ adventure-bukkit = "4.4.0"
 log4j = "2.19.0"
 
 # Plugins
-worldedit = "7.2.20"
+worldedit = "7.3.15"
 fawe = "2.13.0"
 placeholderapi = "2.11.6"
 luckperms = "5.5"
