@@ -316,7 +316,7 @@ public final class FlagCommand extends Command {
             } catch (final Exception ignored) {
             }
         }
-        return tabOf(player, args, space);
+        return Collections.emptyList();
     }
 
     @CommandDeclaration(command = "set",
