@@ -1,7 +1,7 @@
 name: Build and Release
 
 on:
-  workflow_dispatch:  # Allows you to manually trigger builds from the Actions tab
+  workflow_dispatch:  # Allows you to trigger the build manually from GitHub
 
 jobs:
   build:
@@ -28,11 +28,9 @@ jobs:
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           name: "Auto Release - ${{ github.run_number }}"
           tag_name: "v${{ github.run_number }}"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # Automatically includes JARs from the build
-        with:
           files: '**/build/libs/*.jar'
