@@ -115,7 +115,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 this.dataByte = getOrdinal(Boat.Type.values(), boat.getBoatType());
                 storeInventory(boat);
             }
-            case "ARROW", "EGG", "ENDER_CRYSTAL", "ENDER_PEARL", "ENDER_SIGNAL", "EXPERIENCE_ORB", "FALLING_BLOCK", "FIREBALL",
+            case "ARROW", "EGG", "END_CRYSTAL", "ENDER_PEARL", "ENDER_SIGNAL", "EXPERIENCE_ORB", "FALLING_BLOCK", "FIREBALL",
                     "FIREWORK", "FISHING_HOOK", "LEASH_HITCH", "LIGHTNING", "MINECART", "MINECART_COMMAND", "MINECART_MOB_SPAWNER",
                     "MINECART_TNT", "PLAYER", "PRIMED_TNT", "SLIME", "SMALL_FIREBALL", "SNOWBALL", "MINECART_FURNACE", "SPLASH_POTION",
                     "THROWN_EXP_BOTTLE", "WITHER_SKULL", "UNKNOWN", "SPECTRAL_ARROW", "SHULKER_BULLET", "DRAGON_FIREBALL", "AREA_EFFECT_CLOUD",
