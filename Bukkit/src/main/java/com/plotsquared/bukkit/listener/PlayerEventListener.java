@@ -1317,7 +1317,7 @@ public class PlayerEventListener implements Listener {
                 // reset the player's hand item if spawning needs to be cancelled.
                 if (type == Material.ARMOR_STAND || type == Material.END_CRYSTAL) {
                     Plot plot = location.getOwnedPlotAbs();
-                    if (BukkitEntityUtil.checkEntity(type == Material.ARMOR_STAND ? EntityType.ARMOR_STAND : EntityType.ENDER_CRYSTAL,
+                    if (BukkitEntityUtil.checkEntity(type == Material.ARMOR_STAND ? EntityType.ARMOR_STAND : EntityType.END_CRYSTAL,
                             plot)) {
                         event.setCancelled(true);
                         break;
