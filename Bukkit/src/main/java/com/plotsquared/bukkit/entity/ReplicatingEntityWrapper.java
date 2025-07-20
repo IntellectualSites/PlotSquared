@@ -511,7 +511,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 ((Slime) entity).setSize(this.dataByte);
                 return entity;
             } */
-            case "ARROW", "EGG", "ENDER_CRYSTAL", "ENDER_PEARL", "ENDER_SIGNAL", "DROPPED_ITEM", "EXPERIENCE_ORB", "FALLING_BLOCK",
+            case "ARROW", "EGG", "END_CRYSTAL", "ENDER_PEARL", "ENDER_SIGNAL", "DROPPED_ITEM", "EXPERIENCE_ORB", "FALLING_BLOCK",
                     "FIREBALL", "FIREWORK", "FISHING_HOOK", "LEASH_HITCH", "LIGHTNING", "MINECART", "MINECART_COMMAND",
                     "MINECART_MOB_SPAWNER", "MINECART_TNT", "PLAYER", "PRIMED_TNT", "SMALL_FIREBALL", "SNOWBALL",
                     "SPLASH_POTION", "THROWN_EXP_BOTTLE", "SPECTRAL_ARROW", "SHULKER_BULLET", "AREA_EFFECT_CLOUD",
