@@ -837,7 +837,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         case "HOPPER_MINECART":
                         case "MINECART_MOB_SPAWNER":
                         case "SPAWNER_MINECART":
-                        case "ENDER_CRYSTAL":
+                        case "END_CRYSTAL":
                         case "MINECART_TNT":
                         case "TNT_MINECART":
                         case "CHEST_BOAT":
