@@ -676,7 +676,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 restoreLiving((LivingEntity) entity);
                 return entity;
             }
-            case "ENDERMITE", "GHAST", "MAGMA_CUBE", "SQUID", "PIG_ZOMBIE", "HOGLIN", "PIGLIN", "ZOMBIFIED_PIGLIN", "PIGLIN_BRUTE", "ZOMBIE", "WITHER", "WITCH", "SPIDER", "CAVE_SPIDER", "SILVERFISH", "GIANT", "ENDERMAN", "CREEPER", "BLAZE", "SNOWMAN", "SHULKER", "GUARDIAN", "ELDER_GUARDIAN", "SKELETON", "WITHER_SKELETON" -> {
+            case "ENDERMITE", "GHAST", "HAPPY_GHAST", "GHASTLING", "MAGMA_CUBE", "SQUID", "PIG_ZOMBIE", "HOGLIN", "PIGLIN", "ZOMBIFIED_PIGLIN", "PIGLIN_BRUTE", "ZOMBIE", "WITHER", "WITCH", "SPIDER", "CAVE_SPIDER", "SILVERFISH", "GIANT", "ENDERMAN", "CREEPER", "BLAZE", "SNOWMAN", "SHULKER", "GUARDIAN", "ELDER_GUARDIAN", "SKELETON", "WITHER_SKELETON" -> {
                 restoreLiving((LivingEntity) entity);
                 return entity;
             }
