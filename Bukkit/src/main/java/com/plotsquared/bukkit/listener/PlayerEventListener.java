@@ -2041,4 +2041,12 @@ public class PlayerEventListener implements Listener {
         }
     }
 
+    private EntityType getEndCrystalEntityType() {
+        try {
+            return EntityType.valueOf("END_CRYSTAL");
+        } catch (IllegalArgumentException e) {
+            return EntityType.valueOf("ENDER_CRYSTAL");
+        }
+    }
+
 }
