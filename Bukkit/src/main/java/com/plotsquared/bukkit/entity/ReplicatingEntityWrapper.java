@@ -272,7 +272,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 this.dataByte = (byte) entity1.getPhase().ordinal();
                 return;
             }
-            case "SKELETON", "WITHER_SKELETON", "GUARDIAN", "ELDER_GUARDIAN", "GHAST", "MAGMA_CUBE", "SQUID", "PIG_ZOMBIE", "HOGLIN",
+            case "SKELETON", "WITHER_SKELETON", "GUARDIAN", "ELDER_GUARDIAN", "GHAST", "HAPPY_GHAST", "GHASTLING", "MAGMA_CUBE", "SQUID", "PIG_ZOMBIE", "HOGLIN",
                     "ZOMBIFIED_PIGLIN", "PIGLIN", "PIGLIN_BRUTE", "ZOMBIE", "WITHER", "WITCH", "SPIDER", "CAVE_SPIDER", "SILVERFISH",
                     "GIANT", "ENDERMAN", "CREEPER", "BLAZE", "SHULKER", "SNOWMAN", "SNOW_GOLEM" -> {
                 storeLiving((LivingEntity) entity);
