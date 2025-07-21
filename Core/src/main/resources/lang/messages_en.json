@@ -456,7 +456,7 @@
   "category.command_category_debug": "<gray>Debug</gray>",
   "category.command_category_administration": "<gray>Admin</gray>",
   "grants.granted_plots": "<prefix><gold>Result: <gray><amount> </gray>grants left.</gold>",
-  "grants.added": "<prefix><gold>1</gold> <gray>grant has been added.</gray>",
+  "grants.added": "<prefix><gold>1</gold> <gray>grant has been added. (<grants> total grants)</gray>",
   "events.event_denied": "<prefix><gold><value> </gold><gray>Cancelled by external plugin.</gray>",
   "backups.backup_impossible": "<prefix><red>Backups are not enabled for this plot: <plot>.</red>",
   "backups.backup_save_success": "<prefix><gold>The backup was created successfully.</gold>",
