@@ -1,9 +1,7 @@
 import com.diffplug.gradle.spotless.SpotlessPlugin
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
-import com.vanniktech.maven.publish.SonatypeHost
 import groovy.json.JsonSlurper
 import xyz.jpenilla.runpaper.task.RunServer
-import java.net.URI
 
 plugins {
     java
@@ -172,7 +170,7 @@ subprojects {
                 url.set("https://github.com/IntellectualSites/PlotSquared/issues")
             }
 
-            publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+            publishToMavenCentral()
         }
     }
 
