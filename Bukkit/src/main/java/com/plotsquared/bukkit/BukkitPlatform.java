@@ -837,7 +837,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         case "HOPPER_MINECART":
                         case "MINECART_MOB_SPAWNER":
                         case "SPAWNER_MINECART":
-                        case "ENDER_CRYSTAL":
+                        case "END_CRYSTAL":
+                        case "ENDER_CRYSTAL": // Backwards compatibility for 1.20.4
                         case "MINECART_TNT":
                         case "TNT_MINECART":
                         case "CHEST_BOAT":
@@ -955,6 +956,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         case "ENDERMITE":
                         case "ENDER_DRAGON":
                         case "GHAST":
+                        case "HAPPY_GHAST": // 1.21.6+
+                        case "GHASTLING": // 1.21.6+
                         case "GIANT":
                         case "GUARDIAN":
                         case "HORSE":
