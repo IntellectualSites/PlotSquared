@@ -371,8 +371,7 @@ public final class PlotModificationManager {
                             manager.createRoadSouthEast(current, queue);
                         }
                     }
-                }
-                if (current.isMerged(Direction.SOUTH)) {
+                } else if (current.isMerged(Direction.SOUTH)) {
                     manager.createRoadSouth(current, queue);
                 }
             }
