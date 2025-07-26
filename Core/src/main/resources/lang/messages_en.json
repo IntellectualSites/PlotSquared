@@ -234,6 +234,7 @@
   "invalid.not_valid_number": "<prefix><red>That's not a valid number within the range: </red><gray><value></gray>",
   "invalid.not_valid_plot_id": "<prefix><red>That's not a valid plot ID.</red>",
   "invalid.origin_cant_be_target": "<prefix><red>The origin and target location cannot be the same.</red>",
+  "invalid.world_location_plot": "<prefix><red>The target plot is invalid.</red>",
   "invalid.found_no_plots": "<prefix><red>Found no plots with your search query.</red>",
   "invalid.number_not_in_range": "<prefix><red>That's not a valid number within the range: <gray>(<min>, <max>)</gray></red>",
   "invalid.number_not_positive": "<red>That's not a positive number: <gray><value></gray></red>",

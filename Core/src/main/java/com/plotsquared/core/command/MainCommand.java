@@ -275,7 +275,7 @@ public class MainCommand extends Command {
     private CompletableFuture<Optional<CommandExecutionData>> prepareArguments(CommandExecutionData data) {
         if (data.args().length >= 2) {
             PlotArea area = data.player().getApplicablePlotArea();
-            Plot newPlot = Plot.fromString(area, data.args()[0]);
+            Plot newPlot = Plot.fromString(area, data.args()[0], data.player());
             return preparePlotArgument(newPlot, data, area)
                     .thenApply(d -> d.flatMap(x -> prepareFlagArgument(x, area)));
         } else {
