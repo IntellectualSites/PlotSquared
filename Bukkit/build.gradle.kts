@@ -15,6 +15,7 @@ repositories {
         name = "EssentialsX"
         url = uri("https://repo.essentialsx.net/releases/")
     }
+    // To be removed when "adventure-platform-bukkit" cuts a new release of 4.4.1 or higher
     maven("https://central.sonatype.com/repository/maven-snapshots/") {
         content {
             includeGroup("net.kyori")
