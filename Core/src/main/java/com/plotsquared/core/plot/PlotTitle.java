@@ -67,7 +67,7 @@ public class PlotTitle {
      * Provides a string representation of this plot title value (used in placeholders).
      *
      * @return the plot title representation in the format {@code "<title>" "<subtitle>"}
-     * @since TODO
+     * @since 7.5.5
      */
     @Override
     public String toString() {

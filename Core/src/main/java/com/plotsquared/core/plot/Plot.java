@@ -352,7 +352,7 @@ public class Plot {
      * @param arg     The search term
      * @param message If a message should be sent to the player if a plot cannot be found
      * @return The plot if only 1 result is found, or null
-     * @since TODO
+     * @since 7.5.5
      */
     public static @Nullable Plot getPlotFromStringUnchecked(
             final @Nullable PlotPlayer<?> player,
@@ -434,7 +434,7 @@ public class Plot {
      * @param string      plot id/area + id
      * @param player      {@link PlotPlayer} player to notify if plot is invalid (outside bounds)
      * @return New or existing plot object
-     * @since TODO
+     * @since 7.5.5
      */
     public static @Nullable Plot fromString(
             final @Nullable PlotArea defaultArea,
@@ -457,7 +457,7 @@ public class Plot {
      * @param defaultArea if no area is specified
      * @param string      plot id/area + id
      * @return New or existing plot object
-     * @since TODO
+     * @since 7.5.5
      */
     public static @Nullable Plot fromStringUnchecked(final @Nullable PlotArea defaultArea, final @NonNull String string) {
         final String[] split = string.split("[;,]");
