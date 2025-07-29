@@ -15,6 +15,11 @@ repositories {
         name = "EssentialsX"
         url = uri("https://repo.essentialsx.net/releases/")
     }
+    maven("https://central.sonatype.com/repository/maven-snapshots/") {
+        content {
+            includeGroup("net.kyori")
+        }
+    }
 }
 
 dependencies {
