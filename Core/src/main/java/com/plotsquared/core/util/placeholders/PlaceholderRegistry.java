@@ -49,10 +49,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 /**
  * Registry that contains {@link Placeholder placeholders}
@@ -126,6 +128,22 @@ public final class PlaceholderRegistry {
             } catch (final Exception ignored) {
             }
             return legacyComponent(TranslatableCaption.of("info.unknown"), player);
+        });
+        this.createPlaceholder("currentplot_owners", (player, plot) -> {
+            if (plot.getFlag(ServerPlotFlag.class)) {
+                return legacyComponent(TranslatableCaption.of("info.server"), player);
+            }
+            final Set<UUID> plotOwners = plot.getOwners();
+            if (plotOwners.isEmpty()) {
+                return legacyComponent(TranslatableCaption.of("generic.generic_unowned"), player);
+            }
+            return plotOwners.stream().map(PlotSquared.platform().playerManager()::getUsernameCaption).map(f -> {
+                try {
+                    return f.get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS).getComponent(player);
+                } catch (final Exception ignored) {
+                    return legacyComponent(TranslatableCaption.of("info.unknown"), player);
+                }
+            }).collect(Collectors.joining(", "));
         });
         this.createPlaceholder("currentplot_members", (player, plot) -> {
             if (plot.getMembers().isEmpty() && plot.getTrusted().isEmpty()) {
