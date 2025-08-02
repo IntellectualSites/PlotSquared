@@ -290,7 +290,11 @@ public class MainCommand extends Command {
                 || (area != null && area.equals(newPlot.getArea()))
                 || data.player().hasPermission(Permission.PERMISSION_ADMIN)
                 || data.player().hasPermission(Permission.PERMISSION_ADMIN_AREA_SUDO))
-                && !newPlot.isDenied(data.player().getUUID())) {
+                && (!newPlot.isDenied(data.player().getUUID()) 
+                    || newPlot.isOwner(data.player().getUUID())
+                    || data.player().hasPermission("plots.admin.entry.denied")
+                    || data.player().hasPermission(Permission.PERMISSION_ADMIN)
+                    || hasCommandPermissions(data.player(), data.args()))) {
             return fetchPlotCenterLocation(newPlot)
                     .thenApply(newLoc -> {
                         if (!data.player().canTeleport(newLoc)) {
@@ -394,6 +398,57 @@ public class MainCommand extends Command {
                 plotMetaDataAccess.remove();
             } else {
                 plotMetaDataAccess.set(commandMeta.plot());
+            }
+        }
+    }
+
+    private boolean hasCommandPermissions(PlotPlayer<?> player, String[] args) {
+        if (args.length == 0) {
+            return false;
+        }
+        
+        String command = args[0];
+        
+        // Check for common plot commands that should work with coordinates
+        switch (command.toLowerCase()) {
+            case "set", "s" -> {
+                // Check base set permission
+                if (player.hasPermission("plots.set")) {
+                    return true;
+                }
+                // Check admin set permission
+                if (player.hasPermission("plots.admin.command.set")) {
+                    return true;
+                }
+                // For components, check specific permissions
+                if (args.length > 1) {
+                    String component = args[1].toLowerCase();
+                    if (player.hasPermission("plots.set.component." + component)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            case "flag", "f" -> {
+                return player.hasPermission("plots.set.flag") || 
+                       player.hasPermission("plots.admin.command.flag");
+            }
+            case "alias", "setalias" -> {
+                return player.hasPermission("plots.set.alias") || 
+                       player.hasPermission("plots.admin.command.alias");
+            }
+            case "biome", "setbiome" -> {
+                return player.hasPermission("plots.set.biome") || 
+                       player.hasPermission("plots.admin.command.biome");
+            }
+            case "sethome", "sh", "seth" -> {
+                return player.hasPermission("plots.set.home") || 
+                       player.hasPermission("plots.admin.command.sethome");
+            }
+            default -> {
+                // For other commands, check if player has admin permissions
+                return player.hasPermission(Permission.PERMISSION_ADMIN) ||
+                       player.hasPermission("plots.admin.command." + command);
             }
         }
     }
