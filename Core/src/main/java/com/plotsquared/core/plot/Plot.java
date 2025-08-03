@@ -2910,7 +2910,7 @@ public class Plot {
                             } else {
                                 valueComponent = Component.text(formattedValue);
                             }
-                            
+
                             Component snip = MINI_MESSAGE.deserialize(
                                     prefix + CaptionUtility.format(
                                             player,
