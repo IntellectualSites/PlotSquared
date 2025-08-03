@@ -2897,6 +2897,20 @@ public class Plot {
                             } else {
                                 value = flag.toString();
                             }
+                            // Create value component - use MiniMessage parsing for MiniMessage flags
+                            Component valueComponent;
+                            String formattedValue = CaptionUtility.formatRaw(player, value.toString());
+                            if (CaptionUtility.isMiniMessageFlag(flag)) {
+                                try {
+                                    valueComponent = MINI_MESSAGE.deserialize(formattedValue);
+                                } catch (Exception e) {
+                                    // Fallback to plain text if parsing fails
+                                    valueComponent = Component.text(formattedValue);
+                                }
+                            } else {
+                                valueComponent = Component.text(formattedValue);
+                            }
+                            
                             Component snip = MINI_MESSAGE.deserialize(
                                     prefix + CaptionUtility.format(
                                             player,
@@ -2904,10 +2918,7 @@ public class Plot {
                                     ),
                                     TagResolver.builder()
                                             .tag("flag", Tag.inserting(Component.text(flag.getName())))
-                                            .tag("value", Tag.inserting(Component.text(CaptionUtility.formatRaw(
-                                                    player,
-                                                    value.toString()
-                                            ))))
+                                            .tag("value", Tag.inserting(valueComponent))
                                             .build()
                             );
                             flagBuilder.append(snip);
