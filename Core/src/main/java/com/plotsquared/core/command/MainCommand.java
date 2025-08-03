@@ -296,7 +296,7 @@ public class MainCommand extends Command {
         final boolean isDenied = newPlot.isDenied(player.getUUID());
         if (!isAdmin) {
             if (isDenied) {
-                return CompletableFuture.completedFuture(Optional.of(data));
+                throw new CommandException(TranslatableCaption.of("deny.cannot_interact"));
             }
             if (area != null && area.equals(newPlot.getArea()) && !player.hasPermission(Permission.PERMISSION_ADMIN_AREA_SUDO)) {
                 return CompletableFuture.completedFuture(Optional.of(data));
