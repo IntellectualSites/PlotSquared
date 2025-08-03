@@ -415,6 +415,7 @@
   "deny.denied_added": "<prefix><dark_aqua>You successfully denied the player from this plot.</dark_aqua>",
   "deny.no_enter": "<prefix><red>You are denied from the plot <red><gold><plot></gold><red> and therefore not allowed to enter.</red>",
   "deny.you_got_denied": "<prefix><red>You are denied from the plot you were previously on, and got teleported to spawn.</red>",
+  "deny.cannot_interact": "<prefix><red>You are denied from the plot <red><gold><plot></gold><red> and therefore cannot interact with it.</red>",
   "deny.cant_remove_owner": "<prefix><red>You can't remove the plot owner.</red>",
   "kick.player_not_in_plot": "<prefix><red>The player <gray><player></gray> is not on this plot.</red>",
   "kick.cannot_kick_player": "<prefix><red>You cannot kick the player <gray><player></gray>.</red>",
