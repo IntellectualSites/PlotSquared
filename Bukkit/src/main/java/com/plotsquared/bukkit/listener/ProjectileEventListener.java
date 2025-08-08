@@ -35,7 +35,7 @@ import com.plotsquared.core.util.PlotFlagUtil;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -134,7 +134,7 @@ public class ProjectileEventListener implements Listener {
                 event.setCancelled(true);
             }
         } else if (!plot.isAdded(pp.getUUID())) {
-            if (entity.getType().equals(EntityType.FISHING_HOOK)) {
+            if (entity instanceof FishHook) {
                 if (plot.getFlag(FishingFlag.class)) {
                     return;
                 }
@@ -194,7 +194,7 @@ public class ProjectileEventListener implements Listener {
                 return;
             }
             if (plot.isAdded(pp.getUUID()) || pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER) || plot.getFlag(
-                    ProjectilesFlag.class) || (entity.getType().equals(EntityType.FISHING_HOOK) && plot.getFlag(
+                    ProjectilesFlag.class) || (entity instanceof FishHook && plot.getFlag(
                     FishingFlag.class))) {
                 return;
             }

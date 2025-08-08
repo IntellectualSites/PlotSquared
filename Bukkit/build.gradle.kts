@@ -3,7 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 repositories {
     maven {
         name = "PlaceholderAPI"
-        url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+        url = uri("https://repo.extendedclip.com/releases/")
     }
 
     maven {
@@ -39,7 +39,9 @@ dependencies {
     }
     compileOnly(libs.placeholderapi)
     compileOnly(libs.luckperms)
-    compileOnly(libs.essentialsx)
+    compileOnly(libs.essentialsx) {
+        exclude(group = "org.spigotmc")
+    }
     compileOnly(libs.mvdwapi) { isTransitive = false }
 
     // Other libraries
@@ -101,7 +103,7 @@ tasks {
     withType<Javadoc> {
         val isRelease = if (rootProject.version.toString().endsWith("-SNAPSHOT")) "TODO" else rootProject.version.toString()
         val opt = options as StandardJavadocDocletOptions
-        opt.links("https://jd.papermc.io/paper/1.20/")
+        opt.links("https://jd.papermc.io/paper/1.20.4/")
         opt.links("https://docs.enginehub.org/javadoc/com.sk89q.worldedit/worldedit-bukkit/" + libs.worldeditBukkit.get().versionConstraint.toString())
         opt.links("https://intellectualsites.github.io/plotsquared-javadocs/core/")
         opt.links("https://jd.advntr.dev/api/" + libs.adventureApi.get().versionConstraint.toString())

@@ -21,6 +21,7 @@ package com.plotsquared.core.configuration.caption;
 import com.google.common.base.Preconditions;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class StaticCaption implements Caption {
@@ -49,6 +50,14 @@ public final class StaticCaption implements Caption {
     @Override
     public @NonNull Component toComponent(@NonNull final LocaleHolder localeHolder) {
         return MiniMessage.miniMessage().deserialize(this.value);
+    }
+
+    @Override
+    public @NonNull Component toComponent(
+            @NonNull final LocaleHolder localeHolder,
+            final @NonNull TagResolver @NonNull ... tagResolvers
+    ) {
+        return MiniMessage.miniMessage().deserialize(this.value, tagResolvers);
     }
 
     @Override

@@ -49,6 +49,7 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -341,8 +342,7 @@ public class BukkitEntityUtil {
         }
         //disable the firework damage. too much of a headache to support at the moment.
         if (vplot != null) {
-            if (EntityDamageEvent.DamageCause.ENTITY_EXPLOSION == cause
-                    && damager.getType() == EntityType.FIREWORK) {
+            if (EntityDamageEvent.DamageCause.ENTITY_EXPLOSION == cause && damager instanceof Firework) {
                 return false;
             }
         }
@@ -354,13 +354,17 @@ public class BukkitEntityUtil {
     }
 
     public static boolean checkEntity(Entity entity, Plot plot) {
+        return checkEntity(entity.getType(), plot);
+    }
+
+    public static boolean checkEntity(EntityType type, Plot plot) {
         if (plot == null || !plot.hasOwner() || plot.getFlags().isEmpty() && plot.getArea()
                 .getFlagContainer().getFlagMap().isEmpty()) {
             return false;
         }
 
         final com.sk89q.worldedit.world.entity.EntityType entityType =
-                BukkitAdapter.adapt(entity.getType());
+                BukkitAdapter.adapt(type);
 
         if (EntityCategories.PLAYER.contains(entityType)) {
             return false;
