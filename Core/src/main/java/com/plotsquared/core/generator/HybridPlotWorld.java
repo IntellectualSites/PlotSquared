@@ -276,7 +276,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 SCHEM_Y = getMinGenHeight();
                 plotY = 0;
             } else if (!Settings.Schematics.PASTE_ON_TOP) {
-                SCHEM_Y = getMinGenHeight();
+                SCHEM_Y = getMinBuildHeight();
                 plotY = 0;
             }
         }
