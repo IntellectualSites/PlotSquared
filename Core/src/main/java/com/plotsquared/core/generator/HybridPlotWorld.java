@@ -276,6 +276,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 SCHEM_Y = getMinGenHeight();
                 plotY = 0;
             } else if (!Settings.Schematics.PASTE_ON_TOP) {
+                // Schematics should generate/be pasted from build height
                 SCHEM_Y = getMinBuildHeight();
                 plotY = 0;
             }
@@ -293,18 +294,14 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 roadY = 0; // Road is the lowest schematic
                 if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() != worldGenHeight) {
                     // Road is the lowest schematic. Normalize plotY to it.
-                    if (Settings.Schematics.PASTE_ON_TOP) {
-                        plotY = PLOT_HEIGHT - getMinGenHeight();
-                    }
+                    plotY = (Settings.Schematics.PASTE_ON_TOP ? PLOT_HEIGHT : getMinBuildHeight()) - SCHEM_Y;
                 }
             } else if (!Settings.Schematics.PASTE_ROAD_ON_TOP) {
                 roadY = 0;
                 SCHEM_Y = getMinGenHeight();
-                if (schematic3 != null) {
-                    if (Settings.Schematics.PASTE_ON_TOP) {
-                        // Road is the lowest schematic. Normalize plotY to it.
-                        plotY = PLOT_HEIGHT - SCHEM_Y;
-                    }
+                if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() != worldGenHeight) {
+                    // Road is the lowest schematic. Normalize plotY to it.
+                    plotY = (Settings.Schematics.PASTE_ON_TOP ? PLOT_HEIGHT : getMinBuildHeight()) - SCHEM_Y;
                 }
             } else {
                 roadY = minRoadWall - SCHEM_Y;
