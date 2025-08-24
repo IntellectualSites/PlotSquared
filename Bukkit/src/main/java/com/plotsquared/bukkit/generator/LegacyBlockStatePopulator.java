@@ -36,6 +36,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Random;
 
+@Deprecated(since = "TODO")
 final class LegacyBlockStatePopulator extends BlockPopulator {
 
     private final IndependentPlotGenerator plotGenerator;

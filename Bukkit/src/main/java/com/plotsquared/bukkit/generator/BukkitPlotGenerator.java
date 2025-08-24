@@ -90,12 +90,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         this.plotGenerator = generator;
         this.platformGenerator = this;
         this.populators = new ArrayList<>();
-        int minecraftMinorVersion = PlotSquared.platform().serverVersion()[1];
-        if (minecraftMinorVersion >= 17) {
-            this.populators.add(new BlockStatePopulator(this.plotGenerator));
-        } else {
-            this.populators.add(new LegacyBlockStatePopulator(this.plotGenerator));
-        }
+        this.populators.add(new BlockStatePopulator(this.plotGenerator));
         this.full = true;
         this.useNewGenerationMethods = PlotSquared.platform().serverVersion()[1] >= 19;
         this.biomeProvider = new BukkitPlotBiomeProvider();
