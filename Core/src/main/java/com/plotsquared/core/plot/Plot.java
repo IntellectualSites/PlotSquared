@@ -29,6 +29,7 @@ import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.events.PlayerPlotAddRemoveEvent;
 import com.plotsquared.core.events.PlayerTeleportToPlotEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.events.TeleportCause;
@@ -974,7 +975,10 @@ public class Plot {
      * Sets the denied users for this plot.
      *
      * @param uuids uuids to deny
+     * @deprecated Use {@link Plot#addDenied(UUID)} (UUID)} calling
+     *         {@link EventDispatcher#callPlayerDeny(PlotPlayer, Plot, UUID, PlayerPlotAddRemoveEvent.Reason)} for each.
      */
+    @Deprecated
     public void setDenied(final @NonNull Set<UUID> uuids) {
         boolean larger = uuids.size() > getDenied().size();
         HashSet<UUID> intersection;
@@ -1015,7 +1019,10 @@ public class Plot {
      * Sets the trusted users for this plot.
      *
      * @param uuids uuids to trust
+     * @deprecated Use {@link Plot#addTrusted(UUID)} calling
+     *         {@link EventDispatcher#callPlayerTrust(PlotPlayer, Plot, UUID, PlayerPlotAddRemoveEvent.Reason)} for each.
      */
+    @Deprecated
     public void setTrusted(final @NonNull Set<UUID> uuids) {
         boolean larger = uuids.size() > getTrusted().size();
         HashSet<UUID> intersection = new HashSet<>(larger ? getTrusted() : uuids);
@@ -1047,7 +1054,10 @@ public class Plot {
      * Sets the members for this plot.
      *
      * @param uuids uuids to set member status for
+     * @deprecated Use {@link Plot#addMember(UUID)} (UUID)} (UUID)} calling
+     *         {@link EventDispatcher#callPlayerAdd(PlotPlayer, Plot, UUID, PlayerPlotAddRemoveEvent.Reason)} for each.
      */
+    @Deprecated
     public void setMembers(final @NonNull Set<UUID> uuids) {
         boolean larger = uuids.size() > getMembers().size();
         HashSet<UUID> intersection = new HashSet<>(larger ? getMembers() : uuids);
@@ -2302,23 +2312,53 @@ public class Plot {
             this.setAlias(plot.getAlias());
         }
         for (UUID uuid : this.getTrusted()) {
-            plot.addTrusted(uuid);
+            if (eventDispatcher
+                    .callPlayerTrust(null, plot, uuid, PlayerPlotAddRemoveEvent.Reason.MERGE)
+                    .getEventResult() != Result.DENY) {
+                plot.addTrusted(uuid);
+                eventDispatcher.callPostTrusted(null, plot, uuid, true, PlayerPlotAddRemoveEvent.Reason.MERGE);
+            }
         }
         for (UUID uuid : plot.getTrusted()) {
-            this.addTrusted(uuid);
+            if (eventDispatcher
+                    .callPlayerTrust(null, this, uuid, PlayerPlotAddRemoveEvent.Reason.MERGE)
+                    .getEventResult() != Result.DENY) {
+                this.addTrusted(uuid);
+                eventDispatcher.callPostTrusted(null, this, uuid, true, PlayerPlotAddRemoveEvent.Reason.MERGE);
+            }
         }
         for (UUID uuid : this.getMembers()) {
-            plot.addMember(uuid);
+            if (eventDispatcher
+                    .callPlayerAdd(null, plot, uuid, PlayerPlotAddRemoveEvent.Reason.MERGE)
+                    .getEventResult() != Result.DENY) {
+                plot.addMember(uuid);
+                eventDispatcher.callPostAdded(null, plot, uuid, true, PlayerPlotAddRemoveEvent.Reason.MERGE);
+            }
         }
         for (UUID uuid : plot.getMembers()) {
-            this.addMember(uuid);
+            if (eventDispatcher
+                    .callPlayerAdd(null, this, uuid, PlayerPlotAddRemoveEvent.Reason.MERGE)
+                    .getEventResult() != Result.DENY) {
+                this.addMember(uuid);
+                eventDispatcher.callPostAdded(null, this, uuid, true, PlayerPlotAddRemoveEvent.Reason.MERGE);
+            }
         }
 
         for (UUID uuid : this.getDenied()) {
-            plot.addDenied(uuid);
+            if (eventDispatcher
+                    .callPlayerDeny(null, plot, uuid, PlayerPlotAddRemoveEvent.Reason.MERGE)
+                    .getEventResult() != Result.DENY) {
+                plot.addDenied(uuid);
+                eventDispatcher.callPostDenied(null, plot, uuid, true, PlayerPlotAddRemoveEvent.Reason.MERGE);
+            }
         }
         for (UUID uuid : plot.getDenied()) {
-            this.addDenied(uuid);
+            if (eventDispatcher
+                    .callPlayerDeny(null, this, uuid, PlayerPlotAddRemoveEvent.Reason.MERGE)
+                    .getEventResult() != Result.DENY) {
+                this.addDenied(uuid);
+                eventDispatcher.callPostDenied(null, this, uuid, true, PlayerPlotAddRemoveEvent.Reason.MERGE);
+            }
         }
     }
 
