@@ -164,7 +164,7 @@ public class PlotListener {
         try (final MetaDataAccess<Plot> lastPlot = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
             Plot last = lastPlot.get().orElse(null);
             if ((last != null) && !last.getId().equals(plot.getId())) {
-                plotExit(player, last);
+                plotExit(player, last, plot, plot.getArea());
             }
             if (PlotSquared.platform().expireManager() != null) {
                 PlotSquared.platform().expireManager().handleEntry(player, plot);
@@ -365,7 +365,12 @@ public class PlotListener {
         return true;
     }
 
-    public boolean plotExit(final PlotPlayer<?> player, Plot plot) {
+    public boolean plotExit(
+            final PlotPlayer<?> player,
+            @NonNull Plot plot,
+            @Nullable Plot nextPlot,
+            @Nullable PlotArea nextArea
+    ) {
         try (final MetaDataAccess<Plot> lastPlot = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
             final Plot previous = lastPlot.remove();
 
@@ -382,7 +387,9 @@ public class PlotListener {
             if (plot.hasOwner()) {
                 PlotArea pw = plot.getArea();
                 if (pw == null) {
-                    return true;
+                    if (nextPlot == null || (pw = nextPlot.getArea()) == null) {
+                        return true;
+                    }
                 }
                 try (final MetaDataAccess<Boolean> kickAccess =
                              player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
@@ -440,11 +447,23 @@ public class PlotListener {
                             player.setFlight(value.get());
                             metaDataAccess.remove();
                         } else {
-                            GameMode gameMode = player.getGameMode();
-                            if (gameMode == GameModes.SURVIVAL || gameMode == GameModes.ADVENTURE) {
-                                player.setFlight(false);
-                            } else if (!player.getFlight()) {
-                                player.setFlight(true);
+                            FlyFlag.FlyStatus flight = FlyFlag.FlyStatus.DEFAULT;
+                            if (nextPlot != null) {
+                                flight = nextPlot.getFlag(FlyFlag.class);
+                            } else if (nextArea != null) {
+                                if (nextArea.isRoadFlags()) {
+                                    flight = nextArea.getRoadFlag(FlyFlag.class);
+                                } else {
+                                    flight = nextArea.getFlag(FlyFlag.class);
+                                }
+                            }
+                            if (flight != FlyFlag.FlyStatus.ENABLED) {
+                                GameMode gameMode = player.getGameMode();
+                                if (gameMode == GameModes.SURVIVAL || gameMode == GameModes.ADVENTURE) {
+                                    player.setFlight(false);
+                                } else if (!player.getFlight()) {
+                                    player.setFlight(true);
+                                }
                             }
                         }
                     }
