@@ -36,8 +36,7 @@ public class Middle extends SubCommand {
 
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] arguments) {
-        Location location = player.getLocation();
-        Plot plot = location.getPlot();
+        Plot plot = player.getCurrentPlot();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;

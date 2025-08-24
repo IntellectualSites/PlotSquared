@@ -44,8 +44,7 @@ public class Swap extends SubCommand {
             RunnableVal3<Command, Runnable, Runnable> confirm,
             RunnableVal2<Command, CommandResult> whenDone
     ) {
-        Location location = player.getLocation();
-        Plot plot1 = location.getPlotAbs();
+        Plot plot1 = player.getCurrentPlot();
         if (plot1 == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return CompletableFuture.completedFuture(false);
@@ -79,8 +78,10 @@ public class Swap extends SubCommand {
         String p1 = plot1.toString();
         String p2 = plot2.toString();
 
-        return plot1.getPlotModificationManager().move(plot2, player, () -> {
-        }, true).thenApply(result -> {
+        return plot1.getPlotModificationManager().move(
+                plot2, player, () -> {
+                }, true
+        ).thenApply(result -> {
             if (result) {
                 player.sendMessage(
                         TranslatableCaption.of("swap.swap_success"),

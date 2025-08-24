@@ -61,8 +61,7 @@ public class Done extends SubCommand {
 
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
-        Location location = player.getLocation();
-        final Plot plot = location.getPlotAbs();
+        final Plot plot = player.getCurrentPlot();
         if ((plot == null) || !plot.hasOwner()) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
