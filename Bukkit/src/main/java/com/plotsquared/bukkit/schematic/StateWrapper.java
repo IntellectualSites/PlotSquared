@@ -21,6 +21,7 @@ package com.plotsquared.bukkit.schematic;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.core.PlotSquared;
 import com.sk89q.jnbt.ByteTag;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.ListTag;
@@ -36,6 +37,8 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.World;
 import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
@@ -44,25 +47,35 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
+import org.bukkit.block.sign.Side;
+import org.bukkit.block.sign.SignSide;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 
+// TODO: somehow unbreak this class so it doesn't fuck up the whole schematic population system due to MC updates
+@ApiStatus.Internal
 public class StateWrapper {
 
-    public CompoundTag tag;
-
-    private boolean paperErrorTextureSent = false;
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + StateWrapper.class.getSimpleName());
+    private static final boolean MODERN_SIGNS = PlotSquared.platform().serverVersion()[1] > 19;
+    private final Registry<PatternType> PATTERN_TYPE_REGISTRY = Objects.requireNonNull(Bukkit.getRegistry(PatternType.class));
+
+    private static boolean paperErrorTextureSent = false;
+
+    public CompoundTag tag;
 
     public StateWrapper(CompoundTag tag) {
         this.tag = tag;
@@ -212,9 +225,9 @@ public class StateWrapper {
                     if (type == null) {
                         continue;
                     }
-                    int count = itemComp.getByte("Count");
+                    int count = itemComp.containsKey("count") ? itemComp.getInt("count") : itemComp.getByte("Count");
                     int slot = itemComp.getByte("Slot");
-                    CompoundTag tag = (CompoundTag) itemComp.getValue().get("tag");
+                    CompoundTag tag = (CompoundTag) itemComp.getValue().get(itemComp.containsKey("tag") ? "tag" : "components");
                     BaseItemStack baseItemStack = new BaseItemStack(type, tag, count);
                     ItemStack itemStack = BukkitAdapter.adapt(baseItemStack);
                     inv.setItem(slot, itemStack);
@@ -223,82 +236,62 @@ public class StateWrapper {
                 return true;
             }
             case "sign" -> {
-                if (state instanceof Sign sign) {
-                    sign.setLine(0, jsonToColourCode(tag.getString("Text1")));
-                    sign.setLine(1, jsonToColourCode(tag.getString("Text2")));
-                    sign.setLine(2, jsonToColourCode(tag.getString("Text3")));
-                    sign.setLine(3, jsonToColourCode(tag.getString("Text4")));
-                    state.update(true);
+                if (state instanceof Sign sign && this.restoreSign(sign)) {
+                    state.update(true, false);
                     return true;
                 }
                 return false;
             }
             case "skull" -> {
-                if (state instanceof Skull skull) {
-                    CompoundTag skullOwner = ((CompoundTag) this.tag.getValue().get("SkullOwner"));
-                    if (skullOwner == null) {
-                        return true;
-                    }
-                    String player = skullOwner.getString("Name");
-
-                    if (player != null && !player.isEmpty()) {
-                        try {
-                            skull.setOwningPlayer(Bukkit.getOfflinePlayer(player));
-                            skull.update(true);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        return true;
-                    }
-
-                    final CompoundTag properties = (CompoundTag) skullOwner.getValue().get("Properties");
-                    if (properties == null) {
-                        return false;
-                    }
-                    final ListTag textures = properties.getListTag("textures");
-                    if (textures.getValue().isEmpty()) {
-                        return false;
-                    }
-                    final CompoundTag textureCompound = (CompoundTag) textures.getValue().get(0);
-                    if (textureCompound == null) {
-                        return false;
-                    }
-                    String textureValue = textureCompound.getString("Value");
-                    if (textureValue == null) {
-                        return false;
-                    }
-                    if (!PaperLib.isPaper()) {
-                        if (!paperErrorTextureSent) {
-                            paperErrorTextureSent = true;
-                            LOGGER.error("Failed to populate skull data in your road schematic - This is a Spigot limitation.");
-                        }
-                        return false;
-                    }
-                    final PlayerProfile profile = Bukkit.createProfile(UUID.randomUUID());
-                    profile.setProperty(new ProfileProperty("textures", textureValue));
-                    skull.setPlayerProfile(profile);
-                    skull.update(true);
+                if (state instanceof Skull skull && this.restoreSkull(skull)) {
+                    skull.update(true, false);
                     return true;
-
                 }
                 return false;
             }
             case "banner" -> {
                 if (state instanceof Banner banner) {
-                    List<Tag> patterns = this.tag.getListTag("Patterns").getValue();
-                    if (patterns == null || patterns.isEmpty()) {
-                        return false;
+                    List<CompoundTag> patterns;
+                    // "old" format
+                    if ((patterns = this.tag.getList("Patterns", CompoundTag.class)) != null && !patterns.isEmpty()) {
+                        banner.setPatterns(patterns.stream().map(compoundTag -> {
+                            DyeColor color = DyeColor.getByWoolData((byte) compoundTag.getInt("Color"));
+                            final PatternType patternType = PATTERN_TYPE_REGISTRY.get(Objects.requireNonNull(
+                                    NamespacedKey.fromString(compoundTag.getString("Pattern"))
+                            ));
+                            if (color == null || patternType == null) {
+                                return null;
+                            }
+                            return new Pattern(color, patternType);
+                        }).filter(Objects::nonNull).toList());
+                        banner.update(true, false);
+                        return true;
                     }
-                    banner.setPatterns(patterns.stream().map(t -> (CompoundTag) t).map(compoundTag -> {
-                        DyeColor color = DyeColor.getByWoolData((byte) compoundTag.getInt("Color"));
-                        PatternType patternType = PatternType.getByIdentifier(compoundTag.getString("Pattern"));
-                        if (color == null || patternType == null) {
-                            return null;
+
+                    // "new" format - since 1.21.3-ish
+                    if ((patterns = this.tag.getList("patterns", CompoundTag.class)) != null && !patterns.isEmpty()) {
+                        for (final CompoundTag patternTag : patterns) {
+                            final String color = patternTag.getString("color");
+                            if (color.isEmpty()) {
+                                continue;
+                            }
+                            final Tag pattern = patternTag.getValue().get("pattern");
+                            if (pattern instanceof StringTag patternString && !patternString.getValue().isEmpty()) {
+                                final PatternType patternType = PATTERN_TYPE_REGISTRY.get(Objects.requireNonNull(
+                                        NamespacedKey.fromString(patternString.getValue())
+                                ));
+                                if (patternType == null) {
+                                    continue;
+                                }
+                                banner.addPattern(new Pattern(
+                                        DyeColor.legacyValueOf(color.toUpperCase(Locale.ROOT)),
+                                        patternType
+                                ));
+                            }
+                            // not supporting banner pattern definitions (no API available)
                         }
-                        return new Pattern(color, patternType);
-                    }).filter(Objects::nonNull).toList());
-                    banner.update(true);
-                    return true;
+                        banner.update(true, false);
+                    }
                 }
                 return false;
             }
@@ -344,6 +337,152 @@ public class StateWrapper {
             data.put("tag", new CompoundTag(auxData));
         }
         return data;
+    }
+
+    private boolean restoreSkull(Skull skull) {
+        boolean updated = false;
+        // can't support custom_name - Spigot does not provide any API for that
+        if (this.tag.containsKey("note_block_sound")) {
+            skull.setNoteBlockSound(NamespacedKey.fromString(this.tag.getString("note_block_sound")));
+            updated = true;
+        }
+        // modern format - MC 1.21.3-ish
+        if (this.tag.containsKey("profile")) {
+            final Tag profile = this.tag.getValue().get("profile");
+            if (profile instanceof StringTag stringTag) {
+                final String name = stringTag.getValue();
+                if (name != null && !name.isEmpty()) {
+                    skull.setOwningPlayer(Bukkit.getOfflinePlayer(name));
+                    return true;
+                }
+                return updated;
+            }
+            if (profile instanceof CompoundTag compoundTag) {
+                final List<Tag> properties = compoundTag.getList("properties");
+                if (properties != null && !properties.isEmpty()) {
+                    if (!PaperLib.isPaper()) {
+                        if (!paperErrorTextureSent) {
+                            paperErrorTextureSent = true;
+                            LOGGER.error("Failed to populate schematic skull data - this is a Spigot limitation.");
+                        }
+                        return updated;
+                    }
+                    for (final Tag propertyTag : properties) {
+                        if (!(propertyTag instanceof CompoundTag property)) {
+                            continue;
+                        }
+                        if (!property.getString("name").equals("textures")) {
+                            continue;
+                        }
+                        final String value = property.getString("value");
+                        final String signature = property.containsKey("signature") ? property.getString("signature") : null;
+                        final PlayerProfile playerProfile = Bukkit.createProfile(UUID.randomUUID());
+                        playerProfile.setProperty(new ProfileProperty("textures", value, signature));
+                        skull.setPlayerProfile(playerProfile);
+                        return true;
+                    }
+                    return updated;
+                }
+                final int[] id = compoundTag.getIntArray("id");
+                if (id != null && id.length == 4) {
+                    skull.setOwningPlayer(Bukkit.getOfflinePlayer(new UUID(
+                            (long) id[0] << 32 | (id[1] & 0xFFFFFFFFL),
+                            (long) id[2] << 32 | (id[3] & 0xFFFFFFFFL)
+                    )));
+                    return true;
+                }
+                final String name = compoundTag.getString("name");
+                if (name != null && !name.isEmpty()) {
+                    skull.setOwningPlayer(Bukkit.getOfflinePlayer(name));
+                    return true;
+                }
+            }
+        }
+
+        // "Old" MC format (idk when it got updated)
+        if (this.tag.getValue().get("SkullOwner") instanceof CompoundTag skullOwner) {
+            if (skullOwner.getValue().get("Name") instanceof StringTag ownerName && !ownerName.getValue().isEmpty()) {
+                skull.setOwningPlayer(Bukkit.getOfflinePlayer(ownerName.getValue()));
+                skull.update(true);
+                return true;
+            }
+            if (skullOwner.getValue().get("Properties") instanceof CompoundTag properties) {
+                if (!paperErrorTextureSent) {
+                    paperErrorTextureSent = true;
+                    LOGGER.error("Failed to populate schematic skull data - this is a Spigot limitation.");
+                    return updated;
+                }
+                final List<CompoundTag> textures = properties.getList("textures", CompoundTag.class);
+                if (textures.isEmpty()) {
+                    return updated;
+                }
+                final String value = textures.get(0).getString("Value");
+                if (!value.isEmpty()) {
+                    final PlayerProfile profile = Bukkit.createProfile(UUID.randomUUID());
+                    profile.setProperty(new ProfileProperty("textures", value));
+                    skull.setPlayerProfile(profile);
+                    return true;
+                }
+            }
+        }
+        return updated;
+    }
+
+    private boolean restoreSign(Sign sign) {
+        // "old" format (pre 1.20)
+        if (this.tag.containsKey("Text1") || this.tag.containsKey("Text2")
+                || this.tag.containsKey("Text3") || this.tag.containsKey("Text4")) {
+            if (!MODERN_SIGNS) {
+                sign.setLine(0, jsonToColourCode(tag.getString("Text1")));
+                sign.setLine(1, jsonToColourCode(tag.getString("Text2")));
+                sign.setLine(2, jsonToColourCode(tag.getString("Text3")));
+                sign.setLine(3, jsonToColourCode(tag.getString("Text4")));
+                sign.setGlowingText(tag.getByte("GlowingText") == 1);
+                if (tag.getValue().get("Color") instanceof StringTag colorTag && !colorTag.getValue().isEmpty()) {
+                    sign.setColor(DyeColor.legacyValueOf(colorTag.getValue()));
+                }
+                return true;
+            }
+            SignSide front = sign.getSide(Side.FRONT);
+            front.setLine(0, jsonToColourCode(tag.getString("Text1")));
+            front.setLine(1, jsonToColourCode(tag.getString("Text2")));
+            front.setLine(2, jsonToColourCode(tag.getString("Text3")));
+            front.setLine(3, jsonToColourCode(tag.getString("Text4")));
+            front.setGlowingText(tag.getByte("GlowingText") == 1);
+            if (tag.getValue().get("Color") instanceof StringTag colorTag && !colorTag.getValue().isEmpty()) {
+                front.setColor(DyeColor.legacyValueOf(colorTag.getValue()));
+            }
+            return true;
+        }
+
+        // "modern" format
+        if (this.tag.containsKey("front_text") || this.tag.containsKey("back_text") || this.tag.containsKey("is_waxed")) {
+            // the new format on older servers shouldn't be possible, I hope?
+            sign.setWaxed(this.tag.getByte("is_waxed") == 1);
+            BiConsumer<SignSide, CompoundTag> sideSetter = (signSide, compoundTag) -> {
+                signSide.setGlowingText(compoundTag.getByte("has_glowing_text") == 1);
+                if (tag.getValue().get("color") instanceof StringTag colorTag && !colorTag.getValue().isEmpty()) {
+                    signSide.setColor(DyeColor.legacyValueOf(colorTag.getValue()));
+                }
+                final List<Tag> lines = compoundTag.getList("messages");
+                for (int i = 0; i < Math.min(lines.size(), 4); i++) {
+                    final Tag line = lines.get(i);
+                    if (line instanceof StringTag stringLine) {
+                        signSide.setLine(i, jsonToColourCode(stringLine.getValue()));
+                        continue;
+                    }
+                    // TODO: how tf support list of components + components - utilize paper + adventure?
+                }
+            };
+            if (this.tag.getValue().get("front_text") instanceof CompoundTag frontText) {
+                sideSetter.accept(sign.getSide(Side.FRONT), frontText);
+            }
+            if (this.tag.getValue().get("back_text") instanceof CompoundTag backText) {
+                sideSetter.accept(sign.getSide(Side.BACK), backText);
+            }
+            return true;
+        }
+        return false;
     }
 
 }
