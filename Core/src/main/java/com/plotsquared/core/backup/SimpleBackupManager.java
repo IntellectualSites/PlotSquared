@@ -32,6 +32,8 @@ import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -47,6 +49,7 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 public class SimpleBackupManager implements BackupManager {
 
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + SimpleBackupManager.class.getSimpleName());
     private final Path backupPath;
     private final boolean automaticBackup;
     private final int backupLimit;
@@ -112,7 +115,12 @@ public class SimpleBackupManager implements BackupManager {
                                 TagResolver.resolver("reason", Tag.inserting(Component.text(throwable.getMessage())))
                         );
                     }
-                    throwable.printStackTrace();
+                    LOGGER.error(
+                            "Error creating backup for plot {};{} and player {}",
+                            plot.getArea(),
+                            plot.getId(),
+                            player == null ? "null" : player.getName(), throwable
+                    );
                 } else {
                     if (player != null) {
                         player.sendMessage(TranslatableCaption.of("backups.backup_automatic_finished"));
@@ -128,6 +136,7 @@ public class SimpleBackupManager implements BackupManager {
         return this.automaticBackup;
     }
 
+    @NonNull
     public Path getBackupPath() {
         return this.backupPath;
     }
