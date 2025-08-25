@@ -20,7 +20,6 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -55,8 +54,7 @@ public class Move extends SubCommand {
             RunnableVal3<Command, Runnable, Runnable> confirm,
             RunnableVal2<Command, CommandResult> whenDone
     ) {
-        Location location = player.getLocation();
-        Plot plot1 = location.getPlotAbs();
+        Plot plot1 = player.getCurrentPlot();
         if (plot1 == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return CompletableFuture.completedFuture(false);

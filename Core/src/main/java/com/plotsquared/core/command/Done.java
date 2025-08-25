@@ -26,7 +26,6 @@ import com.plotsquared.core.events.PlotDoneEvent;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.generator.HybridUtils;
-import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -61,8 +60,7 @@ public class Done extends SubCommand {
 
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
-        Location location = player.getLocation();
-        final Plot plot = location.getPlotAbs();
+        final Plot plot = player.getCurrentPlot();
         if ((plot == null) || !plot.hasOwner()) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;

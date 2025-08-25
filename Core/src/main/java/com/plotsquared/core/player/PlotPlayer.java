@@ -290,6 +290,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      *
      * @return the plot the player is standing on or null if standing on a road or not in a {@link PlotArea}
      */
+    @Nullable
     public Plot getCurrentPlot() {
         try (final MetaDataAccess<Plot> lastPlotAccess =
                      this.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
@@ -319,7 +320,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      */
     public int getPlotCount() {
         if (!Settings.Limit.GLOBAL) {
-            return getPlotCount(getLocation().getWorldName());
+            return getPlotCount(getCurrentPlot().getWorldName());
         }
         final AtomicInteger count = new AtomicInteger(0);
         final UUID uuid = getUUID();
@@ -339,7 +340,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
 
     public int getClusterCount() {
         if (!Settings.Limit.GLOBAL) {
-            return getClusterCount(getLocation().getWorldName());
+            return getClusterCount(getCurrentPlot().getWorldName());
         }
         final AtomicInteger count = new AtomicInteger(0);
         this.plotAreaManager.forEachPlotArea(value -> {
@@ -408,7 +409,11 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     }
 
     public PlotArea getApplicablePlotArea() {
-        return this.plotAreaManager.getApplicablePlotArea(getLocation());
+        Plot plot = getCurrentPlot();
+        if (plot == null) {
+            return this.plotAreaManager.getApplicablePlotArea(getLocation());
+        }
+        return plot.getArea();
     }
 
     @Override
