@@ -387,7 +387,7 @@ public class PlotListener {
             if (plot.hasOwner()) {
                 PlotArea pw = plot.getArea();
                 if (pw == null) {
-                    if (nextPlot == null || (pw = nextPlot.getArea()) == null) {
+                    if (nextPlot == null || nextPlot.getArea() == null) {
                         return true;
                     }
                 }
