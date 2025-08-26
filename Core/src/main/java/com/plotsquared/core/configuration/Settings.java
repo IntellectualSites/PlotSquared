@@ -436,7 +436,7 @@ public class Settings extends Config {
         public static String SCHEMATICS = "schematics";
         public static String TEMPLATES = "templates";
         @Comment({"If schematics used for generation should be searched for in the path.schematics location",
-                " - This settings exists and is `false` by default for backwards compatibility.",
+                " - This setting exists and is `false` by default for backwards compatibility.",
                 " - If false then generation schematics must be located in `schematics`",
                 " - Schematics must still always be under GEN_ROAD_SCHEMATIC/<world> etc."})
         public static boolean USE_SCHEMATICS_PATH_FOR_GEN_SCHEMATICS = false;
