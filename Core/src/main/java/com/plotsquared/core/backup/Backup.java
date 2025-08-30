@@ -53,7 +53,7 @@ public class Backup {
             try {
                 Files.deleteIfExists(file);
             } catch (final IOException e) {
-                LOGGER.error("Error deleting back at {}", file, e);
+                LOGGER.error("Error deleting backup at {}", file, e);
             }
         }
     }
