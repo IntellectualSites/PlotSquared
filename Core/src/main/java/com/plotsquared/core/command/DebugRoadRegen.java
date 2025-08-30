@@ -22,7 +22,6 @@ import com.google.inject.Inject;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.generator.HybridPlotManager;
 import com.plotsquared.core.generator.HybridUtils;
-import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -57,8 +56,7 @@ public class DebugRoadRegen extends SubCommand {
 
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
-        Location location = player.getLocation();
-        Plot plot = location.getPlotAbs();
+        Plot plot = player.getCurrentPlot();
         if (args.length < 1) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
@@ -92,8 +90,7 @@ public class DebugRoadRegen extends SubCommand {
     }
 
     public boolean regenPlot(PlotPlayer<?> player) {
-        Location location = player.getLocation();
-        PlotArea area = location.getPlotArea();
+        PlotArea area = player.getCurrentPlot().getArea();
         if (area == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
             return false;
@@ -148,8 +145,7 @@ public class DebugRoadRegen extends SubCommand {
             return false;
         }
 
-        Location location = player.getLocation();
-        PlotArea area = location.getPlotArea();
+        PlotArea area = player.getCurrentPlot().getArea();
         if (area == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
         }
