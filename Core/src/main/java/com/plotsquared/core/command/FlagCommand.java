@@ -595,10 +595,6 @@ public final class FlagCommand extends Command {
             final RunnableVal3<Command, Runnable, Runnable> confirm,
             final RunnableVal2<Command, CommandResult> whenDone
     ) {
-        if (!checkRequirements(player)) {
-            return;
-        }
-
         final Map<Component, ArrayList<String>> flags = new HashMap<>();
         for (PlotFlag<?, ?> plotFlag : GlobalFlagContainer.getInstance().getRecognizedPlotFlags()) {
             if (plotFlag instanceof InternalFlag) {
