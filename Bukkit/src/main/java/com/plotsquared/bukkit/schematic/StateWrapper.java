@@ -238,6 +238,7 @@ public class StateWrapper {
                     if (line instanceof CompoundTag compoundTag && compoundTag.getValue().containsKey("")) {
                         //noinspection deprecation - Paper deprecatiom
                         side.setLine(i, compoundTag.getString(""));
+                        continue;
                     }
                     // serializes the line content from JNBT to Gson JSON objects, passes that to adventure and deserializes
                     // into an adventure component.
@@ -273,7 +274,6 @@ public class StateWrapper {
                     'G', 's', 'o', 'n', 'C', 'o', 'm', 'p', 'o', 'n', 'e', 'n', 't', 'S', 'e', 'r', 'i', 'a', 'l', 'i', 'z', 'e', 'r'
             };
             Class<?> gsonComponentSerializerClass = Class.forName(new String(dontObfuscate));
-            LOGGER.info(gsonComponentSerializerClass);
             KYORI_GSON_SERIALIZER = Arrays.stream(gsonComponentSerializerClass.getMethods())
                     .filter(method -> method.getName().equals("gson"))
                     .findFirst()
