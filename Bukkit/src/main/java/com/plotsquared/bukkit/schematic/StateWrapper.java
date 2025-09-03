@@ -19,7 +19,9 @@
 package com.plotsquared.bukkit.schematic;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.util.ReflectionUtils;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.ListTag;
@@ -66,17 +68,20 @@ public class StateWrapper {
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + StateWrapper.class.getSimpleName());
 
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
-    private static final Gson GSON = new Gson();
+    private static final Gson GSON = new GsonBuilder().registerTypeHierarchyAdapter(Tag.class, new NbtGsonSerializer()).create();
     private static final String CRAFTBUKKIT_PACKAGE = Bukkit.getServer().getClass().getPackageName();
 
     private static final boolean FORCE_UPDATE_STATE = true;
     private static final boolean UPDATE_TRIGGER_PHYSICS = false;
+    private static final boolean SUPPORTED = PlotSquared.platform().serverVersion()[1] > 20 ||
+            (PlotSquared.platform().serverVersion()[1] == 20 && PlotSquared.platform().serverVersion()[2] >= 4);
     private static final String INITIALIZATION_ERROR_TEMPLATE = """
-            Failed to initialize StateWrapper: %s
+            Failed to initialize StateWrapper: {}
             Block-/Tile-Entities, pasted by schematics for example, won't be updated with their respective block data. This affects things like sign text, banner patterns, skulls, etc.
             Try updating your Server Software, PlotSquared and WorldEdit / FastAsyncWorldEdit first. If the issue persists, report it on the issue tracker.
             """;
 
+    private static boolean NOT_SUPPORTED_NOTIFIED = false;
     private static boolean FAILED_INITIALIZATION = false;
     private static BukkitImplAdapter ADAPTER = null;
     private static Class<?> LIN_TAG_CLASS = null;
@@ -127,6 +132,13 @@ public class StateWrapper {
         if (this.tag == null || FAILED_INITIALIZATION) {
             return false;
         }
+        if (!SUPPORTED) {
+            if (!NOT_SUPPORTED_NOTIFIED) {
+                NOT_SUPPORTED_NOTIFIED = true;
+                LOGGER.error(INITIALIZATION_ERROR_TEMPLATE, "Your server version is not supported. 1.20.4 or later is required");
+            }
+            return false;
+        }
         if (ADAPTER == null) {
             try {
                 findNbtCompoundClassType(clazz -> LIN_TAG_CLASS = clazz, clazz -> JNBT_TAG_CLASS = clazz);
@@ -144,7 +156,7 @@ public class StateWrapper {
                 );
                 TO_LIN_TAG = findToLinTagMethodHandle(LIN_TAG_CLASS);
             } catch (NoSuchMethodException | ClassNotFoundException | IllegalAccessException | NoCapablePlatformException e) {
-                LOGGER.error(INITIALIZATION_ERROR_TEMPLATE.formatted("Failed to access required WorldEdit methods"), e);
+                LOGGER.error(INITIALIZATION_ERROR_TEMPLATE, "Failed to access required WorldEdit methods", e);
                 FAILED_INITIALIZATION = true;
                 return false;
             }
@@ -153,7 +165,7 @@ public class StateWrapper {
                 CRAFT_BLOCK_ENTITY_STATE_LOAD_DATA = findCraftBlockEntityStateLoadDataMethodHandle(CRAFT_BLOCK_ENTITY_STATE_CLASS);
                 CRAFT_BLOCK_ENTITY_STATE_UPDATE = findCraftBlockEntityStateUpdateMethodHandle(CRAFT_BLOCK_ENTITY_STATE_CLASS);
             } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException e) {
-                LOGGER.error(INITIALIZATION_ERROR_TEMPLATE.formatted("Failed to initialize required native method accessors"), e);
+                LOGGER.error(INITIALIZATION_ERROR_TEMPLATE, "Failed to initialize required native method accessors", e);
                 FAILED_INITIALIZATION = true;
                 return false;
             }
@@ -204,7 +216,7 @@ public class StateWrapper {
             side.setColor(DyeColor.legacyValueOf(text.getString("color").toUpperCase(Locale.ROOT)));
         }
         if (text.containsKey("has_glowing_text")) {
-            side.setGlowingText(text.getByte("has_glowing_text") == 0x1b);
+            side.setGlowingText(text.getByte("has_glowing_text") == 1);
         }
         List<Tag> lines = text.getList("messages");
         if (lines != null) {
@@ -219,11 +231,22 @@ public class StateWrapper {
                     if (!initializeSignHack()) {
                         continue;
                     }
-                    final Object component = GSON_SERIALIZER_DESERIALIZE_TREE.invoke(
-                            KYORI_GSON_SERIALIZER,
-                            GSON.toJsonTree(line.getValue())
+                    // Minecraft uses mixed lists / arrays in their sign texts. One line can be a complex component, whereas
+                    // the following line could simply be a string. Those simpler lines are represented as `{"": ""}` (only in
+                    // SNBT those will be shown as a standard string). Adventure can't parse those, so we handle these lines as
+                    // plaintext lines (can't contain any other extra data either way).
+                    if (line instanceof CompoundTag compoundTag && compoundTag.getValue().containsKey("")) {
+                        //noinspection deprecation - Paper deprecatiom
+                        side.setLine(i, compoundTag.getString(""));
+                    }
+                    // serializes the line content from JNBT to Gson JSON objects, passes that to adventure and deserializes
+                    // into an adventure component.
+                    BUKKIT_SIGN_SIDE_LINE_SET.invoke(
+                            side, i, GSON_SERIALIZER_DESERIALIZE_TREE.invoke(
+                                    KYORI_GSON_SERIALIZER,
+                                    GSON.toJsonTree(line.getValue())
+                            )
                     );
-                    BUKKIT_SIGN_SIDE_LINE_SET.invoke(side, i, component);
                 }
             }
         }
@@ -233,6 +256,9 @@ public class StateWrapper {
         if (FAILED_SIGN_INITIALIZATION) {
             return false;
         }
+        if (KYORI_GSON_SERIALIZER != null) {
+            return true; // already initialized
+        }
         if (!PaperLib.isPaper()) {
             if (!PAPER_SIGN_NOTIFIED) {
                 PAPER_SIGN_NOTIFIED = true;
@@ -241,19 +267,26 @@ public class StateWrapper {
             return false;
         }
         try {
-            final String[] dontRelocate = new String[]{"net.kyo" + "ri.adventure.text.serializer.gson.GsonComponentSerializer"};
-            Class<?> gsonComponentSerializerClass = Class.forName(String.join("", dontRelocate));
-            KYORI_GSON_SERIALIZER = Arrays.stream(gsonComponentSerializerClass.getMethods()).filter(method -> method
-                    .getName()
-                    .equals("gson")).findFirst().orElseThrow().invoke(null);
+            char[] dontObfuscate = new char[]{
+                    'n', 'e', 't', '.', 'k', 'y', 'o', 'r', 'i', '.', 'a', 'd', 'v', 'e', 'n', 't', 'u', 'r', 'e', '.',
+                    't', 'e', 'x', 't', '.', 's', 'e', 'r', 'i', 'a', 'l', 'i', 'z', 'e', 'r', '.', 'g', 's', 'o', 'n', '.',
+                    'G', 's', 'o', 'n', 'C', 'o', 'm', 'p', 'o', 'n', 'e', 'n', 't', 'S', 'e', 'r', 'i', 'a', 'l', 'i', 'z', 'e', 'r'
+            };
+            Class<?> gsonComponentSerializerClass = Class.forName(new String(dontObfuscate));
+            LOGGER.info(gsonComponentSerializerClass);
+            KYORI_GSON_SERIALIZER = Arrays.stream(gsonComponentSerializerClass.getMethods())
+                    .filter(method -> method.getName().equals("gson"))
+                    .findFirst()
+                    .orElseThrow().invoke(null);
             GSON_SERIALIZER_DESERIALIZE_TREE = LOOKUP.unreflect(Arrays
                     .stream(gsonComponentSerializerClass.getMethods())
                     .filter(method -> method.getName().equals("deserializeFromTree") && method.getParameterCount() == 1)
                     .findFirst()
                     .orElseThrow());
-            BUKKIT_SIGN_SIDE_LINE_SET = LOOKUP.unreflect(Arrays.stream(SignSide.class.getMethods()).filter(method -> method
-                    .getName()
-                    .equals("line") && method.getParameterCount() == 2).findFirst().orElseThrow());
+            BUKKIT_SIGN_SIDE_LINE_SET = LOOKUP.unreflect(Arrays.stream(SignSide.class.getMethods())
+                    .filter(method -> method.getName().equals("line") && method.getParameterCount() == 2)
+                    .findFirst()
+                    .orElseThrow());
             return true;
         } catch (Throwable e) {
             FAILED_SIGN_INITIALIZATION = true;
@@ -336,15 +369,12 @@ public class StateWrapper {
 
     private static MethodHandle findCraftBlockEntityStateLoadDataMethodHandle(Class<?> craftBlockEntityStateClass) throws
             NoSuchMethodException, IllegalAccessException, ClassNotFoundException {
-        final Class<?> compoundTagClass = Class.forName("net.minecraft.nbt.CompoundTag"); // TODO: obfuscation...
         for (final Method method : craftBlockEntityStateClass.getMethods()) {
-            if (method
-                    .getReturnType()
-                    .equals(Void.TYPE) && method.getParameterCount() == 1 && method.getParameterTypes()[0] == compoundTagClass) {
+            if (method.getName().equals("loadData") && method.getParameterCount() == 1) {
                 return LOOKUP.unreflect(method);
             }
         }
-        throw new NoSuchMethodException("Couldn't find method for component loading in " + compoundTagClass.getName());
+        throw new NoSuchMethodException("Couldn't find #loadData(CompoundTag) in " + craftBlockEntityStateClass.getName());
     }
 
     private static MethodHandle findCraftBlockEntityStateUpdateMethodHandle(Class<?> craftBlockEntityStateClass) throws
