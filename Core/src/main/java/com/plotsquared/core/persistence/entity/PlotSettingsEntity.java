@@ -10,6 +10,11 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "plot_settings")
+@jakarta.persistence.NamedQueries({
+        @jakarta.persistence.NamedQuery(name = "PlotSettings.updateAlias", query = "UPDATE PlotSettingsEntity s SET s.alias = :alias WHERE s.id = :plotId"),
+        @jakarta.persistence.NamedQuery(name = "PlotSettings.updatePosition", query = "UPDATE PlotSettingsEntity s SET s.position = :pos WHERE s.id = :plotId"),
+        @jakarta.persistence.NamedQuery(name = "PlotSettings.updateMerged", query = "UPDATE PlotSettingsEntity s SET s.merged = :merged WHERE s.id = :plotId")
+})
 public class PlotSettingsEntity {
     @Id
     @Column(name = "plot_plot_id")

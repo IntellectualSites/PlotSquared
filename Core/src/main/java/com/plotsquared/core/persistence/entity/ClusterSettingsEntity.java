@@ -10,6 +10,9 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "cluster_settings")
+@jakarta.persistence.NamedQueries({
+        @jakarta.persistence.NamedQuery(name = "ClusterSettings.updatePosition", query = "UPDATE ClusterSettingsEntity s SET s.position = :pos WHERE s.id = :clusterId")
+})
 public class ClusterSettingsEntity {
     @Id
     @Column(name = "cluster_id")
