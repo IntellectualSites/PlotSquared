@@ -1234,9 +1234,6 @@ public class PlotSquared {
             } catch (final Exception ignored) {
             }
             DBFunc.validatePlots(plots);
-
-            // Close the connection
-            DBFunc.close();
         } catch (NullPointerException throwable) {
             LOGGER.error("Could not close database connection", throwable);
             throwable.printStackTrace();
