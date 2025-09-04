@@ -7,6 +7,7 @@ import com.plotsquared.core.configuration.Storage;
 import com.plotsquared.core.persistence.repository.api.ClusterHelperRepository;
 import com.plotsquared.core.persistence.repository.api.ClusterInvitedRepository;
 import com.plotsquared.core.persistence.repository.api.ClusterRepository;
+import com.plotsquared.core.persistence.repository.api.ClusterSettingsRepository;
 import com.plotsquared.core.persistence.repository.api.PlayerMetaRepository;
 import com.plotsquared.core.persistence.repository.api.PlotCommentRepository;
 import com.plotsquared.core.persistence.repository.api.PlotDeniedRepository;
@@ -19,6 +20,7 @@ import com.plotsquared.core.persistence.repository.api.PlotRatingRepository;
 import com.plotsquared.core.persistence.repository.jpa.ClusterHelperRepositoryJpa;
 import com.plotsquared.core.persistence.repository.jpa.ClusterInvitedRepositoryJpa;
 import com.plotsquared.core.persistence.repository.jpa.ClusterRepositoryJpa;
+import com.plotsquared.core.persistence.repository.jpa.ClusterSettingsRepositoryJpa;
 import com.plotsquared.core.persistence.repository.jpa.PlayerMetaRepositoryJpa;
 import com.plotsquared.core.persistence.repository.jpa.PlotCommentRepositoryJpa;
 import com.plotsquared.core.persistence.repository.jpa.PlotDeniedRepositoryJpa;
@@ -52,6 +54,7 @@ public class PersistenceModule extends AbstractModule {
         bind(ClusterRepository.class).to(ClusterRepositoryJpa.class);
         bind(ClusterHelperRepository.class).to(ClusterHelperRepositoryJpa.class);
         bind(ClusterInvitedRepository.class).to(ClusterInvitedRepositoryJpa.class);
+        bind(ClusterSettingsRepository.class).to(ClusterSettingsRepositoryJpa.class);
 
         // Eagerly run Flyway migrations on startup
         bind(FlywayBootstrap.class).asEagerSingleton();
