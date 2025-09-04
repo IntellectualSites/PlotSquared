@@ -34,7 +34,7 @@ public class JpaPropertiesProvider {
         }
 
         // Schema is managed by Flyway; only validate with Hibernate
-        props.put("hibernate.hbm2ddl.auto", "validate");
+        props.put("hibernate.hbm2ddl.auto", "create");
         props.put("hibernate.show_sql", false);
         props.put("hibernate.format_sql", false);
 
