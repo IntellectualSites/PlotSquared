@@ -117,7 +117,6 @@ public class MainCommand extends Command {
             commands.add(Kick.class);
             commands.add(Inbox.class);
             commands.add(Comment.class);
-            commands.add(DatabaseCommand.class);
             commands.add(Swap.class);
             commands.add(Music.class);
             commands.add(DebugRoadRegen.class);
