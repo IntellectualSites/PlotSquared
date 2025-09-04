@@ -85,6 +85,7 @@ import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.inject.modules.PlotSquaredModule;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.listener.WESubscriber;
+import com.plotsquared.core.persistence.config.PersistenceModule;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -298,7 +299,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         new WorldManagerModule(),
                         new PlotSquaredModule(),
                         new BukkitModule(this),
-                        new BackupModule()
+                        new BackupModule(),
+                        new PersistenceModule()
                 );
         this.injector.injectMembers(this);
 
@@ -321,25 +323,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             LOGGER.info("Thanks for supporting us :)");
         } else {
             LOGGER.info("Couldn't verify purchase :(");
-        }
-
-        // Database
-        if (Settings.Enabled_Components.DATABASE) {
-            plotSquared.setupDatabase();
-        }
-
-        // Check if we need to convert old flag values, etc
-        if (!plotSquared.getConfigurationVersion().equalsIgnoreCase("v5")) {
-            // Perform upgrade
-            if (DBFunc.dbManager.convertFlags()) {
-                LOGGER.info("Flags were converted successfully!");
-                // Update the config version
-                try {
-                    plotSquared.setConfigurationVersion("v5");
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                }
-            }
         }
 
         // Comments
