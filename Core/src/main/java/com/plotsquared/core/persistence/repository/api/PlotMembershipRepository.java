@@ -31,4 +31,11 @@ public interface PlotMembershipRepository {
      * @param userUuid the user's UUID (String representation)
      */
     void remove(long plotId, String userUuid);
+
+    /**
+     * Removes all members for the specified plot.
+     *
+     * @param plotId the unique identifier of the plot
+     */
+    void deleteByPlotId(long plotId);
 }

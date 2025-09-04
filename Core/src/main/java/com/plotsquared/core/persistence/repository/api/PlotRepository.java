@@ -23,9 +23,33 @@ public interface PlotRepository {
      */
     boolean swapPlots(Plot plot1, Plot plot2);
 
+    void replaceWorldAll(String oldWorld, String newWorld);
+
     void movePlots(Plot originPlot, Plot newPlot);
 
     void setOwner(Plot plot, UUID newOwner);
+
+    /**
+     * Bulk update world name for plots within the given rectangular plot-id range.
+     *
+     * @param oldWorld the source world name
+     * @param newWorld the destination world name
+     * @param minX     minimum plot x-id (inclusive)
+     * @param minZ     minimum plot z-id (inclusive)
+     * @param maxX     maximum plot x-id (inclusive)
+     * @param maxZ     maximum plot z-id (inclusive)
+     */
+    void replaceWorldInRange(String oldWorld, String newWorld, int minX, int minZ, int maxX, int maxZ);
+
+    /**
+     * Bulk update world name for all plots in a given world.
+     */
+    void replaceWorld(String oldWorld, String newWorld);
+
+    /**
+     * Bulk update world name for plots within the given rectangular plot-id bounds.
+     */
+    void replaceWorldInBounds(String oldWorld, String newWorld, com.plotsquared.core.plot.PlotId min, com.plotsquared.core.plot.PlotId max);
 
     /**
      * Bulk-creates plots and associated data (settings, flags, memberships)
@@ -52,6 +76,14 @@ public interface PlotRepository {
      * @param plot plot to create
      */
     void createPlotAndSettings(Plot plot);
+
+    /**
+     * Load all plots (with settings, flags and tiers) grouped by world and PlotId.
+     * Mirrors the legacy SQLManager#getPlots structure.
+     *
+     * @return world -> (PlotId -> Plot)
+     */
+    java.util.HashMap<String, java.util.HashMap<com.plotsquared.core.plot.PlotId, Plot>> getPlots();
 
     /**
      * Finds a plot by its primary identifier.
@@ -127,4 +159,14 @@ public interface PlotRepository {
      * @param plot the plot to delete
      */
     void delete(Plot plot);
+
+    /**
+     * Purge plots and all related data by internal database ids.
+     */
+    void purgeIds(java.util.Set<Integer> ids);
+
+    /**
+     * Purge plots by world and plot-id coordinates.
+     */
+    void purgeByWorldAndPlotIds(String world, java.util.Set<com.plotsquared.core.plot.PlotId> plotIds);
 }

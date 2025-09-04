@@ -38,6 +38,11 @@ public interface ClusterRepository {
     List<ClusterEntity> findByWorld(String world);
 
     /**
+     * Returns all clusters across all worlds.
+     */
+    List<ClusterEntity> findAll();
+
+    /**
      * Persists the given cluster. Implementations may insert or update as needed.
      *
      * @param cluster the cluster entity to save
@@ -50,4 +55,24 @@ public interface ClusterRepository {
      * @param id the cluster id
      */
     void deleteById(long id);
+
+    /**
+     * Update world for all clusters from oldWorld to newWorld.
+     */
+    void updateWorldAll(String oldWorld, String newWorld);
+
+    /**
+     * Update world for clusters overlapping the given bounds in oldWorld.
+     */
+    void updateWorldInBounds(String oldWorld, String newWorld, int minX, int minZ, int maxX, int maxZ);
+
+    /**
+     * Update world for all clusters from oldWorld to newWorld.
+     */
+    void replaceWorld(String oldWorld, String newWorld);
+
+    /**
+     * Update world for clusters overlapping the given bounds in oldWorld.
+     */
+    void replaceWorldInBounds(String oldWorld, String newWorld, com.plotsquared.core.plot.PlotId min, com.plotsquared.core.plot.PlotId max);
 }

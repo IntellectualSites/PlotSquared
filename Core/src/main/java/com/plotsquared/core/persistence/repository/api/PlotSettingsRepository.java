@@ -29,4 +29,24 @@ public interface PlotSettingsRepository {
      * @param plotId the plot identifier
      */
     void deleteByPlotId(long plotId);
+
+    /**
+     * Updates the alias for the plot settings row of the given plot id.
+     */
+    void updateAlias(long plotId, String alias);
+
+    /**
+     * Updates the home position string for the plot settings row of the given plot id.
+     */
+    void updatePosition(long plotId, String position);
+
+    /**
+     * Updates the merged bitmask for the plot settings row of the given plot id.
+     */
+    void updateMerged(long plotId, int mergedBitmask);
+
+    /**
+     * Creates a default settings row for the plot if it does not exist.
+     */
+    void createDefaultIfAbsent(long plotId, String defaultPosition);
 }

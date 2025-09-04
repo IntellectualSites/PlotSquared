@@ -33,4 +33,11 @@ public interface PlotDeniedRepository {
      * @param userUuid the user's UUID (String representation)
      */
     void remove(long plotId, String userUuid);
+
+    /**
+     * Removes all denied users for the specified plot.
+     *
+     * @param plotId the unique identifier of the plot
+     */
+    void deleteByPlotId(long plotId);
 }
