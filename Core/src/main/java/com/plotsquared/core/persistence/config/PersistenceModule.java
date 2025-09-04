@@ -83,10 +83,22 @@ public class PersistenceModule extends AbstractModule {
         } else {
             url = "jdbc:sqlite:" + Storage.SQLite.DB + ".db";
         }
+        // Support prefixed table names in SQL migrations via placeholders
+        Map<String, String> placeholders = new java.util.HashMap<>();
+        placeholders.put("prefix", Storage.PREFIX == null ? "" : Storage.PREFIX);
+
         return Flyway.configure()
                 .dataSource(url, user, pass)
                 .locations("classpath:db/migration")
+                // Baseline an existing, unversioned schema to avoid destructive changes
                 .baselineOnMigrate(true)
+                .baselineVersion("0")
+                .baselineDescription("Baseline before migrating to JPA-managed schema")
+                // Prevent accidental data loss
+                .cleanDisabled(true)
+                // Enable ${prefix} usage in SQL files for table names
+                .placeholderReplacement(true)
+                .placeholders(placeholders)
                 .load();
     }
 }
