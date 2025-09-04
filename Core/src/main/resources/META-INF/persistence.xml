@@ -25,7 +25,6 @@
         <class>com.plotsquared.core.persistence.entity.PlotUserId</class>
         <properties>
             <property name="hibernate.archive.autodetection" value="class"/>
-            <property name="hbm2ddl.auto" value="create"/>
         </properties>
     </persistence-unit>
 </persistence>
