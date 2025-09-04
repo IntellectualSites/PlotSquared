@@ -91,6 +91,7 @@ jpaApi = { group = "jakarta.persistence", name = "jakarta.persistence-api", vers
 hibernateCore = { group = "org.hibernate.orm", name = "hibernate-core", version.ref = "hibernate-core" }
 hibernateCommunityDialects = { group = "org.hibernate.orm", name = "hibernate-community-dialects", version.ref = "hibernate-core" }
 flywayCore = { group = "org.flywaydb", name = "flyway-core", version.ref = "flyway-core" }
+flywayMysql = { group = "org.flywaydb", name = "flyway-mysql", version.ref = "flyway-core" }
 jaxbRuntime = { group = "org.glassfish.jaxb", name = "jaxb-runtime", version.ref = "jaxbRuntime" }
 # JDBC Drivers
 mariadbJavaClient = { group = "org.mariadb.jdbc", name = "mariadb-java-client", version.ref = "mariadb-java-client" }

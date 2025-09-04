@@ -52,6 +52,7 @@ dependencies {
     api(libs.hibernateCommunityDialects)
     api(libs.jpaApi)
     api(libs.flywayCore)
+    runtimeOnly(libs.flywayMysql)
 
     runtimeOnly(libs.mariadbJavaClient)
     runtimeOnly(libs.sqliteJdbc)
