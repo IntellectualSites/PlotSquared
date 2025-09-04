@@ -4,15 +4,58 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.plotsquared.core.configuration.Storage;
+import com.plotsquared.core.persistence.repository.api.ClusterHelperRepository;
+import com.plotsquared.core.persistence.repository.api.ClusterInvitedRepository;
+import com.plotsquared.core.persistence.repository.api.ClusterRepository;
+import com.plotsquared.core.persistence.repository.api.PlayerMetaRepository;
+import com.plotsquared.core.persistence.repository.api.PlotCommentRepository;
+import com.plotsquared.core.persistence.repository.api.PlotDeniedRepository;
+import com.plotsquared.core.persistence.repository.api.PlotFlagRepository;
+import com.plotsquared.core.persistence.repository.api.PlotMembershipRepository;
+import com.plotsquared.core.persistence.repository.api.PlotRepository;
+import com.plotsquared.core.persistence.repository.api.PlotSettingsRepository;
+import com.plotsquared.core.persistence.repository.api.PlotTrustedRepository;
+import com.plotsquared.core.persistence.repository.api.PlotRatingRepository;
+import com.plotsquared.core.persistence.repository.jpa.ClusterHelperRepositoryJpa;
+import com.plotsquared.core.persistence.repository.jpa.ClusterInvitedRepositoryJpa;
+import com.plotsquared.core.persistence.repository.jpa.ClusterRepositoryJpa;
+import com.plotsquared.core.persistence.repository.jpa.PlayerMetaRepositoryJpa;
+import com.plotsquared.core.persistence.repository.jpa.PlotCommentRepositoryJpa;
+import com.plotsquared.core.persistence.repository.jpa.PlotDeniedRepositoryJpa;
+import com.plotsquared.core.persistence.repository.jpa.PlotFlagRepositoryJpa;
+import com.plotsquared.core.persistence.repository.jpa.PlotMembershipRepositoryJpa;
+import com.plotsquared.core.persistence.repository.jpa.PlotRepositoryJpa;
+import com.plotsquared.core.persistence.repository.jpa.PlotSettingsRepositoryJpa;
+import com.plotsquared.core.persistence.repository.jpa.PlotTrustedRepositoryJpa;
+import com.plotsquared.core.persistence.repository.jpa.PlotRatingRepositoryJpa;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import org.flywaydb.core.Flyway;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class PersistenceModule extends AbstractModule {
+
+    @Override
+    protected void configure() {
+        // Bind repository interfaces to JPA implementations
+        bind(PlotRepository.class).to(PlotRepositoryJpa.class);
+        bind(PlotFlagRepository.class).to(PlotFlagRepositoryJpa.class);
+        bind(PlotCommentRepository.class).to(PlotCommentRepositoryJpa.class);
+        bind(PlotRatingRepository.class).to(PlotRatingRepositoryJpa.class);
+        bind(PlayerMetaRepository.class).to(PlayerMetaRepositoryJpa.class);
+        bind(PlotSettingsRepository.class).to(PlotSettingsRepositoryJpa.class);
+        bind(PlotMembershipRepository.class).to(PlotMembershipRepositoryJpa.class);
+        bind(PlotTrustedRepository.class).to(PlotTrustedRepositoryJpa.class);
+        bind(PlotDeniedRepository.class).to(PlotDeniedRepositoryJpa.class);
+        bind(ClusterRepository.class).to(ClusterRepositoryJpa.class);
+        bind(ClusterHelperRepository.class).to(ClusterHelperRepositoryJpa.class);
+        bind(ClusterInvitedRepository.class).to(ClusterInvitedRepositoryJpa.class);
+
+        // Eagerly run Flyway migrations on startup
+        bind(FlywayBootstrap.class).asEagerSingleton();
+    }
 
     @Provides
     EntityManager provideEm(EntityManagerFactory emf) {
@@ -21,32 +64,8 @@ public class PersistenceModule extends AbstractModule {
 
     @Provides
     @Singleton
-    EntityManagerFactory provideEmf() {
-        Map<String, Object> props = new HashMap<>();
-
-        if (Storage.MySQL.USE) {
-            String url = "jdbc:mysql://" + Storage.MySQL.HOST + ":" + Storage.MySQL.PORT + "/" + Storage.MySQL.DATABASE
-                    + "?" + String.join("&", Storage.MySQL.PROPERTIES);
-            props.put("jakarta.persistence.jdbc.url", url);
-            props.put("jakarta.persistence.jdbc.user", Storage.MySQL.USER);
-            props.put("jakarta.persistence.jdbc.password", Storage.MySQL.PASSWORD);
-            props.put("jakarta.persistence.jdbc.driver", "com.mysql.cj.jdbc.Driver");
-            props.put("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect");
-        } else if (Storage.SQLite.USE) {
-            String url = "jdbc:sqlite:" + Storage.SQLite.DB + ".db";
-            props.put("jakarta.persistence.jdbc.url", url);
-            props.put("jakarta.persistence.jdbc.driver", "org.sqlite.JDBC");
-            props.put("hibernate.dialect", "org.hibernate.community.dialect.SQLiteDialect");
-        }
-
-        // Schema via Flyway; only validate with Hibernate
-        props.put("hibernate.hbm2ddl.auto", "validate");
-        props.put("hibernate.show_sql", false);
-        props.put("hibernate.format_sql", false);
-
-        // Apply dynamic table prefixing
-        props.put("hibernate.physical_naming_strategy", new PrefixedNamingStrategy(Storage.PREFIX));
-
+    EntityManagerFactory provideEmf(JpaPropertiesProvider jpaPropertiesProvider) {
+        Map<String, Object> props = jpaPropertiesProvider.getProperties();
         return Persistence.createEntityManagerFactory("plotsquaredPU", props);
     }
 
