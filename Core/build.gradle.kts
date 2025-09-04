@@ -47,6 +47,9 @@ dependencies {
 
     // Database
     api(libs.hibernateCore)
+    runtimeOnly(libs.jaxbRuntime)
+    annotationProcessor(libs.hibernateCore)
+    api(libs.hibernateCommunityDialects)
     api(libs.jpaApi)
     api(libs.flywayCore)
 
