@@ -13,8 +13,11 @@ import jakarta.persistence.Table;
 @IdClass(PlotCommentId.class)
 @NamedQueries({
         @NamedQuery(name = "PlotComment.findByWorldAndInbox", query = "SELECT c FROM PlotCommentEntity c WHERE c.world = :world AND c.inbox = :inbox ORDER BY c.timestamp DESC"),
-        @NamedQuery(name = "PlotComment.deleteOne", query = "DELETE FROM PlotCommentEntity c WHERE c.world = :world AND c.hashcode = :hash AND c.inbox = :inbox AND c.sender = :sender"),
-        @NamedQuery(name = "PlotComment.clearInbox", query = "DELETE FROM PlotCommentEntity c WHERE c.world = :world AND c.inbox = :inbox")
+        @NamedQuery(name = "PlotComment.findByWorldHashAndInbox", query = "SELECT c FROM PlotCommentEntity c WHERE c.world = :world AND c.hashcode = :hash AND c.inbox = :inbox ORDER BY c.timestamp DESC"),
+        @NamedQuery(name = "PlotComment.deleteOne", query = "DELETE FROM PlotCommentEntity c WHERE c.world = :world AND c.hashcode = :hash AND c.inbox = :inbox AND c.sender = :sender AND c.comment = :comment"),
+        @NamedQuery(name = "PlotComment.clearInbox", query = "DELETE FROM PlotCommentEntity c WHERE c.world = :world AND c.inbox = :inbox"),
+        @NamedQuery(name = "PlotComment.clearInboxByWorldHash", query = "DELETE FROM PlotCommentEntity c WHERE c.world = :world AND c.hashcode = :hash AND c.inbox = :inbox"),
+        @NamedQuery(name = "PlotComment.deleteByWorldAndHash", query = "DELETE FROM PlotCommentEntity c WHERE c.world = :world AND c.hashcode = :hash")
 })
 public class PlotCommentEntity {
     @Id
