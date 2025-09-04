@@ -23,6 +23,7 @@ import com.plotsquared.core.persistence.entity.PlayerMetaEntity;
 import com.plotsquared.core.persistence.entity.PlotCommentEntity;
 import com.plotsquared.core.persistence.repository.api.PlayerMetaRepository;
 import com.plotsquared.core.persistence.repository.api.PlotCommentRepository;
+import com.plotsquared.core.persistence.repository.api.PlotRepository;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotCluster;
@@ -97,49 +98,27 @@ public class DBFunc {
     }
 
     public static CompletableFuture<Boolean> swapPlots(Plot plot1, Plot plot2) {
-        if (dbManager == null || plot1 == null || plot2 == null || plot1.temp == -1 || plot2.temp == -1) {
+        if (plot1 == null || plot2 == null) {
             return CompletableFuture.completedFuture(false);
         }
-        return DBFunc.dbManager.swapPlots(plot1, plot2);
-    }
-    public static void movePlot(Plot originalPlot, Plot newPlot) {
-        if (originalPlot.temp == -1 || newPlot.temp == -1) {
-            return;
-        }
-        DBFunc.dbManager.movePlot(originalPlot, newPlot);
+        PlotRepository repo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        return CompletableFuture.completedFuture(repo.swapPlots(plot1, plot2));
     }
 
+    public static void movePlot(Plot originalPlot, Plot newPlot) {
+        if (originalPlot == null || newPlot == null) {
+            return;
+        }
+        PlotRepository repo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        repo.movePlots(originalPlot, newPlot);
+    }
+
+    @Deprecated(forRemoval = true)
     public static void validatePlots(Set<Plot> plots) {
         if (dbManager == null) {
             return;
         }
         DBFunc.dbManager.validateAllPlots(plots);
-    }
-
-
-    //TODO Consider Removal
-
-    /**
-     * Check if a {@link ResultSet} contains a column.
-     *
-     * @param resultSet
-     * @param name
-     * @return
-     */
-    @Deprecated
-    public static boolean hasColumn(ResultSet resultSet, String name) {
-        try {
-            ResultSetMetaData meta = resultSet.getMetaData();
-            int count = meta.getColumnCount();
-            for (int x = 1; x <= count; x++) {
-                if (name.equals(meta.getColumnName(x))) {
-                    return true;
-                }
-            }
-            return false;
-        } catch (SQLException ignored) {
-            return false;
-        }
     }
 
     /**
@@ -149,10 +128,8 @@ public class DBFunc {
      * @param uuid New Owner
      */
     public static void setOwner(Plot plot, UUID uuid) {
-        if (plot.temp == -1 || dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.setOwner(plot, uuid);
+        PlotRepository repo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        repo.setOwner(plot, uuid);
     }
 
     /**
@@ -643,19 +620,6 @@ public class DBFunc {
             return;
         }
         DBFunc.dbManager.replaceWorld(oldWorld, newWorld, min, max);
-    }
-
-    /**
-     * Replace all occurrences of a uuid in the database with another one
-     *
-     * @param old
-     * @param now
-     */
-    public static void replaceUUID(UUID old, UUID now) {
-        if (dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.replaceUUID(old, now);
     }
 
     public static void close() {
