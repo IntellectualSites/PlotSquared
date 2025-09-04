@@ -1282,63 +1282,6 @@ public class PlotSquared {
     }
 
     /**
-     * Set up the database connection.
-     */
-    public void setupDatabase() {
-        try {
-            if (DBFunc.dbManager != null) {
-                DBFunc.dbManager.close();
-            }
-            Database database;
-            if (Storage.MySQL.USE) {
-                database = new MySQL(Storage.MySQL.HOST, Storage.MySQL.PORT, Storage.MySQL.DATABASE,
-                        Storage.MySQL.USER, Storage.MySQL.PASSWORD
-                );
-            } else if (Storage.SQLite.USE) {
-                File file = FileUtils.getFile(platform.getDirectory(), Storage.SQLite.DB + ".db");
-                database = new SQLite(file);
-            } else {
-                LOGGER.error("No storage type is set. Disabling PlotSquared");
-                this.platform.shutdown(); //shutdown used instead of disable because no database is set
-                return;
-            }
-            DBFunc.dbManager = new SQLManager(
-                    database,
-                    Storage.PREFIX,
-                    this.eventDispatcher,
-                    this.plotListener,
-                    this.worldConfiguration
-            );
-            this.plots_tmp = DBFunc.getPlots();
-            if (getPlotAreaManager() instanceof SinglePlotAreaManager) {
-                SinglePlotArea area = ((SinglePlotAreaManager) getPlotAreaManager()).getArea();
-                addPlotArea(area);
-                ConfigurationSection section = worldConfiguration.getConfigurationSection("worlds.*");
-                if (section == null) {
-                    section = worldConfiguration.createSection("worlds.*");
-                }
-                area.saveConfiguration(section);
-                area.loadDefaultConfiguration(section);
-            }
-            this.clustersTmp = DBFunc.getClusters();
-            LOGGER.info("Connection to database established. Type: {}", Storage.MySQL.USE ? "MySQL" : "SQLite");
-        } catch (ClassNotFoundException | SQLException e) {
-            LOGGER.error(
-                    "Failed to open database connection ({}). Disabling PlotSquared",
-                    Storage.MySQL.USE ? "MySQL" : "SQLite"
-            );
-            LOGGER.error("==== Here is an ugly stacktrace, if you are interested in those things ===");
-            e.printStackTrace();
-            LOGGER.error("==== End of stacktrace ====");
-            LOGGER.error(
-                    "Please go to the {} 'storage.yml' and configure the database correctly",
-                    platform.pluginName()
-            );
-            this.platform.shutdown(); //shutdown used instead of disable because of database error
-        }
-    }
-
-    /**
      * Setup the default configuration.
      */
     public void setupConfig() {
