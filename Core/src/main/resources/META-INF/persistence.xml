@@ -5,9 +5,27 @@
              version="3.0">
     <persistence-unit name="plotsquaredPU" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <exclude-unlisted-classes>false</exclude-unlisted-classes>
+        <class>com.plotsquared.core.persistence.entity.PlotEntity</class>
+        <class>com.plotsquared.core.persistence.entity.ClusterEntity</class>
+        <class>com.plotsquared.core.persistence.entity.ClusterHelperEntity</class>
+        <class>com.plotsquared.core.persistence.entity.ClusterInvitedEntity</class>
+        <class>com.plotsquared.core.persistence.entity.ClusterSettingsEntity</class>
+        <class>com.plotsquared.core.persistence.entity.ClusterUserId</class>
+        <class>com.plotsquared.core.persistence.entity.PlayerMetaEntity</class>
+        <class>com.plotsquared.core.persistence.entity.PlotCommentEntity</class>
+        <class>com.plotsquared.core.persistence.entity.PlotCommentId</class>
+        <class>com.plotsquared.core.persistence.entity.PlotDeniedEntity</class>
+        <class>com.plotsquared.core.persistence.entity.PlotEntity</class>
+        <class>com.plotsquared.core.persistence.entity.PlotFlagEntity</class>
+        <class>com.plotsquared.core.persistence.entity.PlotMembershipEntity</class>
+        <class>com.plotsquared.core.persistence.entity.PlotRatingEntity</class>
+        <class>com.plotsquared.core.persistence.entity.PlotRatingId</class>
+        <class>com.plotsquared.core.persistence.entity.PlotSettingsEntity</class>
+        <class>com.plotsquared.core.persistence.entity.PlotTrustedEntity</class>
+        <class>com.plotsquared.core.persistence.entity.PlotUserId</class>
         <properties>
             <property name="hibernate.archive.autodetection" value="class"/>
+            <property name="hbm2ddl.auto" value="create"/>
         </properties>
     </persistence-unit>
 </persistence>

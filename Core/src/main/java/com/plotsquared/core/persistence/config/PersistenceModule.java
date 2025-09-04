@@ -36,6 +36,7 @@ import jakarta.persistence.Persistence;
 import org.flywaydb.core.Flyway;
 
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class PersistenceModule extends AbstractModule {
 
@@ -55,21 +56,35 @@ public class PersistenceModule extends AbstractModule {
         bind(ClusterHelperRepository.class).to(ClusterHelperRepositoryJpa.class);
         bind(ClusterInvitedRepository.class).to(ClusterInvitedRepositoryJpa.class);
         bind(ClusterSettingsRepository.class).to(ClusterSettingsRepositoryJpa.class);
+        bind(JpaPropertiesProvider.class).asEagerSingleton();
 
         // Eagerly run Flyway migrations on startup
         bind(FlywayBootstrap.class).asEagerSingleton();
     }
 
     @Provides
-    EntityManager provideEm(EntityManagerFactory emf) {
-        return emf.createEntityManager();
-    }
-
-    @Provides
     @Singleton
     EntityManagerFactory provideEmf(JpaPropertiesProvider jpaPropertiesProvider) {
         Map<String, Object> props = jpaPropertiesProvider.getProperties();
-        return Persistence.createEntityManagerFactory("plotsquaredPU", props);
+        return syncThreadForServiceLoader(() -> Persistence.createEntityManagerFactory("plotsquaredPU", props));
+    }
+
+
+    private <T> T syncThreadForServiceLoader(Supplier<T> supplier) {
+        Thread currentThread = Thread.currentThread();
+        ClassLoader originalClassLoader = currentThread.getContextClassLoader();
+        ClassLoader pluginClassLoader = this.getClass().getClassLoader();
+        try {
+            currentThread.setContextClassLoader(pluginClassLoader);
+            return supplier.get();
+        } finally {
+            currentThread.setContextClassLoader(originalClassLoader);
+        }
+    }
+
+    @Provides
+    EntityManager provideEm(EntityManagerFactory emf) {
+        return emf.createEntityManager();
     }
 
     @Provides
