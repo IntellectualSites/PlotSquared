@@ -44,6 +44,14 @@ dependencies {
     api(libs.arkitektonika)
     api(libs.paster)
     api(libs.informativeAnnotations)
+
+    // Database
+    api(libs.hibernateCore)
+    api(libs.jpaApi)
+    api(libs.flywayCore)
+
+    runtimeOnly(libs.mariadbJavaClient)
+    runtimeOnly(libs.sqliteJdbc)
 }
 
 tasks.processResources {
