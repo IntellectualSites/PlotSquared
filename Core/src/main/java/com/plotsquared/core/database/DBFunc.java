@@ -147,10 +147,13 @@ public class DBFunc {
             final Plot plot, final Runnable success,
             final Runnable failure
     ) {
-        if (dbManager == null) {
-            return;
+        PlotRepository repo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        boolean created = repo.createPlotSafe(plot);
+        if (created) {
+            if (success != null) success.run();
+        } else {
+            if (failure != null) failure.run();
         }
-        DBFunc.dbManager.createPlotSafe(plot, success, failure);
     }
 
     /**
@@ -159,22 +162,9 @@ public class DBFunc {
      * @param plot Plot to create
      */
     public static void createPlotAndSettings(Plot plot, Runnable whenDone) {
-        if (plot.temp == -1 || dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.createPlotAndSettings(plot, whenDone);
-    }
-
-    /**
-     * Create tables.
-     *
-     * @throws Exception
-     */
-    public static void createTables() throws Exception {
-        if (dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.createTables();
+        PlotRepository repo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        repo.createPlotAndSettings(plot);
+        if (whenDone != null) whenDone.run();
     }
 
     /**

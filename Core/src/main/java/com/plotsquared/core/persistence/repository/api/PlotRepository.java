@@ -36,6 +36,24 @@ public interface PlotRepository {
     void createPlotsAndData(List<Plot> plots);
 
     /**
+     * Creates a plot if it does not already exist for the given world/x/z.
+     * Also creates an empty settings row. Mirrors legacy createPlotSafe behavior.
+     * Sets plot.temp to the generated id if created.
+     *
+     * @param plot plot to create
+     * @return true if a new plot was created; false if it already existed
+     */
+    boolean createPlotSafe(Plot plot);
+
+    /**
+     * Creates a plot and an empty settings row. Mirrors legacy createPlotAndSettings.
+     * Sets plot.temp to the generated id.
+     *
+     * @param plot plot to create
+     */
+    void createPlotAndSettings(Plot plot);
+
+    /**
      * Finds a plot by its primary identifier.
      *
      * @param id the plot id

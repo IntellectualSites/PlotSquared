@@ -26,6 +26,82 @@ public class PlotRepositoryJpa implements PlotRepository {
     }
 
     @Override
+    public boolean createPlotSafe(final Plot plot) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            String world = null;
+            try { world = plot.getWorldName(); } catch (Throwable ignored) {}
+            if (world == null) { world = plot.getArea().toString(); }
+            Optional<PlotEntity> existing = findByWorldAndId(world, plot.getId().getX(), plot.getId().getY());
+            if (existing.isPresent()) {
+                tx.commit();
+                return false;
+            }
+            PlotEntity pe = new PlotEntity();
+            pe.setPlotIdX(plot.getId().getX());
+            pe.setPlotIdZ(plot.getId().getY());
+            UUID ownerUuid = null;
+            try { ownerUuid = plot.getOwnerAbs(); } catch (Throwable ignored) {}
+            pe.setOwner(ownerUuid != null ? ownerUuid.toString() : com.plotsquared.core.database.DBFunc.EVERYONE.toString());
+            pe.setWorld(world);
+            em.persist(pe);
+            em.flush();
+            if (pe.getId() != null) {
+                plot.temp = pe.getId().intValue();
+            }
+            com.plotsquared.core.persistence.entity.PlotSettingsEntity se = new com.plotsquared.core.persistence.entity.PlotSettingsEntity();
+            se.setPlot(pe);
+            se.setPosition("DEFAULT");
+            em.persist(se);
+            tx.commit();
+            return true;
+        } catch (RuntimeException e) {
+            if (tx.isActive()) tx.rollback();
+            LOGGER.error("Failed to create plot safely (plot={})", plot, e);
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public void createPlotAndSettings(final Plot plot) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            String world = null;
+            try { world = plot.getWorldName(); } catch (Throwable ignored) {}
+            if (world == null) { world = plot.getArea().toString(); }
+            PlotEntity pe = new PlotEntity();
+            pe.setPlotIdX(plot.getId().getX());
+            pe.setPlotIdZ(plot.getId().getY());
+            UUID ownerUuid = null;
+            try { ownerUuid = plot.getOwnerAbs(); } catch (Throwable ignored) {}
+            pe.setOwner(ownerUuid != null ? ownerUuid.toString() : com.plotsquared.core.database.DBFunc.EVERYONE.toString());
+            pe.setWorld(world);
+            em.persist(pe);
+            em.flush();
+            if (pe.getId() != null) {
+                plot.temp = pe.getId().intValue();
+            }
+            com.plotsquared.core.persistence.entity.PlotSettingsEntity se = new com.plotsquared.core.persistence.entity.PlotSettingsEntity();
+            se.setPlot(pe);
+            se.setPosition("DEFAULT");
+            em.persist(se);
+            tx.commit();
+        } catch (RuntimeException e) {
+            if (tx.isActive()) tx.rollback();
+            LOGGER.error("Failed to create plot and settings (plot={})", plot, e);
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
     public void createPlotsAndData(final List<Plot> plots) {
         if (plots == null || plots.isEmpty()) {
             return;
