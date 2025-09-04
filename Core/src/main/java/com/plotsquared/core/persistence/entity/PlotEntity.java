@@ -17,7 +17,18 @@ import jakarta.persistence.Table;
 @NamedQueries({
         @NamedQuery(name = "Plot.findByWorldAndId", query = "SELECT p FROM PlotEntity p WHERE p.world = :world AND p.plotIdX = :x AND p.plotIdZ = :z"),
         @NamedQuery(name = "Plot.findByOwner", query = "SELECT p FROM PlotEntity p WHERE p.owner = :owner"),
-        @NamedQuery(name = "Plot.findByWorld", query = "SELECT p FROM PlotEntity p WHERE p.world = :world")
+        @NamedQuery(name = "Plot.findByWorld", query = "SELECT p FROM PlotEntity p WHERE p.world = :world"),
+        @NamedQuery(
+                name = "Plot.updateXANDZ",
+                query = "UPDATE PlotEntity p SET p.plotIdX = :x, p.plotIdZ = :z  WHERE p.id = :id"
+        ),
+        @NamedQuery(name = "Plot.findByXAndZAndWorld", query = "SELECT p FROM PlotEntity p WHERE p.plotIdX = :x AND p.plotIdZ = :z AND " +
+                "world = :world order by timestamp asc "),
+        @NamedQuery(
+                name = "Plot.movePlot",
+                query = "UPDATE PlotEntity p SET p.plotIdX = :plotIdX, p.plotIdZ = :plotIdZ, p.world = :world WHERE p.id = :id"
+        ),
+        @NamedQuery(name = "Plot.setOwner", query = "UPDATE PlotEntity p SET p.owner = :owner WHERE p.world = :world AND p.plotIdX = :x AND p.plotIdZ = :z"),
 })
 public class PlotEntity {
     @Id
