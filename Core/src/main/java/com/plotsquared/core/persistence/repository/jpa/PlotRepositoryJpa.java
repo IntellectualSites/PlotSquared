@@ -26,6 +26,118 @@ public class PlotRepositoryJpa implements PlotRepository {
     }
 
     @Override
+    public void createPlotsAndData(final List<Plot> plots) {
+        if (plots == null || plots.isEmpty()) {
+            return;
+        }
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            for (final Plot plot : plots) {
+                // Persist plot row
+                PlotEntity pe = new PlotEntity();
+                pe.setPlotIdX(plot.getId().getX());
+                pe.setPlotIdZ(plot.getId().getY());
+                java.util.UUID ownerUuid = null;
+                try { ownerUuid = plot.getOwnerAbs(); } catch (Throwable ignored) {}
+                pe.setOwner(ownerUuid != null ? ownerUuid.toString() : com.plotsquared.core.database.DBFunc.EVERYONE.toString());
+                // Prefer world name for consistency with other queries
+                String world = null;
+                try { world = plot.getWorldName(); } catch (Throwable ignored) {}
+                if (world == null) { world = plot.getArea().toString(); }
+                pe.setWorld(world);
+                em.persist(pe);
+                em.flush(); // ensure ID is generated
+
+                long plotId = pe.getId();
+
+                // Persist settings (alias, merged, position) similar to legacy behavior
+                try {
+                    var ps = plot.getSettings();
+                    if (ps != null) {
+                        com.plotsquared.core.persistence.entity.PlotSettingsEntity se = new com.plotsquared.core.persistence.entity.PlotSettingsEntity();
+                        se.setPlot(pe);
+                        String alias = ps.getAlias();
+                        if (alias != null && !alias.isEmpty()) {
+                            se.setAlias(alias);
+                        }
+                        boolean[] merged = ps.getMerged();
+                        if (merged != null) {
+                            int hash = com.plotsquared.core.util.HashUtil.hash(merged);
+                            se.setMerged(hash);
+                        }
+                        var loc = ps.getPosition();
+                        String position = "DEFAULT";
+                        if (loc != null) {
+                            if (loc.getY() == 0) {
+                                position = "DEFAULT";
+                            } else {
+                                position = loc.getX() + "," + loc.getY() + "," + loc.getZ();
+                            }
+                        }
+                        se.setPosition(position);
+                        em.persist(se);
+                    }
+                } catch (Throwable t) {
+                    // log and continue
+                    LOGGER.warn("Failed to persist settings for plot (x={}, z={}, world={})", plot.getId().getX(), plot.getId().getY(), world, t);
+                }
+
+                // Persist flags
+                try {
+                    var flagContainer = plot.getFlagContainer();
+                    if (flagContainer != null && flagContainer.getFlagMap() != null) {
+                        for (var flagEntry : flagContainer.getFlagMap().values()) {
+                            com.plotsquared.core.persistence.entity.PlotFlagEntity fe = new com.plotsquared.core.persistence.entity.PlotFlagEntity();
+                            fe.setPlot(pe);
+                            fe.setFlag(flagEntry.getName());
+                            fe.setValue(flagEntry.toString());
+                            em.persist(fe);
+                        }
+                    }
+                } catch (Throwable t) {
+                    LOGGER.warn("Failed to persist flags for plot (x={}, z={}, world={})", plot.getId().getX(), plot.getId().getY(), world, t);
+                }
+
+                // Persist tiers: NOTE legacy mapping members->trusted, trusted->helpers
+                try {
+                    // helpers table from plot.getTrusted()
+                    for (java.util.UUID uuid : plot.getTrusted()) {
+                        com.plotsquared.core.persistence.entity.PlotMembershipEntity e = new com.plotsquared.core.persistence.entity.PlotMembershipEntity();
+                        e.setPlotId(plotId);
+                        e.setUserUuid(uuid.toString());
+                        em.persist(e);
+                    }
+                    // trusted table from plot.getMembers()
+                    for (java.util.UUID uuid : plot.getMembers()) {
+                        com.plotsquared.core.persistence.entity.PlotTrustedEntity e = new com.plotsquared.core.persistence.entity.PlotTrustedEntity();
+                        e.setPlotId(plotId);
+                        e.setUserUuid(uuid.toString());
+                        em.persist(e);
+                    }
+                    // denied table from plot.getDenied()
+                    for (java.util.UUID uuid : plot.getDenied()) {
+                        com.plotsquared.core.persistence.entity.PlotDeniedEntity e = new com.plotsquared.core.persistence.entity.PlotDeniedEntity();
+                        e.setPlotId(plotId);
+                        e.setUserUuid(uuid.toString());
+                        em.persist(e);
+                    }
+                } catch (Throwable t) {
+                    LOGGER.warn("Failed to persist tiers for plot (x={}, z={}, world={})", plot.getId().getX(), plot.getId().getY(), world, t);
+                }
+            }
+            tx.commit();
+        } catch (RuntimeException e) {
+            if (tx.isActive()) tx.rollback();
+            LOGGER.error("Failed bulk create plots and data", e);
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
     public boolean swapPlots(final Plot plot1, final Plot plot2) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();

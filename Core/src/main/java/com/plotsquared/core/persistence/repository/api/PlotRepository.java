@@ -28,6 +28,14 @@ public interface PlotRepository {
     void setOwner(Plot plot, UUID newOwner);
 
     /**
+     * Bulk-creates plots and associated data (settings, flags, memberships)
+     * in a single transactional operation.
+     *
+     * @param plots list of plots to persist
+     */
+    void createPlotsAndData(List<Plot> plots);
+
+    /**
      * Finds a plot by its primary identifier.
      *
      * @param id the plot id

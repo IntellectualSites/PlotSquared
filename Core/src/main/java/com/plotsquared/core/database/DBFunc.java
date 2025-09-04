@@ -138,10 +138,9 @@ public class DBFunc {
      * @param plots List containing all plot objects
      */
     public static void createPlotsAndData(List<Plot> plots, Runnable whenDone) {
-        if (dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.createPlotsAndData(plots, whenDone);
+        PlotRepository repo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        repo.createPlotsAndData(plots);
+        if (whenDone != null) whenDone.run();
     }
 
     public static void createPlotSafe(
