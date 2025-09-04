@@ -382,4 +382,83 @@ public class PlotRepositoryJpa implements PlotRepository {
             em.close();
         }
     }
+
+    @Override
+    public void deleteRatings(final Plot plot) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            String world = null;
+            try { world = plot.getWorldName(); } catch (Throwable ignored) {}
+            if (world == null) { world = plot.getArea().toString(); }
+            PlotEntity pe = em.createNamedQuery("Plot.findByWorldAndId", PlotEntity.class)
+                    .setParameter("world", world)
+                    .setParameter("x", plot.getId().getX())
+                    .setParameter("z", plot.getId().getY())
+                    .getResultStream().findFirst().orElse(null);
+            if (pe != null && pe.getId() != null) {
+                em.createQuery("DELETE FROM PlotRatingEntity r WHERE r.plotId = :plotId")
+                        .setParameter("plotId", pe.getId())
+                        .executeUpdate();
+            }
+            tx.commit();
+        } catch (RuntimeException e) {
+            if (tx.isActive()) tx.rollback();
+            LOGGER.error("Failed to delete ratings for plot (plot={})", plot, e);
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public void delete(final Plot plot) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            String world = null;
+            try { world = plot.getWorldName(); } catch (Throwable ignored) {}
+            if (world == null) { world = plot.getArea().toString(); }
+            PlotEntity pe = em.createNamedQuery("Plot.findByWorldAndId", PlotEntity.class)
+                    .setParameter("world", world)
+                    .setParameter("x", plot.getId().getX())
+                    .setParameter("z", plot.getId().getY())
+                    .getResultStream().findFirst().orElse(null);
+            if (pe != null && pe.getId() != null) {
+                Long plotId = pe.getId();
+                // Delete children first to satisfy FK constraints
+                em.createQuery("DELETE FROM PlotFlagEntity f WHERE f.plot.id = :plotId")
+                        .setParameter("plotId", plotId)
+                        .executeUpdate();
+                em.createQuery("DELETE FROM PlotMembershipEntity e WHERE e.plotId = :plotId")
+                        .setParameter("plotId", plotId)
+                        .executeUpdate();
+                em.createQuery("DELETE FROM PlotTrustedEntity e WHERE e.plotId = :plotId")
+                        .setParameter("plotId", plotId)
+                        .executeUpdate();
+                em.createQuery("DELETE FROM PlotDeniedEntity e WHERE e.plotId = :plotId")
+                        .setParameter("plotId", plotId)
+                        .executeUpdate();
+                em.createQuery("DELETE FROM PlotRatingEntity r WHERE r.plotId = :plotId")
+                        .setParameter("plotId", plotId)
+                        .executeUpdate();
+                // Remove settings explicitly to mirror legacy behavior and avoid orphan rows
+                em.createQuery("DELETE FROM PlotSettingsEntity s WHERE s.id = :plotId")
+                        .setParameter("plotId", plotId)
+                        .executeUpdate();
+                // Remove plot
+                PlotEntity managed = em.contains(pe) ? pe : em.merge(pe);
+                em.remove(managed);
+            }
+            tx.commit();
+        } catch (RuntimeException e) {
+            if (tx.isActive()) tx.rollback();
+            LOGGER.error("Failed to delete plot (plot={})", plot, e);
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
 }

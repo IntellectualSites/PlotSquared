@@ -112,4 +112,19 @@ public interface PlotRepository {
      * @param id the plot id
      */
     void deleteById(long id);
+
+    /**
+     * Deletes all ratings for the given plot.
+     *
+     * @param plot the plot whose ratings should be removed
+     */
+    void deleteRatings(Plot plot);
+
+    /**
+     * Deletes the plot and all related data (flags, helpers, trusted, denied, ratings, and settings via cascade).
+     * No-op if the plot does not exist.
+     *
+     * @param plot the plot to delete
+     */
+    void delete(Plot plot);
 }

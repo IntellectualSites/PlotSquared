@@ -173,10 +173,11 @@ public class DBFunc {
      * @param plot Plot to delete
      */
     public static void delete(Plot plot) {
-        if (plot.temp == -1 || dbManager == null) {
+        if (plot.temp == -1) {
             return;
         }
-        DBFunc.dbManager.delete(plot);
+        PlotRepository repo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        repo.delete(plot);
         plot.temp = -1;
     }
 
@@ -186,10 +187,11 @@ public class DBFunc {
      * @param plot
      */
     public static void deleteRatings(Plot plot) {
-        if (plot.temp == -1 || dbManager == null) {
+        if (plot.temp == -1) {
             return;
         }
-        DBFunc.dbManager.deleteRatings(plot);
+        PlotRepository repo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        repo.deleteRatings(plot);
     }
 
     /**
