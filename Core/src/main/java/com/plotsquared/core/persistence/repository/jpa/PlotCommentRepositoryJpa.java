@@ -36,6 +36,20 @@ public class PlotCommentRepositoryJpa implements PlotCommentRepository {
     }
 
     @Override
+    public List<PlotCommentEntity> findByWorldHashAndInbox(String world, int hashcode, String inbox) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            return em.createNamedQuery("PlotComment.findByWorldHashAndInbox", PlotCommentEntity.class)
+                    .setParameter("world", world)
+                    .setParameter("hash", hashcode)
+                    .setParameter("inbox", inbox)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
     public void save(PlotCommentEntity entity) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -53,7 +67,7 @@ public class PlotCommentRepositoryJpa implements PlotCommentRepository {
     }
 
     @Override
-    public void deleteOne(String world, int hashcode, String inbox, String sender) {
+    public void deleteOne(String world, int hashcode, String inbox, String sender, String comment) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
@@ -63,11 +77,12 @@ public class PlotCommentRepositoryJpa implements PlotCommentRepository {
                     .setParameter("hash", hashcode)
                     .setParameter("inbox", inbox)
                     .setParameter("sender", sender)
+                    .setParameter("comment", comment)
                     .executeUpdate();
             tx.commit();
         } catch (RuntimeException e) {
             if (tx.isActive()) tx.rollback();
-            LOGGER.error("Failed to delete one plot comment (world={}, inbox={}, hashcode={}, sender={})", world, inbox, hashcode, sender, e);
+            LOGGER.error("Failed to delete one plot comment (world={}, inbox={}, hashcode={}, sender={}, comment={})", world, inbox, hashcode, sender, comment, e);
             throw e;
         } finally {
             em.close();
@@ -88,6 +103,47 @@ public class PlotCommentRepositoryJpa implements PlotCommentRepository {
         } catch (RuntimeException e) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to clear inbox (world={}, inbox={})", world, inbox, e);
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public void clearInbox(String world, int hashcode, String inbox) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            em.createNamedQuery("PlotComment.clearInboxByWorldHash")
+                    .setParameter("world", world)
+                    .setParameter("hash", hashcode)
+                    .setParameter("inbox", inbox)
+                    .executeUpdate();
+            tx.commit();
+        } catch (RuntimeException e) {
+            if (tx.isActive()) tx.rollback();
+            LOGGER.error("Failed to clear inbox by world+hash (world={}, hashcode={}, inbox={})", world, hashcode, inbox, e);
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public void deleteByWorldAndHash(String world, int hashcode) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            em.createNamedQuery("PlotComment.deleteByWorldAndHash")
+                    .setParameter("world", world)
+                    .setParameter("hash", hashcode)
+                    .executeUpdate();
+            tx.commit();
+        } catch (RuntimeException e) {
+            if (tx.isActive()) tx.rollback();
+            LOGGER.error("Failed to delete comments by world and hash (world={}, hashcode={})", world, hashcode, e);
             throw e;
         } finally {
             em.close();
