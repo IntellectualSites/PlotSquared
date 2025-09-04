@@ -67,4 +67,21 @@ public class PlotTrustedRepositoryJpa implements PlotTrustedRepository {
             throw ex;
         } finally { em.close(); }
     }
+
+    @Override
+    public void deleteByPlotId(long plotId) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            em.createQuery("DELETE FROM PlotTrustedEntity e WHERE e.plotId = :plotId")
+                    .setParameter("plotId", plotId)
+                    .executeUpdate();
+            tx.commit();
+        } catch (RuntimeException ex) {
+            if (tx.isActive()) tx.rollback();
+            LOGGER.error("Failed to delete all plot trusted users (plotId={})", plotId, ex);
+            throw ex;
+        } finally { em.close(); }
+    }
 }

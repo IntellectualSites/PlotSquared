@@ -54,6 +54,15 @@ public class ClusterRepositoryJpa implements ClusterRepository {
     }
 
     @Override
+    public List<ClusterEntity> findAll() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            return em.createQuery("SELECT c FROM ClusterEntity c", ClusterEntity.class)
+                    .getResultList();
+        } finally { em.close(); }
+    }
+
+    @Override
     public void save(ClusterEntity cluster) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -88,5 +97,56 @@ public class ClusterRepositoryJpa implements ClusterRepository {
             LOGGER.error("Failed to delete cluster by id (id={})", id, ex);
             throw ex;
         } finally { em.close(); }
+    }
+
+    @Override
+    public void updateWorldAll(String oldWorld, String newWorld) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            em.createQuery("UPDATE ClusterEntity c SET c.world = :newWorld WHERE c.world = :oldWorld")
+                    .setParameter("newWorld", newWorld)
+                    .setParameter("oldWorld", oldWorld)
+                    .executeUpdate();
+            tx.commit();
+        } catch (RuntimeException ex) {
+            if (tx.isActive()) tx.rollback();
+            LOGGER.error("Failed to update cluster world (all) oldWorld={}, newWorld={}", oldWorld, newWorld, ex);
+            throw ex;
+        } finally { em.close(); }
+    }
+
+    @Override
+    public void updateWorldInBounds(String oldWorld, String newWorld, int minX, int minZ, int maxX, int maxZ) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            em.createQuery("UPDATE ClusterEntity c SET c.world = :newWorld WHERE c.world = :oldWorld AND c.pos1X <= :maxX AND c.pos1Z <= :maxZ AND c.pos2X >= :minX AND c.pos2Z >= :minZ")
+                    .setParameter("newWorld", newWorld)
+                    .setParameter("oldWorld", oldWorld)
+                    .setParameter("minX", minX)
+                    .setParameter("minZ", minZ)
+                    .setParameter("maxX", maxX)
+                    .setParameter("maxZ", maxZ)
+                    .executeUpdate();
+            tx.commit();
+        } catch (RuntimeException ex) {
+            if (tx.isActive()) tx.rollback();
+            LOGGER.error("Failed to update cluster world in bounds oldWorld={}, newWorld={}, bounds=[{}..{}]x[{}..{}]", oldWorld, newWorld, minX, maxX, minZ, maxZ, ex);
+            throw ex;
+        } finally { em.close(); }
+    }
+
+    @Override
+    public void replaceWorld(String oldWorld, String newWorld) {
+        updateWorldAll(oldWorld, newWorld);
+    }
+
+    @Override
+    public void replaceWorldInBounds(String oldWorld, String newWorld, com.plotsquared.core.plot.PlotId min, com.plotsquared.core.plot.PlotId max) {
+        if (min == null || max == null) return;
+        updateWorldInBounds(oldWorld, newWorld, min.getX(), min.getY(), max.getX(), max.getY());
     }
 }

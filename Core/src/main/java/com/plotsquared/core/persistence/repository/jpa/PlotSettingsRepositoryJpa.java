@@ -72,4 +72,90 @@ public class PlotSettingsRepositoryJpa implements PlotSettingsRepository {
             em.close();
         }
     }
+
+    @Override
+    public void updateAlias(long plotId, String alias) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            em.createNamedQuery("PlotSettings.updateAlias")
+                    .setParameter("plotId", plotId)
+                    .setParameter("alias", alias)
+                    .executeUpdate();
+            tx.commit();
+        } catch (RuntimeException ex) {
+            if (tx.isActive()) tx.rollback();
+            LOGGER.error("Failed to update alias (plotId={})", plotId, ex);
+            throw ex;
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public void updatePosition(long plotId, String position) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            em.createNamedQuery("PlotSettings.updatePosition")
+                    .setParameter("plotId", plotId)
+                    .setParameter("pos", position)
+                    .executeUpdate();
+            tx.commit();
+        } catch (RuntimeException ex) {
+            if (tx.isActive()) tx.rollback();
+            LOGGER.error("Failed to update position (plotId={})", plotId, ex);
+            throw ex;
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public void updateMerged(long plotId, int mergedBitmask) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            em.createNamedQuery("PlotSettings.updateMerged")
+                    .setParameter("plotId", plotId)
+                    .setParameter("merged", mergedBitmask)
+                    .executeUpdate();
+            tx.commit();
+        } catch (RuntimeException ex) {
+            if (tx.isActive()) tx.rollback();
+            LOGGER.error("Failed to update merged (plotId={})", plotId, ex);
+            throw ex;
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public void createDefaultIfAbsent(long plotId, String defaultPosition) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            PlotSettingsEntity existing = em.find(PlotSettingsEntity.class, plotId);
+            if (existing == null) {
+                PlotSettingsEntity se = new PlotSettingsEntity();
+                se.setId(plotId);
+                // attach plot reference to satisfy FK if needed
+                com.plotsquared.core.persistence.entity.PlotEntity pe = em.getReference(com.plotsquared.core.persistence.entity.PlotEntity.class, plotId);
+                se.setPlot(pe);
+                se.setPosition(defaultPosition);
+                em.persist(se);
+            }
+            tx.commit();
+        } catch (RuntimeException ex) {
+            if (tx.isActive()) tx.rollback();
+            LOGGER.error("Failed to create default settings if absent (plotId={})", plotId, ex);
+            throw ex;
+        } finally {
+            em.close();
+        }
+    }
 }
