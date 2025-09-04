@@ -18,6 +18,11 @@
  */
 package com.plotsquared.core.database;
 
+import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.persistence.entity.PlayerMetaEntity;
+import com.plotsquared.core.persistence.entity.PlotCommentEntity;
+import com.plotsquared.core.persistence.repository.api.PlayerMetaRepository;
+import com.plotsquared.core.persistence.repository.api.PlotCommentRepository;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotCluster;
@@ -54,41 +59,49 @@ public class DBFunc {
      */
     public static AbstractDB dbManager;
 
-    public static void updateTables(int[] oldVersion) {
-        if (dbManager != null) {
-            dbManager.updateTables(oldVersion);
-        }
-    }
-
     public static void addPersistentMeta(UUID uuid, String key, byte[] meta, boolean delete) {
-        if (dbManager != null) {
-            dbManager.addPersistentMeta(uuid, key, meta, delete);
+        try {
+            PlayerMetaRepository repo = PlotSquared.platform().injector().getInstance(PlayerMetaRepository.class);
+            if (delete) {
+                repo.delete(uuid.toString(), key);
+            } else {
+                repo.put(uuid.toString(), key, meta);
+            }
+        } catch (Throwable ignored) {
         }
     }
 
     public static void getPersistentMeta(UUID uuid, RunnableVal<Map<String, byte[]>> result) {
-        if (dbManager != null) {
-            dbManager.getPersistentMeta(uuid, result);
+        try {
+            PlayerMetaRepository repo = PlotSquared.platform().injector().getInstance(PlayerMetaRepository.class);
+            Map<String, byte[]> map = new HashMap<>();
+            for (PlayerMetaEntity e : repo.findByUuid(uuid.toString())) {
+                map.put(e.getKey(), e.getValue());
+            }
+            if (result != null) {
+                result.run(map);
+            }
+        } catch (Throwable t) {
+            if (result != null) {
+                result.run(new HashMap<>());
+            }
         }
     }
 
     public static void removePersistentMeta(UUID uuid, String key) {
-        if (dbManager != null) {
-            dbManager.removePersistentMeta(uuid, key);
+        try {
+            PlayerMetaRepository repo = PlotSquared.platform().injector().getInstance(PlayerMetaRepository.class);
+            repo.delete(uuid.toString(), key);
+        } catch (Throwable ignored) {
         }
     }
 
     public static CompletableFuture<Boolean> swapPlots(Plot plot1, Plot plot2) {
-        if (dbManager != null) {
-            return dbManager.swapPlots(plot1, plot2);
+        if (dbManager == null || plot1 == null || plot2 == null || plot1.temp == -1 || plot2.temp == -1) {
+            return CompletableFuture.completedFuture(false);
         }
-        return CompletableFuture.completedFuture(false);
+        return DBFunc.dbManager.swapPlots(plot1, plot2);
     }
-
-    public static boolean deleteTables() {
-        return dbManager != null && dbManager.deleteTables();
-    }
-
     public static void movePlot(Plot originalPlot, Plot newPlot) {
         if (originalPlot.temp == -1 || newPlot.temp == -1) {
             return;
@@ -255,10 +268,16 @@ public class DBFunc {
      * @param plot
      */
     public static void deleteComments(Plot plot) {
-        if (plot.temp == -1 || dbManager == null) {
+        if (plot.temp == -1) {
             return;
         }
-        DBFunc.dbManager.deleteComments(plot);
+        try {
+            com.plotsquared.core.persistence.repository.api.PlotCommentRepository repo = PlotSquared.platform().injector().getInstance(com.plotsquared.core.persistence.repository.api.PlotCommentRepository.class);
+            String world = plot.getArea().toString();
+            int hash = plot.getId().hashCode();
+            repo.deleteByWorldAndHash(world, hash);
+        } catch (Throwable ignored) {
+        }
     }
 
     /**
@@ -382,17 +401,33 @@ public class DBFunc {
      * @param comment
      */
     public static void removeComment(Plot plot, PlotComment comment) {
-        if (plot.temp == -1 || dbManager == null) {
+        if (plot.temp == -1) {
             return;
         }
-        DBFunc.dbManager.removeComment(plot, comment);
+        try {
+            PlotCommentRepository repo = PlotSquared.platform().injector().getInstance(PlotCommentRepository.class);
+            String world = plot.getArea().toString();
+            int hash = plot.getId().hashCode();
+            repo.deleteOne(world, hash, comment.inbox(), comment.senderName(), comment.comment());
+        } catch (Throwable ignored) {
+        }
     }
 
     public static void clearInbox(Plot plot, String inbox) {
-        if (plot != null && plot.temp == -1 || dbManager == null) {
+        if (plot != null && plot.temp == -1) {
             return;
         }
-        DBFunc.dbManager.clearInbox(plot, inbox);
+        try {
+            PlotCommentRepository repo = PlotSquared.platform().injector().getInstance(PlotCommentRepository.class);
+            if (plot != null) {
+                String world = plot.getArea().toString();
+                int hash = plot.getId().hashCode();
+                repo.clearInbox(world, hash, inbox);
+            } else {
+                // Fallback: no plot provided; unable to infer world. No-op to avoid unintended global deletions.
+            }
+        } catch (Throwable ignored) {
+        }
     }
 
     /**
@@ -400,10 +435,23 @@ public class DBFunc {
      * @param comment
      */
     public static void setComment(Plot plot, PlotComment comment) {
-        if (plot != null && plot.temp == -1 || dbManager == null) {
+        if (plot != null && plot.temp == -1) {
             return;
         }
-        DBFunc.dbManager.setComment(plot, comment);
+        try {
+            PlotCommentRepository repo = PlotSquared.platform().injector().getInstance(PlotCommentRepository.class);
+            if (plot != null) {
+                PlotCommentEntity entity = new PlotCommentEntity();
+                entity.setWorld(plot.getArea().toString());
+                entity.setHashcode(plot.getId().hashCode());
+                entity.setComment(comment.comment());
+                entity.setInbox(comment.inbox());
+                entity.setTimestamp((int) (comment.timestamp() / 1000));
+                entity.setSender(comment.senderName());
+                repo.save(entity);
+            }
+        } catch (Throwable ignored) {
+        }
     }
 
     /**
@@ -413,10 +461,29 @@ public class DBFunc {
             Plot plot, String inbox,
             RunnableVal<List<PlotComment>> whenDone
     ) {
-        if (plot != null && plot.temp == -1 || dbManager == null) {
+        if (plot != null && plot.temp == -1) {
             return;
         }
-        DBFunc.dbManager.getComments(plot, inbox, whenDone);
+        try {
+            PlotCommentRepository repo = PlotSquared.platform().injector().getInstance(PlotCommentRepository.class);
+            List<PlotComment> out = new java.util.ArrayList<>();
+            if (plot != null) {
+                String world = plot.getArea().toString();
+                int hash = plot.getId().hashCode();
+                for (PlotCommentEntity e : repo.findByWorldHashAndInbox(world, hash, inbox)) {
+                    PlotId id = (e.getHashcode() != null && e.getHashcode() != 0) ? PlotId.unpair(e.getHashcode()) : null;
+                    long tsMillis = e.getTimestamp() != null ? e.getTimestamp().longValue() * 1000L : 0L;
+                    out.add(new PlotComment(e.getWorld(), id, e.getComment(), e.getSender(), e.getInbox(), tsMillis));
+                }
+            }
+            if (whenDone != null) {
+                whenDone.run(out);
+            }
+        } catch (Throwable t) {
+            if (whenDone != null) {
+                whenDone.run(java.util.Collections.emptyList());
+            }
+        }
     }
 
     /**
