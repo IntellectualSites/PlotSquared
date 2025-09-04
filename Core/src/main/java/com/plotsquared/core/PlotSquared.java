@@ -31,10 +31,6 @@ import com.plotsquared.core.configuration.caption.load.DefaultCaptionProvider;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.configuration.serialization.ConfigurationSerialization;
 import com.plotsquared.core.database.DBFunc;
-import com.plotsquared.core.database.Database;
-import com.plotsquared.core.database.MySQL;
-import com.plotsquared.core.database.SQLManager;
-import com.plotsquared.core.database.SQLite;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.generator.HybridUtils;
@@ -1227,13 +1223,6 @@ public class PlotSquared {
         try {
             eventDispatcher.unregisterAll();
             checkRoadRegenPersistence();
-            // Validate that all data in the db is correct
-            final HashSet<Plot> plots = new HashSet<>();
-            try {
-                forEachPlotRaw(plots::add);
-            } catch (final Exception ignored) {
-            }
-            DBFunc.validatePlots(plots);
         } catch (NullPointerException throwable) {
             LOGGER.error("Could not close database connection", throwable);
             throwable.printStackTrace();
