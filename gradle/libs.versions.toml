@@ -32,6 +32,14 @@ informative-annotations = "1.6"
 vault = "1.7.1"
 serverlib = "2.3.7"
 
+# Database
+jpa-api = "3.2.0"
+hibernate-core = "7.1.0.Final"
+flyway-core = "11.11.2"
+# JDBC Drivers
+mariadb-java-client = "3.5.5"
+sqlite-jdbc = "3.50.3.0"
+
 # Gradle plugins
 shadow = "8.3.9"
 grgit = "4.1.1"
@@ -76,6 +84,14 @@ informativeAnnotations = { group = "com.intellectualsites.informative-annotation
 paperlib = { group = "io.papermc", name = "paperlib", version.ref = "paperlib" }
 vault = { group = "com.github.MilkBowl", name = "VaultAPI", version.ref = "vault" }
 serverlib = { group = "dev.notmyfault.serverlib", name = "ServerLib", version.ref = "serverlib" }
+
+# Database
+jpaApi = { group = "jakarta.persistence", name = "jakarta.persistence-api", version.ref = "jpa-api" }
+hibernateCore = { group = "org.hibernate.orm", name = "hibernate-core", version.ref = "hibernate-core" }
+flywayCore = { group = "org.flywaydb", name = "flyway-core", version.ref = "flyway-core" }
+# JDBC Drivers
+mariadbJavaClient = { group = "org.mariadb.jdbc", name = "mariadb-java-client", version.ref = "mariadb-java-client" }
+sqliteJdbc = { group = "org.xerial", name = "sqlite-jdbc", version.ref = "sqlite-jdbc" }
 
 [plugins]
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
