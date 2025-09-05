@@ -21,7 +21,6 @@ package com.plotsquared.core.persistence.config;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.plotsquared.core.configuration.Storage;
 import com.plotsquared.core.persistence.repository.api.ClusterHelperRepository;
 import com.plotsquared.core.persistence.repository.api.ClusterInvitedRepository;
 import com.plotsquared.core.persistence.repository.api.ClusterRepository;
@@ -51,8 +50,8 @@ import com.plotsquared.core.persistence.repository.jpa.PlotRatingRepositoryJpa;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-import org.flywaydb.core.Flyway;
 
+import javax.sql.DataSource;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -82,10 +81,20 @@ public final class PersistenceModule extends AbstractModule {
         bind(ClusterHelperRepository.class).to(ClusterHelperRepositoryJpa.class);
         bind(ClusterInvitedRepository.class).to(ClusterInvitedRepositoryJpa.class);
         bind(ClusterSettingsRepository.class).to(ClusterSettingsRepositoryJpa.class);
-        bind(JpaPropertiesProvider.class).asEagerSingleton();
 
-        // Eagerly run Flyway migrations on startup
-        bind(FlywayBootstrap.class).asEagerSingleton();
+        // Bind configuration and migration services
+        bind(JpaPropertiesProvider.class).asEagerSingleton();
+        bind(DataSourceProvider.class).asEagerSingleton();
+        bind(DatabaseMigrationService.class).asEagerSingleton();
+
+        // Eagerly run Liquibase migrations on startup
+        bind(LiquibaseBootstrap.class).asEagerSingleton();
+    }
+
+    @Provides
+    @Singleton
+    DataSource provideDataSource(DataSourceProvider dataSourceProvider) {
+        return dataSourceProvider.createDataSource();
     }
 
     @Provides
@@ -95,43 +104,9 @@ public final class PersistenceModule extends AbstractModule {
         return syncThreadForServiceLoader(() -> Persistence.createEntityManagerFactory("plotsquaredPU", props));
     }
 
-
     @Provides
     EntityManager provideEm(EntityManagerFactory emf) {
         return emf.createEntityManager();
-    }
-
-    @Provides
-    @Singleton
-    Flyway provideFlyway() {
-        String url;
-        String user = null;
-        String pass = null;
-        if (Storage.MySQL.USE) {
-            url = "jdbc:mysql://" + Storage.MySQL.HOST + ":" + Storage.MySQL.PORT + "/" + Storage.MySQL.DATABASE
-                    + "?" + String.join("&", Storage.MySQL.PROPERTIES);
-            user = Storage.MySQL.USER;
-            pass = Storage.MySQL.PASSWORD;
-        } else {
-            url = "jdbc:sqlite:" + Storage.SQLite.DB + ".db";
-        }
-        // Support prefixed table names in SQL migrations via placeholders
-        Map<String, String> placeholders = new java.util.HashMap<>();
-        placeholders.put("prefix", Storage.PREFIX == null ? "" : Storage.PREFIX);
-
-        return Flyway.configure()
-                .dataSource(url, user, pass)
-                .locations("classpath:db/migration")
-                // Baseline an existing, unversioned schema to avoid destructive changes
-                .baselineOnMigrate(true)
-                .baselineVersion("0")
-                .baselineDescription("Baseline before migrating to JPA-managed schema")
-                // Prevent accidental data loss
-                .cleanDisabled(true)
-                // Enable ${prefix} usage in SQL files for table names
-                .placeholderReplacement(true)
-                .placeholders(placeholders)
-                .load();
     }
 
     private <T> T syncThreadForServiceLoader(Supplier<T> supplier) {
