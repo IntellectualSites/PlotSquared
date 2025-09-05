@@ -26,6 +26,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -48,7 +49,7 @@ public class ClusterSettingsRepositoryJpa implements ClusterSettingsRepository {
     }
 
     @Override
-    public void updatePosition(long clusterId, String position) {
+    public void updatePosition(long clusterId, @NotNull String position) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
         try (em) {
