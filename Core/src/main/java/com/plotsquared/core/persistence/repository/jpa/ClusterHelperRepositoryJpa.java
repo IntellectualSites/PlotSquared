@@ -42,13 +42,10 @@ public class ClusterHelperRepositoryJpa implements ClusterHelperRepository {
 
     @Override
     public List<String> findUsers(long clusterId) {
-        EntityManager em = emf.createEntityManager();
-        try {
+        try (EntityManager em = emf.createEntityManager()) {
             return em.createNamedQuery("ClusterHelper.findUsers", String.class)
                     .setParameter("clusterId", clusterId)
                     .getResultList();
-        } finally {
-            em.close();
         }
     }
 
@@ -56,7 +53,7 @@ public class ClusterHelperRepositoryJpa implements ClusterHelperRepository {
     public void add(long clusterId, String userUuid) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             ClusterHelperEntity e = new ClusterHelperEntity();
             e.setClusterId(clusterId);
@@ -66,9 +63,6 @@ public class ClusterHelperRepositoryJpa implements ClusterHelperRepository {
         } catch (RuntimeException ex) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to add cluster helper (clusterId={}, userUuid={})", clusterId, userUuid, ex);
-            throw ex;
-        } finally {
-            em.close();
         }
     }
 
@@ -76,7 +70,7 @@ public class ClusterHelperRepositoryJpa implements ClusterHelperRepository {
     public void remove(long clusterId, String userUuid) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             em.createNamedQuery("ClusterHelper.delete")
                     .setParameter("clusterId", clusterId)
@@ -86,9 +80,6 @@ public class ClusterHelperRepositoryJpa implements ClusterHelperRepository {
         } catch (RuntimeException ex) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to remove cluster helper (clusterId={}, userUuid={})", clusterId, userUuid, ex);
-            throw ex;
-        } finally {
-            em.close();
         }
     }
 }
