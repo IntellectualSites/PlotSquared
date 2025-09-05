@@ -15,6 +15,9 @@
                     <columnExists tableName="${prefix}plot" columnName="id"/>
                 </not>
             </and>
+            <not>
+                <dbms type="sqlite"/>
+            </not>
         </preConditions>
         <comment>Add auto-increment ID column to existing v7 plot table (MySQL)</comment>
 
@@ -40,6 +43,9 @@
                     <tableExists tableName="${prefix}plot_settings"/>
                 </not>
             </and>
+            <not>
+                <dbms type="sqlite"/>
+            </not>
         </preConditions>
         <comment>Create plot_settings table for v8 (MySQL)</comment>
 
@@ -89,6 +95,9 @@
                 <tableExists tableName="${prefix}plot_trusted"/>
                 <columnExists tableName="${prefix}plot" columnName="id"/>
             </and>
+            <not>
+                <dbms type="sqlite"/>
+            </not>
         </preConditions>
         <comment>Update plot_trusted foreign key to use new plot.id (MySQL)</comment>
 
@@ -109,6 +118,9 @@
                 <tableExists tableName="${prefix}plot_helpers"/>
                 <columnExists tableName="${prefix}plot" columnName="id"/>
             </and>
+            <not>
+                <dbms type="sqlite"/>
+            </not>
         </preConditions>
         <comment>Update plot_helpers foreign key to use new plot.id (MySQL)</comment>
 
@@ -129,6 +141,9 @@
                 <tableExists tableName="${prefix}plot_denied"/>
                 <columnExists tableName="${prefix}plot" columnName="id"/>
             </and>
+            <not>
+                <dbms type="sqlite"/>
+            </not>
         </preConditions>
         <comment>Update plot_denied foreign key to use new plot.id (MySQL)</comment>
 
@@ -149,6 +164,9 @@
                 <tableExists tableName="${prefix}plot_rating"/>
                 <columnExists tableName="${prefix}plot" columnName="id"/>
             </and>
+            <not>
+                <dbms type="sqlite"/>
+            </not>
         </preConditions>
         <comment>Update plot_rating foreign key to use new plot.id (MySQL)</comment>
 
@@ -172,6 +190,9 @@
                     <columnExists tableName="${prefix}cluster" columnName="id"/>
                 </not>
             </and>
+            <not>
+                <dbms type="sqlite"/>
+            </not>
         </preConditions>
         <comment>Add auto-increment ID column to existing v7 cluster table (MySQL)</comment>
 
@@ -192,6 +213,9 @@
                 <tableExists tableName="${prefix}cluster_helpers"/>
                 <columnExists tableName="${prefix}cluster" columnName="id"/>
             </and>
+            <not>
+                <dbms type="sqlite"/>
+            </not>
         </preConditions>
         <comment>Update cluster_helpers foreign key to use new cluster.id (MySQL)</comment>
 
@@ -212,6 +236,9 @@
                 <tableExists tableName="${prefix}cluster_invited"/>
                 <columnExists tableName="${prefix}cluster" columnName="id"/>
             </and>
+            <not>
+                <dbms type="sqlite"/>
+            </not>
         </preConditions>
         <comment>Update cluster_invited foreign key to use new cluster.id (MySQL)</comment>
 
@@ -232,6 +259,9 @@
                 <tableExists tableName="${prefix}cluster_settings"/>
                 <columnExists tableName="${prefix}cluster" columnName="id"/>
             </and>
+            <not>
+                <dbms type="sqlite"/>
+            </not>
         </preConditions>
         <comment>Update cluster_settings foreign key to use new cluster.id (MySQL)</comment>
 
@@ -255,6 +285,9 @@
                     <columnExists tableName="${prefix}player_meta" columnName="meta_id"/>
                 </not>
             </and>
+            <not>
+                <dbms type="sqlite"/>
+            </not>
         </preConditions>
         <comment>Add auto-increment meta_id column to existing v7 player_meta table (MySQL)</comment>
 
@@ -276,6 +309,9 @@
                     <tableExists tableName="${prefix}plot_flags"/>
                 </not>
             </and>
+            <not>
+                <dbms type="sqlite"/>
+            </not>
         </preConditions>
         <comment>Create plot_flags table if missing (MySQL)</comment>
 
