@@ -27,10 +27,17 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 
+import java.sql.Timestamp;
+
 @Entity
 @Table(name = "cluster")
 @NamedQueries({
-        @NamedQuery(name = "Cluster.findByWorldAndBounds", query = "SELECT c FROM ClusterEntity c WHERE c.world = :world AND c.pos1X <= :x AND c.pos2X >= :x AND c.pos1Z <= :z AND c.pos2Z >= :z")
+        @NamedQuery(name = "Cluster.findByWorldAndBounds", query = "SELECT c FROM ClusterEntity c WHERE c.world = :world AND c" +
+                ".pos1X <= :x AND c.pos2X >= :x AND c.pos1Z <= :z AND c.pos2Z >= :z"),
+        @NamedQuery(name = "Cluster.findByWorld", query = "SELECT c FROM ClusterEntity c WHERE c.world = :world"),
+        @NamedQuery(name = "Cluster.finaAll", query = "SELECT c FROM ClusterEntity c"),
+        @NamedQuery(name = "Cluster.updateWorld", query = "UPDATE ClusterEntity c SET c.world = :newWorld WHERE c.world = :oldWorld"),
+        @NamedQuery(name = "Cluster.updateWorldInBounds", query = "UPDATE ClusterEntity c SET c.world = :newWorld WHERE c.world = :oldWorld AND c.pos1X <= :maxX AND c.pos1Z <= :maxZ AND c.pos2X >= :minX AND c.pos2Z >= :minZ")
 })
 public class ClusterEntity {
     @Id
@@ -43,7 +50,7 @@ public class ClusterEntity {
     @Column(length = 40) private String owner;
     @Column(length = 45) private String world;
     @Column(name = "timestamp", insertable = false, updatable = false)
-    private java.sql.Timestamp timestamp;
+    private Timestamp timestamp;
 
     public ClusterEntity() {}
 
@@ -62,5 +69,5 @@ public class ClusterEntity {
     public String getWorld() { return world; }
     public void setWorld(String world) { this.world = world; }
     public java.sql.Timestamp getTimestamp() { return timestamp; }
-    public void setTimestamp(java.sql.Timestamp timestamp) { this.timestamp = timestamp; }
+    public void setTimestamp(Timestamp timestamp) { this.timestamp = timestamp; }
 }
