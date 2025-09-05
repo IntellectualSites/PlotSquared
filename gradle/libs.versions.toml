@@ -41,6 +41,7 @@ jaxbRuntime = "4.0.5"
 # JDBC Drivers
 mariadb-java-client = "3.5.5"
 sqlite-jdbc = "3.50.3.0"
+h2 = "2.3.232"
 
 # Gradle plugins
 shadow = "8.3.9"
@@ -98,6 +99,7 @@ jaxbRuntime = { group = "org.glassfish.jaxb", name = "jaxb-runtime", version.ref
 # JDBC Drivers
 mariadbJavaClient = { group = "org.mariadb.jdbc", name = "mariadb-java-client", version.ref = "mariadb-java-client" }
 sqliteJdbc = { group = "org.xerial", name = "sqlite-jdbc", version.ref = "sqlite-jdbc" }
+h2 = { group = "com.h2database", name = "h2", version.ref = "h2" }
 
 [plugins]
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
