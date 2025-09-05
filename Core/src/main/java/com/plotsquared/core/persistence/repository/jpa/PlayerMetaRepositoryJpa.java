@@ -42,13 +42,10 @@ public class PlayerMetaRepositoryJpa implements PlayerMetaRepository {
 
     @Override
     public List<PlayerMetaEntity> findByUuid(String uuid) {
-        EntityManager em = emf.createEntityManager();
-        try {
+        try (EntityManager em = emf.createEntityManager()) {
             return em.createNamedQuery("PlayerMeta.findByUuid", PlayerMetaEntity.class)
                     .setParameter("uuid", uuid)
                     .getResultList();
-        } finally {
-            em.close();
         }
     }
 
@@ -56,7 +53,7 @@ public class PlayerMetaRepositoryJpa implements PlayerMetaRepository {
     public void put(String uuid, String key, byte[] value) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             // Delete existing row for same (uuid,key) then insert new
             em.createNamedQuery("PlayerMeta.deleteByUuidAndKey")
@@ -71,10 +68,13 @@ public class PlayerMetaRepositoryJpa implements PlayerMetaRepository {
             tx.commit();
         } catch (RuntimeException ex) {
             if (tx.isActive()) tx.rollback();
-            LOGGER.error("Failed to put player meta (uuid={}, key={}, value.length={})", uuid, key, value != null ? value.length : null, ex);
-            throw ex;
-        } finally {
-            em.close();
+            LOGGER.error(
+                    "Failed to put player meta (uuid={}, key={}, value.length={})",
+                    uuid,
+                    key,
+                    value != null ? value.length : null,
+                    ex
+            );
         }
     }
 
@@ -82,7 +82,7 @@ public class PlayerMetaRepositoryJpa implements PlayerMetaRepository {
     public void delete(String uuid, String key) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             em.createNamedQuery("PlayerMeta.deleteByUuidAndKey")
                     .setParameter("uuid", uuid)
@@ -92,9 +92,6 @@ public class PlayerMetaRepositoryJpa implements PlayerMetaRepository {
         } catch (RuntimeException ex) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to delete player meta (uuid={}, key={})", uuid, key, ex);
-            throw ex;
-        } finally {
-            em.close();
         }
     }
 }
