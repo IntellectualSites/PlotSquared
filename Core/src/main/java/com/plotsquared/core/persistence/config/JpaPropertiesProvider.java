@@ -26,9 +26,14 @@ import java.util.Map;
 
 /**
  * Builds JPA/Hibernate properties based on Storage configuration.
+ *
+ * @since 8.0.0
+ * @version 1.0.0
+ * @author TheMeinerLP
+ * @author IntellectualSites
  */
 @Singleton
-public class JpaPropertiesProvider {
+public final class JpaPropertiesProvider {
 
     /**
      * Create a map of JPA properties suitable for EntityManagerFactory creation.

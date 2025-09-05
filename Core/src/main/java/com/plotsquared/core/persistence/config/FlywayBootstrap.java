@@ -26,9 +26,14 @@ import java.util.logging.Logger;
 
 /**
  * Eager bootstrap that executes Flyway migrations during application startup.
+ *
+ * @since 8.0.0
+ * @version 1.0.0
+ * @author TheMeinerLP
+ * @author IntellectualSites
  */
 @Singleton
-public class FlywayBootstrap {
+public final class FlywayBootstrap {
     private static final Logger LOGGER = Logger.getLogger(FlywayBootstrap.class.getName());
 
     @Inject
@@ -38,7 +43,6 @@ public class FlywayBootstrap {
             LOGGER.info("Flyway migration complete.");
         } catch (Exception e) {
             LOGGER.severe("Flyway migration failed: " + e.getMessage());
-            throw e;
         }
     }
 }

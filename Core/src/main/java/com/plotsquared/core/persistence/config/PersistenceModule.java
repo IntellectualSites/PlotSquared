@@ -56,7 +56,15 @@ import org.flywaydb.core.Flyway;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class PersistenceModule extends AbstractModule {
+/**
+ * Guice module for configuring persistence-related bindings and providers.
+ *
+ * @since 8.0.0
+ * @version 1.0.0
+ * @author TheMeinerLP
+ * @author IntellectualSites
+ */
+public final class PersistenceModule extends AbstractModule {
 
     @Override
     protected void configure() {
@@ -87,18 +95,6 @@ public class PersistenceModule extends AbstractModule {
         return syncThreadForServiceLoader(() -> Persistence.createEntityManagerFactory("plotsquaredPU", props));
     }
 
-
-    private <T> T syncThreadForServiceLoader(Supplier<T> supplier) {
-        Thread currentThread = Thread.currentThread();
-        ClassLoader originalClassLoader = currentThread.getContextClassLoader();
-        ClassLoader pluginClassLoader = this.getClass().getClassLoader();
-        try {
-            currentThread.setContextClassLoader(pluginClassLoader);
-            return supplier.get();
-        } finally {
-            currentThread.setContextClassLoader(originalClassLoader);
-        }
-    }
 
     @Provides
     EntityManager provideEm(EntityManagerFactory emf) {
@@ -136,5 +132,17 @@ public class PersistenceModule extends AbstractModule {
                 .placeholderReplacement(true)
                 .placeholders(placeholders)
                 .load();
+    }
+
+    private <T> T syncThreadForServiceLoader(Supplier<T> supplier) {
+        Thread currentThread = Thread.currentThread();
+        ClassLoader originalClassLoader = currentThread.getContextClassLoader();
+        ClassLoader pluginClassLoader = this.getClass().getClassLoader();
+        try {
+            currentThread.setContextClassLoader(pluginClassLoader);
+            return supplier.get();
+        } finally {
+            currentThread.setContextClassLoader(originalClassLoader);
+        }
     }
 }

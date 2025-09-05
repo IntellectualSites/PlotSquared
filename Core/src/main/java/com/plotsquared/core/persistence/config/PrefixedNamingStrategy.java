@@ -21,13 +21,23 @@ package com.plotsquared.core.persistence.config;
 import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
+import org.jetbrains.annotations.NotNull;
 
+/**
+ * A PhysicalNamingStrategy that adds a specified prefix to all table names.
+ * This is useful for avoiding naming conflicts in shared databases.
+ *
+ * @since 8.0.0
+ * @version 1.0.0
+ * @author TheMeinerLP
+ * @author IntellectualSites
+ */
 public class PrefixedNamingStrategy implements PhysicalNamingStrategy {
 
     private final String prefix;
 
-    public PrefixedNamingStrategy(String prefix) {
-        this.prefix = prefix == null ? "" : prefix;
+    public PrefixedNamingStrategy(@NotNull String prefix) {
+        this.prefix = prefix;
     }
 
     @Override
