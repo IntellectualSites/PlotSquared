@@ -26,6 +26,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -41,20 +42,17 @@ public class PlotCommentRepositoryJpa implements PlotCommentRepository {
     }
 
     @Override
-    public List<PlotCommentEntity> findByWorldAndInbox(String world, String inbox) {
-        EntityManager em = emf.createEntityManager();
-        try {
+    public List<PlotCommentEntity> findByWorldAndInbox(@NotNull String world, @NotNull String inbox) {
+        try (EntityManager em = emf.createEntityManager()) {
             return em.createNamedQuery("PlotComment.findByWorldAndInbox", PlotCommentEntity.class)
                     .setParameter("world", world)
                     .setParameter("inbox", inbox)
                     .getResultList();
-        } finally {
-            em.close();
         }
     }
 
     @Override
-    public List<PlotCommentEntity> findByWorldHashAndInbox(String world, int hashcode, String inbox) {
+    public List<PlotCommentEntity> findByWorldHashAndInbox(@NotNull String world, int hashcode, @NotNull String inbox) {
         EntityManager em = emf.createEntityManager();
         try {
             return em.createNamedQuery("PlotComment.findByWorldHashAndInbox", PlotCommentEntity.class)
@@ -68,27 +66,30 @@ public class PlotCommentRepositoryJpa implements PlotCommentRepository {
     }
 
     @Override
-    public void save(PlotCommentEntity entity) {
+    public void save(@NotNull PlotCommentEntity entity) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             em.persist(entity);
             tx.commit();
         } catch (RuntimeException e) {
             if (tx.isActive()) tx.rollback();
-            LOGGER.error("Failed to save plot comment (world={}, inbox={}, hashcode={})", entity.getWorld(), entity.getInbox(), entity.getHashcode(), e);
-            throw e;
-        } finally {
-            em.close();
+            LOGGER.error(
+                    "Failed to save plot comment (world={}, inbox={}, hashcode={})",
+                    entity.getWorld(),
+                    entity.getInbox(),
+                    entity.getHashcode(),
+                    e
+            );
         }
     }
 
     @Override
-    public void deleteOne(String world, int hashcode, String inbox, String sender, String comment) {
+    public void deleteOne(@NotNull String world, int hashcode, @NotNull String inbox, @NotNull String sender, @NotNull String comment) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             em.createNamedQuery("PlotComment.deleteOne")
                     .setParameter("world", world)
@@ -100,18 +101,23 @@ public class PlotCommentRepositoryJpa implements PlotCommentRepository {
             tx.commit();
         } catch (RuntimeException e) {
             if (tx.isActive()) tx.rollback();
-            LOGGER.error("Failed to delete one plot comment (world={}, inbox={}, hashcode={}, sender={}, comment={})", world, inbox, hashcode, sender, comment, e);
-            throw e;
-        } finally {
-            em.close();
+            LOGGER.error(
+                    "Failed to delete one plot comment (world={}, inbox={}, hashcode={}, sender={}, comment={})",
+                    world,
+                    inbox,
+                    hashcode,
+                    sender,
+                    comment,
+                    e
+            );
         }
     }
 
     @Override
-    public void clearInbox(String world, String inbox) {
+    public void clearInbox(@NotNull String world, @NotNull String inbox) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             em.createNamedQuery("PlotComment.clearInbox")
                     .setParameter("world", world)
@@ -121,17 +127,14 @@ public class PlotCommentRepositoryJpa implements PlotCommentRepository {
         } catch (RuntimeException e) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to clear inbox (world={}, inbox={})", world, inbox, e);
-            throw e;
-        } finally {
-            em.close();
         }
     }
 
     @Override
-    public void clearInbox(String world, int hashcode, String inbox) {
+    public void clearInbox(@NotNull String world, int hashcode, @NotNull String inbox) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             em.createNamedQuery("PlotComment.clearInboxByWorldHash")
                     .setParameter("world", world)
@@ -142,17 +145,14 @@ public class PlotCommentRepositoryJpa implements PlotCommentRepository {
         } catch (RuntimeException e) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to clear inbox by world+hash (world={}, hashcode={}, inbox={})", world, hashcode, inbox, e);
-            throw e;
-        } finally {
-            em.close();
         }
     }
 
     @Override
-    public void deleteByWorldAndHash(String world, int hashcode) {
+    public void deleteByWorldAndHash(@NotNull String world, int hashcode) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             em.createNamedQuery("PlotComment.deleteByWorldAndHash")
                     .setParameter("world", world)
@@ -162,9 +162,6 @@ public class PlotCommentRepositoryJpa implements PlotCommentRepository {
         } catch (RuntimeException e) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to delete comments by world and hash (world={}, hashcode={})", world, hashcode, e);
-            throw e;
-        } finally {
-            em.close();
         }
     }
 }
