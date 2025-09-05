@@ -19,12 +19,18 @@
 package com.plotsquared.core.persistence.repository.api;
 
 import com.plotsquared.core.persistence.entity.ClusterEntity;
+import com.plotsquared.core.plot.PlotId;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
  * Repository for managing ClusterEntity persistence and lookups.
+ *
+ * @since 8.0.0
+ * @version 1.0.0
+ * @author TheMeinerLP
+ * @author IntellectualSites
  */
 public interface ClusterRepository {
     /**
@@ -92,5 +98,5 @@ public interface ClusterRepository {
     /**
      * Update world for clusters overlapping the given bounds in oldWorld.
      */
-    void replaceWorldInBounds(String oldWorld, String newWorld, com.plotsquared.core.plot.PlotId min, com.plotsquared.core.plot.PlotId max);
+    void replaceWorldInBounds(String oldWorld, String newWorld, PlotId min, PlotId max);
 }

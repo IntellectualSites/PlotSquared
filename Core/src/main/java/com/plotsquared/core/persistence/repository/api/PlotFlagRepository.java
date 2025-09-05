@@ -26,6 +26,11 @@ import java.util.Optional;
 /**
  * Repository for managing flags associated with a plot.
  * A flag is a named configuration entry applied to an individual plot.
+ *
+ * @since 8.0.0
+ * @version 1.0.0
+ * @author TheMeinerLP
+ * @author IntellectualSites
  */
 public interface PlotFlagRepository {
     /**

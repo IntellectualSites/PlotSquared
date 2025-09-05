@@ -24,6 +24,11 @@ import java.util.List;
 
 /**
  * Repository for managing player ratings of plots.
+ *
+ * @since 8.0.0
+ * @version 1.0.0
+ * @author TheMeinerLP
+ * @author IntellectualSites
  */
 public interface PlotRatingRepository {
     /**

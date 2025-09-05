@@ -25,6 +25,11 @@ import java.util.List;
 /**
  * Repository for storing and retrieving arbitrary metadata entries for players.
  * Keys are namespaced per player UUID and map to binary values.
+ *
+ * @since 8.0.0
+ * @version 1.0.0
+ * @author TheMeinerLP
+ * @author IntellectualSites
  */
 public interface PlayerMetaRepository {
     /**

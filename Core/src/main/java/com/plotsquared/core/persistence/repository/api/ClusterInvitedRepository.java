@@ -24,6 +24,11 @@ import java.util.List;
  * Repository abstraction for managing invited users for a cluster.
  * Implementations persist associations between clusters and player UUIDs
  * that have been invited to the cluster but may not yet be members/helpers.
+ *
+ * @since 8.0.0
+ * @version 1.0.0
+ * @author TheMeinerLP
+ * @author IntellectualSites
  */
 public interface ClusterInvitedRepository {
     /**

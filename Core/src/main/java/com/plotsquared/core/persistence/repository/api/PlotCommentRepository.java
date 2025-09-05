@@ -26,6 +26,11 @@ import java.util.List;
  * Repository for managing plot comments, typically grouped by "inbox" names
  * (e.g., inbox types). Methods support querying by world, by plot hash, and
  * by inbox, as well as adding and removing comments.
+ *
+ * @since 8.0.0
+ * @version 1.0.0
+ * @author TheMeinerLP
+ * @author IntellectualSites
  */
 public interface PlotCommentRepository {
     /**

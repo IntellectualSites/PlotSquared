@@ -24,6 +24,11 @@ import java.util.List;
  * Repository for managing trusted users for a plot.
  * Trusted users typically have broader permissions than helpers but may be
  * distinct from owners and members depending on server policy.
+ *
+ * @since 8.0.0
+ * @version 1.0.0
+ * @author TheMeinerLP
+ * @author IntellectualSites
  */
 public interface PlotTrustedRepository {
     /**

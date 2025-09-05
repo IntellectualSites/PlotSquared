@@ -23,6 +23,11 @@ import java.util.List;
 /**
  * Repository for managing plot member associations.
  * Members typically have elevated permissions on the plot compared to visitors.
+ *
+ * @since 8.0.0
+ * @version 1.0.0
+ * @author TheMeinerLP
+ * @author IntellectualSites
  */
 public interface PlotMembershipRepository {
     /**

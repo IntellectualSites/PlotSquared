@@ -28,6 +28,11 @@ import java.util.UUID;
 /**
  * Repository abstraction for reading and writing plot data and related
  * lookups by id, world, owner, and coordinates.
+ *
+ * @since 8.0.0
+ * @version 1.0.0
+ * @author TheMeinerLP
+ * @author IntellectualSites
  */
 public interface PlotRepository {
     /**

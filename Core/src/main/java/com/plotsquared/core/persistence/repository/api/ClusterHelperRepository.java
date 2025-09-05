@@ -24,6 +24,11 @@ import java.util.List;
  * Repository abstraction for managing helper users associated with a cluster.
  * Implementations are responsible for persisting and retrieving associations
  * between a cluster and player UUIDs who act as helpers.
+ *
+ * @since 8.0.0
+ * @version 1.0.0
+ * @author TheMeinerLP
+ * @author IntellectualSites
  */
 public interface ClusterHelperRepository {
     /**

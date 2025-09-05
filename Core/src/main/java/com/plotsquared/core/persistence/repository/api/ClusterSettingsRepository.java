@@ -24,6 +24,11 @@ import java.util.Optional;
 
 /**
  * Repository abstraction for managing cluster settings operations.
+ *
+ * @since 8.0.0
+ * @version 1.0.0
+ * @author TheMeinerLP
+ * @author IntellectualSites
  */
 public interface ClusterSettingsRepository {
     /**

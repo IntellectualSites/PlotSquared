@@ -25,6 +25,11 @@ import java.util.List;
  * Denied users are explicitly prevented from interacting with or entering the plot
  * depending on gameplay rules. This repository stores associations between plot ids
  * and player UUIDs.
+ *
+ * @since 8.0.0
+ * @version 1.0.0
+ * @author TheMeinerLP
+ * @author IntellectualSites
  */
 public interface PlotDeniedRepository {
     /**

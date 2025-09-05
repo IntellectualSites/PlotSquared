@@ -24,6 +24,11 @@ import java.util.Optional;
 
 /**
  * Repository for persisting and retrieving per-plot settings.
+ *
+ * @since 8.0.0
+ * @version 1.0.0
+ * @author TheMeinerLP
+ * @author IntellectualSites
  */
 public interface PlotSettingsRepository {
     /**
