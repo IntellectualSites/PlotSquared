@@ -23,15 +23,21 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "plot_settings")
-@jakarta.persistence.NamedQueries({
-        @jakarta.persistence.NamedQuery(name = "PlotSettings.updateAlias", query = "UPDATE PlotSettingsEntity s SET s.alias = :alias WHERE s.id = :plotId"),
-        @jakarta.persistence.NamedQuery(name = "PlotSettings.updatePosition", query = "UPDATE PlotSettingsEntity s SET s.position = :pos WHERE s.id = :plotId"),
-        @jakarta.persistence.NamedQuery(name = "PlotSettings.updateMerged", query = "UPDATE PlotSettingsEntity s SET s.merged = :merged WHERE s.id = :plotId")
+@NamedQueries({
+        @NamedQuery(name = "PlotSettings.updateAlias", query = "UPDATE PlotSettingsEntity s SET s.alias = :alias WHERE s.id = :plotId"),
+        @NamedQuery(name = "PlotSettings.updatePosition", query = "UPDATE PlotSettingsEntity s SET s.position = :pos WHERE s.id = :plotId"),
+        @NamedQuery(name = "PlotSettings.updateMerged", query = "UPDATE PlotSettingsEntity s SET s.merged =" +
+                " :merged WHERE s.id = :plotId"),
+        @NamedQuery(name = "PlotSettings.deleteByPlot", query = "DELETE FROM PlotSettingsEntity s WHERE s.id = :plotId"),
+        @NamedQuery(name = "PlotSettings.findAll", query = "SELECT s FROM PlotSettingsEntity s"),
+        @NamedQuery(name = "PlotSettings.deleteAllInPlotIds", query = "DELETE FROM PlotSettingsEntity s WHERE s.id IN :plotIds")
 })
 public class PlotSettingsEntity {
     @Id

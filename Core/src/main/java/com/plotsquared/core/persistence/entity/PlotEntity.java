@@ -33,6 +33,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "plot")
 @NamedQueries({
+        @NamedQuery(name = "Plot.findAll", query = "SELECT p FROM PlotEntity p"),
         @NamedQuery(name = "Plot.findByWorldAndId", query = "SELECT p FROM PlotEntity p WHERE p.world = :world AND p.plotIdX = :x AND p.plotIdZ = :z"),
         @NamedQuery(name = "Plot.findByOwner", query = "SELECT p FROM PlotEntity p WHERE p.owner = :owner"),
         @NamedQuery(name = "Plot.findByWorld", query = "SELECT p FROM PlotEntity p WHERE p.world = :world"),
@@ -47,6 +48,11 @@ import jakarta.persistence.Table;
                 query = "UPDATE PlotEntity p SET p.plotIdX = :plotIdX, p.plotIdZ = :plotIdZ, p.world = :world WHERE p.id = :id"
         ),
         @NamedQuery(name = "Plot.setOwner", query = "UPDATE PlotEntity p SET p.owner = :owner WHERE p.world = :world AND p.plotIdX = :x AND p.plotIdZ = :z"),
+        @NamedQuery(name = "Plot.replaceWorldInBounds", query = "UPDATE PlotEntity p SET p.world = :newWorld WHERE p.world = " +
+                ":oldWorld AND p.plotIdX BETWEEN :minX AND :maxX AND p.plotIdZ BETWEEN :minZ AND :maxZ"),
+        @NamedQuery(name = "Plot.replaceWorldAll", query = "UPDATE PlotEntity p SET p.world = :newWorld WHERE p.world = " +
+                ":oldWorld"),
+        @NamedQuery(name = "Plot.deleteAllInIds", query = "DELETE FROM PlotEntity p WHERE p.id IN :ids"),
 })
 public class PlotEntity {
     @Id

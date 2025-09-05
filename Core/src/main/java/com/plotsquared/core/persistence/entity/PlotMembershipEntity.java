@@ -25,6 +25,7 @@ import jakarta.persistence.IdClass;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
+import jdk.jfr.Name;
 
 @Entity
 @Table(name = "plot_helpers")
@@ -34,6 +35,8 @@ import jakarta.persistence.Table;
         @NamedQuery(name = "PlotHelper.findUsers", query = "SELECT e.userUuid FROM PlotMembershipEntity e WHERE e.plotId = " +
                 ":plotId"),
         @NamedQuery(name = "PlotHelper.deleteByPlotId", query = "DELETE FROM PlotMembershipEntity e WHERE e.plotId = :plotId"),
+        @NamedQuery(name = "PlotHelper.findAll", query = "SELECT e FROM PlotMembershipEntity e"),
+        @NamedQuery(name = "PlotHelper.deleteAllInPlotIds", query = "DELETE FROM PlotMembershipEntity e WHERE e.plotId IN :plotIds")
 })
 public class PlotMembershipEntity {
     @Id

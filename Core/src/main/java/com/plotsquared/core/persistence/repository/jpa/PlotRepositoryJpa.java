@@ -19,22 +19,42 @@
 package com.plotsquared.core.persistence.repository.jpa;
 
 import com.google.inject.Inject;
+import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.location.BlockLoc;
+import com.plotsquared.core.persistence.entity.PlotDeniedEntity;
 import com.plotsquared.core.persistence.entity.PlotEntity;
+import com.plotsquared.core.persistence.entity.PlotFlagEntity;
+import com.plotsquared.core.persistence.entity.PlotMembershipEntity;
+import com.plotsquared.core.persistence.entity.PlotRatingEntity;
+import com.plotsquared.core.persistence.entity.PlotSettingsEntity;
+import com.plotsquared.core.persistence.entity.PlotTrustedEntity;
 import com.plotsquared.core.persistence.repository.api.PlotRepository;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.plot.flag.FlagParseException;
+import com.plotsquared.core.plot.flag.types.BlockTypeListFlag;
+import com.plotsquared.core.util.HashUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public class PlotRepositoryJpa implements PlotRepository {
 
     private static final Logger LOGGER = LogManager.getLogger(PlotRepositoryJpa.class);
+    private static final UUID EVERYONE = UUID.fromString("1-1-3-3-7");
 
     private final EntityManagerFactory emf;
 
@@ -47,16 +67,9 @@ public class PlotRepositoryJpa implements PlotRepository {
     public boolean createPlotSafe(final Plot plot) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
-            String world = null;
-            try {
-                world = plot.getWorldName();
-            } catch (Throwable ignored) {
-            }
-            if (world == null) {
-                world = plot.getArea().toString();
-            }
+            String world = Optional.of(plot).map(Plot::getWorldName).orElse(Optional.of(plot).map(Plot::getArea).map(Object::toString).orElse(null));
             Optional<PlotEntity> existing = findByWorldAndId(world, plot.getId().getX(), plot.getId().getY());
             if (existing.isPresent()) {
                 tx.commit();
@@ -65,19 +78,12 @@ public class PlotRepositoryJpa implements PlotRepository {
             PlotEntity pe = new PlotEntity();
             pe.setPlotIdX(plot.getId().getX());
             pe.setPlotIdZ(plot.getId().getY());
-            UUID ownerUuid = null;
-            try {
-                ownerUuid = plot.getOwnerAbs();
-            } catch (Throwable ignored) {
-            }
-            pe.setOwner(ownerUuid != null ? ownerUuid.toString() : com.plotsquared.core.database.DBFunc.EVERYONE.toString());
+            UUID ownerUuid = plot.getOwnerAbs();
+            pe.setOwner(Optional.ofNullable(ownerUuid).map(UUID::toString).orElse(EVERYONE.toString()));
             pe.setWorld(world);
             em.persist(pe);
             em.flush();
-            if (pe.getId() != null) {
-                plot.temp = pe.getId().intValue();
-            }
-            com.plotsquared.core.persistence.entity.PlotSettingsEntity se = new com.plotsquared.core.persistence.entity.PlotSettingsEntity();
+            PlotSettingsEntity se = new PlotSettingsEntity();
             se.setPlot(pe);
             se.setPosition("DEFAULT");
             em.persist(se);
@@ -88,42 +94,26 @@ public class PlotRepositoryJpa implements PlotRepository {
                 tx.rollback();
             }
             LOGGER.error("Failed to create plot safely (plot={})", plot, e);
-            throw e;
-        } finally {
-            em.close();
         }
+        return false;
     }
 
     @Override
     public void createPlotAndSettings(final Plot plot) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
-            String world = null;
-            try {
-                world = plot.getWorldName();
-            } catch (Throwable ignored) {
-            }
-            if (world == null) {
-                world = plot.getArea().toString();
-            }
+            String world = Optional.of(plot).map(Plot::getWorldName).orElse(Optional.of(plot).map(Plot::getArea).map(Object::toString).orElse(null));
             PlotEntity pe = new PlotEntity();
             pe.setPlotIdX(plot.getId().getX());
             pe.setPlotIdZ(plot.getId().getY());
-            UUID ownerUuid = null;
-            try {
-                ownerUuid = plot.getOwnerAbs();
-            } catch (Throwable ignored) {
-            }
-            pe.setOwner(ownerUuid != null ? ownerUuid.toString() : com.plotsquared.core.database.DBFunc.EVERYONE.toString());
+            UUID ownerUuid = plot.getOwnerAbs();
+            pe.setOwner(Optional.ofNullable(ownerUuid).map(UUID::toString).orElse(EVERYONE.toString()));
             pe.setWorld(world);
             em.persist(pe);
             em.flush();
-            if (pe.getId() != null) {
-                plot.temp = pe.getId().intValue();
-            }
-            com.plotsquared.core.persistence.entity.PlotSettingsEntity se = new com.plotsquared.core.persistence.entity.PlotSettingsEntity();
+            PlotSettingsEntity se = new PlotSettingsEntity();
             se.setPlot(pe);
             se.setPosition("DEFAULT");
             em.persist(se);
@@ -134,40 +124,27 @@ public class PlotRepositoryJpa implements PlotRepository {
             }
             LOGGER.error("Failed to create plot and settings (plot={})", plot, e);
             throw e;
-        } finally {
-            em.close();
         }
     }
 
     @Override
     public void createPlotsAndData(final List<Plot> plots) {
-        if (plots == null || plots.isEmpty()) {
+        if (plots.isEmpty()) {
             return;
         }
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             for (final Plot plot : plots) {
                 // Persist plot row
                 PlotEntity pe = new PlotEntity();
                 pe.setPlotIdX(plot.getId().getX());
                 pe.setPlotIdZ(plot.getId().getY());
-                java.util.UUID ownerUuid = null;
-                try {
-                    ownerUuid = plot.getOwnerAbs();
-                } catch (Throwable ignored) {
-                }
-                pe.setOwner(ownerUuid != null ? ownerUuid.toString() : com.plotsquared.core.database.DBFunc.EVERYONE.toString());
+                UUID ownerUuid = plot.getOwnerAbs();
+                pe.setOwner(Optional.ofNullable(ownerUuid).map(UUID::toString).orElse(EVERYONE.toString()));
                 // Prefer world name for consistency with other queries
-                String world = null;
-                try {
-                    world = plot.getWorldName();
-                } catch (Throwable ignored) {
-                }
-                if (world == null) {
-                    world = plot.getArea().toString();
-                }
+                String world = Optional.of(plot).map(Plot::getWorldName).orElse(Optional.of(plot).map(Plot::getArea).map(Object::toString).orElse(null));
                 pe.setWorld(world);
                 em.persist(pe);
                 em.flush(); // ensure ID is generated
@@ -177,30 +154,28 @@ public class PlotRepositoryJpa implements PlotRepository {
                 // Persist settings (alias, merged, position) similar to legacy behavior
                 try {
                     var ps = plot.getSettings();
-                    if (ps != null) {
-                        com.plotsquared.core.persistence.entity.PlotSettingsEntity se = new com.plotsquared.core.persistence.entity.PlotSettingsEntity();
-                        se.setPlot(pe);
-                        String alias = ps.getAlias();
-                        if (alias != null && !alias.isEmpty()) {
-                            se.setAlias(alias);
-                        }
-                        boolean[] merged = ps.getMerged();
-                        if (merged != null) {
-                            int hash = com.plotsquared.core.util.HashUtil.hash(merged);
-                            se.setMerged(hash);
-                        }
-                        var loc = ps.getPosition();
-                        String position = "DEFAULT";
-                        if (loc != null) {
-                            if (loc.getY() == 0) {
-                                position = "DEFAULT";
-                            } else {
-                                position = loc.getX() + "," + loc.getY() + "," + loc.getZ();
-                            }
-                        }
-                        se.setPosition(position);
-                        em.persist(se);
+                    PlotSettingsEntity se = new PlotSettingsEntity();
+                    se.setPlot(pe);
+                    String alias = ps.getAlias();
+                    if (alias != null && !alias.isEmpty()) {
+                        se.setAlias(alias);
                     }
+                    boolean[] merged = ps.getMerged();
+                    if (merged != null) {
+                        int hash = HashUtil.hash(merged);
+                        se.setMerged(hash);
+                    }
+                    var loc = ps.getPosition();
+                    String position = "DEFAULT";
+                    if (loc != null) {
+                        if (loc.getY() == 0) {
+                            position = "DEFAULT";
+                        } else {
+                            position = loc.getX() + "," + loc.getY() + "," + loc.getZ();
+                        }
+                    }
+                    se.setPosition(position);
+                    em.persist(se);
                 } catch (Throwable t) {
                     // log and continue
                     LOGGER.warn(
@@ -215,9 +190,9 @@ public class PlotRepositoryJpa implements PlotRepository {
                 // Persist flags
                 try {
                     var flagContainer = plot.getFlagContainer();
-                    if (flagContainer != null && flagContainer.getFlagMap() != null) {
+                    if (flagContainer.getFlagMap() != null) {
                         for (var flagEntry : flagContainer.getFlagMap().values()) {
-                            com.plotsquared.core.persistence.entity.PlotFlagEntity fe = new com.plotsquared.core.persistence.entity.PlotFlagEntity();
+                            PlotFlagEntity fe = new PlotFlagEntity();
                             fe.setPlot(pe);
                             fe.setFlag(flagEntry.getName());
                             fe.setValue(flagEntry.toString());
@@ -237,33 +212,33 @@ public class PlotRepositoryJpa implements PlotRepository {
                 // Persist tiers: NOTE legacy mapping members->trusted, trusted->helpers
                 try {
                     // helpers table from plot.getTrusted()
-                    for (java.util.UUID uuid : plot.getTrusted()) {
-                        com.plotsquared.core.persistence.entity.PlotMembershipEntity e = new com.plotsquared.core.persistence.entity.PlotMembershipEntity();
+                    for (UUID uuid : plot.getTrusted()) {
+                        PlotMembershipEntity e = new PlotMembershipEntity();
                         e.setPlotId(plotId);
                         e.setUserUuid(uuid.toString());
                         em.persist(e);
                     }
                     // trusted table from plot.getMembers()
-                    for (java.util.UUID uuid : plot.getMembers()) {
-                        com.plotsquared.core.persistence.entity.PlotTrustedEntity e = new com.plotsquared.core.persistence.entity.PlotTrustedEntity();
+                    for (UUID uuid : plot.getMembers()) {
+                        PlotTrustedEntity e = new PlotTrustedEntity();
                         e.setPlotId(plotId);
                         e.setUserUuid(uuid.toString());
                         em.persist(e);
                     }
                     // denied table from plot.getDenied()
-                    for (java.util.UUID uuid : plot.getDenied()) {
-                        com.plotsquared.core.persistence.entity.PlotDeniedEntity e = new com.plotsquared.core.persistence.entity.PlotDeniedEntity();
+                    for (UUID uuid : plot.getDenied()) {
+                        PlotDeniedEntity e = new PlotDeniedEntity();
                         e.setPlotId(plotId);
                         e.setUserUuid(uuid.toString());
                         em.persist(e);
                     }
-                } catch (Throwable t) {
+                } catch (Exception exception) {
                     LOGGER.warn(
                             "Failed to persist tiers for plot (x={}, z={}, world={})",
                             plot.getId().getX(),
                             plot.getId().getY(),
                             world,
-                            t
+                            exception
                     );
                 }
             }
@@ -273,14 +248,11 @@ public class PlotRepositoryJpa implements PlotRepository {
                 tx.rollback();
             }
             LOGGER.error("Failed bulk create plots and data", e);
-            throw e;
-        } finally {
-            em.close();
         }
     }
 
     @Override
-    public boolean swapPlots(final Plot plot1, final Plot plot2) {
+    public boolean swapPlots(final @NotNull Plot plot1, final @NotNull Plot plot2) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
@@ -310,12 +282,12 @@ public class PlotRepositoryJpa implements PlotRepository {
     }
 
     @Override
-    public void replaceWorldInRange(String oldWorld, String newWorld, int minX, int minZ, int maxX, int maxZ) {
+    public void replaceWorldInRange(@NotNull String oldWorld, @NotNull String newWorld, int minX, int minZ, int maxX, int maxZ) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
-            em.createQuery("UPDATE PlotEntity p SET p.world = :newWorld WHERE p.world = :oldWorld AND p.plotIdX BETWEEN :minX AND :maxX AND p.plotIdZ BETWEEN :minZ AND :maxZ")
+            em.createNamedQuery("Plot.replaceWorldInBounds")
                     .setParameter("newWorld", newWorld)
                     .setParameter("oldWorld", oldWorld)
                     .setParameter("minX", minX)
@@ -326,20 +298,26 @@ public class PlotRepositoryJpa implements PlotRepository {
             tx.commit();
         } catch (RuntimeException e) {
             if (tx.isActive()) tx.rollback();
-            LOGGER.error("Failed to replace world in range (oldWorld={}, newWorld={}, range=[{}..{}]x[{}..{}])", oldWorld, newWorld, minX, maxX, minZ, maxZ, e);
-            throw e;
-        } finally {
-            em.close();
+            LOGGER.error(
+                    "Failed to replace world in range (oldWorld={}, newWorld={}, range=[{}..{}]x[{}..{}])",
+                    oldWorld,
+                    newWorld,
+                    minX,
+                    maxX,
+                    minZ,
+                    maxZ,
+                    e
+            );
         }
     }
 
     @Override
-    public void replaceWorldAll(String oldWorld, String newWorld) {
+    public void replaceWorldAll(@NotNull String oldWorld, @NotNull String newWorld) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
-            em.createQuery("UPDATE PlotEntity p SET p.world = :newWorld WHERE p.world = :oldWorld")
+            em.createNamedQuery("Plot.replaceWorldAll")
                     .setParameter("newWorld", newWorld)
                     .setParameter("oldWorld", oldWorld)
                     .executeUpdate();
@@ -347,14 +325,11 @@ public class PlotRepositoryJpa implements PlotRepository {
         } catch (RuntimeException e) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to replace world (all plots) oldWorld={}, newWorld={}", oldWorld, newWorld, e);
-            throw e;
-        } finally {
-            em.close();
         }
     }
 
     @Override
-    public void movePlots(final Plot originPlot, final Plot newPlot) {
+    public void movePlots(final @NotNull Plot originPlot, final @NotNull Plot newPlot) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
         try (em) {
@@ -375,12 +350,11 @@ public class PlotRepositoryJpa implements PlotRepository {
                 tx.rollback();
             }
             LOGGER.error("Failed to move plots (plot1={}, plot2={})", originPlot, newPlot, e);
-            throw e;
         }
     }
 
     @Override
-    public void setOwner(final Plot plot, final UUID newOwner) {
+    public void setOwner(final @NotNull Plot plot, final @NotNull UUID newOwner) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
         try (em) {
@@ -396,77 +370,61 @@ public class PlotRepositoryJpa implements PlotRepository {
                 tx.rollback();
             }
             LOGGER.error("Failed to set plot owner (plot={}, newOwner={})", plot, newOwner, e);
-            throw e;
         }
     }
 
     @Override
-    public Optional<PlotEntity> findById(long id) {
-        EntityManager em = emf.createEntityManager();
-        try {
+    public @NotNull Optional<PlotEntity> findById(long id) {
+        try (EntityManager em = emf.createEntityManager()) {
             return Optional.ofNullable(em.find(PlotEntity.class, id));
-        } finally {
-            em.close();
         }
     }
 
     @Override
-    public Optional<PlotEntity> findByXAndZAnyWorld(final int x, final int z, final String world) {
-        EntityManager em = emf.createEntityManager();
-        try {
+    public @NotNull Optional<PlotEntity> findByXAndZAnyWorld(final int x, final int z, final @NotNull String world) {
+        try (EntityManager em = emf.createEntityManager()) {
             return em.createNamedQuery("Plot.findByXAndZAndWorld", PlotEntity.class)
                     .setParameter("x", x)
                     .setParameter("z", z)
                     .setParameter("world", world)
                     .getResultStream().findFirst();
-        } finally {
-            em.close();
         }
     }
 
     @Override
-    public Optional<PlotEntity> findByWorldAndId(String world, int x, int z) {
-        EntityManager em = emf.createEntityManager();
-        try {
+    public @NotNull Optional<PlotEntity> findByWorldAndId(@NotNull String world, int x, int z) {
+        try (EntityManager em = emf.createEntityManager()) {
             return em.createNamedQuery("Plot.findByWorldAndId", PlotEntity.class)
                     .setParameter("world", world)
                     .setParameter("x", x)
                     .setParameter("z", z)
                     .getResultStream().findFirst();
-        } finally {
-            em.close();
         }
     }
 
     @Override
-    public List<PlotEntity> findByOwner(String ownerUuid) {
-        EntityManager em = emf.createEntityManager();
-        try {
+    public @NotNull List<PlotEntity> findByOwner(@NotNull String ownerUuid) {
+        try (EntityManager em = emf.createEntityManager()) {
             return em.createNamedQuery("Plot.findByOwner", PlotEntity.class)
                     .setParameter("owner", ownerUuid)
                     .getResultList();
-        } finally {
-            em.close();
         }
     }
 
     @Override
-    public List<PlotEntity> findByWorld(String world) {
-        EntityManager em = emf.createEntityManager();
-        try {
+    public @NotNull List<PlotEntity> findByWorld(@NotNull String world) {
+        try (EntityManager em = emf.createEntityManager()) {
             return em.createNamedQuery("Plot.findByWorld", PlotEntity.class)
                     .setParameter("world", world)
                     .getResultList();
-        } finally {
-            em.close();
         }
     }
 
     @Override
-    public void save(PlotEntity plot) {
+    public void save(@NotNull PlotEntity plot) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             if (plot.getId() == null) {
                 em.persist(plot);
@@ -486,9 +444,6 @@ public class PlotRepositoryJpa implements PlotRepository {
                     plot.getPlotIdZ(),
                     e
             );
-            throw e;
-        } finally {
-            em.close();
         }
     }
 
@@ -496,7 +451,7 @@ public class PlotRepositoryJpa implements PlotRepository {
     public void deleteById(long id) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             PlotEntity ref = em.find(PlotEntity.class, id);
             if (ref != null) {
@@ -508,9 +463,6 @@ public class PlotRepositoryJpa implements PlotRepository {
                 tx.rollback();
             }
             LOGGER.error("Failed to delete plot by id (id={})", id, e);
-            throw e;
-        } finally {
-            em.close();
         }
     }
 
@@ -554,16 +506,13 @@ public class PlotRepositoryJpa implements PlotRepository {
     public void delete(final Plot plot) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
-            String world = null;
-            try {
-                world = plot.getWorldName();
-            } catch (Throwable ignored) {
-            }
-            if (world == null) {
-                world = plot.getArea().toString();
-            }
+            String world = Optional.of(plot).map(Plot::getWorldName).orElse(Optional
+                    .of(plot)
+                    .map(Plot::getArea)
+                    .map(Object::toString)
+                    .orElse(null));
             PlotEntity pe = em.createNamedQuery("Plot.findByWorldAndId", PlotEntity.class)
                     .setParameter("world", world)
                     .setParameter("x", plot.getId().getX())
@@ -572,23 +521,23 @@ public class PlotRepositoryJpa implements PlotRepository {
             if (pe != null && pe.getId() != null) {
                 Long plotId = pe.getId();
                 // Delete children first to satisfy FK constraints
-                em.createQuery("DELETE FROM PlotFlagEntity f WHERE f.plot.id = :plotId")
+                em.createNamedQuery("PlotFlag.deleteByPlot")
                         .setParameter("plotId", plotId)
                         .executeUpdate();
-                em.createQuery("DELETE FROM PlotMembershipEntity e WHERE e.plotId = :plotId")
+                em.createNamedQuery("PlotHelper.deleteByPlotId")
                         .setParameter("plotId", plotId)
                         .executeUpdate();
-                em.createQuery("DELETE FROM PlotTrustedEntity e WHERE e.plotId = :plotId")
+                em.createNamedQuery("PlotTrusted.deleteByPlotId")
                         .setParameter("plotId", plotId)
                         .executeUpdate();
-                em.createQuery("DELETE FROM PlotDeniedEntity e WHERE e.plotId = :plotId")
+                em.createNamedQuery("PlotDenied.deleteByPlotId")
                         .setParameter("plotId", plotId)
                         .executeUpdate();
-                em.createQuery("DELETE FROM PlotRatingEntity r WHERE r.plotId = :plotId")
+                em.createNamedQuery("PlotRating.deleteByPlot")
                         .setParameter("plotId", plotId)
                         .executeUpdate();
                 // Remove settings explicitly to mirror legacy behavior and avoid orphan rows
-                em.createQuery("DELETE FROM PlotSettingsEntity s WHERE s.id = :plotId")
+                em.createNamedQuery("PlotSettings.deleteByPlot")
                         .setParameter("plotId", plotId)
                         .executeUpdate();
                 // Remove plot
@@ -601,44 +550,39 @@ public class PlotRepositoryJpa implements PlotRepository {
                 tx.rollback();
             }
             LOGGER.error("Failed to delete plot (plot={})", plot, e);
-            throw e;
-        } finally {
-            em.close();
         }
     }
 
     @Override
-    public java.util.HashMap<String, java.util.HashMap<com.plotsquared.core.plot.PlotId, com.plotsquared.core.plot.Plot>> getPlots() {
-        EntityManager em = emf.createEntityManager();
-        try {
-            java.util.HashMap<String, java.util.HashMap<com.plotsquared.core.plot.PlotId, com.plotsquared.core.plot.Plot>> worldMap = new java.util.HashMap<>();
-            java.util.Map<Long, com.plotsquared.core.plot.Plot> byId = new java.util.HashMap<>();
-            java.util.Map<String, java.util.UUID> uuidCache = new java.util.HashMap<>();
-
+    public HashMap<String, HashMap<PlotId, Plot>> getPlots() {
+        HashMap<String, HashMap<PlotId, Plot>> worldMap = new HashMap<>();
+        Map<Long, Plot> byId = new HashMap<>();
+        Map<String, UUID> uuidCache = new HashMap<>();
+        try (EntityManager em = emf.createEntityManager()) {
             // Load plots
-            List<PlotEntity> plots = em.createQuery("SELECT p FROM PlotEntity p", PlotEntity.class).getResultList();
+            List<PlotEntity> plots = em.createNamedQuery("Plot.findAll", PlotEntity.class).getResultList();
             for (PlotEntity p : plots) {
                 String ownerStr = p.getOwner();
-                java.util.UUID owner;
+                UUID owner;
                 if (ownerStr == null) {
-                    owner = com.plotsquared.core.database.DBFunc.EVERYONE;
+                    owner = EVERYONE;
                 } else {
                     owner = uuidCache.get(ownerStr);
                     if (owner == null) {
                         try {
-                            owner = java.util.UUID.fromString(ownerStr);
+                            owner = UUID.fromString(ownerStr);
                         } catch (IllegalArgumentException ex) {
-                            String base = com.plotsquared.core.configuration.Settings.UUID.FORCE_LOWERCASE
+                            String base = Settings.UUID.FORCE_LOWERCASE
                                     ? ("OfflinePlayer:" + ownerStr.toLowerCase())
                                     : ("OfflinePlayer:" + ownerStr);
-                            owner = java.util.UUID.nameUUIDFromBytes(base.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                            owner = UUID.nameUUIDFromBytes(base.getBytes(StandardCharsets.UTF_8));
                         }
                         uuidCache.put(ownerStr, owner);
                     }
                 }
                 long time = p.getTimestamp() != null ? p.getTimestamp().getTime() : System.currentTimeMillis();
-                com.plotsquared.core.plot.PlotId pid = com.plotsquared.core.plot.PlotId.of(p.getPlotIdX(), p.getPlotIdZ());
-                com.plotsquared.core.plot.Plot plot = new com.plotsquared.core.plot.Plot(
+                PlotId pid = PlotId.of(p.getPlotIdX(), p.getPlotIdZ());
+                Plot plot = new Plot(
                         pid,
                         owner,
                         new java.util.HashSet<>(),
@@ -652,83 +596,53 @@ public class PlotRepositoryJpa implements PlotRepository {
                         time,
                         p.getId() != null ? p.getId().intValue() : -1
                 );
-                worldMap.computeIfAbsent(p.getWorld(), k -> new java.util.HashMap<>()).put(pid, plot);
+                worldMap.computeIfAbsent(p.getWorld(), k -> new HashMap<>()).put(pid, plot);
                 if (p.getId() != null) {
                     byId.put(p.getId(), plot);
                 }
             }
 
             // Ratings (optional)
-            if (com.plotsquared.core.configuration.Settings.Enabled_Components.RATING_CACHE) {
-                var ratings = em.createQuery(
-                        "SELECT r FROM PlotRatingEntity r",
-                        com.plotsquared.core.persistence.entity.PlotRatingEntity.class
-                ).getResultList();
+            if (Settings.Enabled_Components.RATING_CACHE) {
+                var ratings = em.createNamedQuery("PlotRating.findAll", PlotRatingEntity.class).getResultList();
                 for (var r : ratings) {
                     var plot = byId.get(r.getPlotId());
                     if (plot != null) {
-                        try {
-                            plot.getSettings().getRatings().put(java.util.UUID.fromString(r.getPlayer()), r.getRating());
-                        } catch (IllegalArgumentException ignored) {
-                        }
+                        plot.getSettings().getRatings().put(UUID.fromString(r.getPlayer()), r.getRating());
                     }
                 }
             }
 
             // Helpers -> trusted
-            var helpers = em.createQuery(
-                    "SELECT e FROM PlotMembershipEntity e",
-                    com.plotsquared.core.persistence.entity.PlotMembershipEntity.class
-            ).getResultList();
+            var helpers = em.createNamedQuery("PlotHelper.findAll", PlotMembershipEntity.class).getResultList();
             for (var e : helpers) {
                 var plot = byId.get(e.getPlotId());
                 if (plot != null) {
-                    try {
-                        plot.getTrusted().add(java.util.UUID.fromString(e.getUserUuid()));
-                    } catch (IllegalArgumentException ignored) {
-                    }
+                    plot.getTrusted().add(UUID.fromString(e.getUserUuid()));
                 }
             }
 
             // Trusted -> members
-            var trusted = em.createQuery(
-                    "SELECT e FROM PlotTrustedEntity e",
-                    com.plotsquared.core.persistence.entity.PlotTrustedEntity.class
-            ).getResultList();
+            var trusted = em.createNamedQuery("PlotTrusted.findAll", PlotTrustedEntity.class).getResultList();
             for (var e : trusted) {
                 var plot = byId.get(e.getPlotId());
                 if (plot != null) {
-                    try {
-                        plot.getMembers().add(java.util.UUID.fromString(e.getUserUuid()));
-                    } catch (IllegalArgumentException ignored) {
-                    }
+                    plot.getMembers().add(UUID.fromString(e.getUserUuid()));
                 }
             }
 
             // Denied
-            var denied = em.createQuery(
-                    "SELECT e FROM PlotDeniedEntity e",
-                    com.plotsquared.core.persistence.entity.PlotDeniedEntity.class
-            ).getResultList();
+            var denied = em.createNamedQuery("PlotDenied.findAll", PlotDeniedEntity.class).getResultList();
             for (var e : denied) {
                 var plot = byId.get(e.getPlotId());
                 if (plot != null) {
-                    try {
-                        plot.getDenied().add(java.util.UUID.fromString(e.getUserUuid()));
-                    } catch (IllegalArgumentException ignored) {
-                    }
+                    plot.getDenied().add(UUID.fromString(e.getUserUuid()));
                 }
             }
 
             // Flags
-            try {
-                com.plotsquared.core.plot.flag.types.BlockTypeListFlag.skipCategoryVerification = true;
-            } catch (Throwable ignored) {
-            }
-            var flags = em.createQuery(
-                    "SELECT f FROM PlotFlagEntity f",
-                    com.plotsquared.core.persistence.entity.PlotFlagEntity.class
-            ).getResultList();
+            BlockTypeListFlag.skipCategoryVerification = true;
+            var flags = em.createNamedQuery("PlotFlag.findAll", PlotFlagEntity.class).getResultList();
             for (var f : flags) {
                 var plot = byId.get(f.getPlot().getId());
                 if (plot != null) {
@@ -739,24 +653,14 @@ public class PlotRepositoryJpa implements PlotRepository {
                     if (plotFlag == null) {
                         plot.getFlagContainer().addUnknownFlag(flag, value);
                     } else {
-                        try {
-                            plot.getFlagContainer().addFlag(plotFlag.parse(value));
-                        } catch (Exception ex) {
-                            // ignore invalid
-                        }
+                        plot.getFlagContainer().addFlag(plotFlag.parse(value));
                     }
                 }
             }
-            try {
-                com.plotsquared.core.plot.flag.types.BlockTypeListFlag.skipCategoryVerification = false;
-            } catch (Throwable ignored) {
-            }
+            BlockTypeListFlag.skipCategoryVerification = false;
 
             // Settings
-            var settings = em.createQuery(
-                    "SELECT s FROM PlotSettingsEntity s",
-                    com.plotsquared.core.persistence.entity.PlotSettingsEntity.class
-            ).getResultList();
+            var settings = em.createNamedQuery("PlotSettings.findAll", PlotSettingsEntity.class).getResultList();
             for (var s : settings) {
                 var plot = byId.get(s.getId());
                 if (plot != null) {
@@ -768,10 +672,7 @@ public class PlotRepositoryJpa implements PlotRepository {
                         String lower = pos.toLowerCase();
                         if (!lower.isEmpty() && !"default".equals(lower) && !"0,0,0".equals(lower) && !"center".equals(lower) && !"centre".equals(
                                 lower)) {
-                            try {
-                                plot.getSettings().setPosition(com.plotsquared.core.location.BlockLoc.fromString(pos));
-                            } catch (Throwable ignored) {
-                            }
+                            plot.getSettings().setPosition(BlockLoc.fromString(pos));
                         }
                     }
                     Integer m = s.getMerged();
@@ -786,20 +687,21 @@ public class PlotRepositoryJpa implements PlotRepository {
             }
 
             return worldMap;
-        } finally {
-            em.close();
+        } catch (FlagParseException e) {
+            LOGGER.error("Failed to load plots due to flag parse error", e);
+            return worldMap;
         }
     }
 
     @Override
-    public void purgeIds(java.util.Set<Integer> ids) {
-        if (ids == null || ids.isEmpty()) return;
+    public void purgeIds(@NotNull Set<Integer> ids) {
+        if (ids.isEmpty()) return;
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             // Convert Integer to Long (plot ids are Long)
-            java.util.Set<Long> longIds = new java.util.HashSet<>();
+            Set<Long> longIds = new HashSet<>();
             for (Integer i : ids) {
                 if (i != null) longIds.add(i.longValue());
             }
@@ -808,53 +710,50 @@ public class PlotRepositoryJpa implements PlotRepository {
                 return;
             }
             // Delete child tables first
-            em.createQuery("DELETE FROM PlotFlagEntity f WHERE f.plot.id IN :ids")
-                    .setParameter("ids", longIds)
+            em.createNamedQuery("PlotFlag.deleteAllInPlotIds")
+                    .setParameter("plotIds", longIds)
                     .executeUpdate();
-            em.createQuery("DELETE FROM PlotMembershipEntity e WHERE e.plotId IN :ids")
-                    .setParameter("ids", longIds)
+            em.createNamedQuery("PlotTrusted.deleteAllInPlotIds")
+                    .setParameter("plotIds", longIds)
                     .executeUpdate();
-            em.createQuery("DELETE FROM PlotTrustedEntity e WHERE e.plotId IN :ids")
-                    .setParameter("ids", longIds)
+            em.createNamedQuery("PlotHelper.deleteAllInPlotIds")
+                    .setParameter("plotIds", longIds)
                     .executeUpdate();
-            em.createQuery("DELETE FROM PlotDeniedEntity e WHERE e.plotId IN :ids")
-                    .setParameter("ids", longIds)
+            em.createNamedQuery("PlotDenied.deleteAllInPlotIds")
+                    .setParameter("plotIds", longIds)
                     .executeUpdate();
-            em.createQuery("DELETE FROM PlotRatingEntity r WHERE r.plotId IN :ids")
-                    .setParameter("ids", longIds)
+            em.createNamedQuery("PlotRating.deleteAllInPlotIds")
+                    .setParameter("plotIds", longIds)
                     .executeUpdate();
-            em.createQuery("DELETE FROM PlotSettingsEntity s WHERE s.id IN :ids")
-                    .setParameter("ids", longIds)
+            em.createNamedQuery("PlotSettings.deleteAllInPlotIds")
+                    .setParameter("plotIds", longIds)
                     .executeUpdate();
             // Finally delete plots
-            em.createQuery("DELETE FROM PlotEntity p WHERE p.id IN :ids")
+            em.createNamedQuery("Plot.deleteAllInIds")
                     .setParameter("ids", longIds)
                     .executeUpdate();
             tx.commit();
         } catch (RuntimeException e) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to purge plots by ids (ids={})", ids, e);
-            throw e;
-        } finally {
-            em.close();
         }
     }
 
     @Override
-    public void purgeByWorldAndPlotIds(String world, java.util.Set<com.plotsquared.core.plot.PlotId> plotIds) {
-        if (world == null || world.isEmpty() || plotIds == null || plotIds.isEmpty()) return;
+    public void purgeByWorldAndPlotIds(String world, Set<PlotId> plotIds) {
+        if (world.isEmpty() || plotIds.isEmpty()) return;
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             // Resolve plot ids by fetching candidates in the world and filtering in-memory
-            List<Long> ids = new java.util.ArrayList<>();
+            List<Long> ids = new ArrayList<>();
             List<PlotEntity> candidates = em.createNamedQuery("Plot.findByWorld", PlotEntity.class)
                     .setParameter("world", world)
                     .getResultList();
-            java.util.HashSet<com.plotsquared.core.plot.PlotId> lookup = new java.util.HashSet<>(plotIds);
+            HashSet<PlotId> lookup = new HashSet<>(plotIds);
             for (PlotEntity p : candidates) {
-                if (lookup.contains(com.plotsquared.core.plot.PlotId.of(p.getPlotIdX(), p.getPlotIdZ())) && p.getId() != null) {
+                if (lookup.contains(PlotId.of(p.getPlotIdX(), p.getPlotIdZ())) && p.getId() != null) {
                     ids.add(p.getId());
                 }
             }
@@ -862,48 +761,43 @@ public class PlotRepositoryJpa implements PlotRepository {
                 tx.commit();
                 return;
             }
-            java.util.Set<Long> longIds = new java.util.HashSet<>(ids);
+            Set<Long> longIds = new HashSet<>(ids);
             // Delete child tables first
-            em.createQuery("DELETE FROM PlotFlagEntity f WHERE f.plot.id IN :ids")
-                    .setParameter("ids", longIds)
+            em.createNamedQuery("PlotFlag.deleteAllInPlotIds")
+                    .setParameter("plotIds", longIds)
                     .executeUpdate();
-            em.createQuery("DELETE FROM PlotMembershipEntity e WHERE e.plotId IN :ids")
-                    .setParameter("ids", longIds)
+            em.createNamedQuery("PlotTrusted.deleteAllInPlotIds")
+                    .setParameter("plotIds", longIds)
                     .executeUpdate();
-            em.createQuery("DELETE FROM PlotTrustedEntity e WHERE e.plotId IN :ids")
-                    .setParameter("ids", longIds)
+            em.createNamedQuery("PlotHelper.deleteAllInPlotIds")
+                    .setParameter("plotIds", longIds)
                     .executeUpdate();
-            em.createQuery("DELETE FROM PlotDeniedEntity e WHERE e.plotId IN :ids")
-                    .setParameter("ids", longIds)
+            em.createNamedQuery("PlotDenied.deleteAllInPlotIds")
+                    .setParameter("plotIds", longIds)
                     .executeUpdate();
-            em.createQuery("DELETE FROM PlotRatingEntity r WHERE r.plotId IN :ids")
-                    .setParameter("ids", longIds)
+            em.createNamedQuery("PlotRating.deleteAllInPlotIds")
+                    .setParameter("plotIds", longIds)
                     .executeUpdate();
-            em.createQuery("DELETE FROM PlotSettingsEntity s WHERE s.id IN :ids")
-                    .setParameter("ids", longIds)
+            em.createNamedQuery("PlotSettings.deleteAllInPlotIds")
+                    .setParameter("plotIds", longIds)
                     .executeUpdate();
-            // Finally delete plots
-            em.createQuery("DELETE FROM PlotEntity p WHERE p.id IN :ids")
+            em.createNamedQuery("Plot.deleteAllInIds")
                     .setParameter("ids", longIds)
                     .executeUpdate();
             tx.commit();
         } catch (RuntimeException e) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to purge plots by world/id (world={}, plotIds={})", world, plotIds, e);
-            throw e;
-        } finally {
-            em.close();
         }
     }
 
     @Override
-    public void replaceWorld(String oldWorld, String newWorld) {
+    public void replaceWorld(@NotNull String oldWorld, @NotNull String newWorld) {
         replaceWorldAll(oldWorld, newWorld);
     }
 
     @Override
-    public void replaceWorldInBounds(String oldWorld, String newWorld, com.plotsquared.core.plot.PlotId min, com.plotsquared.core.plot.PlotId max) {
-        if (min == null || max == null) return;
+    public void replaceWorldInBounds(@NotNull String oldWorld, @NotNull String newWorld, PlotId min, PlotId max) {
         replaceWorldInRange(oldWorld, newWorld, min.getX(), min.getY(), max.getX(), max.getY());
     }
 }

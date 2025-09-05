@@ -32,7 +32,11 @@ import jakarta.persistence.Table;
 @NamedQueries({
         @NamedQuery(name = "PlotRating.findByPlot", query = "SELECT r FROM PlotRatingEntity r WHERE r.plotId = :plotId"),
         @NamedQuery(name = "PlotRating.upsert", query = "UPDATE PlotRatingEntity r SET r.rating = :rating WHERE r.plotId = :plotId AND r.player = :player"),
-        @NamedQuery(name = "PlotRating.updateValue", query = "UPDATE PlotRatingEntity r SET r.rating = :rating WHERE r.plotId = :plotId AND r.player = :player")
+        @NamedQuery(name = "PlotRating.updateValue", query = "UPDATE PlotRatingEntity r SET r.rating = :rating WHERE r.plotId =" +
+                " :plotId AND r.player = :player"),
+        @NamedQuery(name = "PlotRating.deleteByPlot", query = "DELETE FROM PlotRatingEntity r WHERE r.plotId = :plotId"),
+        @NamedQuery(name = "PlotRating.findAll", query = "SELECT r FROM PlotRatingEntity r"),
+        @NamedQuery(name = "PlotRating.deleteAllInPlotIds", query = "DELETE FROM PlotRatingEntity r WHERE r.plotId IN :plotIds")
 })
 public class PlotRatingEntity {
     @Id @Column(name = "plot_plot_id")
