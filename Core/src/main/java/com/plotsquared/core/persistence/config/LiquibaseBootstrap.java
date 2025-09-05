@@ -44,23 +44,37 @@ public final class LiquibaseBootstrap {
 
     @Inject
     public LiquibaseBootstrap(DataSource dataSource, DatabaseMigrationService migrationService) {
-        try (Connection connection = dataSource.getConnection()) {
-            Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
+        syncThreadForServiceLoader(() -> {
+            try (Connection connection = dataSource.getConnection()) {
+                Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
 
-            // Log database version information
-            String dbVersion = migrationService.getDatabaseVersion(connection);
-            LOGGER.info("Detected database version: " + dbVersion);
+                // Log database version information
+                String dbVersion = migrationService.getDatabaseVersion(connection);
+                LOGGER.info("Detected database version: " + dbVersion);
 
-            // Run Liquibase migrations - this will handle both v7->v8 migration and new v8 installations
-            Liquibase liquibase = new Liquibase("db/changelog/db.changelog-master.xml",
-                                                new ClassLoaderResourceAccessor(), database);
+                // Run Liquibase migrations - this will handle both v7->v8 migration and new v8 installations
+                Liquibase liquibase = new Liquibase("db/changelog/db.changelog-master.xml",
+                        new ClassLoaderResourceAccessor(), database);
 
-            liquibase.update("");
-            LOGGER.info("Liquibase migration completed successfully.");
+                liquibase.update("");
+                LOGGER.info("Liquibase migration completed successfully.");
 
-        } catch (Exception e) {
-            LOGGER.severe("Liquibase migration failed: " + e.getMessage());
-            throw new RuntimeException("Database migration failed", e);
+            } catch (Exception e) {
+                LOGGER.severe("Liquibase migration failed: " + e.getMessage());
+                throw new RuntimeException("Database migration failed", e);
+            }
+        });
+    }
+
+    void syncThreadForServiceLoader(Runnable runnable) {
+        Thread currentThread = Thread.currentThread();
+        ClassLoader originalClassLoader = currentThread.getContextClassLoader();
+        ClassLoader pluginClassLoader = this.getClass().getClassLoader();
+        try {
+            currentThread.setContextClassLoader(pluginClassLoader);
+            runnable.run();
+        } finally {
+            currentThread.setContextClassLoader(originalClassLoader);
         }
     }
 }
