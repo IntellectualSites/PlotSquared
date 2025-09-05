@@ -26,6 +26,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class PlayerMetaRepositoryJpa implements PlayerMetaRepository {
     }
 
     @Override
-    public List<PlayerMetaEntity> findByUuid(String uuid) {
+    public @NotNull List<PlayerMetaEntity> findByUuid(@NotNull String uuid) {
         try (EntityManager em = emf.createEntityManager()) {
             return em.createNamedQuery("PlayerMeta.findByUuid", PlayerMetaEntity.class)
                     .setParameter("uuid", uuid)
@@ -50,7 +51,7 @@ public class PlayerMetaRepositoryJpa implements PlayerMetaRepository {
     }
 
     @Override
-    public void put(String uuid, String key, byte[] value) {
+    public void put(@NotNull String uuid, @NotNull String key, byte @NotNull [] value) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
         try (em) {
@@ -72,14 +73,14 @@ public class PlayerMetaRepositoryJpa implements PlayerMetaRepository {
                     "Failed to put player meta (uuid={}, key={}, value.length={})",
                     uuid,
                     key,
-                    value != null ? value.length : null,
+                    value.length,
                     ex
             );
         }
     }
 
     @Override
-    public void delete(String uuid, String key) {
+    public void delete(@NotNull String uuid, @NotNull String key) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
         try (em) {
