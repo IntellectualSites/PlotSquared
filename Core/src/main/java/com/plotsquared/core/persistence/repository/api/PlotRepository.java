@@ -46,10 +46,28 @@ public interface PlotRepository {
      */
     boolean swapPlots(Plot plot1, Plot plot2);
 
+    /**
+     * Updates the world name for all stored plots.
+     *
+     * @param oldWorld The previous world name
+     * @param newWorld The new world name
+     */
     void replaceWorldAll(String oldWorld, String newWorld);
 
+    /**
+     * Moves all data from one plot to another.
+     *
+     * @param originPlot The source plot
+     * @param newPlot    The target plot
+     */
     void movePlots(Plot originPlot, Plot newPlot);
 
+    /**
+     * Sets a new owner for a plot.
+     *
+     * @param plot     The plot whose owner should be changed
+     * @param newOwner The UUID of the new owner
+     */
     void setOwner(Plot plot, UUID newOwner);
 
     /**
