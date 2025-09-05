@@ -26,6 +26,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -41,20 +42,17 @@ public class PlotSettingsRepositoryJpa implements PlotSettingsRepository {
     }
 
     @Override
-    public Optional<PlotSettingsEntity> findByPlotId(long plotId) {
-        EntityManager em = emf.createEntityManager();
-        try {
+    public @NotNull Optional<PlotSettingsEntity> findByPlotId(long plotId) {
+        try (EntityManager em = emf.createEntityManager()) {
             return Optional.ofNullable(em.find(PlotSettingsEntity.class, plotId));
-        } finally {
-            em.close();
         }
     }
 
     @Override
-    public void save(PlotSettingsEntity settings) {
+    public void save(@NotNull PlotSettingsEntity settings) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             if (settings.getId() == null) {
                 em.persist(settings);
@@ -65,9 +63,6 @@ public class PlotSettingsRepositoryJpa implements PlotSettingsRepository {
         } catch (RuntimeException e) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to save plot settings (plotId={})", settings.getId(), e);
-            throw e;
-        } finally {
-            em.close();
         }
     }
 
@@ -75,7 +70,7 @@ public class PlotSettingsRepositoryJpa implements PlotSettingsRepository {
     public void deleteByPlotId(long plotId) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             PlotSettingsEntity e = em.find(PlotSettingsEntity.class, plotId);
             if (e != null) {
@@ -85,17 +80,14 @@ public class PlotSettingsRepositoryJpa implements PlotSettingsRepository {
         } catch (RuntimeException ex) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to delete plot settings (plotId={})", plotId, ex);
-            throw ex;
-        } finally {
-            em.close();
         }
     }
 
     @Override
-    public void updateAlias(long plotId, String alias) {
+    public void updateAlias(long plotId, @NotNull String alias) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             em.createNamedQuery("PlotSettings.updateAlias")
                     .setParameter("plotId", plotId)
@@ -105,17 +97,14 @@ public class PlotSettingsRepositoryJpa implements PlotSettingsRepository {
         } catch (RuntimeException ex) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to update alias (plotId={})", plotId, ex);
-            throw ex;
-        } finally {
-            em.close();
         }
     }
 
     @Override
-    public void updatePosition(long plotId, String position) {
+    public void updatePosition(long plotId, @NotNull String position) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             em.createNamedQuery("PlotSettings.updatePosition")
                     .setParameter("plotId", plotId)
@@ -125,9 +114,6 @@ public class PlotSettingsRepositoryJpa implements PlotSettingsRepository {
         } catch (RuntimeException ex) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to update position (plotId={})", plotId, ex);
-            throw ex;
-        } finally {
-            em.close();
         }
     }
 
@@ -135,7 +121,7 @@ public class PlotSettingsRepositoryJpa implements PlotSettingsRepository {
     public void updateMerged(long plotId, int mergedBitmask) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             em.createNamedQuery("PlotSettings.updateMerged")
                     .setParameter("plotId", plotId)
@@ -145,24 +131,24 @@ public class PlotSettingsRepositoryJpa implements PlotSettingsRepository {
         } catch (RuntimeException ex) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to update merged (plotId={})", plotId, ex);
-            throw ex;
-        } finally {
-            em.close();
         }
     }
 
     @Override
-    public void createDefaultIfAbsent(long plotId, String defaultPosition) {
+    public void createDefaultIfAbsent(long plotId, @NotNull String defaultPosition) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             PlotSettingsEntity existing = em.find(PlotSettingsEntity.class, plotId);
             if (existing == null) {
                 PlotSettingsEntity se = new PlotSettingsEntity();
                 se.setId(plotId);
                 // attach plot reference to satisfy FK if needed
-                com.plotsquared.core.persistence.entity.PlotEntity pe = em.getReference(com.plotsquared.core.persistence.entity.PlotEntity.class, plotId);
+                com.plotsquared.core.persistence.entity.PlotEntity pe = em.getReference(
+                        com.plotsquared.core.persistence.entity.PlotEntity.class,
+                        plotId
+                );
                 se.setPlot(pe);
                 se.setPosition(defaultPosition);
                 em.persist(se);
@@ -171,9 +157,6 @@ public class PlotSettingsRepositoryJpa implements PlotSettingsRepository {
         } catch (RuntimeException ex) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to create default settings if absent (plotId={})", plotId, ex);
-            throw ex;
-        } finally {
-            em.close();
         }
     }
 }
