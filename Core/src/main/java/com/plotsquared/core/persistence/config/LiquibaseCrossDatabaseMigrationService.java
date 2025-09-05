@@ -72,7 +72,7 @@ public final class LiquibaseCrossDatabaseMigrationService {
 
         try {
             // Create MySQL datasource using config settings
-            String mysqlUrl = "jdbc:mysql://" + Storage.MySQL.HOST + ":" + Storage.MySQL.PORT + "/" + Storage.MySQL.DATABASE + 
+            String mysqlUrl = "jdbc:mysql://" + Storage.MySQL.HOST + ":" + Storage.MySQL.PORT + "/" + Storage.MySQL.DATABASE +
                              "?" + String.join("&", Storage.MySQL.PROPERTIES) + "&createDatabaseIfNotExist=true";
             DataSource targetDataSource = dataSourceProvider.createDataSource(mysqlUrl, Storage.MySQL.USER, Storage.MySQL.PASSWORD, "com.mysql.cj.jdbc.Driver");
 
