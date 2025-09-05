@@ -18,6 +18,25 @@
  */
 package com.plotsquared.core.database;
 
+import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.persistence.entity.ClusterEntity;
+import com.plotsquared.core.persistence.entity.PlayerMetaEntity;
+import com.plotsquared.core.persistence.entity.PlotCommentEntity;
+import com.plotsquared.core.persistence.entity.PlotEntity;
+import com.plotsquared.core.persistence.entity.PlotFlagEntity;
+import com.plotsquared.core.persistence.repository.api.ClusterHelperRepository;
+import com.plotsquared.core.persistence.repository.api.ClusterInvitedRepository;
+import com.plotsquared.core.persistence.repository.api.ClusterRepository;
+import com.plotsquared.core.persistence.repository.api.ClusterSettingsRepository;
+import com.plotsquared.core.persistence.repository.api.PlayerMetaRepository;
+import com.plotsquared.core.persistence.repository.api.PlotCommentRepository;
+import com.plotsquared.core.persistence.repository.api.PlotDeniedRepository;
+import com.plotsquared.core.persistence.repository.api.PlotFlagRepository;
+import com.plotsquared.core.persistence.repository.api.PlotMembershipRepository;
+import com.plotsquared.core.persistence.repository.api.PlotRatingRepository;
+import com.plotsquared.core.persistence.repository.api.PlotRepository;
+import com.plotsquared.core.persistence.repository.api.PlotSettingsRepository;
+import com.plotsquared.core.persistence.repository.api.PlotTrustedRepository;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotCluster;
@@ -26,12 +45,11 @@ import com.plotsquared.core.plot.comment.PlotComment;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.task.RunnableVal;
 
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -49,84 +67,46 @@ public class DBFunc {
     public static final UUID EVERYONE = UUID.fromString("1-1-3-3-7");
     public static final UUID SERVER = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
-    /**
-     * Abstract Database Manager
-     */
-    public static AbstractDB dbManager;
-
-    public static void updateTables(int[] oldVersion) {
-        if (dbManager != null) {
-            dbManager.updateTables(oldVersion);
-        }
-    }
-
     public static void addPersistentMeta(UUID uuid, String key, byte[] meta, boolean delete) {
-        if (dbManager != null) {
-            dbManager.addPersistentMeta(uuid, key, meta, delete);
+        PlayerMetaRepository repo = PlotSquared.platform().injector().getInstance(PlayerMetaRepository.class);
+        if (delete) {
+            repo.delete(uuid.toString(), key);
+        } else {
+            repo.put(uuid.toString(), key, meta);
         }
     }
 
     public static void getPersistentMeta(UUID uuid, RunnableVal<Map<String, byte[]>> result) {
-        if (dbManager != null) {
-            dbManager.getPersistentMeta(uuid, result);
+        PlayerMetaRepository repo = PlotSquared.platform().injector().getInstance(PlayerMetaRepository.class);
+        Map<String, byte[]> map = new HashMap<>();
+        for (PlayerMetaEntity e : repo.findByUuid(uuid.toString())) {
+            map.put(e.getKey(), e.getValue());
         }
+        if (result != null) {
+            result.run(map);
+        }
+
     }
 
     public static void removePersistentMeta(UUID uuid, String key) {
-        if (dbManager != null) {
-            dbManager.removePersistentMeta(uuid, key);
-        }
+        PlayerMetaRepository repo = PlotSquared.platform().injector().getInstance(PlayerMetaRepository.class);
+        repo.delete(uuid.toString(), key);
     }
 
     public static CompletableFuture<Boolean> swapPlots(Plot plot1, Plot plot2) {
-        if (dbManager != null) {
-            return dbManager.swapPlots(plot1, plot2);
+        if (plot1 == null || plot2 == null) {
+            return CompletableFuture.completedFuture(false);
         }
-        return CompletableFuture.completedFuture(false);
-    }
-
-    public static boolean deleteTables() {
-        return dbManager != null && dbManager.deleteTables();
+        PlotRepository repo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        return CompletableFuture.completedFuture(repo.swapPlots(plot1, plot2));
     }
 
     public static void movePlot(Plot originalPlot, Plot newPlot) {
-        if (originalPlot.temp == -1 || newPlot.temp == -1) {
+        if (originalPlot == null || newPlot == null) {
             return;
         }
-        DBFunc.dbManager.movePlot(originalPlot, newPlot);
-    }
-
-    public static void validatePlots(Set<Plot> plots) {
-        if (dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.validateAllPlots(plots);
-    }
-
-
-    //TODO Consider Removal
-
-    /**
-     * Check if a {@link ResultSet} contains a column.
-     *
-     * @param resultSet
-     * @param name
-     * @return
-     */
-    @Deprecated
-    public static boolean hasColumn(ResultSet resultSet, String name) {
-        try {
-            ResultSetMetaData meta = resultSet.getMetaData();
-            int count = meta.getColumnCount();
-            for (int x = 1; x <= count; x++) {
-                if (name.equals(meta.getColumnName(x))) {
-                    return true;
-                }
-            }
-            return false;
-        } catch (SQLException ignored) {
-            return false;
-        }
+        PlotRepository repo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        repo.movePlots(originalPlot, newPlot);
     }
 
     /**
@@ -136,10 +116,8 @@ public class DBFunc {
      * @param uuid New Owner
      */
     public static void setOwner(Plot plot, UUID uuid) {
-        if (plot.temp == -1 || dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.setOwner(plot, uuid);
+        PlotRepository repo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        repo.setOwner(plot, uuid);
     }
 
     /**
@@ -148,20 +126,22 @@ public class DBFunc {
      * @param plots List containing all plot objects
      */
     public static void createPlotsAndData(List<Plot> plots, Runnable whenDone) {
-        if (dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.createPlotsAndData(plots, whenDone);
+        PlotRepository repo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        repo.createPlotsAndData(plots);
+        if (whenDone != null) whenDone.run();
     }
 
     public static void createPlotSafe(
             final Plot plot, final Runnable success,
             final Runnable failure
     ) {
-        if (dbManager == null) {
-            return;
+        PlotRepository repo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        boolean created = repo.createPlotSafe(plot);
+        if (created) {
+            if (success != null) success.run();
+        } else {
+            if (failure != null) failure.run();
         }
-        DBFunc.dbManager.createPlotSafe(plot, success, failure);
     }
 
     /**
@@ -170,22 +150,9 @@ public class DBFunc {
      * @param plot Plot to create
      */
     public static void createPlotAndSettings(Plot plot, Runnable whenDone) {
-        if (plot.temp == -1 || dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.createPlotAndSettings(plot, whenDone);
-    }
-
-    /**
-     * Create tables.
-     *
-     * @throws Exception
-     */
-    public static void createTables() throws Exception {
-        if (dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.createTables();
+        PlotRepository repo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        repo.createPlotAndSettings(plot);
+        if (whenDone != null) whenDone.run();
     }
 
     /**
@@ -194,11 +161,8 @@ public class DBFunc {
      * @param plot Plot to delete
      */
     public static void delete(Plot plot) {
-        if (plot.temp == -1 || dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.delete(plot);
-        plot.temp = -1;
+        PlotRepository repo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        repo.delete(plot);
     }
 
     /**
@@ -207,10 +171,8 @@ public class DBFunc {
      * @param plot
      */
     public static void deleteRatings(Plot plot) {
-        if (plot.temp == -1 || dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.deleteRatings(plot);
+        PlotRepository repo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        repo.deleteRatings(plot);
     }
 
     /**
@@ -219,10 +181,16 @@ public class DBFunc {
      * @param plot
      */
     public static void deleteTrusted(Plot plot) {
-        if (plot.temp == -1 || dbManager == null) {
-            return;
+        try {
+            PlotRepository repo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+            String world = plot.getWorldName();
+            var peOpt = repo.findByWorldAndId(world, plot.getId().getX(), plot.getId().getY());
+            peOpt.ifPresent(pe -> {
+                PlotMembershipRepository mRepo = PlotSquared.platform().injector().getInstance(PlotMembershipRepository.class);
+                mRepo.deleteByPlotId(pe.getId());
+            });
+        } catch (Throwable ignored) {
         }
-        DBFunc.dbManager.deleteHelpers(plot);
     }
 
     /**
@@ -231,10 +199,13 @@ public class DBFunc {
      * @param plot
      */
     public static void deleteMembers(Plot plot) {
-        if (plot.temp == -1 || dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.deleteTrusted(plot);
+        PlotRepository repo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        String world = plot.getWorldName();
+        var peOpt = repo.findByWorldAndId(world, plot.getId().getX(), plot.getId().getY());
+        peOpt.ifPresent(pe -> {
+            PlotTrustedRepository tRepo = PlotSquared.platform().injector().getInstance(PlotTrustedRepository.class);
+            tRepo.deleteByPlotId(pe.getId());
+        });
     }
 
     /**
@@ -243,10 +214,13 @@ public class DBFunc {
      * @param plot
      */
     public static void deleteDenied(Plot plot) {
-        if (plot.temp == -1 || dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.deleteDenied(plot);
+        PlotRepository repo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        String world = plot.getWorldName();
+        var peOpt = repo.findByWorldAndId(world, plot.getId().getX(), plot.getId().getY());
+        peOpt.ifPresent(pe -> {
+            PlotDeniedRepository dRepo = PlotSquared.platform().injector().getInstance(PlotDeniedRepository.class);
+            dRepo.deleteByPlotId(pe.getId());
+        });
     }
 
     /**
@@ -255,10 +229,10 @@ public class DBFunc {
      * @param plot
      */
     public static void deleteComments(Plot plot) {
-        if (plot.temp == -1 || dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.deleteComments(plot);
+        PlotCommentRepository repo = PlotSquared.platform().injector().getInstance(PlotCommentRepository.class);
+        String world = plot.getWorldName();
+        int hash = plot.getId().hashCode();
+        repo.deleteByWorldAndHash(world, hash);
     }
 
     /**
@@ -271,17 +245,27 @@ public class DBFunc {
      * @param plot
      */
     public static void deleteSettings(Plot plot) {
-        if (plot.temp == -1 || dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.deleteSettings(plot);
+        PlotRepository repo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        String world = plot.getWorldName();
+        var peOpt = repo.findByWorldAndId(world, plot.getId().getX(), plot.getId().getY());
+        peOpt.ifPresent(pe -> {
+            PlotSettingsRepository sRepo = PlotSquared.platform().injector().getInstance(PlotSettingsRepository.class);
+            sRepo.deleteByPlotId(pe.getId());
+        });
     }
 
     public static void delete(PlotCluster toDelete) {
-        if (dbManager == null) {
+        if (toDelete == null) {
             return;
         }
-        DBFunc.dbManager.delete(toDelete);
+        ClusterRepository clusterRepo = PlotSquared.platform().injector().getInstance(ClusterRepository.class);
+        String world = toDelete.area != null ? toDelete.area.getWorldName() : null;
+        if (world == null) {
+            return;
+        }
+        PlotId center = toDelete.getCenterPlotId();
+        Optional<ClusterEntity> ce = clusterRepo.findByWorldAndBounds(world, center.getX(), center.getY());
+        ce.ifPresent(entity -> clusterRepo.deleteById(entity.getId()));
     }
 
     /**
@@ -291,54 +275,70 @@ public class DBFunc {
      * @param plot Plot Object
      */
     public static void createPlotSettings(int id, Plot plot) {
-        if (plot.temp == -1 || dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.createPlotSettings(id, plot);
-    }
-
-    /**
-     * Get a plot id.
-     *
-     * @param plot Plot Object
-     * @return ID
-     */
-    public static int getId(Plot plot) {
-        if (dbManager == null) {
-            return 0;
-        }
-        return DBFunc.dbManager.getId(plot);
+        PlotSettingsRepository repo = PlotSquared.platform().injector().getInstance(PlotSettingsRepository.class);
+        repo.createDefaultIfAbsent(id, "DEFAULT");
     }
 
     /**
      * @return Plots
      */
     public static HashMap<String, HashMap<PlotId, Plot>> getPlots() {
-        if (dbManager == null) {
-            return new HashMap<>();
-        }
-        return DBFunc.dbManager.getPlots();
+        PlotRepository repo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        return repo.getPlots();
     }
 
     public static void setMerged(Plot plot, boolean[] merged) {
-        if (plot.temp == -1 || dbManager == null) {
+        if (plot == null || merged == null) {
             return;
         }
-        DBFunc.dbManager.setMerged(plot, merged);
+        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        PlotSettingsRepository settingsRepo = PlotSquared.platform().injector().getInstance(PlotSettingsRepository.class);
+        String world = plot.getWorldName();
+        int x = plot.getId().getX();
+        int z = plot.getId().getY();
+        Optional<PlotEntity> pe = plotRepo.findByWorldAndId(world, x, z);
+        pe.ifPresent(entity -> {
+            int mask = com.plotsquared.core.util.HashUtil.hash(merged);
+            settingsRepo.updateMerged(entity.getId(), mask);
+        });
     }
 
     public static void setFlag(Plot plot, PlotFlag<?, ?> flag) {
-        if (plot.temp == -1 || dbManager == null) {
+        if (plot == null || flag == null) {
             return;
         }
-        DBFunc.dbManager.setFlag(plot, flag);
+        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        PlotFlagRepository flagRepo = PlotSquared.platform().injector().getInstance(PlotFlagRepository.class);
+        Optional<PlotEntity> pe = plotRepo.findByWorldAndId(plot.getWorldName(), plot.getId().getX(), plot.getId().getY());
+        pe.ifPresent(entity -> {
+            long plotId = entity.getId();
+            String name = flag.getName();
+            String value = flag.toString();
+            var existing = flagRepo.findByPlotAndName(plotId, name);
+            if (existing.isPresent()) {
+                var e = existing.get();
+                e.setValue(value);
+                flagRepo.save(e);
+            } else {
+                PlotFlagEntity e = new PlotFlagEntity();
+                PlotEntity pref = new PlotEntity();
+                pref.setId(entity.getId());
+                e.setPlot(pref);
+                e.setFlag(name);
+                e.setValue(value);
+                flagRepo.save(e);
+            }
+        });
     }
 
     public static void removeFlag(Plot plot, PlotFlag<?, ?> flag) {
-        if (plot.temp == -1 || dbManager == null) {
+        if (plot == null || flag == null) {
             return;
         }
-        DBFunc.dbManager.removeFlag(plot, flag);
+        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        PlotFlagRepository flagRepo = PlotSquared.platform().injector().getInstance(PlotFlagRepository.class);
+        Optional<PlotEntity> pe = plotRepo.findByWorldAndId(plot.getWorldName(), plot.getId().getX(), plot.getId().getY());
+        pe.ifPresent(entity -> flagRepo.deleteByPlotAndName(entity.getId(), flag.getName()));
     }
 
     /**
@@ -346,24 +346,23 @@ public class DBFunc {
      * @param alias
      */
     public static void setAlias(Plot plot, String alias) {
-        if (plot.temp == -1 || dbManager == null) {
+        if (plot == null) {
             return;
         }
-        DBFunc.dbManager.setAlias(plot, alias);
+        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        PlotSettingsRepository settingsRepo = PlotSquared.platform().injector().getInstance(PlotSettingsRepository.class);
+        Optional<PlotEntity> pe = plotRepo.findByWorldAndId(plot.getWorldName(), plot.getId().getX(), plot.getId().getY());
+        pe.ifPresent(entity -> settingsRepo.updateAlias(entity.getId(), alias));
     }
 
     public static void purgeIds(Set<Integer> uniqueIds) {
-        if (dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.purgeIds(uniqueIds);
+        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        plotRepo.purgeIds(uniqueIds);
     }
 
     public static void purge(PlotArea area, Set<PlotId> plotIds) {
-        if (dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.purge(area, plotIds);
+        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        plotRepo.purgeByWorldAndPlotIds(area.getWorldName(), plotIds);
     }
 
     /**
@@ -371,10 +370,13 @@ public class DBFunc {
      * @param position
      */
     public static void setPosition(Plot plot, String position) {
-        if (plot.temp == -1 || dbManager == null) {
+        if (plot == null || position == null) {
             return;
         }
-        DBFunc.dbManager.setPosition(plot, position);
+        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        PlotSettingsRepository settingsRepo = PlotSquared.platform().injector().getInstance(PlotSettingsRepository.class);
+        Optional<PlotEntity> pe = plotRepo.findByWorldAndId(plot.getWorldName(), plot.getId().getX(), plot.getId().getY());
+        pe.ifPresent(entity -> settingsRepo.updatePosition(entity.getId(), position));
     }
 
     /**
@@ -382,17 +384,19 @@ public class DBFunc {
      * @param comment
      */
     public static void removeComment(Plot plot, PlotComment comment) {
-        if (plot.temp == -1 || dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.removeComment(plot, comment);
+        PlotCommentRepository repo = PlotSquared.platform().injector().getInstance(PlotCommentRepository.class);
+        String world = plot.getWorldName();
+        int hash = plot.getId().hashCode();
+        repo.deleteOne(world, hash, comment.inbox(), comment.senderName(), comment.comment());
     }
 
     public static void clearInbox(Plot plot, String inbox) {
-        if (plot != null && plot.temp == -1 || dbManager == null) {
-            return;
+        PlotCommentRepository repo = PlotSquared.platform().injector().getInstance(PlotCommentRepository.class);
+        if (plot != null) {
+            String world = plot.getWorldName();
+            int hash = plot.getId().hashCode();
+            repo.clearInbox(world, hash, inbox);
         }
-        DBFunc.dbManager.clearInbox(plot, inbox);
     }
 
     /**
@@ -400,10 +404,17 @@ public class DBFunc {
      * @param comment
      */
     public static void setComment(Plot plot, PlotComment comment) {
-        if (plot != null && plot.temp == -1 || dbManager == null) {
-            return;
+        PlotCommentRepository repo = PlotSquared.platform().injector().getInstance(PlotCommentRepository.class);
+        if (plot != null) {
+            PlotCommentEntity entity = new PlotCommentEntity();
+            entity.setWorld(plot.getWorldName());
+            entity.setHashcode(plot.getId().hashCode());
+            entity.setComment(comment.comment());
+            entity.setInbox(comment.inbox());
+            entity.setTimestamp((int) (comment.timestamp() / 1000));
+            entity.setSender(comment.senderName());
+            repo.save(entity);
         }
-        DBFunc.dbManager.setComment(plot, comment);
     }
 
     /**
@@ -413,10 +424,20 @@ public class DBFunc {
             Plot plot, String inbox,
             RunnableVal<List<PlotComment>> whenDone
     ) {
-        if (plot != null && plot.temp == -1 || dbManager == null) {
-            return;
+        PlotCommentRepository repo = PlotSquared.platform().injector().getInstance(PlotCommentRepository.class);
+        List<PlotComment> out = new ArrayList<>();
+        if (plot != null) {
+            String world = plot.getWorldName();
+            int hash = plot.getId().hashCode();
+            for (PlotCommentEntity e : repo.findByWorldHashAndInbox(world, hash, inbox)) {
+                PlotId id = (e.getHashcode() != null && e.getHashcode() != 0) ? PlotId.unpair(e.getHashcode()) : null;
+                long tsMillis = e.getTimestamp() != null ? e.getTimestamp().longValue() * 1000L : 0L;
+                out.add(new PlotComment(e.getWorld(), id, e.getComment(), e.getSender(), e.getInbox(), tsMillis));
+            }
         }
-        DBFunc.dbManager.getComments(plot, inbox, whenDone);
+        if (whenDone != null) {
+            whenDone.run(out);
+        }
     }
 
     /**
@@ -424,10 +445,18 @@ public class DBFunc {
      * @param uuid
      */
     public static void removeTrusted(Plot plot, UUID uuid) {
-        if (plot.temp == -1 || dbManager == null) {
+        if (plot == null) {
             return;
         }
-        DBFunc.dbManager.removeTrusted(plot, uuid);
+        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        PlotTrustedRepository trustedRepo = PlotSquared.platform().injector().getInstance(PlotTrustedRepository.class);
+        String world = plot.getArea().toString();
+        int x = plot.getId().getX();
+        int z = plot.getId().getY();
+        java.util.Optional<PlotEntity> ent = plotRepo.findByWorldAndId(world, x, z);
+        if (ent.isPresent() && ent.get().getId() != null) {
+            trustedRepo.remove(ent.get().getId(), uuid.toString());
+        }
     }
 
     /**
@@ -435,20 +464,41 @@ public class DBFunc {
      * @param uuid
      */
     public static void removeHelper(PlotCluster cluster, UUID uuid) {
-        if (dbManager == null) {
+        if (cluster == null || uuid == null) {
             return;
         }
-        DBFunc.dbManager.removeHelper(cluster, uuid);
+        ClusterRepository clusterRepo = PlotSquared.platform().injector().getInstance(ClusterRepository.class);
+        ClusterHelperRepository helperRepo = PlotSquared.platform().injector().getInstance(ClusterHelperRepository.class);
+        String world = cluster.area != null ? cluster.area.toString() : null;
+        PlotId center = cluster.getCenterPlotId();
+        if (world != null) {
+            Optional<ClusterEntity> ent = clusterRepo.findByWorldAndBounds(world, center.getX(), center.getY());
+            if (ent.isPresent() && ent.get().getId() != null) {
+                helperRepo.remove(ent.get().getId(), uuid.toString());
+            }
+        }
     }
 
     /**
      * @param cluster
      */
     public static void createCluster(PlotCluster cluster) {
-        if (dbManager == null) {
+        if (cluster == null) {
             return;
         }
-        DBFunc.dbManager.createCluster(cluster);
+        ClusterRepository repo = PlotSquared.platform().injector().getInstance(ClusterRepository.class);
+        ClusterEntity e = new ClusterEntity();
+        e.setWorld(cluster.area != null ? cluster.area.toString() : null);
+        e.setOwner(cluster.owner != null ? cluster.owner.toString() : null);
+        if (cluster.getP1() != null) {
+            e.setPos1X(cluster.getP1().getX());
+            e.setPos1Z(cluster.getP1().getY());
+        }
+        if (cluster.getP2() != null) {
+            e.setPos2X(cluster.getP2().getX());
+            e.setPos2Z(cluster.getP2().getY());
+        }
+        repo.save(e);
     }
 
     /**
@@ -457,10 +507,23 @@ public class DBFunc {
      * @param max
      */
     public static void resizeCluster(PlotCluster current, PlotId min, PlotId max) {
-        if (dbManager == null) {
+        if (current == null || min == null || max == null) {
             return;
         }
-        DBFunc.dbManager.resizeCluster(current, min, max);
+        ClusterRepository repo = PlotSquared.platform().injector().getInstance(ClusterRepository.class);
+        String world = current.area != null ? current.area.toString() : null;
+        PlotId center = current.getCenterPlotId();
+        if (world != null) {
+            Optional<ClusterEntity> ent = repo.findByWorldAndBounds(world, center.getX(), center.getY());
+            if (ent.isPresent()) {
+                ClusterEntity e = ent.get();
+                e.setPos1X(min.getX());
+                e.setPos1Z(min.getY());
+                e.setPos2X(max.getX());
+                e.setPos2Z(max.getY());
+                repo.save(e);
+            }
+        }
     }
 
     /**
@@ -468,10 +531,12 @@ public class DBFunc {
      * @param uuid
      */
     public static void removeMember(Plot plot, UUID uuid) {
-        if (plot.temp == -1 || dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.removeMember(plot, uuid);
+        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        PlotMembershipRepository membershipRepo = PlotSquared.platform().injector().getInstance(PlotMembershipRepository.class);
+        String world = plot.getArea().toString();
+        PlotId pid = plot.getId();
+        Optional<PlotEntity> pe = plotRepo.findByWorldAndId(world, pid.getX(), pid.getY());
+        pe.ifPresent(entity -> membershipRepo.remove(entity.getId(), uuid.toString()));
     }
 
     /**
@@ -479,10 +544,15 @@ public class DBFunc {
      * @param uuid
      */
     public static void removeInvited(PlotCluster cluster, UUID uuid) {
-        if (dbManager == null) {
+        ClusterRepository clusterRepo = PlotSquared.platform().injector().getInstance(ClusterRepository.class);
+        ClusterInvitedRepository invitedRepo = PlotSquared.platform().injector().getInstance(ClusterInvitedRepository.class);
+        String world = cluster.area != null ? cluster.area.getWorldName() : null;
+        if (world == null) {
             return;
         }
-        DBFunc.dbManager.removeInvited(cluster, uuid);
+        PlotId center = cluster.getCenterPlotId();
+        Optional<ClusterEntity> ce = clusterRepo.findByWorldAndBounds(world, center.getX(), center.getY());
+        ce.ifPresent(entity -> invitedRepo.remove(entity.getId(), uuid.toString()));
     }
 
     /**
@@ -490,17 +560,24 @@ public class DBFunc {
      * @param uuid
      */
     public static void setTrusted(Plot plot, UUID uuid) {
-        if (plot.temp == -1 || dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.setTrusted(plot, uuid);
+        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        PlotTrustedRepository trustedRepo = PlotSquared.platform().injector().getInstance(PlotTrustedRepository.class);
+        String world = plot.getArea().toString();
+        PlotId pid = plot.getId();
+        Optional<PlotEntity> pe = plotRepo.findByWorldAndId(world, pid.getX(), pid.getY());
+        pe.ifPresent(entity -> trustedRepo.add(entity.getId(), uuid.toString()));
     }
 
     public static void setHelper(PlotCluster cluster, UUID uuid) {
-        if (dbManager == null) {
+        ClusterRepository clusterRepo = PlotSquared.platform().injector().getInstance(ClusterRepository.class);
+        ClusterHelperRepository helperRepo = PlotSquared.platform().injector().getInstance(ClusterHelperRepository.class);
+        String world = cluster.area != null ? cluster.area.getWorldName() : null;
+        if (world == null) {
             return;
         }
-        DBFunc.dbManager.setHelper(cluster, uuid);
+        PlotId center = cluster.getCenterPlotId();
+        Optional<ClusterEntity> ce = clusterRepo.findByWorldAndBounds(world, center.getX(), center.getY());
+        ce.ifPresent(entity -> helperRepo.add(entity.getId(), uuid.toString()));
     }
 
     /**
@@ -508,17 +585,24 @@ public class DBFunc {
      * @param uuid
      */
     public static void setMember(Plot plot, UUID uuid) {
-        if (plot.temp == -1 || dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.setMember(plot, uuid);
+        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        PlotMembershipRepository membershipRepo = PlotSquared.platform().injector().getInstance(PlotMembershipRepository.class);
+        String world = plot.getArea().toString();
+        PlotId pid = plot.getId();
+        Optional<PlotEntity> pe = plotRepo.findByWorldAndId(world, pid.getX(), pid.getY());
+        pe.ifPresent(entity -> membershipRepo.add(entity.getId(), uuid.toString()));
     }
 
     public static void setInvited(PlotCluster cluster, UUID uuid) {
-        if (dbManager == null) {
+        ClusterRepository clusterRepo = PlotSquared.platform().injector().getInstance(ClusterRepository.class);
+        ClusterInvitedRepository invitedRepo = PlotSquared.platform().injector().getInstance(ClusterInvitedRepository.class);
+        String world = cluster.area != null ? cluster.area.getWorldName() : null;
+        if (world == null) {
             return;
         }
-        DBFunc.dbManager.setInvited(cluster, uuid);
+        PlotId center = cluster.getCenterPlotId();
+        Optional<ClusterEntity> ce = clusterRepo.findByWorldAndBounds(world, center.getX(), center.getY());
+        ce.ifPresent(entity -> invitedRepo.add(entity.getId(), uuid.toString()));
     }
 
     /**
@@ -526,10 +610,12 @@ public class DBFunc {
      * @param uuid
      */
     public static void removeDenied(Plot plot, UUID uuid) {
-        if (plot.temp == -1 || dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.removeDenied(plot, uuid);
+        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        PlotDeniedRepository deniedRepo = PlotSquared.platform().injector().getInstance(PlotDeniedRepository.class);
+        String world = plot.getArea().toString();
+        PlotId pid = plot.getId();
+        Optional<PlotEntity> pe = plotRepo.findByWorldAndId(world, pid.getX(), pid.getY());
+        pe.ifPresent(entity -> deniedRepo.remove(entity.getId(), uuid.toString()));
     }
 
     /**
@@ -537,63 +623,112 @@ public class DBFunc {
      * @param uuid
      */
     public static void setDenied(Plot plot, UUID uuid) {
-        if (plot.temp == -1 || dbManager == null) {
+        if (plot == null || uuid == null) {
             return;
         }
-        DBFunc.dbManager.setDenied(plot, uuid);
+        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        PlotDeniedRepository deniedRepo = PlotSquared.platform().injector().getInstance(PlotDeniedRepository.class);
+        String world = plot.getArea().toString();
+        PlotId pid = plot.getId();
+        Optional<PlotEntity> pe = plotRepo.findByWorldAndId(world, pid.getX(), pid.getY());
+        pe.ifPresent(entity -> deniedRepo.add(entity.getId(), uuid.toString()));
     }
 
     public static HashMap<UUID, Integer> getRatings(Plot plot) {
-        if (plot.temp == -1 || dbManager == null) {
+        if (plot == null) {
             return new HashMap<>(0);
         }
-        return DBFunc.dbManager.getRatings(plot);
+        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        PlotRatingRepository ratingRepo = PlotSquared.platform().injector().getInstance(PlotRatingRepository.class);
+        Optional<PlotEntity> pe = plotRepo.findByWorldAndId(plot.getWorldName(), plot.getId().getX(), plot.getId().getY());
+        HashMap<UUID, Integer> out = new HashMap<>();
+        pe.ifPresent(entity -> {
+            for (com.plotsquared.core.persistence.entity.PlotRatingEntity e : ratingRepo.findByPlotId(entity.getId())) {
+                try {
+                    out.put(UUID.fromString(e.getPlayer()), e.getRating());
+                } catch (IllegalArgumentException ignored) {
+                }
+            }
+        });
+        return out;
     }
 
     public static void setRating(Plot plot, UUID rater, int value) {
-        if (plot.temp == -1 || dbManager == null) {
+        if (plot == null || rater == null) {
             return;
         }
-        DBFunc.dbManager.setRating(plot, rater, value);
+        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        PlotRatingRepository ratingRepo = PlotSquared.platform().injector().getInstance(PlotRatingRepository.class);
+        Optional<PlotEntity> pe = plotRepo.findByWorldAndId(plot.getWorldName(), plot.getId().getX(), plot.getId().getY());
+        pe.ifPresent(entity -> ratingRepo.upsert(entity.getId(), rater.toString(), value));
     }
 
     public static HashMap<String, Set<PlotCluster>> getClusters() {
-        if (dbManager == null) {
-            return new HashMap<>();
+        HashMap<String, Set<PlotCluster>> result = new HashMap<>();
+        ClusterRepository clusterRepo = PlotSquared.platform().injector().getInstance(ClusterRepository.class);
+        ClusterHelperRepository helperRepo = PlotSquared.platform().injector().getInstance(ClusterHelperRepository.class);
+        ClusterInvitedRepository invitedRepo = PlotSquared.platform().injector().getInstance(ClusterInvitedRepository.class);
+        ClusterSettingsRepository settingsRepo = PlotSquared.platform().injector().getInstance(ClusterSettingsRepository.class);
+        List<ClusterEntity> clusters = clusterRepo.findAll();
+        Map<Long, PlotCluster> built = new HashMap<>();
+        for (ClusterEntity ce : clusters) {
+            UUID owner = Optional.ofNullable(ce.getOwner()).map(UUID::fromString).orElse(null);
+            PlotCluster cluster = new PlotCluster(null, PlotId.of(ce.getPos1X(), ce.getPos1Z()), PlotId.of(ce.getPos2X(), ce.getPos2Z()), owner);
+            built.put(ce.getId(), cluster);
+            result.computeIfAbsent(ce.getWorld(), k -> new java.util.HashSet<>()).add(cluster);
         }
-        return DBFunc.dbManager.getClusters();
+        // Populate helpers and invited
+        for (Map.Entry<Long, PlotCluster> e : built.entrySet()) {
+            long id = e.getKey();
+            PlotCluster cluster = e.getValue();
+            for (String u : helperRepo.findUsers(id)) {
+                cluster.helpers.add(UUID.fromString(u));
+            }
+            for (String u : invitedRepo.findUsers(id)) {
+                cluster.invited.add(UUID.fromString(u));
+            }
+            // Apply settings (alias, merged). Avoid setting temp variable.
+            settingsRepo.findById(id).ifPresent(se -> {
+                if (se.getAlias() != null) {
+                    cluster.settings.setAlias(se.getAlias());
+                }
+                Integer m = se.getMerged();
+                if (m != null) {
+                    boolean[] merged = new boolean[4];
+                    for (int i = 0; i < 4; i++) {
+                        merged[3 - i] = (m & 1 << i) != 0;
+                    }
+                    cluster.settings.setMerged(merged);
+                }
+            });
+        }
+        return result;
     }
 
     public static void setPosition(PlotCluster cluster, String position) {
-        if (dbManager == null) {
+        if (cluster == null || position == null) {
             return;
         }
-        DBFunc.dbManager.setPosition(cluster, position);
+        ClusterRepository clusterRepo = PlotSquared.platform().injector().getInstance(ClusterRepository.class);
+        ClusterSettingsRepository settingsRepo = PlotSquared.platform().injector().getInstance(ClusterSettingsRepository.class);
+        String world = cluster.area != null ? cluster.area.getWorldName() : null;
+        if (world == null) {
+            return;
+        }
+        PlotId center = cluster.getCenterPlotId();
+        Optional<ClusterEntity> ce = clusterRepo.findByWorldAndBounds(world, center.getX(), center.getY());
+        ce.ifPresent(entity -> settingsRepo.updatePosition(entity.getId(), position));
     }
 
     public static void replaceWorld(String oldWorld, String newWorld, PlotId min, PlotId max) {
-        if (dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.replaceWorld(oldWorld, newWorld, min, max);
-    }
-
-    /**
-     * Replace all occurrences of a uuid in the database with another one
-     *
-     * @param old
-     * @param now
-     */
-    public static void replaceUUID(UUID old, UUID now) {
-        if (dbManager == null) {
-            return;
-        }
-        DBFunc.dbManager.replaceUUID(old, now);
-    }
-
-    public static void close() {
-        if (dbManager != null) {
-            DBFunc.dbManager.close();
+        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        ClusterRepository clusterRepo = PlotSquared.platform().injector().getInstance(ClusterRepository.class);
+        if (min == null) {
+            plotRepo.replaceWorld(oldWorld, newWorld);
+            clusterRepo.replaceWorld(oldWorld, newWorld);
+        } else {
+            plotRepo.replaceWorldInBounds(oldWorld, newWorld, min, max);
+            clusterRepo.replaceWorldInBounds(oldWorld, newWorld, min, max);
         }
     }
 
