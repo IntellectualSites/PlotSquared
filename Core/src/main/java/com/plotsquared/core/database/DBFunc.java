@@ -37,7 +37,6 @@ import com.plotsquared.core.persistence.repository.api.PlotRatingRepository;
 import com.plotsquared.core.persistence.repository.api.PlotRepository;
 import com.plotsquared.core.persistence.repository.api.PlotSettingsRepository;
 import com.plotsquared.core.persistence.repository.api.PlotTrustedRepository;
-import com.plotsquared.core.persistence.repository.api.ClusterSettingsRepository;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotCluster;
