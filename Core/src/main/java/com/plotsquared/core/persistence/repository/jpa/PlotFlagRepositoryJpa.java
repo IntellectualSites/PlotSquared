@@ -27,6 +27,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,35 +44,29 @@ public class PlotFlagRepositoryJpa implements PlotFlagRepository {
     }
 
     @Override
-    public List<PlotFlagEntity> findByPlotId(long plotId) {
-        EntityManager em = emf.createEntityManager();
-        try {
+    public @NotNull List<PlotFlagEntity> findByPlotId(long plotId) {
+        try (EntityManager em = emf.createEntityManager()) {
             return em.createNamedQuery("PlotFlag.findByPlot", PlotFlagEntity.class)
                     .setParameter("plotId", plotId)
                     .getResultList();
-        } finally {
-            em.close();
         }
     }
 
     @Override
-    public Optional<PlotFlagEntity> findByPlotAndName(long plotId, String flagName) {
-        EntityManager em = emf.createEntityManager();
-        try {
+    public @NotNull Optional<PlotFlagEntity> findByPlotAndName(long plotId, @NotNull String flagName) {
+        try (EntityManager em = emf.createEntityManager()) {
             return em.createNamedQuery("PlotFlag.findByPlotAndName", PlotFlagEntity.class)
                     .setParameter("plotId", plotId)
                     .setParameter("flag", flagName)
                     .getResultStream().findFirst();
-        } finally {
-            em.close();
         }
     }
 
     @Override
-    public void save(PlotFlagEntity entity) {
+    public void save(@NotNull PlotFlagEntity entity) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             if (entity.getId() == null) {
                 // ensure Plot reference is managed if set by id only
@@ -87,18 +82,20 @@ public class PlotFlagRepositoryJpa implements PlotFlagRepository {
             tx.commit();
         } catch (RuntimeException e) {
             if (tx.isActive()) tx.rollback();
-            LOGGER.error("Failed to save plot flag (plotId={}, flag={})", entity.getPlot() != null ? entity.getPlot().getId() : null, entity.getFlag(), e);
-            throw e;
-        } finally {
-            em.close();
+            LOGGER.error(
+                    "Failed to save plot flag (plotId={}, flag={})",
+                    entity.getPlot() != null ? entity.getPlot().getId() : null,
+                    entity.getFlag(),
+                    e
+            );
         }
     }
 
     @Override
-    public void deleteByPlotAndName(long plotId, String flagName) {
+    public void deleteByPlotAndName(long plotId, @NotNull String flagName) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             em.createNamedQuery("PlotFlag.deleteByPlotAndName")
                     .setParameter("plotId", plotId)
@@ -108,9 +105,6 @@ public class PlotFlagRepositoryJpa implements PlotFlagRepository {
         } catch (RuntimeException e) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to delete plot flag (plotId={}, flag={})", plotId, flagName, e);
-            throw e;
-        } finally {
-            em.close();
         }
     }
 }
