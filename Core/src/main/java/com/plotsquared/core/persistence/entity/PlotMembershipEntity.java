@@ -25,7 +25,6 @@ import jakarta.persistence.IdClass;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
-import jdk.jfr.Name;
 
 @Entity
 @Table(name = "plot_helpers")
