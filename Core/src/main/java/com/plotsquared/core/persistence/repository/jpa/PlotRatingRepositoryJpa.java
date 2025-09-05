@@ -26,6 +26,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -41,22 +42,19 @@ public class PlotRatingRepositoryJpa implements PlotRatingRepository {
     }
 
     @Override
-    public List<PlotRatingEntity> findByPlotId(long plotId) {
-        EntityManager em = emf.createEntityManager();
-        try {
+    public @NotNull List<PlotRatingEntity> findByPlotId(long plotId) {
+        try (EntityManager em = emf.createEntityManager()) {
             return em.createNamedQuery("PlotRating.findByPlot", PlotRatingEntity.class)
                     .setParameter("plotId", plotId)
                     .getResultList();
-        } finally {
-            em.close();
         }
     }
 
     @Override
-    public void upsert(long plotId, String playerUuid, int rating) {
+    public void upsert(long plotId, @NotNull String playerUuid, int rating) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             int updated = em.createNamedQuery("PlotRating.updateValue")
                     .setParameter("rating", rating)
@@ -74,9 +72,6 @@ public class PlotRatingRepositoryJpa implements PlotRatingRepository {
         } catch (RuntimeException e) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to upsert plot rating (plotId={}, playerUuid={}, rating={})", plotId, playerUuid, rating, e);
-            throw e;
-        } finally {
-            em.close();
         }
     }
 }
