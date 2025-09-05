@@ -41,6 +41,7 @@ dependencies {
     compileOnly(libs.luckperms)
     compileOnly(libs.essentialsx) {
         exclude(group = "org.spigotmc")
+        exclude(group = "io.papermc.paper")
     }
     compileOnly(libs.mvdwapi) { isTransitive = false }
 
