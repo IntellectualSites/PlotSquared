@@ -71,15 +71,6 @@ public class DatabaseCommand extends SubCommand {
             case "migrate-to-h2":
                 migrateToH2(player);
                 break;
-
-            case "backup":
-                if (args.length < 2) {
-                    player.sendMessage(TranslatableCaption.of("database.backup_usage"));
-                    return false;
-                }
-                createBackup(player, args[1]);
-                break;
-
             default:
                 player.sendMessage(TranslatableCaption.of("database.unknown_subcommand"));
                 player.sendMessage(TranslatableCaption.of("database.available_commands"));
@@ -123,22 +114,6 @@ public class DatabaseCommand extends SubCommand {
             } catch (Exception e) {
                 player.sendMessage(TranslatableCaption.of("database.migration_failed"));
                 LOGGER.error("Database migration to SQLite failed", e);
-            }
-        });
-    }
-
-    private void createBackup(PlotPlayer<?> player, String backupSuffix) {
-        player.sendMessage(TranslatableCaption.of("database.backup_started"));
-
-        CompletableFuture.runAsync(() -> {
-            try {
-                liquibaseMigrationService.migrateToBackupDatabase(backupSuffix);
-
-                player.sendMessage(TranslatableCaption.of("database.backup_completed"));
-
-            } catch (Exception e) {
-                player.sendMessage(TranslatableCaption.of("database.backup_failed"));
-                e.printStackTrace();
             }
         });
     }

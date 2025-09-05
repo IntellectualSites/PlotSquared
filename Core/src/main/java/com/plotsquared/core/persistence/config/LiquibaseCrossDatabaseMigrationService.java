@@ -21,6 +21,8 @@ package com.plotsquared.core.persistence.config;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.plotsquared.core.configuration.Storage;
+import liquibase.Contexts;
+import liquibase.LabelExpression;
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
@@ -92,36 +94,6 @@ public final class LiquibaseCrossDatabaseMigrationService {
     }
 
     /**
-     * Migrates from current database to SQLite using Liquibase's native capabilities.
-     */
-    public void migrateToSQLite() {
-        LOGGER.info("Starting pure Liquibase migration to SQLite...");
-
-        if (!Storage.SQLite.USE) {
-            throw new IllegalStateException("SQLite is not configured. Please configure SQLite settings in the config file first.");
-        }
-
-        try {
-            // Create SQLite datasource using config settings
-            String sqliteUrl = "jdbc:sqlite:" + Storage.SQLite.DB + ".db";
-            DataSource targetDataSource = dataSourceProvider.createDataSource(sqliteUrl, null, null, "org.sqlite.JDBC");
-
-            // Get current datasource
-            DataSource sourceDataSource = dataSourceProvider.createDataSource();
-
-            // Perform migration using pure Liquibase
-            migrateUsingLiquibaseNative(sourceDataSource, targetDataSource);
-
-            LOGGER.info("Migration to SQLite completed successfully.");
-
-        } catch (Exception e) {
-            LOGGER.severe("Migration to SQLite failed: " + e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException("Migration to SQLite failed", e);
-        }
-    }
-
-    /**
      * Migrates from current database to H2 using Liquibase's native capabilities.
      */
     public void migrateToH2() {
@@ -155,47 +127,12 @@ public final class LiquibaseCrossDatabaseMigrationService {
     }
 
     /**
-     * Migrates from current database to a backup database.
-     */
-    public void migrateToBackupDatabase(String backupSuffix) {
-        LOGGER.info("Starting migration to backup database with suffix: " + backupSuffix);
-
-        try {
-            DataSource sourceDataSource = dataSourceProvider.createDataSource();
-            DataSource targetDataSource;
-
-            if (Storage.MySQL.USE) {
-                // Create backup MySQL database
-                String backupDatabase = Storage.MySQL.DATABASE + "_" + backupSuffix;
-                String mysqlUrl = "jdbc:mysql://" + Storage.MySQL.HOST + ":" + Storage.MySQL.PORT + "/" + backupDatabase +
-                                 "?" + String.join("&", Storage.MySQL.PROPERTIES) + "&createDatabaseIfNotExist=true";
-                targetDataSource = dataSourceProvider.createDataSource(mysqlUrl, Storage.MySQL.USER, Storage.MySQL.PASSWORD, "com.mysql.cj.jdbc.Driver");
-            } else {
-                // Create backup SQLite database
-                String backupFile = Storage.SQLite.DB + "_" + backupSuffix;
-                String sqliteUrl = "jdbc:sqlite:" + backupFile + ".db";
-                targetDataSource = dataSourceProvider.createDataSource(sqliteUrl, null, null, "org.sqlite.JDBC");
-            }
-
-            // Perform migration using pure Liquibase
-            migrateUsingLiquibaseNative(sourceDataSource, targetDataSource);
-
-            LOGGER.info("Migration to backup database completed successfully.");
-
-        } catch (Exception e) {
-            LOGGER.severe("Migration to backup database failed: " + e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException("Migration to backup database failed", e);
-        }
-    }
-
-    /**
      * Performs the actual migration using Liquibase's native generateChangeLog functionality.
      * This approach eliminates the need for CSV export/import and uses pure Liquibase operations.
      */
     private void migrateUsingLiquibaseNative(DataSource sourceDataSource, DataSource targetDataSource) throws Exception {
         // Create temporary file for the generated changelog
-        Path tempChangelog = Files.createTempFile("plotsquared-migration-", ".xml");
+        Path tempChangelog = Files.createTempFile(Path.of(""),"plotsquared-migration-", ".xml");
 
         try (Connection sourceConnection = sourceDataSource.getConnection();
              Connection targetConnection = targetDataSource.getConnection()) {
@@ -207,7 +144,7 @@ public final class LiquibaseCrossDatabaseMigrationService {
             LOGGER.info("Creating target database schema...");
             Liquibase schemaLiquibase = new Liquibase("db/changelog/db.changelog-master.xml",
                                                      new ClassLoaderResourceAccessor(), targetDatabase);
-            schemaLiquibase.update("");
+            schemaLiquibase.update(new Contexts(), new LabelExpression());
 
             // Step 2: Generate changelog with data from source database
             LOGGER.info("Generating changelog with data from source database...");
@@ -217,7 +154,10 @@ public final class LiquibaseCrossDatabaseMigrationService {
             LOGGER.info("Applying data to target database...");
             Liquibase dataLiquibase = new Liquibase(tempChangelog.toString(),
                                                    new ClassLoaderResourceAccessor(), targetDatabase);
-            dataLiquibase.update("");
+            dataLiquibase.setChangeLogParameter("PREFIX", Storage.PREFIX == null ? "" : Storage.PREFIX);
+            dataLiquibase.setChangeLogParameter("prefix", Storage.PREFIX == null ? "" : Storage.PREFIX);
+
+            dataLiquibase.update(new Contexts(), new LabelExpression());
 
             LOGGER.info("Pure Liquibase migration completed successfully.");
 
@@ -242,8 +182,7 @@ public final class LiquibaseCrossDatabaseMigrationService {
 
             // Generate changelog including data
             // This uses Liquibase's built-in generateChangeLog with data option
-            generateChangeLogUsingDiff(sourceDatabase, sourceDatabase, outputFile);// import liquibase.snapshot.DatabaseSnapshot; // Entfernen
-            // import liquibase.structure.DatabaseSnapshot; // Entfernen
+            generateChangeLogUsingDiff(sourceDatabase, sourceDatabase, outputFile);
 
         } catch (Exception e) {
             LOGGER.severe("Failed to generate data changelog: " + e.getMessage());
@@ -310,27 +249,6 @@ public final class LiquibaseCrossDatabaseMigrationService {
         } catch (Exception e) {
             LOGGER.severe("Error during migration validation: " + e.getMessage());
             return false;
-        }
-    }
-
-    /**
-     * Gets migration statistics without hacky record counting.
-     */
-    public String getMigrationInfo(DataSource dataSource) {
-        try (Connection connection = dataSource.getConnection()) {
-            Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-
-            // Use Liquibase to get database info
-            StringBuilder info = new StringBuilder();
-            info.append("Database Type: ").append(database.getDatabaseProductName()).append("\n");
-            info.append("Database Version: ").append(database.getDatabaseProductVersion()).append("\n");
-            info.append("Default Schema: ").append(database.getDefaultSchemaName()).append("\n");
-
-            return info.toString();
-
-        } catch (Exception e) {
-            LOGGER.warning("Error getting migration info: " + e.getMessage());
-            return "Error retrieving database information";
         }
     }
 }

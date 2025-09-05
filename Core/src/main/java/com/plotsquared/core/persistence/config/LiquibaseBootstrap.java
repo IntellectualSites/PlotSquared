@@ -20,6 +20,9 @@ package com.plotsquared.core.persistence.config;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.plotsquared.core.configuration.Storage;
+import liquibase.Contexts;
+import liquibase.LabelExpression;
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
@@ -50,9 +53,9 @@ public final class LiquibaseBootstrap {
                 Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
 
                 // Log database version information
-                InstallationState dbVersion = migrationService.getDatabaseVersion(connection);
-                LOGGER.info("Detected database version: " + dbVersion.getDescription());
-                if (dbVersion == InstallationState.UPGRADE_FROM_V7) {
+                InstallationState installationState = migrationService.getDatabaseVersion(connection);
+                LOGGER.info("Detected database version: " + installationState.getDescription());
+                if (installationState == InstallationState.UPGRADE_FROM_V7) {
                     liquibaseCrossDatabaseMigrationService.migrateToH2();
                 }
 
@@ -60,12 +63,14 @@ public final class LiquibaseBootstrap {
                 Liquibase liquibase = new Liquibase("db/changelog/db.changelog-master.xml",
                         new ClassLoaderResourceAccessor(), database);
 
-                liquibase.update("");
+                liquibase.setChangeLogParameter("PREFIX", Storage.PREFIX == null ? "" : Storage.PREFIX);
+                liquibase.setChangeLogParameter("prefix", Storage.PREFIX == null ? "" : Storage.PREFIX);
+
+                liquibase.update(new Contexts(), new LabelExpression());
                 LOGGER.info("Liquibase migration completed successfully.");
 
             } catch (Exception e) {
                 LOGGER.severe("Liquibase migration failed: " + e.getMessage());
-                throw new RuntimeException("Database migration failed", e);
             }
         });
     }

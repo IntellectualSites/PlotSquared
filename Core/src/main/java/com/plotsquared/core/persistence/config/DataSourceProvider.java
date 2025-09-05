@@ -51,28 +51,16 @@ public final class DataSourceProvider {
             config.setPassword(Storage.MySQL.PASSWORD);
             config.setDriverClassName("com.mysql.cj.jdbc.Driver");
         } else if (Storage.H2.USE) {
-            String url;
-            switch (Storage.H2.MODE.toUpperCase()) {
-                case "MEMORY":
-                    url = "jdbc:h2:mem:" + Storage.H2.DB;
-                    break;
-                case "SERVER":
-                    url = "jdbc:h2:tcp://localhost/" + Storage.H2.DB;
-                    break;
-                case "FILE":
-                default:
-                    url = "jdbc:h2:file:./" + Storage.H2.DB;
-                    break;
-            }
+            String url = switch (Storage.H2.MODE.toUpperCase()) {
+                case "MEMORY" -> "jdbc:h2:mem:" + Storage.H2.DB;
+                case "SERVER" -> "jdbc:h2:tcp://localhost/" + Storage.H2.DB;
+                default -> "jdbc:h2:file:./" + Storage.H2.DB;
+            };
             if (!Storage.H2.PROPERTIES.isEmpty()) {
                 url += ";" + String.join(";", Storage.H2.PROPERTIES);
             }
             config.setJdbcUrl(url);
             config.setDriverClassName("org.h2.Driver");
-        } else if (Storage.SQLite.USE) {
-            String url = "jdbc:sqlite:" + Storage.SQLite.DB + ".db";
-            config.setJdbcUrl(url);
-            config.setDriverClassName("org.sqlite.JDBC");
         }
 
         config.setMaximumPoolSize(10);

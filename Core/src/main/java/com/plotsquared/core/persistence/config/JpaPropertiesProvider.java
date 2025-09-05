@@ -69,11 +69,6 @@ public final class JpaPropertiesProvider {
             props.put("jakarta.persistence.jdbc.url", url);
             props.put("jakarta.persistence.jdbc.driver", "org.h2.Driver");
             props.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
-        } else if (Storage.SQLite.USE) {
-            String url = "jdbc:sqlite:" + Storage.SQLite.DB + ".db";
-            props.put("jakarta.persistence.jdbc.url", url);
-            props.put("jakarta.persistence.jdbc.driver", "org.sqlite.JDBC");
-            props.put("hibernate.dialect", "org.hibernate.community.dialect.SQLiteDialect");
         }
 
         // Schema is managed by Liquibase; only validate with Hibernate
