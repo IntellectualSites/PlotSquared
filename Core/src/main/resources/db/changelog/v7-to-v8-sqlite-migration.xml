@@ -6,7 +6,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
     <!-- v7 to v8 Migration for SQLite: Recreate plot table with ID column -->
-    <changeSet id="v7-to-v8-sqlite-recreate-plot-table" author="plotsquared">
+    <changeSet id="v7-to-v8-sqlite-recreate-plot-table" author="plotsquared" dbms="sqlite">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="sqlite"/>
@@ -59,7 +59,7 @@
     </changeSet>
 
     <!-- v7 to v8 Migration for SQLite: Create plot_settings if it doesn't exist -->
-    <changeSet id="v7-to-v8-sqlite-create-plot-settings" author="plotsquared">
+    <changeSet id="v7-to-v8-sqlite-create-plot-settings" author="plotsquared" dbms="sqlite">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="sqlite"/>
@@ -109,7 +109,7 @@
     </changeSet>
 
     <!-- v7 to v8 Migration for SQLite: Update plot membership tables -->
-    <changeSet id="v7-to-v8-sqlite-update-plot-trusted" author="plotsquared">
+    <changeSet id="v7-to-v8-sqlite-update-plot-trusted" author="plotsquared" dbms="sqlite">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="sqlite"/>
@@ -148,7 +148,7 @@
                                onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="v7-to-v8-sqlite-update-plot-helpers" author="plotsquared">
+    <changeSet id="v7-to-v8-sqlite-update-plot-helpers" author="plotsquared" dbms="sqlite">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="sqlite"/>
@@ -185,7 +185,7 @@
                                onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="v7-to-v8-sqlite-update-plot-denied" author="plotsquared">
+    <changeSet id="v7-to-v8-sqlite-update-plot-denied" author="plotsquared" dbms="sqlite">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="sqlite"/>
@@ -222,7 +222,7 @@
                                onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="v7-to-v8-sqlite-update-plot-rating" author="plotsquared">
+    <changeSet id="v7-to-v8-sqlite-update-plot-rating" author="plotsquared" dbms="sqlite">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="sqlite"/>
@@ -267,7 +267,7 @@
     </changeSet>
 
     <!-- v7 to v8 Migration for SQLite: Recreate cluster table with ID column -->
-    <changeSet id="v7-to-v8-sqlite-recreate-cluster-table" author="plotsquared">
+    <changeSet id="v7-to-v8-sqlite-recreate-cluster-table" author="plotsquared" dbms="sqlite">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="sqlite"/>
@@ -316,7 +316,7 @@
     </changeSet>
 
     <!-- v7 to v8 Migration for SQLite: Update cluster membership tables -->
-    <changeSet id="v7-to-v8-sqlite-update-cluster-helpers" author="plotsquared">
+    <changeSet id="v7-to-v8-sqlite-update-cluster-helpers" author="plotsquared" dbms="sqlite">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="sqlite"/>
@@ -354,7 +354,7 @@
     </changeSet>
 
     <!-- Add meta_id to player_meta if missing (SQLite) -->
-    <changeSet id="v7-to-v8-sqlite-add-player-meta-id" author="plotsquared">
+    <changeSet id="v7-to-v8-sqlite-add-player-meta-id" author="plotsquared" dbms="sqlite">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="sqlite"/>
@@ -395,7 +395,7 @@
     </changeSet>
 
     <!-- Create missing tables for v8 if they don't exist (SQLite) -->
-    <changeSet id="v7-to-v8-sqlite-create-plot-flags" author="plotsquared">
+    <changeSet id="v7-to-v8-sqlite-create-plot-flags" author="plotsquared" dbms="sqlite">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="sqlite"/>

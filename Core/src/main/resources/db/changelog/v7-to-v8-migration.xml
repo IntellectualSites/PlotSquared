@@ -6,7 +6,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
     <!-- v7 to v8 Migration: Add ID column to existing plot table (MySQL only) -->
-    <changeSet id="v7-to-v8-add-plot-id" author="plotsquared">
+    <changeSet id="v7-to-v8-add-plot-id" author="plotsquared" dbms="mysql">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="mysql"/>
@@ -35,7 +35,7 @@
     </changeSet>
 
     <!-- v7 to v8 Migration: Create plot_settings if it doesn't exist (MySQL only) -->
-    <changeSet id="v7-to-v8-create-plot-settings" author="plotsquared">
+    <changeSet id="v7-to-v8-create-plot-settings" author="plotsquared" dbms="mysql">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="mysql"/>
@@ -88,7 +88,7 @@
     </changeSet>
 
     <!-- v7 to v8 Migration: Update plot membership tables to use new plot IDs (MySQL only) -->
-    <changeSet id="v7-to-v8-update-plot-trusted-fk" author="plotsquared">
+    <changeSet id="v7-to-v8-update-plot-trusted-fk" author="plotsquared" dbms="mysql">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="mysql"/>
@@ -111,7 +111,7 @@
                                onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="v7-to-v8-update-plot-helpers-fk" author="plotsquared">
+    <changeSet id="v7-to-v8-update-plot-helpers-fk" author="plotsquared" dbms="mysql">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="mysql"/>
@@ -134,7 +134,7 @@
                                onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="v7-to-v8-update-plot-denied-fk" author="plotsquared">
+    <changeSet id="v7-to-v8-update-plot-denied-fk" author="plotsquared" dbms="mysql">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="mysql"/>
@@ -157,7 +157,7 @@
                                onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="v7-to-v8-update-plot-rating-fk" author="plotsquared">
+    <changeSet id="v7-to-v8-update-plot-rating-fk" author="plotsquared" dbms="mysql">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="mysql"/>
@@ -181,7 +181,7 @@
     </changeSet>
 
     <!-- v7 to v8 Migration: Add ID column to cluster table (MySQL only) -->
-    <changeSet id="v7-to-v8-add-cluster-id" author="plotsquared">
+    <changeSet id="v7-to-v8-add-cluster-id" author="plotsquared" dbms="mysql">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="mysql"/>
@@ -206,7 +206,7 @@
     </changeSet>
 
     <!-- v7 to v8 Migration: Update cluster membership tables (MySQL only) -->
-    <changeSet id="v7-to-v8-update-cluster-helpers-fk" author="plotsquared">
+    <changeSet id="v7-to-v8-update-cluster-helpers-fk" author="plotsquared" dbms="mysql">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="mysql"/>
@@ -229,7 +229,7 @@
                                onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="v7-to-v8-update-cluster-invited-fk" author="plotsquared">
+    <changeSet id="v7-to-v8-update-cluster-invited-fk" author="plotsquared" dbms="mysql">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="mysql"/>
@@ -252,7 +252,7 @@
                                onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="v7-to-v8-update-cluster-settings-fk" author="plotsquared">
+    <changeSet id="v7-to-v8-update-cluster-settings-fk" author="plotsquared" dbms="mysql">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="mysql"/>
@@ -276,7 +276,7 @@
     </changeSet>
 
     <!-- Add meta_id to player_meta if missing (MySQL only) -->
-    <changeSet id="v7-to-v8-add-player-meta-id" author="plotsquared">
+    <changeSet id="v7-to-v8-add-player-meta-id" author="plotsquared" dbms="mysql">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="mysql"/>
@@ -301,7 +301,7 @@
     </changeSet>
 
     <!-- Create missing tables for v8 if they don't exist (MySQL only) -->
-    <changeSet id="v7-to-v8-create-plot-flags" author="plotsquared">
+    <changeSet id="v7-to-v8-create-plot-flags" author="plotsquared" dbms="mysql">
         <preConditions onFail="MARK_RAN">
             <and>
                 <dbms type="mysql"/>
