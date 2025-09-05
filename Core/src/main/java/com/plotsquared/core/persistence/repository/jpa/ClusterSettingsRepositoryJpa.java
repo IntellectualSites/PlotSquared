@@ -42,11 +42,8 @@ public class ClusterSettingsRepositoryJpa implements ClusterSettingsRepository {
 
     @Override
     public Optional<ClusterSettingsEntity> findById(long clusterId) {
-        EntityManager em = emf.createEntityManager();
-        try {
+        try (EntityManager em = emf.createEntityManager()) {
             return Optional.ofNullable(em.find(ClusterSettingsEntity.class, clusterId));
-        } finally {
-            em.close();
         }
     }
 
@@ -54,7 +51,7 @@ public class ClusterSettingsRepositoryJpa implements ClusterSettingsRepository {
     public void updatePosition(long clusterId, String position) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             em.createNamedQuery("ClusterSettings.updatePosition")
                     .setParameter("clusterId", clusterId)
@@ -64,9 +61,6 @@ public class ClusterSettingsRepositoryJpa implements ClusterSettingsRepository {
         } catch (RuntimeException ex) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to update cluster position (clusterId={}, position={})", clusterId, position, ex);
-            throw ex;
-        } finally {
-            em.close();
         }
     }
 }
