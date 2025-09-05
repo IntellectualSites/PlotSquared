@@ -49,6 +49,26 @@ public final class JpaPropertiesProvider {
             props.put("jakarta.persistence.jdbc.password", Storage.MySQL.PASSWORD);
             props.put("jakarta.persistence.jdbc.driver", "com.mysql.cj.jdbc.Driver");
             props.put("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect");
+        } else if (Storage.H2.USE) {
+            String url;
+            switch (Storage.H2.MODE.toUpperCase()) {
+                case "MEMORY":
+                    url = "jdbc:h2:mem:" + Storage.H2.DB;
+                    break;
+                case "SERVER":
+                    url = "jdbc:h2:tcp://localhost/" + Storage.H2.DB;
+                    break;
+                case "FILE":
+                default:
+                    url = "jdbc:h2:file:./" + Storage.H2.DB;
+                    break;
+            }
+            if (!Storage.H2.PROPERTIES.isEmpty()) {
+                url += ";" + String.join(";", Storage.H2.PROPERTIES);
+            }
+            props.put("jakarta.persistence.jdbc.url", url);
+            props.put("jakarta.persistence.jdbc.driver", "org.h2.Driver");
+            props.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
         } else if (Storage.SQLite.USE) {
             String url = "jdbc:sqlite:" + Storage.SQLite.DB + ".db";
             props.put("jakarta.persistence.jdbc.url", url);

@@ -43,14 +43,18 @@ public final class LiquibaseBootstrap {
     private static final Logger LOGGER = Logger.getLogger(LiquibaseBootstrap.class.getName());
 
     @Inject
-    public LiquibaseBootstrap(DataSource dataSource, DatabaseMigrationService migrationService) {
+    public LiquibaseBootstrap(DataSource dataSource, DatabaseMigrationService migrationService,
+                              LiquibaseCrossDatabaseMigrationService liquibaseCrossDatabaseMigrationService) {
         syncThreadForServiceLoader(() -> {
             try (Connection connection = dataSource.getConnection()) {
                 Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
 
                 // Log database version information
-                String dbVersion = migrationService.getDatabaseVersion(connection);
-                LOGGER.info("Detected database version: " + dbVersion);
+                InstallationState dbVersion = migrationService.getDatabaseVersion(connection);
+                LOGGER.info("Detected database version: " + dbVersion.getDescription());
+                if (dbVersion == InstallationState.UPGRADE_FROM_V7) {
+                    liquibaseCrossDatabaseMigrationService.migrateToH2();
+                }
 
                 // Run Liquibase migrations - this will handle both v7->v8 migration and new v8 installations
                 Liquibase liquibase = new Liquibase("db/changelog/db.changelog-master.xml",

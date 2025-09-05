@@ -122,6 +122,39 @@ public final class LiquibaseCrossDatabaseMigrationService {
     }
 
     /**
+     * Migrates from current database to H2 using Liquibase's native capabilities.
+     */
+    public void migrateToH2() {
+        LOGGER.info("Starting pure Liquibase migration to H2...");
+
+        if (!Storage.H2.USE) {
+            throw new IllegalStateException("H2 is not configured. Please configure H2 settings in the config file first.");
+        }
+
+        try {
+            // Create H2 datasource using config settings
+            String h2Url = "jdbc:h2:file:./" + Storage.H2.DB;
+            if (!Storage.H2.PROPERTIES.isEmpty()) {
+                h2Url += ";" + String.join(";", Storage.H2.PROPERTIES);
+            }
+            DataSource targetDataSource = dataSourceProvider.createDataSource(h2Url, null, null, "org.h2.Driver");
+
+            // Get current datasource
+            DataSource sourceDataSource = dataSourceProvider.createDataSource();
+
+            // Perform migration using pure Liquibase
+            migrateUsingLiquibaseNative(sourceDataSource, targetDataSource);
+
+            LOGGER.info("Migration to H2 completed successfully.");
+
+        } catch (Exception e) {
+            LOGGER.severe("Migration to H2 failed: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Migration to H2 failed", e);
+        }
+    }
+
+    /**
      * Migrates from current database to a backup database.
      */
     public void migrateToBackupDatabase(String backupSuffix) {

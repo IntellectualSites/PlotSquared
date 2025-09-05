@@ -5,21 +5,17 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
-    <!-- v7 to v8 Migration: Add ID column to existing plot table (MySQL only) -->
-    <changeSet id="v7-to-v8-add-plot-id" author="plotsquared" dbms="mysql">
+    <!-- v7 to v8 Migration: Add ID column to existing plot table -->
+    <changeSet id="v7-to-v8-add-plot-id" author="plotsquared">
         <preConditions onFail="MARK_RAN">
             <and>
-                <dbms type="mysql"/>
                 <tableExists tableName="${prefix}plot"/>
                 <not>
                     <columnExists tableName="${prefix}plot" columnName="id"/>
                 </not>
             </and>
-            <not>
-                <dbms type="sqlite"/>
-            </not>
         </preConditions>
-        <comment>Add auto-increment ID column to existing v7 plot table (MySQL)</comment>
+        <comment>Add auto-increment ID column to existing v7 plot table</comment>
 
         <addColumn tableName="${prefix}plot">
             <column name="id" type="BIGINT" autoIncrement="true">
@@ -34,20 +30,16 @@
                            constraintName="uk_plot_coordinates"/>
     </changeSet>
 
-    <!-- v7 to v8 Migration: Create plot_settings if it doesn't exist (MySQL only) -->
-    <changeSet id="v7-to-v8-create-plot-settings" author="plotsquared" dbms="mysql">
+    <!-- v7 to v8 Migration: Create plot_settings if it doesn't exist -->
+    <changeSet id="v7-to-v8-create-plot-settings" author="plotsquared">
         <preConditions onFail="MARK_RAN">
             <and>
-                <dbms type="mysql"/>
                 <not>
                     <tableExists tableName="${prefix}plot_settings"/>
                 </not>
             </and>
-            <not>
-                <dbms type="sqlite"/>
-            </not>
         </preConditions>
-        <comment>Create plot_settings table for v8 (MySQL)</comment>
+        <comment>Create plot_settings table for v8</comment>
 
         <createTable tableName="${prefix}plot_settings">
             <column name="plot_plot_id" type="BIGINT">
@@ -87,19 +79,15 @@
                                onDelete="CASCADE"/>
     </changeSet>
 
-    <!-- v7 to v8 Migration: Update plot membership tables to use new plot IDs (MySQL only) -->
-    <changeSet id="v7-to-v8-update-plot-trusted-fk" author="plotsquared" dbms="mysql">
+    <!-- v7 to v8 Migration: Update plot membership tables to use new plot IDs -->
+    <changeSet id="v7-to-v8-update-plot-trusted-fk" author="plotsquared">
         <preConditions onFail="MARK_RAN">
             <and>
-                <dbms type="mysql"/>
                 <tableExists tableName="${prefix}plot_trusted"/>
                 <columnExists tableName="${prefix}plot" columnName="id"/>
             </and>
-            <not>
-                <dbms type="sqlite"/>
-            </not>
         </preConditions>
-        <comment>Update plot_trusted foreign key to use new plot.id (MySQL)</comment>
+        <comment>Update plot_trusted foreign key to use new plot.id</comment>
 
         <dropForeignKeyConstraint baseTableName="${prefix}plot_trusted" constraintName="fk_plot_trusted_plot"/>
 
@@ -111,18 +99,14 @@
                                onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="v7-to-v8-update-plot-helpers-fk" author="plotsquared" dbms="mysql">
+    <changeSet id="v7-to-v8-update-plot-helpers-fk" author="plotsquared">
         <preConditions onFail="MARK_RAN">
             <and>
-                <dbms type="mysql"/>
                 <tableExists tableName="${prefix}plot_helpers"/>
                 <columnExists tableName="${prefix}plot" columnName="id"/>
             </and>
-            <not>
-                <dbms type="sqlite"/>
-            </not>
         </preConditions>
-        <comment>Update plot_helpers foreign key to use new plot.id (MySQL)</comment>
+        <comment>Update plot_helpers foreign key to use new plot.id</comment>
 
         <dropForeignKeyConstraint baseTableName="${prefix}plot_helpers" constraintName="fk_plot_helpers_plot"/>
 
@@ -134,18 +118,14 @@
                                onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="v7-to-v8-update-plot-denied-fk" author="plotsquared" dbms="mysql">
+    <changeSet id="v7-to-v8-update-plot-denied-fk" author="plotsquared">
         <preConditions onFail="MARK_RAN">
             <and>
-                <dbms type="mysql"/>
                 <tableExists tableName="${prefix}plot_denied"/>
                 <columnExists tableName="${prefix}plot" columnName="id"/>
             </and>
-            <not>
-                <dbms type="sqlite"/>
-            </not>
         </preConditions>
-        <comment>Update plot_denied foreign key to use new plot.id (MySQL)</comment>
+        <comment>Update plot_denied foreign key to use new plot.id</comment>
 
         <dropForeignKeyConstraint baseTableName="${prefix}plot_denied" constraintName="fk_plot_denied_plot"/>
 
@@ -157,18 +137,14 @@
                                onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="v7-to-v8-update-plot-rating-fk" author="plotsquared" dbms="mysql">
+    <changeSet id="v7-to-v8-update-plot-rating-fk" author="plotsquared">
         <preConditions onFail="MARK_RAN">
             <and>
-                <dbms type="mysql"/>
                 <tableExists tableName="${prefix}plot_rating"/>
                 <columnExists tableName="${prefix}plot" columnName="id"/>
             </and>
-            <not>
-                <dbms type="sqlite"/>
-            </not>
         </preConditions>
-        <comment>Update plot_rating foreign key to use new plot.id (MySQL)</comment>
+        <comment>Update plot_rating foreign key to use new plot.id</comment>
 
         <dropForeignKeyConstraint baseTableName="${prefix}plot_rating" constraintName="fk_plot_rating_plot"/>
 
@@ -180,21 +156,17 @@
                                onDelete="CASCADE"/>
     </changeSet>
 
-    <!-- v7 to v8 Migration: Add ID column to cluster table (MySQL only) -->
-    <changeSet id="v7-to-v8-add-cluster-id" author="plotsquared" dbms="mysql">
+    <!-- v7 to v8 Migration: Add ID column to cluster table -->
+    <changeSet id="v7-to-v8-add-cluster-id" author="plotsquared">
         <preConditions onFail="MARK_RAN">
             <and>
-                <dbms type="mysql"/>
                 <tableExists tableName="${prefix}cluster"/>
                 <not>
                     <columnExists tableName="${prefix}cluster" columnName="id"/>
                 </not>
             </and>
-            <not>
-                <dbms type="sqlite"/>
-            </not>
         </preConditions>
-        <comment>Add auto-increment ID column to existing v7 cluster table (MySQL)</comment>
+        <comment>Add auto-increment ID column to existing v7 cluster table</comment>
 
         <addColumn tableName="${prefix}cluster">
             <column name="id" type="BIGINT" autoIncrement="true">
@@ -205,19 +177,15 @@
         <addPrimaryKey tableName="${prefix}cluster" columnNames="id" constraintName="pk_cluster_id"/>
     </changeSet>
 
-    <!-- v7 to v8 Migration: Update cluster membership tables (MySQL only) -->
-    <changeSet id="v7-to-v8-update-cluster-helpers-fk" author="plotsquared" dbms="mysql">
+    <!-- v7 to v8 Migration: Update cluster membership tables -->
+    <changeSet id="v7-to-v8-update-cluster-helpers-fk" author="plotsquared">
         <preConditions onFail="MARK_RAN">
             <and>
-                <dbms type="mysql"/>
                 <tableExists tableName="${prefix}cluster_helpers"/>
                 <columnExists tableName="${prefix}cluster" columnName="id"/>
             </and>
-            <not>
-                <dbms type="sqlite"/>
-            </not>
         </preConditions>
-        <comment>Update cluster_helpers foreign key to use new cluster.id (MySQL)</comment>
+        <comment>Update cluster_helpers foreign key to use new cluster.id</comment>
 
         <dropForeignKeyConstraint baseTableName="${prefix}cluster_helpers" constraintName="fk_cluster_helpers_cluster"/>
 
@@ -229,18 +197,14 @@
                                onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="v7-to-v8-update-cluster-invited-fk" author="plotsquared" dbms="mysql">
+    <changeSet id="v7-to-v8-update-cluster-invited-fk" author="plotsquared">
         <preConditions onFail="MARK_RAN">
             <and>
-                <dbms type="mysql"/>
                 <tableExists tableName="${prefix}cluster_invited"/>
                 <columnExists tableName="${prefix}cluster" columnName="id"/>
             </and>
-            <not>
-                <dbms type="sqlite"/>
-            </not>
         </preConditions>
-        <comment>Update cluster_invited foreign key to use new cluster.id (MySQL)</comment>
+        <comment>Update cluster_invited foreign key to use new cluster.id</comment>
 
         <dropForeignKeyConstraint baseTableName="${prefix}cluster_invited" constraintName="fk_cluster_invited_cluster"/>
 
@@ -252,18 +216,14 @@
                                onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="v7-to-v8-update-cluster-settings-fk" author="plotsquared" dbms="mysql">
+    <changeSet id="v7-to-v8-update-cluster-settings-fk" author="plotsquared">
         <preConditions onFail="MARK_RAN">
             <and>
-                <dbms type="mysql"/>
                 <tableExists tableName="${prefix}cluster_settings"/>
                 <columnExists tableName="${prefix}cluster" columnName="id"/>
             </and>
-            <not>
-                <dbms type="sqlite"/>
-            </not>
         </preConditions>
-        <comment>Update cluster_settings foreign key to use new cluster.id (MySQL)</comment>
+        <comment>Update cluster_settings foreign key to use new cluster.id</comment>
 
         <dropForeignKeyConstraint baseTableName="${prefix}cluster_settings" constraintName="fk_cluster_settings_cluster"/>
 
@@ -275,21 +235,17 @@
                                onDelete="CASCADE"/>
     </changeSet>
 
-    <!-- Add meta_id to player_meta if missing (MySQL only) -->
-    <changeSet id="v7-to-v8-add-player-meta-id" author="plotsquared" dbms="mysql">
+    <!-- Add meta_id to player_meta if missing -->
+    <changeSet id="v7-to-v8-add-player-meta-id" author="plotsquared">
         <preConditions onFail="MARK_RAN">
             <and>
-                <dbms type="mysql"/>
                 <tableExists tableName="${prefix}player_meta"/>
                 <not>
                     <columnExists tableName="${prefix}player_meta" columnName="meta_id"/>
                 </not>
             </and>
-            <not>
-                <dbms type="sqlite"/>
-            </not>
         </preConditions>
-        <comment>Add auto-increment meta_id column to existing v7 player_meta table (MySQL)</comment>
+        <comment>Add auto-increment meta_id column to existing v7 player_meta table</comment>
 
         <addColumn tableName="${prefix}player_meta">
             <column name="meta_id" type="BIGINT" autoIncrement="true">
@@ -300,20 +256,16 @@
         <addPrimaryKey tableName="${prefix}player_meta" columnNames="meta_id" constraintName="pk_player_meta_id"/>
     </changeSet>
 
-    <!-- Create missing tables for v8 if they don't exist (MySQL only) -->
-    <changeSet id="v7-to-v8-create-plot-flags" author="plotsquared" dbms="mysql">
+    <!-- Create missing tables for v8 if they don't exist -->
+    <changeSet id="v7-to-v8-create-plot-flags" author="plotsquared">
         <preConditions onFail="MARK_RAN">
             <and>
-                <dbms type="mysql"/>
                 <not>
                     <tableExists tableName="${prefix}plot_flags"/>
                 </not>
             </and>
-            <not>
-                <dbms type="sqlite"/>
-            </not>
         </preConditions>
-        <comment>Create plot_flags table if missing (MySQL)</comment>
+        <comment>Create plot_flags table if missing</comment>
 
         <createTable tableName="${prefix}plot_flags">
             <column name="id" type="BIGINT" autoIncrement="true">

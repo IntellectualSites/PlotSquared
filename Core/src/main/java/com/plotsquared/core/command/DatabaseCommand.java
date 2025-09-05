@@ -19,15 +19,12 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.configuration.Storage;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.persistence.config.DatabaseMigrationService;
-import com.plotsquared.core.persistence.config.DataSourceProvider;
 import com.plotsquared.core.persistence.config.LiquibaseCrossDatabaseMigrationService;
 import com.plotsquared.core.player.PlotPlayer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -48,16 +45,12 @@ import java.util.concurrent.CompletableFuture;
 )
 public class DatabaseCommand extends SubCommand {
 
-    private final DatabaseMigrationService migrationService;
-    private final DataSourceProvider dataSourceProvider;
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseCommand.class);
+
     private final LiquibaseCrossDatabaseMigrationService liquibaseMigrationService;
 
     @Inject
-    public DatabaseCommand(DatabaseMigrationService migrationService,
-                          DataSourceProvider dataSourceProvider,
-                          LiquibaseCrossDatabaseMigrationService liquibaseMigrationService) {
-        this.migrationService = migrationService;
-        this.dataSourceProvider = dataSourceProvider;
+    public DatabaseCommand(LiquibaseCrossDatabaseMigrationService liquibaseMigrationService) {
         this.liquibaseMigrationService = liquibaseMigrationService;
     }
 
@@ -75,8 +68,8 @@ public class DatabaseCommand extends SubCommand {
                 migrateToMySQL(player);
                 break;
 
-            case "migrate-to-sqlite":
-                migrateToSQLite(player);
+            case "migrate-to-h2":
+                migrateToH2(player);
                 break;
 
             case "backup":
@@ -85,14 +78,6 @@ public class DatabaseCommand extends SubCommand {
                     return false;
                 }
                 createBackup(player, args[1]);
-                break;
-
-            case "status":
-                showDatabaseStatus(player);
-                break;
-
-            case "stats":
-                showDatabaseStats(player);
                 break;
 
             default:
@@ -118,17 +103,17 @@ public class DatabaseCommand extends SubCommand {
                 player.sendMessage(TranslatableCaption.of("database.mysql_not_configured"));
             } catch (Exception e) {
                 player.sendMessage(TranslatableCaption.of("database.migration_failed"));
-                e.printStackTrace();
+                LOGGER.error("Database migration to MySQL failed", e);
             }
         });
     }
 
-    private void migrateToSQLite(PlotPlayer<?> player) {
+    private void migrateToH2(PlotPlayer<?> player) {
         player.sendMessage(TranslatableCaption.of("database.migration_sqlite_started"));
 
         CompletableFuture.runAsync(() -> {
             try {
-                liquibaseMigrationService.migrateToSQLite();
+                liquibaseMigrationService.migrateToH2();
 
                 player.sendMessage(TranslatableCaption.of("database.migration_completed"));
                 player.sendMessage(TranslatableCaption.of("database.update_config_reminder"));
@@ -137,7 +122,7 @@ public class DatabaseCommand extends SubCommand {
                 player.sendMessage(TranslatableCaption.of("database.sqlite_not_configured"));
             } catch (Exception e) {
                 player.sendMessage(TranslatableCaption.of("database.migration_failed"));
-                e.printStackTrace();
+                LOGGER.error("Database migration to SQLite failed", e);
             }
         });
     }
@@ -156,43 +141,5 @@ public class DatabaseCommand extends SubCommand {
                 e.printStackTrace();
             }
         });
-    }
-
-    private void showDatabaseStatus(PlotPlayer<?> player) {
-        try {
-            DataSource dataSource = dataSourceProvider.createDataSource();
-
-            try (Connection connection = dataSource.getConnection()) {
-                String databaseType = Storage.MySQL.USE ? "MySQL" : "SQLite";
-                String version = migrationService.getDatabaseVersion(connection);
-
-                player.sendMessage(TranslatableCaption.of("database.status_header"));
-                player.sendMessage(TranslatableCaption.of("database.status_type", databaseType));
-                player.sendMessage(TranslatableCaption.of("database.status_version", version));
-                player.sendMessage(TranslatableCaption.of("database.status_prefix", Storage.PREFIX == null ? "none" : Storage.PREFIX));
-            }
-
-        } catch (Exception e) {
-            player.sendMessage(TranslatableCaption.of("database.status_error"));
-            e.printStackTrace();
-        }
-    }
-
-    private void showDatabaseStats(PlotPlayer<?> player) {
-        try {
-            DataSource dataSource = dataSourceProvider.createDataSource();
-
-            try (Connection connection = dataSource.getConnection()) {
-                String stats = migrationService.getDatabaseStatistics(connection);
-
-                for (String line : stats.split("\n")) {
-                    player.sendMessage(TranslatableCaption.of("database.stats_line", line));
-                }
-            }
-
-        } catch (Exception e) {
-            player.sendMessage(TranslatableCaption.of("database.stats_error"));
-            e.printStackTrace();
-        }
     }
 }

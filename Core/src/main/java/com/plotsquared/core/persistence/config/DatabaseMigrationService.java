@@ -38,7 +38,6 @@ import java.util.logging.Logger;
  */
 @Singleton
 public final class DatabaseMigrationService {
-    private static final Logger LOGGER = Logger.getLogger(DatabaseMigrationService.class.getName());
 
     /**
      * Checks if the current database is using the v7 schema format.
@@ -79,59 +78,16 @@ public final class DatabaseMigrationService {
     /**
      * Gets the current database version information.
      */
-    public String getDatabaseVersion(Connection connection) throws SQLException {
-        if (isV7Database(connection)) {
-            return "v7 (will be migrated to v8 by Liquibase)";
-        } else {
+    public InstallationState getDatabaseVersion(Connection connection) throws SQLException {
+        if (!isV7Database(connection)) {
             String prefix = Storage.PREFIX == null ? "" : Storage.PREFIX;
             try (ResultSet tables = connection.getMetaData().getTables(null, null, prefix + "plot", new String[]{"TABLE"})) {
-                if (tables.next()) {
-                    return "v8";
-                } else {
-                    return "new installation";
+                if (!tables.next()) {
+                    return InstallationState.FRESH_INSTALLATION;
                 }
             }
+            return InstallationState.NO_MIGRATION_NEEDED;
         }
-    }
-
-    /**
-     * Gets database statistics for informational purposes.
-     */
-    public String getDatabaseStatistics(Connection connection) throws SQLException {
-        String prefix = Storage.PREFIX == null ? "" : Storage.PREFIX;
-        StringBuilder stats = new StringBuilder();
-
-        try {
-            stats.append("Database Statistics:\n");
-            stats.append("- Version: ").append(getDatabaseVersion(connection)).append("\n");
-            stats.append("- Prefix: ").append(prefix.isEmpty() ? "none" : prefix).append("\n");
-
-            // Count plots if table exists
-            try (ResultSet tables = connection.getMetaData().getTables(null, null, prefix + "plot", new String[]{"TABLE"})) {
-                if (tables.next()) {
-                    try (var stmt = connection.createStatement();
-                         var rs = stmt.executeQuery("SELECT COUNT(*) FROM " + prefix + "plot")) {
-                        if (rs.next()) {
-                            stats.append("- Total plots: ").append(rs.getInt(1)).append("\n");
-                        }
-                    }
-                }
-            }
-
-        } catch (SQLException e) {
-            stats.append("- Error retrieving statistics: ").append(e.getMessage());
-        }
-
-        return stats.toString();
-    }
-
-    /**
-     * Checks if a table exists in the database.
-     */
-    public boolean tableExists(Connection connection, String tableName) throws SQLException {
-        DatabaseMetaData metaData = connection.getMetaData();
-        try (ResultSet tables = metaData.getTables(null, null, tableName, new String[]{"TABLE"})) {
-            return tables.next();
-        }
+        return InstallationState.UPGRADE_FROM_V7;
     }
 }

@@ -80,6 +80,7 @@ public class MainCommand extends Command {
             if (Settings.Web.LEGACY_WEBINTERFACE) {
                 LOGGER.warn("Legacy webinterface is used. Please note that it will be removed in future.");
             }
+            commands.add(DatabaseCommand.class);
             commands.add(Load.class);
             commands.add(Confirm.class);
             commands.add(Template.class);
