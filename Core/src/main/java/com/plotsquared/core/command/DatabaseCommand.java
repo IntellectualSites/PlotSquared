@@ -23,15 +23,16 @@ import com.plotsquared.core.configuration.Storage;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.persistence.config.DatabaseMigrationService;
 import com.plotsquared.core.persistence.config.DataSourceProvider;
+import com.plotsquared.core.persistence.config.LiquibaseCrossDatabaseMigrationService;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.task.RunnableVal;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Command for migrating databases between SQLite and MySQL, and from v7 to v8 format.
+ * Command for migrating databases between SQLite and MySQL using Liquibase.
+ * All migrations now run completely through Liquibase without native SQL queries.
  *
  * @since 8.0.0
  * @version 1.0.0
@@ -49,11 +50,15 @@ public class DatabaseCommand extends SubCommand {
 
     private final DatabaseMigrationService migrationService;
     private final DataSourceProvider dataSourceProvider;
+    private final LiquibaseCrossDatabaseMigrationService liquibaseMigrationService;
 
     @Inject
-    public DatabaseCommand(DatabaseMigrationService migrationService, DataSourceProvider dataSourceProvider) {
+    public DatabaseCommand(DatabaseMigrationService migrationService,
+                          DataSourceProvider dataSourceProvider,
+                          LiquibaseCrossDatabaseMigrationService liquibaseMigrationService) {
         this.migrationService = migrationService;
         this.dataSourceProvider = dataSourceProvider;
+        this.liquibaseMigrationService = liquibaseMigrationService;
     }
 
     @Override
@@ -67,58 +72,50 @@ public class DatabaseCommand extends SubCommand {
 
         switch (subCommand) {
             case "migrate-to-mysql":
-                if (args.length < 5) {
-                    player.sendMessage(TranslatableCaption.of("database.migrate_mysql_usage"));
-                    return false;
-                }
-                migrateToMySQL(player, args[1], args[2], args[3], args[4]);
+                migrateToMySQL(player);
                 break;
 
             case "migrate-to-sqlite":
-                if (args.length < 2) {
-                    player.sendMessage(TranslatableCaption.of("database.migrate_sqlite_usage"));
-                    return false;
-                }
-                migrateToSQLite(player, args[1]);
+                migrateToSQLite(player);
                 break;
 
-            case "migrate-from-v7":
-                migrateFromV7(player);
+            case "backup":
+                if (args.length < 2) {
+                    player.sendMessage(TranslatableCaption.of("database.backup_usage"));
+                    return false;
+                }
+                createBackup(player, args[1]);
                 break;
 
             case "status":
                 showDatabaseStatus(player);
                 break;
 
+            case "stats":
+                showDatabaseStats(player);
+                break;
+
             default:
                 player.sendMessage(TranslatableCaption.of("database.unknown_subcommand"));
+                player.sendMessage(TranslatableCaption.of("database.available_commands"));
                 return false;
         }
 
         return true;
     }
 
-    private void migrateToMySQL(PlotPlayer<?> player, String host, String port, String database, String username) {
-        player.sendMessage(TranslatableCaption.of("database.migration_started"));
+    private void migrateToMySQL(PlotPlayer<?> player) {
+        player.sendMessage(TranslatableCaption.of("database.migration_mysql_started"));
 
         CompletableFuture.runAsync(() -> {
             try {
-                // Create target MySQL DataSource
-                String mysqlUrl = "jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=false&allowPublicKeyRetrieval=true";
-                DataSource targetDataSource = dataSourceProvider.createDataSource(mysqlUrl, username,
-                    System.getProperty("mysql.password", ""), "com.mysql.cj.jdbc.Driver");
+                liquibaseMigrationService.migrateToMySQL();
 
-                // Get current SQLite DataSource
-                DataSource sourceDataSource = dataSourceProvider.createDataSource();
+                player.sendMessage(TranslatableCaption.of("database.migration_completed"));
+                player.sendMessage(TranslatableCaption.of("database.update_config_reminder"));
 
-                try (Connection sourceConn = sourceDataSource.getConnection();
-                     Connection targetConn = targetDataSource.getConnection()) {
-
-                    migrationService.migrateBetweenDatabaseTypes(sourceConn, targetConn);
-
-                    player.sendMessage(TranslatableCaption.of("database.migration_completed"));
-                }
-
+            } catch (IllegalStateException e) {
+                player.sendMessage(TranslatableCaption.of("database.mysql_not_configured"));
             } catch (Exception e) {
                 player.sendMessage(TranslatableCaption.of("database.migration_failed"));
                 e.printStackTrace();
@@ -126,26 +123,18 @@ public class DatabaseCommand extends SubCommand {
         });
     }
 
-    private void migrateToSQLite(PlotPlayer<?> player, String sqliteFile) {
-        player.sendMessage(TranslatableCaption.of("database.migration_started"));
+    private void migrateToSQLite(PlotPlayer<?> player) {
+        player.sendMessage(TranslatableCaption.of("database.migration_sqlite_started"));
 
         CompletableFuture.runAsync(() -> {
             try {
-                // Create target SQLite DataSource
-                String sqliteUrl = "jdbc:sqlite:" + sqliteFile + ".db";
-                DataSource targetDataSource = dataSourceProvider.createDataSource(sqliteUrl, null, null, "org.sqlite.JDBC");
+                liquibaseMigrationService.migrateToSQLite();
 
-                // Get current MySQL DataSource
-                DataSource sourceDataSource = dataSourceProvider.createDataSource();
+                player.sendMessage(TranslatableCaption.of("database.migration_completed"));
+                player.sendMessage(TranslatableCaption.of("database.update_config_reminder"));
 
-                try (Connection sourceConn = sourceDataSource.getConnection();
-                     Connection targetConn = targetDataSource.getConnection()) {
-
-                    migrationService.migrateBetweenDatabaseTypes(sourceConn, targetConn);
-
-                    player.sendMessage(TranslatableCaption.of("database.migration_completed"));
-                }
-
+            } catch (IllegalStateException e) {
+                player.sendMessage(TranslatableCaption.of("database.sqlite_not_configured"));
             } catch (Exception e) {
                 player.sendMessage(TranslatableCaption.of("database.migration_failed"));
                 e.printStackTrace();
@@ -153,24 +142,17 @@ public class DatabaseCommand extends SubCommand {
         });
     }
 
-    private void migrateFromV7(PlotPlayer<?> player) {
-        player.sendMessage(TranslatableCaption.of("database.v7_migration_started"));
+    private void createBackup(PlotPlayer<?> player, String backupSuffix) {
+        player.sendMessage(TranslatableCaption.of("database.backup_started"));
 
         CompletableFuture.runAsync(() -> {
             try {
-                DataSource dataSource = dataSourceProvider.createDataSource();
+                liquibaseMigrationService.migrateToBackupDatabase(backupSuffix);
 
-                try (Connection connection = dataSource.getConnection()) {
-                    if (migrationService.isV7Database(connection)) {
-                        migrationService.migrateFromV7(connection);
-                        player.sendMessage(TranslatableCaption.of("database.v7_migration_completed"));
-                    } else {
-                        player.sendMessage(TranslatableCaption.of("database.not_v7_database"));
-                    }
-                }
+                player.sendMessage(TranslatableCaption.of("database.backup_completed"));
 
             } catch (Exception e) {
-                player.sendMessage(TranslatableCaption.of("database.v7_migration_failed"));
+                player.sendMessage(TranslatableCaption.of("database.backup_failed"));
                 e.printStackTrace();
             }
         });
@@ -182,16 +164,34 @@ public class DatabaseCommand extends SubCommand {
 
             try (Connection connection = dataSource.getConnection()) {
                 String databaseType = Storage.MySQL.USE ? "MySQL" : "SQLite";
-                boolean isV7 = migrationService.isV7Database(connection);
+                String version = migrationService.getDatabaseVersion(connection);
 
                 player.sendMessage(TranslatableCaption.of("database.status_header"));
                 player.sendMessage(TranslatableCaption.of("database.status_type", databaseType));
-                player.sendMessage(TranslatableCaption.of("database.status_version", isV7 ? "v7" : "v8"));
+                player.sendMessage(TranslatableCaption.of("database.status_version", version));
                 player.sendMessage(TranslatableCaption.of("database.status_prefix", Storage.PREFIX == null ? "none" : Storage.PREFIX));
             }
 
         } catch (Exception e) {
             player.sendMessage(TranslatableCaption.of("database.status_error"));
+            e.printStackTrace();
+        }
+    }
+
+    private void showDatabaseStats(PlotPlayer<?> player) {
+        try {
+            DataSource dataSource = dataSourceProvider.createDataSource();
+
+            try (Connection connection = dataSource.getConnection()) {
+                String stats = migrationService.getDatabaseStatistics(connection);
+
+                for (String line : stats.split("\n")) {
+                    player.sendMessage(TranslatableCaption.of("database.stats_line", line));
+                }
+            }
+
+        } catch (Exception e) {
+            player.sendMessage(TranslatableCaption.of("database.stats_error"));
             e.printStackTrace();
         }
     }

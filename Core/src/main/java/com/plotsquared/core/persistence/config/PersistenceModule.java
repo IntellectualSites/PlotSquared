@@ -86,6 +86,7 @@ public final class PersistenceModule extends AbstractModule {
         bind(JpaPropertiesProvider.class).asEagerSingleton();
         bind(DataSourceProvider.class).asEagerSingleton();
         bind(DatabaseMigrationService.class).asEagerSingleton();
+        bind(LiquibaseCrossDatabaseMigrationService.class).asEagerSingleton();
 
         // Eagerly run Liquibase migrations on startup
         bind(LiquibaseBootstrap.class).asEagerSingleton();

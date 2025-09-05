@@ -23,19 +23,13 @@ import com.plotsquared.core.configuration.Storage;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * Service for handling database migrations between different PlotSquared versions
- * and database systems (SQLite <-> MySQL).
- *
- * Note: v7 to v8 migration is now handled completely by Liquibase changesets.
+ * Service for providing database information and status.
+ * All database migrations are now handled completely by Liquibase.
  *
  * @since 8.0.0
  * @version 1.0.0
@@ -48,7 +42,7 @@ public final class DatabaseMigrationService {
 
     /**
      * Checks if the current database is using the v7 schema format.
-     * This is now mainly used for informational purposes since Liquibase handles the migration.
+     * This is used for informational purposes since Liquibase handles the migration automatically.
      */
     public boolean isV7Database(Connection connection) throws SQLException {
         String prefix = Storage.PREFIX == null ? "" : Storage.PREFIX;
@@ -101,111 +95,40 @@ public final class DatabaseMigrationService {
     }
 
     /**
-     * Migrates data from one database type to another (e.g., SQLite to MySQL).
-     * This is the main functionality remaining in this service since schema migration
-     * is now handled by Liquibase.
+     * Gets database statistics for informational purposes.
      */
-    public void migrateBetweenDatabaseTypes(Connection sourceConnection, Connection targetConnection) throws SQLException {
-        LOGGER.info("Starting cross-database migration...");
+    public String getDatabaseStatistics(Connection connection) throws SQLException {
+        String prefix = Storage.PREFIX == null ? "" : Storage.PREFIX;
+        StringBuilder stats = new StringBuilder();
 
         try {
-            targetConnection.setAutoCommit(false);
+            stats.append("Database Statistics:\n");
+            stats.append("- Version: ").append(getDatabaseVersion(connection)).append("\n");
+            stats.append("- Prefix: ").append(prefix.isEmpty() ? "none" : prefix).append("\n");
 
-            String prefix = Storage.PREFIX == null ? "" : Storage.PREFIX;
-
-            // Get all tables from source database
-            List<String> tablesToMigrate = getExistingTables(sourceConnection, prefix);
-
-            for (String tableName : tablesToMigrate) {
-                migrateTable(sourceConnection, targetConnection, tableName);
+            // Count plots if table exists
+            try (ResultSet tables = connection.getMetaData().getTables(null, null, prefix + "plot", new String[]{"TABLE"})) {
+                if (tables.next()) {
+                    try (var stmt = connection.createStatement();
+                         var rs = stmt.executeQuery("SELECT COUNT(*) FROM " + prefix + "plot")) {
+                        if (rs.next()) {
+                            stats.append("- Total plots: ").append(rs.getInt(1)).append("\n");
+                        }
+                    }
+                }
             }
-
-            targetConnection.commit();
-            LOGGER.info("Cross-database migration completed successfully.");
 
         } catch (SQLException e) {
-            targetConnection.rollback();
-            LOGGER.severe("Cross-database migration failed: " + e.getMessage());
-            throw e;
-        } finally {
-            targetConnection.setAutoCommit(true);
+            stats.append("- Error retrieving statistics: ").append(e.getMessage());
         }
+
+        return stats.toString();
     }
 
-    private List<String> getExistingTables(Connection connection, String prefix) throws SQLException {
-        List<String> tables = new ArrayList<>();
-        DatabaseMetaData metaData = connection.getMetaData();
-
-        try (ResultSet rs = metaData.getTables(null, null, prefix + "%", new String[]{"TABLE"})) {
-            while (rs.next()) {
-                String tableName = rs.getString("TABLE_NAME");
-                // Skip backup and temporary tables, and Liquibase tables
-                if (!tableName.contains("_backup_") && !tableName.contains("_v7_temp") &&
-                    !tableName.contains("DATABASECHANGELOG")) {
-                    tables.add(tableName);
-                }
-            }
-        }
-
-        return tables;
-    }
-
-    private void migrateTable(Connection source, Connection target, String tableName) throws SQLException {
-        LOGGER.info("Migrating table: " + tableName);
-
-        // First, clear the target table
-        try (Statement stmt = target.createStatement()) {
-            stmt.execute("DELETE FROM " + tableName);
-        }
-
-        // Get all data from source table
-        try (Statement sourceStmt = source.createStatement();
-             ResultSet rs = sourceStmt.executeQuery("SELECT * FROM " + tableName)) {
-
-            if (!rs.next()) {
-                LOGGER.info("Table " + tableName + " is empty, skipping");
-                return;
-            }
-
-            // Get column metadata
-            int columnCount = rs.getMetaData().getColumnCount();
-            List<String> columnNames = new ArrayList<>();
-            for (int i = 1; i <= columnCount; i++) {
-                columnNames.add(rs.getMetaData().getColumnName(i));
-            }
-
-            // Build insert statement
-            StringBuilder insertQuery = new StringBuilder("INSERT INTO " + tableName + " (");
-            insertQuery.append(String.join(", ", columnNames));
-            insertQuery.append(") VALUES (");
-            for (int i = 0; i < columnCount; i++) {
-                if (i > 0) insertQuery.append(", ");
-                insertQuery.append("?");
-            }
-            insertQuery.append(")");
-
-            try (PreparedStatement insertStmt = target.prepareStatement(insertQuery.toString())) {
-                rs.beforeFirst();
-
-                int count = 0;
-                while (rs.next()) {
-                    for (int i = 1; i <= columnCount; i++) {
-                        insertStmt.setObject(i, rs.getObject(i));
-                    }
-                    insertStmt.addBatch();
-
-                    if (++count % 1000 == 0) {
-                        insertStmt.executeBatch();
-                    }
-                }
-
-                insertStmt.executeBatch();
-                LOGGER.info("Migrated " + count + " rows from table " + tableName);
-            }
-        }
-    }
-
-    private boolean tableExists(Connection connection, String tableName) throws SQLException {
+    /**
+     * Checks if a table exists in the database.
+     */
+    public boolean tableExists(Connection connection, String tableName) throws SQLException {
         DatabaseMetaData metaData = connection.getMetaData();
         try (ResultSet tables = metaData.getTables(null, null, tableName, new String[]{"TABLE"})) {
             return tables.next();
