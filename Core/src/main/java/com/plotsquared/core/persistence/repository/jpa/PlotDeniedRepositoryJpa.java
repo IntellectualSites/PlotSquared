@@ -26,6 +26,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -41,20 +42,19 @@ public class PlotDeniedRepositoryJpa implements PlotDeniedRepository {
     }
 
     @Override
-    public List<String> findUsers(long plotId) {
-        EntityManager em = emf.createEntityManager();
-        try {
+    public @NotNull List<String> findUsers(long plotId) {
+        try (EntityManager em = emf.createEntityManager()) {
             return em.createNamedQuery("PlotDenied.findUsers", String.class)
                     .setParameter("plotId", plotId)
                     .getResultList();
-        } finally { em.close(); }
+        }
     }
 
     @Override
-    public void add(long plotId, String userUuid) {
+    public void add(long plotId, @NotNull String userUuid) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             PlotDeniedEntity e = new PlotDeniedEntity();
             e.setPlotId(plotId);
@@ -64,15 +64,14 @@ public class PlotDeniedRepositoryJpa implements PlotDeniedRepository {
         } catch (RuntimeException ex) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to add plot denied (plotId={}, userUuid={})", plotId, userUuid, ex);
-            throw ex;
-        } finally { em.close(); }
+        }
     }
 
     @Override
-    public void remove(long plotId, String userUuid) {
+    public void remove(long plotId, @NotNull String userUuid) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             em.createNamedQuery("PlotDenied.delete")
                     .setParameter("plotId", plotId)
@@ -82,24 +81,22 @@ public class PlotDeniedRepositoryJpa implements PlotDeniedRepository {
         } catch (RuntimeException ex) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to remove plot denied (plotId={}, userUuid={})", plotId, userUuid, ex);
-            throw ex;
-        } finally { em.close(); }
+        }
     }
 
     @Override
     public void deleteByPlotId(long plotId) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
-            em.createQuery("DELETE FROM PlotDeniedEntity e WHERE e.plotId = :plotId")
+            em.createNamedQuery("PlotDenied.deleteByPlotId")
                     .setParameter("plotId", plotId)
                     .executeUpdate();
             tx.commit();
         } catch (RuntimeException ex) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to delete all plot denied users (plotId={})", plotId, ex);
-            throw ex;
-        } finally { em.close(); }
+        }
     }
 }

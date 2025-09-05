@@ -32,7 +32,8 @@ import jakarta.persistence.Table;
 @NamedQueries({
         @NamedQuery(name = "PlotDenied.delete", query = "DELETE FROM PlotDeniedEntity e WHERE e.plotId = :plotId AND e.userUuid = :uuid"),
         @NamedQuery(name = "PlotDenied.findUsers", query = "SELECT e.userUuid FROM PlotDeniedEntity e WHERE e.plotId = :plotId"),
-        @NamedQuery(name = "PlotDenied.deleteAll", query = "DELETE FROM PlotDeniedEntity e WHERE e.plotId = :plotId")
+        @NamedQuery(name = "PlotDenied.deleteAll", query = "DELETE FROM PlotDeniedEntity e WHERE e.plotId = :plotId"),
+        @NamedQuery(name = "PlotDenied.deleteByPlotId", query = "DELETE FROM PlotDeniedEntity e WHERE e.plotId = :plotId")
 })
 public class PlotDeniedEntity {
     @Id
