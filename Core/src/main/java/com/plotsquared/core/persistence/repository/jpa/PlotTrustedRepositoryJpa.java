@@ -26,6 +26,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -42,19 +43,18 @@ public class PlotTrustedRepositoryJpa implements PlotTrustedRepository {
 
     @Override
     public List<String> findUsers(long plotId) {
-        EntityManager em = emf.createEntityManager();
-        try {
+        try (EntityManager em = emf.createEntityManager()) {
             return em.createNamedQuery("PlotTrusted.findUsers", String.class)
                     .setParameter("plotId", plotId)
                     .getResultList();
-        } finally { em.close(); }
+        }
     }
 
     @Override
-    public void add(long plotId, String userUuid) {
+    public void add(long plotId, @NotNull String userUuid) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
             PlotTrustedEntity e = new PlotTrustedEntity();
             e.setPlotId(plotId);
@@ -64,17 +64,16 @@ public class PlotTrustedRepositoryJpa implements PlotTrustedRepository {
         } catch (RuntimeException ex) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to add plot trusted (plotId={}, userUuid={})", plotId, userUuid, ex);
-            throw ex;
-        } finally { em.close(); }
+        }
     }
 
     @Override
     public void remove(long plotId, String userUuid) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
-            em.createNamedQuery("PlotTrusted.delete")
+            em.createNamedQuery("PlotTrusted.deleteByPlotIdAndUserUUID")
                     .setParameter("plotId", plotId)
                     .setParameter("uuid", userUuid)
                     .executeUpdate();
@@ -82,24 +81,22 @@ public class PlotTrustedRepositoryJpa implements PlotTrustedRepository {
         } catch (RuntimeException ex) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to remove plot trusted (plotId={}, userUuid={})", plotId, userUuid, ex);
-            throw ex;
-        } finally { em.close(); }
+        }
     }
 
     @Override
     public void deleteByPlotId(long plotId) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        try {
+        try (em) {
             tx.begin();
-            em.createQuery("DELETE FROM PlotTrustedEntity e WHERE e.plotId = :plotId")
+            em.createNamedQuery("PlotTrusted.deleteByPlotId")
                     .setParameter("plotId", plotId)
                     .executeUpdate();
             tx.commit();
         } catch (RuntimeException ex) {
             if (tx.isActive()) tx.rollback();
             LOGGER.error("Failed to delete all plot trusted users (plotId={})", plotId, ex);
-            throw ex;
-        } finally { em.close(); }
+        }
     }
 }

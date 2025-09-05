@@ -30,8 +30,10 @@ import jakarta.persistence.Table;
 @Table(name = "plot_trusted")
 @IdClass(PlotUserId.class)
 @NamedQueries({
-        @NamedQuery(name = "PlotTrusted.delete", query = "DELETE FROM PlotTrustedEntity e WHERE e.plotId = :plotId AND e.userUuid = :uuid"),
-        @NamedQuery(name = "PlotTrusted.findUsers", query = "SELECT e.userUuid FROM PlotTrustedEntity e WHERE e.plotId = :plotId")
+        @NamedQuery(name = "PlotTrusted.deleteByPlotIdAndUserUUID", query = "DELETE FROM PlotTrustedEntity e WHERE e.plotId = :plotId AND e.userUuid = :uuid"),
+        @NamedQuery(name = "PlotTrusted.findUsers", query = "SELECT e.userUuid FROM PlotTrustedEntity e WHERE e.plotId = " +
+                ":plotId"),
+        @NamedQuery(name = "PlotTrusted.deleteByPlotId", query = "DELETE FROM PlotTrustedEntity e WHERE e.plotId = :plotId"),
 })
 public class PlotTrustedEntity {
     @Id
