@@ -753,46 +753,42 @@ public class DBFunc {
 
     public static HashMap<String, Set<PlotCluster>> getClusters() {
         HashMap<String, Set<PlotCluster>> result = new HashMap<>();
-        try {
-            ClusterRepository clusterRepo = PlotSquared.platform().injector().getInstance(ClusterRepository.class);
-            ClusterHelperRepository helperRepo = PlotSquared.platform().injector().getInstance(ClusterHelperRepository.class);
-            ClusterInvitedRepository invitedRepo = PlotSquared.platform().injector().getInstance(ClusterInvitedRepository.class);
-            ClusterSettingsRepository settingsRepo = PlotSquared.platform().injector().getInstance(ClusterSettingsRepository.class);
-            List<ClusterEntity> clusters = clusterRepo.findAll();
-            Map<Long, PlotCluster> built = new HashMap<>();
-            for (ClusterEntity ce : clusters) {
-                UUID owner = null;
-                try { owner = ce.getOwner() != null ? UUID.fromString(ce.getOwner()) : null; } catch (IllegalArgumentException ignored) {}
-                PlotCluster cluster = new PlotCluster(null, PlotId.of(ce.getPos1X(), ce.getPos1Z()), PlotId.of(ce.getPos2X(), ce.getPos2Z()), owner);
-                built.put(ce.getId(), cluster);
-                result.computeIfAbsent(ce.getWorld(), k -> new java.util.HashSet<>()).add(cluster);
+        ClusterRepository clusterRepo = PlotSquared.platform().injector().getInstance(ClusterRepository.class);
+        ClusterHelperRepository helperRepo = PlotSquared.platform().injector().getInstance(ClusterHelperRepository.class);
+        ClusterInvitedRepository invitedRepo = PlotSquared.platform().injector().getInstance(ClusterInvitedRepository.class);
+        ClusterSettingsRepository settingsRepo = PlotSquared.platform().injector().getInstance(ClusterSettingsRepository.class);
+        List<ClusterEntity> clusters = clusterRepo.findAll();
+        Map<Long, PlotCluster> built = new HashMap<>();
+        for (ClusterEntity ce : clusters) {
+            UUID owner = Optional.ofNullable(ce.getOwner()).map(UUID::fromString).orElse(null);
+            PlotCluster cluster = new PlotCluster(null, PlotId.of(ce.getPos1X(), ce.getPos1Z()), PlotId.of(ce.getPos2X(), ce.getPos2Z()), owner);
+            built.put(ce.getId(), cluster);
+            result.computeIfAbsent(ce.getWorld(), k -> new java.util.HashSet<>()).add(cluster);
+        }
+        // Populate helpers and invited
+        for (Map.Entry<Long, PlotCluster> e : built.entrySet()) {
+            long id = e.getKey();
+            PlotCluster cluster = e.getValue();
+            for (String u : helperRepo.findUsers(id)) {
+                cluster.helpers.add(UUID.fromString(u));
             }
-            // Populate helpers and invited
-            for (Map.Entry<Long, PlotCluster> e : built.entrySet()) {
-                long id = e.getKey();
-                PlotCluster cluster = e.getValue();
-                for (String u : helperRepo.findUsers(id)) {
-                    try { cluster.helpers.add(UUID.fromString(u)); } catch (IllegalArgumentException ignored) {}
-                }
-                for (String u : invitedRepo.findUsers(id)) {
-                    try { cluster.invited.add(UUID.fromString(u)); } catch (IllegalArgumentException ignored) {}
-                }
-                // Apply settings (alias, merged). Avoid setting temp variable.
-                settingsRepo.findById(id).ifPresent(se -> {
-                    if (se.getAlias() != null) {
-                        cluster.settings.setAlias(se.getAlias());
-                    }
-                    Integer m = se.getMerged();
-                    if (m != null) {
-                        boolean[] merged = new boolean[4];
-                        for (int i = 0; i < 4; i++) {
-                            merged[3 - i] = (m & 1 << i) != 0;
-                        }
-                        cluster.settings.setMerged(merged);
-                    }
-                });
+            for (String u : invitedRepo.findUsers(id)) {
+                cluster.invited.add(UUID.fromString(u));
             }
-        } catch (Throwable ignored) {
+            // Apply settings (alias, merged). Avoid setting temp variable.
+            settingsRepo.findById(id).ifPresent(se -> {
+                if (se.getAlias() != null) {
+                    cluster.settings.setAlias(se.getAlias());
+                }
+                Integer m = se.getMerged();
+                if (m != null) {
+                    boolean[] merged = new boolean[4];
+                    for (int i = 0; i < 4; i++) {
+                        merged[3 - i] = (m & 1 << i) != 0;
+                    }
+                    cluster.settings.setMerged(merged);
+                }
+            });
         }
         return result;
     }
@@ -801,32 +797,26 @@ public class DBFunc {
         if (cluster == null || position == null) {
             return;
         }
-        try {
-            ClusterRepository clusterRepo = PlotSquared.platform().injector().getInstance(ClusterRepository.class);
-            ClusterSettingsRepository settingsRepo = PlotSquared.platform().injector().getInstance(ClusterSettingsRepository.class);
-            String world = cluster.area != null ? cluster.area.getWorldName() : null;
-            if (world == null) {
-                return;
-            }
-            PlotId center = cluster.getCenterPlotId();
-            java.util.Optional<ClusterEntity> ce = clusterRepo.findByWorldAndBounds(world, center.getX(), center.getY());
-            ce.ifPresent(entity -> settingsRepo.updatePosition(entity.getId(), position));
-        } catch (Throwable ignored) {
+        ClusterRepository clusterRepo = PlotSquared.platform().injector().getInstance(ClusterRepository.class);
+        ClusterSettingsRepository settingsRepo = PlotSquared.platform().injector().getInstance(ClusterSettingsRepository.class);
+        String world = cluster.area != null ? cluster.area.getWorldName() : null;
+        if (world == null) {
+            return;
         }
+        PlotId center = cluster.getCenterPlotId();
+        Optional<ClusterEntity> ce = clusterRepo.findByWorldAndBounds(world, center.getX(), center.getY());
+        ce.ifPresent(entity -> settingsRepo.updatePosition(entity.getId(), position));
     }
 
     public static void replaceWorld(String oldWorld, String newWorld, PlotId min, PlotId max) {
-        try {
-            PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
-            ClusterRepository clusterRepo = PlotSquared.platform().injector().getInstance(ClusterRepository.class);
-            if (min == null) {
-                plotRepo.replaceWorld(oldWorld, newWorld);
-                clusterRepo.replaceWorld(oldWorld, newWorld);
-            } else {
-                plotRepo.replaceWorldInBounds(oldWorld, newWorld, min, max);
-                clusterRepo.replaceWorldInBounds(oldWorld, newWorld, min, max);
-            }
-        } catch (Throwable ignored) {
+        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
+        ClusterRepository clusterRepo = PlotSquared.platform().injector().getInstance(ClusterRepository.class);
+        if (min == null) {
+            plotRepo.replaceWorld(oldWorld, newWorld);
+            clusterRepo.replaceWorld(oldWorld, newWorld);
+        } else {
+            plotRepo.replaceWorldInBounds(oldWorld, newWorld, min, max);
+            clusterRepo.replaceWorldInBounds(oldWorld, newWorld, min, max);
         }
     }
 
