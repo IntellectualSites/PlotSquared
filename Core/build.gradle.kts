@@ -47,12 +47,12 @@ dependencies {
 
     // Database
     api(libs.hibernateCore)
+    api(libs.hibernateHikariCp)
+    api(libs.hikari)
     runtimeOnly(libs.jaxbRuntime)
-    annotationProcessor(libs.hibernateCore)
     api(libs.hibernateCommunityDialects)
     api(libs.jpaApi)
-    api(libs.flywayCore)
-    runtimeOnly(libs.flywayMysql)
+    api(libs.liquibaseCore)
 
     runtimeOnly(libs.mariadbJavaClient)
     runtimeOnly(libs.sqliteJdbc)

@@ -35,7 +35,8 @@ serverlib = "2.3.7"
 # Database
 jpa-api = "3.2.0"
 hibernate-core = "7.1.0.Final"
-flyway-core = "11.11.2"
+liquibase-core = "4.33.0"
+hikari = "7.0.2"
 jaxbRuntime = "4.0.5"
 # JDBC Drivers
 mariadb-java-client = "3.5.5"
@@ -89,9 +90,10 @@ serverlib = { group = "dev.notmyfault.serverlib", name = "ServerLib", version.re
 # Database
 jpaApi = { group = "jakarta.persistence", name = "jakarta.persistence-api", version.ref = "jpa-api" }
 hibernateCore = { group = "org.hibernate.orm", name = "hibernate-core", version.ref = "hibernate-core" }
+hikari = { group = "com.zaxxer", name = "HikariCP", version.ref = "hikari" }
+hibernateHikariCp = { group = "org.hibernate.orm", name = "hibernate-hikaricp", version.ref = "hibernate-core" }
 hibernateCommunityDialects = { group = "org.hibernate.orm", name = "hibernate-community-dialects", version.ref = "hibernate-core" }
-flywayCore = { group = "org.flywaydb", name = "flyway-core", version.ref = "flyway-core" }
-flywayMysql = { group = "org.flywaydb", name = "flyway-mysql", version.ref = "flyway-core" }
+liquibaseCore = { group = "org.liquibase", name = "liquibase-core", version.ref = "liquibase-core" }
 jaxbRuntime = { group = "org.glassfish.jaxb", name = "jaxb-runtime", version.ref = "jaxbRuntime" }
 # JDBC Drivers
 mariadbJavaClient = { group = "org.mariadb.jdbc", name = "mariadb-java-client", version.ref = "mariadb-java-client" }
