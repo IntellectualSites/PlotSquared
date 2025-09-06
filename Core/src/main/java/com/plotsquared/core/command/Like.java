@@ -19,9 +19,9 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotRateEvent;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.permissions.Permission;
@@ -29,6 +29,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.Rating;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
+import com.plotsquared.core.services.api.RatingService;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
@@ -184,7 +185,7 @@ public class Like extends SubCommand {
         if (plot.getSettings().getRatings() == null) {
             if (!Settings.Enabled_Components.RATING_CACHE) {
                 TaskManager.runTaskAsync(() -> {
-                    plot.getSettings().setRatings(DBFunc.getRatings(plot));
+                    plot.getSettings().setRatings(PlotSquared.platform().injector().getInstance(RatingService.class).getRatings(plot));
                     run.run();
                 });
                 return true;

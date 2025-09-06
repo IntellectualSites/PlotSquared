@@ -70,7 +70,7 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.Storage;
 import com.plotsquared.core.configuration.caption.ChatFormatter;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
-import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.util.StaticUUIDs;
 import com.plotsquared.core.events.RemoveRoadEntityEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.generator.GeneratorWrapper;
@@ -490,7 +490,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             this.backgroundPipeline.registerService(backgroundMojangService);
         }
 
-        this.impromptuPipeline.storeImmediately("*", DBFunc.EVERYONE);
+        this.impromptuPipeline.storeImmediately("*", StaticUUIDs.EVERYONE);
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             injector.getInstance(PAPIPlaceholders.class).register();

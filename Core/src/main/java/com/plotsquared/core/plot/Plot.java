@@ -28,7 +28,7 @@ import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.util.StaticUUIDs;
 import com.plotsquared.core.events.PlayerTeleportToPlotEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.events.TeleportCause;
@@ -56,6 +56,7 @@ import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.services.api.FlagService;
 import com.plotsquared.core.services.api.MemberService;
 import com.plotsquared.core.services.api.PlotService;
+import com.plotsquared.core.services.api.RatingService;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.PlayerManager;
@@ -679,7 +680,7 @@ public class Plot {
      */
     public @Nullable UUID getOwner() {
         if (this.getFlag(ServerPlotFlag.class)) {
-            return DBFunc.SERVER;
+            return StaticUUIDs.SERVER;
         }
         return this.getOwnerAbs();
     }
@@ -746,10 +747,10 @@ public class Plot {
         if (getMembers().contains(uuid)) {
             return isOnline();
         }
-        if (getTrusted().contains(uuid) || getTrusted().contains(DBFunc.EVERYONE)) {
+        if (getTrusted().contains(uuid) || getTrusted().contains(StaticUUIDs.EVERYONE)) {
             return true;
         }
-        if (getMembers().contains(DBFunc.EVERYONE)) {
+        if (getMembers().contains(StaticUUIDs.EVERYONE)) {
             return isOnline();
         }
         return false;
@@ -762,7 +763,7 @@ public class Plot {
      * @return {@code false} if the player is allowed to enter the plot, else {@code true}
      */
     public boolean isDenied(final @NonNull UUID uuid) {
-        return this.denied != null && (this.denied.contains(DBFunc.EVERYONE) && !this.isAdded(uuid) || !this.isAdded(uuid) && this.denied
+        return this.denied != null && (this.denied.contains(StaticUUIDs.EVERYONE) && !this.isAdded(uuid) || !this.isAdded(uuid) && this.denied
                 .contains(uuid));
     }
 
@@ -1713,7 +1714,7 @@ public class Plot {
         }
         int aggregate = rating.getAggregate();
         baseSettings.getRatings().put(uuid, aggregate);
-        DBFunc.setRating(base, uuid, aggregate);
+        PlotSquared.platform().injector().getInstance(RatingService.class).setRating(base, uuid, aggregate);
         return true;
     }
 
@@ -2036,7 +2037,7 @@ public class Plot {
      * @return success or not
      */
     public boolean removeDenied(UUID uuid) {
-        if (uuid == DBFunc.EVERYONE && !denied.contains(uuid)) {
+        if (uuid == StaticUUIDs.EVERYONE && !denied.contains(uuid)) {
             boolean result = false;
             for (UUID other : new HashSet<>(getDenied())) {
                 result = rmvDenied(other) || result;
@@ -2065,7 +2066,7 @@ public class Plot {
      * @return success or not
      */
     public boolean removeTrusted(UUID uuid) {
-        if (uuid == DBFunc.EVERYONE && !trusted.contains(uuid)) {
+        if (uuid == StaticUUIDs.EVERYONE && !trusted.contains(uuid)) {
             boolean result = false;
             for (UUID other : new HashSet<>(getTrusted())) {
                 result = rmvTrusted(other) || result;
@@ -2097,7 +2098,7 @@ public class Plot {
         if (this.members == null) {
             return false;
         }
-        if (uuid == DBFunc.EVERYONE && !members.contains(uuid)) {
+        if (uuid == StaticUUIDs.EVERYONE && !members.contains(uuid)) {
             boolean result = false;
             for (UUID other : new HashSet<>(this.members)) {
                 result = rmvMember(other) || result;
@@ -2929,7 +2930,7 @@ public class Plot {
                     Component owner;
                     if (this.getOwner() == null) {
                         owner = Component.text("unowned");
-                    } else if (this.getOwner().equals(DBFunc.SERVER)) {
+                    } else if (this.getOwner().equals(StaticUUIDs.SERVER)) {
                         owner = Component.text(MINI_MESSAGE.stripTags(TranslatableCaption
                                 .of("info.server")
                                 .getComponent(player)));
@@ -3046,7 +3047,7 @@ public class Plot {
         } else if (Settings.Enabled_Components.RATING_CACHE) {
             rating = new HashMap<>();
         } else {
-            rating = DBFunc.getRatings(this);
+            rating = PlotSquared.platform().injector().getInstance(RatingService.class).getRatings(this);
         }
         int size = 1;
         if (!Settings.Ratings.CATEGORIES.isEmpty()) {

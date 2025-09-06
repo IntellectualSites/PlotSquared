@@ -21,7 +21,7 @@ package com.plotsquared.core.command;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.util.StaticUUIDs;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
@@ -86,7 +86,7 @@ public class Kick extends SubCommand {
             } else {
                 Set<PlotPlayer<?>> players = new HashSet<>();
                 for (UUID uuid : uuids) {
-                    if (uuid == DBFunc.EVERYONE) {
+                    if (uuid == StaticUUIDs.EVERYONE) {
                         for (PlotPlayer<?> pp : plot.getPlayersInPlot()) {
                             if (pp == player || pp.hasPermission(Permission.PERMISSION_ADMIN_ENTRY_DENIED)) {
                                 continue;

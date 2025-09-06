@@ -24,7 +24,7 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.CaptionHolder;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.util.StaticUUIDs;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -419,7 +419,7 @@ public class ListCmd extends SubCommand {
                 Caption color;
                 if (plot.getOwner() == null) {
                     color = TranslatableCaption.of("info.plot_list_no_owner");
-                } else if (plot.isOwner(player.getUUID()) || plot.getOwner().equals(DBFunc.EVERYONE)) {
+                } else if (plot.isOwner(player.getUUID()) || plot.getOwner().equals(StaticUUIDs.EVERYONE)) {
                     color = TranslatableCaption.of("info.plot_list_owned_by");
                 } else if (plot.isAdded(player.getUUID())) {
                     color = TranslatableCaption.of("info.plot_list_added_to");
@@ -487,7 +487,7 @@ public class ListCmd extends SubCommand {
                                         Tag.inserting(TranslatableCaption.of("info.unknown").toComponent(player))
                                 );
                                 builder.append(MINI_MESSAGE.deserialize(unknown, unknownResolver));
-                            } else if (uuidMapping.uuid().equals(DBFunc.EVERYONE)) {
+                            } else if (uuidMapping.uuid().equals(StaticUUIDs.EVERYONE)) {
                                 TagResolver everyoneResolver = TagResolver.resolver(
                                         "everyone",
                                         Tag.inserting(TranslatableCaption.of("info.everyone").toComponent(player))

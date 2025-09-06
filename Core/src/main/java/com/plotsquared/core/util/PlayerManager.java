@@ -24,7 +24,6 @@ import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
@@ -78,7 +77,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
                 consumer.accept(Collections.emptySet(), null);
                 return;
             } else if ("*".equals(name)) {
-                result.add(DBFunc.EVERYONE);
+                result.add(StaticUUIDs.EVERYONE);
             } else if (name.length() > 16) {
                 try {
                     result.add(UUID.fromString(name));
@@ -127,9 +126,9 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
         for (final UUID uuid : uuids) {
             if (uuid == null) {
                 users.add(TranslatableCaption.of("info.none").toComponent(localeHolder));
-            } else if (DBFunc.EVERYONE.equals(uuid)) {
+            } else if (StaticUUIDs.EVERYONE.equals(uuid)) {
                 users.add(TranslatableCaption.of("info.everyone").toComponent(localeHolder));
-            } else if (DBFunc.SERVER.equals(uuid)) {
+            } else if (StaticUUIDs.SERVER.equals(uuid)) {
                 users.add(TranslatableCaption.of("info.console").toComponent(localeHolder));
             } else {
                 players.add(uuid);
@@ -193,10 +192,10 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
         if (owner == null) {
             return TranslatableCaption.of("info.none");
         }
-        if (owner.equals(DBFunc.EVERYONE)) {
+        if (owner.equals(StaticUUIDs.EVERYONE)) {
             return TranslatableCaption.of("info.everyone");
         }
-        if (owner.equals(DBFunc.SERVER)) {
+        if (owner.equals(StaticUUIDs.SERVER)) {
             return TranslatableCaption.of("info.server");
         }
         final String name;
@@ -226,8 +225,8 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * Special Cases:
      * <ul>
      *     <li>{@code null}: Resolves to a {@link TranslatableCaption} with the key {@code info.none}</li>
-     *     <li>{@link DBFunc#EVERYONE}: Resolves to a {@link TranslatableCaption} with the key {@code info.everyone}</li>
-     *     <li>{@link DBFunc#SERVER}: Resolves to a {@link TranslatableCaption} with the key {@code info.server}</li>
+     *     <li>{@link StaticUUIDs#EVERYONE}: Resolves to a {@link TranslatableCaption} with the key {@code info.everyone}</li>
+     *     <li>{@link StaticUUIDs#SERVER}: Resolves to a {@link TranslatableCaption} with the key {@code info.server}</li>
      * </ul>
      * <br>
      * Otherwise, if the UUID is a valid UUID and not reserved by PlotSquared itself, this method first attempts to query the
@@ -244,10 +243,10 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
         if (uuid == null) {
             return CompletableFuture.completedFuture(TranslatableCaption.of("info.none"));
         }
-        if (uuid.equals(DBFunc.EVERYONE)) {
+        if (uuid.equals(StaticUUIDs.EVERYONE)) {
             return CompletableFuture.completedFuture(TranslatableCaption.of("info.everyone"));
         }
-        if (uuid.equals(DBFunc.SERVER)) {
+        if (uuid.equals(StaticUUIDs.SERVER)) {
             return CompletableFuture.completedFuture(TranslatableCaption.of("info.server"));
         }
         P player = getPlayerIfExists(uuid);
