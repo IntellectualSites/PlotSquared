@@ -158,7 +158,7 @@ public class Auto extends SubCommand {
         }
         plot.setOwnerAbs(player.getUUID());
 
-        final RunnableVal<Plot> runnableVal = new RunnableVal<>() {
+        final RunnableVal<Plot> successRunner = new RunnableVal<>() {
             {
                 this.value = plot;
             }
@@ -176,7 +176,7 @@ public class Auto extends SubCommand {
             }
         };
 
-        DBFunc.createPlotSafe(plot, runnableVal, () -> claimSingle(player, plot, plotArea, schematic));
+        DBFunc.createPlotSafe(plot, successRunner, () -> {});
 
     }
 
