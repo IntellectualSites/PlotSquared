@@ -175,19 +175,8 @@ public final class LiquibaseCrossDatabaseMigrationService {
      * Generates a Liquibase changelog with data using Liquibase's native capabilities.
      */
     private void generateDataChangeLog(Database sourceDatabase, Path outputFile) throws Exception {
-        try (PrintStream output = new PrintStream(Files.newOutputStream(outputFile))) {
-
-            // Create Liquibase instance
-            Liquibase liquibase = new Liquibase("", new ClassLoaderResourceAccessor(), sourceDatabase);
-
-            // Generate changelog including data
-            // This uses Liquibase's built-in generateChangeLog with data option
-            generateChangeLogUsingDiff(sourceDatabase, sourceDatabase, outputFile);
-
-        } catch (Exception e) {
-            LOGGER.severe("Failed to generate data changelog: " + e.getMessage());
-            throw e;
-        }
+        // This uses Liquibase's built-in generateChangeLog with data option
+        generateChangeLogUsingDiff(sourceDatabase, sourceDatabase, outputFile);
     }
 
     /**
@@ -213,42 +202,6 @@ public final class LiquibaseCrossDatabaseMigrationService {
         } catch (Exception e) {
             LOGGER.severe("Failed to generate changelog using diff: " + e.getMessage());
             throw e;
-        }
-    }
-
-    /**
-     * Validates that the migration was successful by comparing database structures.
-     */
-    public boolean validateMigration(DataSource sourceDataSource, DataSource targetDataSource) {
-        try (Connection sourceConnection = sourceDataSource.getConnection();
-             Connection targetConnection = targetDataSource.getConnection()) {
-
-            Database sourceDatabase = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(sourceConnection));
-            Database targetDatabase = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(targetConnection));
-
-            // Create snapshots of both databases
-            DatabaseSnapshot sourceSnapshot = liquibase.snapshot.SnapshotGeneratorFactory.getInstance()
-                .createSnapshot(sourceDatabase.getDefaultSchema(), sourceDatabase, new liquibase.snapshot.SnapshotControl(sourceDatabase));
-
-            DatabaseSnapshot targetSnapshot = liquibase.snapshot.SnapshotGeneratorFactory.getInstance()
-                .createSnapshot(targetDatabase.getDefaultSchema(), targetDatabase, new liquibase.snapshot.SnapshotControl(targetDatabase));
-
-            // Compare structure and data
-            DiffResult diffResult = DiffGeneratorFactory.getInstance().compare(sourceSnapshot, targetSnapshot, new CompareControl());
-
-            boolean hasUnexpectedDiffs = !diffResult.areEqual();
-
-            if (!hasUnexpectedDiffs) {
-                LOGGER.info("Migration validation successful: Databases are identical");
-            } else {
-                LOGGER.warning("Migration validation found differences between source and target databases");
-            }
-
-            return !hasUnexpectedDiffs;
-
-        } catch (Exception e) {
-            LOGGER.severe("Error during migration validation: " + e.getMessage());
-            return false;
         }
     }
 }

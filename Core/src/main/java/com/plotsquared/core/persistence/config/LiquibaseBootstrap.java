@@ -46,8 +46,7 @@ public final class LiquibaseBootstrap {
     private static final Logger LOGGER = Logger.getLogger(LiquibaseBootstrap.class.getName());
 
     @Inject
-    public LiquibaseBootstrap(DataSource dataSource, DatabaseMigrationService migrationService,
-                              LiquibaseCrossDatabaseMigrationService liquibaseCrossDatabaseMigrationService) {
+    public LiquibaseBootstrap(DataSource dataSource) {
         syncThreadForServiceLoader(() -> {
             try (Connection connection = dataSource.getConnection()) {
                 Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
