@@ -90,10 +90,10 @@
             <column name="uuid" type="VARCHAR(40)">
                 <constraints nullable="false"/>
             </column>
-            <column name="key" type="VARCHAR(32)">
+            <column name="playerMetaKey" type="VARCHAR(32)">
                 <constraints nullable="false"/>
             </column>
-            <column name="value" type="BLOB">
+            <column name="playerMetaValue" type="BLOB">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -183,7 +183,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="flag" type="VARCHAR(64)"/>
-            <column name="value" type="VARCHAR(512)"/>
+            <column name="flagvalue" type="VARCHAR(512)"/>
         </createTable>
     </changeSet>
 
