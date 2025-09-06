@@ -30,7 +30,6 @@ import com.plotsquared.core.configuration.caption.load.CaptionLoader;
 import com.plotsquared.core.configuration.caption.load.DefaultCaptionProvider;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.configuration.serialization.ConfigurationSerialization;
-import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.generator.HybridUtils;

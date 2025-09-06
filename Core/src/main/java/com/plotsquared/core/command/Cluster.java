@@ -22,7 +22,6 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Location;
