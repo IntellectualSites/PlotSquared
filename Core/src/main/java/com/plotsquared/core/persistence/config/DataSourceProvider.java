@@ -24,7 +24,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import javax.sql.DataSource;
-import java.util.logging.Logger;
 
 /**
  * Provides configured DataSource instances for database connections.
