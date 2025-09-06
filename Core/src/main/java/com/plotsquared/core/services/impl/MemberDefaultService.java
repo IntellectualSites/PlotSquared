@@ -26,6 +26,7 @@ import com.plotsquared.core.persistence.repository.api.PlotTrustedRepository;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.services.api.MemberService;
+import jakarta.inject.Inject;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -37,6 +38,7 @@ public class MemberDefaultService implements MemberService {
     private final PlotMembershipRepository membershipRepository;
     private final PlotDeniedRepository deniedRepository;
 
+    @Inject
     public MemberDefaultService(final PlotRepository repository, final PlotTrustedRepository trustedRepository,
                                 final PlotMembershipRepository repo, final PlotDeniedRepository deniedRepository
     ) {
