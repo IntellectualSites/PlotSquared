@@ -80,7 +80,7 @@ public class DBFunc {
         PlayerMetaRepository repo = PlotSquared.platform().injector().getInstance(PlayerMetaRepository.class);
         Map<String, byte[]> map = new HashMap<>();
         for (PlayerMetaEntity e : repo.findByUuid(uuid.toString())) {
-            map.put(e.getKey(), e.getValue());
+            map.put(e.getKey(), e.getPlayerMetaValue());
         }
         if (result != null) {
             result.run(map);
@@ -317,7 +317,7 @@ public class DBFunc {
             var existing = flagRepo.findByPlotAndName(plotId, name);
             if (existing.isPresent()) {
                 var e = existing.get();
-                e.setValue(value);
+                e.setFlagValue(value);
                 flagRepo.save(e);
             } else {
                 PlotFlagEntity e = new PlotFlagEntity();
@@ -325,7 +325,7 @@ public class DBFunc {
                 pref.setId(entity.getId());
                 e.setPlot(pref);
                 e.setFlag(name);
-                e.setValue(value);
+                e.setFlagValue(value);
                 flagRepo.save(e);
             }
         });
