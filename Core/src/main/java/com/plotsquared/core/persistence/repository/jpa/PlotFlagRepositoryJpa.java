@@ -55,10 +55,10 @@ public class PlotFlagRepositoryJpa implements PlotFlagRepository {
     @Override
     public @NotNull Optional<PlotFlagEntity> findByPlotAndName(long plotId, @NotNull String flagName) {
         try (EntityManager em = emf.createEntityManager()) {
-            return em.createNamedQuery("PlotFlag.findByPlotAndName", PlotFlagEntity.class)
+            return Optional.ofNullable(em.createNamedQuery("PlotFlag.findByPlotAndName", PlotFlagEntity.class)
                     .setParameter("plotId", plotId)
                     .setParameter("flag", flagName)
-                    .getResultStream().findFirst();
+                    .getSingleResultOrNull());
         }
     }
 
@@ -97,10 +97,13 @@ public class PlotFlagRepositoryJpa implements PlotFlagRepository {
         EntityTransaction tx = em.getTransaction();
         try (em) {
             tx.begin();
-            em.createNamedQuery("PlotFlag.deleteByPlotAndName")
+            var plot = em.createNamedQuery("PlotFlag.findByPlotAndName", PlotFlagEntity.class)
                     .setParameter("plotId", plotId)
                     .setParameter("flag", flagName)
-                    .executeUpdate();
+                    .getSingleResultOrNull();
+            if (plot != null) {
+                em.remove(plot);
+            }
             tx.commit();
         } catch (RuntimeException e) {
             if (tx.isActive()) tx.rollback();

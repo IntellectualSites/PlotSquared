@@ -363,7 +363,7 @@ public class PlotRepositoryJpa implements PlotRepository {
                     .setParameter("world", plot.getWorldName())
                     .setParameter("x", plot.getId().getX())
                     .setParameter("z", plot.getId().getY())
-                    .setParameter("owner", newOwner);
+                    .setParameter("owner", newOwner.toString());
             tx.commit();
         } catch (RuntimeException e) {
             if (tx.isActive()) {
@@ -521,9 +521,9 @@ public class PlotRepositoryJpa implements PlotRepository {
             if (pe != null && pe.getId() != null) {
                 Long plotId = pe.getId();
                 // Delete children first to satisfy FK constraints
-                em.createNamedQuery("PlotFlag.deleteByPlot")
+                em.createNamedQuery("PlotFlag.findByPlot")
                         .setParameter("plotId", plotId)
-                        .executeUpdate();
+                        .getResultList().forEach(em::remove);
                 em.createNamedQuery("PlotHelper.deleteByPlotId")
                         .setParameter("plotId", plotId)
                         .executeUpdate();
@@ -710,9 +710,9 @@ public class PlotRepositoryJpa implements PlotRepository {
                 return;
             }
             // Delete child tables first
-            em.createNamedQuery("PlotFlag.deleteAllInPlotIds")
+            em.createNamedQuery("PlotFlag.findAllInPlotIds")
                     .setParameter("plotIds", longIds)
-                    .executeUpdate();
+                            .getResultList().forEach(em::remove);
             em.createNamedQuery("PlotTrusted.deleteAllInPlotIds")
                     .setParameter("plotIds", longIds)
                     .executeUpdate();
