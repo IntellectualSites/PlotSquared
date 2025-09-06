@@ -50,21 +50,33 @@ public class PrefixedNamingStrategy implements PhysicalNamingStrategy {
 
     @Override
     public Identifier toPhysicalCatalogName(Identifier n, JdbcEnvironment e) {
-        return n;
+        if (n == null) {
+            return null;
+        }
+        return Identifier.toIdentifier(n.getText().toUpperCase());
     }
 
     @Override
     public Identifier toPhysicalSchemaName(Identifier n, JdbcEnvironment e) {
-        return n;
+        if (n == null) {
+            return null;
+        }
+        return Identifier.toIdentifier(n.getText().toUpperCase());
     }
 
     @Override
     public Identifier toPhysicalSequenceName(Identifier n, JdbcEnvironment e) {
-        return n;
+        if (n == null) {
+            return null;
+        }
+        return Identifier.toIdentifier(n.getText().toUpperCase());
     }
 
     @Override
     public Identifier toPhysicalColumnName(Identifier n, JdbcEnvironment e) {
+        if (n == null) {
+            return null;
+        }
         return Identifier.toIdentifier(n.getText().toUpperCase());
     }
 
