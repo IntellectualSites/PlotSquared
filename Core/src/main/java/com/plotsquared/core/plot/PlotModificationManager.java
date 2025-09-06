@@ -38,6 +38,7 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.queue.QueueCoordinator;
+import com.plotsquared.core.services.api.FlagService;
 import com.plotsquared.core.services.api.PlotService;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
@@ -125,9 +126,9 @@ public final class PlotModificationManager {
                 for (final PlotFlag<?, ?> flag : existingFlags) {
                     final PlotFlag<?, ?> newFlag = other.getFlagContainer().queryLocal(flag.getClass());
                     if (other.getFlagContainer().queryLocal(flag.getClass()) == null) {
-                        DBFunc.removeFlag(other, flag);
+                        PlotSquared.platform().injector().getInstance(FlagService.class).removeFlag(other, flag);
                     } else {
-                        DBFunc.setFlag(other, newFlag);
+                        PlotSquared.platform().injector().getInstance(FlagService.class).setFlag(other, newFlag);
                     }
                 }
             }

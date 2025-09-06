@@ -54,44 +54,6 @@ public class DBFunc {
     public static final UUID EVERYONE = UUID.fromString("1-1-3-3-7");
     public static final UUID SERVER = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
-    public static void setFlag(Plot plot, PlotFlag<?, ?> flag) {
-        if (plot == null || flag == null) {
-            return;
-        }
-        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
-        PlotFlagRepository flagRepo = PlotSquared.platform().injector().getInstance(PlotFlagRepository.class);
-        Optional<PlotEntity> pe = plotRepo.findByWorldAndId(plot.getWorldName(), plot.getId().getX(), plot.getId().getY());
-        pe.ifPresent(entity -> {
-            long plotId = entity.getId();
-            String name = flag.getName();
-            String value = flag.toString();
-            var existing = flagRepo.findByPlotAndName(plotId, name);
-            if (existing.isPresent()) {
-                var e = existing.get();
-                e.setFlagValue(value);
-                flagRepo.save(e);
-            } else {
-                PlotFlagEntity e = new PlotFlagEntity();
-                PlotEntity pref = new PlotEntity();
-                pref.setId(entity.getId());
-                e.setPlot(pref);
-                e.setFlag(name);
-                e.setFlagValue(value);
-                flagRepo.save(e);
-            }
-        });
-    }
-
-    public static void removeFlag(Plot plot, PlotFlag<?, ?> flag) {
-        if (plot == null || flag == null) {
-            return;
-        }
-        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
-        PlotFlagRepository flagRepo = PlotSquared.platform().injector().getInstance(PlotFlagRepository.class);
-        Optional<PlotEntity> pe = plotRepo.findByWorldAndId(plot.getWorldName(), plot.getId().getX(), plot.getId().getY());
-        pe.ifPresent(entity -> flagRepo.deleteByPlotAndName(entity.getId(), flag.getName()));
-    }
-
     /**
      * @param plot
      * @param comment

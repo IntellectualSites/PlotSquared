@@ -53,6 +53,7 @@ import com.plotsquared.core.plot.flag.types.DoubleFlag;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.queue.QueueCoordinator;
+import com.plotsquared.core.services.api.FlagService;
 import com.plotsquared.core.services.api.PlotService;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
@@ -1171,7 +1172,7 @@ public class Plot {
         for (final Plot plot : this.getConnectedPlots()) {
             plot.getFlagContainer().addFlag(flag);
             plot.reEnter();
-            DBFunc.setFlag(plot, flag);
+            PlotSquared.platform().injector().getInstance(FlagService.class).setFlag(plot, flag);
         }
         return true;
     }
@@ -1261,7 +1262,7 @@ public class Plot {
                 continue;
             }
             plot.reEnter();
-            DBFunc.removeFlag(plot, flag);
+            PlotSquared.platform().injector().getInstance(FlagService.class).removeFlag(plot, flag);
             removed = true;
         }
         return removed;
