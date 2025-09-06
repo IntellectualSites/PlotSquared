@@ -41,11 +41,11 @@ public class PlayerMetaEntity {
     private Long id;
     @Column(length = 40, nullable = false)
     private String uuid;
-    @Column(name = "key", length = 32, nullable = false)
+    @Column(name = "playerMetaKey", length = 32, nullable = false)
     private String key;
     @Lob
-    @Column(name = "value", nullable = false)
-    private byte[] value;
+    @Column(name = "playerMetaValue", nullable = false)
+    private byte[] playerMetaValue;
 
     public PlayerMetaEntity() {}
 
@@ -55,6 +55,6 @@ public class PlayerMetaEntity {
     public void setUuid(String uuid) { this.uuid = uuid; }
     public String getKey() { return key; }
     public void setKey(String key) { this.key = key; }
-    public byte[] getValue() { return value; }
-    public void setValue(byte[] value) { this.value = value; }
+    public byte[] getPlayerMetaValue() { return playerMetaValue; }
+    public void setPlayerMetaValue(byte[] value) { this.playerMetaValue = value; }
 }

@@ -34,9 +34,12 @@ import jakarta.persistence.UniqueConstraint;
 @Entity
 @Table(name = "plot_flags", uniqueConstraints = @UniqueConstraint(columnNames = {"plot_id","flag"}))
 @NamedQueries({
-        @NamedQuery(name = "PlotFlag.findByPlot", query = "SELECT f FROM PlotFlagEntity f WHERE f.plot.id = :plotId"),
-        @NamedQuery(name = "PlotFlag.findAllInPlotIds", query = "SELECT f FROM PlotFlagEntity f WHERE f.plot.id IN :plotIds"),
-        @NamedQuery(name = "PlotFlag.findByPlotAndName", query = "SELECT f FROM PlotFlagEntity f WHERE f.plot.id = :plotId AND f.flag = :flag"),
+        @NamedQuery(name = "PlotFlag.findByPlot", query = "SELECT f FROM PlotFlagEntity f join fetch f.plot p WHERE p.id =" +
+                " " +
+                ":plotId"),
+        @NamedQuery(name = "PlotFlag.findAllInPlotIds", query = "SELECT f FROM PlotFlagEntity f join fetch f.plot p WHERE p.id IN :plotIds"),
+        @NamedQuery(name = "PlotFlag.findByPlotAndName", query = "SELECT f FROM PlotFlagEntity f join fetch f.plot p WHERE p.id" +
+                " = :plotId AND f.flag = :flag"),
         @NamedQuery(name = "PlotFlag.findAll", query = "SELECT f FROM PlotFlagEntity f"),
 })
 public class PlotFlagEntity {
@@ -49,7 +52,7 @@ public class PlotFlagEntity {
     @Column(length = 64)
     private String flag;
     @Column(length = 512)
-    private String value;
+    private String flagValue;
 
     public PlotFlagEntity() {}
 
@@ -62,6 +65,6 @@ public class PlotFlagEntity {
     public String getFlag() { return flag; }
     public void setFlag(String flag) { this.flag = flag; }
 
-    public String getValue() { return value; }
-    public void setValue(String value) { this.value = value; }
+    public String getFlagValue() { return flagValue; }
+    public void setFlagValue(String value) { this.flagValue = value; }
 }
