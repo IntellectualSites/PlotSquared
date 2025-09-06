@@ -52,13 +52,6 @@ public final class LiquibaseBootstrap {
             try (Connection connection = dataSource.getConnection()) {
                 Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
 
-                // Log database version information
-                InstallationState installationState = migrationService.getDatabaseVersion(connection);
-                LOGGER.info("Detected database version: " + installationState.getDescription());
-                if (installationState == InstallationState.UPGRADE_FROM_V7) {
-                    liquibaseCrossDatabaseMigrationService.migrateToH2();
-                }
-
                 // Run Liquibase migrations - this will handle both v7->v8 migration and new v8 installations
                 Liquibase liquibase = new Liquibase("db/changelog/db.changelog-master.xml",
                         new ClassLoaderResourceAccessor(), database);
