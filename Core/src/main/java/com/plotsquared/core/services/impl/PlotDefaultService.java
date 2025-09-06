@@ -18,7 +18,6 @@
  */
 package com.plotsquared.core.services.impl;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.persistence.entity.PlotEntity;
 import com.plotsquared.core.persistence.repository.api.PlotRepository;
 import com.plotsquared.core.persistence.repository.api.PlotSettingsRepository;
