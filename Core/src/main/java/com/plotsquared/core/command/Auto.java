@@ -35,6 +35,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.services.api.PlotService;
 import com.plotsquared.core.services.plots.AutoQuery;
 import com.plotsquared.core.services.plots.AutoService;
 import com.plotsquared.core.util.EconHandler;
@@ -176,7 +177,8 @@ public class Auto extends SubCommand {
             }
         };
 
-        DBFunc.createPlotSafe(plot, successRunner, () -> {});
+        PlotService service = PlotSquared.platform().injector().getInstance(PlotService.class);
+        service.createPlotSafe(plot, successRunner, () -> {});
 
     }
 

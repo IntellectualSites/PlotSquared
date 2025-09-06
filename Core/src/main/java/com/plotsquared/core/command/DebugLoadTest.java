@@ -19,8 +19,8 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.services.api.PlotService;
 
 @CommandDeclaration(command = "debugloadtest",
         permission = "plots.debugloadtest",
@@ -31,7 +31,8 @@ public class DebugLoadTest extends SubCommand {
 
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
-        PlotSquared.get().plots_tmp = DBFunc.getPlots();
+        PlotService plotService = PlotSquared.platform().injector().getInstance(PlotService.class);
+        PlotSquared.get().plots_tmp = plotService.getPlots();
         return true;
     }
 

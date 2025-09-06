@@ -19,6 +19,7 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
@@ -32,6 +33,7 @@ import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.services.api.PlotService;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlotExpression;
@@ -199,7 +201,8 @@ public class Claim extends SubCommand {
         }
         plot.setOwnerAbs(player.getUUID());
         final String finalSchematic = schematic;
-        DBFunc.createPlotSafe(plot, () -> {
+        PlotService service = PlotSquared.platform().injector().getInstance(PlotService.class);
+        service.createPlotSafe(plot, () -> {
             try {
                 TaskManager.getPlatformImplementation().sync(() -> {
                     if (!plot.claim(player, true, finalSchematic, false, false)) {
