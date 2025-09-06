@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
  * @author TheMeinerLP
  * @author IntellectualSites
  */
-public class PrefixedNamingStrategy implements PhysicalNamingStrategy {
+public final class PrefixedNamingStrategy implements PhysicalNamingStrategy {
 
     private final String prefix;
 
