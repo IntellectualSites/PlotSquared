@@ -20,7 +20,6 @@ package com.plotsquared.core.database;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.persistence.entity.ClusterEntity;
-import com.plotsquared.core.persistence.entity.PlayerMetaEntity;
 import com.plotsquared.core.persistence.entity.PlotCommentEntity;
 import com.plotsquared.core.persistence.entity.PlotEntity;
 import com.plotsquared.core.persistence.entity.PlotFlagEntity;
@@ -28,7 +27,6 @@ import com.plotsquared.core.persistence.repository.api.ClusterHelperRepository;
 import com.plotsquared.core.persistence.repository.api.ClusterInvitedRepository;
 import com.plotsquared.core.persistence.repository.api.ClusterRepository;
 import com.plotsquared.core.persistence.repository.api.ClusterSettingsRepository;
-import com.plotsquared.core.persistence.repository.api.PlayerMetaRepository;
 import com.plotsquared.core.persistence.repository.api.PlotCommentRepository;
 import com.plotsquared.core.persistence.repository.api.PlotDeniedRepository;
 import com.plotsquared.core.persistence.repository.api.PlotFlagRepository;
@@ -52,7 +50,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Database Functions
