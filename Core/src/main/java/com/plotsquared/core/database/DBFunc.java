@@ -67,32 +67,6 @@ public class DBFunc {
     public static final UUID EVERYONE = UUID.fromString("1-1-3-3-7");
     public static final UUID SERVER = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
-    public static void addPersistentMeta(UUID uuid, String key, byte[] meta, boolean delete) {
-        PlayerMetaRepository repo = PlotSquared.platform().injector().getInstance(PlayerMetaRepository.class);
-        if (delete) {
-            repo.delete(uuid.toString(), key);
-        } else {
-            repo.put(uuid.toString(), key, meta);
-        }
-    }
-
-    public static void getPersistentMeta(UUID uuid, RunnableVal<Map<String, byte[]>> result) {
-        PlayerMetaRepository repo = PlotSquared.platform().injector().getInstance(PlayerMetaRepository.class);
-        Map<String, byte[]> map = new HashMap<>();
-        for (PlayerMetaEntity e : repo.findByUuid(uuid.toString())) {
-            map.put(e.getKey(), e.getPlayerMetaValue());
-        }
-        if (result != null) {
-            result.run(map);
-        }
-
-    }
-
-    public static void removePersistentMeta(UUID uuid, String key) {
-        PlayerMetaRepository repo = PlotSquared.platform().injector().getInstance(PlayerMetaRepository.class);
-        repo.delete(uuid.toString(), key);
-    }
-
     public static CompletableFuture<Boolean> swapPlots(Plot plot1, Plot plot2) {
         if (plot1 == null || plot2 == null) {
             return CompletableFuture.completedFuture(false);
