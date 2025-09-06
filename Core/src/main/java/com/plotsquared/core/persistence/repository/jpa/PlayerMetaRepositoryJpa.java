@@ -64,7 +64,7 @@ public class PlayerMetaRepositoryJpa implements PlayerMetaRepository {
             PlayerMetaEntity e = new PlayerMetaEntity();
             e.setUuid(uuid);
             e.setKey(key);
-            e.setValue(value);
+            e.setPlayerMetaValue(value);
             em.persist(e);
             tx.commit();
         } catch (RuntimeException ex) {

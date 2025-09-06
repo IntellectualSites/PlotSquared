@@ -195,7 +195,7 @@ public class PlotRepositoryJpa implements PlotRepository {
                             PlotFlagEntity fe = new PlotFlagEntity();
                             fe.setPlot(pe);
                             fe.setFlag(flagEntry.getName());
-                            fe.setValue(flagEntry.toString());
+                            fe.setFlagValue(flagEntry.toString());
                             em.persist(fe);
                         }
                     }
@@ -647,7 +647,7 @@ public class PlotRepositoryJpa implements PlotRepository {
                 var plot = byId.get(f.getPlot().getId());
                 if (plot != null) {
                     String flag = f.getFlag();
-                    String value = f.getValue();
+                    String value = f.getFlagValue();
                     var registry = com.plotsquared.core.plot.flag.GlobalFlagContainer.getInstance();
                     var plotFlag = registry.getFlagFromString(flag);
                     if (plotFlag == null) {
