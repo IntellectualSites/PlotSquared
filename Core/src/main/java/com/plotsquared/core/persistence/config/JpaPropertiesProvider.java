@@ -50,19 +50,11 @@ public final class JpaPropertiesProvider {
             props.put("jakarta.persistence.jdbc.driver", "com.mysql.cj.jdbc.Driver");
             props.put("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect");
         } else if (Storage.H2.USE) {
-            String url;
-            switch (Storage.H2.MODE.toUpperCase()) {
-                case "MEMORY":
-                    url = "jdbc:h2:mem:" + Storage.H2.DB;
-                    break;
-                case "SERVER":
-                    url = "jdbc:h2:tcp://localhost/" + Storage.H2.DB;
-                    break;
-                case "FILE":
-                default:
-                    url = "jdbc:h2:file:./" + Storage.H2.DB;
-                    break;
-            }
+            String url = switch (Storage.H2.MODE.toUpperCase()) {
+                case "MEMORY" -> "jdbc:h2:mem:" + Storage.H2.DB;
+                case "SERVER" -> "jdbc:h2:tcp://localhost/" + Storage.H2.DB;
+                default -> "jdbc:h2:file:./" + Storage.H2.DB;
+            };
             if (!Storage.H2.PROPERTIES.isEmpty()) {
                 url += ";" + String.join(";", Storage.H2.PROPERTIES);
             }
