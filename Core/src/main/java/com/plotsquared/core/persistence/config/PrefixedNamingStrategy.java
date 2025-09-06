@@ -45,7 +45,7 @@ public class PrefixedNamingStrategy implements PhysicalNamingStrategy {
         if (name == null) {
             return null;
         }
-        return Identifier.toIdentifier(prefix + name.getText(), name.isQuoted());
+        return Identifier.toIdentifier((prefix + name.getText()).toUpperCase(), name.isQuoted());
     }
 
     @Override
@@ -65,7 +65,7 @@ public class PrefixedNamingStrategy implements PhysicalNamingStrategy {
 
     @Override
     public Identifier toPhysicalColumnName(Identifier n, JdbcEnvironment e) {
-        return n;
+        return Identifier.toIdentifier(n.getText().toUpperCase());
     }
 
 }
