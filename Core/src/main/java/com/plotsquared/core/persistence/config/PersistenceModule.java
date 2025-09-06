@@ -49,7 +49,7 @@ import com.plotsquared.core.persistence.repository.jpa.PlotTrustedRepositoryJpa;
 import com.plotsquared.core.persistence.repository.jpa.PlotRatingRepositoryJpa;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import org.hibernate.jpa.HibernatePersistenceProvider;
 
 import javax.sql.DataSource;
 import java.util.Map;
@@ -100,9 +100,11 @@ public final class PersistenceModule extends AbstractModule {
 
     @Provides
     @Singleton
-    EntityManagerFactory provideEmf(JpaPropertiesProvider jpaPropertiesProvider) {
+    EntityManagerFactory provideEmf(JpaPropertiesProvider jpaPropertiesProvider, DataSource ds, LiquibaseBootstrap liquibaseBootstrap) {
         Map<String, Object> props = jpaPropertiesProvider.getProperties();
-        return syncThreadForServiceLoader(() -> Persistence.createEntityManagerFactory("plotsquaredPU", props));
+        props.put("jakarta.persistence.nonJtaDataSource", ds);
+        return syncThreadForServiceLoader(() -> new HibernatePersistenceProvider().createEntityManagerFactory("plotsquaredPU",
+                props));
     }
 
     @Provides
