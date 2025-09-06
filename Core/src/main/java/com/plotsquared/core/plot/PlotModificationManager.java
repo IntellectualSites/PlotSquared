@@ -38,6 +38,7 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.queue.QueueCoordinator;
+import com.plotsquared.core.services.api.PlotService;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.function.pattern.Pattern;
@@ -516,7 +517,8 @@ public final class PlotModificationManager {
         this.plot.getDenied().clear();
         this.plot.settings = new PlotSettings();
         if (this.plot.getArea().addPlot(this.plot)) {
-            DBFunc.createPlotAndSettings(this.plot, () -> {
+            final PlotService service = PlotSquared.platform().injector().getInstance(PlotService.class);
+            service.createPlotAndSettings(this.plot, () -> {
                 PlotArea plotworld = plot.getArea();
                 if (notify && plotworld.isAutoMerge()) {
                     final PlotPlayer<?> player = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);

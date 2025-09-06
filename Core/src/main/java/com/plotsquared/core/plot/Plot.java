@@ -53,6 +53,7 @@ import com.plotsquared.core.plot.flag.types.DoubleFlag;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.queue.QueueCoordinator;
+import com.plotsquared.core.services.api.PlotService;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.PlayerManager;
@@ -692,17 +693,18 @@ public class Plot {
             this.getPlotModificationManager().create();
             return;
         }
+        PlotService service = PlotSquared.platform().injector().getInstance(PlotService.class);
         if (!isMerged()) {
             if (!owner.equals(this.getOwnerAbs())) {
                 this.setOwnerAbs(owner);
-                DBFunc.setOwner(this, owner);
+                service.setOwner(this, owner);
             }
             return;
         }
         for (final Plot current : getConnectedPlots()) {
             if (!owner.equals(current.getOwnerAbs())) {
                 current.setOwnerAbs(owner);
-                DBFunc.setOwner(current, owner);
+                service.setOwner(current, owner);
             }
         }
     }
@@ -1115,17 +1117,18 @@ public class Plot {
             this.getPlotModificationManager().create();
             return true;
         }
+        PlotService service = PlotSquared.platform().injector().getInstance(PlotService.class);
         if (!isMerged()) {
             if (!owner.equals(this.getOwnerAbs())) {
                 this.setOwnerAbs(owner);
-                DBFunc.setOwner(this, owner);
+                service.setOwner(this, owner);
             }
             return true;
         }
         for (final Plot current : getConnectedPlots()) {
             if (!owner.equals(current.getOwnerAbs())) {
                 current.setOwnerAbs(owner);
-                DBFunc.setOwner(current, owner);
+                service.setOwner(current, owner);
             }
         }
         return true;
@@ -1349,7 +1352,7 @@ public class Plot {
             }
 
             getArea().removePlot(getId());
-            DBFunc.delete(current);
+            PlotSquared.platform().injector().getInstance(PlotService.class).delete(current);
             current.setOwnerAbs(null);
             current.settings = null;
             current.clearCache();
@@ -1718,7 +1721,8 @@ public class Plot {
         Plot base = this.getBasePlot(false);
         PlotSettings baseSettings = base.getSettings();
         if (baseSettings.getRatings() != null && !baseSettings.getRatings().isEmpty()) {
-            DBFunc.deleteRatings(base);
+            PlotService plotService = PlotSquared.platform().injector().getInstance(PlotService.class);
+            plotService.deleteRatings(base);
             baseSettings.setRatings(null);
         }
     }
@@ -1901,7 +1905,9 @@ public class Plot {
         this.area.addPlotAbs(this);
         plot.area.addPlotAbs(plot);
         // Swap database
-        return DBFunc.swapPlots(plot, this);
+        PlotService service =
+                PlotSquared.platform().injector().getInstance(PlotService.class);
+        return service.swapPlots(plot, this);
     }
 
     /**
@@ -1924,7 +1930,8 @@ public class Plot {
         this.id = plot.getId();
         this.area.addPlotAbs(this);
         clearCache();
-        DBFunc.movePlot(this, plot);
+        PlotService service = PlotSquared.platform().injector().getInstance(PlotService.class);
+        service.movePlot(this, plot);
         TaskManager.runTaskLater(whenDone, TaskTime.ticks(1L));
         return true;
     }
