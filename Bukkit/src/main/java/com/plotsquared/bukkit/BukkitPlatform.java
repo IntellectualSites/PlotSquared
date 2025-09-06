@@ -54,6 +54,11 @@ import com.plotsquared.bukkit.util.UpdateUtility;
 import com.plotsquared.bukkit.util.task.BukkitTaskManager;
 import com.plotsquared.bukkit.util.task.PaperTimeConverter;
 import com.plotsquared.bukkit.util.task.SpigotTimeConverter;
+import com.plotsquared.bukkit.uuid.EssentialsUUIDService;
+import com.plotsquared.bukkit.uuid.LuckPermsUUIDService;
+import com.plotsquared.bukkit.uuid.OfflinePlayerUUIDService;
+import com.plotsquared.bukkit.uuid.PaperUUIDService;
+import com.plotsquared.bukkit.uuid.SquirrelIdUUIDService;
 import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.backup.BackupManager;
@@ -65,12 +70,15 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.Storage;
 import com.plotsquared.core.configuration.caption.ChatFormatter;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
+import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.RemoveRoadEntityEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.generator.SingleWorldGenerator;
+import com.plotsquared.core.inject.annotations.BackgroundPipeline;
 import com.plotsquared.core.inject.annotations.DefaultGenerator;
+import com.plotsquared.core.inject.annotations.ImpromptuPipeline;
 import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.inject.modules.PlotSquaredModule;
@@ -91,6 +99,7 @@ import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.EventDispatcher;
+import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.PlatformWorldManager;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.PremiumVerification;
@@ -100,6 +109,8 @@ import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import com.plotsquared.core.uuid.CacheUUIDService;
+import com.plotsquared.core.uuid.UUIDPipeline;
+import com.plotsquared.core.uuid.offline.OfflineModeUUIDService;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import io.papermc.lib.PaperLib;
@@ -196,6 +207,12 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     private BukkitPlayerManager playerManager;
     @Inject
     private BackupManager backupManager;
+    @Inject
+    @ImpromptuPipeline
+    private UUIDPipeline impromptuPipeline;
+    @Inject
+    @BackgroundPipeline
+    private UUIDPipeline backgroundPipeline;
     @Inject
     private PlatformWorldManager<World> worldManager;
     private Locale serverLocale;
@@ -415,6 +432,73 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         // Once the server has loaded force updating all generators known to PlotSquared
         TaskManager.runTaskLater(() -> PlotSquared.platform().setupUtils().updateGenerators(true), TaskTime.ticks(1L));
 
+        // Services are accessed in order
+        final CacheUUIDService cacheUUIDService = new CacheUUIDService(Settings.UUID.UUID_CACHE_SIZE);
+        this.impromptuPipeline.registerService(cacheUUIDService);
+        this.backgroundPipeline.registerService(cacheUUIDService);
+        this.impromptuPipeline.registerConsumer(cacheUUIDService);
+        this.backgroundPipeline.registerConsumer(cacheUUIDService);
+
+        // Now, if the server is in offline mode we can only use profiles and direct UUID
+        // access, and so we skip the player profile stuff as well as SquirrelID (Mojang lookups)
+        if (Settings.UUID.OFFLINE) {
+            final OfflineModeUUIDService offlineModeUUIDService = new OfflineModeUUIDService();
+            this.impromptuPipeline.registerService(offlineModeUUIDService);
+            this.backgroundPipeline.registerService(offlineModeUUIDService);
+            LOGGER.info("(UUID) Using the offline mode UUID service");
+        }
+
+        if (Settings.UUID.SERVICE_BUKKIT) {
+            final OfflinePlayerUUIDService offlinePlayerUUIDService = new OfflinePlayerUUIDService();
+            this.impromptuPipeline.registerService(offlinePlayerUUIDService);
+            this.backgroundPipeline.registerService(offlinePlayerUUIDService);
+        }
+
+        final LuckPermsUUIDService luckPermsUUIDService;
+        if (Settings.UUID.SERVICE_LUCKPERMS && Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
+            luckPermsUUIDService = new LuckPermsUUIDService();
+            LOGGER.info("(UUID) Using LuckPerms as a complementary UUID service");
+        } else {
+            luckPermsUUIDService = null;
+        }
+
+        final EssentialsUUIDService essentialsUUIDService;
+        if (Settings.UUID.SERVICE_ESSENTIALSX && Bukkit.getPluginManager().getPlugin("Essentials") != null) {
+            essentialsUUIDService = new EssentialsUUIDService();
+            LOGGER.info("(UUID) Using EssentialsX as a complementary UUID service");
+        } else {
+            essentialsUUIDService = null;
+        }
+
+        if (!Settings.UUID.OFFLINE) {
+            // If running Paper we'll also try to use their profiles
+            if (Bukkit.getOnlineMode() && PaperLib.isPaper() && Settings.UUID.SERVICE_PAPER) {
+                final PaperUUIDService paperUUIDService = new PaperUUIDService();
+                this.impromptuPipeline.registerService(paperUUIDService);
+                this.backgroundPipeline.registerService(paperUUIDService);
+                LOGGER.info("(UUID) Using Paper as a complementary UUID service");
+            }
+
+            // Plugin providers
+            if (luckPermsUUIDService != null) {
+                this.impromptuPipeline.registerService(luckPermsUUIDService);
+                this.backgroundPipeline.registerService(luckPermsUUIDService);
+            }
+            if (essentialsUUIDService != null) {
+                this.impromptuPipeline.registerService(essentialsUUIDService);
+                this.backgroundPipeline.registerService(essentialsUUIDService);
+            }
+
+            if (Settings.UUID.IMPROMPTU_SERVICE_MOJANG_API) {
+                final SquirrelIdUUIDService impromptuMojangService = new SquirrelIdUUIDService(Settings.UUID.IMPROMPTU_LIMIT);
+                this.impromptuPipeline.registerService(impromptuMojangService);
+            }
+            final SquirrelIdUUIDService backgroundMojangService = new SquirrelIdUUIDService(Settings.UUID.BACKGROUND_LIMIT);
+            this.backgroundPipeline.registerService(backgroundMojangService);
+        }
+
+        this.impromptuPipeline.storeImmediately("*", DBFunc.EVERYONE);
+
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             injector.getInstance(PAPIPlaceholders.class).register();
             if (Settings.Enabled_Components.EXTERNAL_PLACEHOLDERS) {
@@ -535,68 +619,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 }
             }
         }
-    }
-
-    private void startUuidCaching(
-            final @NonNull CacheUUIDService cacheUUIDService
-    ) {
-        // Record all unique UUID's and put them into a queue
-        final Set<UUID> uuidSet = new HashSet<>();
-        PlotSquared.get().forEachPlotRaw(plot -> {
-            uuidSet.add(plot.getOwnerAbs());
-            uuidSet.addAll(plot.getMembers());
-            uuidSet.addAll(plot.getTrusted());
-            uuidSet.addAll(plot.getDenied());
-        });
-        final Queue<UUID> uuidQueue = new LinkedBlockingQueue<>(uuidSet);
-
-        LOGGER.info("(UUID) {} UUIDs will be cached", uuidQueue.size());
-
-        Executors.newSingleThreadScheduledExecutor().schedule(() -> {
-            // Begin by reading all the SQLite cache at once
-            // Now fetch names for all known UUIDs
-            final int totalSize = uuidQueue.size();
-            int read = 0;
-            LOGGER.info("(UUID) PlotSquared will fetch UUIDs in groups of {}", Settings.UUID.BACKGROUND_LIMIT);
-            final List<UUID> uuidList = new ArrayList<>(Settings.UUID.BACKGROUND_LIMIT);
-
-            // Used to indicate that the second retrieval has been attempted
-            boolean secondRun = false;
-
-            while (!uuidQueue.isEmpty() || !uuidList.isEmpty()) {
-                if (!uuidList.isEmpty() && secondRun) {
-                    LOGGER.warn("(UUID) Giving up on last batch. Fetching new batch instead");
-                    uuidList.clear();
-                }
-                if (uuidList.isEmpty()) {
-                    // Retrieve the secondRun variable to indicate that we're retrieving a
-                    // fresh batch
-                    secondRun = false;
-                    // Populate the request list
-                    for (int i = 0; i < Settings.UUID.BACKGROUND_LIMIT && !uuidQueue.isEmpty(); i++) {
-                        uuidList.add(uuidQueue.poll());
-                        read++;
-                    }
-                } else {
-                    // If the list isn't empty then this is a second run for
-                    // an old batch, so we re-use the patch
-                    secondRun = true;
-                }
-                try {
-                    PlotSquared.get().getBackgroundUUIDPipeline().getNames(uuidList).get();
-                    // Clear the list if we successfully index all the names
-                    uuidList.clear();
-                    // Print progress
-                    final double percentage = ((double) read / (double) totalSize) * 100.0D;
-                    if (Settings.DEBUG) {
-                        LOGGER.info("(UUID) PlotSquared has cached {} of UUIDs", String.format("%.1f%%", percentage));
-                    }
-                } catch (final InterruptedException | ExecutionException e) {
-                    LOGGER.error("(UUID) Failed to retrieve last batch. Will try again", e);
-                }
-            }
-            LOGGER.info("(UUID) PlotSquared has cached all UUIDs");
-        }, 10, TimeUnit.SECONDS);
     }
 
     @Override
