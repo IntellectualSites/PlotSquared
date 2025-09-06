@@ -21,10 +21,8 @@ package com.plotsquared.core.database;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.persistence.entity.PlotCommentEntity;
 import com.plotsquared.core.persistence.entity.PlotEntity;
-import com.plotsquared.core.persistence.entity.PlotFlagEntity;
 import com.plotsquared.core.persistence.repository.api.PlotCommentRepository;
 import com.plotsquared.core.persistence.repository.api.PlotDeniedRepository;
-import com.plotsquared.core.persistence.repository.api.PlotFlagRepository;
 import com.plotsquared.core.persistence.repository.api.PlotMembershipRepository;
 import com.plotsquared.core.persistence.repository.api.PlotRatingRepository;
 import com.plotsquared.core.persistence.repository.api.PlotRepository;
@@ -32,7 +30,6 @@ import com.plotsquared.core.persistence.repository.api.PlotTrustedRepository;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.comment.PlotComment;
-import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.task.RunnableVal;
 
 import java.util.ArrayList;
