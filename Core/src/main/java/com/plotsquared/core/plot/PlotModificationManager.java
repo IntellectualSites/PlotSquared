@@ -25,7 +25,6 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotComponentSetEvent;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
@@ -39,6 +38,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.services.api.FlagService;
+import com.plotsquared.core.services.api.MemberService;
 import com.plotsquared.core.services.api.PlotService;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
@@ -138,19 +138,19 @@ public final class PlotModificationManager {
             if (plot.members != null && !plot.members.isEmpty()) {
                 other.members = plot.members;
                 for (UUID member : plot.members) {
-                    DBFunc.setMember(other, member);
+                    PlotSquared.platform().injector().getInstance(MemberService.class).setMember(other, member);
                 }
             }
             if (plot.trusted != null && !plot.trusted.isEmpty()) {
                 other.trusted = plot.trusted;
                 for (UUID trusted : plot.trusted) {
-                    DBFunc.setTrusted(other, trusted);
+                    PlotSquared.platform().injector().getInstance(MemberService.class).setTrusted(other, trusted);
                 }
             }
             if (plot.denied != null && !plot.denied.isEmpty()) {
                 other.denied = plot.denied;
                 for (UUID denied : plot.denied) {
-                    DBFunc.setDenied(other, denied);
+                    PlotSquared.platform().injector().getInstance(MemberService.class).setDenied(other, denied);
                 }
             }
         }

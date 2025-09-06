@@ -54,6 +54,7 @@ import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.services.api.FlagService;
+import com.plotsquared.core.services.api.MemberService;
 import com.plotsquared.core.services.api.PlotService;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
@@ -1074,7 +1075,7 @@ public class Plot {
     public void addDenied(final @NonNull UUID uuid) {
         for (final Plot current : getConnectedPlots()) {
             if (current.getDenied().add(uuid)) {
-                DBFunc.setDenied(current, uuid);
+                PlotSquared.platform().injector().getInstance(MemberService.class).setDenied(current, uuid);
             }
         }
     }
@@ -1087,7 +1088,7 @@ public class Plot {
     public void addTrusted(final @NonNull UUID uuid) {
         for (final Plot current : getConnectedPlots()) {
             if (current.getTrusted().add(uuid)) {
-                DBFunc.setTrusted(current, uuid);
+                PlotSquared.platform().injector().getInstance(MemberService.class).setTrusted(current, uuid);
             }
         }
     }
@@ -1100,7 +1101,7 @@ public class Plot {
     public void addMember(final @NonNull UUID uuid) {
         for (final Plot current : getConnectedPlots()) {
             if (current.getMembers().add(uuid)) {
-                DBFunc.setMember(current, uuid);
+                PlotSquared.platform().injector().getInstance(MemberService.class).setMember(current, uuid);
             }
         }
     }
@@ -2048,7 +2049,7 @@ public class Plot {
     private boolean rmvDenied(UUID uuid) {
         for (Plot current : this.getConnectedPlots()) {
             if (current.getDenied().remove(uuid)) {
-                DBFunc.removeDenied(current, uuid);
+                PlotSquared.platform().injector().getInstance(MemberService.class).removeDenied(current, uuid);
             } else {
                 return false;
             }
@@ -2077,7 +2078,7 @@ public class Plot {
     private boolean rmvTrusted(UUID uuid) {
         for (Plot plot : this.getConnectedPlots()) {
             if (plot.getTrusted().remove(uuid)) {
-                DBFunc.removeTrusted(plot, uuid);
+                PlotSquared.platform().injector().getInstance(MemberService.class).removeTrusted(plot, uuid);
             } else {
                 return false;
             }
@@ -2109,7 +2110,7 @@ public class Plot {
     private boolean rmvMember(UUID uuid) {
         for (Plot current : this.getConnectedPlots()) {
             if (current.getMembers().remove(uuid)) {
-                DBFunc.removeMember(current, uuid);
+                PlotSquared.platform().injector().getInstance(MemberService.class).removeMember(current, uuid);
             } else {
                 return false;
             }
