@@ -51,6 +51,7 @@ import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.expiration.ExpiryTask;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.services.api.ClusterService;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.LegacyConverter;
@@ -876,7 +877,8 @@ public class PlotSquared {
                         String name = cluster.getName(); // Cluster name
                         String fullId = name + "-" + pos1 + "-" + pos2;
                         worldSection.createSection("areas." + fullId);
-                        DBFunc.replaceWorld(world, world + ";" + name, pos1, pos2); // NPE
+                        PlotSquared.platform().injector().getInstance(ClusterService.class).replaceWorld(world, world + ";" + name, pos1, pos2);
+                        // NPE
                         LOGGER.info("- {}-{}-{}", name, pos1, pos2);
                         GeneratorWrapper<?> areaGen = this.platform.getGenerator(world, gen_string);
                         if (areaGen == null) {
