@@ -18,8 +18,12 @@
  */
 package com.plotsquared.core.services.impl;
 
+import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.persistence.entity.PlotEntity;
 import com.plotsquared.core.persistence.repository.api.PlotRepository;
+import com.plotsquared.core.persistence.repository.api.PlotSettingsRepository;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.services.api.PlotService;
 import jakarta.inject.Inject;
@@ -27,16 +31,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class PlotDefaultService implements PlotService {
 
     private final PlotRepository repository;
+    private final PlotSettingsRepository settingsRepository;
 
     @Inject
-    public PlotDefaultService(final PlotRepository repository) {
+    public PlotDefaultService(final PlotRepository repository, final PlotSettingsRepository settingsRepository) {
         this.repository = repository;
+        this.settingsRepository = settingsRepository;
     }
 
     @Override
@@ -89,6 +97,40 @@ public class PlotDefaultService implements PlotService {
     @Override
     public HashMap<String, HashMap<PlotId, Plot>> getPlots() {
         return this.repository.getPlots();
+    }
+
+    @Override
+    public void setMerged(final Plot plot, final boolean[] merged) {
+        String world = plot.getWorldName();
+        int x = plot.getId().getX();
+        int z = plot.getId().getY();
+        Optional<PlotEntity> pe = this.repository.findByWorldAndId(world, x, z);
+        pe.ifPresent(entity -> {
+            int mask = com.plotsquared.core.util.HashUtil.hash(merged);
+            this.settingsRepository.updateMerged(entity.getId(), mask);
+        });
+    }
+
+    @Override
+    public void setAlias(final Plot plot, final String alias) {
+        Optional<PlotEntity> pe = this.repository.findByWorldAndId(plot.getWorldName(), plot.getId().getX(), plot.getId().getY());
+        pe.ifPresent(entity -> this.settingsRepository.updateAlias(entity.getId(), alias));
+    }
+
+    @Override
+    public void setPosition(final Plot plot, final String position) {
+        Optional<PlotEntity> pe = this.repository.findByWorldAndId(plot.getWorldName(), plot.getId().getX(), plot.getId().getY());
+        pe.ifPresent(entity -> this.settingsRepository.updatePosition(entity.getId(), position));
+    }
+
+    @Override
+    public void purgeIds(final Set<Integer> uniqueIds) {
+        this.repository.purgeIds(uniqueIds);
+    }
+
+    @Override
+    public void purge(final PlotArea area, final Set<PlotId> plotIds) {
+        this.repository.purgeByWorldAndPlotIds(area.getWorldName(), plotIds);
     }
 
 }

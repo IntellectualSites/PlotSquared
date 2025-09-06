@@ -29,6 +29,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.services.api.PlotService;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
@@ -241,7 +242,7 @@ public class Purge extends SubCommand {
                         TaskManager.runTaskAsync(this);
                     } else {
                         TaskManager.runTask(() -> {
-                            DBFunc.purgeIds(ids);
+                            PlotSquared.platform().injector().getInstance(PlotService.class).purgeIds(ids);
                             player.sendMessage(
                                     TranslatableCaption.of("purge.purge_success"),
                                     TagResolver.resolver(

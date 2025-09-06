@@ -28,10 +28,8 @@ import com.plotsquared.core.persistence.repository.api.PlotFlagRepository;
 import com.plotsquared.core.persistence.repository.api.PlotMembershipRepository;
 import com.plotsquared.core.persistence.repository.api.PlotRatingRepository;
 import com.plotsquared.core.persistence.repository.api.PlotRepository;
-import com.plotsquared.core.persistence.repository.api.PlotSettingsRepository;
 import com.plotsquared.core.persistence.repository.api.PlotTrustedRepository;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.comment.PlotComment;
 import com.plotsquared.core.plot.flag.PlotFlag;
@@ -41,7 +39,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -56,22 +53,6 @@ public class DBFunc {
     // TODO: Use this instead. public static final UUID EVERYONE = UUID.fromString("4aa2aaa4-c06b-485c-bc58-186aa1780d9b");
     public static final UUID EVERYONE = UUID.fromString("1-1-3-3-7");
     public static final UUID SERVER = UUID.fromString("00000000-0000-0000-0000-000000000000");
-
-    public static void setMerged(Plot plot, boolean[] merged) {
-        if (plot == null || merged == null) {
-            return;
-        }
-        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
-        PlotSettingsRepository settingsRepo = PlotSquared.platform().injector().getInstance(PlotSettingsRepository.class);
-        String world = plot.getWorldName();
-        int x = plot.getId().getX();
-        int z = plot.getId().getY();
-        Optional<PlotEntity> pe = plotRepo.findByWorldAndId(world, x, z);
-        pe.ifPresent(entity -> {
-            int mask = com.plotsquared.core.util.HashUtil.hash(merged);
-            settingsRepo.updateMerged(entity.getId(), mask);
-        });
-    }
 
     public static void setFlag(Plot plot, PlotFlag<?, ?> flag) {
         if (plot == null || flag == null) {
@@ -109,44 +90,6 @@ public class DBFunc {
         PlotFlagRepository flagRepo = PlotSquared.platform().injector().getInstance(PlotFlagRepository.class);
         Optional<PlotEntity> pe = plotRepo.findByWorldAndId(plot.getWorldName(), plot.getId().getX(), plot.getId().getY());
         pe.ifPresent(entity -> flagRepo.deleteByPlotAndName(entity.getId(), flag.getName()));
-    }
-
-    /**
-     * @param plot
-     * @param alias
-     */
-    public static void setAlias(Plot plot, String alias) {
-        if (plot == null) {
-            return;
-        }
-        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
-        PlotSettingsRepository settingsRepo = PlotSquared.platform().injector().getInstance(PlotSettingsRepository.class);
-        Optional<PlotEntity> pe = plotRepo.findByWorldAndId(plot.getWorldName(), plot.getId().getX(), plot.getId().getY());
-        pe.ifPresent(entity -> settingsRepo.updateAlias(entity.getId(), alias));
-    }
-
-    public static void purgeIds(Set<Integer> uniqueIds) {
-        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
-        plotRepo.purgeIds(uniqueIds);
-    }
-
-    public static void purge(PlotArea area, Set<PlotId> plotIds) {
-        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
-        plotRepo.purgeByWorldAndPlotIds(area.getWorldName(), plotIds);
-    }
-
-    /**
-     * @param plot
-     * @param position
-     */
-    public static void setPosition(Plot plot, String position) {
-        if (plot == null || position == null) {
-            return;
-        }
-        PlotRepository plotRepo = PlotSquared.platform().injector().getInstance(PlotRepository.class);
-        PlotSettingsRepository settingsRepo = PlotSquared.platform().injector().getInstance(PlotSettingsRepository.class);
-        Optional<PlotEntity> pe = plotRepo.findByWorldAndId(plot.getWorldName(), plot.getId().getX(), plot.getId().getY());
-        pe.ifPresent(entity -> settingsRepo.updatePosition(entity.getId(), position));
     }
 
     /**

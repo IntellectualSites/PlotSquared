@@ -19,10 +19,12 @@
 package com.plotsquared.core.services.api;
 
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -49,5 +51,15 @@ public interface PlotService {
     void deleteRatings(Plot plot);
 
     HashMap<String, HashMap<PlotId, Plot>> getPlots();
+
+    void setMerged(Plot plot, boolean[] merged);
+
+    void setAlias(Plot plot, String alias);
+
+    void setPosition(Plot plot, String position);
+
+    void purgeIds(Set<Integer> uniqueIds);
+
+    void purge(PlotArea area, Set<PlotId> plotIds);
 
 }

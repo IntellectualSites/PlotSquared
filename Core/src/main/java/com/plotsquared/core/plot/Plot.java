@@ -1552,10 +1552,11 @@ public class Plot {
         }
         plot.getSettings().setPosition(location);
         if (location != null) {
-            DBFunc.setPosition(plot, plot.getSettings().getPosition().toString());
+            PlotSquared.platform().injector().getInstance(PlotService.class).setPosition(plot,
+                    plot.getSettings().getPosition().toString());
             return;
         }
-        DBFunc.setPosition(plot, null);
+        PlotSquared.platform().injector().getInstance(PlotService.class).setPosition(plot, null);
     }
 
     /**
@@ -2171,7 +2172,7 @@ public class Plot {
                 return;
             }
             current.getSettings().setAlias(alias);
-            DBFunc.setAlias(current, alias);
+            PlotSquared.platform().injector().getInstance(PlotService.class).setAlias(current, alias);
         }
     }
 
@@ -2204,7 +2205,7 @@ public class Plot {
                 }
                 this.connectedCache = null;
             }
-            DBFunc.setMerged(this, this.getSettings().getMerged());
+            PlotSquared.platform().injector().getInstance(PlotService.class).setMerged(this, this.getSettings().getMerged());
         }
     }
 
@@ -2234,7 +2235,7 @@ public class Plot {
      */
     public void setMerged(boolean[] merged) {
         this.getSettings().setMerged(merged);
-        DBFunc.setMerged(this, merged);
+        PlotSquared.platform().injector().getInstance(PlotService.class).setMerged(this, merged);
         clearCache();
     }
 
@@ -2413,10 +2414,10 @@ public class Plot {
                 // invalid merge
                 if (tmp.isOwnerAbs(this.getOwnerAbs())) {
                     tmp.getSettings().setMerged(direction.opposite(), true);
-                    DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
+                    PlotSquared.platform().injector().getInstance(PlotService.class).setMerged(tmp, tmp.getSettings().getMerged());
                 } else {
                     this.getSettings().setMerged(direction, false);
-                    DBFunc.setMerged(this, this.getSettings().getMerged());
+                    PlotSquared.platform().injector().getInstance(PlotService.class).setMerged(this, this.getSettings().getMerged());
                 }
             }
             queueCache.add(tmp);
