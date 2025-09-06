@@ -18,9 +18,10 @@
  */
 package com.plotsquared.core.plot.comment;
 
-import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.services.api.CommentService;
 import com.plotsquared.core.util.task.RunnableVal;
 
 import java.util.List;
@@ -91,14 +92,14 @@ public abstract class CommentInbox {
      * @param comment the comment to remove
      */
     public void removeComment(Plot plot, PlotComment comment) {
-        DBFunc.removeComment(plot, comment);
+        PlotSquared.platform().injector().getInstance(CommentService.class).removeComment(plot, comment);
     }
 
     /**
      * @param plot plot
      */
     public void clearInbox(Plot plot) {
-        DBFunc.clearInbox(plot, toString());
+        PlotSquared.platform().injector().getInstance(CommentService.class).clearInbox(plot, toString());
     }
 
 }

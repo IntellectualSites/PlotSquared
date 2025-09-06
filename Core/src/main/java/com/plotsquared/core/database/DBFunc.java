@@ -19,9 +19,7 @@
 package com.plotsquared.core.database;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.persistence.entity.PlotCommentEntity;
 import com.plotsquared.core.persistence.entity.PlotEntity;
-import com.plotsquared.core.persistence.repository.api.PlotCommentRepository;
 import com.plotsquared.core.persistence.repository.api.PlotDeniedRepository;
 import com.plotsquared.core.persistence.repository.api.PlotMembershipRepository;
 import com.plotsquared.core.persistence.repository.api.PlotRatingRepository;
@@ -29,12 +27,8 @@ import com.plotsquared.core.persistence.repository.api.PlotRepository;
 import com.plotsquared.core.persistence.repository.api.PlotTrustedRepository;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.plot.comment.PlotComment;
-import com.plotsquared.core.util.task.RunnableVal;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -50,67 +44,6 @@ public class DBFunc {
     // TODO: Use this instead. public static final UUID EVERYONE = UUID.fromString("4aa2aaa4-c06b-485c-bc58-186aa1780d9b");
     public static final UUID EVERYONE = UUID.fromString("1-1-3-3-7");
     public static final UUID SERVER = UUID.fromString("00000000-0000-0000-0000-000000000000");
-
-    /**
-     * @param plot
-     * @param comment
-     */
-    public static void removeComment(Plot plot, PlotComment comment) {
-        PlotCommentRepository repo = PlotSquared.platform().injector().getInstance(PlotCommentRepository.class);
-        String world = plot.getWorldName();
-        int hash = plot.getId().hashCode();
-        repo.deleteOne(world, hash, comment.inbox(), comment.senderName(), comment.comment());
-    }
-
-    public static void clearInbox(Plot plot, String inbox) {
-        PlotCommentRepository repo = PlotSquared.platform().injector().getInstance(PlotCommentRepository.class);
-        if (plot != null) {
-            String world = plot.getWorldName();
-            int hash = plot.getId().hashCode();
-            repo.clearInbox(world, hash, inbox);
-        }
-    }
-
-    /**
-     * @param plot
-     * @param comment
-     */
-    public static void setComment(Plot plot, PlotComment comment) {
-        PlotCommentRepository repo = PlotSquared.platform().injector().getInstance(PlotCommentRepository.class);
-        if (plot != null) {
-            PlotCommentEntity entity = new PlotCommentEntity();
-            entity.setWorld(plot.getWorldName());
-            entity.setHashcode(plot.getId().hashCode());
-            entity.setComment(comment.comment());
-            entity.setInbox(comment.inbox());
-            entity.setTimestamp((int) (comment.timestamp() / 1000));
-            entity.setSender(comment.senderName());
-            repo.save(entity);
-        }
-    }
-
-    /**
-     * @param plot
-     */
-    public static void getComments(
-            Plot plot, String inbox,
-            RunnableVal<List<PlotComment>> whenDone
-    ) {
-        PlotCommentRepository repo = PlotSquared.platform().injector().getInstance(PlotCommentRepository.class);
-        List<PlotComment> out = new ArrayList<>();
-        if (plot != null) {
-            String world = plot.getWorldName();
-            int hash = plot.getId().hashCode();
-            for (PlotCommentEntity e : repo.findByWorldHashAndInbox(world, hash, inbox)) {
-                PlotId id = (e.getHashcode() != null && e.getHashcode() != 0) ? PlotId.unpair(e.getHashcode()) : null;
-                long tsMillis = e.getTimestamp() != null ? e.getTimestamp().longValue() * 1000L : 0L;
-                out.add(new PlotComment(e.getWorld(), id, e.getComment(), e.getSender(), e.getInbox(), tsMillis));
-            }
-        }
-        if (whenDone != null) {
-            whenDone.run(out);
-        }
-    }
 
     /**
      * @param plot

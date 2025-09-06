@@ -18,12 +18,12 @@
  */
 package com.plotsquared.core.plot.comment;
 
-import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.services.api.CommentService;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class InboxOwner extends CommentInbox {
@@ -36,19 +36,12 @@ public class InboxOwner extends CommentInbox {
             TaskManager.runTask(whenDone);
             return true;
         }
-        DBFunc.getComments(plot, toString(), new RunnableVal<>() {
-            @Override
-            public void run(List<PlotComment> value) {
-                whenDone.value = value;
-                if (value != null) {
-                    for (PlotComment comment : value) {
-                        plot.getPlotCommentContainer().addComment(comment);
-                    }
-                } else {
-                    plot.getPlotCommentContainer().setComments(new ArrayList<>());
-                }
-                TaskManager.runTask(whenDone);
+        PlotSquared.platform().injector().getInstance(CommentService.class).getComments(plot, toString(), value -> {
+            whenDone.value = value;
+            for (PlotComment comment : value) {
+                plot.getPlotCommentContainer().addComment(comment);
             }
+            TaskManager.runTask(whenDone);
         });
         return true;
     }
@@ -59,7 +52,7 @@ public class InboxOwner extends CommentInbox {
             return false;
         }
         plot.getPlotCommentContainer().addComment(comment);
-        DBFunc.setComment(plot, comment);
+        PlotSquared.platform().injector().getInstance(CommentService.class).setComment(plot, comment);
         return true;
     }
 
