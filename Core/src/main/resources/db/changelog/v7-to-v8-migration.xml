@@ -10,9 +10,7 @@
         <preConditions onFail="MARK_RAN">
             <and>
                 <tableExists tableName="${prefix}plot"/>
-                <not>
-                    <columnExists tableName="${prefix}plot" columnName="id"/>
-                </not>
+                <columnExists tableName="${prefix}plot" columnName="id"/>
             </and>
         </preConditions>
         <comment>Add auto-increment ID column to existing v7 plot table</comment>
@@ -34,9 +32,7 @@
     <changeSet id="v7-to-v8-create-plot-settings" author="plotsquared">
         <preConditions onFail="MARK_RAN">
             <and>
-                <not>
-                    <tableExists tableName="${prefix}plot_settings"/>
-                </not>
+                <tableExists tableName="${prefix}plot_settings"/>
             </and>
         </preConditions>
         <comment>Create plot_settings table for v8</comment>
@@ -240,9 +236,7 @@
         <preConditions onFail="MARK_RAN">
             <and>
                 <tableExists tableName="${prefix}player_meta"/>
-                <not>
-                    <columnExists tableName="${prefix}player_meta" columnName="meta_id"/>
-                </not>
+                <columnExists tableName="${prefix}player_meta" columnName="meta_id"/>
             </and>
         </preConditions>
         <comment>Add auto-increment meta_id column to existing v7 player_meta table</comment>
@@ -260,9 +254,7 @@
     <changeSet id="v7-to-v8-create-plot-flags" author="plotsquared">
         <preConditions onFail="MARK_RAN">
             <and>
-                <not>
-                    <tableExists tableName="${prefix}plot_flags"/>
-                </not>
+                <tableExists tableName="${prefix}plot_flags"/>
             </and>
         </preConditions>
         <comment>Create plot_flags table if missing</comment>

@@ -5,280 +5,87 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
-    <!-- Plot table - only for new installations -->
-    <changeSet id="create-plot-table" author="plotsquared">
-        <preConditions onFail="MARK_RAN">
+    <changeSet id="create-cluster-table" author="plotsquared">
+        <preConditions>
             <not>
-                <tableExists tableName="${prefix}plot"/>
+                <tableExists tableName="${prefix}cluster" />
             </not>
         </preConditions>
-        <comment>Create plot table for new v8 installations</comment>
-
-        <createTable tableName="${prefix}plot">
-            <column name="id" type="BIGINT" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
+        <createTable tableName="${prefix}cluster">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cluster"/>
             </column>
-            <column name="plot_id_x" type="INT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="plot_id_z" type="INT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="world" type="VARCHAR(45)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="owner" type="VARCHAR(45)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="timestamp" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
-                <constraints nullable="false"/>
-            </column>
+            <column name="pos1_x" type="INT"/>
+            <column name="pos1_z" type="INT"/>
+            <column name="pos2_x" type="INT"/>
+            <column name="pos2_z" type="INT"/>
+            <column name="owner" type="VARCHAR(40)"/>
+            <column name="world" type="VARCHAR(45)"/>
+            <column name="timestamp" type="DATETIME"/>
         </createTable>
-
-        <createIndex tableName="${prefix}plot" indexName="idx_plot_world_x_z">
-            <column name="world"/>
-            <column name="plot_id_x"/>
-            <column name="plot_id_z"/>
-        </createIndex>
-
-        <addUniqueConstraint tableName="${prefix}plot"
-                             columnNames="world,plot_id_x,plot_id_z"
-                             constraintName="uk_plot_coordinates"/>
     </changeSet>
 
-    <!-- Plot Settings table - only for new installations -->
-    <changeSet id="create-plot-settings-table" author="plotsquared">
-        <preConditions onFail="MARK_RAN">
+    <changeSet id="create-cluster-helpers" author="plotsquared">
+        <preConditions>
             <not>
-                <tableExists tableName="${prefix}plot_settings"/>
+                <tableExists tableName="${prefix}cluster_helpers" />
             </not>
         </preConditions>
-        <comment>Create plot_settings table for new v8 installations</comment>
-
-        <createTable tableName="${prefix}plot_settings">
-            <column name="plot_plot_id" type="BIGINT">
-                <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column name="biome" type="VARCHAR(45)" defaultValue="FOREST">
-                <constraints nullable="true"/>
-            </column>
-            <column name="rain" type="INT" defaultValue="0">
-                <constraints nullable="true"/>
-            </column>
-            <column name="custom_time" type="TINYINT" defaultValue="0">
-                <constraints nullable="true"/>
-            </column>
-            <column name="time" type="INT" defaultValue="8000">
-                <constraints nullable="true"/>
-            </column>
-            <column name="deny_entry" type="TINYINT" defaultValue="0">
-                <constraints nullable="true"/>
-            </column>
-            <column name="alias" type="VARCHAR(50)">
-                <constraints nullable="true"/>
-            </column>
-            <column name="merged" type="INT">
-                <constraints nullable="true"/>
-            </column>
-            <column name="position" type="VARCHAR(50)" defaultValue="DEFAULT">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <addForeignKeyConstraint baseTableName="${prefix}plot_settings"
-                               baseColumnNames="plot_plot_id"
-                               referencedTableName="${prefix}plot"
-                               referencedColumnNames="id"
-                               constraintName="fk_plot_settings_plot"
-                               onDelete="CASCADE"/>
-    </changeSet>
-
-    <!-- Plot Flags table - only for new installations -->
-    <changeSet id="create-plot-flags-table" author="plotsquared">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <tableExists tableName="${prefix}plot_flags"/>
-            </not>
-        </preConditions>
-        <comment>Create plot_flags table for new v8 installations</comment>
-
-        <createTable tableName="${prefix}plot_flags">
-            <column name="id" type="BIGINT" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="plot_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="flag" type="VARCHAR(64)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="value" type="VARCHAR(512)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <addForeignKeyConstraint baseTableName="${prefix}plot_flags"
-                               baseColumnNames="plot_id"
-                               referencedTableName="${prefix}plot"
-                               referencedColumnNames="id"
-                               constraintName="fk_plot_flags_plot"
-                               onDelete="CASCADE"/>
-
-        <createIndex tableName="${prefix}plot_flags" indexName="idx_plot_flags_plot_id">
-            <column name="plot_id"/>
-        </createIndex>
-
-        <addUniqueConstraint tableName="${prefix}plot_flags"
-                           columnNames="plot_id,flag"
-                           constraintName="uk_plot_flag"/>
-    </changeSet>
-
-    <!-- Plot Membership tables (trusted, members, denied) - only for new installations -->
-    <changeSet id="create-plot-membership-tables" author="plotsquared">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <tableExists tableName="${prefix}plot_trusted"/>
-            </not>
-        </preConditions>
-        <comment>Create plot membership tables for new v8 installations</comment>
-
-        <!-- Plot Trusted -->
-        <createTable tableName="${prefix}plot_trusted">
-            <column name="plot_plot_id" type="BIGINT">
-                <constraints nullable="false"/>
+        <createTable tableName="${prefix}cluster_helpers">
+            <column name="cluster_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cluster_helpers"/>
             </column>
             <column name="user_uuid" type="VARCHAR(40)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cluster_helpers"/>
             </column>
         </createTable>
-
-        <!-- Plot Helpers -->
-        <createTable tableName="${prefix}plot_helpers">
-            <column name="plot_plot_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="user_uuid" type="VARCHAR(40)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <!-- Plot Denied -->
-        <createTable tableName="${prefix}plot_denied">
-            <column name="plot_plot_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="user_uuid" type="VARCHAR(40)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <!-- Foreign Key Constraints -->
-        <addForeignKeyConstraint baseTableName="${prefix}plot_trusted"
-                               baseColumnNames="plot_plot_id"
-                               referencedTableName="${prefix}plot"
-                               referencedColumnNames="id"
-                               constraintName="fk_plot_trusted_plot"
-                               onDelete="CASCADE"/>
-
-        <addForeignKeyConstraint baseTableName="${prefix}plot_helpers"
-                               baseColumnNames="plot_plot_id"
-                               referencedTableName="${prefix}plot"
-                               referencedColumnNames="id"
-                               constraintName="fk_plot_helpers_plot"
-                               onDelete="CASCADE"/>
-
-        <addForeignKeyConstraint baseTableName="${prefix}plot_denied"
-                               baseColumnNames="plot_plot_id"
-                               referencedTableName="${prefix}plot"
-                               referencedColumnNames="id"
-                               constraintName="fk_plot_denied_plot"
-                               onDelete="CASCADE"/>
-
-        <!-- Indexes for performance -->
-        <createIndex tableName="${prefix}plot_trusted" indexName="idx_plot_trusted_plot_user">
-            <column name="plot_plot_id"/>
-            <column name="user_uuid"/>
-        </createIndex>
-
-        <createIndex tableName="${prefix}plot_helpers" indexName="idx_plot_helpers_plot_user">
-            <column name="plot_plot_id"/>
-            <column name="user_uuid"/>
-        </createIndex>
-
-        <createIndex tableName="${prefix}plot_denied" indexName="idx_plot_denied_plot_user">
-            <column name="plot_plot_id"/>
-            <column name="user_uuid"/>
-        </createIndex>
     </changeSet>
 
-    <!-- Plot Comments and Ratings - only for new installations -->
-    <changeSet id="create-plot-comments-ratings-tables" author="plotsquared">
-        <preConditions onFail="MARK_RAN">
+    <changeSet id="create-cluster-invite" author="plotsquared">
+        <preConditions>
             <not>
-                <tableExists tableName="${prefix}plot_comments"/>
+                <tableExists tableName="${prefix}cluster_invited" />
             </not>
         </preConditions>
-        <comment>Create plot comments and ratings tables for new v8 installations</comment>
-
-        <!-- Plot Comments -->
-        <createTable tableName="${prefix}plot_comments">
-            <column name="world" type="VARCHAR(40)">
-                <constraints nullable="false"/>
+        <createTable tableName="${prefix}cluster_invited">
+            <column name="cluster_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cluster_invited"/>
             </column>
-            <column name="hashcode" type="INT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="comment" type="VARCHAR(40)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="inbox" type="VARCHAR(40)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="timestamp" type="INT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="sender" type="VARCHAR(40)">
-                <constraints nullable="false"/>
+            <column name="user_uuid" type="VARCHAR(40)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cluster_invited"/>
             </column>
         </createTable>
-
-        <!-- Plot Ratings -->
-        <createTable tableName="${prefix}plot_rating">
-            <column name="plot_plot_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="rating" type="INT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="player" type="VARCHAR(40)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <addForeignKeyConstraint baseTableName="${prefix}plot_rating"
-                               baseColumnNames="plot_plot_id"
-                               referencedTableName="${prefix}plot"
-                               referencedColumnNames="id"
-                               constraintName="fk_plot_rating_plot"
-                               onDelete="CASCADE"/>
-
-        <addUniqueConstraint tableName="${prefix}plot_rating"
-                           columnNames="plot_plot_id,player"
-                           constraintName="uk_plot_rating"/>
     </changeSet>
 
-    <!-- Player Meta - only for new installations -->
-    <changeSet id="create-player-meta-table" author="plotsquared">
-        <preConditions onFail="MARK_RAN">
+    <changeSet id="create-cluster-settings" author="plotsquared">
+        <preConditions>
             <not>
-                <tableExists tableName="${prefix}player_meta"/>
+                <tableExists tableName="${prefix}cluster_settings" />
             </not>
         </preConditions>
-        <comment>Create player_meta table for new v8 installations</comment>
-
+        <createTable tableName="${prefix}cluster_settings">
+            <column name="cluster_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cluster_settings"/>
+            </column>
+            <column name="biome" type="VARCHAR(45)"/>
+            <column name="rain" type="INT"/>
+            <column name="custom_time" type="BOOLEAN"/>
+            <column name="time" type="INT"/>
+            <column name="deny_entry" type="BOOLEAN"/>
+            <column name="alias" type="VARCHAR(50)"/>
+            <column name="merged" type="INT"/>
+            <column name="position" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="create-player-meta" author="plotsquared">
+        <preConditions>
+            <not>
+                <tableExists tableName="${prefix}player_meta" />
+            </not>
+        </preConditions>
         <createTable tableName="${prefix}player_meta">
-            <column name="meta_id" type="BIGINT" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
+            <column autoIncrement="true" name="meta_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_player_meta"/>
             </column>
             <column name="uuid" type="VARCHAR(40)">
                 <constraints nullable="false"/>
@@ -290,36 +97,22 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-
-        <addUniqueConstraint tableName="${prefix}player_meta"
-                           columnNames="uuid,key"
-                           constraintName="uk_player_meta"/>
     </changeSet>
 
-    <!-- Cluster tables - only for new installations -->
-    <changeSet id="create-cluster-tables" author="plotsquared">
-        <preConditions onFail="MARK_RAN">
+    <changeSet id="create-plot" author="plotsquared">
+        <preConditions>
             <not>
-                <tableExists tableName="${prefix}cluster"/>
+                <tableExists tableName="${prefix}plot" />
             </not>
         </preConditions>
-        <comment>Create cluster tables for new v8 installations</comment>
-
-        <!-- Main cluster table -->
-        <createTable tableName="${prefix}cluster">
-            <column name="id" type="BIGINT" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
+        <createTable tableName="${prefix}plot">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_plot"/>
             </column>
-            <column name="pos1_x" type="INT">
+            <column name="plot_id_x" type="INT">
                 <constraints nullable="false"/>
             </column>
-            <column name="pos1_z" type="INT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="pos2_x" type="INT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="pos2_z" type="INT">
+            <column name="plot_id_z" type="INT">
                 <constraints nullable="false"/>
             </column>
             <column name="owner" type="VARCHAR(40)">
@@ -328,92 +121,163 @@
             <column name="world" type="VARCHAR(45)">
                 <constraints nullable="false"/>
             </column>
-            <column name="timestamp" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+            <column name="timestamp" type="DATETIME"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-plot-comments" author="plotsquared">
+        <preConditions>
+            <not>
+                <tableExists tableName="${prefix}plot_comments" />
+            </not>
+        </preConditions>
+        <createTable tableName="${prefix}plot_comments">
+            <column name="world" type="VARCHAR(40)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_plot_comments"/>
+            </column>
+            <column name="hashcode" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_plot_comments"/>
+            </column>
+            <column name="inbox" type="VARCHAR(40)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_plot_comments"/>
+            </column>
+            <column name="comment" type="VARCHAR(40)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sender" type="VARCHAR(40)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
+    </changeSet>
 
-        <!-- Cluster settings -->
-        <createTable tableName="${prefix}cluster_settings">
-            <column name="cluster_id" type="BIGINT">
-                <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column name="biome" type="VARCHAR(45)" defaultValue="FOREST">
-                <constraints nullable="true"/>
-            </column>
-            <column name="rain" type="INT" defaultValue="0">
-                <constraints nullable="true"/>
-            </column>
-            <column name="custom_time" type="TINYINT" defaultValue="0">
-                <constraints nullable="true"/>
-            </column>
-            <column name="time" type="INT" defaultValue="8000">
-                <constraints nullable="true"/>
-            </column>
-            <column name="deny_entry" type="TINYINT" defaultValue="0">
-                <constraints nullable="true"/>
-            </column>
-            <column name="alias" type="VARCHAR(50)">
-                <constraints nullable="true"/>
-            </column>
-            <column name="merged" type="INT">
-                <constraints nullable="true"/>
-            </column>
-            <column name="position" type="VARCHAR(50)" defaultValue="DEFAULT">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <!-- Cluster helpers -->
-        <createTable tableName="${prefix}cluster_helpers">
-            <column name="cluster_id" type="BIGINT">
-                <constraints nullable="false"/>
+    <changeSet id="create-plot-denied" author="plotsquared">
+        <preConditions>
+            <not>
+                <tableExists tableName="${prefix}plot_denied" />
+            </not>
+        </preConditions>
+        <createTable tableName="${prefix}plot_denied">
+            <column name="plot_plot_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_plot_denied"/>
             </column>
             <column name="user_uuid" type="VARCHAR(40)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_plot_denied"/>
             </column>
         </createTable>
+    </changeSet>
 
-        <!-- Cluster invited -->
-        <createTable tableName="${prefix}cluster_invited">
-            <column name="cluster_id" type="BIGINT">
+    <changeSet id="create-plot-flags" author="plotsquared">
+        <preConditions>
+            <not>
+                <tableExists tableName="${prefix}plot_flags" />
+            </not>
+        </preConditions>
+        <createTable tableName="${prefix}plot_flags">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_plot_flags"/>
+            </column>
+            <column name="plot_id" type="BIGINT">
                 <constraints nullable="false"/>
+            </column>
+            <column name="flag" type="VARCHAR(64)"/>
+            <column name="value" type="VARCHAR(512)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-plot-helpers" author="plotsquared">
+        <preConditions>
+            <not>
+                <tableExists tableName="${prefix}plot_helpers" />
+            </not>
+        </preConditions>
+        <createTable tableName="${prefix}plot_helpers">
+            <column name="plot_plot_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_plot_helpers"/>
             </column>
             <column name="user_uuid" type="VARCHAR(40)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_plot_helpers"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-plot-rating" author="plotsquared">
+        <preConditions>
+            <not>
+                <tableExists tableName="${prefix}plot_rating" />
+            </not>
+        </preConditions>
+        <createTable tableName="${prefix}plot_rating">
+            <column name="plot_plot_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_plot_rating"/>
+            </column>
+            <column name="player" type="VARCHAR(40)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_plot_rating"/>
+            </column>
+            <column name="rating" type="INT">
                 <constraints nullable="false"/>
             </column>
         </createTable>
+    </changeSet>
 
-        <!-- Foreign Key Constraints -->
-        <addForeignKeyConstraint baseTableName="${prefix}cluster_settings"
-                               baseColumnNames="cluster_id"
-                               referencedTableName="${prefix}cluster"
-                               referencedColumnNames="id"
-                               constraintName="fk_cluster_settings_cluster"
-                               onDelete="CASCADE"/>
+    <changeSet id="create-plot-settings" author="plotsquared">
+        <preConditions>
+            <not>
+                <tableExists tableName="${prefix}plot_settings" />
+            </not>
+        </preConditions>
+        <createTable tableName="${prefix}plot_settings">
+            <column name="plot_plot_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_plot_settings"/>
+            </column>
+            <column name="biome" type="VARCHAR(45)"/>
+            <column name="rain" type="INT"/>
+            <column name="custom_time" type="BOOLEAN"/>
+            <column name="time" type="INT"/>
+            <column name="deny_entry" type="BOOLEAN"/>
+            <column name="alias" type="VARCHAR(50)"/>
+            <column name="merged" type="INT"/>
+            <column name="position" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
 
-        <addForeignKeyConstraint baseTableName="${prefix}cluster_helpers"
-                               baseColumnNames="cluster_id"
-                               referencedTableName="${prefix}cluster"
-                               referencedColumnNames="id"
-                               constraintName="fk_cluster_helpers_cluster"
-                               onDelete="CASCADE"/>
+    <changeSet id="create-plot-trusted" author="plotsquared">
+        <preConditions>
+            <not>
+                <tableExists tableName="${prefix}plot_trusted" />
+            </not>
+        </preConditions>
+        <createTable tableName="${prefix}plot_trusted">
+            <column name="plot_plot_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_plot_trusted"/>
+            </column>
+            <column name="user_uuid" type="VARCHAR(40)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_plot_trusted"/>
+            </column>
+        </createTable>
+    </changeSet>
 
-        <addForeignKeyConstraint baseTableName="${prefix}cluster_invited"
-                               baseColumnNames="cluster_id"
-                               referencedTableName="${prefix}cluster"
-                               referencedColumnNames="id"
-                               constraintName="fk_cluster_invited_cluster"
-                               onDelete="CASCADE"/>
+    <changeSet id="add-plot-id-and-flag-constraint" author="plotsquared">
+        <addUniqueConstraint columnNames="plot_id, flag" constraintName="uc_4f1a2baba6bdd8ca77f83eb71" tableName="${prefix}plot_flags"/>
+    </changeSet>
 
-        <!-- Indexes -->
-        <createIndex tableName="${prefix}cluster" indexName="idx_cluster_world_coords">
-            <column name="world"/>
-            <column name="pos1_x"/>
-            <column name="pos1_z"/>
-            <column name="pos2_x"/>
-            <column name="pos2_z"/>
-        </createIndex>
+    <changeSet id="fk-cluster-settings-on-cluster" author="plotsquared">
+        <addForeignKeyConstraint baseColumnNames="cluster_id" baseTableName="${prefix}cluster_settings"
+                                 constraintName="FK_CLUSTER_SETTINGS_ON_CLUSTER" referencedColumnNames="id"
+                                 referencedTableName="${prefix}cluster"/>
+    </changeSet>
+
+    <changeSet id="fk-plot-flags-on-plot" author="plotsquared">
+        <addForeignKeyConstraint baseColumnNames="plot_id" baseTableName="${prefix}plot_flags" constraintName="FK_PLOT_FLAGS_ON_PLOT"
+                                 referencedColumnNames="id" referencedTableName="${prefix}plot"/>
+    </changeSet>
+
+    <changeSet id="fk-plot-settings-on-plot-plot" author="plotsquared">
+        <addForeignKeyConstraint baseColumnNames="plot_plot_id" baseTableName="${prefix}plot_settings"
+                                 constraintName="FK_PLOT_SETTINGS_ON_PLOT_PLOT" referencedColumnNames="id"
+                                 referencedTableName="${prefix}plot"/>
     </changeSet>
 
 </databaseChangeLog>
