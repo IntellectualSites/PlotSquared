@@ -96,6 +96,7 @@ import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
+import com.plotsquared.core.services.config.ServiceModule;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.EventDispatcher;
@@ -290,7 +291,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         new PlotSquaredModule(),
                         new BukkitModule(this),
                         new BackupModule(),
-                        new PersistenceModule()
+                        new PersistenceModule(),
+                        new ServiceModule()
                 );
         this.injector.injectMembers(this);
 
