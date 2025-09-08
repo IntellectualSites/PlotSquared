@@ -32,6 +32,17 @@ informative-annotations = "1.6"
 vault = "1.7.1"
 serverlib = "2.3.7"
 
+# Database
+jpa-api = "3.2.0"
+hibernate-core = "7.1.0.Final"
+liquibase-core = "4.33.0"
+hikari = "7.0.2"
+jaxbRuntime = "4.0.5"
+# JDBC Drivers
+mariadb-java-client = "3.5.5"
+sqlite-jdbc = "3.50.3.0"
+h2 = "2.3.232"
+
 # Gradle plugins
 shadow = "8.3.9"
 grgit = "4.1.1"
@@ -76,6 +87,19 @@ informativeAnnotations = { group = "com.intellectualsites.informative-annotation
 paperlib = { group = "io.papermc", name = "paperlib", version.ref = "paperlib" }
 vault = { group = "com.github.MilkBowl", name = "VaultAPI", version.ref = "vault" }
 serverlib = { group = "dev.notmyfault.serverlib", name = "ServerLib", version.ref = "serverlib" }
+
+# Database
+jpaApi = { group = "jakarta.persistence", name = "jakarta.persistence-api", version.ref = "jpa-api" }
+hibernateCore = { group = "org.hibernate.orm", name = "hibernate-core", version.ref = "hibernate-core" }
+hikari = { group = "com.zaxxer", name = "HikariCP", version.ref = "hikari" }
+hibernateHikariCp = { group = "org.hibernate.orm", name = "hibernate-hikaricp", version.ref = "hibernate-core" }
+hibernateCommunityDialects = { group = "org.hibernate.orm", name = "hibernate-community-dialects", version.ref = "hibernate-core" }
+liquibaseCore = { group = "org.liquibase", name = "liquibase-core", version.ref = "liquibase-core" }
+jaxbRuntime = { group = "org.glassfish.jaxb", name = "jaxb-runtime", version.ref = "jaxbRuntime" }
+# JDBC Drivers
+mariadbJavaClient = { group = "org.mariadb.jdbc", name = "mariadb-java-client", version.ref = "mariadb-java-client" }
+sqliteJdbc = { group = "org.xerial", name = "sqlite-jdbc", version.ref = "sqlite-jdbc" }
+h2 = { group = "com.h2database", name = "h2", version.ref = "h2" }
 
 [plugins]
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }

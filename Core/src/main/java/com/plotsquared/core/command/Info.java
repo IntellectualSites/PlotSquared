@@ -21,7 +21,7 @@ package com.plotsquared.core.command;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.util.StaticUUIDs;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -111,8 +111,8 @@ public class Info extends SubCommand {
 
         boolean hasOwner = plot.hasOwner();
         // Wildcard player {added}
-        boolean containsEveryone = plot.getTrusted().contains(DBFunc.EVERYONE);
-        boolean trustedEveryone = plot.getMembers().contains(DBFunc.EVERYONE);
+        boolean containsEveryone = plot.getTrusted().contains(StaticUUIDs.EVERYONE);
+        boolean trustedEveryone = plot.getMembers().contains(StaticUUIDs.EVERYONE);
         // Unclaimed?
         if (!hasOwner && !containsEveryone && !trustedEveryone) {
             player.sendMessage(

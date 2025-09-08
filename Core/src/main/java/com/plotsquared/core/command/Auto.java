@@ -23,7 +23,6 @@ import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlayerAutoPlotEvent;
 import com.plotsquared.core.events.PlotAutoMergeEvent;
 import com.plotsquared.core.events.Result;
@@ -35,6 +34,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.services.api.PlotService;
 import com.plotsquared.core.services.plots.AutoQuery;
 import com.plotsquared.core.services.plots.AutoService;
 import com.plotsquared.core.util.EconHandler;
@@ -158,7 +158,7 @@ public class Auto extends SubCommand {
         }
         plot.setOwnerAbs(player.getUUID());
 
-        final RunnableVal<Plot> runnableVal = new RunnableVal<>() {
+        final RunnableVal<Plot> successRunner = new RunnableVal<>() {
             {
                 this.value = plot;
             }
@@ -176,7 +176,8 @@ public class Auto extends SubCommand {
             }
         };
 
-        DBFunc.createPlotSafe(plot, runnableVal, () -> claimSingle(player, plot, plotArea, schematic));
+        PlotService service = PlotSquared.platform().injector().getInstance(PlotService.class);
+        service.createPlotSafe(plot, successRunner, () -> {});
 
     }
 

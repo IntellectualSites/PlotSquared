@@ -22,7 +22,7 @@ import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.util.StaticUUIDs;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -100,7 +100,7 @@ public class Trust extends Command {
                 int size = currentPlot.getTrusted().size() + currentPlot.getMembers().size();
                 while (iterator.hasNext()) {
                     UUID uuid = iterator.next();
-                    if (uuid == DBFunc.EVERYONE && !(
+                    if (uuid == StaticUUIDs.EVERYONE && !(
                             player.hasPermission(Permission.PERMISSION_TRUST_EVERYONE) || player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_TRUST))) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
@@ -152,7 +152,7 @@ public class Trust extends Command {
                 // Success
                 confirm.run(this, () -> {
                     for (UUID uuid : uuids) {
-                        if (uuid != DBFunc.EVERYONE) {
+                        if (uuid != StaticUUIDs.EVERYONE) {
                             if (!currentPlot.removeMember(uuid)) {
                                 if (currentPlot.getDenied().contains(uuid)) {
                                     currentPlot.removeDenied(uuid);

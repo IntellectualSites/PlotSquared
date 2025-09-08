@@ -18,8 +18,9 @@
  */
 package com.plotsquared.core.plot.comment;
 
-import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.services.api.CommentService;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 
@@ -29,12 +30,9 @@ public class InboxReport extends CommentInbox {
 
     @Override
     public boolean getComments(Plot plot, final RunnableVal<List<PlotComment>> whenDone) {
-        DBFunc.getComments(plot, toString(), new RunnableVal<>() {
-            @Override
-            public void run(List<PlotComment> value) {
-                whenDone.value = value;
-                TaskManager.runTask(whenDone);
-            }
+        PlotSquared.platform().injector().getInstance(CommentService.class).getComments(plot, toString(), value -> {
+            whenDone.value = value;
+            TaskManager.runTask(whenDone);
         });
         return true;
     }
@@ -44,7 +42,7 @@ public class InboxReport extends CommentInbox {
         if (plot.getOwner() == null) {
             return false;
         }
-        DBFunc.setComment(plot, comment);
+        PlotSquared.platform().injector().getInstance(CommentService.class).setComment(plot, comment);
         return true;
     }
 

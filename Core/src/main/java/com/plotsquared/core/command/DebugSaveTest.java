@@ -18,10 +18,11 @@
  */
 package com.plotsquared.core.command;
 
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.services.api.PlotService;
 import com.plotsquared.core.util.query.PlotQuery;
 
 import java.util.List;
@@ -37,7 +38,8 @@ public class DebugSaveTest extends SubCommand {
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         final List<Plot> plots = PlotQuery.newQuery().allPlots().asList();
         player.sendMessage(TranslatableCaption.of("debugsavetest.starting"));
-        DBFunc.createPlotsAndData(
+        PlotService service = PlotSquared.platform().injector().getInstance(PlotService.class);
+        service.createPlotsAndData(
                 plots,
                 () -> player.sendMessage(TranslatableCaption.of("debugsavetest.done"))
         );

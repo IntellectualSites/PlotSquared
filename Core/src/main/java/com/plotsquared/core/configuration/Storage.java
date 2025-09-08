@@ -57,10 +57,22 @@ public class Storage extends Config {
     public static final class SQLite {
 
         @Comment("Should SQLite be used?")
-        public static boolean USE = true;
+        public static boolean USE = false;
         @Comment("The file to use")
         public static String DB = "storage";
 
+    }
+
+    @Comment("H2 section")
+    public static final class H2 {
+        @Comment("Should H2 be used?")
+        public static boolean USE = true;
+        @Comment("The file to use (without .mv.db ending)")
+        public static String DB = "storage";
+        @Comment("The mode to use (MEMORY, FILE, SERVER)")
+        public static String MODE = "FILE";
+        @Comment("Set additional properties: https://h2database.com/html/features.html#database_url")
+        public static List<String> PROPERTIES = new ArrayList<>(Collections.singletonList("AUTO_SERVER=TRUE"));
     }
 
 }

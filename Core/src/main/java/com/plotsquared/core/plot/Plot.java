@@ -28,7 +28,7 @@ import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.util.StaticUUIDs;
 import com.plotsquared.core.events.PlayerTeleportToPlotEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.events.TeleportCause;
@@ -53,6 +53,10 @@ import com.plotsquared.core.plot.flag.types.DoubleFlag;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.queue.QueueCoordinator;
+import com.plotsquared.core.services.api.FlagService;
+import com.plotsquared.core.services.api.MemberService;
+import com.plotsquared.core.services.api.PlotService;
+import com.plotsquared.core.services.api.RatingService;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.PlayerManager;
@@ -676,7 +680,7 @@ public class Plot {
      */
     public @Nullable UUID getOwner() {
         if (this.getFlag(ServerPlotFlag.class)) {
-            return DBFunc.SERVER;
+            return StaticUUIDs.SERVER;
         }
         return this.getOwnerAbs();
     }
@@ -692,17 +696,18 @@ public class Plot {
             this.getPlotModificationManager().create();
             return;
         }
+        PlotService service = PlotSquared.platform().injector().getInstance(PlotService.class);
         if (!isMerged()) {
             if (!owner.equals(this.getOwnerAbs())) {
                 this.setOwnerAbs(owner);
-                DBFunc.setOwner(this, owner);
+                service.setOwner(this, owner);
             }
             return;
         }
         for (final Plot current : getConnectedPlots()) {
             if (!owner.equals(current.getOwnerAbs())) {
                 current.setOwnerAbs(owner);
-                DBFunc.setOwner(current, owner);
+                service.setOwner(current, owner);
             }
         }
     }
@@ -742,10 +747,10 @@ public class Plot {
         if (getMembers().contains(uuid)) {
             return isOnline();
         }
-        if (getTrusted().contains(uuid) || getTrusted().contains(DBFunc.EVERYONE)) {
+        if (getTrusted().contains(uuid) || getTrusted().contains(StaticUUIDs.EVERYONE)) {
             return true;
         }
-        if (getMembers().contains(DBFunc.EVERYONE)) {
+        if (getMembers().contains(StaticUUIDs.EVERYONE)) {
             return isOnline();
         }
         return false;
@@ -758,7 +763,7 @@ public class Plot {
      * @return {@code false} if the player is allowed to enter the plot, else {@code true}
      */
     public boolean isDenied(final @NonNull UUID uuid) {
-        return this.denied != null && (this.denied.contains(DBFunc.EVERYONE) && !this.isAdded(uuid) || !this.isAdded(uuid) && this.denied
+        return this.denied != null && (this.denied.contains(StaticUUIDs.EVERYONE) && !this.isAdded(uuid) || !this.isAdded(uuid) && this.denied
                 .contains(uuid));
     }
 
@@ -1071,7 +1076,7 @@ public class Plot {
     public void addDenied(final @NonNull UUID uuid) {
         for (final Plot current : getConnectedPlots()) {
             if (current.getDenied().add(uuid)) {
-                DBFunc.setDenied(current, uuid);
+                PlotSquared.platform().injector().getInstance(MemberService.class).setDenied(current, uuid);
             }
         }
     }
@@ -1084,7 +1089,7 @@ public class Plot {
     public void addTrusted(final @NonNull UUID uuid) {
         for (final Plot current : getConnectedPlots()) {
             if (current.getTrusted().add(uuid)) {
-                DBFunc.setTrusted(current, uuid);
+                PlotSquared.platform().injector().getInstance(MemberService.class).setTrusted(current, uuid);
             }
         }
     }
@@ -1097,7 +1102,7 @@ public class Plot {
     public void addMember(final @NonNull UUID uuid) {
         for (final Plot current : getConnectedPlots()) {
             if (current.getMembers().add(uuid)) {
-                DBFunc.setMember(current, uuid);
+                PlotSquared.platform().injector().getInstance(MemberService.class).setMember(current, uuid);
             }
         }
     }
@@ -1115,17 +1120,18 @@ public class Plot {
             this.getPlotModificationManager().create();
             return true;
         }
+        PlotService service = PlotSquared.platform().injector().getInstance(PlotService.class);
         if (!isMerged()) {
             if (!owner.equals(this.getOwnerAbs())) {
                 this.setOwnerAbs(owner);
-                DBFunc.setOwner(this, owner);
+                service.setOwner(this, owner);
             }
             return true;
         }
         for (final Plot current : getConnectedPlots()) {
             if (!owner.equals(current.getOwnerAbs())) {
                 current.setOwnerAbs(owner);
-                DBFunc.setOwner(current, owner);
+                service.setOwner(current, owner);
             }
         }
         return true;
@@ -1168,7 +1174,7 @@ public class Plot {
         for (final Plot plot : this.getConnectedPlots()) {
             plot.getFlagContainer().addFlag(flag);
             plot.reEnter();
-            DBFunc.setFlag(plot, flag);
+            PlotSquared.platform().injector().getInstance(FlagService.class).setFlag(plot, flag);
         }
         return true;
     }
@@ -1258,7 +1264,7 @@ public class Plot {
                 continue;
             }
             plot.reEnter();
-            DBFunc.removeFlag(plot, flag);
+            PlotSquared.platform().injector().getInstance(FlagService.class).removeFlag(plot, flag);
             removed = true;
         }
         return removed;
@@ -1349,7 +1355,7 @@ public class Plot {
             }
 
             getArea().removePlot(getId());
-            DBFunc.delete(current);
+            PlotSquared.platform().injector().getInstance(PlotService.class).delete(current);
             current.setOwnerAbs(null);
             current.settings = null;
             current.clearCache();
@@ -1549,10 +1555,11 @@ public class Plot {
         }
         plot.getSettings().setPosition(location);
         if (location != null) {
-            DBFunc.setPosition(plot, plot.getSettings().getPosition().toString());
+            PlotSquared.platform().injector().getInstance(PlotService.class).setPosition(plot,
+                    plot.getSettings().getPosition().toString());
             return;
         }
-        DBFunc.setPosition(plot, null);
+        PlotSquared.platform().injector().getInstance(PlotService.class).setPosition(plot, null);
     }
 
     /**
@@ -1707,7 +1714,7 @@ public class Plot {
         }
         int aggregate = rating.getAggregate();
         baseSettings.getRatings().put(uuid, aggregate);
-        DBFunc.setRating(base, uuid, aggregate);
+        PlotSquared.platform().injector().getInstance(RatingService.class).setRating(base, uuid, aggregate);
         return true;
     }
 
@@ -1718,7 +1725,8 @@ public class Plot {
         Plot base = this.getBasePlot(false);
         PlotSettings baseSettings = base.getSettings();
         if (baseSettings.getRatings() != null && !baseSettings.getRatings().isEmpty()) {
-            DBFunc.deleteRatings(base);
+            PlotService plotService = PlotSquared.platform().injector().getInstance(PlotService.class);
+            plotService.deleteRatings(base);
             baseSettings.setRatings(null);
         }
     }
@@ -1901,7 +1909,9 @@ public class Plot {
         this.area.addPlotAbs(this);
         plot.area.addPlotAbs(plot);
         // Swap database
-        return DBFunc.swapPlots(plot, this);
+        PlotService service =
+                PlotSquared.platform().injector().getInstance(PlotService.class);
+        return service.swapPlots(plot, this);
     }
 
     /**
@@ -1924,7 +1934,8 @@ public class Plot {
         this.id = plot.getId();
         this.area.addPlotAbs(this);
         clearCache();
-        DBFunc.movePlot(this, plot);
+        PlotService service = PlotSquared.platform().injector().getInstance(PlotService.class);
+        service.movePlot(this, plot);
         TaskManager.runTaskLater(whenDone, TaskTime.ticks(1L));
         return true;
     }
@@ -2026,7 +2037,7 @@ public class Plot {
      * @return success or not
      */
     public boolean removeDenied(UUID uuid) {
-        if (uuid == DBFunc.EVERYONE && !denied.contains(uuid)) {
+        if (uuid == StaticUUIDs.EVERYONE && !denied.contains(uuid)) {
             boolean result = false;
             for (UUID other : new HashSet<>(getDenied())) {
                 result = rmvDenied(other) || result;
@@ -2039,7 +2050,7 @@ public class Plot {
     private boolean rmvDenied(UUID uuid) {
         for (Plot current : this.getConnectedPlots()) {
             if (current.getDenied().remove(uuid)) {
-                DBFunc.removeDenied(current, uuid);
+                PlotSquared.platform().injector().getInstance(MemberService.class).removeDenied(current, uuid);
             } else {
                 return false;
             }
@@ -2055,7 +2066,7 @@ public class Plot {
      * @return success or not
      */
     public boolean removeTrusted(UUID uuid) {
-        if (uuid == DBFunc.EVERYONE && !trusted.contains(uuid)) {
+        if (uuid == StaticUUIDs.EVERYONE && !trusted.contains(uuid)) {
             boolean result = false;
             for (UUID other : new HashSet<>(getTrusted())) {
                 result = rmvTrusted(other) || result;
@@ -2068,7 +2079,7 @@ public class Plot {
     private boolean rmvTrusted(UUID uuid) {
         for (Plot plot : this.getConnectedPlots()) {
             if (plot.getTrusted().remove(uuid)) {
-                DBFunc.removeTrusted(plot, uuid);
+                PlotSquared.platform().injector().getInstance(MemberService.class).removeTrusted(plot, uuid);
             } else {
                 return false;
             }
@@ -2087,7 +2098,7 @@ public class Plot {
         if (this.members == null) {
             return false;
         }
-        if (uuid == DBFunc.EVERYONE && !members.contains(uuid)) {
+        if (uuid == StaticUUIDs.EVERYONE && !members.contains(uuid)) {
             boolean result = false;
             for (UUID other : new HashSet<>(this.members)) {
                 result = rmvMember(other) || result;
@@ -2100,7 +2111,7 @@ public class Plot {
     private boolean rmvMember(UUID uuid) {
         for (Plot current : this.getConnectedPlots()) {
             if (current.getMembers().remove(uuid)) {
-                DBFunc.removeMember(current, uuid);
+                PlotSquared.platform().injector().getInstance(MemberService.class).removeMember(current, uuid);
             } else {
                 return false;
             }
@@ -2164,7 +2175,7 @@ public class Plot {
                 return;
             }
             current.getSettings().setAlias(alias);
-            DBFunc.setAlias(current, alias);
+            PlotSquared.platform().injector().getInstance(PlotService.class).setAlias(current, alias);
         }
     }
 
@@ -2197,7 +2208,7 @@ public class Plot {
                 }
                 this.connectedCache = null;
             }
-            DBFunc.setMerged(this, this.getSettings().getMerged());
+            PlotSquared.platform().injector().getInstance(PlotService.class).setMerged(this, this.getSettings().getMerged());
         }
     }
 
@@ -2227,7 +2238,7 @@ public class Plot {
      */
     public void setMerged(boolean[] merged) {
         this.getSettings().setMerged(merged);
-        DBFunc.setMerged(this, merged);
+        PlotSquared.platform().injector().getInstance(PlotService.class).setMerged(this, merged);
         clearCache();
     }
 
@@ -2406,10 +2417,10 @@ public class Plot {
                 // invalid merge
                 if (tmp.isOwnerAbs(this.getOwnerAbs())) {
                     tmp.getSettings().setMerged(direction.opposite(), true);
-                    DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
+                    PlotSquared.platform().injector().getInstance(PlotService.class).setMerged(tmp, tmp.getSettings().getMerged());
                 } else {
                     this.getSettings().setMerged(direction, false);
-                    DBFunc.setMerged(this, this.getSettings().getMerged());
+                    PlotSquared.platform().injector().getInstance(PlotService.class).setMerged(this, this.getSettings().getMerged());
                 }
             }
             queueCache.add(tmp);
@@ -2919,7 +2930,7 @@ public class Plot {
                     Component owner;
                     if (this.getOwner() == null) {
                         owner = Component.text("unowned");
-                    } else if (this.getOwner().equals(DBFunc.SERVER)) {
+                    } else if (this.getOwner().equals(StaticUUIDs.SERVER)) {
                         owner = Component.text(MINI_MESSAGE.stripTags(TranslatableCaption
                                 .of("info.server")
                                 .getComponent(player)));
@@ -3036,7 +3047,7 @@ public class Plot {
         } else if (Settings.Enabled_Components.RATING_CACHE) {
             rating = new HashMap<>();
         } else {
-            rating = DBFunc.getRatings(this);
+            rating = PlotSquared.platform().injector().getInstance(RatingService.class).getRatings(this);
         }
         int size = 1;
         if (!Settings.Ratings.CATEGORIES.isEmpty()) {

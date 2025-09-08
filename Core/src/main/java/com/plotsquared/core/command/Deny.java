@@ -22,7 +22,7 @@ import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.util.StaticUUIDs;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
@@ -104,7 +104,7 @@ public class Deny extends SubCommand {
                 );
             } else {
                 for (UUID uuid : uuids) {
-                    if (uuid == DBFunc.EVERYONE && !(
+                    if (uuid == StaticUUIDs.EVERYONE && !(
                             player.hasPermission(Permission.PERMISSION_DENY_EVERYONE) || player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_DENY))) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
@@ -124,13 +124,13 @@ public class Deny extends SubCommand {
                         );
                         return;
                     } else {
-                        if (uuid != DBFunc.EVERYONE) {
+                        if (uuid != StaticUUIDs.EVERYONE) {
                             plot.removeMember(uuid);
                             plot.removeTrusted(uuid);
                         }
                         plot.addDenied(uuid);
                         this.eventDispatcher.callDenied(player, plot, uuid, true);
-                        if (!uuid.equals(DBFunc.EVERYONE)) {
+                        if (!uuid.equals(StaticUUIDs.EVERYONE)) {
                             handleKick(PlotSquared.platform().playerManager().getPlayerIfExists(uuid), plot);
                         } else {
                             for (PlotPlayer<?> plotPlayer : plot.getPlayersInPlot()) {

@@ -23,7 +23,7 @@ import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.util.StaticUUIDs;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -112,7 +112,7 @@ public class HighFreqBlockEventListener implements Listener {
         }
         if (Settings.Redstone.DISABLE_OFFLINE) {
             boolean disable = false;
-            if (!DBFunc.SERVER.equals(plot.getOwner())) {
+            if (!StaticUUIDs.SERVER.equals(plot.getOwner())) {
                 if (plot.isMerged()) {
                     disable = true;
                     for (UUID owner : plot.getOwners()) {

@@ -22,7 +22,7 @@ import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.util.StaticUUIDs;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.Result;
@@ -467,7 +467,7 @@ public class ExpireManager {
     }
 
     public long getAge(Plot plot, final boolean shouldDeleteUnknownOwner) {
-        if (!plot.hasOwner() || Objects.equals(DBFunc.EVERYONE, plot.getOwner())
+        if (!plot.hasOwner() || Objects.equals(StaticUUIDs.EVERYONE, plot.getOwner())
                 || PlotSquared.platform().playerManager().getPlayerIfExists(plot.getOwner()) != null || plot.getRunning() > 0) {
             return 0;
         }

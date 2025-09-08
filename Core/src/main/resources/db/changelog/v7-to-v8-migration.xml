@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- v7 to v8 Migration: Add ID column to existing plot table -->
+    <changeSet id="v7-to-v8-add-plot-id" author="plotsquared">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="${prefix}plot"/>
+                <columnExists tableName="${prefix}plot" columnName="id"/>
+            </and>
+        </preConditions>
+        <comment>Add auto-increment ID column to existing v7 plot table</comment>
+
+        <addColumn tableName="${prefix}plot">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addPrimaryKey tableName="${prefix}plot" columnNames="id" constraintName="pk_plot_id"/>
+
+        <addUniqueConstraint tableName="${prefix}plot"
+                           columnNames="world,plot_id_x,plot_id_z"
+                           constraintName="uk_plot_coordinates"/>
+    </changeSet>
+
+    <!-- v7 to v8 Migration: Create plot_settings if it doesn't exist -->
+    <changeSet id="v7-to-v8-create-plot-settings" author="plotsquared">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="${prefix}plot_settings"/>
+            </and>
+        </preConditions>
+        <comment>Create plot_settings table for v8</comment>
+
+        <createTable tableName="${prefix}plot_settings">
+            <column name="plot_plot_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="biome" type="VARCHAR(45)" defaultValue="FOREST">
+                <constraints nullable="true"/>
+            </column>
+            <column name="rain" type="INT" defaultValue="0">
+                <constraints nullable="true"/>
+            </column>
+            <column name="custom_time" type="TINYINT" defaultValue="0">
+                <constraints nullable="true"/>
+            </column>
+            <column name="time" type="INT" defaultValue="8000">
+                <constraints nullable="true"/>
+            </column>
+            <column name="deny_entry" type="TINYINT" defaultValue="0">
+                <constraints nullable="true"/>
+            </column>
+            <column name="alias" type="VARCHAR(50)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="merged" type="INT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="position" type="VARCHAR(50)" defaultValue="DEFAULT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="${prefix}plot_settings"
+                               baseColumnNames="plot_plot_id"
+                               referencedTableName="${prefix}plot"
+                               referencedColumnNames="id"
+                               constraintName="fk_plot_settings_plot"
+                               onDelete="CASCADE"/>
+    </changeSet>
+
+    <!-- v7 to v8 Migration: Update plot membership tables to use new plot IDs -->
+    <changeSet id="v7-to-v8-update-plot-trusted-fk" author="plotsquared">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="${prefix}plot_trusted"/>
+                <columnExists tableName="${prefix}plot" columnName="id"/>
+            </and>
+        </preConditions>
+        <comment>Update plot_trusted foreign key to use new plot.id</comment>
+
+        <dropForeignKeyConstraint baseTableName="${prefix}plot_trusted" constraintName="fk_plot_trusted_plot"/>
+
+        <addForeignKeyConstraint baseTableName="${prefix}plot_trusted"
+                               baseColumnNames="plot_plot_id"
+                               referencedTableName="${prefix}plot"
+                               referencedColumnNames="id"
+                               constraintName="fk_plot_trusted_plot"
+                               onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="v7-to-v8-update-plot-helpers-fk" author="plotsquared">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="${prefix}plot_helpers"/>
+                <columnExists tableName="${prefix}plot" columnName="id"/>
+            </and>
+        </preConditions>
+        <comment>Update plot_helpers foreign key to use new plot.id</comment>
+
+        <dropForeignKeyConstraint baseTableName="${prefix}plot_helpers" constraintName="fk_plot_helpers_plot"/>
+
+        <addForeignKeyConstraint baseTableName="${prefix}plot_helpers"
+                               baseColumnNames="plot_plot_id"
+                               referencedTableName="${prefix}plot"
+                               referencedColumnNames="id"
+                               constraintName="fk_plot_helpers_plot"
+                               onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="v7-to-v8-update-plot-denied-fk" author="plotsquared">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="${prefix}plot_denied"/>
+                <columnExists tableName="${prefix}plot" columnName="id"/>
+            </and>
+        </preConditions>
+        <comment>Update plot_denied foreign key to use new plot.id</comment>
+
+        <dropForeignKeyConstraint baseTableName="${prefix}plot_denied" constraintName="fk_plot_denied_plot"/>
+
+        <addForeignKeyConstraint baseTableName="${prefix}plot_denied"
+                               baseColumnNames="plot_plot_id"
+                               referencedTableName="${prefix}plot"
+                               referencedColumnNames="id"
+                               constraintName="fk_plot_denied_plot"
+                               onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="v7-to-v8-update-plot-rating-fk" author="plotsquared">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="${prefix}plot_rating"/>
+                <columnExists tableName="${prefix}plot" columnName="id"/>
+            </and>
+        </preConditions>
+        <comment>Update plot_rating foreign key to use new plot.id</comment>
+
+        <dropForeignKeyConstraint baseTableName="${prefix}plot_rating" constraintName="fk_plot_rating_plot"/>
+
+        <addForeignKeyConstraint baseTableName="${prefix}plot_rating"
+                               baseColumnNames="plot_plot_id"
+                               referencedTableName="${prefix}plot"
+                               referencedColumnNames="id"
+                               constraintName="fk_plot_rating_plot"
+                               onDelete="CASCADE"/>
+    </changeSet>
+
+    <!-- v7 to v8 Migration: Add ID column to cluster table -->
+    <changeSet id="v7-to-v8-add-cluster-id" author="plotsquared">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="${prefix}cluster"/>
+                <not>
+                    <columnExists tableName="${prefix}cluster" columnName="id"/>
+                </not>
+            </and>
+        </preConditions>
+        <comment>Add auto-increment ID column to existing v7 cluster table</comment>
+
+        <addColumn tableName="${prefix}cluster">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addPrimaryKey tableName="${prefix}cluster" columnNames="id" constraintName="pk_cluster_id"/>
+    </changeSet>
+
+    <!-- v7 to v8 Migration: Update cluster membership tables -->
+    <changeSet id="v7-to-v8-update-cluster-helpers-fk" author="plotsquared">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="${prefix}cluster_helpers"/>
+                <columnExists tableName="${prefix}cluster" columnName="id"/>
+            </and>
+        </preConditions>
+        <comment>Update cluster_helpers foreign key to use new cluster.id</comment>
+
+        <dropForeignKeyConstraint baseTableName="${prefix}cluster_helpers" constraintName="fk_cluster_helpers_cluster"/>
+
+        <addForeignKeyConstraint baseTableName="${prefix}cluster_helpers"
+                               baseColumnNames="cluster_id"
+                               referencedTableName="${prefix}cluster"
+                               referencedColumnNames="id"
+                               constraintName="fk_cluster_helpers_cluster"
+                               onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="v7-to-v8-update-cluster-invited-fk" author="plotsquared">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="${prefix}cluster_invited"/>
+                <columnExists tableName="${prefix}cluster" columnName="id"/>
+            </and>
+        </preConditions>
+        <comment>Update cluster_invited foreign key to use new cluster.id</comment>
+
+        <dropForeignKeyConstraint baseTableName="${prefix}cluster_invited" constraintName="fk_cluster_invited_cluster"/>
+
+        <addForeignKeyConstraint baseTableName="${prefix}cluster_invited"
+                               baseColumnNames="cluster_id"
+                               referencedTableName="${prefix}cluster"
+                               referencedColumnNames="id"
+                               constraintName="fk_cluster_invited_cluster"
+                               onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="v7-to-v8-update-cluster-settings-fk" author="plotsquared">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="${prefix}cluster_settings"/>
+                <columnExists tableName="${prefix}cluster" columnName="id"/>
+            </and>
+        </preConditions>
+        <comment>Update cluster_settings foreign key to use new cluster.id</comment>
+
+        <dropForeignKeyConstraint baseTableName="${prefix}cluster_settings" constraintName="fk_cluster_settings_cluster"/>
+
+        <addForeignKeyConstraint baseTableName="${prefix}cluster_settings"
+                               baseColumnNames="cluster_id"
+                               referencedTableName="${prefix}cluster"
+                               referencedColumnNames="id"
+                               constraintName="fk_cluster_settings_cluster"
+                               onDelete="CASCADE"/>
+    </changeSet>
+
+    <!-- Add meta_id to player_meta if missing -->
+    <changeSet id="v7-to-v8-add-player-meta-id" author="plotsquared">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="${prefix}player_meta"/>
+                <columnExists tableName="${prefix}player_meta" columnName="meta_id"/>
+            </and>
+        </preConditions>
+        <comment>Add auto-increment meta_id column to existing v7 player_meta table</comment>
+
+        <addColumn tableName="${prefix}player_meta">
+            <column name="meta_id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addPrimaryKey tableName="${prefix}player_meta" columnNames="meta_id" constraintName="pk_player_meta_id"/>
+    </changeSet>
+
+    <!-- Create missing tables for v8 if they don't exist -->
+    <changeSet id="v7-to-v8-create-plot-flags" author="plotsquared">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="${prefix}plot_flags"/>
+            </and>
+        </preConditions>
+        <comment>Create plot_flags table if missing</comment>
+
+        <createTable tableName="${prefix}plot_flags">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="plot_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="flag" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="VARCHAR(512)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="${prefix}plot_flags"
+                               baseColumnNames="plot_id"
+                               referencedTableName="${prefix}plot"
+                               referencedColumnNames="id"
+                               constraintName="fk_plot_flags_plot"
+                               onDelete="CASCADE"/>
+
+        <createIndex tableName="${prefix}plot_flags" indexName="idx_plot_flags_plot_id">
+            <column name="plot_id"/>
+        </createIndex>
+
+        <addUniqueConstraint tableName="${prefix}plot_flags"
+                           columnNames="plot_id,flag"
+                           constraintName="uk_plot_flag"/>
+    </changeSet>
+
+</databaseChangeLog>

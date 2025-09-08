@@ -30,11 +30,6 @@ import com.plotsquared.core.configuration.caption.load.CaptionLoader;
 import com.plotsquared.core.configuration.caption.load.DefaultCaptionProvider;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.configuration.serialization.ConfigurationSerialization;
-import com.plotsquared.core.database.DBFunc;
-import com.plotsquared.core.database.Database;
-import com.plotsquared.core.database.MySQL;
-import com.plotsquared.core.database.SQLManager;
-import com.plotsquared.core.database.SQLite;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.generator.HybridUtils;
@@ -55,8 +50,7 @@ import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.expiration.ExpiryTask;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.plot.world.SinglePlotArea;
-import com.plotsquared.core.plot.world.SinglePlotAreaManager;
+import com.plotsquared.core.services.api.ClusterService;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.LegacyConverter;
@@ -89,7 +83,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.sql.SQLException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -883,7 +876,8 @@ public class PlotSquared {
                         String name = cluster.getName(); // Cluster name
                         String fullId = name + "-" + pos1 + "-" + pos2;
                         worldSection.createSection("areas." + fullId);
-                        DBFunc.replaceWorld(world, world + ";" + name, pos1, pos2); // NPE
+                        PlotSquared.platform().injector().getInstance(ClusterService.class).replaceWorld(world, world + ";" + name, pos1, pos2);
+                        // NPE
                         LOGGER.info("- {}-{}-{}", name, pos1, pos2);
                         GeneratorWrapper<?> areaGen = this.platform.getGenerator(world, gen_string);
                         if (areaGen == null) {
@@ -1227,16 +1221,6 @@ public class PlotSquared {
         try {
             eventDispatcher.unregisterAll();
             checkRoadRegenPersistence();
-            // Validate that all data in the db is correct
-            final HashSet<Plot> plots = new HashSet<>();
-            try {
-                forEachPlotRaw(plots::add);
-            } catch (final Exception ignored) {
-            }
-            DBFunc.validatePlots(plots);
-
-            // Close the connection
-            DBFunc.close();
         } catch (NullPointerException throwable) {
             LOGGER.error("Could not close database connection", throwable);
             throwable.printStackTrace();
@@ -1278,63 +1262,6 @@ public class PlotSquared {
             oos.writeObject(list);
         } catch (IOException e) {
             LOGGER.error("Error creating persistent_region_data file", e);
-        }
-    }
-
-    /**
-     * Set up the database connection.
-     */
-    public void setupDatabase() {
-        try {
-            if (DBFunc.dbManager != null) {
-                DBFunc.dbManager.close();
-            }
-            Database database;
-            if (Storage.MySQL.USE) {
-                database = new MySQL(Storage.MySQL.HOST, Storage.MySQL.PORT, Storage.MySQL.DATABASE,
-                        Storage.MySQL.USER, Storage.MySQL.PASSWORD
-                );
-            } else if (Storage.SQLite.USE) {
-                File file = FileUtils.getFile(platform.getDirectory(), Storage.SQLite.DB + ".db");
-                database = new SQLite(file);
-            } else {
-                LOGGER.error("No storage type is set. Disabling PlotSquared");
-                this.platform.shutdown(); //shutdown used instead of disable because no database is set
-                return;
-            }
-            DBFunc.dbManager = new SQLManager(
-                    database,
-                    Storage.PREFIX,
-                    this.eventDispatcher,
-                    this.plotListener,
-                    this.worldConfiguration
-            );
-            this.plots_tmp = DBFunc.getPlots();
-            if (getPlotAreaManager() instanceof SinglePlotAreaManager) {
-                SinglePlotArea area = ((SinglePlotAreaManager) getPlotAreaManager()).getArea();
-                addPlotArea(area);
-                ConfigurationSection section = worldConfiguration.getConfigurationSection("worlds.*");
-                if (section == null) {
-                    section = worldConfiguration.createSection("worlds.*");
-                }
-                area.saveConfiguration(section);
-                area.loadDefaultConfiguration(section);
-            }
-            this.clustersTmp = DBFunc.getClusters();
-            LOGGER.info("Connection to database established. Type: {}", Storage.MySQL.USE ? "MySQL" : "SQLite");
-        } catch (ClassNotFoundException | SQLException e) {
-            LOGGER.error(
-                    "Failed to open database connection ({}). Disabling PlotSquared",
-                    Storage.MySQL.USE ? "MySQL" : "SQLite"
-            );
-            LOGGER.error("==== Here is an ugly stacktrace, if you are interested in those things ===");
-            e.printStackTrace();
-            LOGGER.error("==== End of stacktrace ====");
-            LOGGER.error(
-                    "Please go to the {} 'storage.yml' and configure the database correctly",
-                    platform.pluginName()
-            );
-            this.platform.shutdown(); //shutdown used instead of disable because of database error
         }
     }
 

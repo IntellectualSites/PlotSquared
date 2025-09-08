@@ -24,7 +24,7 @@ import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.util.StaticUUIDs;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.inject.annotations.ConsoleActor;
 import com.plotsquared.core.location.Location;
@@ -128,7 +128,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
     @NonNull
     @Override
     public UUID getUUID() {
-        return DBFunc.EVERYONE;
+        return StaticUUIDs.EVERYONE;
     }
 
     @Override

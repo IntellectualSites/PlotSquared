@@ -58,7 +58,6 @@ import com.plotsquared.bukkit.uuid.EssentialsUUIDService;
 import com.plotsquared.bukkit.uuid.LuckPermsUUIDService;
 import com.plotsquared.bukkit.uuid.OfflinePlayerUUIDService;
 import com.plotsquared.bukkit.uuid.PaperUUIDService;
-import com.plotsquared.bukkit.uuid.SQLiteUUIDService;
 import com.plotsquared.bukkit.uuid.SquirrelIdUUIDService;
 import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.PlotSquared;
@@ -71,7 +70,7 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.Storage;
 import com.plotsquared.core.configuration.caption.ChatFormatter;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
-import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.util.StaticUUIDs;
 import com.plotsquared.core.events.RemoveRoadEntityEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.generator.GeneratorWrapper;
@@ -85,6 +84,7 @@ import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.inject.modules.PlotSquaredModule;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.listener.WESubscriber;
+import com.plotsquared.core.persistence.config.PersistenceModule;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -96,10 +96,10 @@ import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
+import com.plotsquared.core.services.config.ServiceModule;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.PlatformWorldManager;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.PremiumVerification;
@@ -149,18 +149,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 import static com.plotsquared.core.util.PremiumVerification.getDownloadID;
 import static com.plotsquared.core.util.PremiumVerification.getResourceID;
@@ -298,7 +290,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         new WorldManagerModule(),
                         new PlotSquaredModule(),
                         new BukkitModule(this),
-                        new BackupModule()
+                        new BackupModule(),
+                        new PersistenceModule(),
+                        new ServiceModule()
                 );
         this.injector.injectMembers(this);
 
@@ -321,25 +315,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             LOGGER.info("Thanks for supporting us :)");
         } else {
             LOGGER.info("Couldn't verify purchase :(");
-        }
-
-        // Database
-        if (Settings.Enabled_Components.DATABASE) {
-            plotSquared.setupDatabase();
-        }
-
-        // Check if we need to convert old flag values, etc
-        if (!plotSquared.getConfigurationVersion().equalsIgnoreCase("v5")) {
-            // Perform upgrade
-            if (DBFunc.dbManager.convertFlags()) {
-                LOGGER.info("Flags were converted successfully!");
-                // Update the config version
-                try {
-                    plotSquared.setConfigurationVersion("v5");
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                }
-            }
         }
 
         // Comments
@@ -472,17 +447,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             this.backgroundPipeline.registerService(offlinePlayerUUIDService);
         }
 
-        final SQLiteUUIDService sqLiteUUIDService = new SQLiteUUIDService("user_cache.db");
-
-        final SQLiteUUIDService legacyUUIDService;
-        if (Settings.UUID.LEGACY_DATABASE_SUPPORT && FileUtils
-                .getFile(PlotSquared.platform().getDirectory(), "usercache.db")
-                .exists()) {
-            legacyUUIDService = new SQLiteUUIDService("usercache.db");
-        } else {
-            legacyUUIDService = null;
-        }
-
         final LuckPermsUUIDService luckPermsUUIDService;
         if (Settings.UUID.SERVICE_LUCKPERMS && Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
             luckPermsUUIDService = new LuckPermsUUIDService();
@@ -508,16 +472,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 LOGGER.info("(UUID) Using Paper as a complementary UUID service");
             }
 
-            this.impromptuPipeline.registerService(sqLiteUUIDService);
-            this.backgroundPipeline.registerService(sqLiteUUIDService);
-            this.impromptuPipeline.registerConsumer(sqLiteUUIDService);
-            this.backgroundPipeline.registerConsumer(sqLiteUUIDService);
-
-            if (legacyUUIDService != null) {
-                this.impromptuPipeline.registerService(legacyUUIDService);
-                this.backgroundPipeline.registerService(legacyUUIDService);
-            }
-
             // Plugin providers
             if (luckPermsUUIDService != null) {
                 this.impromptuPipeline.registerService(luckPermsUUIDService);
@@ -534,23 +488,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             }
             final SquirrelIdUUIDService backgroundMojangService = new SquirrelIdUUIDService(Settings.UUID.BACKGROUND_LIMIT);
             this.backgroundPipeline.registerService(backgroundMojangService);
-        } else {
-            this.impromptuPipeline.registerService(sqLiteUUIDService);
-            this.backgroundPipeline.registerService(sqLiteUUIDService);
-            this.impromptuPipeline.registerConsumer(sqLiteUUIDService);
-            this.backgroundPipeline.registerConsumer(sqLiteUUIDService);
-
-            if (legacyUUIDService != null) {
-                this.impromptuPipeline.registerService(legacyUUIDService);
-                this.backgroundPipeline.registerService(legacyUUIDService);
-            }
         }
 
-        this.impromptuPipeline.storeImmediately("*", DBFunc.EVERYONE);
-
-        if (Settings.UUID.BACKGROUND_CACHING_ENABLED) {
-            this.startUuidCaching(sqLiteUUIDService, cacheUUIDService);
-        }
+        this.impromptuPipeline.storeImmediately("*", StaticUUIDs.EVERYONE);
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             injector.getInstance(PAPIPlaceholders.class).register();
@@ -672,70 +612,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 }
             }
         }
-    }
-
-    private void startUuidCaching(
-            final @NonNull SQLiteUUIDService sqLiteUUIDService,
-            final @NonNull CacheUUIDService cacheUUIDService
-    ) {
-        // Record all unique UUID's and put them into a queue
-        final Set<UUID> uuidSet = new HashSet<>();
-        PlotSquared.get().forEachPlotRaw(plot -> {
-            uuidSet.add(plot.getOwnerAbs());
-            uuidSet.addAll(plot.getMembers());
-            uuidSet.addAll(plot.getTrusted());
-            uuidSet.addAll(plot.getDenied());
-        });
-        final Queue<UUID> uuidQueue = new LinkedBlockingQueue<>(uuidSet);
-
-        LOGGER.info("(UUID) {} UUIDs will be cached", uuidQueue.size());
-
-        Executors.newSingleThreadScheduledExecutor().schedule(() -> {
-            // Begin by reading all the SQLite cache at once
-            cacheUUIDService.accept(sqLiteUUIDService.getAll());
-            // Now fetch names for all known UUIDs
-            final int totalSize = uuidQueue.size();
-            int read = 0;
-            LOGGER.info("(UUID) PlotSquared will fetch UUIDs in groups of {}", Settings.UUID.BACKGROUND_LIMIT);
-            final List<UUID> uuidList = new ArrayList<>(Settings.UUID.BACKGROUND_LIMIT);
-
-            // Used to indicate that the second retrieval has been attempted
-            boolean secondRun = false;
-
-            while (!uuidQueue.isEmpty() || !uuidList.isEmpty()) {
-                if (!uuidList.isEmpty() && secondRun) {
-                    LOGGER.warn("(UUID) Giving up on last batch. Fetching new batch instead");
-                    uuidList.clear();
-                }
-                if (uuidList.isEmpty()) {
-                    // Retrieve the secondRun variable to indicate that we're retrieving a
-                    // fresh batch
-                    secondRun = false;
-                    // Populate the request list
-                    for (int i = 0; i < Settings.UUID.BACKGROUND_LIMIT && !uuidQueue.isEmpty(); i++) {
-                        uuidList.add(uuidQueue.poll());
-                        read++;
-                    }
-                } else {
-                    // If the list isn't empty then this is a second run for
-                    // an old batch, so we re-use the patch
-                    secondRun = true;
-                }
-                try {
-                    PlotSquared.get().getBackgroundUUIDPipeline().getNames(uuidList).get();
-                    // Clear the list if we successfully index all the names
-                    uuidList.clear();
-                    // Print progress
-                    final double percentage = ((double) read / (double) totalSize) * 100.0D;
-                    if (Settings.DEBUG) {
-                        LOGGER.info("(UUID) PlotSquared has cached {} of UUIDs", String.format("%.1f%%", percentage));
-                    }
-                } catch (final InterruptedException | ExecutionException e) {
-                    LOGGER.error("(UUID) Failed to retrieve last batch. Will try again", e);
-                }
-            }
-            LOGGER.info("(UUID) PlotSquared has cached all UUIDs");
-        }, 10, TimeUnit.SECONDS);
     }
 
     @Override

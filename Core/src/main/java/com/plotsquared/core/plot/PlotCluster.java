@@ -19,7 +19,7 @@
 package com.plotsquared.core.plot;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.util.StaticUUIDs;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.util.RegionUtil;
@@ -103,13 +103,13 @@ public class PlotCluster {
 
     public boolean isAdded(UUID uuid) {
         return this.owner.equals(uuid) || this.invited.contains(uuid) || this.invited
-                .contains(DBFunc.EVERYONE) || this.helpers.contains(uuid) || this.helpers
-                .contains(DBFunc.EVERYONE);
+                .contains(StaticUUIDs.EVERYONE) || this.helpers.contains(uuid) || this.helpers
+                .contains(StaticUUIDs.EVERYONE);
     }
 
     public boolean hasHelperRights(UUID uuid) {
         return this.owner.equals(uuid) || this.helpers.contains(uuid) || this.helpers
-                .contains(DBFunc.EVERYONE);
+                .contains(StaticUUIDs.EVERYONE);
     }
 
     public String getName() {

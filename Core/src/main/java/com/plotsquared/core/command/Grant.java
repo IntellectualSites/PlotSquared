@@ -21,14 +21,13 @@ package com.plotsquared.core.command;
 import com.google.common.primitives.Ints;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.services.api.PlayerMetaService;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
-import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.Component;
@@ -43,6 +42,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "grant",
@@ -108,39 +108,41 @@ public class Grant extends Command {
                                 }
                             }
                         } else {
-                            DBFunc.getPersistentMeta(uuid, new RunnableVal<>() {
-                                @Override
-                                public void run(Map<String, byte[]> value) {
-                                    final byte[] array = value.get("grantedPlots");
-                                    if (arg0.equals("check")) { // check
-                                        int granted;
-                                        if (array == null) {
-                                            granted = 0;
-                                        } else {
-                                            granted = Ints.fromByteArray(array);
-                                        }
-                                        player.sendMessage(
-                                                TranslatableCaption.of("grants.granted_plots"),
-                                                TagResolver.resolver("amount", Tag.inserting(Component.text(granted)))
-                                        );
-                                    } else { // add
-                                        int amount;
-                                        if (array == null) {
-                                            amount = 1;
-                                        } else {
-                                            amount = 1 + Ints.fromByteArray(array);
-                                        }
-                                        boolean replace = array != null;
-                                        String key = "grantedPlots";
-                                        byte[] rawData = Ints.toByteArray(amount);
-                                        DBFunc.addPersistentMeta(uuid, key, rawData, replace);
-                                        player.sendMessage(
-                                                TranslatableCaption.of("grants.added"),
-                                                TagResolver.resolver("grants", Tag.inserting(Component.text(amount)))
-                                        );
+                            Consumer<Map<String, byte[]>> resultConsumer = (value) -> {
+                                final byte[] array = value.get("grantedPlots");
+                                if (arg0.equals("check")) { // check
+                                    int granted;
+                                    if (array == null) {
+                                        granted = 0;
+                                    } else {
+                                        granted = Ints.fromByteArray(array);
                                     }
+                                    player.sendMessage(
+                                            TranslatableCaption.of("grants.granted_plots"),
+                                            TagResolver.resolver("amount", Tag.inserting(Component.text(granted)))
+                                    );
+                                } else { // add
+                                    int amount;
+                                    if (array == null) {
+                                        amount = 1;
+                                    } else {
+                                        amount = 1 + Ints.fromByteArray(array);
+                                    }
+                                    boolean delete = array != null;
+                                    String key = "grantedPlots";
+                                    byte[] rawData = Ints.toByteArray(amount);
+                                    PlayerMetaService service =
+                                            PlotSquared.platform().injector().getInstance(PlayerMetaService.class);
+                                    service.addPersistentMeta(uuid, key, rawData, delete);
+                                    player.sendMessage(
+                                            TranslatableCaption.of("grants.added"),
+                                            TagResolver.resolver("grants", Tag.inserting(Component.text(amount)))
+                                    );
                                 }
-                            });
+                            };
+                            PlayerMetaService service =
+                                    PlotSquared.platform().injector().getInstance(PlayerMetaService.class);
+                            service.getPersistentMeta(uuid, resultConsumer);
                         }
                     }
                 });

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- v7 to v8 Migration - runs ONLY if v7 tables exist -->
+<!--    <include file="db/changelog/v7-to-v8-migration.xml"/>-->
+
+    <!-- Include version-specific changelogs for new installations -->
+    <include file="db/changelog/v8.0.0/db.changelog-v8.0.0.xml"/>
+
+    <!-- Future versions can be added here -->
+    <!-- <include file="db/changelog/v8.1.0/db.changelog-v8.1.0.xml"/> -->
+
+
+</databaseChangeLog>

@@ -31,7 +31,6 @@ import com.plotsquared.core.configuration.caption.CaptionMap;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.NullPermissionProfile;
@@ -46,10 +45,10 @@ import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
+import com.plotsquared.core.services.api.PlayerMetaService;
 import com.plotsquared.core.synchronization.LockRepository;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.query.PlotQuery;
-import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.gamemode.GameMode;
@@ -83,6 +82,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 /**
  * The abstract class supporting {@code BukkitPlayer} and {@code SpongePlayer}.
@@ -683,88 +683,87 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
 
     public void populatePersistentMetaMap() {
         if (Settings.Enabled_Components.PERSISTENT_META) {
-            DBFunc.getPersistentMeta(getUUID(), new RunnableVal<>() {
-                @Override
-                public void run(Map<String, byte[]> value) {
-                    try {
-                        PlotPlayer.this.metaMap = value;
-                        if (value.isEmpty()) {
-                            return;
-                        }
+            PlayerMetaService service =
+                    PlotSquared.platform().injector().getInstance(PlayerMetaService.class);
+            Consumer<Map<String, byte[]>> resultConsumer = value -> {
+                try {
+                    PlotPlayer.this.metaMap = value;
+                    if (value.isEmpty()) {
+                        return;
+                    }
 
-                        if (PlotPlayer.this.getAttribute("debug")) {
-                            debugModeEnabled.add(PlotPlayer.this);
-                        }
+                    if (PlotPlayer.this.getAttribute("debug")) {
+                        debugModeEnabled.add(PlotPlayer.this);
+                    }
 
-                        if (!Settings.Teleport.ON_LOGIN) {
-                            return;
-                        }
-                        PlotAreaManager manager = PlotPlayer.this.plotAreaManager;
+                    if (!Settings.Teleport.ON_LOGIN) {
+                        return;
+                    }
+                    PlotAreaManager manager = PlotPlayer.this.plotAreaManager;
 
-                        if (!(manager instanceof SinglePlotAreaManager)) {
-                            return;
-                        }
-                        PlotArea area = ((SinglePlotAreaManager) manager).getArea();
-                        boolean V2 = false;
-                        byte[] arr = PlotPlayer.this.getPersistentMeta("quitLoc");
+                    if (!(manager instanceof SinglePlotAreaManager)) {
+                        return;
+                    }
+                    PlotArea area = ((SinglePlotAreaManager) manager).getArea();
+                    boolean V2 = false;
+                    byte[] arr = PlotPlayer.this.getPersistentMeta("quitLoc");
+                    if (arr == null) {
+                        arr = PlotPlayer.this.getPersistentMeta("quitLocV2");
                         if (arr == null) {
-                            arr = PlotPlayer.this.getPersistentMeta("quitLocV2");
-                            if (arr == null) {
-                                return;
-                            }
-                            V2 = true;
-                            removePersistentMeta("quitLocV2");
-                        } else {
-                            removePersistentMeta("quitLoc");
-                        }
-
-                        if (!getMeta("teleportOnLogin", true)) {
                             return;
                         }
-                        ByteBuffer quitWorld = ByteBuffer.wrap(arr);
-                        final int plotX = quitWorld.getShort();
-                        final int plotZ = quitWorld.getShort();
-                        PlotId id = PlotId.of(plotX, plotZ);
-                        int x = quitWorld.getInt();
-                        int y = V2 ? quitWorld.getShort() : (quitWorld.get() & 0xFF);
-                        int z = quitWorld.getInt();
-                        Plot plot = area.getOwnedPlot(id);
+                        V2 = true;
+                        removePersistentMeta("quitLocV2");
+                    } else {
+                        removePersistentMeta("quitLoc");
+                    }
 
-                        if (plot == null) {
-                            return;
-                        }
+                    if (!getMeta("teleportOnLogin", true)) {
+                        return;
+                    }
+                    ByteBuffer quitWorld = ByteBuffer.wrap(arr);
+                    final int plotX = quitWorld.getShort();
+                    final int plotZ = quitWorld.getShort();
+                    PlotId id = PlotId.of(plotX, plotZ);
+                    int x = quitWorld.getInt();
+                    int y = V2 ? quitWorld.getShort() : (quitWorld.get() & 0xFF);
+                    int z = quitWorld.getInt();
+                    Plot plot = area.getOwnedPlot(id);
 
-                        final Location location = Location.at(plot.getWorldName(), x, y, z);
-                        if (plot.isLoaded()) {
-                            TaskManager.runTask(() -> {
-                                if (getMeta("teleportOnLogin", true)) {
-                                    teleport(location, TeleportCause.LOGIN);
-                                    sendMessage(
-                                            TranslatableCaption.of("teleport.teleported_to_plot"));
-                                }
-                            });
-                        } else if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
+                    if (plot == null) {
+                        return;
+                    }
+
+                    final Location location = Location.at(plot.getWorldName(), x, y, z);
+                    if (plot.isLoaded()) {
+                        TaskManager.runTask(() -> {
                             if (getMeta("teleportOnLogin", true)) {
-                                plot.teleportPlayer(
-                                        PlotPlayer.this,
-                                        result -> TaskManager.runTask(() -> {
-                                            if (getMeta("teleportOnLogin", true)) {
-                                                if (plot.isLoaded()) {
-                                                    teleport(location, TeleportCause.LOGIN);
-                                                    sendMessage(TranslatableCaption
-                                                            .of("teleport.teleported_to_plot"));
-                                                }
-                                            }
-                                        })
-                                );
+                                teleport(location, TeleportCause.LOGIN);
+                                sendMessage(
+                                        TranslatableCaption.of("teleport.teleported_to_plot"));
                             }
+                        });
+                    } else if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
+                        if (getMeta("teleportOnLogin", true)) {
+                            plot.teleportPlayer(
+                                    PlotPlayer.this,
+                                    result -> TaskManager.runTask(() -> {
+                                        if (getMeta("teleportOnLogin", true)) {
+                                            if (plot.isLoaded()) {
+                                                teleport(location, TeleportCause.LOGIN);
+                                                sendMessage(TranslatableCaption
+                                                        .of("teleport.teleported_to_plot"));
+                                            }
+                                        }
+                                    })
+                            );
                         }
-                    } catch (Throwable e) {
-                        LOGGER.error("Error populating persistent meta for player {}", PlotPlayer.this.getName(), e);
                     }
+                } catch (Throwable e) {
+                    LOGGER.error("Error populating persistent meta for player {}", PlotPlayer.this.getName(), e);
                 }
-                    }
-            );
+            };
+            service.getPersistentMeta(getUUID(), resultConsumer);
         }
     }
 
@@ -775,7 +774,9 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     Object removePersistentMeta(String key) {
         final Object old = this.metaMap.remove(key);
         if (Settings.Enabled_Components.PERSISTENT_META) {
-            DBFunc.removePersistentMeta(getUUID(), key);
+            PlayerMetaService service =
+                    PlotSquared.platform().injector().getInstance(PlayerMetaService.class);
+            service.removePersistentMeta(getUUID(), key);
         }
         return old;
     }
@@ -852,7 +853,9 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         boolean delete = hasPersistentMeta(key);
         this.metaMap.put(key, value);
         if (Settings.Enabled_Components.PERSISTENT_META) {
-            DBFunc.addPersistentMeta(getUUID(), key, value, delete);
+            PlayerMetaService service =
+                    PlotSquared.platform().injector().getInstance(PlayerMetaService.class);
+            service.addPersistentMeta(getUUID(), key, value, delete);
         }
     }
 

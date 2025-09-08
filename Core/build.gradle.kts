@@ -44,6 +44,19 @@ dependencies {
     api(libs.arkitektonika)
     api(libs.paster)
     api(libs.informativeAnnotations)
+
+    // Database
+    api(libs.hibernateCore)
+    api(libs.hibernateHikariCp)
+    api(libs.hikari)
+    api(libs.hibernateCommunityDialects)
+    api(libs.jpaApi)
+    api(libs.liquibaseCore)
+
+    runtimeOnly(libs.mariadbJavaClient)
+    runtimeOnly(libs.sqliteJdbc)
+    runtimeOnly(libs.h2)
+    runtimeOnly(libs.jaxbRuntime)
 }
 
 tasks.processResources {

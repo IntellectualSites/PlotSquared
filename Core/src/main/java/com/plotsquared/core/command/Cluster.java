@@ -22,7 +22,6 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Location;
@@ -32,6 +31,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotCluster;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.services.api.ClusterService;
 import com.plotsquared.core.util.ComponentHelper;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
@@ -252,13 +252,13 @@ public class Cluster extends SubCommand {
                 // create cluster
                 cluster.settings.setAlias(name);
                 area.addCluster(cluster);
-                DBFunc.createCluster(cluster);
+                PlotSquared.platform().injector().getInstance(ClusterService.class).createCluster(cluster);
                 // Add any existing plots to the current cluster
                 for (Plot plot : plots) {
                     if (plot.hasOwner()) {
                         if (!cluster.isAdded(plot.getOwner())) {
                             cluster.invited.add(plot.getOwner());
-                            DBFunc.setInvited(cluster, plot.getOwner());
+                            PlotSquared.platform().injector().getInstance(ClusterService.class).setInvited(cluster, plot.getOwner());
                         }
                     }
                 }
@@ -320,7 +320,7 @@ public class Cluster extends SubCommand {
                         return false;
                     }
                 }
-                DBFunc.delete(cluster);
+                PlotSquared.platform().injector().getInstance(ClusterService.class).delete(cluster);
                 player.sendMessage(TranslatableCaption.of("cluster.cluster_deleted"), TagResolver.resolver(
                         "cluster",
                         Tag.inserting(Component.text(cluster.toString()))
@@ -444,7 +444,7 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 // resize cluster
-                DBFunc.resizeCluster(cluster, pos1, pos2);
+                PlotSquared.platform().injector().getInstance(ClusterService.class).resizeCluster(cluster, pos1, pos2);
                 player.sendMessage(TranslatableCaption.of("cluster.cluster_resized"));
                 return true;
             }
@@ -502,7 +502,7 @@ public class Cluster extends SubCommand {
                                 if (!cluster.isAdded(uuid)) {
                                     // add the user if not added
                                     cluster.invited.add(uuid);
-                                    DBFunc.setInvited(cluster, uuid);
+                                    PlotSquared.platform().injector().getInstance(ClusterService.class).setInvited(cluster, uuid);
                                     final PlotPlayer<?> otherPlayer =
                                             PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                                     if (otherPlayer != null) {
@@ -577,10 +577,10 @@ public class Cluster extends SubCommand {
                                 } else {
                                     if (cluster.helpers.contains(uuid)) {
                                         cluster.helpers.remove(uuid);
-                                        DBFunc.removeHelper(cluster, uuid);
+                                        PlotSquared.platform().injector().getInstance(ClusterService.class).removeHelper(cluster, uuid);
                                     }
                                     cluster.invited.remove(uuid);
-                                    DBFunc.removeInvited(cluster, uuid);
+                                    PlotSquared.platform().injector().getInstance(ClusterService.class).removeInvited(cluster, uuid);
 
                                     final PlotPlayer<?> player2 =
                                             PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
@@ -647,10 +647,10 @@ public class Cluster extends SubCommand {
                 }
                 if (cluster.helpers.contains(uuid)) {
                     cluster.helpers.remove(uuid);
-                    DBFunc.removeHelper(cluster, uuid);
+                    PlotSquared.platform().injector().getInstance(ClusterService.class).removeHelper(cluster, uuid);
                 }
                 cluster.invited.remove(uuid);
-                DBFunc.removeInvited(cluster, uuid);
+                PlotSquared.platform().injector().getInstance(ClusterService.class).removeInvited(cluster, uuid);
                 player.sendMessage(
                         TranslatableCaption.of("cluster.cluster_removed"),
                         TagResolver.resolver("cluster", Tag.inserting(Component.text(cluster.getName())))
@@ -701,11 +701,11 @@ public class Cluster extends SubCommand {
                             } else {
                                 if (args[1].equalsIgnoreCase("add")) {
                                     cluster.helpers.add(uuid);
-                                    DBFunc.setHelper(cluster, uuid);
+                                    PlotSquared.platform().injector().getInstance(ClusterService.class).setHelper(cluster, uuid);
                                     player.sendMessage(TranslatableCaption.of("cluster.cluster_added_helper"));
                                 } else if (args[1].equalsIgnoreCase("remove")) {
                                     cluster.helpers.remove(uuid);
-                                    DBFunc.removeHelper(cluster, uuid);
+                                    PlotSquared.platform().injector().getInstance(ClusterService.class).removeHelper(cluster, uuid);
                                     player.sendMessage(TranslatableCaption.of("cluster.cluster_removed_helper"));
                                 } else {
                                     player.sendMessage(
@@ -872,7 +872,7 @@ public class Cluster extends SubCommand {
                 Location relative = player.getLocation().subtract(base.getX(), 0, base.getZ());
                 BlockLoc blockloc = new BlockLoc(relative.getX(), relative.getY(), relative.getZ());
                 cluster.settings.setPosition(blockloc);
-                DBFunc.setPosition(
+                PlotSquared.platform().injector().getInstance(ClusterService.class).setPosition(
                         cluster,
                         relative.getX() + "," + relative.getY() + "," + relative.getZ()
                 );
