@@ -37,7 +37,7 @@ import java.util.List;
 
 public class SinglePlotManager extends PlotManager {
 
-    private static final int MAX_COORDINATE = 30000000;
+    private static final int MAX_COORDINATE = 20000000;
 
     public SinglePlotManager(final @NonNull PlotArea plotArea) {
         super(plotArea);

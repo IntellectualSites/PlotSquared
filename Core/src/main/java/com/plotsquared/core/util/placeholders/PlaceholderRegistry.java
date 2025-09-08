@@ -27,15 +27,18 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlayerManager;
+import com.plotsquared.core.util.query.PlotQuery;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -46,9 +49,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 /**
  * Registry that contains {@link Placeholder placeholders}
@@ -74,8 +80,7 @@ public final class PlaceholderRegistry {
      * @return a legacy-formatted string.
      */
     private static String legacyComponent(TranslatableCaption caption, LocaleHolder localeHolder) {
-        Component component = MiniMessage.get().parse(caption.getComponent(localeHolder));
-        return PlotSquared.platform().toLegacyPlatformString(component);
+        return PlotSquared.platform().toLegacyPlatformString(caption.toComponent(localeHolder).asComponent());
     }
 
     private void registerDefault() {
@@ -96,6 +101,12 @@ public final class PlaceholderRegistry {
             }
             return Integer.toString(player.getAllowedPlots());
         });
+        this.createPlaceholder("base_plot_count", player -> Integer.toString(PlotQuery.newQuery()
+                .ownedBy(player)
+                .whereBasePlot()
+                .thatPasses(plot -> !DoneFlag.isDone(plot))
+                .count())
+        );
         this.createPlaceholder("plot_count", player -> Integer.toString(player.getPlotCount()));
         this.createPlaceholder("currentplot_alias", (player, plot) -> {
             if (plot.getAlias().isEmpty()) {
@@ -104,19 +115,35 @@ public final class PlaceholderRegistry {
             return plot.getAlias();
         });
         this.createPlaceholder("currentplot_owner", (player, plot) -> {
-            if (plot.getFlag(ServerPlotFlag.class)){
+            if (plot.getFlag(ServerPlotFlag.class)) {
                 return legacyComponent(TranslatableCaption.of("info.server"), player);
             }
             final UUID plotOwner = plot.getOwnerAbs();
             if (plotOwner == null) {
                 return legacyComponent(TranslatableCaption.of("generic.generic_unowned"), player);
             }
-
             try {
-                return PlayerManager.resolveName(plotOwner, false).getComponent(player);
+                return PlotSquared.platform().playerManager().getUsernameCaption(plotOwner)
+                        .get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS).getComponent(player);
             } catch (final Exception ignored) {
             }
             return legacyComponent(TranslatableCaption.of("info.unknown"), player);
+        });
+        this.createPlaceholder("currentplot_owners", (player, plot) -> {
+            if (plot.getFlag(ServerPlotFlag.class)) {
+                return legacyComponent(TranslatableCaption.of("info.server"), player);
+            }
+            final Set<UUID> plotOwners = plot.getOwners();
+            if (plotOwners.isEmpty()) {
+                return legacyComponent(TranslatableCaption.of("generic.generic_unowned"), player);
+            }
+            return plotOwners.stream().map(PlotSquared.platform().playerManager()::getUsernameCaption).map(f -> {
+                try {
+                    return f.get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS).getComponent(player);
+                } catch (final Exception ignored) {
+                    return legacyComponent(TranslatableCaption.of("info.unknown"), player);
+                }
+            }).collect(Collectors.joining(", "));
         });
         this.createPlaceholder("currentplot_members", (player, plot) -> {
             if (plot.getMembers().isEmpty() && plot.getTrusted().isEmpty()) {
@@ -189,6 +216,12 @@ public final class PlaceholderRegistry {
             }
         });
         this.createPlaceholder("currentplot_biome", (player, plot) -> plot.getBiomeSynchronous().toString());
+        this.createPlaceholder("currentplot_size", (player, plot) -> String.valueOf(plot.getConnectedPlots().size()));
+        this.createPlaceholder("total_grants", player -> {
+            try (final MetaDataAccess<Integer> metaDataAccess = player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
+                return Integer.toString(metaDataAccess.get().orElse(0));
+            }
+        });
     }
 
     /**
@@ -302,17 +335,9 @@ public final class PlaceholderRegistry {
     /**
      * Event called when a new {@link Placeholder} has been added
      */
-    public static class PlaceholderAddedEvent {
-
-        private final Placeholder placeholder;
-
-        public PlaceholderAddedEvent(Placeholder placeholder) {
-            this.placeholder = placeholder;
-        }
-
-        public Placeholder getPlaceholder() {
-            return this.placeholder;
-        }
+    public record PlaceholderAddedEvent(
+            Placeholder placeholder
+    ) {
 
     }
 

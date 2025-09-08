@@ -25,11 +25,17 @@ import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.SetupUtils;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public class PlotAreaBuilder {
 
     private String generatorName;
     private String plotManager;
+    @Nullable
     private PlotAreaType plotAreaType;
     private PlotAreaTerrainType terrainType;
     private String worldName;
@@ -85,8 +91,10 @@ public class PlotAreaBuilder {
         return this.plotManager;
     }
 
+    @NotNull
+    @Contract(" -> !null")
     public PlotAreaType plotAreaType() {
-        return this.plotAreaType;
+        return Objects.requireNonNullElse(this.plotAreaType, PlotAreaType.NORMAL);
     }
 
     public PlotAreaTerrainType terrainType() {
@@ -127,7 +135,8 @@ public class PlotAreaBuilder {
         return this;
     }
 
-    public PlotAreaBuilder plotAreaType(PlotAreaType plotAreaType) {
+    public PlotAreaBuilder plotAreaType(@NotNull PlotAreaType plotAreaType) {
+        Objects.requireNonNull(plotAreaType, "PlotAreaType must not be null");
         this.plotAreaType = plotAreaType;
         return this;
     }

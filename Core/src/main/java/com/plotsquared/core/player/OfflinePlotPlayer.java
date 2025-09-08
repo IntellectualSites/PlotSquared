@@ -25,9 +25,9 @@ import java.util.UUID;
 public interface OfflinePlotPlayer extends PermissionHolder {
 
     /**
-     * Gets the {@code UUID} of this player
+     * Returns the UUID of the player.
      *
-     * @return the player {@link UUID}
+     * @return the UUID of the player
      */
     UUID getUUID();
 
@@ -39,9 +39,9 @@ public interface OfflinePlotPlayer extends PermissionHolder {
     long getLastPlayed();
 
     /**
-     * Gets the name of this player.
+     * Returns the name of the player.
      *
-     * @return the player name
+     * @return the name of the player
      */
     String getName();
 

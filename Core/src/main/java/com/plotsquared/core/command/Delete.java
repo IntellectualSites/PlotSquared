@@ -23,7 +23,6 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.events.TeleportCause;
-import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -32,7 +31,9 @@ import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 
@@ -59,8 +60,7 @@ public class Delete extends SubCommand {
 
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
-        Location location = player.getLocation();
-        final Plot plot = location.getPlotAbs();
+        final Plot plot = player.getCurrentPlot();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
@@ -77,7 +77,7 @@ public class Delete extends SubCommand {
         if (eventResult == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Delete")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("Delete")))
             );
             return true;
         }
@@ -90,7 +90,7 @@ public class Delete extends SubCommand {
         final java.util.Set<Plot> plots = plot.getConnectedPlots();
         final int currentPlots = Settings.Limit.GLOBAL ?
                 player.getPlotCount() :
-                player.getPlotCount(location.getWorldName());
+                player.getPlotCount(plot.getWorldName());
         Runnable run = () -> {
             if (plot.getRunning() > 0) {
                 player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
@@ -112,14 +112,18 @@ public class Delete extends SubCommand {
                         this.econHandler.depositMoney(player, value);
                         player.sendMessage(
                                 TranslatableCaption.of("economy.added_balance"),
-                                Template.of("money", this.econHandler.format(value))
+                                TagResolver.resolver("money", Tag.inserting(Component.text(this.econHandler.format(value))))
                         );
                     }
                 }
                 player.sendMessage(
                         TranslatableCaption.of("working.deleting_done"),
-                        Template.of("amount", String.valueOf(System.currentTimeMillis() - start)),
-                        Template.of("plot", plot.getId().toString())
+                        TagResolver.resolver(
+                                "amount",
+                                Tag.inserting(Component.text(String.valueOf(System.currentTimeMillis() - start)))
+                        ),
+                        TagResolver.resolver("world", Tag.inserting(Component.text(plotArea.getWorldName()))),
+                        TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
                 );
                 eventDispatcher.callPostDelete(plot);
             });

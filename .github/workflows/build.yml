@@ -2,21 +2,21 @@ name: build
 on:
   push:
     branches:
-      - v6
+      - main
 jobs:
   build:
     if: github.repository_owner == 'IntellectualSites'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
       - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@55e685c48d84285a5b0418cd094606e199cca3b6 # v1
+        uses: gradle/actions/wrapper-validation@v4
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
       - name: Clean Build
         run: ./gradlew clean build
       - name: Determine release status
@@ -28,22 +28,22 @@ jobs:
             echo "STATUS=release" >> $GITHUB_ENV
           fi
       - name: Publish Release
-        if: ${{ runner.os == 'Linux' && env.STATUS == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/v6'}}
-        run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
+        if: ${{ runner.os == 'Linux' && env.STATUS == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/main'}}
+        run: ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache
         env:
-          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
-          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.CENTRAL_PASSWORD }}
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
       - name: Publish Snapshot
-        if: ${{ runner.os == 'Linux' && env.STATUS != 'release' && github.event_name == 'push' && github.ref == 'refs/heads/v6' }}
-        run: ./gradlew publishToSonatype
+        if: ${{ runner.os == 'Linux' && env.STATUS != 'release' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        run: ./gradlew publishAllPublicationsToMavenCentralRepository
         env:
-          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
-          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.CENTRAL_PASSWORD }}
       - name: Publish core javadoc
-        if: ${{ runner.os == 'Linux' && env.STATUS == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/v6'}}
-        uses: cpina/github-action-push-to-another-repository@0a14457bb28b04dfa1652e0ffdfda866d2845c73 # main
+        if: ${{ runner.os == 'Linux' && env.STATUS == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/main'}}
+        uses: cpina/github-action-push-to-another-repository@main
         env:
           SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
         with:
@@ -52,10 +52,10 @@ jobs:
           destination-repository-name: 'plotsquared-javadocs'
           user-email: ${{ secrets.USER_EMAIL }}
           target-branch: main
-          target-directory: core
+          target-directory: v7/core
       - name: Publish bukkit javadoc
-        if: ${{ runner.os == 'Linux' && env.STATUS == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/v6'}}
-        uses: cpina/github-action-push-to-another-repository@0a14457bb28b04dfa1652e0ffdfda866d2845c73 # main
+        if: ${{ runner.os == 'Linux' && env.STATUS == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/main'}}
+        uses: cpina/github-action-push-to-another-repository@main
         env:
           SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
         with:
@@ -64,4 +64,4 @@ jobs:
           destination-repository-name: 'plotsquared-javadocs'
           user-email: ${{ secrets.USER_EMAIL }}
           target-branch: main
-          target-directory: bukkit
+          target-directory: v7/bukkit

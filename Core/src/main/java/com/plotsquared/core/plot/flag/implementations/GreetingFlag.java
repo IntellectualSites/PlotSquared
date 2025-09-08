@@ -51,7 +51,7 @@ public class GreetingFlag extends StringFlag<GreetingFlag> {
 
     @Override
     public String getExample() {
-        return "&6Welcome to my plot!";
+        return "<gold>Welcome to my plot!";
     }
 
     @Override

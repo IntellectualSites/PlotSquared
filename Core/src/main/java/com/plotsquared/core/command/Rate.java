@@ -37,7 +37,9 @@ import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
@@ -146,7 +148,7 @@ public class Rate extends SubCommand {
                     if (plot.getRatings().containsKey(player.getUUID())) {
                         player.sendMessage(
                                 TranslatableCaption.of("ratings.rating_already_exists"),
-                                Template.of("plot", plot.getId().toString())
+                                TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
                         );
                         return;
                     }
@@ -166,7 +168,7 @@ public class Rate extends SubCommand {
                                     plot.addRating(this.getPlayer().getUUID(), event.getRating());
                                     getPlayer().sendMessage(
                                             TranslatableCaption.of("ratings.rating_applied"),
-                                            Template.of("plot", plot.getId().toString())
+                                            TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
                                     );
                                 }
                                 return false;
@@ -239,7 +241,7 @@ public class Rate extends SubCommand {
             if (plot.getRatings().containsKey(uuid)) {
                 player.sendMessage(
                         TranslatableCaption.of("ratings.rating_already_exists"),
-                        Template.of("plot", plot.getId().toString())
+                        TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
                 );
                 return;
             }
@@ -249,7 +251,7 @@ public class Rate extends SubCommand {
                 plot.addRating(uuid, event.getRating());
                 player.sendMessage(
                         TranslatableCaption.of("ratings.rating_applied"),
-                        Template.of("plot", plot.getId().toString())
+                        TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
                 );
             }
         };

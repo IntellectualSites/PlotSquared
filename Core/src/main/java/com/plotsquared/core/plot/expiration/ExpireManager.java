@@ -19,10 +19,8 @@
 package com.plotsquared.core.plot.expiration;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.Caption;
-import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotFlagAddEvent;
@@ -46,7 +44,9 @@ import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayDeque;
@@ -62,11 +62,6 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class ExpireManager {
 
-    /**
-     * @deprecated Use {@link PlotPlatform#expireManager()} instead
-     */
-    @Deprecated(forRemoval = true, since = "6.10.2")
-    public static ExpireManager IMP;
     private final ConcurrentHashMap<UUID, Long> dates_cache;
     private final ConcurrentHashMap<UUID, Long> account_age_cache;
     private final EventDispatcher eventDispatcher;
@@ -152,25 +147,17 @@ public class ExpireManager {
                             current.getCenter(pp::teleport);
                             metaDataAccess.remove();
                             Caption msg = TranslatableCaption.of("expiry.expired_options_clicky");
-                            Template numTemplate = Template.of("num", String.valueOf(num));
-                            Template areIsTemplate = Template.of("are_or_is", (num > 1 ? "plots are" : "plot is"));
-                            Template list_cmd = Template.of("list_cmd", "/plot list expired");
-                            Template plot = Template.of("plot", current.toString());
-                            Template cmd_del = Template.of("cmd_del", "/plot delete");
-                            Template cmd_keep_1d = Template.of("cmd_keep_1d", "/plot flag set keep 1d");
-                            Template cmd_keep = Template.of("cmd_keep", "/plot flag set keep true");
-                            Template cmd_no_show_expir = Template.of("cmd_no_show_expir", "/plot toggle clear-confirmation");
-                            pp.sendMessage(
-                                    msg,
-                                    numTemplate,
-                                    areIsTemplate,
-                                    list_cmd,
-                                    plot,
-                                    cmd_del,
-                                    cmd_keep_1d,
-                                    cmd_keep,
-                                    cmd_no_show_expir
-                            );
+                            TagResolver resolver = TagResolver.builder()
+                                    .tag("num", Tag.inserting(Component.text(num)))
+                                    .tag("are_or_is", Tag.inserting(Component.text(num > 1 ? "plots are" : "plot is")))
+                                    .tag("list_cmd", Tag.preProcessParsed("/plot list expired"))
+                                    .tag("plot", Tag.inserting(Component.text(current.toString())))
+                                    .tag("cmd_del", Tag.preProcessParsed("/plot delete"))
+                                    .tag("cmd_keep_1d", Tag.preProcessParsed("/plot flag set keep 1d"))
+                                    .tag("cmd_keep", Tag.preProcessParsed("/plot flag set keep true"))
+                                    .tag("cmd_no_show_expir", Tag.preProcessParsed("/plot toggle clear-confirmation"))
+                                    .build();
+                            pp.sendMessage(msg, resolver);
                             return;
                         } else {
                             iter.remove();
@@ -436,7 +423,7 @@ public class ExpireManager {
             if (player != null) {
                 player.sendMessage(
                         TranslatableCaption.of("trusted.plot_removed_user"),
-                        Templates.of("plot", plot.toString())
+                        TagResolver.resolver("plot", Tag.inserting(Component.text(plot.toString())))
                 );
             }
         }
@@ -445,16 +432,11 @@ public class ExpireManager {
             if (player != null) {
                 player.sendMessage(
                         TranslatableCaption.of("trusted.plot_removed_user"),
-                        Templates.of("plot", plot.toString())
+                        TagResolver.resolver("plot", Tag.inserting(Component.text(plot.toString())))
                 );
             }
         }
         plot.getPlotModificationManager().deletePlot(null, whenDone);
-    }
-
-    @Deprecated(forRemoval = true, since = "6.4.0")
-    public long getAge(UUID uuid) {
-        return getAge(uuid, false);
     }
 
     /**

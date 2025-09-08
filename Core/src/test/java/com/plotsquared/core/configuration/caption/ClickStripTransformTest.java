@@ -37,12 +37,7 @@ class ClickStripTransformTest {
     void removeClickEvent() {
         var commonAction = ClickEvent.Action.OPEN_FILE;
         var transform = new ClickStripTransform(EnumSet.of(commonAction));
-        var component = Component.text("Hello")
-                .clickEvent(ClickEvent.clickEvent(
-                                commonAction,
-                                "World"
-                        )
-                );
+        var component = Component.text("Hello").clickEvent(ClickEvent.openFile("World"));
         var transformedComponent = transform.transform(component);
         Assertions.assertNull(transformedComponent.clickEvent());
     }
@@ -52,10 +47,7 @@ class ClickStripTransformTest {
     void ignoreClickEvent() {
         var actionToRemove = ClickEvent.Action.SUGGEST_COMMAND;
         var transform = new ClickStripTransform(EnumSet.of(actionToRemove));
-        var originalClickEvent = ClickEvent.clickEvent(
-                ClickEvent.Action.CHANGE_PAGE,
-                "World"
-        );
+        var originalClickEvent = ClickEvent.changePage(1337);
         var component = Component.text("Hello")
                 .clickEvent(originalClickEvent);
         var transformedComponent = transform.transform(component);
@@ -76,12 +68,12 @@ class ClickStripTransformTest {
                 .insertion("DEF");
         var component = Component.text("Hello ")
                 .append(
-                        inner.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, "https://example.org"))
+                        inner.clickEvent(ClickEvent.openUrl("https://example.org"))
                 );
         var transformedComponent = transform.transform(component);
         Assertions.assertFalse(transformedComponent.children().isEmpty()); // child still exists
-        Assertions.assertEquals(inner, transformedComponent.children().get(0)); // only the click event has changed
-        Assertions.assertNull(transformedComponent.children().get(0).clickEvent());
+        Assertions.assertEquals(inner, transformedComponent.children().getFirst()); // only the click event has changed
+        Assertions.assertNull(transformedComponent.children().getFirst().clickEvent());
     }
 
 }

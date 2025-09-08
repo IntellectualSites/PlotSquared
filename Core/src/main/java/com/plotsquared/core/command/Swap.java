@@ -19,13 +19,14 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -42,8 +43,7 @@ public class Swap extends SubCommand {
             RunnableVal3<Command, Runnable, Runnable> confirm,
             RunnableVal2<Command, CommandResult> whenDone
     ) {
-        Location location = player.getLocation();
-        Plot plot1 = location.getPlotAbs();
+        Plot plot1 = player.getCurrentPlot();
         if (plot1 == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return CompletableFuture.completedFuture(false);
@@ -77,13 +77,17 @@ public class Swap extends SubCommand {
         String p1 = plot1.toString();
         String p2 = plot2.toString();
 
-        return plot1.getPlotModificationManager().move(plot2, player, () -> {
-        }, true).thenApply(result -> {
+        return plot1.getPlotModificationManager().move(
+                plot2, player, () -> {
+                }, true
+        ).thenApply(result -> {
             if (result) {
                 player.sendMessage(
                         TranslatableCaption.of("swap.swap_success"),
-                        Template.of("origin", p1),
-                        Template.of("target", p2)
+                        TagResolver.builder()
+                                .tag("origin", Tag.inserting(Component.text(p1)))
+                                .tag("target", Tag.inserting(Component.text(p2)))
+                                .build()
                 );
                 return true;
             } else {

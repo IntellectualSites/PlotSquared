@@ -24,7 +24,7 @@ import com.plotsquared.core.plot.Plot;
 public class PlayerEnterPlotEvent extends PlotPlayerEvent {
 
     /**
-     * Called when a player leaves a plot.
+     * PlayerEnterPlotEvent: Called when a player enters a plot
      *
      * @param player Player that entered the plot
      * @param plot   Plot that was entered

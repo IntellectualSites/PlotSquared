@@ -20,7 +20,6 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
-import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.permissions.Permission;
@@ -28,7 +27,9 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.HideInfoFlag;
 import com.plotsquared.core.util.TabCompletions;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -50,8 +51,9 @@ public class Info extends SubCommand {
             arg = args[0];
             switch (arg) {
                 // TODO: (re?)implement /plot info inv. (it was never properly implemented)
-                case "trusted", "alias", "biome", "denied", "flags", "id", "size", "members", "creationdate", "seen", "owner", "rating", "likes" -> plot = Plot
-                        .getPlotFromString(player, null, false);
+                case "trusted", "alias", "biome", "denied", "flags", "id", "size", "members", "creationdate", "seen", "owner", "rating", "likes" ->
+                        plot = Plot
+                                .getPlotFromString(player, null, false);
                 default -> {
                     plot = Plot.getPlotFromString(player, arg, false);
                     if (args.length == 2) {
@@ -90,7 +92,10 @@ public class Info extends SubCommand {
                             .hasPermission(Permission.PERMISSION_AREA_INFO_FORCE.toString())) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.of("node", Permission.PERMISSION_AREA_INFO_FORCE.toString())
+                                TagResolver.resolver(
+                                        "node",
+                                        Tag.inserting(Permission.PERMISSION_AREA_INFO_FORCE)
+                                )
                         );
                         return true;
                     }
@@ -112,7 +117,10 @@ public class Info extends SubCommand {
         if (!hasOwner && !containsEveryone && !trustedEveryone) {
             player.sendMessage(
                     TranslatableCaption.of("info.plot_info_unclaimed"),
-                    Template.of("plot", plot.getId().getX() + ";" + plot.getId().getY())
+                    TagResolver.resolver(
+                            "plot",
+                            Tag.inserting(Component.text(plot.getId().getX() + ";" + plot.getId().getY()))
+                    )
             );
             return true;
         }
@@ -122,13 +130,9 @@ public class Info extends SubCommand {
             info = getCaption(arg);
             if (info == null) {
                 if (Settings.Ratings.USE_LIKES) {
-                    player.sendMessage(StaticCaption.of(
-                            "&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &aseen&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, "
-                                    + "&aowner&7, " + " &alikes"));
+                    player.sendMessage(TranslatableCaption.of("info.plot_info_categories.use_likes"));
                 } else {
-                    player.sendMessage(StaticCaption.of(
-                            "&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &aseen&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, "
-                                    + "&aowner&7, " + " &arating"));
+                    player.sendMessage(TranslatableCaption.of("info.plot_info_categories.use_rating"));
                 }
                 return false;
             }

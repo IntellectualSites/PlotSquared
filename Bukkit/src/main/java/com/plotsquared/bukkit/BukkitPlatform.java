@@ -24,7 +24,6 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Singleton;
 import com.google.inject.Stage;
-import com.google.inject.TypeLiteral;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.inject.BackupModule;
 import com.plotsquared.bukkit.inject.BukkitModule;
@@ -35,8 +34,10 @@ import com.plotsquared.bukkit.listener.BlockEventListener117;
 import com.plotsquared.bukkit.listener.ChunkListener;
 import com.plotsquared.bukkit.listener.EntityEventListener;
 import com.plotsquared.bukkit.listener.EntitySpawnListener;
+import com.plotsquared.bukkit.listener.HighFreqBlockEventListener;
 import com.plotsquared.bukkit.listener.PaperListener;
 import com.plotsquared.bukkit.listener.PlayerEventListener;
+import com.plotsquared.bukkit.listener.PlayerEventListener1201;
 import com.plotsquared.bukkit.listener.ProjectileEventListener;
 import com.plotsquared.bukkit.listener.ServerListener;
 import com.plotsquared.bukkit.listener.SingleWorldListener;
@@ -44,11 +45,11 @@ import com.plotsquared.bukkit.listener.SpigotListener;
 import com.plotsquared.bukkit.listener.WorldEvents;
 import com.plotsquared.bukkit.placeholder.PAPIPlaceholders;
 import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
-import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.BukkitWorld;
 import com.plotsquared.bukkit.util.SetGenCB;
+import com.plotsquared.bukkit.util.TranslationUpdateManager;
 import com.plotsquared.bukkit.util.UpdateUtility;
 import com.plotsquared.bukkit.util.task.BukkitTaskManager;
 import com.plotsquared.bukkit.util.task.PaperTimeConverter;
@@ -134,12 +135,14 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.serverlib.ServerLib;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -250,6 +253,12 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     }
 
     @Override
+    public @NonNull String serverBrand() {
+        return Bukkit.getName();
+    }
+
+    @Override
+    @SuppressWarnings("deprecation") // Paper deprecation
     public void onEnable() {
         this.pluginName = getDescription().getName();
 
@@ -292,6 +301,12 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         new BackupModule()
                 );
         this.injector.injectMembers(this);
+
+        try {
+            this.injector.getInstance(TranslationUpdateManager.class).upgradeTranslationFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         this.serverLocale = Locale.forLanguageTag(Settings.Enabled_Components.DEFAULT_LOCALE);
 
@@ -349,7 +364,13 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
         if (Settings.Enabled_Components.EVENTS) {
             getServer().getPluginManager().registerEvents(injector().getInstance(PlayerEventListener.class), this);
+            if ((serverVersion()[1] == 20 && serverVersion()[2] >= 1) || serverVersion()[1] > 20) {
+                getServer().getPluginManager().registerEvents(injector().getInstance(PlayerEventListener1201.class), this);
+            }
             getServer().getPluginManager().registerEvents(injector().getInstance(BlockEventListener.class), this);
+            if (Settings.HIGH_FREQUENCY_LISTENER) {
+                getServer().getPluginManager().registerEvents(injector().getInstance(HighFreqBlockEventListener.class), this);
+            }
             if (serverVersion()[1] >= 17) {
                 getServer().getPluginManager().registerEvents(injector().getInstance(BlockEventListener117.class), this);
             }
@@ -358,7 +379,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             getServer().getPluginManager().registerEvents(injector().getInstance(ServerListener.class), this);
             getServer().getPluginManager().registerEvents(injector().getInstance(EntitySpawnListener.class), this);
             if (PaperLib.isPaper() && Settings.Paper_Components.PAPER_LISTENERS) {
-                    getServer().getPluginManager().registerEvents(injector().getInstance(PaperListener.class), this);
+                getServer().getPluginManager().registerEvents(injector().getInstance(PaperListener.class), this);
             } else {
                 getServer().getPluginManager().registerEvents(injector().getInstance(SpigotListener.class), this);
             }
@@ -542,7 +563,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         this.startMetrics();
 
         if (Settings.Enabled_Components.WORLDS) {
-            TaskManager.getPlatformImplementation().taskRepeat(this::unload, TaskTime.seconds(1L));
+            TaskManager.getPlatformImplementation().taskRepeat(this::unload, TaskTime.seconds(10L));
             try {
                 singleWorldListener = injector().getInstance(SingleWorldListener.class);
                 Bukkit.getPluginManager().registerEvents(singleWorldListener, this);
@@ -765,22 +786,31 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 Iterator<Entity> iterator = entities.iterator();
                 while (iterator.hasNext()) {
                     Entity entity = iterator.next();
+                    //noinspection ConstantValue - getEntitySpawnReason annotated as NotNull, but is not NotNull. lol.
+                    if (PaperLib.isPaper() && entity.getEntitySpawnReason() != null && "CUSTOM".equals(entity.getEntitySpawnReason().name())) {
+                        continue;
+                    }
+                    // Fallback for Spigot not having Entity#getEntitySpawnReason
+                    if (entity.getMetadata("ps_custom_spawned").stream().anyMatch(MetadataValue::asBoolean)) {
+                        continue;
+                    }
+                    // TODO: use (type) pattern matching when targeting java 21
                     switch (entity.getType().toString()) {
                         case "EGG":
-                        case "FISHING_HOOK":
-                        case "ENDER_SIGNAL":
+                        case "FISHING_HOOK", "FISHING_BOBBER":
+                        case "ENDER_SIGNAL", "EYE_OF_ENDER":
                         case "AREA_EFFECT_CLOUD":
                         case "EXPERIENCE_ORB":
-                        case "LEASH_HITCH":
-                        case "FIREWORK":
-                        case "LIGHTNING":
+                        case "LEASH_HITCH", "LEASH_KNOT":
+                        case "FIREWORK", "FIREWORK_ROCKET":
+                        case "LIGHTNING", "LIGHTNING_BOLT":
                         case "WITHER_SKULL":
                         case "UNKNOWN":
                         case "PLAYER":
                             // non moving / unmovable
                             continue;
-                        case "THROWN_EXP_BOTTLE":
-                        case "SPLASH_POTION":
+                        case "THROWN_EXP_BOTTLE", "EXPERIENCE_BOTTLE":
+                        case "SPLASH_POTION", "POTION":
                         case "SNOWBALL":
                         case "SHULKER_BULLET":
                         case "SPECTRAL_ARROW":
@@ -798,13 +828,26 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                             // Temporarily classify as vehicle
                         case "MINECART":
                         case "MINECART_CHEST":
+                        case "CHEST_MINECART":
                         case "MINECART_COMMAND":
+                        case "COMMAND_BLOCK_MINECART":
                         case "MINECART_FURNACE":
+                        case "FURNACE_MINECART":
                         case "MINECART_HOPPER":
+                        case "HOPPER_MINECART":
                         case "MINECART_MOB_SPAWNER":
-                        case "ENDER_CRYSTAL":
+                        case "SPAWNER_MINECART":
+                        case "END_CRYSTAL":
+                        case "ENDER_CRYSTAL": // Backwards compatibility for 1.20.4
                         case "MINECART_TNT":
+                        case "TNT_MINECART":
+                        case "CHEST_BOAT":
                         case "BOAT":
+                        case "ACACIA_BOAT", "BIRCH_BOAT", "CHERRY_BOAT", "DARK_OAK_BOAT", "JUNGLE_BOAT", "MANGROVE_BOAT",
+                             "OAK_BOAT", "PALE_OAK_BOAT", "SPRUCE_BOAT", "BAMBOO_RAFT":
+                        case "ACACIA_CHEST_BOAT", "BIRCH_CHEST_BOAT", "CHERRY_CHEST_BOAT", "DARK_OAK_CHEST_BOAT",
+                             "JUNGLE_CHEST_BOAT", "MANGROVE_CHEST_BOAT", "OAK_CHEST_BOAT", "PALE_OAK_CHEST_BOAT",
+                             "SPRUCE_CHEST_BOAT", "BAMBOO_CHEST_RAFT":
                             if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
                                 com.plotsquared.core.location.Location location = BukkitUtil.adapt(entity.getLocation());
                                 Plot plot = location.getPlot();
@@ -833,14 +876,14 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         case "SMALL_FIREBALL":
                         case "FIREBALL":
                         case "DRAGON_FIREBALL":
-                        case "DROPPED_ITEM":
+                        case "DROPPED_ITEM", "ITEM":
                             if (Settings.Enabled_Components.KILL_ROAD_ITEMS
                                     && plotArea.getOwnedPlotAbs(BukkitUtil.adapt(entity.getLocation())) == null) {
                                 this.removeRoadEntity(entity, iterator);
                             }
                             // dropped item
                             continue;
-                        case "PRIMED_TNT":
+                        case "PRIMED_TNT", "TNT":
                         case "FALLING_BLOCK":
                             // managed elsewhere
                             continue;
@@ -852,8 +895,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                     if (livingEntity.isLeashed() && !Settings.Enabled_Components.KILL_OWNED_ROAD_MOBS) {
                                         continue;
                                     }
-                                    List<MetadataValue> keep = entity.getMetadata("keep");
-                                    if (!keep.isEmpty()) {
+                                    if (entity.hasMetadata("keep")) {
                                         continue;
                                     }
 
@@ -914,12 +956,14 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         case "ENDERMITE":
                         case "ENDER_DRAGON":
                         case "GHAST":
+                        case "HAPPY_GHAST": // 1.21.6+
+                        case "GHASTLING": // 1.21.6+
                         case "GIANT":
                         case "GUARDIAN":
                         case "HORSE":
                         case "IRON_GOLEM":
                         case "MAGMA_CUBE":
-                        case "MUSHROOM_COW":
+                        case "MUSHROOM_COW", "MOOSHROOM":
                         case "OCELOT":
                         case "PIG":
                         case "PIG_ZOMBIE":
@@ -928,7 +972,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         case "SILVERFISH":
                         case "SKELETON":
                         case "SLIME":
-                        case "SNOWMAN":
+                        case "SNOWMAN", "SNOW_GOLEM":
                         case "SPIDER":
                         case "SQUID":
                         case "VILLAGER":
@@ -1141,7 +1185,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     @Override
     public @NonNull String serverNativePackage() {
         final String name = Bukkit.getServer().getClass().getPackage().getName();
-        return name.substring(name.lastIndexOf('.') + 1);
+        String ver = name.substring(name.lastIndexOf('.') + 1);
+        // org.bukkit.craftbukkit is no longer suffixed by a version
+        return ver.equals("craftbukkit") ? "" : ver;
     }
 
     @Override
@@ -1152,6 +1198,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         return new BukkitPlotGenerator(world, generator, this.plotAreaManager);
     }
 
+    @SuppressWarnings("deprecation") // Paper deprecation
     @Override
     public @NonNull String pluginsFormatted() {
         StringBuilder msg = new StringBuilder();
@@ -1168,18 +1215,37 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                     .append("  • Load Before: ").append(p.getDescription().getLoadBefore()).append("\n")
                     .append("  • Dependencies: ").append(p.getDescription().getDepend()).append("\n")
                     .append("  • Soft Dependencies: ").append(p.getDescription().getSoftDepend()).append("\n");
+            List<RegisteredServiceProvider<?>> providers = Bukkit.getServicesManager().getRegistrations(p);
+            if (!providers.isEmpty()) {
+                msg.append("  • Provided Services: \n");
+                for (RegisteredServiceProvider<?> provider : providers) {
+                    msg.append("    • ")
+                            .append(provider.getService().getName()).append(" = ")
+                            .append(provider.getProvider().getClass().getName())
+                            .append(" (priority: ").append(provider.getPriority()).append(")")
+                            .append("\n");
+                }
+            }
         }
         return msg.toString();
     }
 
     @Override
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings({"ConstantConditions", "deprecation"}) // Paper deprecation
     public @NonNull String worldEditImplementations() {
         StringBuilder msg = new StringBuilder();
         if (Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null) {
-            msg.append("FastAsyncWorldEdit: ").append(Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit").getDescription().getVersion());
+            msg.append("FastAsyncWorldEdit: ").append(Bukkit
+                    .getPluginManager()
+                    .getPlugin("FastAsyncWorldEdit")
+                    .getDescription()
+                    .getVersion());
         } else if (Bukkit.getPluginManager().getPlugin("AsyncWorldEdit") != null) {
-            msg.append("AsyncWorldEdit: ").append(Bukkit.getPluginManager().getPlugin("AsyncWorldEdit").getDescription().getVersion()).append("\n");
+            msg.append("AsyncWorldEdit: ").append(Bukkit
+                    .getPluginManager()
+                    .getPlugin("AsyncWorldEdit")
+                    .getDescription()
+                    .getVersion()).append("\n");
             msg.append("WorldEdit: ").append(Bukkit.getPluginManager().getPlugin("WorldEdit").getDescription().getVersion());
         } else {
             msg.append("WorldEdit: ").append(Bukkit.getPluginManager().getPlugin("WorldEdit").getDescription().getVersion());
@@ -1229,15 +1295,13 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
     @Override
     public @NonNull PlatformWorldManager<?> worldManager() {
-        return injector().getInstance(Key.get(new TypeLiteral<PlatformWorldManager<World>>() {
-        }));
+        return this.worldManager;
     }
 
     @Override
     @NonNull
-    @SuppressWarnings("unchecked")
     public PlayerManager<? extends PlotPlayer<Player>, ? extends Player> playerManager() {
-        return (PlayerManager<BukkitPlayer, Player>) injector().getInstance(PlayerManager.class);
+        return this.playerManager;
     }
 
     @Override

@@ -19,6 +19,7 @@
 package com.plotsquared.bukkit.listener;
 
 import com.destroystokyo.paper.event.block.BeaconEffectEvent;
+import com.destroystokyo.paper.event.block.BlockDestroyEvent;
 import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
 import com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent;
 import com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent;
@@ -28,6 +29,7 @@ import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
 import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
 import com.google.inject.Inject;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.Command;
 import com.plotsquared.core.command.MainCommand;
 import com.plotsquared.core.configuration.Settings;
@@ -37,15 +39,23 @@ import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.flag.FlagContainer;
 import com.plotsquared.core.plot.flag.implementations.BeaconEffectsFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
+import com.plotsquared.core.plot.flag.implementations.FishingFlag;
 import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
+import com.plotsquared.core.plot.flag.implementations.TileDropFlag;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.PlotFlagUtil;
-import net.kyori.adventure.text.minimessage.Template;
+import io.papermc.paper.event.entity.EntityMoveEvent;
+import io.papermc.paper.event.world.StructuresLocateEvent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Chunk;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.Entity;
@@ -53,6 +63,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Slime;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -73,6 +84,9 @@ import java.util.regex.Pattern;
 @SuppressWarnings("unused")
 public class PaperListener implements Listener {
 
+    private static final NamespacedKey ITEM = NamespacedKey.minecraft("item");
+    private static final NamespacedKey FISHING_BOBBER = NamespacedKey.minecraft("fishing_bobber");
+
     private final PlotAreaManager plotAreaManager;
     private Chunk lastChunk;
 
@@ -81,38 +95,25 @@ public class PaperListener implements Listener {
         this.plotAreaManager = plotAreaManager;
     }
 
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    public void onBlockDestroy(final BlockDestroyEvent event) {
+        Location location = BukkitUtil.adapt(event.getBlock().getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = area.getPlot(location);
+        if (plot != null) {
+            event.setWillDrop(plot.getFlag(TileDropFlag.class));
+        }
+    }
+
     @EventHandler
     public void onEntityPathfind(EntityPathfindEvent event) {
         if (!Settings.Paper_Components.ENTITY_PATHING) {
             return;
         }
-        Location toLoc = BukkitUtil.adapt(event.getLoc());
-        Location fromLoc = BukkitUtil.adapt(event.getEntity().getLocation());
-        PlotArea tarea = toLoc.getPlotArea();
-        if (tarea == null) {
-            return;
-        }
-        PlotArea farea = fromLoc.getPlotArea();
-        if (farea == null) {
-            return;
-        }
-        if (tarea != farea) {
-            event.setCancelled(true);
-            return;
-        }
-        Plot tplot = toLoc.getPlot();
-        Plot fplot = fromLoc.getPlot();
-        if (tplot == null ^ fplot == null) {
-            event.setCancelled(true);
-            return;
-        }
-        if (tplot == null || tplot.getId().hashCode() == fplot.getId().hashCode()) {
-            return;
-        }
-        if (fplot.isMerged() && fplot.getConnectedPlots().contains(fplot)) {
-            return;
-        }
-        event.setCancelled(true);
+        handleEntityMovement(event, event.getEntity().getLocation(), event.getLoc());
     }
 
     @EventHandler
@@ -122,13 +123,28 @@ public class PaperListener implements Listener {
         }
         Slime slime = event.getEntity();
 
-        Block b = slime.getTargetBlock(4);
+        Block b = slime.getTargetBlockExact(4);
         if (b == null) {
             return;
         }
 
-        Location toLoc = BukkitUtil.adapt(b.getLocation());
-        Location fromLoc = BukkitUtil.adapt(event.getEntity().getLocation());
+        handleEntityMovement(event, event.getEntity().getLocation(),  b.getLocation());
+    }
+
+    @EventHandler
+    public void onEntityMove(EntityMoveEvent event) {
+        if (!Settings.Paper_Components.ENTITY_MOVEMENT) {
+            return;
+        }
+        if (!event.hasExplicitlyChangedBlock()) {
+            return;
+        }
+        handleEntityMovement(event, event.getFrom(), event.getTo());
+    }
+
+    private static void handleEntityMovement(Cancellable event, org.bukkit.Location from, org.bukkit.Location target) {
+        Location toLoc = BukkitUtil.adapt(target);
+        Location fromLoc = BukkitUtil.adapt(from);
         PlotArea tarea = toLoc.getPlotArea();
         if (tarea == null) {
             return;
@@ -137,7 +153,6 @@ public class PaperListener implements Listener {
         if (farea == null) {
             return;
         }
-
         if (tarea != farea) {
             event.setCancelled(true);
             return;
@@ -148,10 +163,10 @@ public class PaperListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        if (tplot == null || tplot.getId().hashCode() == fplot.getId().hashCode()) {
+        if (tplot == null || tplot.getId().equals(fplot.getId())) {
             return;
         }
-        if (fplot.isMerged() && fplot.getConnectedPlots().contains(fplot)) {
+        if (fplot.isMerged() && fplot.getConnectedPlots().contains(tplot)) {
             return;
         }
         event.setCancelled(true);
@@ -164,77 +179,63 @@ public class PaperListener implements Listener {
         }
         Location location = BukkitUtil.adapt(event.getSpawnLocation());
         PlotArea area = location.getPlotArea();
-        if (!location.isPlotArea()) {
+        if (area == null) {
             return;
         }
-        //If entities are spawning... the chunk should be loaded?
+        // Armour-stands are handled elsewhere and should not be handled by area-wide entity-spawn options
+        if (event.getType() == EntityType.ARMOR_STAND) {
+            return;
+        }
+        // If entities are spawning... the chunk should be loaded?
         Entity[] entities = event.getSpawnLocation().getChunk().getEntities();
-        if (entities.length > Settings.Chunk_Processor.MAX_ENTITIES) {
+        if (entities.length >= Settings.Chunk_Processor.MAX_ENTITIES) {
             event.setShouldAbortSpawn(true);
             event.setCancelled(true);
             return;
         }
         CreatureSpawnEvent.SpawnReason reason = event.getReason();
         switch (reason.toString()) {
-            case "DISPENSE_EGG":
-            case "EGG":
-            case "OCELOT_BABY":
-            case "SPAWNER_EGG":
+            case "DISPENSE_EGG", "EGG", "OCELOT_BABY", "SPAWNER_EGG" -> {
                 if (!area.isSpawnEggs()) {
                     event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                     return;
                 }
-                break;
-            case "REINFORCEMENTS":
-            case "NATURAL":
-            case "MOUNT":
-            case "PATROL":
-            case "RAID":
-            case "SHEARED":
-            case "SILVERFISH_BLOCK":
-            case "ENDER_PEARL":
-            case "TRAP":
-            case "VILLAGE_DEFENSE":
-            case "VILLAGE_INVASION":
-            case "BEEHIVE":
-            case "CHUNK_GEN":
+            }
+            case "REINFORCEMENTS", "NATURAL", "MOUNT", "PATROL", "RAID", "SHEARED", "SILVERFISH_BLOCK", "ENDER_PEARL", "TRAP", "VILLAGE_DEFENSE", "VILLAGE_INVASION", "BEEHIVE", "CHUNK_GEN" -> {
                 if (!area.isMobSpawning()) {
                     event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                     return;
                 }
-                break;
-            case "BREEDING":
+            }
+            case "BREEDING" -> {
                 if (!area.isSpawnBreeding()) {
                     event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                     return;
                 }
-                break;
-            case "BUILD_IRONGOLEM":
-            case "BUILD_SNOWMAN":
-            case "BUILD_WITHER":
-            case "CUSTOM":
-                if (!area.isSpawnCustom() && event.getType() != EntityType.ARMOR_STAND) {
+            }
+            case "BUILD_IRONGOLEM", "BUILD_SNOWMAN", "BUILD_WITHER", "CUSTOM" -> {
+                if (!area.isSpawnCustom()) {
                     event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                     return;
                 }
-                break;
-            case "SPAWNER":
+            }
+            case "SPAWNER" -> {
                 if (!area.isMobSpawnerSpawning()) {
                     event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                     return;
                 }
-                break;
+            }
         }
         Plot plot = location.getOwnedPlotAbs();
         if (plot == null) {
             EntityType type = event.getType();
             // PreCreatureSpawnEvent **should** not be called for DROPPED_ITEM, just for the sake of consistency
-            if (type == EntityType.DROPPED_ITEM) {
+            if (type.getKey().equals(ITEM)) {
                 if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
                     event.setCancelled(true);
                 }
@@ -302,7 +303,7 @@ public class PaperListener implements Listener {
             final PlotPlayer<?> plotPlayer = BukkitUtil.adapt(event.getPlayer());
             plotPlayer.sendMessage(
                     TranslatableCaption.of("errors.tile_entity_cap_reached"),
-                    Template.of("amount", String.valueOf(Settings.Chunk_Processor.MAX_TILES))
+                    TagResolver.resolver("amount", Tag.inserting(Component.text(Settings.Chunk_Processor.MAX_TILES)))
             );
             event.setCancelled(true);
             event.setBuild(false);
@@ -339,7 +340,10 @@ public class PaperListener implements Listener {
             )) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_ROAD))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_PROJECTILE_ROAD)
+                        )
                 );
                 entity.remove();
                 event.setCancelled(true);
@@ -348,17 +352,28 @@ public class PaperListener implements Listener {
             if (!pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)
+                        )
                 );
                 entity.remove();
                 event.setCancelled(true);
             }
         } else if (!plot.isAdded(pp.getUUID())) {
+            if (entity.getType().getKey().equals(FISHING_BOBBER)) {
+                if (plot.getFlag(FishingFlag.class)) {
+                    return;
+                }
+            }
             if (!plot.getFlag(ProjectilesFlag.class)) {
                 if (!pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)
+                            )
                     );
                     entity.remove();
                     event.setCancelled(true);
@@ -446,9 +461,26 @@ public class PaperListener implements Listener {
         }
     }
 
-    private boolean getBooleanFlagValue(@NonNull FlagContainer container,
-                                        @NonNull Class<? extends BooleanFlag<?>> flagClass,
-                                        boolean defaultValue) {
+    /**
+     * Don't let the server die when populating cartographers (villager offering maps) in classic plot worlds
+     * (as those don't generate POIs)
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onStructuresLocate(StructuresLocateEvent event) {
+        if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(event.getWorld().getName())) {
+            return;
+        }
+        final PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(event.getWorld().getName());
+        if (area != null && area.getType() == PlotAreaType.NORMAL) {
+            event.setCancelled(true);
+        }
+    }
+
+    private boolean getBooleanFlagValue(
+            @NonNull FlagContainer container,
+            @NonNull Class<? extends BooleanFlag<?>> flagClass,
+            boolean defaultValue
+    ) {
         BooleanFlag<?> flag = container.getFlag(flagClass);
         return flag == null ? defaultValue : flag.getValue();
     }

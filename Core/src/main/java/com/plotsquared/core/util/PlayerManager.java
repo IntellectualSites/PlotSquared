@@ -28,13 +28,17 @@ import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.uuid.UUIDMapping;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
@@ -96,7 +101,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
                             consumer.accept(null, throwable);
                         } else {
                             for (final UUIDMapping uuid : uuids) {
-                                result.add(uuid.getUuid());
+                                result.add(uuid.uuid());
                             }
                             consumer.accept(result, null);
                         }
@@ -114,18 +119,18 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      */
     public static @NonNull Component getPlayerList(final @NonNull Collection<UUID> uuids, LocaleHolder localeHolder) {
         if (uuids.isEmpty()) {
-            return MINI_MESSAGE.parse(TranslatableCaption.of("info.none").getComponent(localeHolder));
+            return TranslatableCaption.of("info.none").toComponent(localeHolder).asComponent();
         }
 
         final List<UUID> players = new LinkedList<>();
-        final List<String> users = new LinkedList<>();
+        final List<ComponentLike> users = new LinkedList<>();
         for (final UUID uuid : uuids) {
             if (uuid == null) {
-                users.add(MINI_MESSAGE.stripTokens(TranslatableCaption.of("info.none").getComponent(localeHolder)));
+                users.add(TranslatableCaption.of("info.none").toComponent(localeHolder));
             } else if (DBFunc.EVERYONE.equals(uuid)) {
-                users.add(MINI_MESSAGE.stripTokens(TranslatableCaption.of("info.everyone").getComponent(localeHolder)));
+                users.add(TranslatableCaption.of("info.everyone").toComponent(localeHolder));
             } else if (DBFunc.SERVER.equals(uuid)) {
-                users.add(MINI_MESSAGE.stripTokens(TranslatableCaption.of("info.console").getComponent(localeHolder)));
+                users.add(TranslatableCaption.of("info.console").toComponent(localeHolder));
             } else {
                 players.add(uuid);
             }
@@ -134,7 +139,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
         try {
             for (final UUIDMapping mapping : PlotSquared.get().getImpromptuUUIDPipeline()
                     .getNames(players).get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS)) {
-                users.add(mapping.getUsername());
+                users.add(Component.text(mapping.username()));
             }
         } catch (final Exception e) {
             e.printStackTrace();
@@ -144,62 +149,18 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
         TextComponent.Builder list = Component.text();
         for (int x = 0; x < users.size(); x++) {
             if (x + 1 == uuids.size()) {
-                list.append(MINI_MESSAGE.parse(c, Template.of("user", users.get(x))));
+                list.append(MINI_MESSAGE.deserialize(c, TagResolver.resolver(
+                        "user",
+                        Tag.inserting(users.get(x))
+                )));
             } else {
-                list.append(MINI_MESSAGE.parse(c + ", ", Template.of("user", users.get(x))));
+                list.append(MINI_MESSAGE.deserialize(c + ", ", TagResolver.resolver(
+                        "user",
+                        Tag.inserting(users.get(x))
+                )));
             }
         }
         return list.asComponent();
-    }
-
-    /**
-     * Get the name from a UUID.
-     *
-     * @param owner Owner UUID
-     * @return The player's name, None, Everyone or Unknown
-     * @deprecated Use {@link #resolveName(UUID)}
-     */
-    @Deprecated(forRemoval = true, since = "6.4.0")
-    public static @NonNull String getName(final @Nullable UUID owner) {
-        return getName(owner, true);
-    }
-
-    /**
-     * Get the name from a UUID.
-     *
-     * @param owner    Owner UUID
-     * @param blocking Whether or not the operation can be blocking
-     * @return The player's name, None, Everyone or Unknown
-     * @deprecated Use {@link #resolveName(UUID, boolean)}
-     */
-    @Deprecated(forRemoval = true, since = "6.4.0")
-    public static @NonNull String getName(final @Nullable UUID owner, final boolean blocking) {
-        if (owner == null) {
-            TranslatableCaption.of("info.none");
-        }
-        if (owner.equals(DBFunc.EVERYONE)) {
-            TranslatableCaption.of("info.everyone");
-        }
-        if (owner.equals(DBFunc.SERVER)) {
-            TranslatableCaption.of("info.server");
-        }
-        final String name;
-        if (blocking) {
-            name = PlotSquared.get().getImpromptuUUIDPipeline()
-                    .getSingle(owner, Settings.UUID.BLOCKING_TIMEOUT);
-        } else {
-            final UUIDMapping uuidMapping =
-                    PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(owner);
-            if (uuidMapping != null) {
-                name = uuidMapping.getUsername();
-            } else {
-                name = null;
-            }
-        }
-        if (name == null) {
-            TranslatableCaption.of("info.unknown");
-        }
-        return name;
     }
 
     /**
@@ -211,7 +172,9 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @return A caption containing either the name, {@code None}, {@code Everyone} or {@code Unknown}
      * @see #resolveName(UUID, boolean)
      * @since 6.4.0
+     * @deprecated Don't unnecessarily block threads and utilize playerMap - see {@link #getUsernameCaption(UUID)}
      */
+    @Deprecated(since = "7.1.0")
     public static @NonNull Caption resolveName(final @Nullable UUID owner) {
         return resolveName(owner, true);
     }
@@ -223,7 +186,9 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param blocking If the operation should block the current thread for {@link Settings.UUID#BLOCKING_TIMEOUT} milliseconds
      * @return A caption containing either the name, {@code None}, {@code Everyone} or {@code Unknown}
      * @since 6.4.0
+     * @deprecated Don't unnecessarily block threads and utilize playerMap - see {@link #getUsernameCaption(UUID)}
      */
+    @Deprecated(since = "7.1.0")
     public static @NonNull Caption resolveName(final @Nullable UUID owner, final boolean blocking) {
         if (owner == null) {
             return TranslatableCaption.of("info.none");
@@ -242,7 +207,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
             final UUIDMapping uuidMapping =
                     PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(owner);
             if (uuidMapping != null) {
-                name = uuidMapping.getUsername();
+                name = uuidMapping.username();
             } else {
                 name = null;
             }
@@ -251,6 +216,50 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
             return TranslatableCaption.of("info.unknown");
         }
         return StaticCaption.of(name);
+    }
+
+    /**
+     * Resolves a UUID to a formatted {@link Caption} representing the player behind the UUID.
+     * Returns a {@link CompletableFuture} instead of a plain {@link UUID} as this method may query the
+     * {@link com.plotsquared.core.uuid.UUIDPipeline ImpromptuUUIDPipeline}.
+     * <br>
+     * Special Cases:
+     * <ul>
+     *     <li>{@code null}: Resolves to a {@link TranslatableCaption} with the key {@code info.none}</li>
+     *     <li>{@link DBFunc#EVERYONE}: Resolves to a {@link TranslatableCaption} with the key {@code info.everyone}</li>
+     *     <li>{@link DBFunc#SERVER}: Resolves to a {@link TranslatableCaption} with the key {@code info.server}</li>
+     * </ul>
+     * <br>
+     * Otherwise, if the UUID is a valid UUID and not reserved by PlotSquared itself, this method first attempts to query the
+     * online players ({@link #getPlayerIfExists(UUID)}) for the specific UUID.
+     * If no online player was found for that UUID, the {@link com.plotsquared.core.uuid.UUIDPipeline ImpromptuUUIDPipeline} is
+     * queried to retrieve the known username
+     *
+     * @param uuid The UUID of the player (for example provided by {@link Plot#getOwner()}
+     * @return A CompletableFuture resolving to a Caption representing the players name of the uuid
+     * @since 7.1.0
+     */
+    @Contract("_->!null")
+    public @NonNull CompletableFuture<Caption> getUsernameCaption(@Nullable UUID uuid) {
+        if (uuid == null) {
+            return CompletableFuture.completedFuture(TranslatableCaption.of("info.none"));
+        }
+        if (uuid.equals(DBFunc.EVERYONE)) {
+            return CompletableFuture.completedFuture(TranslatableCaption.of("info.everyone"));
+        }
+        if (uuid.equals(DBFunc.SERVER)) {
+            return CompletableFuture.completedFuture(TranslatableCaption.of("info.server"));
+        }
+        P player = getPlayerIfExists(uuid);
+        if (player != null) {
+            return CompletableFuture.completedFuture(StaticCaption.of(player.getName()));
+        }
+        return PlotSquared.get().getImpromptuUUIDPipeline().getNames(Collections.singleton(uuid)).thenApply(mapping -> {
+            if (mapping.isEmpty()) {
+                return TranslatableCaption.of("info.unknown");
+            }
+            return StaticCaption.of(mapping.get(0).username());
+        });
     }
 
     /**

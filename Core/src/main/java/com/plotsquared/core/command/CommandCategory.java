@@ -22,7 +22,11 @@ import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * CommandCategory.
@@ -80,7 +84,7 @@ public enum CommandCategory implements Caption {
     // TODO this method shouldn't be invoked
     @Deprecated
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return this.caption.getComponent(LocaleHolder.console());
     }
 
@@ -88,6 +92,19 @@ public enum CommandCategory implements Caption {
     @Override
     public String getComponent(@NonNull LocaleHolder localeHolder) {
         return this.caption.getComponent(localeHolder);
+    }
+
+    @Override
+    public @NonNull Component toComponent(@NonNull final LocaleHolder localeHolder) {
+        return MiniMessage.miniMessage().deserialize(getComponent(localeHolder));
+    }
+
+    @Override
+    public @NonNull Component toComponent(
+            @NonNull final LocaleHolder localeHolder,
+            final @NonNull TagResolver @NonNull ... tagResolvers
+    ) {
+        return MiniMessage.miniMessage().deserialize(getComponent(localeHolder));
     }
 
     /**
@@ -100,5 +117,6 @@ public enum CommandCategory implements Caption {
     boolean canAccess(PlotPlayer<?> player) {
         return !MainCommand.getInstance().getCommands(this, player).isEmpty();
     }
+
 
 }

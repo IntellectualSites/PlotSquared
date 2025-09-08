@@ -20,6 +20,7 @@ package com.plotsquared.core.plot.flag;
 
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.configuration.caption.Caption;
+import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
@@ -81,6 +82,16 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
             }
         }
         return flagName.toString();
+    }
+
+    /**
+     * Gets the flag name as a Kyori {@link Component}
+     *
+     * @see #getFlagName(Class)
+     * @since 7.0.0
+     */
+    public static <T, F extends PlotFlag<T, F>> Component getFlagNameComponent(Class<F> flagClass) {
+        return Component.text(getFlagName(flagClass));
     }
 
     /**
@@ -209,14 +220,5 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
     public int hashCode() {
         return value.hashCode();
     }
-
-    /**
-     * @deprecated This method is not meant to be invoked or overridden, with no replacement.
-     */
-    @Deprecated(forRemoval = true, since = "6.6.0")
-    protected boolean canEqual(final Object other) {
-        return other instanceof PlotFlag;
-    }
-
 
 }

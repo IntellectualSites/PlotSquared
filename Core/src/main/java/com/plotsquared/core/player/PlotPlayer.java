@@ -57,7 +57,8 @@ import com.sk89q.worldedit.world.item.ItemType;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.title.Title;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -79,6 +80,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -205,7 +207,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
             if (notify) {
                 sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", permission)
+                        TagResolver.resolver("node", Tag.inserting(Component.text(permission)))
                 );
             }
             return false;
@@ -272,8 +274,9 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         return this.meta == null ? null : this.meta.remove(key);
     }
 
+
     /**
-     * This player's name.
+     * Returns the name of the player.
      *
      * @return the name of the player
      */
@@ -287,6 +290,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      *
      * @return the plot the player is standing on or null if standing on a road or not in a {@link PlotArea}
      */
+    @Nullable
     public Plot getCurrentPlot() {
         try (final MetaDataAccess<Plot> lastPlotAccess =
                      this.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
@@ -303,7 +307,8 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      * @return number of allowed plots within the scope (globally, or in the player's current world as defined in the settings.yml)
      */
     public int getAllowedPlots() {
-        return hasPermissionRange("plots.plot", Settings.Limit.MAX_PLOTS);
+        final int calculatedLimit = hasPermissionRange("plots.plot", Settings.Limit.MAX_PLOTS);
+        return this.eventDispatcher.callPlayerPlotLimit(this, calculatedLimit).limit();
     }
 
     /**
@@ -315,7 +320,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      */
     public int getPlotCount() {
         if (!Settings.Limit.GLOBAL) {
-            return getPlotCount(getLocation().getWorldName());
+            return getPlotCount(getCurrentPlot().getWorldName());
         }
         final AtomicInteger count = new AtomicInteger(0);
         final UUID uuid = getUUID();
@@ -335,7 +340,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
 
     public int getClusterCount() {
         if (!Settings.Limit.GLOBAL) {
-            return getClusterCount(getLocation().getWorldName());
+            return getClusterCount(getCurrentPlot().getWorldName());
         }
         final AtomicInteger count = new AtomicInteger(0);
         this.plotAreaManager.forEachPlotArea(value -> {
@@ -404,7 +409,11 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     }
 
     public PlotArea getApplicablePlotArea() {
-        return this.plotAreaManager.getApplicablePlotArea(getLocation());
+        Plot plot = getCurrentPlot();
+        if (plot == null) {
+            return this.plotAreaManager.getApplicablePlotArea(getLocation());
+        }
+        return plot.getArea();
     }
 
     @Override
@@ -440,7 +449,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
 
     /**
      * Get this player's UUID.
-     * === !IMPORTANT ===<br>
+     * <p>=== !IMPORTANT ===</p>
      * The UUID is dependent on the mode chosen in the settings.yml and may not be the same as Bukkit has
      * (especially if using an old version of Bukkit that does not support UUIDs)
      *
@@ -610,16 +619,16 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
             PlotId id = plot.getId();
             int x = id.getX();
             int z = id.getY();
-            ByteBuffer buffer = ByteBuffer.allocate(13);
+            ByteBuffer buffer = ByteBuffer.allocate(14);
             buffer.putShort((short) x);
             buffer.putShort((short) z);
             Location location = getLocation();
             buffer.putInt(location.getX());
-            buffer.put((byte) location.getY());
+            buffer.putShort((short) location.getY());
             buffer.putInt(location.getZ());
-            setPersistentMeta("quitLoc", buffer.array());
-        } else if (hasPersistentMeta("quitLoc")) {
-            removePersistentMeta("quitLoc");
+            setPersistentMeta("quitLocV2", buffer.array());
+        } else if (hasPersistentMeta("quitLocV2")) {
+            removePersistentMeta("quitLocV2");
         }
         if (plot != null) {
             this.eventDispatcher.callLeave(this, plot);
@@ -696,11 +705,18 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                             return;
                         }
                         PlotArea area = ((SinglePlotAreaManager) manager).getArea();
+                        boolean V2 = false;
                         byte[] arr = PlotPlayer.this.getPersistentMeta("quitLoc");
                         if (arr == null) {
-                            return;
+                            arr = PlotPlayer.this.getPersistentMeta("quitLocV2");
+                            if (arr == null) {
+                                return;
+                            }
+                            V2 = true;
+                            removePersistentMeta("quitLocV2");
+                        } else {
+                            removePersistentMeta("quitLoc");
                         }
-                        removePersistentMeta("quitLoc");
 
                         if (!getMeta("teleportOnLogin", true)) {
                             return;
@@ -710,7 +726,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                         final int plotZ = quitWorld.getShort();
                         PlotId id = PlotId.of(plotX, plotZ);
                         int x = quitWorld.getInt();
-                        int y = quitWorld.get() & 0xFF;
+                        int y = V2 ? quitWorld.getShort() : (quitWorld.get() & 0xFF);
                         int z = quitWorld.getInt();
                         Plot plot = area.getOwnedPlot(id);
 
@@ -744,10 +760,11 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                             }
                         }
                     } catch (Throwable e) {
-                        e.printStackTrace();
+                        LOGGER.error("Error populating persistent meta for player {}", PlotPlayer.this.getName(), e);
                     }
                 }
-            });
+                    }
+            );
         }
     }
 
@@ -849,7 +866,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      */
     public void sendTitle(
             final @NonNull Caption title, final @NonNull Caption subtitle,
-            final @NonNull Template... replacements
+            final @NonNull TagResolver... replacements
     ) {
         sendTitle(
                 title,
@@ -874,12 +891,12 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     public void sendTitle(
             final @NonNull Caption title, final @NonNull Caption subtitle,
             final int fadeIn, final int stay, final int fadeOut,
-            final @NonNull Template... replacements
+            final @NonNull TagResolver... replacements
     ) {
-        final Component titleComponent = MiniMessage.get().parse(title.getComponent(this), replacements);
+        final Component titleComponent = MiniMessage.miniMessage().deserialize(title.getComponent(this), replacements);
         final Component subtitleComponent =
-                MiniMessage.get().parse(subtitle.getComponent(this), replacements);
-        final Title.Times times = Title.Times.of(
+                MiniMessage.miniMessage().deserialize(subtitle.getComponent(this), replacements);
+        final Title.Times times = Title.Times.times(
                 Duration.of(Settings.Titles.TITLES_FADE_IN * 50L, ChronoUnit.MILLIS),
                 Duration.of(Settings.Titles.TITLES_STAY * 50L, ChronoUnit.MILLIS),
                 Duration.of(Settings.Titles.TITLES_FADE_OUT * 50L, ChronoUnit.MILLIS)
@@ -896,7 +913,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      */
     public void sendActionBar(
             final @NonNull Caption caption,
-            final @NonNull Template... replacements
+            final @NonNull TagResolver... replacements
     ) {
         String message;
         try {
@@ -916,14 +933,14 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                 .replace("<prefix>", TranslatableCaption.of("core.prefix").getComponent(this));
 
 
-        final Component component = MiniMessage.get().parse(message, replacements);
+        final Component component = MiniMessage.miniMessage().deserialize(message, replacements);
         getAudience().sendActionBar(component);
     }
 
     @Override
     public void sendMessage(
             final @NonNull Caption caption,
-            final @NonNull Template... replacements
+            final @NonNull TagResolver... replacements
     ) {
         String message;
         try {
@@ -942,13 +959,61 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                 .replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&')
                 .replace("<prefix>", TranslatableCaption.of("core.prefix").getComponent(this));
         // Parse the message
-        final Component component = MiniMessage.get().parse(message, replacements);
+        final Component component = MiniMessage.miniMessage().deserialize(message, replacements);
         if (!Objects.equal(component, this.getMeta("lastMessage"))
                 || System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000) {
             setMeta("lastMessage", component);
             setMeta("lastMessageTime", System.currentTimeMillis());
             getAudience().sendMessage(component);
         }
+    }
+
+    /**
+     * Sends a message to the command caller, when the future is resolved
+     *
+     * @param caption          Caption to send
+     * @param asyncReplacement Async variable replacement
+     * @return A Future to be resolved, after the message was sent
+     * @since 7.1.0
+     */
+    public final CompletableFuture<Void> sendMessage(
+            @NonNull Caption caption,
+            CompletableFuture<@NonNull TagResolver> asyncReplacement
+    ) {
+        return sendMessage(caption, new CompletableFuture[]{asyncReplacement});
+    }
+
+    /**
+     * Sends a message to the command caller, when all futures are resolved
+     *
+     * @param caption           Caption to send
+     * @param asyncReplacements Async variable replacements
+     * @param replacements      Sync variable replacements
+     * @return A Future to be resolved, after the message was sent
+     * @since 7.1.0
+     */
+    public final CompletableFuture<Void> sendMessage(
+            @NonNull Caption caption,
+            CompletableFuture<@NonNull TagResolver>[] asyncReplacements,
+            @NonNull TagResolver... replacements
+    ) {
+        return CompletableFuture.allOf(asyncReplacements).whenComplete((unused, throwable) -> {
+            Set<TagResolver> resolvers = new HashSet<>(Arrays.asList(replacements));
+            if (throwable != null) {
+                sendMessage(
+                        TranslatableCaption.of("errors.error"),
+                        TagResolver.resolver("value", Tag.inserting(
+                                Component.text("Failed to resolve asynchronous caption replacements")
+                        ))
+                );
+                LOGGER.error("Failed to resolve asynchronous tagresolver(s) for " + caption, throwable);
+            } else {
+                for (final CompletableFuture<TagResolver> asyncReplacement : asyncReplacements) {
+                    resolvers.add(asyncReplacement.join());
+                }
+            }
+            sendMessage(caption, resolvers.toArray(TagResolver[]::new));
+        });
     }
 
     // Redefine from PermissionHolder as it's required from CommandCaller

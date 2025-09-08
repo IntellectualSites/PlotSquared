@@ -24,13 +24,16 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.inject.factory.PlayerBackupProfileFactory;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -46,6 +49,7 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 public class SimpleBackupManager implements BackupManager {
 
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + SimpleBackupManager.class.getSimpleName());
     private final Path backupPath;
     private final boolean automaticBackup;
     private final int backupLimit;
@@ -100,7 +104,7 @@ public class SimpleBackupManager implements BackupManager {
             if (player != null) {
                 player.sendMessage(
                         TranslatableCaption.of("backups.backup_automatic_started"),
-                        Template.of("plot", plot.getId().toString())
+                        TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
                 );
             }
             profile.createBackup().whenComplete((backup, throwable) -> {
@@ -108,10 +112,15 @@ public class SimpleBackupManager implements BackupManager {
                     if (player != null) {
                         player.sendMessage(
                                 TranslatableCaption.of("backups.backup_automatic_failure"),
-                                Templates.of("reason", throwable.getMessage())
+                                TagResolver.resolver("reason", Tag.inserting(Component.text(throwable.getMessage())))
                         );
                     }
-                    throwable.printStackTrace();
+                    LOGGER.error(
+                            "Error creating backup for plot {};{} and player {}",
+                            plot.getArea(),
+                            plot.getId(),
+                            player == null ? "null" : player.getName(), throwable
+                    );
                 } else {
                     if (player != null) {
                         player.sendMessage(TranslatableCaption.of("backups.backup_automatic_finished"));
@@ -127,6 +136,7 @@ public class SimpleBackupManager implements BackupManager {
         return this.automaticBackup;
     }
 
+    @NonNull
     public Path getBackupPath() {
         return this.backupPath;
     }
@@ -135,13 +145,9 @@ public class SimpleBackupManager implements BackupManager {
         return this.backupLimit;
     }
 
-    private static final class PlotCacheKey {
-
-        private final Plot plot;
-
-        private PlotCacheKey(Plot plot) {
-            this.plot = plot;
-        }
+    private record PlotCacheKey(
+            Plot plot
+    ) {
 
         @Override
         public boolean equals(final Object o) {

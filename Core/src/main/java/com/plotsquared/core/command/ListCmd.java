@@ -23,7 +23,6 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.CaptionHolder;
-import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.permissions.Permission;
@@ -46,7 +45,8 @@ import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.uuid.UUIDMapping;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -123,7 +123,7 @@ public class ListCmd extends SubCommand {
     public void noArgs(PlotPlayer<?> player) {
         player.sendMessage(
                 TranslatableCaption.of("commandconfig.subcommand_set_options_header"),
-                Templates.of("values", Arrays.toString(getArgumentList(player)))
+                TagResolver.resolver("values", Tag.inserting(Component.text(Arrays.toString(getArgumentList(player)))))
         );
     }
 
@@ -150,8 +150,8 @@ public class ListCmd extends SubCommand {
             page = 0;
         }
 
-        String world = player.getLocation().getWorldName();
-        PlotArea area = player.getApplicablePlotArea();
+        String world = player.getCurrentPlot().getWorldName();
+        PlotArea area = player.getCurrentPlot().getArea();
         String arg = args[0].toLowerCase();
         final boolean[] sort = new boolean[]{true};
 
@@ -159,9 +159,14 @@ public class ListCmd extends SubCommand {
             if (query == null) {
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.did_you_mean"),
-                        Template.of(
+                        TagResolver.resolver(
                                 "value",
-                                new StringComparison<>(args[0], new String[]{"mine", "shared", "world", "all"}).getBestMatch()
+                                Tag.inserting(Component.text(
+                                        new StringComparison<>(
+                                                args[0],
+                                                new String[]{"mine", "shared", "world", "all"}
+                                        ).getBestMatch()
+                                ))
                         )
                 );
                 return;
@@ -189,7 +194,7 @@ public class ListCmd extends SubCommand {
                 if (!player.hasPermission(Permission.PERMISSION_LIST_MINE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.mine")
+                            TagResolver.resolver("node", Tag.inserting(Component.text("plots.list.mine")))
                     );
                     return false;
                 }
@@ -204,7 +209,7 @@ public class ListCmd extends SubCommand {
                 if (!player.hasPermission(Permission.PERMISSION_LIST_SHARED)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.shared")
+                            TagResolver.resolver("node", Tag.inserting(Component.text("plots.list.shared")))
                     );
                     return false;
                 }
@@ -217,14 +222,14 @@ public class ListCmd extends SubCommand {
                 if (!player.hasPermission(Permission.PERMISSION_LIST_WORLD)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.world")
+                            TagResolver.resolver("node", Tag.inserting(Component.text("plots.list.world")))
                     );
                     return false;
                 }
                 if (!player.hasPermission("plots.list.world." + world)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.world." + world)
+                            TagResolver.resolver("node", Tag.inserting(Component.text("plots.list.world." + world)))
                     );
                     return false;
                 }
@@ -234,7 +239,7 @@ public class ListCmd extends SubCommand {
                 if (!player.hasPermission(Permission.PERMISSION_LIST_EXPIRED)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.expired")
+                            TagResolver.resolver("node", Tag.inserting(Component.text("plots.list.expired")))
                     );
                     return false;
                 }
@@ -248,14 +253,14 @@ public class ListCmd extends SubCommand {
                 if (!player.hasPermission(Permission.PERMISSION_LIST_AREA)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.area")
+                            TagResolver.resolver("node", Tag.inserting(Component.text("plots.list.area")))
                     );
                     return false;
                 }
                 if (!player.hasPermission("plots.list.world." + world)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.world." + world)
+                            TagResolver.resolver("node", Tag.inserting(Component.text("plots.list.world." + world)))
                     );
                     return false;
                 }
@@ -269,7 +274,7 @@ public class ListCmd extends SubCommand {
                 if (!player.hasPermission(Permission.PERMISSION_LIST_ALL)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.all")
+                            TagResolver.resolver("node", Tag.inserting(Component.text("plots.list.all")))
                     );
                     return false;
                 }
@@ -279,7 +284,7 @@ public class ListCmd extends SubCommand {
                 if (!player.hasPermission(Permission.PERMISSION_LIST_DONE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.done")
+                            TagResolver.resolver("node", Tag.inserting(Component.text("plots.list.done")))
                     );
                     return false;
                 }
@@ -294,7 +299,7 @@ public class ListCmd extends SubCommand {
                 if (!player.hasPermission(Permission.PERMISSION_LIST_TOP)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.top")
+                            TagResolver.resolver("node", Tag.inserting(Component.text("plots.list.top")))
                     );
                     return false;
                 }
@@ -305,7 +310,7 @@ public class ListCmd extends SubCommand {
                 if (!player.hasPermission(Permission.PERMISSION_LIST_FOR_SALE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.forsale")
+                            TagResolver.resolver("node", Tag.inserting(Component.text("plots.list.forsale")))
                     );
                     return false;
                 }
@@ -318,7 +323,7 @@ public class ListCmd extends SubCommand {
                 if (!player.hasPermission(Permission.PERMISSION_LIST_UNOWNED)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.unowned")
+                            TagResolver.resolver("node", Tag.inserting(Component.text("plots.list.unowned")))
                     );
                     return false;
                 }
@@ -328,14 +333,14 @@ public class ListCmd extends SubCommand {
                 if (!player.hasPermission(Permission.PERMISSION_LIST_FUZZY)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Templates.of("node", "plots.list.fuzzy")
+                            TagResolver.resolver("node", Tag.inserting(Component.text("plots.list.fuzzy")))
                     );
                     return false;
                 }
                 if (args.length < (page == -1 ? 2 : 3)) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Templates.of("value", "/plot list fuzzy <search...> [#]")
+                            TagResolver.resolver("value", Tag.inserting(Component.text("/plot list fuzzy <search...> [#]")))
                     );
                     return false;
                 }
@@ -353,14 +358,14 @@ public class ListCmd extends SubCommand {
                     if (!player.hasPermission(Permission.PERMISSION_LIST_WORLD)) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Templates.of("node", "plots.list.world")
+                                TagResolver.resolver("node", Tag.inserting(Component.text("plots.list.world")))
                         );
                         return false;
                     }
                     if (!player.hasPermission("plots.list.world." + args[0])) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Templates.of("node", "plots.list.world." + args[0])
+                                TagResolver.resolver("node", Tag.inserting(Component.text("plots.list.world." + args[0])))
                         );
                         return false;
                     }
@@ -379,12 +384,15 @@ public class ListCmd extends SubCommand {
                         }
                     }
                     if (uuid == null) {
-                        player.sendMessage(TranslatableCaption.of("errors.invalid_player"), Templates.of("value", args[0]));
+                        player.sendMessage(
+                                TranslatableCaption.of("errors.invalid_player"),
+                                TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))
+                        );
                     } else {
                         if (!player.hasPermission(Permission.PERMISSION_LIST_PLAYER)) {
                             player.sendMessage(
                                     TranslatableCaption.of("permission.no_permission"),
-                                    Templates.of("node", "plots.list.player")
+                                    TagResolver.resolver("node", Tag.inserting(Component.text("plots.list.player")))
                             );
                         } else {
                             sort[0] = false;
@@ -420,32 +428,34 @@ public class ListCmd extends SubCommand {
                 } else {
                     color = TranslatableCaption.of("info.plot_list_default");
                 }
-                Component trusted = MINI_MESSAGE.parse(
+                Component trusted = MINI_MESSAGE.deserialize(
                         TranslatableCaption.of("info.plot_info_trusted").getComponent(player),
-                        Template.of("trusted", PlayerManager.getPlayerList(plot.getTrusted(), player))
+                        TagResolver.resolver("trusted", Tag.inserting(PlayerManager.getPlayerList(plot.getTrusted(), player)))
                 );
-                Component members = MINI_MESSAGE.parse(
+                Component members = MINI_MESSAGE.deserialize(
                         TranslatableCaption.of("info.plot_info_members").getComponent(player),
-                        Template.of("members", PlayerManager.getPlayerList(plot.getMembers(), player))
+                        TagResolver.resolver("members", Tag.inserting(PlayerManager.getPlayerList(plot.getMembers(), player)))
                 );
-                Template command_tp = Template.of("command_tp", "/plot visit " + plot.getArea() + ";" + plot.getId());
-                Template command_info = Template.of("command_info", "/plot info " + plot.getArea() + ";" + plot.getId());
-                Template hover_info =
-                        Template.of(
-                                "hover_info",
-                                MINI_MESSAGE.serialize(Component
-                                        .text()
-                                        .append(trusted)
-                                        .append(Component.newline())
-                                        .append(members)
-                                        .asComponent())
-                        );
-                Template numberTemplate = Template.of("number", String.valueOf(i));
-                Template plotTemplate = Template.of(
-                        "plot",
-                        MINI_MESSAGE.parse(color.getComponent(player), Template.of("plot", plot.toString()))
+                TagResolver.Builder finalResolver = TagResolver.builder();
+                finalResolver.tag(
+                        "command_tp",
+                        Tag.preProcessParsed("/plot visit " + plot.getArea() + ";" + plot.getId())
                 );
-
+                finalResolver.tag(
+                        "command_info",
+                        Tag.preProcessParsed("/plot info " + plot.getArea() + ";" + plot.getId())
+                );
+                finalResolver.tag("hover_info", Tag.inserting(
+                        Component.text()
+                                .append(trusted)
+                                .append(Component.newline())
+                                .append(members)
+                                .asComponent()
+                ));
+                finalResolver.tag("number", Tag.inserting(Component.text(i)));
+                finalResolver.tag("plot", Tag.inserting(MINI_MESSAGE.deserialize(
+                        color.getComponent(player), TagResolver.resolver("plot", Tag.inserting(Component.text(plot.toString())))
+                )));
                 String prefix = "";
                 String online = TranslatableCaption.of("info.plot_list_player_online").getComponent(player);
                 String offline = TranslatableCaption.of("info.plot_list_player_offline").getComponent(player);
@@ -454,35 +464,37 @@ public class ListCmd extends SubCommand {
                 String everyone = TranslatableCaption.of("info.plot_list_player_everyone").getComponent(player);
                 TextComponent.Builder builder = Component.text();
                 if (plot.getFlag(ServerPlotFlag.class)) {
-                    Template serverTemplate = Template.of(
-                            "info.server",
-                            TranslatableCaption.of("info.server").getComponent(player)
+                    TagResolver serverResolver = TagResolver.resolver(
+                            "server",
+                            Tag.inserting(TranslatableCaption.of("info.server").toComponent(player))
                     );
-                    builder.append(MINI_MESSAGE.parse(server, serverTemplate));
+                    builder.append(MINI_MESSAGE.deserialize(server, serverResolver));
                 } else {
                     try {
                         final List<UUIDMapping> names = PlotSquared.get().getImpromptuUUIDPipeline().getNames(plot.getOwners())
                                 .get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS);
                         for (final UUIDMapping uuidMapping : names) {
-                            PlotPlayer<?> pp = PlotSquared.platform().playerManager().getPlayerIfExists(uuidMapping.getUuid());
-                            Template prefixTemplate = Template.of("prefix", prefix);
-                            Template playerTemplate = Template.of("player", uuidMapping.getUsername());
+                            PlotPlayer<?> pp = PlotSquared.platform().playerManager().getPlayerIfExists(uuidMapping.uuid());
+                            TagResolver resolver = TagResolver.builder()
+                                    .tag("prefix", Tag.inserting(Component.text(prefix)))
+                                    .tag("player", Tag.inserting(Component.text(uuidMapping.username())))
+                                    .build();
                             if (pp != null) {
-                                builder.append(MINI_MESSAGE.parse(online, prefixTemplate, playerTemplate));
-                            } else if (uuidMapping.getUsername().equalsIgnoreCase("unknown")) {
-                                Template unknownTemplate = Template.of(
-                                        "info.unknown",
-                                        TranslatableCaption.of("info.unknown").getComponent(player)
+                                builder.append(MINI_MESSAGE.deserialize(online, resolver));
+                            } else if (uuidMapping.username().equalsIgnoreCase("unknown")) {
+                                TagResolver unknownResolver = TagResolver.resolver(
+                                        "unknown",
+                                        Tag.inserting(TranslatableCaption.of("info.unknown").toComponent(player))
                                 );
-                                builder.append(MINI_MESSAGE.parse(unknown, unknownTemplate));
-                            } else if (uuidMapping.getUuid().equals(DBFunc.EVERYONE)) {
-                                Template everyoneTemplate = Template.of(
-                                        "info.everyone",
-                                        TranslatableCaption.of("info.everyone").getComponent(player)
+                                builder.append(MINI_MESSAGE.deserialize(unknown, unknownResolver));
+                            } else if (uuidMapping.uuid().equals(DBFunc.EVERYONE)) {
+                                TagResolver everyoneResolver = TagResolver.resolver(
+                                        "everyone",
+                                        Tag.inserting(TranslatableCaption.of("info.everyone").toComponent(player))
                                 );
-                                builder.append(MINI_MESSAGE.parse(everyone, everyoneTemplate));
+                                builder.append(MINI_MESSAGE.deserialize(everyone, everyoneResolver));
                             } else {
-                                builder.append(MINI_MESSAGE.parse(offline, prefixTemplate, playerTemplate));
+                                builder.append(MINI_MESSAGE.deserialize(offline, resolver));
                             }
                             prefix = ", ";
                         }
@@ -498,15 +510,16 @@ public class ListCmd extends SubCommand {
                         }
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
-                                Templates.of("value", playerBuilder.toString())
+                                TagResolver.resolver("value", Tag.inserting(Component.text(playerBuilder.toString())))
                         );
                     } catch (TimeoutException e) {
                         player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                     }
                 }
-                Template players = Template.of("players", builder.asComponent());
+                finalResolver.tag("players", Tag.inserting(builder.asComponent()));
+                finalResolver.tag("size", Tag.inserting(Component.text(plot.getConnectedPlots().size())));
                 caption.set(TranslatableCaption.of("info.plot_list_item"));
-                caption.setTemplates(command_tp, command_info, hover_info, numberTemplate, plotTemplate, players);
+                caption.setTagResolvers(finalResolver.build());
             }
         }, "/plot list " + args[0], TranslatableCaption.of("list.plot_list_header_paged"));
     }

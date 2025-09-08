@@ -31,7 +31,7 @@ import com.sk89q.worldedit.world.registry.LegacyMapper;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * {@link BlockState} related utility methods
@@ -45,7 +45,8 @@ public final class BlockUtil {
         PARSER_CONTEXT.setRestricted(false);
         PARSER_CONTEXT.setPreferringWildcard(false);
         PARSER_CONTEXT.setTryLegacy(true);
-        PARSER = WorldEdit.getInstance().getBlockFactory().getParsers().get(0);
+        List<InputParser<BaseBlock>> parsers = WorldEdit.getInstance().getBlockFactory().getParsers();
+        PARSER = parsers.get(parsers.size() - 1); // Default parser is always at the end
     }
 
     private BlockUtil() {
@@ -107,40 +108,6 @@ public final class BlockUtil {
         } catch (InputParseException e) {
             return null;
         }
-    }
-
-    /**
-     * Parse a comma delimited list of block states
-     *
-     * @param commaDelimited List of block states
-     * @return Parsed block states
-     * @deprecated Unused internally. Scheduled for removal in next major release.
-     */
-    @Deprecated(forRemoval = true, since = "6.11.1")
-    public static @NonNull BlockState[] parse(final @NonNull String commaDelimited) {
-        final String[] split = commaDelimited.split(",(?![^\\(\\[]*[\\]\\)])");
-        final BlockState[] result = new BlockState[split.length];
-        for (int i = 0; i < split.length; i++) {
-            result[i] = get(split[i]);
-        }
-        return result;
-    }
-
-    /**
-     * Deserialize a serialized {@link BlockState}
-     *
-     * @param map Serialized block state
-     * @return Deserialized block state, or {@code null} if the map is
-     *         not a properly serialized block state
-     * @deprecated Unused internally. Scheduled for removal in next major release.
-     */
-    @Deprecated(forRemoval = true, since = "6.11.1")
-    public static @Nullable BlockState deserialize(final @NonNull Map<String, Object> map) {
-        if (map.containsKey("material")) {
-            final Object object = map.get("material");
-            return get(object.toString());
-        }
-        return null;
     }
 
 }

@@ -51,7 +51,6 @@ public final class UncheckedWorldLocation extends Location {
      * @param y     Y coordinate
      * @param z     Z coordinate
      * @return New location
-     *
      * @since 6.9.0
      */
     @DoNotUse
@@ -59,6 +58,19 @@ public final class UncheckedWorldLocation extends Location {
             final @NonNull String world, final int x, final int y, final int z
     ) {
         return new UncheckedWorldLocation(world, x, y, z);
+    }
+
+    /**
+     * Construct a new location with yaw and pitch equal to 0
+     *
+     * @param world World
+     * @param loc   Coordinates
+     * @return New location
+     * @since 7.0.0
+     */
+    @DoNotUse
+    public static @NonNull UncheckedWorldLocation at(final @NonNull String world, BlockVector3 loc) {
+        return new UncheckedWorldLocation(world, loc.getX(), loc.getY(), loc.getZ());
     }
 
     @Override

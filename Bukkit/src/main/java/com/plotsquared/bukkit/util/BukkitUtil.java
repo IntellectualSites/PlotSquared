@@ -45,7 +45,7 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 import io.papermc.lib.PaperLib;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -75,6 +75,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Ghast;
 import org.bukkit.entity.Hanging;
+import org.bukkit.entity.Interaction;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LightningStrike;
@@ -262,6 +263,11 @@ public class BukkitUtil extends WorldUtil {
     }
 
     @Override
+    public boolean isSmallBlock(Location location) {
+        return adapt(location).getBlock().getBoundingBox().getHeight() < 0.25;
+    }
+
+    @Override
     @NonNegative
     public int getHighestBlockSynchronous(final @NonNull String world, final int x, final int z) {
         final World bukkitWorld = Objects.requireNonNull(getWorld(world));
@@ -333,7 +339,7 @@ public class BukkitUtil extends WorldUtil {
     @SuppressWarnings("deprecation")
     public void setSign(
             final @NonNull Location location, final @NonNull Caption[] lines,
-            final @NonNull Template... replacements
+            final @NonNull TagResolver... replacements
     ) {
         ensureLoaded(location.getWorldName(), location.getX(), location.getZ(), chunk -> {
             PlotArea area = location.getPlotArea();
@@ -366,8 +372,9 @@ public class BukkitUtil extends WorldUtil {
             final org.bukkit.block.BlockState blockstate = block.getState();
             if (blockstate instanceof final Sign sign) {
                 for (int i = 0; i < lines.length; i++) {
-                    sign.setLine(i, LEGACY_COMPONENT_SERIALIZER
-                            .serialize(MINI_MESSAGE.parse(lines[i].getComponent(LocaleHolder.console()), replacements)));
+                    sign.setLine(i, LEGACY_COMPONENT_SERIALIZER.serialize(
+                            MINI_MESSAGE.deserialize(lines[i].getComponent(LocaleHolder.console()), replacements)
+                    ));
                 }
                 sign.update(true, false);
             }
@@ -431,6 +438,7 @@ public class BukkitUtil extends WorldUtil {
     @Override
     public @NonNull Set<com.sk89q.worldedit.world.entity.EntityType> getTypesInCategory(final @NonNull String category) {
         final Collection<Class<?>> allowedInterfaces = new HashSet<>();
+        final int[] version = PlotSquared.platform().serverVersion();
         switch (category) {
             case "animal" -> {
                 allowedInterfaces.add(IronGolem.class);
@@ -438,7 +446,7 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(Animals.class);
                 allowedInterfaces.add(WaterMob.class);
                 allowedInterfaces.add(Ambient.class);
-                if (PlotSquared.platform().serverVersion()[1] >= 19) {
+                if (version[1] >= 19) {
                     allowedInterfaces.add(Allay.class);
                 }
             }
@@ -469,6 +477,11 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(Firework.class);
             }
             case "player" -> allowedInterfaces.add(Player.class);
+            case "interaction" -> {
+                if ((version[1] > 19) || (version[1] == 19 && version[2] >= 4)) {
+                    allowedInterfaces.add(Interaction.class);
+                }
+            }
             default -> LOGGER.error("Unknown entity category requested: {}", category);
         }
         final Set<com.sk89q.worldedit.world.entity.EntityType> types = new HashSet<>();

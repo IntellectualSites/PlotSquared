@@ -20,8 +20,14 @@ package com.plotsquared.core.configuration.caption;
 
 import com.google.common.base.Objects;
 import com.plotsquared.core.PlotSquared;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -90,6 +96,27 @@ public final class TranslatableCaption implements NamespacedCaption {
     }
 
     @Override
+    public @NonNull Component toComponent(@NonNull final LocaleHolder localeHolder) {
+        return this.toComponent(localeHolder, new TagResolver[0]);
+    }
+
+    @Override
+    public @NonNull Component toComponent(
+            @NonNull final LocaleHolder localeHolder,
+            final @NonNull TagResolver @NonNull ... tagResolvers
+    ) {
+        if (getKey().equals("core.prefix")) {
+            return MiniMessage.miniMessage().deserialize(getComponent(localeHolder));
+        }
+        TagResolver[] finalResolvers = Arrays.copyOf(tagResolvers, tagResolvers.length + 1);
+        finalResolvers[finalResolvers.length - 1] = TagResolver.resolver(
+                "prefix",
+                Tag.inserting(TranslatableCaption.of("core.prefix").toComponent(localeHolder))
+        );
+        return MiniMessage.miniMessage().deserialize(getComponent(localeHolder), finalResolvers);
+    }
+
+    @Override
     public @NonNull String getKey() {
         return this.key;
     }
@@ -115,6 +142,11 @@ public final class TranslatableCaption implements NamespacedCaption {
     @Override
     public int hashCode() {
         return Objects.hashCode(this.getNamespace(), this.getKey());
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return "TranslatableCaption(" + getNamespace() + ":" + getKey() + ")";
     }
 
 }

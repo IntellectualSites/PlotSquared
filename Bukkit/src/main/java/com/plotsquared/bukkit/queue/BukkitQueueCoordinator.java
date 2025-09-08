@@ -62,19 +62,28 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
     private static final SideEffectSet EDGE_LIGHTING_SIDE_EFFECT_SET;
 
     static {
-        NO_SIDE_EFFECT_SET = SideEffectSet.none().with(SideEffect.LIGHTING, SideEffect.State.OFF).with(
-                SideEffect.NEIGHBORS,
-                SideEffect.State.OFF
-        );
-        EDGE_SIDE_EFFECT_SET = SideEffectSet.none().with(SideEffect.UPDATE, SideEffect.State.ON).with(
-                SideEffect.NEIGHBORS,
-                SideEffect.State.ON
-        );
-        LIGHTING_SIDE_EFFECT_SET = SideEffectSet.none().with(SideEffect.NEIGHBORS, SideEffect.State.OFF);
-        EDGE_LIGHTING_SIDE_EFFECT_SET = SideEffectSet.none().with(SideEffect.UPDATE, SideEffect.State.ON).with(
-                SideEffect.NEIGHBORS,
-                SideEffect.State.ON
-        );
+        NO_SIDE_EFFECT_SET = enableNetworkIfNeeded()
+                .with(SideEffect.LIGHTING, SideEffect.State.OFF)
+                .with(SideEffect.NEIGHBORS, SideEffect.State.OFF);
+        EDGE_SIDE_EFFECT_SET = NO_SIDE_EFFECT_SET
+                .with(SideEffect.UPDATE, SideEffect.State.ON)
+                .with(SideEffect.NEIGHBORS, SideEffect.State.ON);
+        LIGHTING_SIDE_EFFECT_SET = NO_SIDE_EFFECT_SET
+                .with(SideEffect.NEIGHBORS, SideEffect.State.OFF);
+        EDGE_LIGHTING_SIDE_EFFECT_SET = NO_SIDE_EFFECT_SET
+                .with(SideEffect.UPDATE, SideEffect.State.ON)
+                .with(SideEffect.NEIGHBORS, SideEffect.State.ON);
+    }
+
+    // make sure block changes are sent
+    private static SideEffectSet enableNetworkIfNeeded() {
+        SideEffect network;
+        try {
+            network = SideEffect.valueOf("NETWORK");
+        } catch (IllegalArgumentException ignored) {
+            return SideEffectSet.none();
+        }
+        return SideEffectSet.none().with(network, SideEffect.State.ON);
     }
 
     private org.bukkit.World bukkitWorld;
@@ -229,6 +238,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                         .unloadAfter(isUnloadAfter())
                         .withProgressSubscribers(getProgressSubscribers())
                         .forceSync(isForceSync())
+                        .shouldGen(isShouldGen())
                         .build();
         return super.enqueue();
     }
@@ -270,7 +280,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
             if (getChunkObject() instanceof Chunk chunkObject) {
                 existing = chunkObject.getBlock(x & 15, y, z & 15);
             } else {
-                 existing = getBukkitWorld().getBlockAt(x, y, z);
+                existing = getBukkitWorld().getBlockAt(x, y, z);
             }
             final BlockState existingBaseBlock = BukkitAdapter.adapt(existing.getBlockData());
             if (BukkitBlockUtil.get(existing).equals(existingBaseBlock) && existing.getBlockData().matches(blockData)) {

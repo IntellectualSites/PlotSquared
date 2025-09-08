@@ -53,7 +53,8 @@ public abstract class EntityEvent {
      * @return the event class name
      * @since 6.11.0
      */
-    @NonNull public String getEventName() {
+    @NonNull
+    public String getEventName() {
         if (this.name == null) {
             this.name = this.getClass().getSimpleName();
         }

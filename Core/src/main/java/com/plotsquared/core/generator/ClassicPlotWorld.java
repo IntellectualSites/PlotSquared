@@ -38,6 +38,7 @@ import javax.annotation.Nullable;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class ClassicPlotWorld extends SquarePlotWorld {
+
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + ClassicPlotWorld.class.getSimpleName());
 
     public int ROAD_HEIGHT = 62;
@@ -51,6 +52,7 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     public BlockBucket ROAD_BLOCK = new BlockBucket(BlockTypes.QUARTZ_BLOCK);
     public boolean PLOT_BEDROCK = true;
     public boolean PLACE_TOP_BLOCK = true;
+    public boolean COMPONENT_BELOW_BEDROCK = false;
 
     public ClassicPlotWorld(
             final @NonNull String worldName,
@@ -62,6 +64,21 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
             final @NonNull GlobalBlockQueue blockQueue
     ) {
         super(worldName, id, generator, min, max, worldConfiguration, blockQueue);
+    }
+
+    private static BlockBucket createCheckedBlockBucket(String input, BlockBucket def) {
+        final BlockBucket bucket = new BlockBucket(input);
+        Pattern pattern = null;
+        try {
+            pattern = bucket.toPattern();
+        } catch (Exception ignore) {
+        }
+        if (pattern == null) {
+            LOGGER.error("Failed to parse pattern '{}', check your worlds.yml", input);
+            LOGGER.error("Falling back to {}", def);
+            return def;
+        }
+        return bucket;
     }
 
     /**
@@ -113,6 +130,9 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
                 ),
                 new ConfigurationNode("plot.bedrock", this.PLOT_BEDROCK, TranslatableCaption.of("setup.bedrock_boolean"),
                         ConfigurationUtil.BOOLEAN
+                ),
+                new ConfigurationNode("world.component_below_bedrock", this.COMPONENT_BELOW_BEDROCK, TranslatableCaption.of(
+                        "setup.component_below_bedrock_boolean"), ConfigurationUtil.BOOLEAN
                 )};
     }
 
@@ -134,6 +154,14 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
         this.PLACE_TOP_BLOCK = config.getBoolean("wall.place_top_block");
         this.WALL_HEIGHT = Math.min(getMaxGenHeight() - (PLACE_TOP_BLOCK ? 1 : 0), config.getInt("wall.height"));
         this.CLAIMED_WALL_BLOCK = createCheckedBlockBucket(config.getString("wall.block_claimed"), CLAIMED_WALL_BLOCK);
+        this.COMPONENT_BELOW_BEDROCK = config.getBoolean("world.component_below_bedrock");
+    }
+
+    @Override
+    public int getMinComponentHeight() {
+        return COMPONENT_BELOW_BEDROCK && getMinGenHeight() >= getMinBuildHeight()
+                ? getMinGenHeight() + (PLOT_BEDROCK ? 1 : 0)
+                : getMinBuildHeight();
     }
 
     int schematicStartHeight() {
@@ -142,21 +170,6 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
             return plotRoadMin;
         }
         return Math.min(WALL_HEIGHT, plotRoadMin);
-    }
-
-    private static BlockBucket createCheckedBlockBucket(String input, BlockBucket def) {
-        final BlockBucket bucket = new BlockBucket(input);
-        Pattern pattern = null;
-        try {
-            pattern = bucket.toPattern();
-        } catch (Exception ignore) {
-        }
-        if (pattern == null) {
-            LOGGER.error("Failed to parse pattern '{}', check your worlds.yml", input);
-            LOGGER.error("Falling back to {}", def);
-            return def;
-        }
-        return bucket;
     }
 
 }

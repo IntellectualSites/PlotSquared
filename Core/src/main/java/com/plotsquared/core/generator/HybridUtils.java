@@ -63,7 +63,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -78,6 +77,10 @@ public class HybridUtils {
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + HybridUtils.class.getSimpleName());
     private static final BlockState AIR = BlockTypes.AIR.getDefaultState();
 
+    /**
+     * Deprecated and likely to be removed in a future release.
+     */
+    @Deprecated(forRemoval = true, since = "7.0.0")
     public static HybridUtils manager;
     public static Set<BlockVector2> regions;
     public static int height;
@@ -163,7 +166,7 @@ public class HybridUtils {
                 int relChunkZ = chunkPos.getZ() - cbz;
                 oldBlockQueue.setOffsetX(relChunkX << 4);
                 oldBlockQueue.setOffsetZ(relChunkZ << 4);
-                hpw.getGenerator().generateChunk(oldBlockQueue, hpw);
+                hpw.getGenerator().generateChunk(oldBlockQueue, hpw, false);
             });
 
             final BlockState[][][] oldBlocks = oldBlockQueue.getBlockStates();
@@ -380,26 +383,6 @@ public class HybridUtils {
         run.run();
     }
 
-    /**
-     * @deprecated Unused internally and poor implementation. Scheduled for removal in next major release.
-     */
-    @Deprecated(forRemoval = true, since = "6.11.1")
-    public int checkModified(QueueCoordinator queue, int x1, int x2, int y1, int y2, int z1, int z2, BlockState[] blocks) {
-        int count = 0;
-        for (int y = y1; y <= y2; y++) {
-            for (int x = x1; x <= x2; x++) {
-                for (int z = z1; z <= z2; z++) {
-                    BlockState block = queue.getBlock(x, y, z);
-                    boolean same = Arrays.stream(blocks).anyMatch(p -> this.worldUtil.isBlockSame(block, p));
-                    if (!same) {
-                        count++;
-                    }
-                }
-            }
-        }
-        return count;
-    }
-
     public final ArrayList<BlockVector2> getChunks(BlockVector2 region) {
         ArrayList<BlockVector2> chunks = new ArrayList<>();
         int sx = region.getX() << 5;
@@ -449,6 +432,7 @@ public class HybridUtils {
                 if (!UPDATE) {
                     Iterator<BlockVector2> iter = chunks.iterator();
                     QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(area.getWorldName()));
+                    queue.setShouldGen(false);
                     while (iter.hasNext()) {
                         BlockVector2 chunk = iter.next();
                         iter.remove();
@@ -491,6 +475,7 @@ public class HybridUtils {
                                     Iterator<BlockVector2> iterator = chunks.iterator();
                                     if (chunks.size() >= 32) {
                                         QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(area.getWorldName()));
+                                        queue.setShouldGen(false);
                                         for (int i = 0; i < 32; i++) {
                                             final BlockVector2 chunk = iterator.next();
                                             iterator.remove();
@@ -504,6 +489,7 @@ public class HybridUtils {
                                         return null;
                                     }
                                     QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(area.getWorldName()));
+                                    queue.setShouldGen(false);
                                     while (!chunks.isEmpty()) {
                                         final BlockVector2 chunk = iterator.next();
                                         iterator.remove();
@@ -519,7 +505,6 @@ public class HybridUtils {
                                 return;
                             }
                         } catch (Exception e) {
-                            e.printStackTrace();
                             Iterator<BlockVector2> iterator = HybridUtils.regions.iterator();
                             BlockVector2 loc = iterator.next();
                             iterator.remove();
@@ -527,7 +512,8 @@ public class HybridUtils {
                                     "Error! Could not update '{}/region/r.{}.{}.mca' (Corrupt chunk?)",
                                     area.getWorldHash(),
                                     loc.getX(),
-                                    loc.getZ()
+                                    loc.getZ(),
+                                    e
                             );
                         }
                         TaskManager.runTaskLater(task, TaskTime.seconds(1L));
@@ -550,7 +536,7 @@ public class HybridUtils {
                 Math.min(plotworld.PLOT_HEIGHT, Math.min(plotworld.WALL_HEIGHT, plotworld.ROAD_HEIGHT)) : plotworld.ROAD_HEIGHT;
         int sx = bot.getX() - plotworld.ROAD_WIDTH + 1;
         int sz = bot.getZ() + 1;
-        int sy = Settings.Schematics.PASTE_ROAD_ON_TOP ? schemY : plot.getArea().getMinBuildHeight();
+        int sy = Settings.Schematics.PASTE_ROAD_ON_TOP ? schemY : plot.getArea().getMinGenHeight();
         int ex = bot.getX();
         int ez = top.getZ();
         int ey = get_ey(plotworld, queue, sx, ex, sz, ez, sy);
@@ -575,7 +561,7 @@ public class HybridUtils {
                                 try {
                                     plotworld.setupSchematics();
                                 } catch (SchematicHandler.UnsupportedFormatException e) {
-                                    e.printStackTrace();
+                                    LOGGER.error(e);
                                 }
                             });
                 });
@@ -597,20 +583,6 @@ public class HybridUtils {
             }
         }
         return ey;
-    }
-
-    /**
-     * Regenerate the road in a chunk in a plot area.
-     *
-     * @param area   Plot area to regenerate road for
-     * @param chunk  Chunk location to regenerate
-     * @param extend How far to extend setting air above the road
-     * @return if successful
-     * @deprecated use {@link HybridUtils#regenerateRoad(PlotArea, BlockVector2, int, QueueCoordinator)}
-     */
-    @Deprecated(forRemoval = true, since = "6.6.0")
-    public boolean regenerateRoad(final PlotArea area, final BlockVector2 chunk, int extend) {
-        return regenerateRoad(area, chunk, extend, null);
     }
 
     /**
@@ -703,7 +675,7 @@ public class HybridUtils {
                     }
                     if (condition) {
                         BaseBlock[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
-                        int minY = Settings.Schematics.PASTE_ROAD_ON_TOP ? plotWorld.SCHEM_Y : area.getMinGenHeight() + 1;
+                        int minY = plotWorld.getRoadYStart();
                         int maxDy = Math.max(extend, blocks.length);
                         for (int dy = 0; dy < maxDy; dy++) {
                             if (dy > blocks.length - 1) {

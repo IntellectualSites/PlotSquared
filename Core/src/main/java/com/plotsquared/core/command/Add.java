@@ -19,6 +19,7 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
@@ -30,7 +31,9 @@ import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
@@ -71,7 +74,7 @@ public class Add extends Command {
         checkTrue(
                 args.length == 1,
                 TranslatableCaption.of("commandconfig.command_syntax"),
-                Template.of("value", "/plot add <player | *>")
+                TagResolver.resolver("value", Tag.inserting(Component.text("/plot add <player | *>")))
         );
         final CompletableFuture<Boolean> future = new CompletableFuture<>();
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
@@ -81,7 +84,7 @@ public class Add extends Command {
                 } else {
                     player.sendMessage(
                             TranslatableCaption.of("errors.invalid_player"),
-                            Template.of("value", args[0])
+                            TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))
                     );
                 }
                 future.completeExceptionally(throwable);
@@ -89,7 +92,7 @@ public class Add extends Command {
             } else {
                 try {
                     checkTrue(!uuids.isEmpty(), TranslatableCaption.of("errors.invalid_player"),
-                            Template.of("value", args[0])
+                            TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))
                     );
                     Iterator<UUID> iterator = uuids.iterator();
                     int size = plot.getTrusted().size() + plot.getMembers().size();
@@ -99,7 +102,14 @@ public class Add extends Command {
                                 Permission.PERMISSION_ADMIN_COMMAND_TRUST))) {
                             player.sendMessage(
                                     TranslatableCaption.of("errors.invalid_player"),
-                                    Template.of("value", PlayerManager.resolveName(uuid).getComponent(player))
+                                    PlotSquared
+                                            .platform()
+                                            .playerManager()
+                                            .getUsernameCaption(uuid)
+                                            .thenApply(caption -> TagResolver.resolver(
+                                                    "value",
+                                                    Tag.inserting(caption.toComponent(player))
+                                            ))
                             );
                             iterator.remove();
                             continue;
@@ -107,7 +117,11 @@ public class Add extends Command {
                         if (plot.isOwner(uuid)) {
                             player.sendMessage(
                                     TranslatableCaption.of("member.already_added"),
-                                    Template.of("player", PlayerManager.resolveName(uuid).getComponent(player))
+                                    PlotSquared.platform().playerManager().getUsernameCaption(uuid)
+                                            .thenApply(caption -> TagResolver.resolver(
+                                                    "player",
+                                                    Tag.inserting(caption.toComponent(player))
+                                            ))
                             );
                             iterator.remove();
                             continue;
@@ -115,7 +129,11 @@ public class Add extends Command {
                         if (plot.getMembers().contains(uuid)) {
                             player.sendMessage(
                                     TranslatableCaption.of("member.already_added"),
-                                    Template.of("player", PlayerManager.resolveName(uuid).getComponent(player))
+                                    PlotSquared.platform().playerManager().getUsernameCaption(uuid)
+                                            .thenApply(caption -> TagResolver.resolver(
+                                                    "player",
+                                                    Tag.inserting(caption.toComponent(player))
+                                            ))
                             );
                             iterator.remove();
                             continue;
@@ -128,7 +146,7 @@ public class Add extends Command {
                     if (localAddSize >= maxAddSize) {
                         player.sendMessage(
                                 TranslatableCaption.of("members.plot_max_members_added"),
-                                Template.of("amount", String.valueOf(localAddSize))
+                                TagResolver.resolver("amount", Tag.inserting(Component.text(localAddSize)))
                         );
                         return;
                     }

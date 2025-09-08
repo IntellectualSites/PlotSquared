@@ -68,8 +68,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     private static final AffineTransform transform = new AffineTransform().rotateY(90);
     public boolean ROAD_SCHEMATIC_ENABLED;
     public boolean PLOT_SCHEMATIC = false;
-    @Deprecated(forRemoval = true, since = "6.9.0")
-    public int PLOT_SCHEMATIC_HEIGHT = -1;
     public short PATH_WIDTH_LOWER;
     public short PATH_WIDTH_UPPER;
     public HashMap<Integer, BaseBlock[]> G_SCH;
@@ -78,6 +76,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
      * The Y level at which schematic generation will start, lowest of either road or plot schematic generation.
      */
     public int SCHEM_Y;
+
+    private int plotY;
+    private int roadY;
     private Location SIGN_LOCATION;
     private File root = null;
     private int lastOverlayHeightError = Integer.MIN_VALUE;
@@ -102,22 +103,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     ) {
         super(worldName, id, generator, min, max, worldConfiguration, blockQueue);
         PlotSquared.platform().injector().injectMembers(this);
-    }
-
-    @Deprecated(forRemoval = true, since = "6.9.0")
-    public static byte wrap(byte data, int start) {
-        if ((data >= start) && (data < (start + 4))) {
-            data = (byte) ((((data - start) + 2) & 3) + start);
-        }
-        return data;
-    }
-
-    @Deprecated(forRemoval = true, since = "6.9.0")
-    public static byte wrap2(byte data, int start) {
-        if ((data >= start) && (data < (start + 2))) {
-            data = (byte) ((((data - start) + 1) & 1) + start);
-        }
-        return data;
     }
 
     public static BaseBlock rotate(BaseBlock id) {
@@ -204,7 +189,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 }
                 Object value;
                 try {
-                    final boolean accessible = field.isAccessible();
+                    final boolean accessible = field.canAccess(this);
                     field.setAccessible(true);
                     value = field.get(this);
                     field.setAccessible(accessible);
@@ -270,68 +255,60 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
         SCHEM_Y = schematicStartHeight();
 
-        // plotY and roadY are important to allow plot and/or road schematic "overflow" into each other without causing AIOOB
-        //  exceptions when attempting either to set blocks to, or get block from G_SCH
+        // plotY and roadY are important to allow plot and/or road schematic "overflow" into each other
+        // without causing AIOOB exceptions when attempting either to set blocks to, or get block from G_SCH
         // Default plot schematic start height, normalized to the minimum height schematics are pasted from.
-        int plotY = PLOT_HEIGHT - SCHEM_Y;
+        plotY = PLOT_HEIGHT - SCHEM_Y;
         int minRoadWall = Settings.Schematics.USE_WALL_IN_ROAD_SCHEM_HEIGHT ? Math.min(ROAD_HEIGHT, WALL_HEIGHT) : ROAD_HEIGHT;
         // Default road schematic start height, normalized to the minimum height schematics are pasted from.
-        int roadY = minRoadWall - SCHEM_Y;
+        roadY = minRoadWall - SCHEM_Y;
 
         int worldGenHeight = getMaxGenHeight() - getMinGenHeight() + 1;
 
-        int maxSchematicHeight = 0;
         int plotSchemHeight = 0;
 
         // SCHEM_Y should be normalised to the plot "start" height
         if (schematic3 != null) {
-            plotSchemHeight = maxSchematicHeight = schematic3.getClipboard().getDimensions().getY();
-            if (maxSchematicHeight == worldGenHeight) {
+            plotSchemHeight = schematic3.getClipboard().getDimensions().getY();
+            if (plotSchemHeight == worldGenHeight) {
                 SCHEM_Y = getMinGenHeight();
                 plotY = 0;
             } else if (!Settings.Schematics.PASTE_ON_TOP) {
-                SCHEM_Y = getMinBuildHeight();
+                SCHEM_Y = getMinGenHeight();
                 plotY = 0;
             }
         }
 
-        int roadSchemHeight;
+        int roadSchemHeight = 0;
 
         if (schematic1 != null) {
             roadSchemHeight = Math.max(
                     schematic1.getClipboard().getDimensions().getY(),
                     schematic2.getClipboard().getDimensions().getY()
             );
-            maxSchematicHeight = Math.max(roadSchemHeight, maxSchematicHeight);
-            if (maxSchematicHeight == worldGenHeight) {
+            if (roadSchemHeight == worldGenHeight) {
                 SCHEM_Y = getMinGenHeight();
                 roadY = 0; // Road is the lowest schematic
                 if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() != worldGenHeight) {
                     // Road is the lowest schematic. Normalize plotY to it.
                     if (Settings.Schematics.PASTE_ON_TOP) {
                         plotY = PLOT_HEIGHT - getMinGenHeight();
-                    } else {
-                        plotY = getMinBuildHeight() - getMinGenHeight();
                     }
                 }
             } else if (!Settings.Schematics.PASTE_ROAD_ON_TOP) {
-                if (SCHEM_Y == getMinGenHeight()) { // Only possible if plot schematic is enabled
-                    // Plot is still the lowest schematic, normalize roadY to it
-                    roadY = getMinBuildHeight() - getMinGenHeight();
-                } else if (schematic3 != null) {
-                    SCHEM_Y = getMinBuildHeight();
-                    roadY = 0;// Road is the lowest schematic
+                roadY = 0;
+                SCHEM_Y = getMinGenHeight();
+                if (schematic3 != null) {
                     if (Settings.Schematics.PASTE_ON_TOP) {
                         // Road is the lowest schematic. Normalize plotY to it.
-                        plotY = PLOT_HEIGHT - getMinBuildHeight();
+                        plotY = PLOT_HEIGHT - SCHEM_Y;
                     }
-                    maxSchematicHeight = Math.max(maxSchematicHeight, plotY + plotSchemHeight);
                 }
             } else {
                 roadY = minRoadWall - SCHEM_Y;
-                maxSchematicHeight = Math.max(maxSchematicHeight, roadY + roadSchemHeight);
             }
         }
+        int maxSchematicHeight = Math.max(plotY + plotSchemHeight, roadY + roadSchemHeight);
 
         if (schematic3 != null) {
             this.PLOT_SCHEMATIC = true;
@@ -341,7 +318,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             short w3 = (short) d3.getX();
             short l3 = (short) d3.getZ();
             short h3 = (short) d3.getY();
-            if (w3 > PLOT_WIDTH || h3 > PLOT_WIDTH) {
+            if (w3 > PLOT_WIDTH || l3 > PLOT_WIDTH) {
                 this.ROAD_SCHEMATIC_ENABLED = true;
             }
             int centerShiftZ;
@@ -396,7 +373,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         if ((schematic1 == null && schematic2 == null) || this.ROAD_WIDTH == 0) {
             if (Settings.DEBUG) {
-                LOGGER.info("- schematic: false");
+                LOGGER.info("- road schematic: false");
             }
             return;
         }
@@ -486,11 +463,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
     }
 
-    /**
-     * @deprecated This method should not be available for public API usage and will be made private.
-     */
-    @Deprecated(forRemoval = true, since = "6.10.2")
-    public void addOverlayBlock(short x, short y, short z, BaseBlock id, boolean rotate, int height) {
+    private void addOverlayBlock(short x, short y, short z, BaseBlock id, boolean rotate, int height) {
         if (z < 0) {
             z += this.SIZE;
         } else if (z >= this.SIZE) {
@@ -521,11 +494,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         existing[y] = id;
     }
 
-    /**
-     * @deprecated This method should not be available for public API usage and will be made private.
-     */
-    @Deprecated(forRemoval = true, since = "6.10.2")
-    public void addOverlayBiome(short x, short z, BiomeType id) {
+    private void addOverlayBiome(short x, short z, BiomeType id) {
         if (z < 0) {
             z += this.SIZE;
         } else if (z >= this.SIZE) {
@@ -571,14 +540,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     }
 
     /**
-     * @deprecated in favour of {@link HybridPlotWorld#getSchematicRoot()}
-     */
-    @Deprecated(forRemoval = true, since = "6.9.0")
-    public File getRoot() {
-        return this.root;
-    }
-
-    /**
      * Get the root folder for this world's generation schematics. May be null if schematics not initialised via
      * {@link HybridPlotWorld#setupSchematics()}
      *
@@ -586,6 +547,26 @@ public class HybridPlotWorld extends ClassicPlotWorld {
      */
     public @Nullable File getSchematicRoot() {
         return this.root;
+    }
+
+    /**
+     * Get the y value where the plot schematic should be pasted from.
+     *
+     * @return plot schematic y start value
+     * @since 7.0.0
+     */
+    public int getPlotYStart() {
+        return SCHEM_Y + plotY;
+    }
+
+    /**
+     * Get the y value where the road schematic should be pasted from.
+     *
+     * @return road schematic y start value
+     * @since 7.0.0
+     */
+    public int getRoadYStart() {
+        return SCHEM_Y + roadY;
     }
 
 }

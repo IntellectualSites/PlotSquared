@@ -143,7 +143,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                     classicPlotWorld,
                     plot.getRegions(),
                     blocks,
-                    classicPlotWorld.getMinBuildHeight(),
+                    classicPlotWorld.getMinComponentHeight(),
                     classicPlotWorld.getMaxBuildHeight() - 1,
                     actor,
                     queue
@@ -204,7 +204,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                     classicPlotWorld,
                     plot.getRegions(),
                     blocks,
-                    classicPlotWorld.getMinBuildHeight(),
+                    classicPlotWorld.getMinComponentHeight(),
                     classicPlotWorld.PLOT_HEIGHT - 1,
                     actor,
                     queue
@@ -379,10 +379,11 @@ public class ClassicPlotManager extends SquarePlotManager {
             }
         }
 
+        int yStart = classicPlotWorld.getMinComponentHeight();
         if (!plot.isMerged(Direction.NORTH)) {
             int z = bot.getZ();
             for (int x = bot.getX(); x < top.getX(); x++) {
-                for (int y = classicPlotWorld.getMinBuildHeight(); y <= classicPlotWorld.WALL_HEIGHT; y++) {
+                for (int y = yStart; y <= classicPlotWorld.WALL_HEIGHT; y++) {
                     queue.setBlock(x, y, z, blocks);
                 }
             }
@@ -390,7 +391,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         if (!plot.isMerged(Direction.WEST)) {
             int x = bot.getX();
             for (int z = bot.getZ(); z < top.getZ(); z++) {
-                for (int y = classicPlotWorld.getMinBuildHeight(); y <= classicPlotWorld.WALL_HEIGHT; y++) {
+                for (int y = yStart; y <= classicPlotWorld.WALL_HEIGHT; y++) {
                     queue.setBlock(x, y, z, blocks);
                 }
             }
@@ -398,7 +399,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         if (!plot.isMerged(Direction.SOUTH)) {
             int z = top.getZ();
             for (int x = bot.getX(); x < top.getX() + (plot.isMerged(Direction.EAST) ? 0 : 1); x++) {
-                for (int y = classicPlotWorld.getMinBuildHeight(); y <= classicPlotWorld.WALL_HEIGHT; y++) {
+                for (int y = yStart; y <= classicPlotWorld.WALL_HEIGHT; y++) {
                     queue.setBlock(x, y, z, blocks);
                 }
             }
@@ -406,7 +407,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         if (!plot.isMerged(Direction.EAST)) {
             int x = top.getX();
             for (int z = bot.getZ(); z < top.getZ() + (plot.isMerged(Direction.SOUTH) ? 0 : 1); z++) {
-                for (int y = classicPlotWorld.getMinBuildHeight(); y <= classicPlotWorld.WALL_HEIGHT; y++) {
+                for (int y = yStart; y <= classicPlotWorld.WALL_HEIGHT; y++) {
                     queue.setBlock(x, y, z, blocks);
                 }
             }

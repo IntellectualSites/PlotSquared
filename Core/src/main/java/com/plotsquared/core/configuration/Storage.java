@@ -46,7 +46,7 @@ public class Storage extends Config {
         public static String PASSWORD = "password";
         public static String DATABASE = "plot_db";
 
-        @Comment("Set additional properties: https://goo.gl/wngtN8")
+        @Comment("Set additional properties: https://dev.mysql.com/doc/connector-j/en/connector-j-reference-configuration-properties.html")
         public static List<String>
                 PROPERTIES = new ArrayList<>(Collections.singletonList("useSSL=false"));
 

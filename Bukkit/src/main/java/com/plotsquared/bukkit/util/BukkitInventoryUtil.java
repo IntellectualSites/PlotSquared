@@ -44,6 +44,7 @@ import java.util.stream.IntStream;
 @Singleton
 public class BukkitInventoryUtil extends InventoryUtil {
 
+    @SuppressWarnings("deprecation") // Paper deprecation
     private static @Nullable ItemStack getItem(PlotItemStack item) {
         if (item == null) {
             return null;
@@ -56,7 +57,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
         ItemMeta meta = null;
         if (item.getName() != null) {
             meta = stack.getItemMeta();
-            Component nameComponent = BukkitUtil.MINI_MESSAGE.parse(item.getName());
+            Component nameComponent = BukkitUtil.MINI_MESSAGE.deserialize(item.getName());
             meta.setDisplayName(BukkitUtil.LEGACY_COMPONENT_SERIALIZER.serialize(nameComponent));
         }
         if (item.getLore() != null) {

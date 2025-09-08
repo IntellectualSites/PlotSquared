@@ -30,14 +30,13 @@ import com.sk89q.jnbt.NBTInputStream;
 import com.sk89q.jnbt.NBTOutputStream;
 import com.sk89q.jnbt.Tag;
 import com.sk89q.worldedit.math.BlockVector2;
-import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.entity.EntityType;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -64,23 +63,12 @@ import java.util.zip.ZipOutputStream;
 public abstract class WorldUtil {
 
     /**
-     * Set the biome in a region
-     *
-     * @param world World name
-     * @param p1x   Min X
-     * @param p1z   Min Z
-     * @param p2x   Max X
-     * @param p2z   Max Z
-     * @param biome Biome
-     * @deprecated use {@link WorldUtil#setBiome(String, CuboidRegion, BiomeType)}
+     * {@return whether the given location is valid in the world}
+     * @param location the location to check
+     * @since 7.3.6
      */
-    @Deprecated(forRemoval = true)
-    public static void setBiome(String world, int p1x, int p1z, int p2x, int p2z, BiomeType biome) {
-        World weWorld = PlotSquared.platform().worldUtil().getWeWorld(world);
-        BlockVector3 pos1 = BlockVector2.at(p1x, p1z).toBlockVector3(weWorld.getMinY());
-        BlockVector3 pos2 = BlockVector2.at(p2x, p2z).toBlockVector3(weWorld.getMaxY());
-        CuboidRegion region = new CuboidRegion(pos1, pos2);
-        PlotSquared.platform().worldUtil().setBiomes(world, region, biome);
+    public static boolean isValidLocation(Location location) {
+        return Math.abs(location.getX()) < 30000000 && Math.abs(location.getZ()) < 30000000;
     }
 
     /**
@@ -155,7 +143,7 @@ public abstract class WorldUtil {
     public abstract void setSign(
             @NonNull Location location,
             @NonNull Caption[] lines,
-            @NonNull Template... replacements
+            @NonNull TagResolver... replacements
     );
 
     /**
@@ -188,6 +176,13 @@ public abstract class WorldUtil {
      * @param result   Result consumer
      */
     public abstract void getBlock(@NonNull Location location, @NonNull Consumer<BlockState> result);
+
+    /**
+     * Checks if the block smaller as a slab
+     * @param location Block location
+     * @return true if it smaller as a slab
+     */
+    public abstract boolean isSmallBlock(@NonNull Location location);
 
     /**
      * Get the block at a given location (synchronously)
@@ -306,7 +301,8 @@ public abstract class WorldUtil {
                         int trz = top.getZ() >> 9;
                         Set<BlockVector2> files = getChunkChunks(bot.getWorldName());
                         for (BlockVector2 mca : files) {
-                            if (mca.getX() >= brx && mca.getX() <= trx && mca.getZ() >= brz && mca.getZ() <= trz && !added.contains(mca)) {
+                            if (mca.getX() >= brx && mca.getX() <= trx && mca.getZ() >= brz && mca.getZ() <= trz && !added.contains(
+                                    mca)) {
                                 final File file = getMcr(plot.getWorldName(), mca.getX(), mca.getZ());
                                 if (file != null) {
                                     //final String name = "r." + (x - cx) + "." + (z - cz) + ".mca";

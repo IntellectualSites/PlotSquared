@@ -30,7 +30,9 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
@@ -63,8 +65,7 @@ public class Kick extends SubCommand {
 
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
-        Location location = player.getLocation();
-        Plot plot = location.getPlot();
+        Plot plot = player.getCurrentPlot();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
@@ -80,7 +81,7 @@ public class Kick extends SubCommand {
             } else if (throwable != null || uuids.isEmpty()) {
                 player.sendMessage(
                         TranslatableCaption.of("errors.invalid_player"),
-                        Template.of("value", args[0])
+                        TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))
                 );
             } else {
                 Set<PlotPlayer<?>> players = new HashSet<>();
@@ -103,26 +104,26 @@ public class Kick extends SubCommand {
                 if (players.isEmpty()) {
                     player.sendMessage(
                             TranslatableCaption.of("errors.invalid_player"),
-                            Template.of("value", args[0])
+                            TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))
                     );
                     return;
                 }
                 for (PlotPlayer<?> player2 : players) {
                     if (!plot.equals(player2.getCurrentPlot())) {
                         player.sendMessage(
-                                TranslatableCaption.of("errors.invalid_player"),
-                                Template.of("value", args[0])
+                                TranslatableCaption.of("kick.player_not_in_plot"),
+                                TagResolver.resolver("player", Tag.inserting(Component.text(player2.getName())))
                         );
                         return;
                     }
                     if (player2.hasPermission(Permission.PERMISSION_ADMIN_ENTRY_DENIED)) {
                         player.sendMessage(
-                                TranslatableCaption.of("cluster.cannot_kick_player"),
-                                Template.of("name", player2.getName())
+                                TranslatableCaption.of("kick.cannot_kick_player"),
+                                TagResolver.resolver("player", Tag.inserting(Component.text(player2.getName())))
                         );
                         return;
                     }
-                    Location spawn = this.worldUtil.getSpawn(location.getWorldName());
+                    Location spawn = this.worldUtil.getSpawn(plot.getWorldName());
                     player2.sendMessage(TranslatableCaption.of("kick.you_got_kicked"));
                     if (plot.equals(spawn.getPlot())) {
                         Location newSpawn = this.worldUtil.getSpawn(this.plotAreaManager.getAllWorlds()[0]);
@@ -146,12 +147,11 @@ public class Kick extends SubCommand {
 
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
-        Location location = player.getLocation();
-        Plot plot = location.getPlotAbs();
+        Plot plot = player.getCurrentPlot();
         if (plot == null) {
             return Collections.emptyList();
         }
-        return TabCompletions.completePlayersInPlot(plot, String.join(",", args).trim(),
+        return TabCompletions.completePlayersInPlot(player, plot, String.join(",", args).trim(),
                 Collections.singletonList(player.getName())
         );
     }

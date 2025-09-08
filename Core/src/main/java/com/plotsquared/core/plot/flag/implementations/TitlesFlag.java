@@ -21,7 +21,9 @@ package com.plotsquared.core.plot.flag.implementations;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -47,7 +49,7 @@ public class TitlesFlag extends PlotFlag<TitlesFlag.TitlesFlagValue, TitlesFlag>
                     this,
                     input,
                     TranslatableCaption.of("flags.flag_error_enum"),
-                    Template.of("list", "none, true, false")
+                    TagResolver.resolver("list", Tag.inserting(Component.text("none, true, false")))
             );
         }
         return flagOf(titlesFlagValue);

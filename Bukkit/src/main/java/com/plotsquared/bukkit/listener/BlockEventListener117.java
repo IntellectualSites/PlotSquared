@@ -26,8 +26,8 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.CopperOxideFlag;
 import com.plotsquared.core.plot.flag.implementations.MiscInteractFlag;
+import com.plotsquared.core.plot.flag.implementations.SculkSensorInteractFlag;
 import com.plotsquared.core.util.PlotFlagUtil;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -41,30 +41,10 @@ import org.bukkit.event.block.BlockReceiveGameEvent;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
 public class BlockEventListener117 implements Listener {
-
-    private static final Set<Material> COPPER_OXIDIZING = Set.of(
-            Material.COPPER_BLOCK,
-            Material.EXPOSED_COPPER,
-            Material.WEATHERED_COPPER,
-            Material.OXIDIZED_COPPER,
-            Material.CUT_COPPER,
-            Material.EXPOSED_CUT_COPPER,
-            Material.WEATHERED_CUT_COPPER,
-            Material.OXIDIZED_CUT_COPPER,
-            Material.CUT_COPPER_STAIRS,
-            Material.EXPOSED_CUT_COPPER_STAIRS,
-            Material.WEATHERED_CUT_COPPER_STAIRS,
-            Material.OXIDIZED_CUT_COPPER_STAIRS,
-            Material.CUT_COPPER_SLAB,
-            Material.EXPOSED_CUT_COPPER_SLAB,
-            Material.WEATHERED_CUT_COPPER_SLAB,
-            Material.OXIDIZED_CUT_COPPER_SLAB
-    );
 
     @Inject
     public BlockEventListener117() {
@@ -92,12 +72,16 @@ public class BlockEventListener117 implements Listener {
         }
 
         Plot plot = location.getOwnedPlot();
-        if (plot == null && !PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, MiscInteractFlag.class, true) || plot != null && !plot.getFlag(
-                MiscInteractFlag.class)) {
+        if (plot == null && !PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(
+                area,
+                MiscInteractFlag.class,
+                true
+        ) || plot != null && (!plot.getFlag(MiscInteractFlag.class) || !plot.getFlag(SculkSensorInteractFlag.class))) {
             if (plotPlayer != null) {
                 if (plot != null) {
                     if (!plot.isAdded(plotPlayer.getUUID())) {
-                        plot.debug(plotPlayer.getName() + " couldn't trigger sculk sensors because misc-interact = false");
+                        plot.debug(plotPlayer.getName() + " couldn't trigger sculk sensors because both " +
+                                "sculk-sensor-interact and misc-interact = false");
                         event.setCancelled(true);
                     }
                 }
@@ -108,13 +92,15 @@ public class BlockEventListener117 implements Listener {
                 if (plot != null) {
                     if (itemThrower == null && (itemThrower = item.getOwner()) == null) {
                         plot.debug(
-                                "A thrown item couldn't trigger sculk sensors because misc-interact = false and the item's owner could not be resolved.");
+                                "A thrown item couldn't trigger sculk sensors because both sculk-sensor-interact and " +
+                                        "misc-interact = false and the item's owner could not be resolved.");
                         event.setCancelled(true);
                         return;
                     }
                     if (!plot.isAdded(itemThrower)) {
                         if (!plot.isAdded(itemThrower)) {
-                            plot.debug("A thrown item couldn't trigger sculk sensors because misc-interact = false");
+                            plot.debug("A thrown item couldn't trigger sculk sensors because both sculk-sensor-interact and " +
+                                    "misc-interact = false");
                             event.setCancelled(true);
                         }
                     }
@@ -127,13 +113,12 @@ public class BlockEventListener117 implements Listener {
     public void onBlockFertilize(BlockFertilizeEvent event) {
         Block block = event.getBlock();
         List<org.bukkit.block.BlockState> blocks = event.getBlocks();
-        Location location = BukkitUtil.adapt(blocks.get(0).getLocation());
+        Location location = BukkitUtil.adapt(block.getLocation());
 
         PlotArea area = location.getPlotArea();
         if (area == null) {
             for (int i = blocks.size() - 1; i >= 0; i--) {
                 Location blockLocation = BukkitUtil.adapt(blocks.get(i).getLocation());
-                blockLocation = BukkitUtil.adapt(blocks.get(i).getLocation());
                 if (blockLocation.isPlotArea()) {
                     blocks.remove(i);
                 }
@@ -178,7 +163,7 @@ public class BlockEventListener117 implements Listener {
         if (plot == null) {
             return;
         }
-        if (COPPER_OXIDIZING.contains(event.getNewState().getType())) {
+        if (event.getNewState().getType().name().contains("COPPER")) {
             if (!plot.getFlag(CopperOxideFlag.class)) {
                 plot.debug("Copper could not oxide because copper-oxide = false");
                 event.setCancelled(true);

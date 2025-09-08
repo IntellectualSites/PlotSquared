@@ -52,6 +52,7 @@ public class ChunkCoordinatorBuilder {
     private int initialBatchSize = Settings.QUEUE.INITIAL_BATCH_SIZE;
     private boolean unloadAfter = true;
     private boolean forceSync = false;
+    private boolean shouldGen = true;
 
     @Inject
     public ChunkCoordinatorBuilder(@NonNull ChunkCoordinatorFactory chunkCoordinatorFactory) {
@@ -183,7 +184,7 @@ public class ChunkCoordinatorBuilder {
      * Set whether the chunks should be allow to unload after being accessed. This should only be used where the chunks are read from
      * and then written to from a separate queue where they're consequently unloaded.
      *
-     * @param unloadAfter if to unload chuns afterwards
+     * @param unloadAfter if to unload chunks afterwards
      * @return this ChunkCoordinatorBuilder instance
      */
     public @NonNull ChunkCoordinatorBuilder unloadAfter(final boolean unloadAfter) {
@@ -200,6 +201,19 @@ public class ChunkCoordinatorBuilder {
      */
     public @NonNull ChunkCoordinatorBuilder forceSync(final boolean forceSync) {
         this.forceSync = forceSync;
+        return this;
+    }
+
+    /**
+     * Set whether chunks should be generated as part of this operation. Default is true. Disabling this may not be supported
+     * depending on server implementation. (i.e. setting to false may not actually disable generation as part of this operation
+     * - this is just a catch-all in case of future differing server implementations; the option will work on Spigot/Paper).
+     *
+     * @param shouldGen should generate new chunks or not
+     * @since 7.5.0
+     */
+    public @NonNull ChunkCoordinatorBuilder shouldGen(final boolean shouldGen) {
+        this.shouldGen = shouldGen;
         return this;
     }
 
@@ -234,7 +248,8 @@ public class ChunkCoordinatorBuilder {
                         this.throwableConsumer,
                         this.unloadAfter,
                         this.progressSubscribers,
-                        this.forceSync
+                        this.forceSync,
+                        this.shouldGen
                 );
     }
 

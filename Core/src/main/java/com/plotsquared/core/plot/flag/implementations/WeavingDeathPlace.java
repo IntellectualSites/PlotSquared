@@ -16,19 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.util;
+package com.plotsquared.core.plot.flag.implementations;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.plot.flag.types.BooleanFlag;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-@Deprecated(since = "6.6.2", forRemoval = true)
-public class RegExUtil {
+public class WeavingDeathPlace extends BooleanFlag<WeavingDeathPlace> {
 
-    public static Map<String, Pattern> compiledPatterns;
+    public static final WeavingDeathPlace WEAVING_DEATH_PLACE_TRUE = new WeavingDeathPlace(true);
+    public static final WeavingDeathPlace WEAVING_DEATH_PLACE_FALSE = new WeavingDeathPlace(false);
 
-    static {
-        compiledPatterns = new HashMap<>();
+    private WeavingDeathPlace(boolean value) {
+        super(value, TranslatableCaption.of("flags.flag_description_weaving_death_place"));
+    }
+
+    @Override
+    protected WeavingDeathPlace flagOf(@NonNull Boolean value) {
+        return value ? WEAVING_DEATH_PLACE_TRUE : WEAVING_DEATH_PLACE_FALSE;
     }
 
 }

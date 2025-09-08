@@ -20,7 +20,6 @@ package com.plotsquared.core.plot;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.Like;
@@ -30,6 +29,7 @@ import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.events.PlayerTeleportToPlotEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.generator.ClassicPlotWorld;
@@ -40,6 +40,7 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.expiration.PlotAnalysis;
 import com.plotsquared.core.plot.flag.FlagContainer;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
@@ -68,9 +69,11 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -83,6 +86,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -112,9 +116,6 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
  * - Use the methods from the PlotArea/PS/Location etc to get existing plots
  */
 public class Plot {
-
-    @Deprecated(forRemoval = true, since = "6.6.0")
-    public static final int MAX_HEIGHT = 256;
 
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Plot.class.getSimpleName());
     private static final DecimalFormat FLAG_DECIMAL_FORMAT = new DecimalFormat("0");
@@ -320,7 +321,8 @@ public class Plot {
     }
 
     /**
-     * Get the plot from a string.
+     * Get the plot from a string. Performs a check to ensure Plot#getBottomAbs is not outside world bounds
+     * (x/z +/- 30,000,000) to prevent crashes
      *
      * @param player  Provides a context for what world to search in. Prefixing the term with 'world_name;' will override this context.
      * @param arg     The search term
@@ -328,6 +330,31 @@ public class Plot {
      * @return The plot if only 1 result is found, or null
      */
     public static @Nullable Plot getPlotFromString(
+            final @Nullable PlotPlayer<?> player,
+            final @Nullable String arg,
+            final boolean message
+    ) {
+        Plot plot = getPlotFromStringUnchecked(player, arg, message);
+        if (plot != null && !WorldUtil.isValidLocation(plot.getBottomAbs())) {
+            if (message) {
+                (player == null ? ConsolePlayer.getConsole() : player).sendMessage(TranslatableCaption.of(
+                        "invalid.world_location_plot"));
+            }
+            return null;
+        }
+        return plot;
+    }
+
+    /**
+     * Get the plot from a string. Does not perform a check on world bounds.
+     *
+     * @param player  Provides a context for what world to search in. Prefixing the term with 'world_name;' will override this context.
+     * @param arg     The search term
+     * @param message If a message should be sent to the player if a plot cannot be found
+     * @return The plot if only 1 result is found, or null
+     * @since 7.5.5
+     */
+    public static @Nullable Plot getPlotFromStringUnchecked(
             final @Nullable PlotPlayer<?> player,
             final @Nullable String arg,
             final boolean message
@@ -388,13 +415,51 @@ public class Plot {
     }
 
     /**
-     * Gets a plot from a string e.g. [area];[id]
+     * Gets a plot from a string e.g. [area];[id]. Performs a check to ensure Plot#getBottomAbs is not outside world bounds
+     * (x/z +/- 30,000,000) to prevent crashes
      *
      * @param defaultArea if no area is specified
      * @param string      plot id/area + id
      * @return New or existing plot object
      */
     public static @Nullable Plot fromString(final @Nullable PlotArea defaultArea, final @NonNull String string) {
+        return fromString(defaultArea, string, null);
+    }
+
+    /**
+     * Gets a plot from a string e.g. [area];[id]. Performs a check to ensure Plot#getBottomAbs is not outside world bounds
+     * (x/z +/- 30,000,000) to prevent crashes
+     *
+     * @param defaultArea if no area is specified
+     * @param string      plot id/area + id
+     * @param player      {@link PlotPlayer} player to notify if plot is invalid (outside bounds)
+     * @return New or existing plot object
+     * @since 7.5.5
+     */
+    public static @Nullable Plot fromString(
+            final @Nullable PlotArea defaultArea,
+            final @NonNull String string,
+            final @Nullable PlotPlayer<?> player
+    ) {
+        Plot plot = fromStringUnchecked(defaultArea, string);
+        if (plot != null && !WorldUtil.isValidLocation(plot.getBottomAbs())) {
+            if (player != null) {
+                player.sendMessage(TranslatableCaption.of("invalid.world_location_plot"));
+            }
+            return null;
+        }
+        return plot;
+    }
+
+    /**
+     * Gets a plot from a string e.g. [area];[id]. Does not perform a check on world bounds.
+     *
+     * @param defaultArea if no area is specified
+     * @param string      plot id/area + id
+     * @return New or existing plot object
+     * @since 7.5.5
+     */
+    public static @Nullable Plot fromStringUnchecked(final @Nullable PlotArea defaultArea, final @NonNull String string) {
         final String[] split = string.split("[;,]");
         if (split.length == 2) {
             if (defaultArea != null) {
@@ -418,7 +483,8 @@ public class Plot {
     }
 
     /**
-     * Return a new/cached plot object at a given location.
+     * Return a new/cached plot object at a given location. Does not check world bounds for potential crashes, these should be
+     * performed before (or after) this method is used.
      *
      * <p>
      * Use {@link PlotPlayer#getCurrentPlot()} if a player is expected here.
@@ -642,35 +708,22 @@ public class Plot {
     }
 
     /**
-     * Gets a immutable set of owner UUIDs for a plot (supports multi-owner mega-plots).
+     * Gets an immutable set of owner UUIDs for a plot (supports multi-owner mega-plots).
      * <p>
      * This method cannot be used to add or remove owners from a plot.
      * </p>
      *
-     * @return Immutable view of plot owners
+     * @return Immutable set of plot owners
      */
     public @NonNull Set<UUID> getOwners() {
-        if (this.getOwner() == null) {
-            return ImmutableSet.of();
-        }
-        if (isMerged()) {
-            Set<Plot> plots = getConnectedPlots();
-            Plot[] array = plots.toArray(new Plot[0]);
-            ImmutableSet.Builder<UUID> owners = ImmutableSet.builder();
-            UUID last = this.getOwner();
-            owners.add(this.getOwner());
-            for (final Plot current : array) {
-                if (current.getOwner() == null) {
-                    continue;
-                }
-                if (last == null || current.getOwner().getMostSignificantBits() != last.getMostSignificantBits()) {
-                    owners.add(current.getOwner());
-                    last = current.getOwner();
-                }
+        ImmutableSet.Builder<UUID> owners = ImmutableSet.builder();
+        for (Plot plot : getConnectedPlots()) {
+            UUID owner = plot.getOwner();
+            if (owner != null) {
+                owners.add(owner);
             }
-            return owners.build();
         }
-        return ImmutableSet.of(this.getOwner());
+        return owners.build();
     }
 
     /**
@@ -1445,6 +1498,9 @@ public class Plot {
                 );
             }
             Location location = toHomeLocation(bottom, home);
+            if (Settings.Teleport.SIZED_BASED && this.worldUtil.isSmallBlock(location) && this.worldUtil.isSmallBlock(location.add(0,1,0))) {
+                return location;
+            }
             if (!this.worldUtil.getBlockSynchronous(location).getBlockType().getMaterial().isAir()) {
                 location = location.withY(
                         Math.max(1 + this.worldUtil.getHighestBlockSynchronous(
@@ -1478,15 +1534,21 @@ public class Plot {
             }
             Location bottom = this.getBottomAbs();
             Location location = toHomeLocation(bottom, home);
-            this.worldUtil.getBlock(location, block -> {
-                if (!block.getBlockType().getMaterial().isAir()) {
-                    this.worldUtil.getHighestBlock(this.getWorldName(), location.getX(), location.getZ(),
-                            y -> result.accept(location.withY(Math.max(1 + y, bottom.getY())))
-                    );
-                } else {
-                    result.accept(location);
-                }
-            });
+            if (Settings.Teleport.SIZED_BASED && this.worldUtil.isSmallBlock(location) && this.worldUtil.isSmallBlock(location.add(0,1,0))) {
+                result.accept(location);
+            } else {
+                this.worldUtil.getBlock(location, block -> {
+
+                    if (!block.getBlockType().getMaterial().isAir()) {
+                        this.worldUtil.getHighestBlock(this.getWorldName(), location.getX(), location.getZ(),
+                                y -> result.accept(location.withY(Math.max(1 + y, bottom.getY())))
+                        );
+                    } else {
+                        result.accept(location);
+                    }
+                });
+            }
+
         }
     }
 
@@ -1508,7 +1570,7 @@ public class Plot {
      */
     public void setHome(BlockLoc location) {
         Plot plot = this.getBasePlot(false);
-        if (BlockLoc.ZERO.equals(location) || BlockLoc.MINY.equals(location)) {
+        if (location != null && (BlockLoc.ZERO.equals(location) || BlockLoc.MINY.equals(location))) {
             return;
         }
         plot.getSettings().setPosition(location);
@@ -1717,19 +1779,6 @@ public class Plot {
         return base.settings != null && base.settings.getRatings() != null;
     }
 
-    @Deprecated(forRemoval = true, since = "6.1.0")
-    public boolean claim(final @NonNull PlotPlayer<?> player, boolean teleport, String schematic) {
-        if (!canClaim(player)) {
-            return false;
-        }
-        return claim(player, teleport, schematic, true);
-    }
-
-    @Deprecated(forRemoval = true, since = "6.1.0")
-    public boolean claim(final @NonNull PlotPlayer<?> player, boolean teleport, String schematic, boolean updateDB) {
-        return claim(player, teleport, schematic, updateDB, false);
-    }
-
     /**
      * Claim the plot
      *
@@ -1757,7 +1806,11 @@ public class Plot {
             area.addPlot(this);
             updateWorldBorder();
         }
-        player.sendMessage(TranslatableCaption.of("working.claimed"), Template.of("plot", this.getId().toString()));
+        player.sendMessage(
+                TranslatableCaption.of("working.claimed"),
+                TagResolver.resolver("world", Tag.inserting(Component.text(this.getWorldName()))),
+                TagResolver.resolver("plot", Tag.inserting(Component.text(this.getId().toString())))
+        );
         if (teleport) {
             if (!auto && Settings.Teleport.ON_CLAIM) {
                 teleportPlayer(player, TeleportCause.COMMAND_CLAIM, result -> {
@@ -2230,6 +2283,9 @@ public class Plot {
      * @return if the given player can claim the plot
      */
     public boolean canClaim(@NonNull PlotPlayer<?> player) {
+        if (!WorldUtil.isValidLocation(getBottomAbs())) {
+            return false;
+        }
         PlotCluster cluster = this.getCluster();
         if (cluster != null) {
             if (!cluster.isAdded(player.getUUID()) && !player.hasPermission("plots.admin.command.claim")) {
@@ -2320,8 +2376,8 @@ public class Plot {
     }
 
     /**
-     * Gets a set of plots connected (and including) this plot<br>
-     * - This result is cached globally
+     * Gets a set of plots connected (and including) this plot.
+     * The returned set is immutable.
      *
      * @return a Set of Plots connected to this Plot
      */
@@ -2332,115 +2388,73 @@ public class Plot {
         if (!this.isMerged()) {
             return Collections.singleton(this);
         }
+        Plot basePlot = getBasePlot(false);
+        if (this.connectedCache == null && this != basePlot) {
+            // share cache between connected plots
+            Set<Plot> connectedPlots = basePlot.getConnectedPlots();
+            this.connectedCache = connectedPlots;
+            return connectedPlots;
+        }
         if (this.connectedCache != null && this.connectedCache.contains(this)) {
             return this.connectedCache;
         }
 
-        HashSet<Plot> tmpSet = new HashSet<>();
+        Set<Plot> tmpSet = new HashSet<>();
         tmpSet.add(this);
-        Plot tmp;
-        HashSet<Object> queuecache = new HashSet<>();
+        HashSet<Plot> queueCache = new HashSet<>();
         ArrayDeque<Plot> frontier = new ArrayDeque<>();
-        if (this.isMerged(Direction.NORTH)) {
-            tmp = this.area.getPlotAbs(this.id.getRelative(Direction.NORTH));
-            if (!tmp.isMerged(Direction.SOUTH)) {
-                // invalid merge
-                if (tmp.isOwnerAbs(this.getOwnerAbs())) {
-                    tmp.getSettings().setMerged(Direction.SOUTH, true);
-                    DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
-                } else {
-                    this.getSettings().setMerged(Direction.NORTH, false);
-                    DBFunc.setMerged(this, this.getSettings().getMerged());
-                }
-            }
-            queuecache.add(tmp);
-            frontier.add(tmp);
-        }
-        if (this.isMerged(Direction.EAST)) {
-            tmp = this.area.getPlotAbs(this.id.getRelative(Direction.EAST));
-            assert tmp != null;
-            if (!tmp.isMerged(Direction.WEST)) {
-                // invalid merge
-                if (tmp.isOwnerAbs(this.getOwnerAbs())) {
-                    tmp.getSettings().setMerged(Direction.WEST, true);
-                    DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
-                } else {
-                    this.getSettings().setMerged(Direction.EAST, false);
-                    DBFunc.setMerged(this, this.getSettings().getMerged());
-                }
-            }
-            queuecache.add(tmp);
-            frontier.add(tmp);
-        }
-        if (this.isMerged(Direction.SOUTH)) {
-            tmp = this.area.getPlotAbs(this.id.getRelative(Direction.SOUTH));
-            assert tmp != null;
-            if (!tmp.isMerged(Direction.NORTH)) {
-                // invalid merge
-                if (tmp.isOwnerAbs(this.getOwnerAbs())) {
-                    tmp.getSettings().setMerged(Direction.NORTH, true);
-                    DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
-                } else {
-                    this.getSettings().setMerged(Direction.SOUTH, false);
-                    DBFunc.setMerged(this, this.getSettings().getMerged());
-                }
-            }
-            queuecache.add(tmp);
-            frontier.add(tmp);
-        }
-        if (this.isMerged(Direction.WEST)) {
-            tmp = this.area.getPlotAbs(this.id.getRelative(Direction.WEST));
-            if (!tmp.isMerged(Direction.EAST)) {
-                // invalid merge
-                if (tmp.isOwnerAbs(this.getOwnerAbs())) {
-                    tmp.getSettings().setMerged(Direction.EAST, true);
-                    DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
-                } else {
-                    this.getSettings().setMerged(Direction.WEST, false);
-                    DBFunc.setMerged(this, this.getSettings().getMerged());
-                }
-            }
-            queuecache.add(tmp);
-            frontier.add(tmp);
-        }
+        computeDirectMerged(queueCache, frontier, Direction.NORTH);
+        computeDirectMerged(queueCache, frontier, Direction.EAST);
+        computeDirectMerged(queueCache, frontier, Direction.SOUTH);
+        computeDirectMerged(queueCache, frontier, Direction.WEST);
         Plot current;
         while ((current = frontier.poll()) != null) {
             if (!current.hasOwner() || current.settings == null) {
                 continue;
             }
             tmpSet.add(current);
-            queuecache.remove(current);
-            if (current.isMerged(Direction.NORTH)) {
-                tmp = current.area.getPlotAbs(current.id.getRelative(Direction.NORTH));
-                if (tmp != null && !queuecache.contains(tmp) && !tmpSet.contains(tmp)) {
-                    queuecache.add(tmp);
-                    frontier.add(tmp);
-                }
-            }
-            if (current.isMerged(Direction.EAST)) {
-                tmp = current.area.getPlotAbs(current.id.getRelative(Direction.EAST));
-                if (tmp != null && !queuecache.contains(tmp) && !tmpSet.contains(tmp)) {
-                    queuecache.add(tmp);
-                    frontier.add(tmp);
-                }
-            }
-            if (current.isMerged(Direction.SOUTH)) {
-                tmp = current.area.getPlotAbs(current.id.getRelative(Direction.SOUTH));
-                if (tmp != null && !queuecache.contains(tmp) && !tmpSet.contains(tmp)) {
-                    queuecache.add(tmp);
-                    frontier.add(tmp);
-                }
-            }
-            if (current.isMerged(Direction.WEST)) {
-                tmp = current.area.getPlotAbs(current.id.getRelative(Direction.WEST));
-                if (tmp != null && !queuecache.contains(tmp) && !tmpSet.contains(tmp)) {
-                    queuecache.add(tmp);
-                    frontier.add(tmp);
-                }
-            }
+            queueCache.remove(current);
+            addIfIncluded(current, Direction.NORTH, queueCache, tmpSet, frontier);
+            addIfIncluded(current, Direction.EAST, queueCache, tmpSet, frontier);
+            addIfIncluded(current, Direction.SOUTH, queueCache, tmpSet, frontier);
+            addIfIncluded(current, Direction.WEST, queueCache, tmpSet, frontier);
         }
+        tmpSet = Set.copyOf(tmpSet);
         this.connectedCache = tmpSet;
         return tmpSet;
+    }
+
+    private void computeDirectMerged(Set<Plot> queueCache, Deque<Plot> frontier, Direction direction) {
+        if (this.isMerged(direction)) {
+            Plot tmp = this.area.getPlotAbs(this.id.getRelative(direction));
+            assert tmp != null;
+            if (!tmp.isMerged(direction.opposite())) {
+                // invalid merge
+                if (tmp.isOwnerAbs(this.getOwnerAbs())) {
+                    tmp.getSettings().setMerged(direction.opposite(), true);
+                    DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
+                } else {
+                    this.getSettings().setMerged(direction, false);
+                    DBFunc.setMerged(this, this.getSettings().getMerged());
+                }
+            }
+            queueCache.add(tmp);
+            frontier.add(tmp);
+        }
+    }
+
+    private void addIfIncluded(
+            Plot current, Direction
+            direction, Set<Plot> queueCache, Set<Plot> tmpSet, Deque<Plot> frontier
+    ) {
+        if (!current.isMerged(direction)) {
+            return;
+        }
+        Plot tmp = current.area.getPlotAbs(current.id.getRelative(direction));
+        if (tmp != null && !queueCache.contains(tmp) && !tmpSet.contains(tmp)) {
+            queueCache.add(tmp);
+            frontier.add(tmp);
+        }
     }
 
     /**
@@ -2454,7 +2468,6 @@ public class Plot {
         if (!this.isMerged()) {
             Location pos1 = this.getBottomAbs().withY(getArea().getMinBuildHeight());
             Location pos2 = this.getTopAbs().withY(getArea().getMaxBuildHeight());
-            this.connectedCache = Sets.newHashSet(this);
             CuboidRegion rg = new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3());
             return Collections.singleton(rg);
         }
@@ -2620,11 +2633,13 @@ public class Plot {
                 return;
             }
             Caption caption = TranslatableCaption.of("debug.plot_debug");
-            Template plotTemplate = Template.of("plot", this.toString());
-            Template messageTemplate = Template.of("message", message);
+            TagResolver resolver = TagResolver.builder()
+                    .tag("plot", Tag.inserting(Component.text(toString())))
+                    .tag("message", Tag.inserting(Component.text(message)))
+                    .build();
             for (final PlotPlayer<?> player : players) {
                 if (isOwner(player.getUUID()) || player.hasPermission(Permission.PERMISSION_ADMIN_DEBUG_OTHER)) {
-                    player.sendMessage(caption, plotTemplate, messageTemplate);
+                    player.sendMessage(caption, resolver);
                 }
             }
         } catch (final Exception ignored) {
@@ -2650,16 +2665,26 @@ public class Plot {
      */
     public void teleportPlayer(final PlotPlayer<?> player, TeleportCause cause, Consumer<Boolean> resultConsumer) {
         Plot plot = this.getBasePlot(false);
-        Result result = this.eventDispatcher.callTeleport(player, player.getLocation(), plot, cause).getEventResult();
-        if (result == Result.DENY) {
+        if ((getArea() == null || !(getArea() instanceof SinglePlotArea)) && !WorldUtil.isValidLocation(plot.getBottomAbs())) {
+            // prevent from teleporting into unsafe regions
+            player.sendMessage(TranslatableCaption.of("border.denied"));
+            resultConsumer.accept(false);
+            return;
+        }
+
+        PlayerTeleportToPlotEvent event = this.eventDispatcher.callTeleport(player, player.getLocation(), plot, cause);
+        if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Teleport")
+                    TagResolver.resolver("value", Tag.inserting(Component.text("Teleport")))
             );
             resultConsumer.accept(false);
             return;
         }
-        final Consumer<Location> locationConsumer = location -> {
+
+        final Consumer<Location> locationConsumer = calculatedLocation -> {
+            Location location = event.getLocationTransformer() == null ? calculatedLocation :
+                    Objects.requireNonNullElse(event.getLocationTransformer().apply(calculatedLocation), calculatedLocation);
             if (Settings.Teleport.DELAY == 0 || player.hasPermission("plots.teleport.delay.bypass")) {
                 player.sendMessage(TranslatableCaption.of("teleport.teleported_to_plot"));
                 player.teleport(location, cause);
@@ -2668,7 +2693,7 @@ public class Plot {
             }
             player.sendMessage(
                     TranslatableCaption.of("teleport.teleport_in_seconds"),
-                    Template.of("amount", String.valueOf(Settings.Teleport.DELAY))
+                    TagResolver.resolver("amount", Tag.inserting(Component.text(Settings.Teleport.DELAY)))
             );
             final String name = player.getName();
             TaskManager.addToTeleportQueue(name);
@@ -2715,6 +2740,11 @@ public class Plot {
         return false;
     }
 
+    /**
+     * Get the maximum distance of the plot from x=0, z=0.
+     *
+     * @return max block distance from 0,0
+     */
     public int getDistanceFromOrigin() {
         Location bot = getManager().getPlotBottomLocAbs(id);
         Location top = getManager().getPlotTopLocAbs(id);
@@ -2728,7 +2758,7 @@ public class Plot {
      * Expands the world border to include this plot if it is beyond the current border.
      */
     public void updateWorldBorder() {
-        int border = this.area.getBorder();
+        int border = this.area.getBorder(false);
         if (border == Integer.MAX_VALUE) {
             return;
         }
@@ -2844,41 +2874,45 @@ public class Plot {
     public CompletableFuture<Caption> format(final Caption iInfo, PlotPlayer<?> player, final boolean full) {
         final CompletableFuture<Caption> future = new CompletableFuture<>();
         int num = this.getConnectedPlots().size();
-        String alias = !this.getAlias().isEmpty() ? this.getAlias() : TranslatableCaption.of("info.none").getComponent(player);
+        ComponentLike alias = !this.getAlias().isEmpty() ?
+                Component.text(this.getAlias()) :
+                TranslatableCaption.of("info.none").toComponent(player);
         Location bot = this.getCorners()[0];
         PlotSquared.platform().worldUtil().getBiome(
                 Objects.requireNonNull(this.getWorldName()),
                 bot.getX(),
                 bot.getZ(),
                 biome -> {
-                    Component trusted = PlayerManager.getPlayerList(this.getTrusted(), player);
-                    Component members = PlayerManager.getPlayerList(this.getMembers(), player);
-                    Component denied = PlayerManager.getPlayerList(this.getDenied(), player);
-                    String seen;
-                    if (Settings.Enabled_Components.PLOT_EXPIRY && PlotSquared.platform().expireManager() != null) {
+                    ComponentLike trusted = PlayerManager.getPlayerList(this.getTrusted(), player);
+                    ComponentLike members = PlayerManager.getPlayerList(this.getMembers(), player);
+                    ComponentLike denied = PlayerManager.getPlayerList(this.getDenied(), player);
+                    ComponentLike seen;
+                    ExpireManager expireManager = PlotSquared.platform().expireManager();
+                    if (Settings.Enabled_Components.PLOT_EXPIRY && expireManager != null) {
                         if (this.isOnline()) {
-                            seen = TranslatableCaption.of("info.now").getComponent(player);
+                            seen = TranslatableCaption.of("info.now").toComponent(player);
                         } else {
                             int time = (int) (PlotSquared.platform().expireManager().getAge(this, false) / 1000);
                             if (time != 0) {
-                                seen = TimeUtil.secToTime(time);
+                                seen = Component.text(TimeUtil.secToTime(time));
                             } else {
-                                seen = TranslatableCaption.of("info.unknown").getComponent(player);
+                                seen = TranslatableCaption.of("info.unknown").toComponent(player);
                             }
                         }
                     } else {
-                        seen = TranslatableCaption.of("info.never").getComponent(player);
+                        seen = TranslatableCaption.of("info.never").toComponent(player);
                     }
 
-                    String description = this.getFlag(DescriptionFlag.class);
-                    if (description.isEmpty()) {
-                        description = TranslatableCaption.of("info.plot_no_description").getComponent(player);
+                    ComponentLike description = TranslatableCaption.of("info.plot_no_description").toComponent(player);
+                    String descriptionValue = this.getFlag(DescriptionFlag.class);
+                    if (!descriptionValue.isEmpty()) {
+                        description = Component.text(descriptionValue);
                     }
 
-                    Component flags;
+                    ComponentLike flags;
                     Collection<PlotFlag<?, ?>> flagCollection = this.getApplicableFlags(true);
                     if (flagCollection.isEmpty()) {
-                        flags = MINI_MESSAGE.parse(TranslatableCaption.of("info.none").getComponent(player));
+                        flags = TranslatableCaption.of("info.none").toComponent(player);
                     } else {
                         TextComponent.Builder flagBuilder = Component.text();
                         String prefix = "";
@@ -2889,13 +2923,18 @@ public class Plot {
                             } else {
                                 value = flag.toString();
                             }
-                            Component snip = MINI_MESSAGE.parse(
+                            Component snip = MINI_MESSAGE.deserialize(
                                     prefix + CaptionUtility.format(
                                             player,
                                             TranslatableCaption.of("info.plot_flag_list").getComponent(player)
                                     ),
-                                    Template.of("flag", flag.getName()),
-                                    Template.of("value", CaptionUtility.formatRaw(player, value.toString()))
+                                    TagResolver.builder()
+                                            .tag("flag", Tag.inserting(Component.text(flag.getName())))
+                                            .tag("value", Tag.inserting(Component.text(CaptionUtility.formatRaw(
+                                                    player,
+                                                    value.toString()
+                                            ))))
+                                            .build()
                             );
                             flagBuilder.append(snip);
                             prefix = ", ";
@@ -2907,67 +2946,57 @@ public class Plot {
                     if (this.getOwner() == null) {
                         owner = Component.text("unowned");
                     } else if (this.getOwner().equals(DBFunc.SERVER)) {
-                        owner = Component.text(MINI_MESSAGE.stripTokens(TranslatableCaption
+                        owner = Component.text(MINI_MESSAGE.stripTags(TranslatableCaption
                                 .of("info.server")
                                 .getComponent(player)));
                     } else {
                         owner = PlayerManager.getPlayerList(this.getOwners(), player);
                     }
-                    Template headerTemplate = Template.of(
-                            "header",
-                            TranslatableCaption.of("info.plot_info_header").getComponent(player)
-                    );
-                    Template footerTemplate = Template.of(
-                            "footer",
-                            TranslatableCaption.of("info.plot_info_footer").getComponent(player)
-                    );
-                    Template areaTemplate;
+                    TagResolver.Builder tagBuilder = TagResolver.builder();
+                    tagBuilder.tag("header", Tag.inserting(TranslatableCaption.of("info.plot_info_header").toComponent(player)));
+                    tagBuilder.tag("footer", Tag.inserting(TranslatableCaption.of("info.plot_info_footer").toComponent(player)));
+                    TextComponent.Builder areaComponent = Component.text();
                     if (this.getArea() != null) {
-                        areaTemplate =
-                                Template.of(
-                                        "area",
-                                        this.getArea().getWorldName() + (this.getArea().getId() == null
-                                                ? ""
-                                                : "(" + this.getArea().getId() + ")")
-                                );
+                        areaComponent.append(Component.text(getArea().getWorldName()));
+                        if (getArea().getId() != null) {
+                            areaComponent.append(Component.text("("))
+                                    .append(Component.text(getArea().getId()))
+                                    .append(Component.text(")"));
+                        }
                     } else {
-                        areaTemplate = Template.of("area", TranslatableCaption.of("info.none").getComponent(player));
+                        areaComponent.append(TranslatableCaption.of("info.none").toComponent(player));
                     }
+                    tagBuilder.tag("area", Tag.inserting(areaComponent));
                     long creationDate = Long.parseLong(String.valueOf(timestamp));
                     SimpleDateFormat sdf = new SimpleDateFormat(Settings.Timeformat.DATE_FORMAT);
                     sdf.setTimeZone(TimeZone.getTimeZone(Settings.Timeformat.TIME_ZONE));
                     String newDate = sdf.format(creationDate);
 
-                    Template idTemplate = Template.of("id", this.getId().toString());
-                    Template aliasTemplate = Template.of("alias", alias);
-                    Template numTemplate = Template.of("num", String.valueOf(num));
-                    Template descTemplate = Template.of("desc", description);
-                    Template biomeTemplate = Template.of("biome", biome.toString().toLowerCase());
-                    Template ownerTemplate = Template.of("owner", owner);
-                    Template membersTemplate = Template.of("members", members);
-                    Template playerTemplate = Template.of("player", player.getName());
-                    Template trustedTemplate = Template.of("trusted", trusted);
-                    Template helpersTemplate = Template.of("helpers", members);
-                    Template deniedTemplate = Template.of("denied", denied);
-                    Template seenTemplate = Template.of("seen", seen);
-                    Template flagsTemplate = Template.of("flags", flags);
-                    Template creationTemplate = Template.of("creationdate", newDate);
-                    Template buildTemplate = Template.of("build", String.valueOf(build));
-                    Template sizeTemplate = Template.of("size", String.valueOf(getConnectedPlots().size()));
+                    tagBuilder.tag("id", Tag.inserting(Component.text(getId().toString())));
+                    tagBuilder.tag("alias", Tag.inserting(alias));
+                    tagBuilder.tag("num", Tag.inserting(Component.text(num)));
+                    tagBuilder.tag("desc", Tag.inserting(description));
+                    tagBuilder.tag("biome", Tag.inserting(Component.text(biome.toString().toLowerCase())));
+                    tagBuilder.tag("owner", Tag.inserting(owner));
+                    tagBuilder.tag("members", Tag.inserting(members));
+                    tagBuilder.tag("player", Tag.inserting(Component.text(player.getName())));
+                    tagBuilder.tag("trusted", Tag.inserting(trusted));
+                    tagBuilder.tag("denied", Tag.inserting(denied));
+                    tagBuilder.tag("seen", Tag.inserting(seen));
+                    tagBuilder.tag("flags", Tag.inserting(flags));
+                    tagBuilder.tag("creationdate", Tag.inserting(Component.text(newDate)));
+                    tagBuilder.tag("build", Tag.inserting(Component.text(build)));
+                    tagBuilder.tag("size", Tag.inserting(Component.text(getConnectedPlots().size())));
                     String component = iInfo.getComponent(player);
                     if (component.contains("<rating>") || component.contains("<likes>")) {
                         TaskManager.runTaskAsync(() -> {
-                            Template ratingTemplate;
-                            Template likesTemplate;
                             if (Settings.Ratings.USE_LIKES) {
-                                ratingTemplate = Template.of(
-                                        "rating",
+                                tagBuilder.tag("rating", Tag.inserting(Component.text(
                                         String.format("%.0f%%", Like.getLikesPercentage(this) * 100D)
-                                );
-                                likesTemplate = Template.of(
-                                        "likes",
+                                )));
+                                tagBuilder.tag("likes", Tag.inserting(Component.text(
                                         String.format("%.0f%%", Like.getLikesPercentage(this) * 100D)
-                                );
+                                )));
                             } else {
                                 int max = 10;
                                 if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES.isEmpty()) {
@@ -2982,70 +3011,34 @@ public class Plot {
                                                 .append(String.format("%.1f", ratings[i]));
                                         prefix = ",";
                                     }
-                                    ratingTemplate = Template.of("rating", rating.toString());
+                                    tagBuilder.tag("rating", Tag.inserting(Component.text(rating.toString())));
                                 } else {
                                     double rating = this.getAverageRating();
                                     if (Double.isFinite(rating)) {
-                                        ratingTemplate = Template.of("rating", String.format("%.1f", rating) + '/' + max);
-                                    } else {
-                                        ratingTemplate = Template.of(
+                                        tagBuilder.tag(
                                                 "rating",
-                                                TranslatableCaption.of("info.none").getComponent(player)
+                                                Tag.inserting(Component.text(String.format("%.1f", rating) + '/' + max))
+                                        );
+                                    } else {
+                                        tagBuilder.tag(
+                                                "rating", Tag.inserting(TranslatableCaption.of("info.none").toComponent(player))
                                         );
                                     }
                                 }
-                                likesTemplate = Template.of("likes", "N/A");
+                                tagBuilder.tag("likes", Tag.inserting(Component.text("N/A")));
                             }
                             future.complete(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
-                                    .parse(
+                                    .deserialize(
                                             iInfo.getComponent(player),
-                                            headerTemplate,
-                                            areaTemplate,
-                                            idTemplate,
-                                            aliasTemplate,
-                                            numTemplate,
-                                            descTemplate,
-                                            biomeTemplate,
-                                            ownerTemplate,
-                                            membersTemplate,
-                                            playerTemplate,
-                                            trustedTemplate,
-                                            helpersTemplate,
-                                            deniedTemplate,
-                                            seenTemplate,
-                                            flagsTemplate,
-                                            buildTemplate,
-                                            ratingTemplate,
-                                            creationTemplate,
-                                            sizeTemplate,
-                                            likesTemplate,
-                                            footerTemplate
+                                            tagBuilder.build()
                                     ))));
                         });
                         return;
                     }
                     future.complete(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
-                            .parse(
+                            .deserialize(
                                     iInfo.getComponent(player),
-                                    headerTemplate,
-                                    areaTemplate,
-                                    idTemplate,
-                                    aliasTemplate,
-                                    numTemplate,
-                                    descTemplate,
-                                    biomeTemplate,
-                                    ownerTemplate,
-                                    membersTemplate,
-                                    playerTemplate,
-                                    trustedTemplate,
-                                    helpersTemplate,
-                                    deniedTemplate,
-                                    seenTemplate,
-                                    flagsTemplate,
-                                    buildTemplate,
-                                    creationTemplate,
-                                    sizeTemplate,
-                                    footerTemplate
+                                    tagBuilder.build()
                             ))));
                 }
         );

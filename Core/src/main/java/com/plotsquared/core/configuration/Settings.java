@@ -43,6 +43,11 @@ public class Settings extends Config {
             "Leave it off if you don't need it, it can spam your console."})
     public static boolean DEBUG = true;
 
+    @Comment({"The activity of high-frequency event listener can be deactivated here to improve the server performance. ",
+            "Affected settings: 'redstone' settings here below. Affected flags: 'disable-physics', 'redstone'. ",
+            "Only deactivate this setting if you do not need any of the mentioned settings or flags."})
+    public static boolean HIGH_FREQUENCY_LISTENER = true;
+
     @Create // This value will be generated automatically
     public static ConfigBlock<Auto_Clear> AUTO_CLEAR = null;
     // A ConfigBlock is a section that can have multiple instances e.g. multiple expiry tasks
@@ -194,7 +199,7 @@ public class Settings extends Config {
         public List<String> WORLDS = new ArrayList<>(Collections.singletonList("*"));
 
 
-        @Comment("See: https://intellectualsites.github.io/plotsquared-documentation/optimization/plot-analysis for a description of each value.")
+        @Comment("See: https://intellectualsites.gitbook.io/plotsquared/optimization/plot-analysis for a description of each value.")
         public static final class CALIBRATION {
 
             public int VARIETY = 0;
@@ -214,7 +219,7 @@ public class Settings extends Config {
 
 
     @Comment({"Chunk processor related settings",
-            "See https://intellectualsites.github.io/plotsquared-documentation/optimization/chunk-processor for more information."})
+            "See https://intellectualsites.gitbook.io/plotsquared/optimization/chunk-processor for more information."})
     public static class Chunk_Processor {
 
         @Comment("Auto trim will not save chunks which aren't claimed")
@@ -280,7 +285,7 @@ public class Settings extends Config {
         @Comment("Always show explosion Particles, even if explosion flag is set to false")
         public static boolean ALWAYS_SHOW_EXPLOSIONS = false;
         @Comment({"Blocks that may not be used in plot components",
-                "Checkout the wiki article regarding plot components before modifying: https://intellectualsites.github.io/plotsquared-documentation/customization/plot-components"})
+                "Checkout the wiki article regarding plot components before modifying: https://intellectualsites.gitbook.io/plotsquared/customization/plot-components"})
         public static List<String>
                 INVALID_BLOCKS = Arrays.asList(
                 // Acacia Stuff
@@ -402,7 +407,7 @@ public class Settings extends Config {
 
 
     @Comment({"Schematic Settings",
-            "See https://intellectualsites.github.io/plotsquared-documentation/schematics/schematic-on-claim for more information."})
+            "See https://intellectualsites.gitbook.io/plotsquared/schematics/schematic-on-claim for more information."})
     public static final class Schematics {
 
         @Comment(
@@ -522,7 +527,7 @@ public class Settings extends Config {
         @Comment("Should the limit be global (over multiple worlds)")
         public static boolean GLOBAL =
                 false;
-        @Comment({"The max range of permissions to check for, e.g. plots.plot.127",
+        @Comment({"The max range of integer permissions to check for, e.g. 'plots.plot.127' or 'plots.set.flag.mob-cap.127'",
                 "The value covers the permission range to check, you need to assign the permission to players/groups still",
                 "Modifying the value does NOT change the amount of plots players can claim"})
         public static int MAX_PLOTS = 127;
@@ -531,7 +536,7 @@ public class Settings extends Config {
 
 
     @Comment({"Backup related settings",
-            "See https://intellectualsites.github.io/plotsquared-documentation/plot-backups for more information."})
+            "See https://intellectualsites.gitbook.io/plotsquared/plot-backups for more information."})
     public static final class Backup {
 
         @Comment("Automatically backup plots when destructive commands are performed, e.g. /plot clear")
@@ -577,6 +582,8 @@ public class Settings extends Config {
         public static boolean PER_WORLD_VISIT = false;
         @Comment("Search merged plots for having multiple owners when using the visit command")
         public static boolean VISIT_MERGED_OWNERS = true;
+        @Comment("Allows to teleport based on block size instead to spawn on the highest block at the home command")
+        public static boolean SIZED_BASED = true;
 
     }
 
@@ -646,6 +653,8 @@ public class Settings extends Config {
         public static boolean PAPER_LISTENERS = true;
         @Comment("Prevent entities from leaving plots")
         public static boolean ENTITY_PATHING = true;
+        @Comment("Prevent entities from leaving plots, even by pushing or pulling")
+        public static boolean ENTITY_MOVEMENT = false;
         @Comment(
                 "Cancel entity spawns when the chunk is loaded if the PlotArea's mob spawning is off")
         public static boolean CANCEL_CHUNK_SPAWN = true;
@@ -723,6 +732,12 @@ public class Settings extends Config {
 
     }
 
+    @Comment("Settings related to flags")
+    public static final class Flags {
+
+        @Comment("If \"instabreak\" should consider the used tool.")
+        public static boolean INSTABREAK_CONSIDER_TOOL = false;
+    }
 
     @Comment({"Enable or disable parts of the plugin",
             "Note: A cache will use some memory if enabled"})
@@ -783,7 +798,7 @@ public class Settings extends Config {
         public static boolean
                 PERSISTENT_ROAD_REGEN = true;
         @Comment({"Enable the `/plot component` preset GUI",
-                "Read more about components here: https://intellectualsites.github.io/plotsquared-documentation/customization/plot-components"})
+                "Read more about components here: https://intellectualsites.gitbook.io/plotsquared/customization/plot-components"})
         public static boolean COMPONENT_PRESETS = true;
         @Comment("Enable per user locale")
         public static boolean PER_USER_LOCALE = false;

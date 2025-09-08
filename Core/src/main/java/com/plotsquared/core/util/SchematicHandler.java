@@ -83,6 +83,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
@@ -134,6 +135,7 @@ public abstract class SchematicHandler {
         }
         final String filename;
         final String website;
+        final @Nullable UUID finalUuid = uuid;
         if (uuid == null) {
             uuid = UUID.randomUUID();
             website = Settings.Web.URL + "upload.php?" + uuid;
@@ -143,17 +145,18 @@ public abstract class SchematicHandler {
             filename = file + '.' + extension;
         }
         final URL url;
+        String uri = Settings.Web.URL + "?key=" + uuid + "&type=" + extension;
         try {
-            url = new URL(Settings.Web.URL + "?key=" + uuid + "&type=" + extension);
+            url = URI.create(uri).toURL();
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            LOGGER.error("Malformed URI `{}`", uri, e);
             whenDone.run();
             return;
         }
         TaskManager.runTaskAsync(() -> {
             try {
                 String boundary = Long.toHexString(System.currentTimeMillis());
-                URLConnection con = new URL(website).openConnection();
+                URLConnection con = URI.create(website).toURL().openConnection();
                 con.setDoOutput(true);
                 con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
                 try (OutputStream output = con.getOutputStream();
@@ -192,7 +195,7 @@ public abstract class SchematicHandler {
                 }
                 TaskManager.runTask(whenDone);
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error("Error while uploading schematic for UUID {}", finalUuid, e);
                 TaskManager.runTask(whenDone);
             }
         });
@@ -387,8 +390,14 @@ public abstract class SchematicHandler {
             }
             queue.enqueue();
         } catch (Exception e) {
-            e.printStackTrace();
             TaskManager.runTask(whenDone);
+            LOGGER.error(
+                    "Error pasting schematic to plot {};{} for player {}",
+                    plot.getArea(),
+                    plot.getId(),
+                    actor == null ? "null" : actor.getName(),
+                    e
+            );
         }
     }
 
@@ -455,7 +464,7 @@ public abstract class SchematicHandler {
                 Clipboard clip = reader.read();
                 return new Schematic(clip);
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error("Error reading schematic from file {}", file.getAbsolutePath(), e);
             }
         } else {
             throw new UnsupportedFormatException("This schematic format is not recognised or supported.");
@@ -469,7 +478,7 @@ public abstract class SchematicHandler {
             InputStream inputStream = Channels.newInputStream(readableByteChannel);
             return getSchematic(inputStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Error reading schematic from {}", url, e);
         }
         return null;
     }
@@ -485,7 +494,7 @@ public abstract class SchematicHandler {
                 Clipboard clip = schematicReader.read();
                 return new Schematic(clip);
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error("Error reading schematic", e);
             }
         }
         return null;
@@ -498,9 +507,10 @@ public abstract class SchematicHandler {
     public List<String> getSaves(UUID uuid) {
         String rawJSON;
         try {
-            String website = Settings.Web.URL + "list.php?" + uuid.toString();
-            URL url = new URL(website);
-            URLConnection connection = new URL(url.toString()).openConnection();
+            URLConnection connection = URI.create(
+                    Settings.Web.URL + "list.php?" + uuid.toString())
+                    .toURL()
+                    .openConnection();
             connection.setRequestProperty("User-Agent", "Mozilla/5.0");
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
                 rawJSON = reader.lines().collect(Collectors.joining());
@@ -513,7 +523,7 @@ public abstract class SchematicHandler {
             }
             return schematics;
         } catch (JsonParseException | IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Error retrieving saves for UUID {}", uuid, e);
         }
         return null;
     }
@@ -530,7 +540,7 @@ public abstract class SchematicHandler {
                 try (NBTOutputStream nos = new NBTOutputStream(new GZIPOutputStream(output, true))) {
                     nos.writeNamedTag("Schematic", tag);
                 } catch (IOException e1) {
-                    e1.printStackTrace();
+                    LOGGER.error("Error uploading schematic for UUID {}", uuid, e1);
                 }
             }
         }, whenDone);
@@ -554,9 +564,9 @@ public abstract class SchematicHandler {
                 nbtStream.writeNamedTag("Schematic", tag);
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.error("Error saving schematic at {}", path, e);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Error saving schematic at {}", path, e);
             return false;
         }
         return true;
@@ -579,7 +589,7 @@ public abstract class SchematicHandler {
         schematic.put("BlockData", new ByteArrayTag(buffer.toByteArray()));
         schematic.put("BlockEntities", new ListTag(CompoundTag.class, tileEntities));
 
-        if (biomeBuffer.size() == 0 || biomePalette.size() == 0) {
+        if (biomeBuffer.size() == 0 || biomePalette.isEmpty()) {
             return;
         }
 
@@ -731,10 +741,7 @@ public abstract class SchematicHandler {
                                     }
                                     BaseBlock block = aabb.getWorld().getFullBlock(point);
                                     if (block.getNbtData() != null) {
-                                        Map<String, Tag> values = new HashMap<>();
-                                        for (Map.Entry<String, Tag> entry : block.getNbtData().getValue().entrySet()) {
-                                            values.put(entry.getKey(), entry.getValue());
-                                        }
+                                        Map<String, Tag> values = new HashMap<>(block.getNbtData().getValue());
 
                                         // Positions are kept in NBT, we don't want that.
                                         values.remove("x");

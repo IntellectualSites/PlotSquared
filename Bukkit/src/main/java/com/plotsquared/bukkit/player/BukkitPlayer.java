@@ -32,6 +32,7 @@ import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.item.ItemType;
@@ -40,6 +41,7 @@ import io.papermc.lib.PaperLib;
 import net.kyori.adventure.audience.Audience;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.WeatherType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -51,7 +53,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
 
@@ -71,31 +72,11 @@ public class BukkitPlayer extends PlotPlayer<Player> {
      * @param eventDispatcher   EventDispatcher instance
      * @param player            Bukkit player instance
      * @param permissionHandler PermissionHandler instance
-     *
-     * @deprecated Please do not use this method. Instead use {@link BukkitUtil#adapt(Player)}, as it caches player objects.
-     * This method will be made private in a future release.
      */
-    @Deprecated(forRemoval = true, since = "6.10.9")
-    public BukkitPlayer(
-            final @NonNull PlotAreaManager plotAreaManager, final @NonNull EventDispatcher eventDispatcher,
-            final @NonNull Player player, final @NonNull PermissionHandler permissionHandler
-    ) {
-        this(plotAreaManager, eventDispatcher, player, false, permissionHandler);
-    }
-
-    /**
-     * @param plotAreaManager   PlotAreaManager instance
-     * @param eventDispatcher   EventDispatcher instance
-     * @param player            Bukkit player instance
-     * @param permissionHandler PermissionHandler instance
-     *
-     * @deprecated Please do not use this method. Instead use {@link BukkitUtil#adapt(Player)}, as it caches player objects.
-     * This method will be made private in a future release.
-     */
-    @Deprecated(forRemoval = true, since = "6.10.9")
-    public BukkitPlayer(
-            final @NonNull PlotAreaManager plotAreaManager, final @NonNull
-            EventDispatcher eventDispatcher, final @NonNull Player player,
+    BukkitPlayer(
+            final @NonNull PlotAreaManager plotAreaManager,
+            final @NonNull EventDispatcher eventDispatcher,
+            final @NonNull Player player,
             final boolean realPlayer,
             final @NonNull PermissionHandler permissionHandler
     ) {
@@ -140,6 +121,9 @@ public class BukkitPlayer extends PlotPlayer<Player> {
 
     @Override
     public boolean canTeleport(final @NonNull Location location) {
+        if (!WorldUtil.isValidLocation(location)) {
+            return false;
+        }
         final org.bukkit.Location to = BukkitUtil.adapt(location);
         final org.bukkit.Location from = player.getLocation();
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to);
@@ -178,6 +162,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
         final String[] nodes = stub.split("\\.");
         final StringBuilder n = new StringBuilder();
+        // Wildcard check from less specific permission to more specific permission
         for (int i = 0; i < (nodes.length - 1); i++) {
             n.append(nodes[i]).append(".");
             if (!stub.equals(n + Permission.PERMISSION_STAR.toString())) {
@@ -186,9 +171,11 @@ public class BukkitPlayer extends PlotPlayer<Player> {
                 }
             }
         }
+        // Wildcard check for the full permission
         if (hasPermission(stub + ".*")) {
             return Integer.MAX_VALUE;
         }
+        // Permission value cache for iterative check
         int max = 0;
         if (CHECK_EFFECTIVE) {
             boolean hasAny = false;
@@ -196,6 +183,10 @@ public class BukkitPlayer extends PlotPlayer<Player> {
             final Set<PermissionAttachmentInfo> effective = player.getEffectivePermissions();
             if (!effective.isEmpty()) {
                 for (PermissionAttachmentInfo attach : effective) {
+                    // Ignore all "false" permissions
+                    if (!attach.getValue()) {
+                        continue;
+                    }
                     String permStr = attach.getPermission();
                     if (permStr.startsWith(stubPlus)) {
                         hasAny = true;
@@ -234,7 +225,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
 
     @Override
     public void teleport(final @NonNull Location location, final @NonNull TeleportCause cause) {
-        if (Math.abs(location.getX()) >= 30000000 || Math.abs(location.getZ()) >= 30000000) {
+        if (!WorldUtil.isValidLocation(location)) {
             return;
         }
         final org.bukkit.Location bukkitLocation =
@@ -322,18 +313,21 @@ public class BukkitPlayer extends PlotPlayer<Player> {
     @Override
     public void playMusic(final @NonNull Location location, final @NonNull ItemType id) {
         if (id == ItemTypes.AIR) {
-            // Let's just stop all the discs because why not?
-            for (final Sound sound : Arrays.stream(Sound.values())
-                    .filter(sound -> sound.name().contains("DISC")).toList()) {
-                player.stopSound(sound);
+            if (PlotSquared.platform().serverVersion()[1] >= 19) {
+                player.stopSound(SoundCategory.MUSIC);
+                return;
             }
-            // this.player.playEffect(BukkitUtil.getLocation(location), Effect.RECORD_PLAY, Material.AIR);
-        } else {
-            // this.player.playEffect(BukkitUtil.getLocation(location), Effect.RECORD_PLAY, id.to(Material.class));
-            this.player.playSound(BukkitUtil.adapt(location),
-                    Sound.valueOf(BukkitAdapter.adapt(id).name()), Float.MAX_VALUE, 1f
-            );
+            // 1.18 and downwards require a specific Sound to stop (even tho the packet does not??)
+            for (final Sound sound : Sound.values()) {
+                if (sound.name().startsWith("MUSIC_DISC")) {
+                    this.player.stopSound(sound, SoundCategory.MUSIC);
+                }
+            }
+            return;
         }
+        this.player.playSound(BukkitUtil.adapt(location), Sound.valueOf(BukkitAdapter.adapt(id).name()),
+                SoundCategory.MUSIC, Float.MAX_VALUE, 1f
+        );
     }
 
     @SuppressWarnings("deprecation") // Needed for Spigot compatibility

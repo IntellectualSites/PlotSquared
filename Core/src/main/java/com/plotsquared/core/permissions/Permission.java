@@ -18,22 +18,21 @@
  */
 package com.plotsquared.core.permissions;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Permission class.
  */
-public enum Permission {
+public enum Permission implements ComponentLike {
 
     //@formatter:off
     //<editor-fold desc="Static Permission">
     PERMISSION_STAR("*"),
     PERMISSION_ADMIN("plots.admin"),
     PERMISSION_ADMIN_AREA_SUDO("plots.admin.area.sudo"),
-    @Deprecated(forRemoval = true, since = "6.2.2")
-    PERMISSION_PROJECTILE_UNOWNED("plots.projectile.unowned"),
-    @Deprecated(forRemoval = true, since = "6.2.2")
-    PERMISSION_PROJECTILE_OTHER("plots.projectile.other"),
     PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS("plots.admin.interact.blockedcommands"),
     PERMISSION_WORLDEDIT_BYPASS("plots.worldedit.bypass"),
     PERMISSION_PLOT_TOGGLE_TITLES("plots.toggle.titles"),
@@ -46,6 +45,7 @@ public enum Permission {
     PERMISSION_ADMIN_ENTRY_FORCEFIELD("plots.admin.entry.forcefield"),
     PERMISSION_ADMIN_COMMANDS_CHATSPY("plots.admin.command.chatspy"),
     PERMISSION_MERGE("plots.merge"),
+    PERMISSION_MERGE_ALL("plots.merge.all"),
     PERMISSION_MERGE_OTHER("plots.merge.other"),
     PERMISSION_MERGE_KEEP_ROAD("plots.merge.keeproad"),
     PERMISSION_ADMIN_CAPS_OTHER("plots.admin.caps.other"),
@@ -59,6 +59,9 @@ public enum Permission {
     PERMISSION_ADMIN_DESTROY_VEHICLE_UNOWNED("plots.admin.vehicle.break.unowned"),
     PERMISSION_ADMIN_DESTROY_VEHICLE_OTHER("plots.admin.vehicle.break.other"),
     PERMISSION_ADMIN_PVE("plots.admin.pve"),
+    PERMISSION_ADMIN_PLACE_VEHICLE_ROAD("plots.admin.vehicle.place.road"),
+    PERMISSION_ADMIN_PLACE_VEHICLE_UNOWNED("plots.admin.vehicle.place.unowned"),
+    PERMISSION_ADMIN_PLACE_VEHICLE_OTHER("plots.admin.vehicle.place.other"),
     PERMISSION_ADMIN_PVP("plots.admin.pvp"),
     PERMISSION_ADMIN_BUILD_ROAD("plots.admin.build.road"),
     PERMISSION_ADMIN_PROJECTILE_ROAD("plots.admin.projectile.road"),
@@ -201,7 +204,8 @@ public enum Permission {
     PERMISSION_RATE("plots.rate"),
     PERMISSION_ADMIN_FLIGHT("plots.admin.flight"),
     PERMISSION_ADMIN_COMPONENTS_OTHER("plots.admin.component.other"),
-    PERMISSION_ADMIN_BYPASS_BORDER("plots.admin.border.bypass");
+    PERMISSION_ADMIN_BYPASS_BORDER("plots.admin.border.bypass"),
+    PERMISSION_ADMIN_BYPASS_ECON("plots.admin.econ.bypass");
     //</editor-fold>
 
     private final String text;
@@ -217,6 +221,11 @@ public enum Permission {
 
     public String format(Object... replacements) {
         return String.format(this.toString(), replacements);
+    }
+
+    @Override
+    public @NotNull Component asComponent() {
+        return Component.text(text);
     }
 
 }

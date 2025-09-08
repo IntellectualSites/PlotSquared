@@ -50,9 +50,11 @@ import com.plotsquared.core.plot.flag.implementations.DenyPortalsFlag;
 import com.plotsquared.core.plot.flag.implementations.DenyTeleportFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.DropProtectionFlag;
+import com.plotsquared.core.plot.flag.implementations.EditSignFlag;
 import com.plotsquared.core.plot.flag.implementations.HangingBreakFlag;
 import com.plotsquared.core.plot.flag.implementations.HangingPlaceFlag;
 import com.plotsquared.core.plot.flag.implementations.HostileInteractFlag;
+import com.plotsquared.core.plot.flag.implementations.InteractionInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.ItemDropFlag;
 import com.plotsquared.core.plot.flag.implementations.KeepInventoryFlag;
 import com.plotsquared.core.plot.flag.implementations.LecternReadBookFlag;
@@ -60,10 +62,13 @@ import com.plotsquared.core.plot.flag.implementations.MiscInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.PlayerInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.PreventCreativeCopyFlag;
 import com.plotsquared.core.plot.flag.implementations.TamedInteractFlag;
+import com.plotsquared.core.plot.flag.implementations.TileDropFlag;
 import com.plotsquared.core.plot.flag.implementations.UntrustedVisitFlag;
+import com.plotsquared.core.plot.flag.implementations.UseFlag;
 import com.plotsquared.core.plot.flag.implementations.VehicleBreakFlag;
 import com.plotsquared.core.plot.flag.implementations.VehicleUseFlag;
 import com.plotsquared.core.plot.flag.implementations.VillagerInteractFlag;
+import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
@@ -74,19 +79,21 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.util.Enums;
 import com.sk89q.worldedit.world.block.BlockType;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import io.papermc.lib.PaperLib;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.data.Waterlogged;
+import org.bukkit.block.Sign;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Boat;
@@ -104,6 +111,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
@@ -148,9 +156,12 @@ import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -174,6 +185,108 @@ public class PlayerEventListener implements Listener {
             Material.WRITABLE_BOOK,
             Material.WRITTEN_BOOK
     );
+
+    /**
+     * The correct EntityType for End Crystal, determined once at class loading time.
+     * Tries END_CRYSTAL first (1.21+), falls back to ENDER_CRYSTAL (1.20.4 and older).
+     */
+    private static final EntityType END_CRYSTAL_ENTITY_TYPE = Objects.requireNonNull(
+            Enums.findByValue(EntityType.class, "END_CRYSTAL", "ENDER_CRYSTAL")
+    );
+
+    private static final Set<String> DYES;
+
+    static {
+        Set<String> mutableDyes = new HashSet<>(Set.of(
+                "WHITE_DYE",
+                "LIGHT_GRAY_DYE",
+                "GRAY_DYE",
+                "BLACK_DYE",
+                "BROWN_DYE",
+                "RED_DYE",
+                "ORANGE_DYE",
+                "YELLOW_DYE",
+                "LIME_DYE",
+                "GREEN_DYE",
+                "CYAN_DYE",
+                "LIGHT_BLUE_DYE",
+                "BLUE_DYE",
+                "PURPLE_DYE",
+                "MAGENTA_DYE",
+                "PINK_DYE",
+                "GLOW_INK_SAC"
+        ));
+        int[] version = PlotSquared.platform().serverVersion();
+        if (version[1] >= 20) {
+            mutableDyes.add("HONEYCOMB");
+        }
+        DYES = Set.copyOf(mutableDyes);
+    }
+
+    private static final Set<String> INTERACTABLE_MATERIALS;
+
+    static {
+        // @formatter:off
+        // "temporary" fix for https://hub.spigotmc.org/jira/browse/SPIGOT-7813
+        // can (and should) be removed when 1.21 support is dropped
+        // List of all interactable 1.21 materials
+        INTERACTABLE_MATERIALS = Material.CHEST.isInteractable() ? null : Set.of(
+                "REDSTONE_ORE", "DEEPSLATE_REDSTONE_ORE", "CHISELED_BOOKSHELF", "DECORATED_POT", "CHEST", "CRAFTING_TABLE",
+                "FURNACE", "JUKEBOX", "OAK_FENCE", "SPRUCE_FENCE", "BIRCH_FENCE", "JUNGLE_FENCE", "ACACIA_FENCE", "CHERRY_FENCE",
+                "DARK_OAK_FENCE", "MANGROVE_FENCE", "BAMBOO_FENCE", "CRIMSON_FENCE", "WARPED_FENCE", "PUMPKIN",
+                "NETHER_BRICK_FENCE", "ENCHANTING_TABLE", "DRAGON_EGG", "ENDER_CHEST", "COMMAND_BLOCK", "BEACON", "ANVIL",
+                "CHIPPED_ANVIL", "DAMAGED_ANVIL", "LIGHT", "REPEATING_COMMAND_BLOCK", "CHAIN_COMMAND_BLOCK", "SHULKER_BOX",
+                "WHITE_SHULKER_BOX", "ORANGE_SHULKER_BOX", "MAGENTA_SHULKER_BOX", "LIGHT_BLUE_SHULKER_BOX", "YELLOW_SHULKER_BOX",
+                "LIME_SHULKER_BOX", "PINK_SHULKER_BOX", "GRAY_SHULKER_BOX", "LIGHT_GRAY_SHULKER_BOX", "CYAN_SHULKER_BOX",
+                "PURPLE_SHULKER_BOX", "BLUE_SHULKER_BOX", "BROWN_SHULKER_BOX", "GREEN_SHULKER_BOX", "RED_SHULKER_BOX",
+                "BLACK_SHULKER_BOX", "REPEATER", "COMPARATOR", "HOPPER", "DISPENSER", "DROPPER", "LECTERN", "LEVER",
+                "DAYLIGHT_DETECTOR", "TRAPPED_CHEST", "TNT", "NOTE_BLOCK", "STONE_BUTTON", "POLISHED_BLACKSTONE_BUTTON",
+                "OAK_BUTTON", "SPRUCE_BUTTON", "BIRCH_BUTTON", "JUNGLE_BUTTON", "ACACIA_BUTTON", "CHERRY_BUTTON",
+                "DARK_OAK_BUTTON", "MANGROVE_BUTTON", "BAMBOO_BUTTON", "CRIMSON_BUTTON", "WARPED_BUTTON", "IRON_DOOR", "OAK_DOOR",
+                "SPRUCE_DOOR", "BIRCH_DOOR", "JUNGLE_DOOR", "ACACIA_DOOR", "CHERRY_DOOR", "DARK_OAK_DOOR", "MANGROVE_DOOR",
+                "BAMBOO_DOOR", "CRIMSON_DOOR", "WARPED_DOOR", "COPPER_DOOR", "EXPOSED_COPPER_DOOR", "WEATHERED_COPPER_DOOR",
+                "OXIDIZED_COPPER_DOOR", "WAXED_COPPER_DOOR", "WAXED_EXPOSED_COPPER_DOOR", "WAXED_WEATHERED_COPPER_DOOR",
+                "WAXED_OXIDIZED_COPPER_DOOR", "IRON_TRAPDOOR", "OAK_TRAPDOOR", "SPRUCE_TRAPDOOR", "BIRCH_TRAPDOOR",
+                "JUNGLE_TRAPDOOR", "ACACIA_TRAPDOOR", "CHERRY_TRAPDOOR", "DARK_OAK_TRAPDOOR", "MANGROVE_TRAPDOOR",
+                "BAMBOO_TRAPDOOR", "CRIMSON_TRAPDOOR", "WARPED_TRAPDOOR", "COPPER_TRAPDOOR", "EXPOSED_COPPER_TRAPDOOR",
+                "WEATHERED_COPPER_TRAPDOOR", "OXIDIZED_COPPER_TRAPDOOR", "WAXED_COPPER_TRAPDOOR", "WAXED_EXPOSED_COPPER_TRAPDOOR",
+                "WAXED_WEATHERED_COPPER_TRAPDOOR", "WAXED_OXIDIZED_COPPER_TRAPDOOR", "OAK_FENCE_GATE", "SPRUCE_FENCE_GATE",
+                "BIRCH_FENCE_GATE", "JUNGLE_FENCE_GATE", "ACACIA_FENCE_GATE", "CHERRY_FENCE_GATE", "DARK_OAK_FENCE_GATE",
+                "MANGROVE_FENCE_GATE", "BAMBOO_FENCE_GATE", "CRIMSON_FENCE_GATE", "WARPED_FENCE_GATE", "STRUCTURE_BLOCK",
+                "JIGSAW", "OAK_SIGN", "SPRUCE_SIGN", "BIRCH_SIGN", "JUNGLE_SIGN", "ACACIA_SIGN", "CHERRY_SIGN", "DARK_OAK_SIGN",
+                "MANGROVE_SIGN", "BAMBOO_SIGN", "CRIMSON_SIGN", "WARPED_SIGN", "OAK_HANGING_SIGN", "SPRUCE_HANGING_SIGN",
+                "BIRCH_HANGING_SIGN", "JUNGLE_HANGING_SIGN", "ACACIA_HANGING_SIGN", "CHERRY_HANGING_SIGN",
+                "DARK_OAK_HANGING_SIGN", "MANGROVE_HANGING_SIGN", "BAMBOO_HANGING_SIGN", "CRIMSON_HANGING_SIGN",
+                "WARPED_HANGING_SIGN", "CAKE", "WHITE_BED", "ORANGE_BED", "MAGENTA_BED", "LIGHT_BLUE_BED", "YELLOW_BED",
+                "LIME_BED", "PINK_BED", "GRAY_BED", "LIGHT_GRAY_BED", "CYAN_BED", "PURPLE_BED", "BLUE_BED", "BROWN_BED",
+                "GREEN_BED", "RED_BED", "BLACK_BED", "CRAFTER", "BREWING_STAND", "CAULDRON", "FLOWER_POT", "LOOM", "COMPOSTER",
+                "BARREL", "SMOKER", "BLAST_FURNACE", "CARTOGRAPHY_TABLE", "FLETCHING_TABLE", "GRINDSTONE", "SMITHING_TABLE",
+                "STONECUTTER", "BELL", "CAMPFIRE", "SOUL_CAMPFIRE", "BEE_NEST", "BEEHIVE", "RESPAWN_ANCHOR", "CANDLE",
+                "WHITE_CANDLE", "ORANGE_CANDLE", "MAGENTA_CANDLE", "LIGHT_BLUE_CANDLE", "YELLOW_CANDLE", "LIME_CANDLE",
+                "PINK_CANDLE", "GRAY_CANDLE", "LIGHT_GRAY_CANDLE", "CYAN_CANDLE", "PURPLE_CANDLE", "BLUE_CANDLE", "BROWN_CANDLE",
+                "GREEN_CANDLE", "RED_CANDLE", "BLACK_CANDLE", "VAULT", "MOVING_PISTON", "REDSTONE_WIRE", "OAK_WALL_SIGN",
+                "SPRUCE_WALL_SIGN", "BIRCH_WALL_SIGN", "ACACIA_WALL_SIGN", "CHERRY_WALL_SIGN", "JUNGLE_WALL_SIGN",
+                "DARK_OAK_WALL_SIGN", "MANGROVE_WALL_SIGN", "BAMBOO_WALL_SIGN", "OAK_WALL_HANGING_SIGN",
+                "SPRUCE_WALL_HANGING_SIGN", "BIRCH_WALL_HANGING_SIGN", "ACACIA_WALL_HANGING_SIGN",
+                "CHERRY_WALL_HANGING_SIGN", "JUNGLE_WALL_HANGING_SIGN", "DARK_OAK_WALL_HANGING_SIGN",
+                "MANGROVE_WALL_HANGING_SIGN", "CRIMSON_WALL_HANGING_SIGN", "WARPED_WALL_HANGING_SIGN", "BAMBOO_WALL_HANGING_SIGN",
+                "WATER_CAULDRON", "LAVA_CAULDRON", "POWDER_SNOW_CAULDRON", "POTTED_TORCHFLOWER", "POTTED_OAK_SAPLING",
+                "POTTED_SPRUCE_SAPLING", "POTTED_BIRCH_SAPLING", "POTTED_JUNGLE_SAPLING", "POTTED_ACACIA_SAPLING",
+                "POTTED_CHERRY_SAPLING", "POTTED_DARK_OAK_SAPLING", "POTTED_MANGROVE_PROPAGULE", "POTTED_FERN",
+                "POTTED_DANDELION", "POTTED_POPPY", "POTTED_BLUE_ORCHID", "POTTED_ALLIUM", "POTTED_AZURE_BLUET",
+                "POTTED_RED_TULIP", "POTTED_ORANGE_TULIP", "POTTED_WHITE_TULIP", "POTTED_PINK_TULIP", "POTTED_OXEYE_DAISY",
+                "POTTED_CORNFLOWER", "POTTED_LILY_OF_THE_VALLEY", "POTTED_WITHER_ROSE", "POTTED_RED_MUSHROOM",
+                "POTTED_BROWN_MUSHROOM", "POTTED_DEAD_BUSH", "POTTED_CACTUS", "POTTED_BAMBOO", "SWEET_BERRY_BUSH",
+                "CRIMSON_WALL_SIGN", "WARPED_WALL_SIGN", "POTTED_CRIMSON_FUNGUS", "POTTED_WARPED_FUNGUS", "POTTED_CRIMSON_ROOTS",
+                "POTTED_WARPED_ROOTS", "CANDLE_CAKE", "WHITE_CANDLE_CAKE", "ORANGE_CANDLE_CAKE", "MAGENTA_CANDLE_CAKE",
+                "LIGHT_BLUE_CANDLE_CAKE", "YELLOW_CANDLE_CAKE", "LIME_CANDLE_CAKE", "PINK_CANDLE_CAKE", "GRAY_CANDLE_CAKE",
+                "LIGHT_GRAY_CANDLE_CAKE", "CYAN_CANDLE_CAKE", "PURPLE_CANDLE_CAKE", "BLUE_CANDLE_CAKE", "BROWN_CANDLE_CAKE",
+                "GREEN_CANDLE_CAKE", "RED_CANDLE_CAKE", "BLACK_CANDLE_CAKE", "CAVE_VINES", "CAVE_VINES_PLANT",
+                "POTTED_AZALEA_BUSH", "POTTED_FLOWERING_AZALEA_BUSH"
+        );
+        // @formatter:on
+    }
+
     private final EventDispatcher eventDispatcher;
     private final WorldEdit worldEdit;
     private final PlotAreaManager plotAreaManager;
@@ -206,6 +319,53 @@ public class PlayerEventListener implements Listener {
         this.plotListener = plotListener;
     }
 
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    public void onBlockBreak(final BlockBreakEvent event) {
+        Location location = BukkitUtil.adapt(event.getBlock().getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = area.getPlot(location);
+        if (plot != null) {
+            event.setDropItems(plot.getFlag(TileDropFlag.class));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPlayerDyeSign(PlayerInteractEvent event) {
+        ItemStack itemStack = event.getItem();
+        if (itemStack == null) {
+            return;
+        }
+        Block block = event.getClickedBlock();
+        if (block != null && block.getState() instanceof Sign) {
+            if (DYES.contains(itemStack.getType().toString())) {
+                Location location = BukkitUtil.adapt(block.getLocation());
+                PlotArea area = location.getPlotArea();
+                if (area == null) {
+                    return;
+                }
+                Plot plot = location.getOwnedPlot();
+                if (plot == null) {
+                    if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, EditSignFlag.class, false)
+                            && !event.getPlayer().hasPermission(Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString())) {
+                        event.setCancelled(true);
+                    }
+                    return;
+                }
+                if (plot.isAdded(event.getPlayer().getUniqueId())) {
+                    return; // allow for added players
+                }
+                if (!plot.getFlag(EditSignFlag.class)
+                        && !event.getPlayer().hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString())) {
+                    plot.debug(event.getPlayer().getName() + " could not color the sign because of edit-sign = false");
+                    event.setCancelled(true);
+                }
+            }
+        }
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void onEffect(@NonNull EntityPotionEffectEvent event) {
         if (Settings.Enabled_Components.DISABLE_BEACON_EFFECT_OVERFLOW ||
@@ -231,7 +391,7 @@ public class PlayerEventListener implements Listener {
 
     @EventHandler
     public void onVehicleEntityCollision(VehicleEntityCollisionEvent e) {
-        if (e.getVehicle().getType() == EntityType.BOAT) {
+        if (e.getVehicle() instanceof Boat) {
             Location location = BukkitUtil.adapt(e.getEntity().getLocation());
             if (location.isPlotArea()) {
                 if (e.getEntity() instanceof Player) {
@@ -272,8 +432,7 @@ public class PlayerEventListener implements Listener {
         Plot plot = plotPlayer.getCurrentPlot();
         // Check WorldEdit
         switch (parts[0]) {
-            case "up":
-            case "worldedit:up":
+            case "up", "worldedit:up" -> {
                 if (plot == null || (!plot.isAdded(plotPlayer.getUUID()) && !plotPlayer.hasPermission(
                         Permission.PERMISSION_ADMIN_BUILD_OTHER,
                         true
@@ -281,6 +440,7 @@ public class PlayerEventListener implements Listener {
                     event.setCancelled(true);
                     return;
                 }
+            }
         }
         if (plot == null && !area.isRoadFlags()) {
             return;
@@ -368,6 +528,7 @@ public class PlayerEventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @SuppressWarnings("deprecation") // Paper deprecation
     public void onConnect(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
         PlotSquared.platform().playerManager().removePlayer(player.getUniqueId());
@@ -387,22 +548,28 @@ public class PlayerEventListener implements Listener {
         // Delayed
 
         // Async
-        TaskManager.runTaskLaterAsync(() -> {
-            if (!player.hasPlayedBefore() && player.isOnline()) {
-                player.saveData();
-            }
-            this.eventDispatcher.doJoinTask(pp);
-        }, TaskTime.seconds(1L));
+        TaskManager.runTaskLaterAsync(
+                () -> {
+                    if (!player.hasPlayedBefore() && player.isOnline()) {
+                        player.saveData();
+                    }
+                    this.eventDispatcher.doJoinTask(pp);
+                }, TaskTime.seconds(1L)
+        );
 
         if (pp.hasPermission(Permission.PERMISSION_ADMIN_UPDATE_NOTIFICATION.toString()) && Settings.Enabled_Components.UPDATE_NOTIFICATIONS
                 && PremiumVerification.isPremium() && UpdateUtility.hasUpdate) {
             Caption boundary = TranslatableCaption.of("update.update_boundary");
             Caption updateNotification = TranslatableCaption.of("update.update_notification");
-            Template internalVersion = Template.of("p2version", UpdateUtility.internalVersion.versionString());
-            Template spigotVersion = Template.of("spigotversion", UpdateUtility.spigotVersion);
-            Template downloadUrl = Template.of("downloadurl", "https://www.spigotmc.org/resources/77506/updates");
             pp.sendMessage(boundary);
-            pp.sendMessage(updateNotification, internalVersion, spigotVersion, downloadUrl);
+            pp.sendMessage(
+                    updateNotification,
+                    TagResolver.builder()
+                            .tag("p2version", Tag.inserting(Component.text(UpdateUtility.internalVersion.versionString())))
+                            .tag("spigotversion", Tag.inserting(Component.text(UpdateUtility.spigotVersion)))
+                            .tag("downloadurl", Tag.preProcessParsed("https://www.spigotmc.org/resources/77506/updates"))
+                            .build()
+            );
             pp.sendMessage(boundary);
         }
     }
@@ -443,18 +610,24 @@ public class PlayerEventListener implements Listener {
                     return;
                 }
                 Plot plot = area.getPlot(location);
-                if (plot != null) {
+                if (plot != null && !plot.equals(lastPlot)) {
                     final boolean result = DenyTeleportFlag.allowsTeleport(pp, plot);
                     // there is one possibility to still allow teleportation:
                     // to is identical to the plot's home location, and untrusted-visit is true
                     // i.e. untrusted-visit can override deny-teleport
                     // this is acceptable, because otherwise it wouldn't make sense to have both flags set
-                    if (!result && !(plot.getFlag(UntrustedVisitFlag.class) && plot
+                    if (result || (plot.getFlag(UntrustedVisitFlag.class) && plot
                             .getHomeSynchronous()
                             .equals(BukkitUtil.adaptComplete(to)))) {
+                        // returns false if the player is not allowed to enter the plot (if they are denied, for example)
+                        // don't let the move event cancel the entry after teleport, but rather catch and cancel early (#4647)
+                        if (!plotListener.plotEntry(pp, plot)) {
+                            event.setCancelled(true);
+                        }
+                    } else {
                         pp.sendMessage(
                                 TranslatableCaption.of("deny.no_enter"),
-                                Template.of("plot", plot.toString())
+                                TagResolver.resolver("plot", Tag.inserting(Component.text(plot.toString())))
                         );
                         event.setCancelled(true);
                     }
@@ -462,6 +635,19 @@ public class PlayerEventListener implements Listener {
             }
         }
         playerMove(event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onWorldChanged(PlayerChangedWorldEvent event) {
+        Player player = event.getPlayer();
+        BukkitPlayer pp = BukkitUtil.adapt(player);
+        if (this.worldEdit != null) {
+            if (!pp.hasPermission(Permission.PERMISSION_WORLDEDIT_BYPASS)) {
+                if (pp.getAttribute("worldedit")) {
+                    pp.removeAttribute("worldedit");
+                }
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -567,10 +753,14 @@ public class PlayerEventListener implements Listener {
             if (now == null) {
                 try (final MetaDataAccess<Boolean> kickAccess =
                              pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
-                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(false)) {
+                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(
+                            false)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
-                                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_EXIT_DENIED))
+                                TagResolver.resolver(
+                                        "node",
+                                        Tag.inserting(Permission.PERMISSION_ADMIN_EXIT_DENIED)
+                                )
                         );
                         this.tmpTeleport = false;
                         if (lastPlot.equals(BukkitUtil.adapt(from).getPlot())) {
@@ -588,7 +778,7 @@ public class PlayerEventListener implements Listener {
             } else if (!plotListener.plotEntry(pp, now) && this.tmpTeleport) {
                 pp.sendMessage(
                         TranslatableCaption.of("deny.no_enter"),
-                        Template.of("plot", now.toString())
+                        TagResolver.resolver("plot", Tag.inserting(Component.text(now.toString())))
                 );
                 this.tmpTeleport = false;
                 to.setX(from.getBlockX());
@@ -598,7 +788,7 @@ public class PlayerEventListener implements Listener {
                 this.tmpTeleport = true;
                 return;
             }
-            int border = area.getBorder();
+            int border = area.getBorder(true);
             int x1;
             if (x2 > border && this.tmpTeleport) {
                 if (!pp.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
@@ -657,10 +847,14 @@ public class PlayerEventListener implements Listener {
             if (plot == null) {
                 try (final MetaDataAccess<Boolean> kickAccess =
                              pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
-                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(false)) {
+                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(
+                            false)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
-                                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_EXIT_DENIED))
+                                TagResolver.resolver(
+                                        "node",
+                                        Tag.inserting(Permission.PERMISSION_ADMIN_EXIT_DENIED)
+                                )
                         );
                         this.tmpTeleport = false;
                         if (lastPlot.equals(BukkitUtil.adapt(from).getPlot())) {
@@ -678,7 +872,7 @@ public class PlayerEventListener implements Listener {
             } else if (!plotListener.plotEntry(pp, plot) && this.tmpTeleport) {
                 pp.sendMessage(
                         TranslatableCaption.of("deny.no_enter"),
-                        Template.of("plot", plot.toString())
+                        TagResolver.resolver("plot", Tag.inserting(Component.text(plot.toString())))
                 );
                 this.tmpTeleport = false;
                 player.teleport(from);
@@ -689,7 +883,7 @@ public class PlayerEventListener implements Listener {
                 this.tmpTeleport = true;
                 return;
             }
-            int border = area.getBorder();
+            int border = area.getBorder(true);
             int z1;
             if (z2 > border && this.tmpTeleport) {
                 if (!pp.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_BORDER)) {
@@ -720,6 +914,7 @@ public class PlayerEventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
+    @SuppressWarnings("deprecation") // Paper deprecation
     public void onChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled()) {
             return;
@@ -762,81 +957,38 @@ public class PlayerEventListener implements Listener {
         PlotId id = plot.getId();
         String worldName = plot.getWorldName();
         Caption msg = TranslatableCaption.of("chat.plot_chat_format");
-        Template msgTemplate;
-        Template worldNameTemplate = Template.of("world", worldName);
-        Template plotTemplate = Template.of("plot_id", id.toString());
-        Template senderTemplate = Template.of("sender", sender);
-        // If we do/don't want colour, we need to be careful about how to go about it, as players could attempt either <gold></gold> or &6 etc.
-        // In both cases, we want to use a Component Template to ensure that the player cannot use any placeholders in their message on purpose
-        //  or accidentally, as component templates are done at the end. We also need to deserialize from legacy color codes to a Component if
-        //  allowing colour.
+        TagResolver.Builder builder = TagResolver.builder();
+        builder.tag("world", Tag.inserting(Component.text(worldName)));
+        builder.tag("plot_id", Tag.inserting(Component.text(id.toString())));
+        builder.tag("sender", Tag.inserting(Component.text(sender)));
         if (plotPlayer.hasPermission("plots.chat.color")) {
-            msgTemplate = Template
-                    .of(
-                            "msg",
-                            BukkitUtil.LEGACY_COMPONENT_SERIALIZER.deserialize(ChatColor.translateAlternateColorCodes(
-                                    '&',
-                                    message
-                            ))
-                    );
+            builder.tag(
+                    "msg", Tag.inserting(MiniMessage.miniMessage().deserialize(
+                            message,
+                            TagResolver.resolver(
+                                    StandardTags.color(), StandardTags.gradient(),
+                                    StandardTags.rainbow(), StandardTags.decorations()
+                            )
+                    ))
+            );
         } else {
-            msgTemplate = Template.of("msg", BukkitUtil.MINI_MESSAGE.deserialize(
-                    ChatColor.stripColor(BukkitUtil.LEGACY_COMPONENT_SERIALIZER.serialize(Component.text(message)))));
+            builder.tag("msg", Tag.inserting(Component.text(message)));
         }
         for (PlotPlayer<?> receiver : plotRecipients) {
-            receiver.sendMessage(msg, worldNameTemplate, msgTemplate, plotTemplate, senderTemplate);
+            receiver.sendMessage(msg, builder.build());
         }
         if (!spies.isEmpty()) {
             Caption spymsg = TranslatableCaption.of("chat.plot_chat_spy_format");
-            Template plotidTemplate = Template.of("plot_id", id.getX() + ";" + id.getY());
-            Template spysenderTemplate = Template.of("sender", sender);
-            Template spymessageTemplate = Template.of("msg", Component.text(message));
             for (PlotPlayer<?> player : spies) {
-                player.sendMessage(spymsg, worldNameTemplate, plotidTemplate, spysenderTemplate, spymessageTemplate);
+                player.sendMessage(spymsg, builder.tag("message", Tag.inserting(Component.text(message))).build());
             }
         }
         if (Settings.Chat.LOG_PLOTCHAT_TO_CONSOLE) {
             Caption spymsg = TranslatableCaption.of("chat.plot_chat_spy_format");
-            Template plotidTemplate = Template.of("plot_id", id.getX() + ";" + id.getY());
-            Template spysenderTemplate = Template.of("sender", sender);
-            Template spymessageTemplate = Template.of("msg", Component.text(message));
-            ConsolePlayer.getConsole().sendMessage(spymsg, worldNameTemplate, plotidTemplate, spysenderTemplate,
-                    spymessageTemplate
+            ConsolePlayer.getConsole().sendMessage(
+                    spymsg,
+                    builder.tag("message", Tag.inserting(Component.text(message))).build()
             );
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onWorldChanged(PlayerChangedWorldEvent event) {
-        Player player = event.getPlayer();
-        BukkitPlayer pp = BukkitUtil.adapt(player);
-        // Delete last location
-        Plot plot;
-        try (final MetaDataAccess<Plot> lastPlotAccess =
-                     pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
-            plot = lastPlotAccess.remove();
-        }
-        try (final MetaDataAccess<Location> lastLocationAccess =
-                     pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
-            lastLocationAccess.remove();
-        }
-        if (plot != null) {
-            plotListener.plotExit(pp, plot);
-        }
-        if (this.worldEdit != null) {
-            if (!pp.hasPermission(Permission.PERMISSION_WORLDEDIT_BYPASS)) {
-                if (pp.getAttribute("worldedit")) {
-                    pp.removeAttribute("worldedit");
-                }
-            }
-        }
-        Location location = pp.getLocation();
-        PlotArea area = location.getPlotArea();
-        if (location.isPlotArea()) {
-            plot = location.getPlot();
-            if (plot != null) {
-                plotListener.plotEntry(pp, plot);
-            }
         }
     }
 
@@ -945,7 +1097,10 @@ public class PlayerEventListener implements Listener {
             if (!pp.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_ROAD)) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_ROAD))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_INTERACT_ROAD)
+                        )
                 );
                 cancelled = true;
             }
@@ -953,7 +1108,10 @@ public class PlayerEventListener implements Listener {
             if (!pp.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_UNOWNED)) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_UNOWNED))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_INTERACT_UNOWNED)
+                        )
                 );
                 cancelled = true;
             }
@@ -963,7 +1121,10 @@ public class PlayerEventListener implements Listener {
                 if (!pp.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_OTHER))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_INTERACT_OTHER)
+                            )
                     );
                     cancelled = true;
                 }
@@ -1002,7 +1163,10 @@ public class PlayerEventListener implements Listener {
             )) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_ROAD))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_INTERACT_ROAD)
+                        )
                 );
                 e.setCancelled(true);
             }
@@ -1018,7 +1182,10 @@ public class PlayerEventListener implements Listener {
                 if (!pp.hasPermission("plots.admin.interact.unowned")) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_UNOWNED))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_INTERACT_UNOWNED)
+                            )
                     );
                     e.setCancelled(true);
                 }
@@ -1033,7 +1200,10 @@ public class PlayerEventListener implements Listener {
                 if (!pp.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_OTHER))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_INTERACT_OTHER)
+                            )
                     );
                     e.setCancelled(true);
                     plot.debug(pp.getName() + " could not interact with " + entity.getType()
@@ -1044,6 +1214,7 @@ public class PlayerEventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
+    @SuppressWarnings("deprecation") // Paper deprecation
     public void onCancelledInteract(PlayerInteractEvent event) {
         if (event.isCancelled() && event.getAction() == Action.RIGHT_CLICK_AIR) {
             Player player = event.getPlayer();
@@ -1097,18 +1268,20 @@ public class PlayerEventListener implements Listener {
         Location location = BukkitUtil.adapt(block.getLocation());
         Action action = event.getAction();
         switch (action) {
-            case PHYSICAL: {
+            case PHYSICAL -> {
                 eventType = PlayerBlockEventType.TRIGGER_PHYSICAL;
                 blocktype1 = BukkitAdapter.asBlockType(block.getType());
-                break;
             }
+
             //todo rearrange the right click code. it is all over the place.
-            case RIGHT_CLICK_BLOCK: {
+            case RIGHT_CLICK_BLOCK -> {
                 Material blockType = block.getType();
                 eventType = PlayerBlockEventType.INTERACT_BLOCK;
                 blocktype1 = BukkitAdapter.asBlockType(block.getType());
 
-                if (blockType.isInteractable()) {
+                if (INTERACTABLE_MATERIALS != null
+                        ? INTERACTABLE_MATERIALS.contains(blockType.name())
+                        : blockType.isInteractable()) {
                     if (!player.isSneaking()) {
                         break;
                     }
@@ -1125,21 +1298,16 @@ public class PlayerEventListener implements Listener {
 
                 // in the following, lb needs to have the material of the item in hand i.e. type
                 switch (type.toString()) {
-                    case "REDSTONE":
-                    case "STRING":
-                    case "PUMPKIN_SEEDS":
-                    case "MELON_SEEDS":
-                    case "COCOA_BEANS":
-                    case "WHEAT_SEEDS":
-                    case "BEETROOT_SEEDS":
-                    case "SWEET_BERRIES":
-                    case "GLOW_BERRIES":
+                    case "REDSTONE", "STRING", "PUMPKIN_SEEDS", "MELON_SEEDS", "COCOA_BEANS", "WHEAT_SEEDS", "BEETROOT_SEEDS",
+                         "SWEET_BERRIES", "GLOW_BERRIES" -> {
                         return;
-                    default:
+                    }
+                    default -> {
                         //eventType = PlayerBlockEventType.PLACE_BLOCK;
                         if (type.isBlock()) {
                             return;
                         }
+                    }
                 }
                 if (PaperLib.isPaper()) {
                     if (MaterialTags.SPAWN_EGGS.isTagged(type) || Material.EGG.equals(type)) {
@@ -1153,14 +1321,25 @@ public class PlayerEventListener implements Listener {
                     }
                 }
                 if (type.isEdible()) {
-                    //Allow all players to eat while also allowing the block place event ot be fired
+                    //Allow all players to eat while also allowing the block place event to be fired
                     return;
                 }
+                // Process creature spawning of armor stands & end crystals here if spawned by the player in order to be able to
+                // reset the player's hand item if spawning needs to be cancelled.
+                if (type == Material.ARMOR_STAND || type == Material.END_CRYSTAL) {
+                    Plot plot = location.getOwnedPlotAbs();
+                    EntityType entityType = type == Material.ARMOR_STAND ? EntityType.ARMOR_STAND : END_CRYSTAL_ENTITY_TYPE;
+                    if (BukkitEntityUtil.checkEntity(entityType, plot)) {
+                        event.setCancelled(true);
+                        break;
+                    }
+                }
+                // Continue with normal place event checks
                 if (type == Material.ARMOR_STAND) {
                     location = BukkitUtil.adapt(block.getRelative(event.getBlockFace()).getLocation());
                     eventType = PlayerBlockEventType.PLACE_MISC;
                 }
-                if (Tag.ITEMS_BOATS.isTagged(type) || MINECARTS.contains(type)) {
+                if (org.bukkit.Tag.ITEMS_BOATS.isTagged(type) || MINECARTS.contains(type)) {
                     eventType = PlayerBlockEventType.PLACE_VEHICLE;
                     break;
                 }
@@ -1172,9 +1351,8 @@ public class PlayerEventListener implements Listener {
                     eventType = PlayerBlockEventType.READ;
                     break;
                 }
-                break;
             }
-            case LEFT_CLICK_BLOCK: {
+            case LEFT_CLICK_BLOCK -> {
                 Material blockType = block.getType();
 
                 // todo: when the code above is rearranged, it would be great to beautify this as well.
@@ -1185,10 +1363,10 @@ public class PlayerEventListener implements Listener {
 
                 eventType = PlayerBlockEventType.INTERACT_BLOCK;
                 blocktype1 = BukkitAdapter.asBlockType(block.getType());
-                break;
             }
-            default:
+            default -> {
                 return;
+            }
         }
         if (this.worldEdit != null && pp.getAttribute("worldedit")) {
             if (event.getMaterial() == Material.getMaterial(this.worldEdit.getConfiguration().wandItem)) {
@@ -1231,22 +1409,7 @@ public class PlayerEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketEmpty(PlayerBucketEmptyEvent event) {
-        BlockFace bf = event.getBlockFace();
-        // Note: a month after Bukkit 1.14.4 released, they added the API method
-        // PlayerBucketEmptyEvent#getBlock(), which returns the block the
-        // bucket contents is going to be placed at. Currently we determine this
-        // block ourselves to retain compatibility with 1.13.
-        final Block block;
-        // if the block can be waterlogged, the event might waterlog the block
-        // sometimes
-        if (event.getBlockClicked().getBlockData() instanceof Waterlogged waterlogged
-                && !waterlogged.isWaterlogged() && event.getBucket() != Material.LAVA_BUCKET) {
-            block = event.getBlockClicked();
-        } else {
-            block = event.getBlockClicked().getLocation()
-                    .add(bf.getModX(), bf.getModY(), bf.getModZ())
-                    .getBlock();
-        }
+        final Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
@@ -1254,13 +1417,23 @@ public class PlayerEventListener implements Listener {
         }
         BukkitPlayer pp = BukkitUtil.adapt(event.getPlayer());
         Plot plot = area.getPlot(location);
+        final List<BlockTypeWrapper> use =
+                Optional.ofNullable(plot).map(p -> p.getFlag(UseFlag.class)).orElse(area.isRoadFlags() ?
+                        area.getFlag(UseFlag.class) : Collections.emptyList());
+        BlockType type = BukkitAdapter.asBlockType(block.getType());
+        for (final BlockTypeWrapper blockTypeWrapper : use) {
+            if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper
+                    .accepts(type)) {
+                return;
+            }
+        }
         if (plot == null) {
             if (pp.hasPermission(Permission.PERMISSION_ADMIN_BUILD_ROAD)) {
                 return;
             }
             pp.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
+                    TagResolver.resolver("node", Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_ROAD))
             );
             event.setCancelled(true);
         } else if (!plot.hasOwner()) {
@@ -1269,7 +1442,10 @@ public class PlayerEventListener implements Listener {
             }
             pp.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_UNOWNED))
+                    TagResolver.resolver(
+                            "node",
+                            Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_UNOWNED)
+                    )
             );
             event.setCancelled(true);
         } else if (!plot.isAdded(pp.getUUID())) {
@@ -1278,7 +1454,10 @@ public class PlayerEventListener implements Listener {
             }
             pp.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
+                    TagResolver.resolver(
+                            "node",
+                            Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_OTHER)
+                    )
             );
             event.setCancelled(true);
         } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
@@ -1319,13 +1498,23 @@ public class PlayerEventListener implements Listener {
         Player player = event.getPlayer();
         BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
         Plot plot = area.getPlot(location);
+        final List<BlockTypeWrapper> use =
+                Optional.ofNullable(plot).map(p -> p.getFlag(UseFlag.class)).orElse(area.isRoadFlags() ?
+                        area.getFlag(UseFlag.class) : Collections.emptyList());
+        BlockType type = BukkitAdapter.asBlockType(blockClicked.getType());
+        for (final BlockTypeWrapper blockTypeWrapper : use) {
+            if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper
+                    .accepts(type)) {
+                return;
+            }
+        }
         if (plot == null) {
             if (plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_BUILD_ROAD)) {
                 return;
             }
             plotPlayer.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
+                    TagResolver.resolver("node", Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_ROAD))
             );
             event.setCancelled(true);
         } else if (!plot.hasOwner()) {
@@ -1334,7 +1523,10 @@ public class PlayerEventListener implements Listener {
             }
             plotPlayer.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_UNOWNED))
+                    TagResolver.resolver(
+                            "node",
+                            Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_UNOWNED)
+                    )
             );
             event.setCancelled(true);
         } else if (!plot.isAdded(plotPlayer.getUUID())) {
@@ -1343,7 +1535,10 @@ public class PlayerEventListener implements Listener {
             }
             plotPlayer.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
+                    TagResolver.resolver(
+                            "node",
+                            Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_OTHER)
+                    )
             );
             event.setCancelled(true);
         } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
@@ -1375,7 +1570,10 @@ public class PlayerEventListener implements Listener {
             if (!pp.hasPermission(Permission.PERMISSION_ADMIN_BUILD_ROAD)) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_ROAD)
+                        )
                 );
                 event.setCancelled(true);
             }
@@ -1384,7 +1582,10 @@ public class PlayerEventListener implements Listener {
                 if (!pp.hasPermission(Permission.PERMISSION_ADMIN_BUILD_UNOWNED)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_UNOWNED))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_UNOWNED)
+                            )
                     );
                     event.setCancelled(true);
                 }
@@ -1395,7 +1596,10 @@ public class PlayerEventListener implements Listener {
                     if (!pp.hasPermission(Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
-                                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
+                                TagResolver.resolver(
+                                        "node",
+                                        Tag.inserting(Permission.PERMISSION_ADMIN_BUILD_OTHER)
+                                )
                         );
                         event.setCancelled(true);
                     }
@@ -1424,7 +1628,10 @@ public class PlayerEventListener implements Listener {
                 if (!pp.hasPermission(Permission.PERMISSION_ADMIN_DESTROY_ROAD)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_ROAD))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_ROAD)
+                            )
                     );
                     event.setCancelled(true);
                 }
@@ -1432,7 +1639,10 @@ public class PlayerEventListener implements Listener {
                 if (!pp.hasPermission(Permission.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_UNOWNED))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_UNOWNED)
+                            )
                     );
                     event.setCancelled(true);
                 }
@@ -1443,7 +1653,10 @@ public class PlayerEventListener implements Listener {
                 if (!pp.hasPermission(Permission.PERMISSION_ADMIN_DESTROY_OTHER)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_OTHER))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_OTHER)
+                            )
                     );
                     event.setCancelled(true);
                     plot.debug(p.getName()
@@ -1464,7 +1677,10 @@ public class PlayerEventListener implements Listener {
                         if (!player.hasPermission(Permission.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
                             player.sendMessage(
                                     TranslatableCaption.of("permission.no_permission_event"),
-                                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_UNOWNED))
+                                    TagResolver.resolver(
+                                            "node",
+                                            Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_UNOWNED)
+                                    )
                             );
                             event.setCancelled(true);
                         }
@@ -1473,7 +1689,10 @@ public class PlayerEventListener implements Listener {
                             if (!player.hasPermission(Permission.PERMISSION_ADMIN_DESTROY_OTHER)) {
                                 player.sendMessage(
                                         TranslatableCaption.of("permission.no_permission_event"),
-                                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_OTHER))
+                                        TagResolver.resolver(
+                                                "node",
+                                                Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_OTHER)
+                                        )
                                 );
                                 event.setCancelled(true);
                                 plot.debug(player.getName()
@@ -1505,7 +1724,10 @@ public class PlayerEventListener implements Listener {
             if (!pp.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_ROAD)) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_ROAD))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_INTERACT_ROAD)
+                        )
                 );
                 event.setCancelled(true);
             }
@@ -1513,7 +1735,10 @@ public class PlayerEventListener implements Listener {
             if (!pp.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_UNOWNED)) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_UNOWNED))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_INTERACT_UNOWNED)
+                        )
                 );
                 event.setCancelled(true);
             }
@@ -1557,6 +1782,11 @@ public class PlayerEventListener implements Listener {
                 return;
             }
 
+            if (EntityCategories.INTERACTION.contains(entityType) && flagContainer
+                    .getFlag(InteractionInteractFlag.class).getValue()) {
+                return;
+            }
+
             if (EntityCategories.VILLAGER.contains(entityType) && flagContainer
                     .getFlag(VillagerInteractFlag.class).getValue()) {
                 return;
@@ -1571,7 +1801,10 @@ public class PlayerEventListener implements Listener {
             if (!pp.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER)) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_OTHER))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_INTERACT_OTHER)
+                        )
                 );
                 event.setCancelled(true);
             }
@@ -1595,7 +1828,10 @@ public class PlayerEventListener implements Listener {
                 )) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_ROAD))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_ROAD)
+                            )
                     );
                     event.setCancelled(true);
                 }
@@ -1604,7 +1840,10 @@ public class PlayerEventListener implements Listener {
                     if (!pp.hasPermission(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_UNOWNED)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
-                                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_UNOWNED))
+                                TagResolver.resolver(
+                                        "node",
+                                        Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_UNOWNED)
+                                )
                         );
                         event.setCancelled(true);
                         return;
@@ -1618,7 +1857,10 @@ public class PlayerEventListener implements Listener {
                     if (!pp.hasPermission(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_OTHER)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
-                                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_OTHER))
+                                TagResolver.resolver(
+                                        "node",
+                                        Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_OTHER)
+                                )
                         );
                         event.setCancelled(true);
                         plot.debug(pp.getName()
@@ -1788,7 +2030,9 @@ public class PlayerEventListener implements Listener {
 
     @EventHandler
     public void onPlayerTakeLecternBook(PlayerTakeLecternBookEvent event) {
-        Location location = BukkitUtil.adapt(event.getPlayer().getLocation());
+        Player player = event.getPlayer();
+        BukkitPlayer pp = BukkitUtil.adapt(player);
+        Location location = pp.getLocation();
         PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
@@ -1800,9 +2044,11 @@ public class PlayerEventListener implements Listener {
             }
             return;
         }
-        if (plot.getFlag(LecternReadBookFlag.class)) {
-            plot.debug(event.getPlayer().getName() + " could not take the book because of lectern-read-book = true");
-            event.setCancelled(true);
+        if (!plot.isAdded(pp.getUUID())) {
+            if (plot.getFlag(LecternReadBookFlag.class)) {
+                plot.debug(event.getPlayer().getName() + " could not take the book because of lectern-read-book = true");
+                event.setCancelled(true);
+            }
         }
     }
 

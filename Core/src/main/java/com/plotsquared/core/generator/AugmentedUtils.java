@@ -27,7 +27,7 @@ import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.queue.AreaBoundDelegateQueueCoordinator;
 import com.plotsquared.core.queue.LocationOffsetDelegateQueueCoordinator;
 import com.plotsquared.core.queue.QueueCoordinator;
-import com.plotsquared.core.queue.ScopedQueueCoordinator;
+import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.plotsquared.core.util.RegionUtil;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BlockState;
@@ -161,34 +161,19 @@ public class AugmentedUtils {
 
             // This queue should not be enqueued as it is simply used to restrict block setting, and then delegate to the
             // actual queue
-            ScopedQueueCoordinator scoped =
-                    new ScopedQueueCoordinator(
+            ZeroedDelegateScopedQueueCoordinator scoped =
+                    new ZeroedDelegateScopedQueueCoordinator(
                             secondaryMask,
                             Location.at(world, blockX, area.getMinGenHeight(), blockZ),
                             Location.at(world, blockX + 15, area.getMaxGenHeight(), blockZ + 15)
                     );
-            generator.generateChunk(scoped, area);
+            generator.generateChunk(scoped, area, true);
             generator.populateChunk(scoped, area);
         }
         if (enqueue) {
             queue.enqueue();
         }
         return generationResult;
-    }
-
-    /**
-     * @deprecated Use {@link AugmentedUtils#generateChunk(String, int, int, QueueCoordinator)} as chunkObject is not required
-     * in the above method
-     */
-    @Deprecated(forRemoval = true, since = "6.8.0")
-    public static boolean generate(
-            @Nullable Object chunkObject,
-            final @NonNull String world,
-            final int chunkX,
-            final int chunkZ,
-            QueueCoordinator queue
-    ) {
-        return generateChunk(world, chunkX, chunkZ, queue);
     }
 
 }

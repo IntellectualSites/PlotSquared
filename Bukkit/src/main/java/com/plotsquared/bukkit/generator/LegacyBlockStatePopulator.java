@@ -26,7 +26,7 @@ import com.plotsquared.core.location.UncheckedWorldLocation;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.queue.QueueCoordinator;
-import com.plotsquared.core.queue.ScopedQueueCoordinator;
+import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.util.SideEffectSet;
 import org.bukkit.Chunk;
@@ -65,7 +65,7 @@ final class LegacyBlockStatePopulator extends BlockPopulator {
         queue.setChunkObject(source);
         Location min = UncheckedWorldLocation.at(world.getName(), chunkMinX, world.getMinHeight(), chunkMinZ);
         Location max = UncheckedWorldLocation.at(world.getName(), chunkMinX + 15, world.getMaxHeight(), chunkMinZ + 15);
-        ScopedQueueCoordinator offsetChunkQueue = new ScopedQueueCoordinator(queue, min, max);
+        ZeroedDelegateScopedQueueCoordinator offsetChunkQueue = new ZeroedDelegateScopedQueueCoordinator(queue, min, max);
         this.plotGenerator.populateChunk(offsetChunkQueue, area);
         queue.enqueue();
     }

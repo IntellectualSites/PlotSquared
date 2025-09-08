@@ -27,7 +27,7 @@ public class ProjectilesFlag extends BooleanFlag<ProjectilesFlag> {
     public static final ProjectilesFlag PROJECTILES_TRUE = new ProjectilesFlag(true);
     public static final ProjectilesFlag PROJECTILES_FALSE = new ProjectilesFlag(false);
 
-    private ProjectilesFlag(boolean value){
+    private ProjectilesFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_projectiles"));
     }
 
