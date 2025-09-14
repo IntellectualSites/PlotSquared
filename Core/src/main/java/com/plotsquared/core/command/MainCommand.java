@@ -35,11 +35,13 @@ import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import gg.kpjm.transientPlots.menus.SelectionMenu;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -55,7 +57,7 @@ import javax.annotation.Nullable;
  * PlotSquared command class.
  */
 @CommandDeclaration(command = "plot",
-        aliases = {"plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap"})
+        aliases = {"plots", "p", "plotsquared"})
 public class MainCommand extends Command {
 
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + MainCommand.class.getSimpleName());
@@ -222,7 +224,6 @@ public class MainCommand extends Command {
             }, new RunnableVal2<>() {
                 @Override
                 public void run(Command cmd, CommandResult result) {
-                    // Post command stuff!?
                 }
             }).thenAccept(result -> {
                 // TODO: Something with the command result
@@ -240,6 +241,11 @@ public class MainCommand extends Command {
             RunnableVal3<Command, Runnable, Runnable> confirm,
             RunnableVal2<Command, CommandResult> whenDone
     ) {
+        if (args.length == 0) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "plotmenu " + player.getUUID().toString());
+            return CompletableFuture.completedFuture(true);
+        }
+
         prepareArguments(new CommandExecutionData(player, args, confirm, whenDone, null))
                 .thenCompose(executionData -> {
                     if (executionData.isEmpty()) {
