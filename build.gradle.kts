@@ -44,12 +44,21 @@ subprojects {
             url = uri("https://jitpack.io")
             content {
                 includeModule("com.github.MilkBowl", "VaultAPI")
+                includeModule("com.github.notKolja", "InjectLib")
             }
         }
 
         maven {
             name = "EngineHub"
             url = uri("https://maven.enginehub.org/repo/")
+        }
+
+        maven {
+            url = uri("https://maven.pkg.github.com/TransientCodes/TransientJobs")
+            credentials {
+                username = project.findProperty("gpr.user") as String?
+                password = project.findProperty("gpr.key") as String?
+            }
         }
     }
 
@@ -69,6 +78,8 @@ subprojects {
         // Tests
         testImplementation("org.junit.jupiter:junit-jupiter:5.13.4")
         testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.4")
+        implementation("gg.kpjm:transientjobs:1.9.5")
+        compileOnly("com.github.notKolja:InjectLib:0.1.3")
     }
 
     plugins.withId("java") {
