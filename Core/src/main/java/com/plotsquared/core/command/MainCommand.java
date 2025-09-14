@@ -35,7 +35,6 @@ import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import gg.kpjm.transientPlots.menus.SelectionMenu;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
