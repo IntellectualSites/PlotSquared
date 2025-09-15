@@ -13,7 +13,7 @@ log4j = "2.19.0"
 
 # Plugins
 worldedit = "7.2.20"
-fawe = "2.13.1"
+fawe = "2.13.2"
 placeholderapi = "2.11.6"
 luckperms = "5.5"
 essentialsx = "2.21.2"
