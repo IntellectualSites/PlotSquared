@@ -3,7 +3,7 @@
 paper = "1.20.4-R0.1-SNAPSHOT"
 guice = "7.0.0"
 spotbugs = "4.9.4"
-checkerqual = "3.50.0"
+checkerqual = "3.51.0"
 gson = "2.10"
 guava = "31.1-jre"
 snakeyaml = "2.0"
@@ -13,7 +13,7 @@ log4j = "2.19.0"
 
 # Plugins
 worldedit = "7.2.20"
-fawe = "2.13.1"
+fawe = "2.13.2"
 placeholderapi = "2.11.6"
 luckperms = "5.5"
 essentialsx = "2.21.2"
