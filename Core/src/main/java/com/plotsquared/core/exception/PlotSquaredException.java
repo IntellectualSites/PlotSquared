@@ -24,7 +24,7 @@ import com.plotsquared.core.configuration.caption.LocaleHolder;
 /**
  * Internal use only. Used to allow adventure captions to be used in an exception
  *
- * @since TODO
+ * @since 7.5.7
  */
 public final class PlotSquaredException extends RuntimeException {
 
