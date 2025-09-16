@@ -34,6 +34,7 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.accessor.PlotAreaAccessor;
 import com.plotsquared.core.permissions.NullPermissionProfile;
 import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.permissions.PermissionProfile;
@@ -87,7 +88,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * The abstract class supporting {@code BukkitPlayer} and {@code SpongePlayer}.
  */
-public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer, LocaleHolder {
+public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer, LocaleHolder, PlotAreaAccessor {
 
     private static final String NON_EXISTENT_CAPTION = "<red>PlotSquared does not recognize the caption: ";
 
@@ -414,6 +415,11 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
             return this.plotAreaManager.getApplicablePlotArea(getLocation());
         }
         return plot.getArea();
+    }
+
+    @Override
+    public PlotArea getArea() {
+        return getApplicablePlotArea();
     }
 
     @Override
