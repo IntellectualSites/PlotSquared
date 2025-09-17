@@ -24,8 +24,6 @@ import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.util.ReflectionUtils;
 import com.sk89q.jnbt.CompoundTag;
-import com.sk89q.jnbt.ListTag;
-import com.sk89q.jnbt.StringTag;
 import com.sk89q.jnbt.Tag;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.adapter.BukkitImplAdapter;
@@ -182,6 +180,13 @@ public class StateWrapper {
             );
             CRAFT_BLOCK_ENTITY_STATE_LOAD_DATA.invoke(blockState, nativeTag);
             if (blockState instanceof Sign sign) {
+                if (!PaperLib.isPaper()) {
+                    if (!PAPER_SIGN_NOTIFIED) {
+                        PAPER_SIGN_NOTIFIED = true;
+                        LOGGER.error("PlotSquared can't populate sign tile entities. To load sign content, use Paper.");
+                    }
+                    return false;
+                }
                 Object text;
                 if ((text = tag.getValue().get("front_text")) != null && text instanceof CompoundTag textTag) {
                     setSignTextHack(sign, textTag, true);
@@ -218,37 +223,32 @@ public class StateWrapper {
         if (text.containsKey("has_glowing_text")) {
             side.setGlowingText(text.getByte("has_glowing_text") == 1);
         }
+        if (!initializeSignHack()) {
+            return;
+        }
+        // TODO: Pre 1.21.5 sign texts are JSON in string tags... somehow support and fix that
         List<Tag> lines = text.getList("messages");
         if (lines != null) {
             for (int i = 0; i < Math.min(lines.size(), 3); i++) {
                 Tag line = lines.get(i);
-                if (line instanceof StringTag stringTag) {
-                    //noinspection deprecation - Paper deprecatiom
-                    side.setLine(i, stringTag.getValue());
-                    continue;
+                Object content = line.getValue();
+                // Minecraft uses mixed lists / arrays in their sign texts. One line can be a complex component, whereas
+                // the following line could simply be a string. Those simpler lines are represented as `{"": ""}` (only in
+                // SNBT those will be shown as a standard string).
+                if (line instanceof CompoundTag compoundTag && compoundTag.getValue().containsKey("")) {
+                    content = compoundTag.getValue().get("");
                 }
-                if (line instanceof ListTag || line instanceof CompoundTag) {
-                    if (!initializeSignHack()) {
-                        continue;
-                    }
-                    // Minecraft uses mixed lists / arrays in their sign texts. One line can be a complex component, whereas
-                    // the following line could simply be a string. Those simpler lines are represented as `{"": ""}` (only in
-                    // SNBT those will be shown as a standard string). Adventure can't parse those, so we handle these lines as
-                    // plaintext lines (can't contain any other extra data either way).
-                    if (line instanceof CompoundTag compoundTag && compoundTag.getValue().containsKey("")) {
-                        //noinspection deprecation - Paper deprecatiom
-                        side.setLine(i, compoundTag.getString(""));
-                        continue;
-                    }
-                    // serializes the line content from JNBT to Gson JSON objects, passes that to adventure and deserializes
-                    // into an adventure component.
-                    BUKKIT_SIGN_SIDE_LINE_SET.invoke(
-                            side, i, GSON_SERIALIZER_DESERIALIZE_TREE.invoke(
-                                    KYORI_GSON_SERIALIZER,
-                                    GSON.toJsonTree(line.getValue())
-                            )
-                    );
-                }
+                // serializes the line content from JNBT to Gson JSON objects, passes that to adventure and deserializes
+                // into an adventure component.
+                // pass all possible types of content into the deserializer (Strings, Compounds, Arrays), even though Strings
+                // could be set directly via Sign#setLine(int, String). The overhead is minimal, the serializer can handle
+                // strings - and we don't have to use the deprecated method.
+                BUKKIT_SIGN_SIDE_LINE_SET.invoke(
+                        side, i, GSON_SERIALIZER_DESERIALIZE_TREE.invoke(
+                                KYORI_GSON_SERIALIZER,
+                                GSON.toJsonTree(content)
+                        )
+                );
             }
         }
     }
@@ -259,13 +259,6 @@ public class StateWrapper {
         }
         if (KYORI_GSON_SERIALIZER != null) {
             return true; // already initialized
-        }
-        if (!PaperLib.isPaper()) {
-            if (!PAPER_SIGN_NOTIFIED) {
-                PAPER_SIGN_NOTIFIED = true;
-                LOGGER.error("Can't populate non-plain sign line. To load modern sign content, use Paper.");
-            }
-            return false;
         }
         try {
             char[] dontObfuscate = new char[]{
@@ -290,7 +283,7 @@ public class StateWrapper {
             return true;
         } catch (Throwable e) {
             FAILED_SIGN_INITIALIZATION = true;
-            LOGGER.error("Failed to initialize sign-hack. Signs populated by schematics might not have their line contents.", e);
+            LOGGER.error("Failed to initialize sign-hack. Signs populated by schematics won't have their line contents.", e);
             return false;
         }
     }
