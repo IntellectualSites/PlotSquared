@@ -21,6 +21,7 @@ package com.plotsquared.core.location;
 import com.intellectualsites.annotations.DoNotUse;
 import com.sk89q.worldedit.math.BlockVector3;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Used internally for generation to reference locations in worlds that "don't exist yet". There is no guarantee that the world
@@ -75,7 +76,7 @@ public final class UncheckedWorldLocation extends Location {
 
     @Override
     @DoNotUse
-    public @NonNull String getWorldName() {
+    public @NonNull @NotNull String getWorldName() {
         return this.worldName;
     }
 

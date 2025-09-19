@@ -21,12 +21,14 @@ package com.plotsquared.core.location;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.accessor.WorldNameAccessor;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.khelekore.prtree.MBR;
 import org.khelekore.prtree.SimpleMBR;
 
@@ -34,7 +36,7 @@ import org.khelekore.prtree.SimpleMBR;
  * An unmodifiable 6-tuple (world,x,y,z,yaw,pitch)
  */
 @SuppressWarnings("unused")
-public sealed class Location extends BlockLoc implements Comparable<Location> permits UncheckedWorldLocation {
+public sealed class Location extends BlockLoc implements Comparable<Location>, WorldNameAccessor permits UncheckedWorldLocation {
 
     private final float yaw;
     private final float pitch;
@@ -213,7 +215,7 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
      *
      * @return World name
      */
-    public @NonNull String getWorldName() {
+    public @NonNull @NotNull String getWorldName() {
         return this.world.getName();
     }
 
