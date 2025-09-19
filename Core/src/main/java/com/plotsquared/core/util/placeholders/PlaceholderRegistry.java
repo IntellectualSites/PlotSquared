@@ -204,6 +204,9 @@ public final class PlaceholderRegistry {
         this.createPlaceholder("currentplot_x", (player, plot) -> Integer.toString(plot.getId().getX()));
         this.createPlaceholder("currentplot_y", (player, plot) -> Integer.toString(plot.getId().getY()));
         this.createPlaceholder("currentplot_xy", (player, plot) -> plot.getId().toString());
+        this.createPlaceholder("currentplot_abs_x", (player, plot) -> Integer.toString(plot.getId().getX()), true);
+        this.createPlaceholder("currentplot_abs_y", (player, plot) -> Integer.toString(plot.getId().getY()), true);
+        this.createPlaceholder("currentplot_abs_xy", (player, plot) -> plot.getId().toString(), true);
         this.createPlaceholder("currentplot_rating", (player, plot) -> {
             if (Double.isNaN(plot.getAverageRating())) {
                 return legacyComponent(TranslatableCaption.of("placeholder.nan"), player);
@@ -253,7 +256,23 @@ public final class PlaceholderRegistry {
             final @NonNull String key,
             final @NonNull BiFunction<PlotPlayer<?>, Plot, String> placeholderFunction
     ) {
-        this.registerPlaceholder(new PlotSpecificPlaceholder(key) {
+        this.createPlaceholder(key, placeholderFunction, false);
+    }
+
+    /**
+     * Create a functional placeholder
+     *
+     * @param key                 Placeholder key
+     * @param placeholderFunction Placeholder generator. Cannot return null
+     * @param requireAbsolute     If the plot given to the placeholder should be the absolute (not base) plot
+     * @since TODO
+     */
+    public void createPlaceholder(
+            final @NonNull String key,
+            final @NonNull BiFunction<PlotPlayer<?>, Plot, String> placeholderFunction,
+            final boolean requireAbsolute
+    ) {
+        this.registerPlaceholder(new PlotSpecificPlaceholder(key, requireAbsolute) {
             @Override
             public @NonNull String getValue(final @NonNull PlotPlayer<?> player, final @NonNull Plot plot) {
                 return placeholderFunction.apply(player, plot);
