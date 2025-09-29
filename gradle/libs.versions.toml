@@ -37,7 +37,7 @@ shadow = "8.3.9"
 grgit = "4.1.1"
 spotless = "7.2.1"
 publish = "0.34.0"
-runPaper = "2.3.1"
+runPaper = "3.0.0"
 
 [libraries]
 # Platform expectations
