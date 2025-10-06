@@ -27,6 +27,7 @@ import com.plotsquared.core.plot.flag.PlotFlag;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -58,7 +59,7 @@ public class SinglePlot extends Plot {
     }
 
     @Override
-    public String getWorldName() {
+    public @NotNull String getWorldName() {
         return getId().toUnderscoreSeparatedString();
     }
 

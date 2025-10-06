@@ -25,6 +25,8 @@ import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.CaptionHolder;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.accessor.PlotAreaAccessor;
+import com.plotsquared.core.accessor.WorldNameAccessor;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -56,6 +58,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -150,8 +153,14 @@ public class ListCmd extends SubCommand {
             page = 0;
         }
 
-        String world = player.getCurrentPlot().getWorldName();
-        PlotArea area = player.getCurrentPlot().getArea();
+        String world = Optional
+                .ofNullable(player.getCurrentPlot())
+                .map(WorldNameAccessor.class::cast)
+                .orElse(player.getLocation())
+                .getWorldName();
+        PlotArea area = Optional.ofNullable(player.getCurrentPlot())
+                .map(PlotAreaAccessor.class::cast)
+                .orElse(player).getArea();
         String arg = args[0].toLowerCase();
         final boolean[] sort = new boolean[]{true};
 

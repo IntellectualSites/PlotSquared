@@ -37,6 +37,7 @@ import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.accessor.WorldNameAccessor;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
@@ -78,6 +79,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.Cleaner;
 import java.text.DecimalFormat;
@@ -115,7 +117,7 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
  * - Using the `new` operator will create an unclaimed plot instance
  * - Use the methods from the PlotArea/PS/Location etc to get existing plots
  */
-public class Plot {
+public class Plot implements WorldNameAccessor {
 
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Plot.class.getSimpleName());
     private static final DecimalFormat FLAG_DECIMAL_FORMAT = new DecimalFormat("0");
@@ -541,7 +543,7 @@ public class Plot {
      *
      * @return World name
      */
-    public @Nullable String getWorldName() {
+    public @Nullable @NotNull String getWorldName() {
         return area.getWorldName();
     }
 
