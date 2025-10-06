@@ -150,8 +150,9 @@ public class ListCmd extends SubCommand {
             page = 0;
         }
 
-        String world = player.getCurrentPlot().getWorldName();
-        PlotArea area = player.getCurrentPlot().getArea();
+        Plot currentPlot = player.getCurrentPlot();
+        String world = currentPlot != null ? currentPlot.getWorldName() : null;
+        PlotArea area = currentPlot != null ? currentPlot.getArea() : null;
         String arg = args[0].toLowerCase();
         final boolean[] sort = new boolean[]{true};
 
@@ -226,11 +227,15 @@ public class ListCmd extends SubCommand {
                     );
                     return false;
                 }
-                if (!player.hasPermission("plots.list.world." + world)) {
+                if (world != null && !player.hasPermission("plots.list.world." + world)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
                             TagResolver.resolver("node", Tag.inserting(Component.text("plots.list.world." + world)))
                     );
+                    return false;
+                }
+                if (world == null) {
+                    player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
                     return false;
                 }
                 plotConsumer.accept(PlotQuery.newQuery().inWorld(world));
@@ -257,7 +262,7 @@ public class ListCmd extends SubCommand {
                     );
                     return false;
                 }
-                if (!player.hasPermission("plots.list.world." + world)) {
+                if (world != null && !player.hasPermission("plots.list.world." + world)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
                             TagResolver.resolver("node", Tag.inserting(Component.text("plots.list.world." + world)))
