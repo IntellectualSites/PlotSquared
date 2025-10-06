@@ -121,6 +121,7 @@ public class MainCommand extends Command {
             commands.add(DatabaseCommand.class);
             commands.add(Swap.class);
             commands.add(Music.class);
+//            commands.add(Title.class);
             commands.add(DebugRoadRegen.class);
             commands.add(DebugExec.class);
             commands.add(FlagCommand.class);
