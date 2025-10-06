@@ -20,7 +20,7 @@ plugins {
 }
 
 group = "com.intellectualsites.plotsquared"
-version = "7.5.8-SNAPSHOT"
+version = "7.5.9-SNAPSHOT"
 
 if (!File("$rootDir/.git").exists()) {
     logger.lifecycle("""
@@ -84,12 +84,11 @@ subprojects {
 
     dependencies {
         // Tests
-        testImplementation("org.junit.jupiter:junit-jupiter:5.13.4")
-        testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.4")
-//        implementation("gg.kpjm:transientjobs:1.9.5")
         implementation("gg.kpjm:transientplots:1.1.1")
         compileOnly("com.github.notKolja:InjectLib:0.1.3")
         compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
+        testImplementation("org.junit.jupiter:junit-jupiter:5.14.0")
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.14.0")
     }
 
     plugins.withId("java") {
