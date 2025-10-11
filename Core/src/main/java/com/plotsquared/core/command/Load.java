@@ -68,7 +68,7 @@ public class Load extends SubCommand {
 
     @Override
     public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
-        final String world = player.getLocation().getWorldName();
+        final String world = player.getCurrentPlot().getWorldName();
         if (!this.plotAreaManager.hasPlotArea(world)) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
             return false;

@@ -26,7 +26,6 @@ import com.plotsquared.core.events.PlayerClaimPlotEvent;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Direction;
-import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
@@ -72,8 +71,7 @@ public class Claim extends SubCommand {
         if (args.length >= 1) {
             schematic = args[0];
         }
-        Location location = player.getLocation();
-        Plot plot = location.getPlotAbs();
+        Plot plot = player.getCurrentPlot();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
@@ -90,7 +88,7 @@ public class Claim extends SubCommand {
         boolean force = event.getEventResult() == Result.FORCE;
         int currentPlots = Settings.Limit.GLOBAL ?
                 player.getPlotCount() :
-                player.getPlotCount(location.getWorldName());
+                player.getPlotCount(plot.getWorldName());
 
         final PlotArea area = plot.getArea();
 

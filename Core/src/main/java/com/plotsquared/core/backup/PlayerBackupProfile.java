@@ -21,14 +21,15 @@ package com.plotsquared.core.backup;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.player.ConsolePlayer;
+import com.plotsquared.core.exception.PlotSquaredException;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -51,7 +52,7 @@ import java.util.concurrent.CompletableFuture;
  */
 public class PlayerBackupProfile implements BackupProfile {
 
-    static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlayerBackupProfile.class.getSimpleName());
 
     private final UUID owner;
     private final Plot plot;
@@ -87,7 +88,7 @@ public class PlayerBackupProfile implements BackupProfile {
                 Files.createDirectory(path);
             }
         } catch (final Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Error resolving {} from {}", child, parent, e);
         }
         return path;
     }
@@ -104,7 +105,7 @@ public class PlayerBackupProfile implements BackupProfile {
                     try {
                         Files.createDirectories(path);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        LOGGER.error("Error creating directory {}", path, e);
                         return Collections.emptyList();
                     }
                 }
@@ -117,11 +118,11 @@ public class PlayerBackupProfile implements BackupProfile {
                             backups.add(
                                     new Backup(this, basicFileAttributes.creationTime().toMillis(), file));
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            LOGGER.error("Error getting attributes for file {} to create backup", file, e);
                         }
                     });
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOGGER.error("Error walking files from {}", path, e);
                 }
                 backups.sort(Comparator.comparingLong(Backup::getCreationTime).reversed());
                 return (this.backupCache = backups);
@@ -133,7 +134,7 @@ public class PlayerBackupProfile implements BackupProfile {
     public void destroy() {
         this.listBackups().whenCompleteAsync((backups, error) -> {
             if (error != null) {
-                error.printStackTrace();
+                LOGGER.error("Error while listing backups", error);
             }
             backups.forEach(Backup::delete);
             this.backupCache = null;
@@ -141,10 +142,12 @@ public class PlayerBackupProfile implements BackupProfile {
     }
 
     public @NonNull Path getBackupDirectory() {
-        return resolve(resolve(
-                resolve(backupManager.getBackupPath(), Objects.requireNonNull(plot.getArea().toString(), "plot area id")),
-                Objects.requireNonNull(plot.getId().toDashSeparatedString(), "plot id")
-        ), Objects.requireNonNull(owner.toString(), "owner"));
+        return resolve(
+                resolve(
+                        resolve(backupManager.getBackupPath(), Objects.requireNonNull(plot.getArea().toString(), "plot area id")),
+                        Objects.requireNonNull(plot.getId().toDashSeparatedString(), "plot id")
+                ), Objects.requireNonNull(owner.toString(), "owner")
+        );
     }
 
     @Override
@@ -156,7 +159,8 @@ public class PlayerBackupProfile implements BackupProfile {
                     backups.get(backups.size() - 1).delete();
                 }
                 final List<Plot> plots = Collections.singletonList(plot);
-                final boolean result = this.schematicHandler.exportAll(plots, getBackupDirectory().toFile(),
+                final boolean result = this.schematicHandler.exportAll(
+                        plots, getBackupDirectory().toFile(),
                         "%world%-%id%-" + System.currentTimeMillis(), () ->
                                 future.complete(new Backup(this, System.currentTimeMillis(), null))
                 );
@@ -180,7 +184,7 @@ public class PlayerBackupProfile implements BackupProfile {
                 try {
                     schematic = this.schematicHandler.getSchematic(backup.getFile().toFile());
                 } catch (SchematicHandler.UnsupportedFormatException e) {
-                    e.printStackTrace();
+                    LOGGER.error("Unsupported format for backup {}", backup.getFile(), e);
                 }
                 if (schematic == null) {
                     future.completeExceptionally(new IllegalArgumentException(
@@ -200,10 +204,9 @@ public class PlayerBackupProfile implements BackupProfile {
                                     if (value) {
                                         future.complete(null);
                                     } else {
-                                        future.completeExceptionally(new RuntimeException(MINI_MESSAGE.escapeTags(
+                                        future.completeExceptionally(new PlotSquaredException(
                                                 TranslatableCaption
-                                                        .of("schematics.schematic_paste_failed")
-                                                        .getComponent(ConsolePlayer.getConsole()))));
+                                                        .of("schematics.schematic_paste_failed")));
                                     }
                                 }
                             }

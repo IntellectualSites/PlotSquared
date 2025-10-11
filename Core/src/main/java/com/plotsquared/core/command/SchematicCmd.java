@@ -22,7 +22,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
@@ -102,8 +101,7 @@ public class SchematicCmd extends SubCommand {
                     );
                     break;
                 }
-                Location loc = player.getLocation();
-                final Plot plot = loc.getPlotAbs();
+                final Plot plot = player.getCurrentPlot();
                 if (plot == null) {
                     player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
                     return false;
@@ -247,8 +245,7 @@ public class SchematicCmd extends SubCommand {
                     player.sendMessage(TranslatableCaption.of("error.task_in_process"));
                     return false;
                 }
-                Location location = player.getLocation();
-                Plot plot = location.getPlotAbs();
+                Plot plot = player.getCurrentPlot();
                 if (plot == null) {
                     player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
                     return false;

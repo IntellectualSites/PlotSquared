@@ -78,7 +78,7 @@ public class Set extends SubCommand {
 
             @Override
             public boolean set(PlotPlayer<?> player, final Plot plot, String value) {
-                final PlotArea plotArea = player.getLocation().getPlotArea();
+                final PlotArea plotArea = player.getCurrentPlot().getArea();
                 if (plotArea == null) {
                     return false;
                 }

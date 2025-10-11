@@ -58,8 +58,7 @@ public class Remove extends SubCommand {
 
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
-        Location location = player.getLocation();
-        Plot plot = location.getPlotAbs();
+        Plot plot = player.getCurrentPlot();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
@@ -149,8 +148,7 @@ public class Remove extends SubCommand {
 
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
-        Location location = player.getLocation();
-        Plot plot = location.getPlotAbs();
+        Plot plot = player.getCurrentPlot();
         if (plot == null) {
             return Collections.emptyList();
         }

@@ -290,6 +290,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      *
      * @return the plot the player is standing on or null if standing on a road or not in a {@link PlotArea}
      */
+    @Nullable
     public Plot getCurrentPlot() {
         try (final MetaDataAccess<Plot> lastPlotAccess =
                      this.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
@@ -319,7 +320,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      */
     public int getPlotCount() {
         if (!Settings.Limit.GLOBAL) {
-            return getPlotCount(getLocation().getWorldName());
+            return getPlotCount(getCurrentPlot().getWorldName());
         }
         final AtomicInteger count = new AtomicInteger(0);
         final UUID uuid = getUUID();
@@ -339,7 +340,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
 
     public int getClusterCount() {
         if (!Settings.Limit.GLOBAL) {
-            return getClusterCount(getLocation().getWorldName());
+            return getClusterCount(getCurrentPlot().getWorldName());
         }
         final AtomicInteger count = new AtomicInteger(0);
         this.plotAreaManager.forEachPlotArea(value -> {
@@ -408,7 +409,11 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     }
 
     public PlotArea getApplicablePlotArea() {
-        return this.plotAreaManager.getApplicablePlotArea(getLocation());
+        Plot plot = getCurrentPlot();
+        if (plot == null) {
+            return this.plotAreaManager.getApplicablePlotArea(getLocation());
+        }
+        return plot.getArea();
     }
 
     @Override
@@ -614,16 +619,16 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
             PlotId id = plot.getId();
             int x = id.getX();
             int z = id.getY();
-            ByteBuffer buffer = ByteBuffer.allocate(13);
+            ByteBuffer buffer = ByteBuffer.allocate(14);
             buffer.putShort((short) x);
             buffer.putShort((short) z);
             Location location = getLocation();
             buffer.putInt(location.getX());
-            buffer.put((byte) location.getY());
+            buffer.putShort((short) location.getY());
             buffer.putInt(location.getZ());
-            setPersistentMeta("quitLoc", buffer.array());
-        } else if (hasPersistentMeta("quitLoc")) {
-            removePersistentMeta("quitLoc");
+            setPersistentMeta("quitLocV2", buffer.array());
+        } else if (hasPersistentMeta("quitLocV2")) {
+            removePersistentMeta("quitLocV2");
         }
         if (plot != null) {
             this.eventDispatcher.callLeave(this, plot);
@@ -700,11 +705,18 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                             return;
                         }
                         PlotArea area = ((SinglePlotAreaManager) manager).getArea();
+                        boolean V2 = false;
                         byte[] arr = PlotPlayer.this.getPersistentMeta("quitLoc");
                         if (arr == null) {
-                            return;
+                            arr = PlotPlayer.this.getPersistentMeta("quitLocV2");
+                            if (arr == null) {
+                                return;
+                            }
+                            V2 = true;
+                            removePersistentMeta("quitLocV2");
+                        } else {
+                            removePersistentMeta("quitLoc");
                         }
-                        removePersistentMeta("quitLoc");
 
                         if (!getMeta("teleportOnLogin", true)) {
                             return;
@@ -714,7 +726,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                         final int plotZ = quitWorld.getShort();
                         PlotId id = PlotId.of(plotX, plotZ);
                         int x = quitWorld.getInt();
-                        int y = quitWorld.get() & 0xFF;
+                        int y = V2 ? quitWorld.getShort() : (quitWorld.get() & 0xFF);
                         int z = quitWorld.getInt();
                         Plot plot = area.getOwnedPlot(id);
 
@@ -748,10 +760,11 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                             }
                         }
                     } catch (Throwable e) {
-                        e.printStackTrace();
+                        LOGGER.error("Error populating persistent meta for player {}", PlotPlayer.this.getName(), e);
                     }
                 }
-            });
+                    }
+            );
         }
     }
 
