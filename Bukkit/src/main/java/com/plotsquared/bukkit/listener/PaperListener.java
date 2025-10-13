@@ -202,7 +202,7 @@ public class PaperListener implements Listener {
                     return;
                 }
             }
-            case "REINFORCEMENTS", "NATURAL", "MOUNT", "PATROL", "RAID", "SHEARED", "SILVERFISH_BLOCK", "ENDER_PEARL", "TRAP", "VILLAGE_DEFENSE", "VILLAGE_INVASION", "BEEHIVE", "CHUNK_GEN" -> {
+            case "REINFORCEMENTS", "NATURAL", "MOUNT", "PATROL", "RAID", "SILVERFISH_BLOCK", "ENDER_PEARL", "TRAP", "VILLAGE_DEFENSE", "VILLAGE_INVASION", "BEEHIVE", "CHUNK_GEN" -> {
                 if (!area.isMobSpawning()) {
                     event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
