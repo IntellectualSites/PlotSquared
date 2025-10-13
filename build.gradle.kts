@@ -101,9 +101,15 @@ subprojects {
         }
     }
 
-    val javaComponent = components["java"] as AdhocComponentWithVariants
-    javaComponent.withVariantsFromConfiguration(configurations["shadowRuntimeElements"]) {
-        skip()
+    afterEvaluate {
+        val javaComponent = components["java"] as AdhocComponentWithVariants
+        configurations.findByName("shadowRuntimeElements")?.let { shadowRuntimeElements ->
+            javaComponent.withVariantsFromConfiguration(shadowRuntimeElements) {
+                skip()
+            }
+        } ?: run {
+            logger.warn("Configuration 'shadowRuntimeElements' does not exist.")
+        }
     }
 
     signing {
