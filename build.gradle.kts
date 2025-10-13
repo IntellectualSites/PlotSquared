@@ -65,6 +65,12 @@ subprojects {
         plugin<IdeaPlugin>()
     }
 
+    configurations.matching { it.name == "signatures" }.configureEach {
+        attributes {
+            attribute(Attribute.of("signatures-unique", String::class.java), "true")
+        }
+    }
+
     dependencies {
         // Tests
         testImplementation("org.junit.jupiter:junit-jupiter:5.14.0")
