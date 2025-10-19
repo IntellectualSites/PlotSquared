@@ -541,7 +541,7 @@ public class Plot {
      *
      * @return World name
      */
-    public @Nullable String getWorldName() {
+    public @NonNull String getWorldName() {
         return area.getWorldName();
     }
 
