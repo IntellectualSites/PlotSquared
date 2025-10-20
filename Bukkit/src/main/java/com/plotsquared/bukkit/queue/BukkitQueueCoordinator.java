@@ -52,6 +52,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class BukkitQueueCoordinator extends BasicQueueCoordinator {
@@ -210,8 +211,13 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                             BaseBlock block = getWorld().getBlock(blockVector3).toBaseBlock(tag);
                             getWorld().setBlock(blockVector3, block, getSideEffectSet(SideEffectState.NONE));
                         } catch (WorldEditException ignored) {
-                            StateWrapper sw = new StateWrapper(tag);
-                            sw.restoreTag(getWorld().getName(), blockVector3.getX(), blockVector3.getY(), blockVector3.getZ());
+                            StateWrapper.INSTANCE.restore(
+                                    getWorld().getName(),
+                                    blockVector3.getX(),
+                                    blockVector3.getY(),
+                                    blockVector3.getZ(),
+                                    tag
+                            );
                         }
                     });
                 }
@@ -295,9 +301,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
             existing.setBlockData(blockData, false);
             if (block.hasNbtData()) {
                 CompoundTag tag = block.getNbtData();
-                StateWrapper sw = new StateWrapper(tag);
-
-                sw.restoreTag(existing);
+                StateWrapper.INSTANCE.restore(existing, Objects.requireNonNull(tag));
             }
         }
     }
