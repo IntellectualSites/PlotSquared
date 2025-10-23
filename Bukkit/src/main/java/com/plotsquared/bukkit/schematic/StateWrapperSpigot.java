@@ -41,6 +41,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Optional;
 
 final class StateWrapperSpigot implements StateWrapper {
 
@@ -62,7 +63,7 @@ final class StateWrapperSpigot implements StateWrapper {
     private static MethodHandle CRAFT_BLOCK_ENTITY_STATE_GET_SNAPSHOT = null;
     private static MethodHandle SIGN_BLOCK_ENTITY_SET_TEXT = null;
     private static MethodHandle DECODER_PARSE = null;
-    private static MethodHandle DATA_RESULT_GET_OR_THROW = null;
+    private static MethodHandle DATA_RESULT_RESULT = null;
     private static MethodHandle TO_LIN_TAG = null;
 
     private static Object SIGN_TEXT_DIRECT_CODEC = null;
@@ -124,9 +125,9 @@ final class StateWrapperSpigot implements StateWrapper {
                     .filter(field -> Modifier.isStatic(field.getModifiers()) && Modifier.isPublic(field.getModifiers()))
                     .filter(field -> field.getType() == NBT_OPS_CLASS)
                     .findFirst().orElseThrow().get(null);
-            DATA_RESULT_GET_OR_THROW = LOOKUP.findVirtual(
-                    DATA_RESULT_CLASS, "getOrThrow",
-                    MethodType.genericMethodType(0)
+            DATA_RESULT_RESULT = LOOKUP.findVirtual(
+                    DATA_RESULT_CLASS, "result",
+                    MethodType.methodType(Optional.class)
             );
         } catch (Throwable e) {
             throw new RuntimeException("Failed to initialize required native method accessors", e);
@@ -165,7 +166,8 @@ final class StateWrapperSpigot implements StateWrapper {
     private static void setSignContents(boolean front, SignSide side, BlockState blockState, CompoundTag data) throws Throwable {
         Object nativeTag = PAPERWEIGHT_ADAPTER_FROM_NATIVE.invoke(ADAPTER, TO_LIN_TAG.invoke(data));
         Object dataResult = DECODER_PARSE.invoke(SIGN_TEXT_DIRECT_CODEC, NBT_OPS_INSTANCE, nativeTag);
-        Object signText = DATA_RESULT_GET_OR_THROW.invoke(dataResult);
+        //noinspection rawtypes
+        Object signText = ((Optional) DATA_RESULT_RESULT.invoke(dataResult)).orElseThrow();
 
         // set the SignText on the underlying tile entity snapshot (SignBlockEntity)
         SIGN_BLOCK_ENTITY_SET_TEXT.invoke(CRAFT_BLOCK_ENTITY_STATE_GET_SNAPSHOT.invoke(blockState), signText, front);
