@@ -19,18 +19,14 @@
 package com.plotsquared.bukkit.schematic;
 
 import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.core.PlotSquared;
 import com.sk89q.jnbt.CompoundTag;
-import io.papermc.lib.PaperLib;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
-public sealed interface StateWrapper permits StateWrapperSpigot, StateWrapper.Factory.NoopStateWrapper {
+public sealed interface StateWrapper permits StateWrapperSpigot {
 
     StateWrapper INSTANCE = Factory.createStateWrapper();
 
@@ -47,40 +43,8 @@ public sealed interface StateWrapper permits StateWrapperSpigot, StateWrapper.Fa
     @ApiStatus.Internal
     final class Factory {
 
-        private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + StateWrapper.class.getSimpleName());
-
-        private static final String INITIALIZATION_ERROR_TEMPLATE = """
-                Failed to initialize StateWrapper: {}
-                Block-/Tile-Entities, pasted by schematics for example, won't be updated with their respective block data. This affects things like sign text, banner patterns, skulls, etc.
-                Try updating your Server Software, PlotSquared and WorldEdit / FastAsyncWorldEdit first. If the issue persists, report it on the issue tracker.
-                """;
-
         private static StateWrapper createStateWrapper() {
-            int[] serverVersion = PlotSquared.platform().serverVersion();
-            if (PaperLib.isPaper() && (serverVersion[1] == 21 && serverVersion[2] >= 5) || serverVersion[1] > 21) {
-                try {
-                    return new StateWrapperPaper1_21_5();
-                } catch (Exception e) {
-                    LOGGER.error("Failed to initialize Paper-specific state wrapper, falling back to Spigot", e);
-                }
-            }
-            try {
-                return new StateWrapperSpigot();
-            } catch (Exception e) {
-                LOGGER.error(INITIALIZATION_ERROR_TEMPLATE, StateWrapperSpigot.class.getSimpleName(), e);
-            }
-            return new NoopStateWrapper();
-        }
-
-
-        @ApiStatus.Internal
-        static final class NoopStateWrapper implements StateWrapper {
-
-            @Override
-            public boolean restore(final @NonNull Block block, final @NonNull CompoundTag data) {
-                return false;
-            }
-
+            return new StateWrapperSpigot();
         }
 
     }
