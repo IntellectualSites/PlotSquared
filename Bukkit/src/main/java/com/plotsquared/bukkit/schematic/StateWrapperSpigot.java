@@ -18,11 +18,8 @@
  */
 package com.plotsquared.bukkit.schematic;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.plotsquared.core.util.ReflectionUtils;
 import com.sk89q.jnbt.CompoundTag;
-import com.sk89q.jnbt.Tag;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.adapter.BukkitImplAdapter;
 import com.sk89q.worldedit.bukkit.adapter.Refraction;
@@ -30,7 +27,6 @@ import com.sk89q.worldedit.extension.platform.NoCapablePlatformException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
@@ -41,13 +37,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.Arrays;
 
 final class StateWrapperSpigot implements StateWrapper {
 
@@ -56,26 +49,23 @@ final class StateWrapperSpigot implements StateWrapper {
     private static final String CRAFTBUKKIT_PACKAGE = Bukkit.getServer().getClass().getPackageName();
 
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + StateWrapperSpigot.class.getSimpleName());
-    private static final Gson GSON = new GsonBuilder().disableHtmlEscaping()
-            .registerTypeHierarchyAdapter(Tag.class, new NbtGsonSerializer()).create();
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
     private static BukkitImplAdapter ADAPTER = null;
     private static Class<?> LIN_TAG_CLASS = null;
     private static Class<?> CRAFT_BLOCK_ENTITY_STATE_CLASS = null;
-    private static Class<?> MINECRAFT_CHAT_COMPONENT_CLASS = null;
     private static Field CRAFT_SIGN_SIDE_SIGN_TEXT = null;
     private static MethodHandle PAPERWEIGHT_ADAPTER_FROM_NATIVE = null;
     private static MethodHandle CRAFT_BLOCK_ENTITY_STATE_LOAD_DATA = null;
     private static MethodHandle CRAFT_BLOCK_ENTITY_STATE_UPDATE = null;
     private static MethodHandle CRAFT_BLOCK_ENTITY_STATE_GET_SNAPSHOT = null;
     private static MethodHandle SIGN_BLOCK_ENTITY_SET_TEXT = null;
-    private static MethodHandle MINECRAFT_DYE_COLOR_BY_NAME = null;
-    private static MethodHandle CRAFT_CHAT_MESSAGE_FROM_JSON_OR_STRING = null;
-    private static MethodHandle SIGN_TEXT_CONSTRUCTOR = null;
+    private static MethodHandle DECODER_PARSE = null;
+    private static MethodHandle DATA_RESULT_GET_OR_THROW = null;
     private static MethodHandle TO_LIN_TAG = null;
 
-    private static Object DYE_COLOR_BLACK = null;
+    private static Object SIGN_TEXT_DIRECT_CODEC = null;
+    private static Object NBT_OPS_INSTANCE = null;
 
     public StateWrapperSpigot() {
         try {
@@ -96,14 +86,6 @@ final class StateWrapperSpigot implements StateWrapper {
         }
         try {
             final Class<?> SIGN_TEXT_CLASS = Class.forName("net.minecraft.world.level.block.entity.SignText");
-            MINECRAFT_CHAT_COMPONENT_CLASS = Class.forName(Refraction.pickName(
-                    "net.minecraft.network.chat.Component",
-                    "net.minecraft.network.chat.IChatBaseComponent"
-            ));
-            final Class<?> MINECRAFT_DYE_COLOR_CLASS = Class.forName(Refraction.pickName(
-                    "net.minecraft.world.item.DyeColor",
-                    "net.minecraft.world.item.EnumColor"
-            ));
             CRAFT_SIGN_SIDE_SIGN_TEXT = Class.forName(CRAFTBUKKIT_PACKAGE + ".block.sign.CraftSignSide")
                     .getDeclaredField("signText");
             CRAFT_SIGN_SIDE_SIGN_TEXT.setAccessible(true);
@@ -118,14 +100,30 @@ final class StateWrapperSpigot implements StateWrapper {
                     )),
                     SIGN_TEXT_CLASS
             );
-            CRAFT_CHAT_MESSAGE_FROM_JSON_OR_STRING = findCraftChatMessageFromJsonOrStringMethodHandle(
-                    MINECRAFT_CHAT_COMPONENT_CLASS);
-            SIGN_TEXT_CONSTRUCTOR = findSignTextConstructor(
-                    SIGN_TEXT_CLASS, MINECRAFT_CHAT_COMPONENT_CLASS, MINECRAFT_DYE_COLOR_CLASS
+            final Class<?> CODEC_CLASS = Class.forName("com.mojang.serialization.Codec");
+            final Class<?> DECODER_CLASS = Class.forName("com.mojang.serialization.Decoder");
+            final Class<?> DATA_RESULT_CLASS = Class.forName("com.mojang.serialization.DataResult");
+            final Class<?> DYNAMIC_OPS_CLASS = Class.forName("com.mojang.serialization.DynamicOps");
+            final Class<?> NBT_OPS_CLASS = Class.forName(Refraction.pickName(
+                    "net.minecraft.nbt.NbtOps",
+                    "net.minecraft.nbt.DynamicOpsNBT"
+            ));
+            SIGN_TEXT_DIRECT_CODEC = Arrays.stream(SIGN_TEXT_CLASS.getFields())
+                    .filter(field -> Modifier.isStatic(field.getModifiers()) && Modifier.isPublic(field.getModifiers()))
+                    .filter(field -> field.getType() == CODEC_CLASS)
+                    .findFirst().orElseThrow().get(null);
+            DECODER_PARSE = LOOKUP.findVirtual(
+                    DECODER_CLASS, "parse", MethodType.methodType(
+                            DATA_RESULT_CLASS, DYNAMIC_OPS_CLASS, Object.class
+                    )
             );
-            MINECRAFT_DYE_COLOR_BY_NAME = findDyeColorByNameMethodHandle(MINECRAFT_DYE_COLOR_CLASS);
-            DYE_COLOR_BLACK = Objects.requireNonNull(
-                    MINECRAFT_DYE_COLOR_BY_NAME.invoke("black", null), "couldn't find black dye color"
+            NBT_OPS_INSTANCE = Arrays.stream(NBT_OPS_CLASS.getFields())
+                    .filter(field -> Modifier.isStatic(field.getModifiers()) && Modifier.isPublic(field.getModifiers()))
+                    .filter(field -> field.getType() == NBT_OPS_CLASS)
+                    .findFirst().orElseThrow().get(null);
+            DATA_RESULT_GET_OR_THROW = LOOKUP.findVirtual(
+                    DATA_RESULT_CLASS, "getOrThrow",
+                    MethodType.genericMethodType(0)
             );
         } catch (Throwable e) {
             throw new RuntimeException("Failed to initialize required native method accessors", e);
@@ -140,14 +138,19 @@ final class StateWrapperSpigot implements StateWrapper {
                 return false;
             }
             // get native tag
-            Object nativeTag = PAPERWEIGHT_ADAPTER_FROM_NATIVE.invoke(
-                    ADAPTER,
-                    TO_LIN_TAG.invoke(data)
-            );
+            Object nativeTag = PAPERWEIGHT_ADAPTER_FROM_NATIVE.invoke(ADAPTER, TO_LIN_TAG.invoke(data));
             // load block entity data
             CRAFT_BLOCK_ENTITY_STATE_LOAD_DATA.invoke(blockState, nativeTag);
 
-            postEntityStateLoad(blockState, data);
+            // signs need to be handled explicitly (at least during worldgen)
+            if (blockState instanceof Sign sign) {
+                if (data.getValue().get("front_text") instanceof CompoundTag textTag) {
+                    setSignContents(true, sign.getSide(Side.FRONT), blockState, textTag);
+                }
+                if (data.getValue().get("back_text") instanceof CompoundTag textTag) {
+                    setSignContents(false, sign.getSide(Side.BACK), blockState, textTag);
+                }
+            }
 
             CRAFT_BLOCK_ENTITY_STATE_UPDATE.invoke(blockState, FORCE_UPDATE_STATE, UPDATE_TRIGGER_PHYSICS);
         } catch (Throwable e) {
@@ -156,60 +159,10 @@ final class StateWrapperSpigot implements StateWrapper {
         return false;
     }
 
-    public void postEntityStateLoad(final @NonNull BlockState blockState, final @NonNull CompoundTag data) throws Throwable {
-        if (blockState instanceof Sign sign) {
-            if (data.getValue().get("front_text") instanceof CompoundTag textTag) {
-                setSignContents(true, sign.getSide(Side.FRONT), blockState, textTag);
-            }
-            if (data.getValue().get("back_text") instanceof CompoundTag textTag) {
-                setSignContents(false, sign.getSide(Side.BACK), blockState, textTag);
-            }
-        }
-    }
-
     private static void setSignContents(boolean front, SignSide side, BlockState blockState, CompoundTag data) throws Throwable {
-        final List<Tag> messages = data.getList("messages");
-        if (messages.size() != 4) {
-            if (data.containsKey("color")) {
-                //noinspection UnstableApiUsage
-                side.setColor(DyeColor.legacyValueOf(data.getString("color").toUpperCase(Locale.ROOT)));
-            }
-            side.setGlowingText(data.getByte("has_glowing_text") == 1);
-            return;
-        }
-
-        final String color = data.getString("color");
-        final boolean glowing = data.getByte("has_glowing_text") == 1;
-        final Object dyeColor = color.isEmpty() ? DYE_COLOR_BLACK : MINECRAFT_DYE_COLOR_BY_NAME.invoke(
-                color.equalsIgnoreCase("silver") ? "light_gray" : color,
-                DYE_COLOR_BLACK // fallback
-        );
-
-        Object[] components = new Object[messages.size()];
-        for (int i = 0; i < components.length; i++) {
-            final Tag message = messages.get(i);
-            Object content;
-            // unwrap possible nested entry for mixed array types in later versions
-            if (message instanceof CompoundTag tag && tag.containsKey("")) {
-                content = tag.getString("");
-            } else {
-                content = message.getValue();
-            }
-            // if the value is not a string, make it one so it can be converted to a chat component
-            if (!(content instanceof String)) {
-                content = GSON.toJson(content);
-                LOGGER.info("GSON serialized to {}", content);
-                LOGGER.info("factory to {}", CRAFT_CHAT_MESSAGE_FROM_JSON_OR_STRING.invoke((String) content));
-            }
-            // chat.Component
-            components[i] = CRAFT_CHAT_MESSAGE_FROM_JSON_OR_STRING.invoke((String) content);
-        }
-        final Object typedComponents = Array.newInstance(MINECRAFT_CHAT_COMPONENT_CLASS, components.length);
-        System.arraycopy(components, 0, typedComponents, 0, components.length);
-        final Object signText = SIGN_TEXT_CONSTRUCTOR.invoke(typedComponents, typedComponents, dyeColor, glowing);
-
-        // blockState == org.bukkit.craftbukkit.block.CraftBlockEntityState
-        //      --> getSnapshot() == net.minecraft.world.level.block.entity.SignBlockEntity
+        Object nativeTag = PAPERWEIGHT_ADAPTER_FROM_NATIVE.invoke(ADAPTER, TO_LIN_TAG.invoke(data));
+        Object dataResult = DECODER_PARSE.invoke(SIGN_TEXT_DIRECT_CODEC, NBT_OPS_INSTANCE, nativeTag);
+        Object signText = DATA_RESULT_GET_OR_THROW.invoke(dataResult);
         SIGN_BLOCK_ENTITY_SET_TEXT.invoke(CRAFT_BLOCK_ENTITY_STATE_GET_SNAPSHOT.invoke(blockState), signText, front);
         CRAFT_SIGN_SIDE_SIGN_TEXT.set(side, signText);
     }
@@ -239,7 +192,6 @@ final class StateWrapperSpigot implements StateWrapper {
      * <br />
      * Depending on the used version of WE/FAWE, this differs:
      * <ul>
-     *     <li>On WE/FAWE version pre LinBus introduction: {@code fromNative(org.sk89q.jnbt.Tag)}</li>
      *     <li>On WE versions post LinBus introduction: {@code fromNative(org.enginehub.linbus.tree.LinTag)}</li>
      *     <li>On FAWE versions post LinBus introduction: {@code fromNativeLin(org.enginehub.linbus.tree.LinTag)}</li>
      * </ul>
@@ -298,36 +250,6 @@ final class StateWrapperSpigot implements StateWrapper {
             }
         }
         throw new NoSuchMethodException("Couldn't lookup SignBlockEntity#setText(SignText, boolean) boolean");
-    }
-
-    private static MethodHandle findCraftChatMessageFromJsonOrStringMethodHandle(Class<?> minecraftChatComponent)
-            throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException {
-        // public static IChatBaseComponent fromJSONOrString(String message)
-        return LOOKUP.findStatic(
-                Class.forName(CRAFTBUKKIT_PACKAGE + ".util.CraftChatMessage"),
-                "fromJSONOrString",
-                MethodType.methodType(minecraftChatComponent, String.class)
-        );
-    }
-
-    private static MethodHandle findSignTextConstructor(Class<?> signText, Class<?> chatComponent, Class<?> dyeColorEnum) throws
-            NoSuchMethodException, IllegalAccessException {
-        return LOOKUP.findConstructor(
-                signText, MethodType.methodType(
-                        void.class,
-                        chatComponent.arrayType(), chatComponent.arrayType(), dyeColorEnum, Boolean.TYPE
-                )
-        );
-    }
-
-    private static MethodHandle findDyeColorByNameMethodHandle(Class<?> dyeColorClass) throws
-            NoSuchMethodException, IllegalAccessException {
-        for (final Method method : dyeColorClass.getMethods()) {
-            if (Modifier.isStatic(method.getModifiers()) && method.getParameterCount() == 2 && method.getParameterTypes()[0] == String.class) {
-                return LOOKUP.unreflect(method);
-            }
-        }
-        throw new NoSuchMethodException("Couldn't lookup static DyeColor.byName(String, DyeColor)");
     }
 
 }
