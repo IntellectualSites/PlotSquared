@@ -48,7 +48,6 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 final class StateWrapperSpigot implements StateWrapper {
 
@@ -57,12 +56,12 @@ final class StateWrapperSpigot implements StateWrapper {
     private static final String CRAFTBUKKIT_PACKAGE = Bukkit.getServer().getClass().getPackageName();
 
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + StateWrapperSpigot.class.getSimpleName());
-    private static final Gson GSON = new GsonBuilder().registerTypeHierarchyAdapter(Tag.class, new NbtGsonSerializer()).create();
+    private static final Gson GSON = new GsonBuilder().disableHtmlEscaping()
+            .registerTypeHierarchyAdapter(Tag.class, new NbtGsonSerializer()).create();
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
     private static BukkitImplAdapter ADAPTER = null;
     private static Class<?> LIN_TAG_CLASS = null;
-    private static Class<?> JNBT_TAG_CLASS = null;
     private static Class<?> CRAFT_BLOCK_ENTITY_STATE_CLASS = null;
     private static Class<?> MINECRAFT_CHAT_COMPONENT_CLASS = null;
     private static Field CRAFT_SIGN_SIDE_SIGN_TEXT = null;
@@ -80,7 +79,6 @@ final class StateWrapperSpigot implements StateWrapper {
 
     public StateWrapperSpigot() {
         try {
-            findNbtCompoundClassType(clazz -> LIN_TAG_CLASS = clazz, clazz -> JNBT_TAG_CLASS = clazz);
             ReflectionUtils.RefClass worldEditPluginRefClass = ReflectionUtils.getRefClass(WorldEditPlugin.class);
             WorldEditPlugin worldEditPlugin = (WorldEditPlugin) worldEditPluginRefClass
                     .getMethod("getInstance")
@@ -90,12 +88,11 @@ final class StateWrapperSpigot implements StateWrapper {
                     .getMethod("getBukkitImplAdapter")
                     .of(worldEditPlugin)
                     .call();
-            PAPERWEIGHT_ADAPTER_FROM_NATIVE = findPaperweightAdapterFromNativeMethodHandle(
-                    ADAPTER.getClass(), LIN_TAG_CLASS, JNBT_TAG_CLASS
-            );
-            TO_LIN_TAG = findToLinTagMethodHandle(LIN_TAG_CLASS);
+            LIN_TAG_CLASS = Class.forName("org.enginehub.linbus.tree.LinTag"); // provided WE / FAWE version is too old
+            PAPERWEIGHT_ADAPTER_FROM_NATIVE = findPaperweightAdapterFromNativeMethodHandle(ADAPTER.getClass());
+            TO_LIN_TAG = findToLinTagMethodHandle();
         } catch (NoSuchMethodException | ClassNotFoundException | IllegalAccessException | NoCapablePlatformException e) {
-            throw new RuntimeException("Failed to access required WorldEdit methods", e);
+            throw new RuntimeException("Failed to access required WorldEdit classes or methods", e);
         }
         try {
             final Class<?> SIGN_TEXT_CLASS = Class.forName("net.minecraft.world.level.block.entity.SignText");
@@ -145,7 +142,7 @@ final class StateWrapperSpigot implements StateWrapper {
             // get native tag
             Object nativeTag = PAPERWEIGHT_ADAPTER_FROM_NATIVE.invoke(
                     ADAPTER,
-                    LIN_TAG_CLASS == null ? data : TO_LIN_TAG.invoke(data)
+                    TO_LIN_TAG.invoke(data)
             );
             // load block entity data
             CRAFT_BLOCK_ENTITY_STATE_LOAD_DATA.invoke(blockState, nativeTag);
@@ -212,23 +209,9 @@ final class StateWrapperSpigot implements StateWrapper {
         final Object signText = SIGN_TEXT_CONSTRUCTOR.invoke(typedComponents, typedComponents, dyeColor, glowing);
 
         // blockState == org.bukkit.craftbukkit.block.CraftBlockEntityState
-        // --> net.minecraft.world.level.block.entity.SignBlockEntity
+        //      --> getSnapshot() == net.minecraft.world.level.block.entity.SignBlockEntity
         SIGN_BLOCK_ENTITY_SET_TEXT.invoke(CRAFT_BLOCK_ENTITY_STATE_GET_SNAPSHOT.invoke(blockState), signText, front);
         CRAFT_SIGN_SIDE_SIGN_TEXT.set(side, signText);
-    }
-
-    /**
-     * Initialize the used NBT tag class. For modern FAWE and WE that'll be Lin - for older ones JNBT.
-     *
-     * @throws ClassNotFoundException if neither can be found.
-     */
-    private static void findNbtCompoundClassType(Consumer<Class<?>> linClass, Consumer<Class<?>> jnbtClass) throws
-            ClassNotFoundException {
-        try {
-            linClass.accept(Class.forName("org.enginehub.linbus.tree.LinTag"));
-        } catch (ClassNotFoundException e) {
-            jnbtClass.accept(Class.forName("com.sk89q.jnbt.Tag"));
-        }
     }
 
     /**
@@ -237,21 +220,17 @@ final class StateWrapperSpigot implements StateWrapper {
      * Required to access the underlying lin tag of the used JNBT tag by PlotSquared, so it can be converted into the platforms
      * native tag later.
      *
-     * @param linTagClass {@code Tag} class of lin-bus, or {@code null} if not available.
      * @return the MethodHandle for {@code toLinTag}, or {@code null} if lin-bus is not available in the classpath.
      * @throws ClassNotFoundException if the {@code ToLinTag} class could not be found.
      * @throws NoSuchMethodException  if no {@code toLinTag} method exists.
      * @throws IllegalAccessException shouldn't happen.
      */
-    private static MethodHandle findToLinTagMethodHandle(Class<?> linTagClass) throws ClassNotFoundException,
+    private static MethodHandle findToLinTagMethodHandle() throws ClassNotFoundException,
             NoSuchMethodException, IllegalAccessException {
-        if (linTagClass == null) {
-            return null;
-        }
         return LOOKUP.findVirtual(
                 Class.forName("org.enginehub.linbus.tree.ToLinTag"),
                 "toLinTag",
-                MethodType.methodType(linTagClass)
+                MethodType.methodType(LIN_TAG_CLASS)
         );
     }
 
@@ -266,26 +245,19 @@ final class StateWrapperSpigot implements StateWrapper {
      * </ul>
      *
      * @param adapterClass The bukkit adapter implementation class
-     * @param linTagClass  The lin-bus {@code Tag} class, if existing - otherwise {@code null}
-     * @param jnbtTagClass The jnbt {@code Tag} class, if lin-bus was not found in classpath - otherwise {@code null}
      * @return the method.
      * @throws IllegalAccessException shouldn't happen as private lookup is used.
      * @throws NoSuchMethodException  if the method couldn't be found.
      */
-    private static MethodHandle findPaperweightAdapterFromNativeMethodHandle(
-            Class<?> adapterClass, Class<?> linTagClass, Class<?> jnbtTagClass
-    ) throws IllegalAccessException, NoSuchMethodException {
+    private static MethodHandle findPaperweightAdapterFromNativeMethodHandle(Class<?> adapterClass) throws
+            IllegalAccessException, NoSuchMethodException {
         final MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(adapterClass, LOOKUP);
-        if (jnbtTagClass != null) {
-            // usage of JNBT = identical method signatures for WE and FAWE
-            return lookup.findVirtual(adapterClass, "fromNative", MethodType.methodType(Object.class, jnbtTagClass));
-        }
         try {
             // FAWE
-            return lookup.findVirtual(adapterClass, "fromNativeLin", MethodType.methodType(Object.class, linTagClass));
+            return lookup.findVirtual(adapterClass, "fromNativeLin", MethodType.methodType(Object.class, LIN_TAG_CLASS));
         } catch (NoSuchMethodException e) {
             // WE
-            return lookup.findVirtual(adapterClass, "fromNative", MethodType.methodType(Object.class, linTagClass));
+            return lookup.findVirtual(adapterClass, "fromNative", MethodType.methodType(Object.class, LIN_TAG_CLASS));
         }
     }
 
