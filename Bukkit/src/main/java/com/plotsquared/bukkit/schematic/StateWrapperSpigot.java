@@ -55,6 +55,7 @@ final class StateWrapperSpigot implements StateWrapper {
     private static Class<?> LIN_TAG_CLASS = null;
     private static Class<?> CRAFT_BLOCK_ENTITY_STATE_CLASS = null;
     private static Field CRAFT_SIGN_SIDE_SIGN_TEXT = null;
+    private static Field CRAFT_SIGN_SIDE_LINES = null;
     private static MethodHandle PAPERWEIGHT_ADAPTER_FROM_NATIVE = null;
     private static MethodHandle CRAFT_BLOCK_ENTITY_STATE_LOAD_DATA = null;
     private static MethodHandle CRAFT_BLOCK_ENTITY_STATE_UPDATE = null;
@@ -86,9 +87,11 @@ final class StateWrapperSpigot implements StateWrapper {
         }
         try {
             final Class<?> SIGN_TEXT_CLASS = Class.forName("net.minecraft.world.level.block.entity.SignText");
-            CRAFT_SIGN_SIDE_SIGN_TEXT = Class.forName(CRAFTBUKKIT_PACKAGE + ".block.sign.CraftSignSide")
-                    .getDeclaredField("signText");
+            final Class<?> CRAFT_SIGN_SIDE_CLASS = Class.forName(CRAFTBUKKIT_PACKAGE + ".block.sign.CraftSignSide");
+            CRAFT_SIGN_SIDE_SIGN_TEXT = CRAFT_SIGN_SIDE_CLASS.getDeclaredField("signText");
             CRAFT_SIGN_SIDE_SIGN_TEXT.setAccessible(true);
+            CRAFT_SIGN_SIDE_LINES = CRAFT_SIGN_SIDE_CLASS.getDeclaredField("lines");
+            CRAFT_SIGN_SIDE_LINES.setAccessible(true);
             CRAFT_BLOCK_ENTITY_STATE_CLASS = Class.forName(CRAFTBUKKIT_PACKAGE + ".block.CraftBlockEntityState");
             CRAFT_BLOCK_ENTITY_STATE_LOAD_DATA = findCraftBlockEntityStateLoadDataMethodHandle(CRAFT_BLOCK_ENTITY_STATE_CLASS);
             CRAFT_BLOCK_ENTITY_STATE_UPDATE = findCraftBlockEntityStateUpdateMethodHandle(CRAFT_BLOCK_ENTITY_STATE_CLASS);
@@ -163,8 +166,14 @@ final class StateWrapperSpigot implements StateWrapper {
         Object nativeTag = PAPERWEIGHT_ADAPTER_FROM_NATIVE.invoke(ADAPTER, TO_LIN_TAG.invoke(data));
         Object dataResult = DECODER_PARSE.invoke(SIGN_TEXT_DIRECT_CODEC, NBT_OPS_INSTANCE, nativeTag);
         Object signText = DATA_RESULT_GET_OR_THROW.invoke(dataResult);
+
+        // set the SignText on the underlying tile entity snapshot (SignBlockEntity)
         SIGN_BLOCK_ENTITY_SET_TEXT.invoke(CRAFT_BLOCK_ENTITY_STATE_GET_SNAPSHOT.invoke(blockState), signText, front);
+        // and update the SignText field on the CraftSignSide - changes are otherwise not reflected
         CRAFT_SIGN_SIDE_SIGN_TEXT.set(side, signText);
+
+        // reset cached lines to null, so it can be re-retrieved from SignText (for API access etc.)
+        CRAFT_SIGN_SIDE_LINES.set(side, null);
     }
 
     /**
