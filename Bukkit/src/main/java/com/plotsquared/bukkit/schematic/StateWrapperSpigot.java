@@ -18,6 +18,7 @@
  */
 package com.plotsquared.bukkit.schematic;
 
+import com.plotsquared.core.util.ReflectionHelper;
 import com.plotsquared.core.util.ReflectionUtils;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
@@ -236,13 +237,11 @@ final class StateWrapperSpigot implements StateWrapper {
 
     private static MethodHandle findCraftBlockEntityStateUpdateMethodHandle(Class<?> craftBlockEntityStateClass) throws
             NoSuchMethodException, IllegalAccessException {
-        for (final Method method : craftBlockEntityStateClass.getMethods()) {
-            if (method.getReturnType().equals(Boolean.TYPE) && method.getParameterCount() == 2 &&
-                    method.getParameterTypes()[0] == Boolean.TYPE && method.getParameterTypes()[1] == Boolean.TYPE) {
-                return LOOKUP.unreflect(method);
-            }
-        }
-        throw new NoSuchMethodException("Couldn't find method for #update(boolean, boolean) in " + craftBlockEntityStateClass.getName());
+        return LOOKUP.unreflect(ReflectionHelper.findMethod(
+                craftBlockEntityStateClass,
+                MethodType.methodType(Boolean.TYPE, Boolean.TYPE, Boolean.TYPE),
+                Modifier.PUBLIC
+        ).orElseThrow(() -> new NoSuchMethodException("Couldn't lookup CraftBlockEntityState#update(boolean, boolean) boolean")));
     }
 
     private static MethodHandle findCraftBlockEntityStateSnapshotMethodHandle(Class<?> craftBlockEntityStateClass) throws
@@ -254,13 +253,11 @@ final class StateWrapperSpigot implements StateWrapper {
 
     private static MethodHandle findSignBlockEntitySetTextMethodHandle(Class<?> signBlockEntity, Class<?> signText) throws
             NoSuchMethodException, IllegalAccessException {
-        for (final Method method : signBlockEntity.getMethods()) {
-            if (method.getReturnType() == Boolean.TYPE && method.getParameterCount() == 2
-                    && method.getParameterTypes()[0] == signText && method.getParameterTypes()[1] == Boolean.TYPE) {
-                return LOOKUP.unreflect(method);
-            }
-        }
-        throw new NoSuchMethodException("Couldn't lookup SignBlockEntity#setText(SignText, boolean) boolean");
+        return LOOKUP.unreflect(ReflectionHelper.findMethod(
+                signBlockEntity,
+                MethodType.methodType(Boolean.TYPE, signText, Boolean.TYPE),
+                Modifier.PUBLIC
+        ).orElseThrow(() -> new NoSuchMethodException("Couldn't lookup SignBlockEntity#setText(SignText, boolean) boolean")));
     }
 
 }
