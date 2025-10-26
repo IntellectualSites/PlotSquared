@@ -219,7 +219,7 @@ public class BlockEventListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void blockDestroy(BlockBreakEvent event) {
         Player player = event.getPlayer();
         Location location = BukkitUtil.adapt(event.getBlock().getLocation());
