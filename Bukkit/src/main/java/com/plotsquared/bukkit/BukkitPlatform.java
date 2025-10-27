@@ -24,6 +24,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Singleton;
 import com.google.inject.Stage;
+import com.plotsquared.bukkit.entity.EntityType;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.inject.BackupModule;
 import com.plotsquared.bukkit.inject.BukkitModule;
@@ -794,60 +795,29 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                     if (entity.getMetadata("ps_custom_spawned").stream().anyMatch(MetadataValue::asBoolean)) {
                         continue;
                     }
-                    // TODO: use (type) pattern matching when targeting java 21
-                    switch (entity.getType().toString()) {
-                        case "EGG":
-                        case "FISHING_HOOK", "FISHING_BOBBER":
-                        case "ENDER_SIGNAL", "EYE_OF_ENDER":
-                        case "AREA_EFFECT_CLOUD":
-                        case "EXPERIENCE_ORB":
-                        case "LEASH_HITCH", "LEASH_KNOT":
-                        case "FIREWORK", "FIREWORK_ROCKET":
-                        case "LIGHTNING", "LIGHTNING_BOLT":
-                        case "WITHER_SKULL":
-                        case "UNKNOWN":
-                        case "PLAYER":
+
+                    switch (EntityType.of(entity.getType())) {
+                        case EGG, FISHING_BOBBER, EYE_OF_ENDER, AREA_EFFECT_CLOUD, EXPERIENCE_ORB, LEASH_KNOT, FIREWORK_ROCKET,
+                             LIGHTNING_BOLT, WITHER_SKULL, UNKNOWN, PLAYER, MANNEQUIN, BLOCK_DISPLAY, INTERACTION, ITEM_DISPLAY,
+                             GLOW_ITEM_FRAME, TEXT_DISPLAY, OMINOUS_ITEM_SPAWNER, MARKER -> {
                             // non moving / unmovable
-                            continue;
-                        case "THROWN_EXP_BOTTLE", "EXPERIENCE_BOTTLE":
-                        case "SPLASH_POTION", "POTION":
-                        case "SNOWBALL":
-                        case "SHULKER_BULLET":
-                        case "SPECTRAL_ARROW":
-                        case "ENDER_PEARL":
-                        case "ARROW":
-                        case "LLAMA_SPIT":
-                        case "TRIDENT":
+                        }
+                        case EXPERIENCE_BOTTLE, SPLASH_POTION, LINGERING_POTION, SNOWBALL, SHULKER_BULLET, SPECTRAL_ARROW,
+                             ENDER_PEARL, ARROW, LLAMA_SPIT, TRIDENT -> {
                             // managed elsewhere | projectile
-                            continue;
-                        case "ITEM_FRAME":
-                        case "PAINTING":
+                        }
+                        case TNT, FALLING_BLOCK -> {
+                            // managed elsewhere
+                        }
+                        case ITEM_FRAME, PAINTING -> {
                             // Not vehicles
-                            continue;
-                        case "ARMOR_STAND":
-                            // Temporarily classify as vehicle
-                        case "MINECART":
-                        case "MINECART_CHEST":
-                        case "CHEST_MINECART":
-                        case "MINECART_COMMAND":
-                        case "COMMAND_BLOCK_MINECART":
-                        case "MINECART_FURNACE":
-                        case "FURNACE_MINECART":
-                        case "MINECART_HOPPER":
-                        case "HOPPER_MINECART":
-                        case "MINECART_MOB_SPAWNER":
-                        case "SPAWNER_MINECART":
-                        case "END_CRYSTAL":
-                        case "ENDER_CRYSTAL": // Backwards compatibility for 1.20.4
-                        case "MINECART_TNT":
-                        case "TNT_MINECART":
-                        case "CHEST_BOAT":
-                        case "BOAT":
-                        case "ACACIA_BOAT", "BIRCH_BOAT", "CHERRY_BOAT", "DARK_OAK_BOAT", "JUNGLE_BOAT", "MANGROVE_BOAT",
-                             "OAK_BOAT", "PALE_OAK_BOAT", "SPRUCE_BOAT", "BAMBOO_RAFT":
-                        case "ACACIA_CHEST_BOAT", "BIRCH_CHEST_BOAT", "CHERRY_CHEST_BOAT", "DARK_OAK_CHEST_BOAT",
-                             "JUNGLE_CHEST_BOAT", "MANGROVE_CHEST_BOAT", "OAK_CHEST_BOAT", "PALE_OAK_CHEST_BOAT",
-                             "SPRUCE_CHEST_BOAT", "BAMBOO_CHEST_RAFT":
+                        }
+                        // ARMOR_STAND temporarily classified as vehicle
+                        case ARMOR_STAND, MINECART, CHEST_MINECART, COMMAND_BLOCK_MINECART, FURNACE_MINECART, HOPPER_MINECART,
+                             SPAWNER_MINECART, END_CRYSTAL, TNT_MINECART, ACACIA_BOAT, BIRCH_BOAT, CHERRY_BOAT, DARK_OAK_BOAT,
+                             JUNGLE_BOAT, MANGROVE_BOAT, OAK_BOAT, PALE_OAK_BOAT, SPRUCE_BOAT, BAMBOO_RAFT, ACACIA_CHEST_BOAT,
+                             BIRCH_CHEST_BOAT, CHERRY_CHEST_BOAT, DARK_OAK_CHEST_BOAT, JUNGLE_CHEST_BOAT, MANGROVE_CHEST_BOAT,
+                             OAK_CHEST_BOAT, PALE_OAK_CHEST_BOAT, SPRUCE_CHEST_BOAT, BAMBOO_CHEST_RAFT -> {
                             if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
                                 com.plotsquared.core.location.Location location = BukkitUtil.adapt(entity.getLocation());
                                 Plot plot = location.getPlot();
@@ -872,22 +842,15 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                     this.removeRoadEntity(entity, iterator);
                                 }
                             }
-                            continue;
-                        case "SMALL_FIREBALL":
-                        case "FIREBALL":
-                        case "DRAGON_FIREBALL":
-                        case "DROPPED_ITEM", "ITEM":
+                        }
+                        case SMALL_FIREBALL, FIREBALL, DRAGON_FIREBALL, ITEM, WIND_CHARGE, BREEZE_WIND_CHARGE -> {
                             if (Settings.Enabled_Components.KILL_ROAD_ITEMS
                                     && plotArea.getOwnedPlotAbs(BukkitUtil.adapt(entity.getLocation())) == null) {
                                 this.removeRoadEntity(entity, iterator);
                             }
                             // dropped item
-                            continue;
-                        case "PRIMED_TNT", "TNT":
-                        case "FALLING_BLOCK":
-                            // managed elsewhere
-                            continue;
-                        case "SHULKER":
+                        }
+                        case SHULKER -> {
                             if (Settings.Enabled_Components.KILL_ROAD_MOBS && (Settings.Enabled_Components.KILL_NAMED_ROAD_MOBS || entity.getCustomName() == null)) {
                                 LivingEntity livingEntity = (LivingEntity) entity;
                                 List<MetadataValue> meta = entity.getMetadata("shulkerPlot");
@@ -928,80 +891,16 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                     }
                                 }
                             }
-                            continue;
-                        case "ZOMBIFIED_PIGLIN":
-                        case "PIGLIN_BRUTE":
-                        case "LLAMA":
-                        case "DONKEY":
-                        case "MULE":
-                        case "ZOMBIE_HORSE":
-                        case "SKELETON_HORSE":
-                        case "HUSK":
-                        case "ELDER_GUARDIAN":
-                        case "WITHER_SKELETON":
-                        case "STRAY":
-                        case "ZOMBIE_VILLAGER":
-                        case "EVOKER":
-                        case "EVOKER_FANGS":
-                        case "VEX":
-                        case "VINDICATOR":
-                        case "POLAR_BEAR":
-                        case "BAT":
-                        case "BLAZE":
-                        case "CAVE_SPIDER":
-                        case "CHICKEN":
-                        case "COW":
-                        case "CREEPER":
-                        case "ENDERMAN":
-                        case "ENDERMITE":
-                        case "ENDER_DRAGON":
-                        case "GHAST":
-                        case "HAPPY_GHAST": // 1.21.6+
-                        case "GHASTLING": // 1.21.6+
-                        case "GIANT":
-                        case "GUARDIAN":
-                        case "HORSE":
-                        case "IRON_GOLEM":
-                        case "MAGMA_CUBE":
-                        case "MUSHROOM_COW", "MOOSHROOM":
-                        case "OCELOT":
-                        case "PIG":
-                        case "PIG_ZOMBIE":
-                        case "RABBIT":
-                        case "SHEEP":
-                        case "SILVERFISH":
-                        case "SKELETON":
-                        case "SLIME":
-                        case "SNOWMAN", "SNOW_GOLEM":
-                        case "SPIDER":
-                        case "SQUID":
-                        case "VILLAGER":
-                        case "WITCH":
-                        case "WITHER":
-                        case "WOLF":
-                        case "ZOMBIE":
-                        case "PARROT":
-                        case "SALMON":
-                        case "DOLPHIN":
-                        case "TROPICAL_FISH":
-                        case "DROWNED":
-                        case "COD":
-                        case "TURTLE":
-                        case "PUFFERFISH":
-                        case "PHANTOM":
-                        case "ILLUSIONER":
-                        case "CAT":
-                        case "PANDA":
-                        case "FOX":
-                        case "PILLAGER":
-                        case "TRADER_LLAMA":
-                        case "WANDERING_TRADER":
-                        case "RAVAGER":
-                        case "BEE":
-                        case "HOGLIN":
-                        case "PIGLIN":
-                        case "ZOGLIN":
-                        default: {
+                        }
+                        case ZOMBIFIED_PIGLIN, PIGLIN_BRUTE, LLAMA, DONKEY, MULE, ZOMBIE_HORSE, SKELETON_HORSE, HUSK,
+                             ELDER_GUARDIAN, WITHER_SKELETON, STRAY, ZOMBIE_VILLAGER, EVOKER, EVOKER_FANGS, VEX, VINDICATOR,
+                             POLAR_BEAR, BAT, BLAZE, CAVE_SPIDER, CHICKEN, COW, CREEPER, ENDERMAN, ENDERMITE, ENDER_DRAGON, GHAST,
+                             HAPPY_GHAST, GIANT, GUARDIAN, HORSE, IRON_GOLEM, MAGMA_CUBE, MOOSHROOM, OCELOT, PIG, RABBIT, SHEEP,
+                             SILVERFISH, SKELETON, SLIME, SNOW_GOLEM, SPIDER, SQUID, VILLAGER, WITCH, WITHER, WOLF, ZOMBIE,
+                             PARROT, SALMON, DOLPHIN, TROPICAL_FISH, DROWNED, COD, TURTLE, PUFFERFISH, PHANTOM, ILLUSIONER, CAT,
+                             PANDA, FOX, PILLAGER, TRADER_LLAMA, WANDERING_TRADER, RAVAGER, BEE, HOGLIN, PIGLIN, ZOGLIN, FROG,
+                             GOAT, WARDEN, TADPOLE, ALLAY, ARMADILLO, AXOLOTL, STRIDER, SNIFFER, CAMEL, BOGGED, COPPER_GOLEM,
+                             GLOW_SQUID, BREEZE, CREAKING -> {
                             if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
                                 Location location = entity.getLocation();
                                 if (BukkitUtil.adapt(location).isPlotRoad()) {
