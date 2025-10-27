@@ -18,6 +18,7 @@
  */
 package com.plotsquared.bukkit.util;
 
+import com.plotsquared.bukkit.entity.EntityType;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -48,7 +49,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -189,7 +189,7 @@ public class BukkitEntityUtil {
                     );
                     return false;
                 }
-            } else if (victim.getType() == EntityType.ARMOR_STAND) {
+            } else if (EntityType.of(victim.getType()) == EntityType.ARMOR_STAND) {
                 if (plot != null && (plot.getFlag(MiscBreakFlag.class) || plot
                         .isAdded(plotPlayer.getUUID()))) {
                     return true;
@@ -354,7 +354,7 @@ public class BukkitEntityUtil {
     }
 
     public static boolean checkEntity(Entity entity, Plot plot) {
-        return checkEntity(entity.getType(), plot);
+        return checkEntity(EntityType.of(entity.getType()), plot);
     }
 
     public static boolean checkEntity(EntityType type, Plot plot) {
@@ -364,7 +364,7 @@ public class BukkitEntityUtil {
         }
 
         final com.sk89q.worldedit.world.entity.EntityType entityType =
-                BukkitAdapter.adapt(type);
+                BukkitAdapter.adapt(type.bukkitType());
 
         if (EntityCategories.PLAYER.contains(entityType)) {
             return false;
