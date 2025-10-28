@@ -5,7 +5,7 @@ on:
       - main
 jobs:
   build:
-    if: github.repository_owner == 'IntellectualSites'
+    if: github.repository_owner == 'KeinGithubMensch'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -48,7 +48,7 @@ jobs:
           SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
         with:
           source-directory: 'Core/build/docs/javadoc'
-          destination-github-username: 'IntellectualSites'
+          destination-github-username: 'KeinGithubMensch'
           destination-repository-name: 'plotsquared-javadocs'
           user-email: ${{ secrets.USER_EMAIL }}
           target-branch: main
@@ -60,7 +60,7 @@ jobs:
           SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
         with:
           source-directory: 'Bukkit/build/docs/javadoc'
-          destination-github-username: 'IntellectualSites'
+          destination-github-username: 'KeinGithubMensch'
           destination-repository-name: 'plotsquared-javadocs'
           user-email: ${{ secrets.USER_EMAIL }}
           target-branch: main
