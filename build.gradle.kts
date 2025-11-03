@@ -73,8 +73,8 @@ subprojects {
 
     dependencies {
         // Tests
-        testImplementation("org.junit.jupiter:junit-jupiter:6.0.0")
-        testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.0")
+        testImplementation("org.junit.jupiter:junit-jupiter:6.0.1")
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.1")
     }
 
     plugins.withId("java") {
