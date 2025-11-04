@@ -370,7 +370,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      * The contextual position can be affected when using a command with
      * an explicit plot override, e.g., `/plot &ltid&gt info`.
      *
-     * @since TODO
+     * @since 7.5.9
      */
     public @Nullable PlotArea getContextualPlotArea() {
         Plot current = getCurrentPlot();

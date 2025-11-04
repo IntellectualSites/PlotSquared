@@ -265,7 +265,7 @@ public final class PlaceholderRegistry {
      * @param key                 Placeholder key
      * @param placeholderFunction Placeholder generator. Cannot return null
      * @param requireAbsolute     If the plot given to the placeholder should be the absolute (not base) plot
-     * @since TODO
+     * @since 7.5.9
      */
     public void createPlaceholder(
             final @NonNull String key,

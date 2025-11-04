@@ -38,7 +38,7 @@ public abstract class PlotSpecificPlaceholder extends Placeholder {
      *
      * @param key             Placeholder key
      * @param requireAbsolute If the plot given to the placeholder should be the absolute (not base) plot
-     * @since TODO
+     * @since 7.5.9
      */
     public PlotSpecificPlaceholder(final @NonNull String key, final boolean requireAbsolute) {
         super(key);
