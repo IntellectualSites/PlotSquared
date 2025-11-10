@@ -1340,7 +1340,7 @@ public class Plot {
         for (Plot current : getConnectedPlots()) {
             List<PlotPlayer<?>> players = current.getPlayersInPlot();
             for (PlotPlayer<?> pp : players) {
-                this.plotListener.plotExit(pp, current);
+                this.plotListener.plotExit(pp, current, null, area);
             }
 
             if (Settings.Backup.DELETE_ON_UNCLAIM) {
@@ -2594,7 +2594,7 @@ public class Plot {
     public void reEnter() {
         TaskManager.runTaskLater(() -> {
             for (PlotPlayer<?> pp : Plot.this.getPlayersInPlot()) {
-                this.plotListener.plotExit(pp, Plot.this);
+                this.plotListener.plotExit(pp, Plot.this, Plot.this, area);
                 this.plotListener.plotEntry(pp, Plot.this);
             }
         }, TaskTime.ticks(1L));

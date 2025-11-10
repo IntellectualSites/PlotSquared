@@ -600,7 +600,7 @@ public class PlayerEventListener implements Listener {
                 PlotArea area = location.getPlotArea();
                 if (area == null) {
                     if (lastPlot != null) {
-                        plotListener.plotExit(pp, lastPlot);
+                        plotListener.plotExit(pp, lastPlot, null, null);
                         lastPlotAccess.remove();
                     }
                     try (final MetaDataAccess<Location> lastLocationAccess =
@@ -753,7 +753,7 @@ public class PlayerEventListener implements Listener {
             if (now == null) {
                 try (final MetaDataAccess<Boolean> kickAccess =
                              pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
-                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(
+                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot, now, area) && this.tmpTeleport && !kickAccess.get().orElse(
                             false)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
@@ -847,7 +847,7 @@ public class PlayerEventListener implements Listener {
             if (plot == null) {
                 try (final MetaDataAccess<Boolean> kickAccess =
                              pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
-                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(
+                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot, null, area) && this.tmpTeleport && !kickAccess.get().orElse(
                             false)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
