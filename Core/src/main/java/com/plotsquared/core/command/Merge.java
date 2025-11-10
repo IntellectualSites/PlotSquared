@@ -40,6 +40,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
 @CommandDeclaration(command = "merge",
         aliases = "m",
@@ -116,9 +117,11 @@ public class Merge extends SubCommand {
         if (direction == null) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    TagResolver.resolver("value", Tag.inserting(Component.text(
-                            "/plot merge <" + StringMan.join(values, " | ") + "> [removeroads]"
-                    )))
+                    TagResolver.resolver(
+                            "value", Tag.inserting(Component.text(
+                                    "/plot merge <" + StringMan.join(values, " | ") + "> [removeroads]"
+                            ))
+                    )
             );
             player.sendMessage(
                     TranslatableCaption.of("help.direction"),
@@ -244,54 +247,66 @@ public class Merge extends SubCommand {
         }
         java.util.Set<UUID> uuids = adjacent.getOwners();
         boolean isOnline = false;
-        for (final UUID owner : uuids) {
-            final PlotPlayer<?> accepter = PlotSquared.platform().playerManager().getPlayerIfExists(owner);
-            if (!force && accepter == null) {
-                continue;
-            }
-            isOnline = true;
-            final Direction dir = direction;
-            Runnable run = () -> {
-                accepter.sendMessage(TranslatableCaption.of("merge.merge_accepted"));
-                plot.getPlotModificationManager().autoMerge(dir, maxSize - size, owner, player, terrain);
-                PlotPlayer<?> plotPlayer = PlotSquared.platform().playerManager().getPlayerIfExists(player.getUUID());
-                if (plotPlayer == null) {
-                    accepter.sendMessage(TranslatableCaption.of("merge.merge_not_valid"));
-                    return;
+        if (!force) {
+            for (final UUID owner : uuids) {
+                final PlotPlayer<?> accepter = PlotSquared.platform().playerManager().getPlayerIfExists(owner);
+                if (accepter == null) {
+                    continue;
                 }
-                if (this.econHandler.isEnabled(plotArea) && !player.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_ECON) && price > 0d) {
-                    if (!force && this.econHandler.getMoney(player) < price) {
-                        player.sendMessage(
-                                TranslatableCaption.of("economy.cannot_afford_merge"),
-                                TagResolver.resolver("money", Tag.inserting(Component.text(this.econHandler.format(price))))
-                        );
-                        return;
+                isOnline = true;
+                final Direction dir = direction;
+                Supplier<Boolean> run = () -> {
+                    accepter.sendMessage(TranslatableCaption.of("merge.merge_accepted"));
+                    if (plot.getPlotModificationManager().autoMerge(dir, maxSize - size, owner, player, terrain)) {
+                        PlotPlayer<?> plotPlayer = PlotSquared.platform().playerManager().getPlayerIfExists(player.getUUID());
+                        if (plotPlayer == null) {
+                            accepter.sendMessage(TranslatableCaption.of("merge.merge_not_valid"));
+                            return false;
+                        }
+                        if (this.econHandler.isEnabled(plotArea) && !player.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_ECON) && price > 0d) {
+                            if (this.econHandler.getMoney(player) < price) {
+                                player.sendMessage(
+                                        TranslatableCaption.of("economy.cannot_afford_merge"),
+                                        TagResolver.resolver(
+                                                "money",
+                                                Tag.inserting(Component.text(this.econHandler.format(price)))
+                                        )
+                                );
+                                return false;
+                            }
+                            this.econHandler.withdrawMoney(player, price);
+                            player.sendMessage(
+                                    TranslatableCaption.of("economy.removed_balance"),
+                                    TagResolver.resolver("money", Tag.inserting(Component.text(this.econHandler.format(price))))
+                            );
+                        }
+                        player.sendMessage(TranslatableCaption.of("merge.success_merge"));
+                        eventDispatcher.callPostMerge(player, plot);
+                        return true;
                     }
-                    this.econHandler.withdrawMoney(player, price);
-                    player.sendMessage(
-                            TranslatableCaption.of("economy.removed_balance"),
-                            TagResolver.resolver("money", Tag.inserting(Component.text(this.econHandler.format(price))))
+                    player.sendMessage(TranslatableCaption.of("merge.no_available_automerge"));
+                    return false;
+                };
+                if (hasConfirmation(player)) {
+                    CmdConfirm.addPending(
+                            accepter, MINI_MESSAGE.serialize(MINI_MESSAGE
+                                    .deserialize(
+                                            TranslatableCaption.of("merge.merge_request_confirm").getComponent(player),
+                                            TagResolver.builder()
+                                                    .tag("player", Tag.inserting(Component.text(player.getName())))
+                                                    .tag(
+                                                            "location",
+                                                            Tag.inserting(Component.text(plot.getWorldName() + " " + plot.getId()))
+                                                    )
+                                                    .build()
+                                    )),
+                            run::get
                     );
+                } else {
+                    return run.get();
                 }
-                player.sendMessage(TranslatableCaption.of("merge.success_merge"));
-                eventDispatcher.callPostMerge(player, plot);
-            };
-            if (!force && hasConfirmation(player)) {
-                CmdConfirm.addPending(accepter, MINI_MESSAGE.serialize(MINI_MESSAGE
-                                .deserialize(
-                                        TranslatableCaption.of("merge.merge_request_confirm").getComponent(player),
-                                        TagResolver.builder()
-                                                .tag("player", Tag.inserting(Component.text(player.getName())))
-                                                .tag(
-                                                        "location",
-                                                        Tag.inserting(Component.text(plot.getWorldName() + " " + plot.getId()))
-                                                )
-                                                .build()
-                                )),
-                        run
-                );
-            } else {
-                run.run();
+                // find first
+                break;
             }
         }
         if (force || !isOnline) {
