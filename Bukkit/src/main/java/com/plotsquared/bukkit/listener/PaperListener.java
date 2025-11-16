@@ -104,6 +104,10 @@ public class PaperListener implements Listener {
         }
         Plot plot = area.getPlot(location);
         if (plot != null) {
+            // Prevent dropping blocks which normally would not be dropped.
+            if (!event.willDrop()) {
+                return;
+            }
             event.setWillDrop(plot.getFlag(TileDropFlag.class));
         }
     }
