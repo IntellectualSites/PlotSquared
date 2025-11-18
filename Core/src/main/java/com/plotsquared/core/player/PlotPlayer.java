@@ -355,7 +355,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     /**
      * {@return the world name at the player's contextual position}
      * The contextual position can be affected when using a command with
-     * an explicit plot override, e.g., `/plot &ltid&gt info`.
+     * an explicit plot override, e.g., {@code /plot <id> info}.
      */
     private @NonNull String getContextualWorldName() {
         Plot current = getCurrentPlot();
@@ -368,7 +368,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     /**
      * {@return the plot area at the player's contextual position}
      * The contextual position can be affected when using a command with
-     * an explicit plot override, e.g., `/plot &ltid&gt info`.
+     * an explicit plot override, e.g., {@code /plot <id> info}.
      *
      * @since 7.5.9
      */
