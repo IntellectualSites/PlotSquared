@@ -90,7 +90,7 @@ public class DebugRoadRegen extends SubCommand {
     }
 
     public boolean regenPlot(PlotPlayer<?> player) {
-        PlotArea area = player.getCurrentPlot().getArea();
+        PlotArea area = player.getContextualPlotArea();
         if (area == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
             return false;
@@ -145,9 +145,10 @@ public class DebugRoadRegen extends SubCommand {
             return false;
         }
 
-        PlotArea area = player.getCurrentPlot().getArea();
+        PlotArea area = player.getContextualPlotArea();
         if (area == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
+            return false;
         }
         Plot plot = player.getCurrentPlot();
         PlotManager manager = area.getPlotManager();
