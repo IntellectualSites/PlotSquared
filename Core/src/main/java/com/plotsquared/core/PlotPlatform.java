@@ -31,6 +31,7 @@ import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.inject.annotations.DefaultGenerator;
 import com.plotsquared.core.location.World;
 import com.plotsquared.core.permissions.PermissionHandler;
+import com.plotsquared.core.permissions.RangedPermissionResolver;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
@@ -347,6 +348,10 @@ public interface PlotPlatform<P> extends LocaleHolder {
      */
     default @NonNull PermissionHandler permissionHandler() {
         return injector().getInstance(PermissionHandler.class);
+    }
+
+    default @NonNull RangedPermissionResolver rangedPermissionResolver() {
+        return injector().getInstance(RangedPermissionResolver.class);
     }
 
     /**
