@@ -41,7 +41,6 @@ import com.plotsquared.core.plot.flag.implementations.ExplosionFlag;
 import com.plotsquared.core.plot.flag.implementations.GrassGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.IceFormFlag;
 import com.plotsquared.core.plot.flag.implementations.IceMeltFlag;
-import com.plotsquared.core.plot.flag.implementations.InstabreakFlag;
 import com.plotsquared.core.plot.flag.implementations.KelpGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.LeafDecayFlag;
 import com.plotsquared.core.plot.flag.implementations.LiquidFlowFlag;
@@ -63,7 +62,6 @@ import com.sk89q.worldedit.world.block.BlockType;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -80,7 +78,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
-import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockFadeEvent;
@@ -505,67 +502,6 @@ public class BlockEventListener implements Listener {
             ));
             event.setCancelled(true);
         }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onBlockDamage(BlockDamageEvent event) {
-        Player player = event.getPlayer();
-        Location location = BukkitUtil.adapt(event.getBlock().getLocation());
-        PlotArea area = location.getPlotArea();
-        if (area == null) {
-            return;
-        }
-        if (player.getGameMode() != GameMode.SURVIVAL) {
-            return;
-        }
-        Plot plot = area.getPlot(location);
-        if (plot != null) {
-            if (plot.getFlag(InstabreakFlag.class)) {
-                Block block = event.getBlock();
-                BlockBreakEvent call = new BlockBreakEvent(block, player);
-                Bukkit.getServer().getPluginManager().callEvent(call);
-                if (!call.isCancelled()) {
-                    if (Settings.Flags.INSTABREAK_CONSIDER_TOOL) {
-                        block.breakNaturally(event.getItemInHand());
-                    } else {
-                        block.breakNaturally();
-                    }
-                }
-            }
-            // == rather than <= as we only care about the "ground level" not being destroyed
-            if (location.getY() == area.getMinGenHeight()) {
-                event.setCancelled(true);
-                return;
-            }
-            if (!plot.hasOwner()) {
-                BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
-                if (plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
-                    return;
-                }
-                event.setCancelled(true);
-                return;
-            }
-            BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
-            if (!plot.isAdded(plotPlayer.getUUID())) {
-                List<BlockTypeWrapper> destroy = plot.getFlag(BreakFlag.class);
-                Block block = event.getBlock();
-                if (destroy
-                        .contains(BlockTypeWrapper.get(BukkitAdapter.asBlockType(block.getType())))
-                        || plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_DESTROY_OTHER)) {
-                    return;
-                }
-                plot.debug(player.getName() + " could not break " + block.getType()
-                        + " because it was not in the break flag");
-                event.setCancelled(true);
-                return;
-            }
-            return;
-        }
-        BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
-        if (plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_DESTROY_ROAD)) {
-            return;
-        }
-        event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
