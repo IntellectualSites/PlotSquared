@@ -7,7 +7,7 @@ checkerqual = "3.52.1"
 gson = "2.10"
 guava = "31.1-jre"
 snakeyaml = "2.0"
-adventure = "4.25.0"
+adventure = "4.26.1"
 adventure-bukkit = "4.4.1"
 log4j = "2.19.0"
 
