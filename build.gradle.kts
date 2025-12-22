@@ -231,9 +231,10 @@ tasks {
         register<RunServer>("runServer-$it") {
             dependsOn(getByName("cacheLatestFaweArtifact"))
             minecraftVersion(it)
-            pluginJars(*project(":plotsquared-bukkit").getTasksByName("shadowJar", false)
-                    .map { task -> (task as Jar).archiveFile }
-                    .toTypedArray())
+            pluginJars(project.files(
+                project(":plotsquared-bukkit").tasks.named<Jar>("shadowJar")
+                .map { it.archiveFile }
+            ))
             jvmArgs("-DPaper.IgnoreJavaVersion=true", "-Dcom.mojang.eula.agree=true")
             downloadPlugins {
                 url("https://ci.athion.net/job/FastAsyncWorldEdit/lastSuccessfulBuild/artifact/artifacts/${project.ext["faweArtifact"]}")
