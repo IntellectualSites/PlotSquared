@@ -157,14 +157,26 @@ public class Merge extends SubCommand {
 
         UUID uuid = player.getUUID();
 
-        if (!force && !plot.isOwner(uuid)) {
-            if (!player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_MERGE)) {
-                player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
+        if (!force) {
+            if (!plot.isOwner(uuid)) {
+                if (!player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_MERGE)) {
+                    player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
+                    return false;
+                } else {
+                    uuid = plot.getOwnerAbs();
+                }
+            }
+
+            if (this.econHandler.isEnabled(plotArea) && !player.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_ECON) && price > 0d && this.econHandler.getMoney(
+                    player) < price) {
+                player.sendMessage(
+                        TranslatableCaption.of("economy.cannot_afford_merge"),
+                        TagResolver.resolver("money", Tag.inserting(Component.text(this.econHandler.format(price))))
+                );
                 return false;
-            } else {
-                uuid = plot.getOwnerAbs();
             }
         }
+
         if (direction == Direction.ALL) {
             boolean terrain = true;
             if (args.length == 2) {
@@ -181,30 +193,20 @@ public class Merge extends SubCommand {
                 return true;
             }
             if (plot.getPlotModificationManager().autoMerge(Direction.ALL, maxSize, uuid, player, terrain)) {
-                if (this.econHandler.isEnabled(plotArea) && !player.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_ECON) && price > 0d) {
-                    this.econHandler.withdrawMoney(player, price);
-                    player.sendMessage(
-                            TranslatableCaption.of("economy.removed_balance"),
-                            TagResolver.resolver("money", Tag.inserting(Component.text(this.econHandler.format(price)))),
-                            TagResolver.resolver(
-                                    "balance",
-                                    Tag.inserting(Component.text(this.econHandler.format(this.econHandler.getMoney(player))))
-                            )
-                    );
-                }
+                this.econHandler.withdrawMoney(player, price);
+                player.sendMessage(
+                        TranslatableCaption.of("economy.removed_balance"),
+                        TagResolver.resolver("money", Tag.inserting(Component.text(this.econHandler.format(price)))),
+                        TagResolver.resolver(
+                                "balance",
+                                Tag.inserting(Component.text(this.econHandler.format(this.econHandler.getMoney(player))))
+                        )
+                );
                 player.sendMessage(TranslatableCaption.of("merge.success_merge"));
                 eventDispatcher.callPostMerge(player, plot);
                 return true;
             }
             player.sendMessage(TranslatableCaption.of("merge.no_available_automerge"));
-            return false;
-        }
-        if (!force && this.econHandler.isEnabled(plotArea) && !player.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_ECON) && price > 0d && this.econHandler.getMoney(
-                player) < price) {
-            player.sendMessage(
-                    TranslatableCaption.of("economy.cannot_afford_merge"),
-                    TagResolver.resolver("money", Tag.inserting(Component.text(this.econHandler.format(price))))
-            );
             return false;
         }
         final boolean terrain;
