@@ -389,7 +389,7 @@ public class SQLManager implements AbstractDB {
         }
     }
 
-    public boolean sendBatch() {
+    public synchronized boolean sendBatch() {
         try {
             if (!getGlobalTasks().isEmpty()) {
                 if (this.connection.getAutoCommit()) {
