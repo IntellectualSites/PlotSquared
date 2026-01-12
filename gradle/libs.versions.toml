@@ -33,7 +33,7 @@ vault = "1.7.1"
 serverlib = "2.3.7"
 
 # Gradle plugins
-shadow = "9.3.0"
+shadow = "9.3.1"
 grgit = "4.1.1"
 spotless = "8.1.0"
 publish = "0.35.0"
