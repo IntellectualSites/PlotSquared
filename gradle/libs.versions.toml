@@ -3,7 +3,7 @@
 paper = "1.20.4-R0.1-SNAPSHOT"
 guice = "7.0.0"
 spotbugs = "4.9.8"
-checkerqual = "3.52.1"
+checkerqual = "3.53.0"
 gson = "2.10"
 guava = "31.1-jre"
 snakeyaml = "2.0"
