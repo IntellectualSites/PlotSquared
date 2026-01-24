@@ -391,8 +391,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         int count = 0;
         for (PlotArea area : this.plotAreaManager.getPlotAreasSet(world)) {
             if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
-                count +=
-                        area.getPlotsAbs(uuid).stream().filter(plot -> !DoneFlag.isDone(plot)).count();
+                count += area.getPlotsAbs(uuid).stream().filter(plot -> !DoneFlag.isDone(plot)).count();
             } else {
                 count += area.getPlotsAbs(uuid).size();
             }
