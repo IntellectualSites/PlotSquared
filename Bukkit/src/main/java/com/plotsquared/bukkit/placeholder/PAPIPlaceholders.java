@@ -70,6 +70,10 @@ public class PAPIPlaceholders extends PlaceholderExpansion {
             if (identifier.isEmpty()) {
                 return "";
             }
+            
+            if (identifier.equals("this")) {
+                identifier = pl.getLocation().getWorldName();
+            }
 
             return pl.getPlotCount(identifier) > 0 ?
                     PlaceholderAPIPlugin.booleanTrue() :
@@ -81,7 +85,11 @@ public class PAPIPlaceholders extends PlaceholderExpansion {
             if (identifier.isEmpty()) {
                 return "";
             }
-
+            
+            if (identifier.equals("this")) {
+                identifier = pl.getLocation().getWorldName();
+            }
+            
             return String.valueOf(pl.getPlotCount(identifier));
         }
 
@@ -89,6 +97,10 @@ public class PAPIPlaceholders extends PlaceholderExpansion {
             identifier = identifier.substring("base_plot_count_".length());
             if (identifier.isEmpty()) {
                 return "";
+            }
+            
+            if (identifier.equals("this")) {
+                identifier = pl.getLocation().getWorldName();
             }
 
             return String.valueOf(PlotQuery.newQuery()
