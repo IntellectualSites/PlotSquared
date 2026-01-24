@@ -70,7 +70,7 @@ public class PAPIPlaceholders extends PlaceholderExpansion {
             if (identifier.isEmpty()) {
                 return "";
             }
-            
+
             if (identifier.equals("this")) {
                 identifier = pl.getLocation().getWorldName();
             }
@@ -85,11 +85,11 @@ public class PAPIPlaceholders extends PlaceholderExpansion {
             if (identifier.isEmpty()) {
                 return "";
             }
-            
+
             if (identifier.equals("this")) {
                 identifier = pl.getLocation().getWorldName();
             }
-            
+
             return String.valueOf(pl.getPlotCount(identifier));
         }
 
@@ -98,7 +98,7 @@ public class PAPIPlaceholders extends PlaceholderExpansion {
             if (identifier.isEmpty()) {
                 return "";
             }
-            
+
             if (identifier.equals("this")) {
                 identifier = pl.getLocation().getWorldName();
             }
@@ -108,6 +108,39 @@ public class PAPIPlaceholders extends PlaceholderExpansion {
                     .inWorld(identifier)
                     .whereBasePlot()
                     .thatPasses(plot -> !DoneFlag.isDone(plot))
+                    .count());
+        }
+
+        if (identifier.startsWith("server_plot_count_")) {
+            identifier = identifier.substring("server_plot_count_".length());
+            if (identifier.isEmpty()) {
+                return "";
+            }
+
+            if (identifier.equals("this")) {
+                identifier = pl.getLocation().getWorldName();
+            }
+
+            return String.valueOf(PlotQuery.newQuery()
+                    .allPlots()
+                    .inWorld(identifier)
+                    .count());
+        }
+
+        if (identifier.startsWith("server_base_plot_count_")) {
+            identifier = identifier.substring("server_base_plot_count_".length());
+            if (identifier.isEmpty()) {
+                return "";
+            }
+
+            if (identifier.equals("this")) {
+                identifier = pl.getLocation().getWorldName();
+            }
+
+            return String.valueOf(PlotQuery.newQuery()
+                    .allPlots()
+                    .inWorld(identifier)
+                    .whereBasePlot()
                     .count());
         }
 
