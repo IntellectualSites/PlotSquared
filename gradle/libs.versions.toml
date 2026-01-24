@@ -2,21 +2,21 @@
 # Platform expectations
 paper = "1.21.1-R0.1-SNAPSHOT"
 guice = "7.0.0"
-spotbugs = "4.9.3"
-checkerqual = "3.49.4"
+spotbugs = "4.9.8"
+checkerqual = "3.53.0"
 gson = "2.10"
 guava = "31.1-jre"
 snakeyaml = "2.0"
-adventure = "4.21.0"
-adventure-bukkit = "4.4.0"
+adventure = "4.26.1"
+adventure-bukkit = "4.4.1"
 log4j = "2.19.0"
 
 # Plugins
 worldedit = "7.2.20"
-fawe = "2.13.0"
-placeholderapi = "2.11.6"
+fawe = "2.14.3"
+placeholderapi = "2.11.7"
 luckperms = "5.5"
-essentialsx = "2.21.1"
+essentialsx = "2.21.2"
 mvdwapi = "3.1.1"
 
 # Third party
@@ -33,11 +33,11 @@ vault = "1.7.1"
 serverlib = "2.3.7"
 
 # Gradle plugins
-shadow = "8.3.6"
+shadow = "9.3.1"
 grgit = "4.1.1"
-spotless = "7.0.4"
-publish = "0.32.0"
-runPaper = "2.3.1"
+spotless = "8.1.0"
+publish = "0.36.0"
+runPaper = "3.0.2"
 
 [libraries]
 # Platform expectations

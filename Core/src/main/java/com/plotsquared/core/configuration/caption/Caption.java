@@ -51,7 +51,7 @@ public interface Caption {
      * @param localeHolder Local holder
      * @param tagResolvers custom tag resolvers to replace placeholders / parameters
      * @return {@link ComponentLike}
-     * @since TODO
+     * @since 7.5.4
      */
     @NonNull Component toComponent(@NonNull LocaleHolder localeHolder, @NonNull TagResolver @NonNull... tagResolvers);
 

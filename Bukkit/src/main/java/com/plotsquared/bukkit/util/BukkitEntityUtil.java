@@ -354,13 +354,17 @@ public class BukkitEntityUtil {
     }
 
     public static boolean checkEntity(Entity entity, Plot plot) {
+        return checkEntity(entity.getType(), plot);
+    }
+
+    public static boolean checkEntity(EntityType type, Plot plot) {
         if (plot == null || !plot.hasOwner() || plot.getFlags().isEmpty() && plot.getArea()
                 .getFlagContainer().getFlagMap().isEmpty()) {
             return false;
         }
 
         final com.sk89q.worldedit.world.entity.EntityType entityType =
-                BukkitAdapter.adapt(entity.getType());
+                BukkitAdapter.adapt(type);
 
         if (EntityCategories.PLAYER.contains(entityType)) {
             return false;

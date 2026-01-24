@@ -101,6 +101,10 @@ public class Grant extends Command {
                                     );
                                 } else {
                                     access.set(access.get().orElse(0) + 1);
+                                    player.sendMessage(
+                                            TranslatableCaption.of("grants.added"),
+                                            TagResolver.resolver("grants", Tag.inserting(Component.text(access.get().orElse(0))))
+                                    );
                                 }
                             }
                         } else {
@@ -173,8 +177,14 @@ public class Grant extends Command {
                 commands.addAll(TabCompletions.completePlayers(player, args[0], Collections.emptyList()));
             }
             return commands;
+        } else if (args.length == 2) {
+            final String subcommand = args[0].toLowerCase();
+            if ((subcommand.equals("add") && player.hasPermission(Permission.PERMISSION_GRANT_ADD)) ||
+                (subcommand.equals("check") && player.hasPermission(Permission.PERMISSION_GRANT_CHECK))) {
+                return TabCompletions.completePlayers(player, args[1], Collections.emptyList());
+            }
         }
-        return TabCompletions.completePlayers(player, String.join(",", args).trim(), Collections.emptyList());
+        return Collections.emptyList();
     }
 
 }

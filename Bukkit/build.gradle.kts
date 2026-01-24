@@ -17,6 +17,19 @@ repositories {
     }
 }
 
+// Make sure we control the exact version of paper being included, while dropping spigot + bukkit
+configurations.all {
+    exclude("org.bukkit")
+    exclude("org.spigotmc")
+
+    resolutionStrategy.eachDependency {
+        if (requested.group == "io.papermc.paper" && requested.name == "paper-api") {
+            useVersion(checkNotNull(libs.paper.orNull?.version))
+            because("specific paper version is required to prevent binary incompatibilities on older versions")
+        }
+    }
+}
+
 dependencies {
     api(projects.plotsquaredCore)
 
@@ -28,20 +41,13 @@ dependencies {
     implementation(libs.paperlib)
 
     // Plugins
-    compileOnly(libs.worldeditBukkit) {
-        exclude(group = "org.bukkit")
-        exclude(group = "org.spigotmc")
-    }
+    compileOnly(libs.worldeditBukkit)
     compileOnly(libs.faweBukkit) { isTransitive = false }
     testImplementation(libs.faweBukkit) { isTransitive = false }
-    compileOnly(libs.vault) {
-        exclude(group = "org.bukkit")
-    }
+    compileOnly(libs.vault)
     compileOnly(libs.placeholderapi)
     compileOnly(libs.luckperms)
-    compileOnly(libs.essentialsx) {
-        exclude(group = "org.spigotmc")
-    }
+    compileOnly(libs.essentialsx)
     compileOnly(libs.mvdwapi) { isTransitive = false }
 
     // Other libraries
@@ -106,7 +112,7 @@ tasks {
         opt.links("https://jd.papermc.io/paper/1.21.1/")
         opt.links("https://docs.enginehub.org/javadoc/com.sk89q.worldedit/worldedit-bukkit/" + libs.worldeditBukkit.get().versionConstraint.toString())
         opt.links("https://intellectualsites.github.io/plotsquared-javadocs/core/")
-        opt.links("https://jd.advntr.dev/api/" + libs.adventureApi.get().versionConstraint.toString())
+//        opt.links("https://jd.advntr.dev/api/" + libs.adventureApi.get().versionConstraint.toString())
         opt.links("https://google.github.io/guice/api-docs/" + libs.guice.get().versionConstraint.toString() + "/javadoc/")
         opt.links("https://checkerframework.org/api/")
         opt.isLinkSource = true
