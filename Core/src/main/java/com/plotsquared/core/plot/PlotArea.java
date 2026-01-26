@@ -21,6 +21,7 @@ package com.plotsquared.core.plot;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.collection.QuadMap;
 import com.plotsquared.core.configuration.ConfigurationNode;
@@ -29,6 +30,8 @@ import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
+import com.plotsquared.core.events.PlayerPlotAddRemoveEvent;
+import com.plotsquared.core.events.Result;
 import com.plotsquared.core.generator.GridPlotWorld;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.inject.annotations.WorldConfig;
@@ -47,6 +50,7 @@ import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueCoordinator;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.RegionUtil;
@@ -155,6 +159,9 @@ public abstract class PlotArea implements ComponentLike {
     private QuadMap<PlotCluster> clusters;
     private String signMaterial = "OAK_WALL_SIGN";
     private String legacySignMaterial = "WALL_SIGN";
+    // These will be injected
+    @Inject
+    private EventDispatcher eventDispatcher;
 
     public PlotArea(
             final @NonNull String worldName, final @Nullable String id,
@@ -1104,9 +1111,44 @@ public abstract class PlotArea implements ComponentLike {
                 final PlotId id = PlotId.of(x, y);
                 final Plot plot = getPlotAbs(id);
 
-                plot.setTrusted(trusted);
-                plot.setMembers(members);
-                plot.setDenied(denied);
+                Set<UUID> currentlyTrusted = plot.getTrusted();
+                trusted.forEach(uuid -> {
+                    if (!currentlyTrusted.contains(uuid) && eventDispatcher.callPlayerTrust(
+                            null,
+                            plot,
+                            uuid,
+                            PlayerPlotAddRemoveEvent.Reason.MERGE
+                    ).getEventResult() != Result.DENY) {
+                        plot.addTrusted(uuid);
+                        eventDispatcher.callPostTrusted(null, plot, uuid, true, PlayerPlotAddRemoveEvent.Reason.MERGE);
+                    }
+                });
+
+                Set<UUID> currentlyAdded = plot.getMembers();
+                members.forEach(uuid -> {
+                    if (!currentlyAdded.contains(uuid) && eventDispatcher.callPlayerAdd(
+                            null,
+                            plot,
+                            uuid,
+                            PlayerPlotAddRemoveEvent.Reason.MERGE
+                    ).getEventResult() != Result.DENY) {
+                        plot.addMember(uuid);
+                        eventDispatcher.callPostAdded(null, plot, uuid, true, PlayerPlotAddRemoveEvent.Reason.MERGE);
+                    }
+                });
+
+                Set<UUID> currentlyDenied = plot.getDenied();
+                denied.forEach(uuid -> {
+                    if (!currentlyDenied.contains(uuid) && eventDispatcher.callPlayerDeny(
+                            null,
+                            plot,
+                            uuid,
+                            PlayerPlotAddRemoveEvent.Reason.MERGE
+                    ).getEventResult() != Result.DENY) {
+                        plot.addDenied(uuid);
+                        eventDispatcher.callPostDenied(null, plot, uuid, true, PlayerPlotAddRemoveEvent.Reason.MERGE);
+                    }
+                });
 
                 Plot plot2;
                 if (lx) {
