@@ -31,6 +31,7 @@ import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -96,6 +97,10 @@ public class Delete extends SubCommand {
                 player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
                 return;
             }
+
+            for (Plot connectedPlot : plots) {
+                connectedPlot.setMeta("pendingDelete", true);
+            }
             final long start = System.currentTimeMillis();
             if (Settings.Teleport.ON_DELETE) {
                 plot.getPlayersInPlot().forEach(playerInPlot -> plot.teleportPlayer(playerInPlot, TeleportCause.COMMAND_DELETE,
@@ -104,6 +109,10 @@ public class Delete extends SubCommand {
                 ));
             }
             boolean result = plot.getPlotModificationManager().deletePlot(player, () -> {
+                // Clear pending delete metadata now that deletion is actually starting
+                for (Plot connectedPlot : plots) {
+                    connectedPlot.deleteMeta("pendingDelete");
+                }
                 plot.removeRunning();
                 if (this.econHandler.isEnabled(plotArea)) {
                     PlotExpression valueExr = plotArea.getPrices().get("sell");
@@ -135,6 +144,12 @@ public class Delete extends SubCommand {
         };
         if (hasConfirmation(player)) {
             CmdConfirm.addPending(player, getCommandString() + ' ' + plot.getId(), run);
+            // Schedule cleanup task for when confirmation times out
+            TaskManager.runTaskLater(() -> {
+                for (Plot connectedPlot : plots) {
+                    connectedPlot.deleteMeta("pendingDelete");
+                }
+            }, TaskTime.seconds(Settings.Confirmation.CONFIRMATION_TIMEOUT_SECONDS + 1));
         } else {
             TaskManager.runTask(run);
         }
