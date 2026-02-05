@@ -150,8 +150,8 @@ public class ListCmd extends SubCommand {
             page = 0;
         }
 
-        String world = player.getLocation().getWorldName();
-        PlotArea area = player.getApplicablePlotArea();
+        PlotArea area = player.getContextualPlotArea();
+        String world = area != null ? area.getWorldName() : "";
         String arg = args[0].toLowerCase();
         final boolean[] sort = new boolean[]{true};
 

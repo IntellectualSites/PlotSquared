@@ -22,7 +22,6 @@ import com.google.inject.Inject;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.generator.HybridUtils;
-import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import net.kyori.adventure.text.Component;
@@ -47,8 +46,7 @@ public class CreateRoadSchematic extends SubCommand {
 
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
-        Location location = player.getLocation();
-        Plot plot = location.getPlotAbs();
+        Plot plot = player.getCurrentPlot();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
@@ -57,7 +55,7 @@ public class CreateRoadSchematic extends SubCommand {
             player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
             return false;
         }
-        if (!(location.getPlotArea() instanceof HybridPlotWorld)) {
+        if (!(plot.getArea() instanceof HybridPlotWorld)) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
         }
         this.hybridUtils.setupRoadSchematic(plot);

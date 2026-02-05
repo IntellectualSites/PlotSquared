@@ -79,6 +79,7 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.util.Enums;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import io.papermc.lib.PaperLib;
@@ -159,6 +160,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -183,6 +185,15 @@ public class PlayerEventListener implements Listener {
             Material.WRITABLE_BOOK,
             Material.WRITTEN_BOOK
     );
+
+    /**
+     * The correct EntityType for End Crystal, determined once at class loading time.
+     * Tries END_CRYSTAL first (1.21+), falls back to ENDER_CRYSTAL (1.20.4 and older).
+     */
+    private static final EntityType END_CRYSTAL_ENTITY_TYPE = Objects.requireNonNull(
+            Enums.findByValue(EntityType.class, "END_CRYSTAL", "ENDER_CRYSTAL")
+    );
+
     private static final Set<String> DYES;
 
     static {
@@ -589,7 +600,7 @@ public class PlayerEventListener implements Listener {
                 PlotArea area = location.getPlotArea();
                 if (area == null) {
                     if (lastPlot != null) {
-                        plotListener.plotExit(pp, lastPlot);
+                        plotListener.plotExit(pp, lastPlot, null, null);
                         lastPlotAccess.remove();
                     }
                     try (final MetaDataAccess<Location> lastLocationAccess =
@@ -742,7 +753,7 @@ public class PlayerEventListener implements Listener {
             if (now == null) {
                 try (final MetaDataAccess<Boolean> kickAccess =
                              pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
-                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(
+                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot, now, area) && this.tmpTeleport && !kickAccess.get().orElse(
                             false)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
@@ -836,7 +847,7 @@ public class PlayerEventListener implements Listener {
             if (plot == null) {
                 try (final MetaDataAccess<Boolean> kickAccess =
                              pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
-                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(
+                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot, null, area) && this.tmpTeleport && !kickAccess.get().orElse(
                             false)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
@@ -1317,8 +1328,8 @@ public class PlayerEventListener implements Listener {
                 // reset the player's hand item if spawning needs to be cancelled.
                 if (type == Material.ARMOR_STAND || type == Material.END_CRYSTAL) {
                     Plot plot = location.getOwnedPlotAbs();
-                    if (BukkitEntityUtil.checkEntity(type == Material.ARMOR_STAND ? EntityType.ARMOR_STAND : EntityType.ENDER_CRYSTAL,
-                            plot)) {
+                    EntityType entityType = type == Material.ARMOR_STAND ? EntityType.ARMOR_STAND : END_CRYSTAL_ENTITY_TYPE;
+                    if (BukkitEntityUtil.checkEntity(entityType, plot)) {
                         event.setCancelled(true);
                         break;
                     }

@@ -18,6 +18,8 @@
  */
 package com.plotsquared.core.backup;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.IOException;
@@ -30,12 +32,14 @@ import java.nio.file.Path;
  */
 public class Backup {
 
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Backup.class.getSimpleName());
+
     private final BackupProfile owner;
     private final long creationTime;
     @Nullable
     private final Path file;
 
-    Backup(final BackupProfile owner, final long creationTime, final Path file) {
+    Backup(final BackupProfile owner, final long creationTime, @Nullable final Path file) {
         this.owner = owner;
         this.creationTime = creationTime;
         this.file = file;
@@ -49,7 +53,7 @@ public class Backup {
             try {
                 Files.deleteIfExists(file);
             } catch (final IOException e) {
-                e.printStackTrace();
+                LOGGER.error("Error deleting backup at {}", file, e);
             }
         }
     }

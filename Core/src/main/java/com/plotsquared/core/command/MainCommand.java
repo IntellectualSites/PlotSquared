@@ -275,7 +275,7 @@ public class MainCommand extends Command {
     private CompletableFuture<Optional<CommandExecutionData>> prepareArguments(CommandExecutionData data) {
         if (data.args().length >= 2) {
             PlotArea area = data.player().getApplicablePlotArea();
-            Plot newPlot = Plot.fromString(area, data.args()[0]);
+            Plot newPlot = Plot.fromString(area, data.args()[0], data.player());
             return preparePlotArgument(newPlot, data, area)
                     .thenApply(d -> d.flatMap(x -> prepareFlagArgument(x, area)));
         } else {
@@ -283,32 +283,41 @@ public class MainCommand extends Command {
         }
     }
 
-    private CompletableFuture<Optional<CommandExecutionData>> preparePlotArgument(@Nullable Plot newPlot,
-                                                                        @Nonnull CommandExecutionData data,
-                                                                                  @Nullable PlotArea area) {
-        if (newPlot != null && (data.player() instanceof ConsolePlayer
-                || (area != null && area.equals(newPlot.getArea()))
-                || data.player().hasPermission(Permission.PERMISSION_ADMIN)
-                || data.player().hasPermission(Permission.PERMISSION_ADMIN_AREA_SUDO))
-                && !newPlot.isDenied(data.player().getUUID())) {
-            return fetchPlotCenterLocation(newPlot)
-                    .thenApply(newLoc -> {
-                        if (!data.player().canTeleport(newLoc)) {
-                            data.player().sendMessage(TranslatableCaption.of("border.denied"));
-                            return Optional.empty();
-                        }
-                        // Save meta
-                        var originalCommandMeta = setCommandScope(data.player(), new TemporaryCommandMeta(newLoc, newPlot));
-                        return Optional.of(new CommandExecutionData(
-                                data.player(),
-                                Arrays.copyOfRange(data.args(), 1, data.args().length), // Trimmed command
-                                data.confirm(),
-                                data.whenDone(),
-                                originalCommandMeta
-                        ));
-                    });
+    private CompletableFuture<Optional<CommandExecutionData>> preparePlotArgument(
+            @Nullable Plot newPlot,
+            @Nonnull CommandExecutionData data,
+            @Nullable PlotArea area
+    ) {
+        if (newPlot == null) {
+            return CompletableFuture.completedFuture(Optional.of(data));
         }
-        return CompletableFuture.completedFuture(Optional.of(data));
+        final PlotPlayer<?> player = data.player();
+        final boolean isAdmin = player instanceof ConsolePlayer || player.hasPermission(Permission.PERMISSION_ADMIN);
+        final boolean isDenied = newPlot.isDenied(player.getUUID());
+        if (!isAdmin) {
+            if (isDenied) {
+                throw new CommandException(TranslatableCaption.of("deny.cannot_interact"));
+            }
+            if (area != null && area.equals(newPlot.getArea()) && !player.hasPermission(Permission.PERMISSION_ADMIN_AREA_SUDO)) {
+                return CompletableFuture.completedFuture(Optional.of(data));
+            }
+        }
+        return fetchPlotCenterLocation(newPlot)
+                .thenApply(newLoc -> {
+                    if (!player.canTeleport(newLoc)) {
+                        player.sendMessage(TranslatableCaption.of("border.denied"));
+                        return Optional.empty();
+                    }
+                    // Save meta
+                    var originalCommandMeta = setCommandScope(player, new TemporaryCommandMeta(newLoc, newPlot));
+                    return Optional.of(new CommandExecutionData(
+                            player,
+                            Arrays.copyOfRange(data.args(), 1, data.args().length), // Trimmed command
+                            data.confirm(),
+                            data.whenDone(),
+                            originalCommandMeta
+                    ));
+                });
     }
 
     private Optional<CommandExecutionData> prepareFlagArgument(@Nonnull CommandExecutionData data, @Nonnull PlotArea area) {

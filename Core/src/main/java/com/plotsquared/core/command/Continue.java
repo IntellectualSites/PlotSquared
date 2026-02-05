@@ -68,8 +68,8 @@ public class Continue extends SubCommand {
             return false;
         }
         int size = plot.getConnectedPlots().size();
-        if (!Settings.Done.COUNTS_TOWARDS_LIMIT && (player.getAllowedPlots()
-                < player.getPlotCount() + size)) {
+        int plotCount = Settings.Limit.GLOBAL ? player.getPlotCount() : player.getPlotCount(plot.getWorldName());
+        if (!Settings.Done.COUNTS_TOWARDS_LIMIT && (player.getAllowedPlots() < plotCount + size)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.cant_claim_more_plots"),
                     TagResolver.resolver("amount", Tag.inserting(Component.text(player.getAllowedPlots())))

@@ -140,7 +140,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     @NonNull
     @Override
     protected PlotManager createManager() {
-        return new HybridPlotManager(this, PlotSquared.platform().regionManager(),
+        return new HybridPlotManager(
+                this, PlotSquared.platform().regionManager(),
                 PlotSquared.platform().injector().getInstance(ProgressSubscriberFactory.class)
         );
     }
@@ -215,15 +216,16 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
         // Try to determine root. This means that plot areas can have separate schematic
         // directories
+        String schematicFolder = Settings.Paths.USE_SCHEMATICS_PATH_FOR_GEN_SCHEMATICS ? Settings.Paths.SCHEMATICS : "schematics";
         if (!(root =
                 FileUtils.getFile(
                         PlotSquared.platform().getDirectory(),
-                        "schematics/GEN_ROAD_SCHEMATIC/" + this.getWorldName() + "/" + this.getId()
+                        schematicFolder + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + this.getWorldName() + File.separator + this.getId()
                 ))
                 .exists()) {
             root = FileUtils.getFile(
                     PlotSquared.platform().getDirectory(),
-                    "schematics/GEN_ROAD_SCHEMATIC/" + this.getWorldName()
+                    schematicFolder + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + this.getWorldName()
             );
         }
 

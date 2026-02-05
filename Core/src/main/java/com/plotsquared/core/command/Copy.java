@@ -19,7 +19,6 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -37,8 +36,7 @@ public class Copy extends SubCommand {
 
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
-        Location location = player.getLocation();
-        Plot plot1 = location.getPlotAbs();
+        Plot plot1 = player.getCurrentPlot();
         if (plot1 == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;

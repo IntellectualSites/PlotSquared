@@ -67,8 +67,8 @@ tasks {
     withType<Javadoc> {
         val isRelease = if (rootProject.version.toString().endsWith("-SNAPSHOT")) "TODO" else rootProject.version.toString()
         val opt = options as StandardJavadocDocletOptions
-        opt.links("https://docs.enginehub.org/javadoc/com.sk89q.worldedit/worldedit-core/" + libs.worldeditCore.get().versionConstraint.toString())
-        opt.links("https://jd.advntr.dev/api/" + libs.adventureApi.get().versionConstraint.toString())
+//        opt.links("https://docs.enginehub.org/javadoc/com.sk89q.worldedit/worldedit-core/" + libs.worldeditCore.get().versionConstraint.toString())
+//        opt.links("https://jd.advntr.dev/api/" + libs.adventureApi.get().versionConstraint.toString())
         opt.links("https://jd.advntr.dev/text-minimessage/" + libs.adventureApi.get().versionConstraint.toString())
         opt.links("https://google.github.io/guice/api-docs/" + libs.guice.get().versionConstraint.toString() + "/javadoc/")
         opt.links("https://checkerframework.org/api/")
