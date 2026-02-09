@@ -32,6 +32,7 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
+import java.util.concurrent.atomic.AtomicBoolean;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -92,8 +93,14 @@ public class Delete extends SubCommand {
         final int currentPlots = Settings.Limit.GLOBAL ?
                 player.getPlotCount() :
                 player.getPlotCount(plot.getWorldName());
+
+        final AtomicBoolean confirmed = new AtomicBoolean(false);
         Runnable run = () -> {
+            confirmed.set(true);
             if (plot.getRunning() > 0) {
+                for (Plot connectedPlot : plots) {
+                    connectedPlot.deleteMeta("pendingDelete");
+                }
                 player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
                 return;
             }
@@ -139,15 +146,23 @@ public class Delete extends SubCommand {
             if (result) {
                 plot.addRunning();
             } else {
+                for (Plot connectedPlot : plots) {
+                    connectedPlot.deleteMeta("pendingDelete");
+                }
                 player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
             }
         };
         if (hasConfirmation(player)) {
+            for (Plot connectedPlot : plots) {
+                connectedPlot.setMeta("pendingDelete", true);
+            }
             CmdConfirm.addPending(player, getCommandString() + ' ' + plot.getId(), run);
             // Schedule cleanup task for when confirmation times out
             TaskManager.runTaskLater(() -> {
-                for (Plot connectedPlot : plots) {
-                    connectedPlot.deleteMeta("pendingDelete");
+                if (!confirmed.get()) {
+                    for (Plot connectedPlot : plots) {
+                        connectedPlot.deleteMeta("pendingDelete");
+                    }
                 }
             }, TaskTime.seconds(Settings.Confirmation.CONFIRMATION_TIMEOUT_SECONDS + 1));
         } else {
