@@ -225,6 +225,15 @@ public final class PlaceholderRegistry {
                 return Integer.toString(metaDataAccess.get().orElse(0));
             }
         });
+        this.createPlaceholder("server_plot_count", player -> Integer.toString(PlotQuery.newQuery()
+                .allPlots()
+                .count())
+        );
+        this.createPlaceholder("server_base_plot_count", player -> Integer.toString(PlotQuery.newQuery()
+                .allPlots()
+                .whereBasePlot()
+                .count())
+        );
     }
 
     /**
