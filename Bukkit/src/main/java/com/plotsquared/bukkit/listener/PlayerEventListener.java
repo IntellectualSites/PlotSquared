@@ -21,6 +21,7 @@ package com.plotsquared.bukkit.listener;
 import com.destroystokyo.paper.MaterialTags;
 import com.google.common.base.Charsets;
 import com.google.inject.Inject;
+import com.plotsquared.bukkit.entity.EntityType;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitEntityUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -79,7 +80,6 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.util.Enums;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import io.papermc.lib.PaperLib;
@@ -98,7 +98,6 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
@@ -160,7 +159,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -184,14 +182,6 @@ public class PlayerEventListener implements Listener {
             Material.KNOWLEDGE_BOOK,
             Material.WRITABLE_BOOK,
             Material.WRITTEN_BOOK
-    );
-
-    /**
-     * The correct EntityType for End Crystal, determined once at class loading time.
-     * Tries END_CRYSTAL first (1.21+), falls back to ENDER_CRYSTAL (1.20.4 and older).
-     */
-    private static final EntityType END_CRYSTAL_ENTITY_TYPE = Objects.requireNonNull(
-            Enums.findByValue(EntityType.class, "END_CRYSTAL", "ENDER_CRYSTAL")
     );
 
     private static final Set<String> DYES;
@@ -1328,7 +1318,7 @@ public class PlayerEventListener implements Listener {
                 // reset the player's hand item if spawning needs to be cancelled.
                 if (type == Material.ARMOR_STAND || type == Material.END_CRYSTAL) {
                     Plot plot = location.getOwnedPlotAbs();
-                    EntityType entityType = type == Material.ARMOR_STAND ? EntityType.ARMOR_STAND : END_CRYSTAL_ENTITY_TYPE;
+                    EntityType entityType = type == Material.ARMOR_STAND ? EntityType.ARMOR_STAND : EntityType.END_CRYSTAL;
                     if (BukkitEntityUtil.checkEntity(entityType, plot)) {
                         event.setCancelled(true);
                         break;
@@ -1709,7 +1699,7 @@ public class PlayerEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (event.getRightClicked().getType() == EntityType.UNKNOWN) {
+        if (EntityType.of(event.getRightClicked().getType()) == EntityType.UNKNOWN) {
             return;
         }
         Location location = BukkitUtil.adapt(event.getRightClicked().getLocation());
