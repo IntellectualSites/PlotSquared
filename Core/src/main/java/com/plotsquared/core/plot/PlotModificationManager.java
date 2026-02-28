@@ -35,6 +35,8 @@ import com.plotsquared.core.generator.SquarePlotWorld;
 import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.queue.QueueCoordinator;
@@ -379,6 +381,23 @@ public final class PlotModificationManager {
         for (Plot current : plots) {
             boolean[] merged = new boolean[]{false, false, false, false};
             current.setMerged(merged);
+        }
+        // Update TEMPORARY_LAST_PLOT metadata for all players that were in the merged plot
+        // so that getCurrentPlot() returns the correct individual plot based on their location
+        for (final PlotPlayer<?> player : PlotSquared.platform().playerManager().getPlayers()) {
+            try (final MetaDataAccess<Plot> lastPlotAccess =
+                         player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+                final Plot lastPlot = lastPlotAccess.get().orElse(null);
+                if (lastPlot != null && plots.contains(lastPlot)) {
+                    // Player was in the merged plot, update to their actual current plot
+                    final Plot actualPlot = player.getLocation().getPlot();
+                    if (actualPlot != null) {
+                        lastPlotAccess.set(actualPlot);
+                    } else {
+                        lastPlotAccess.remove();
+                    }
+                }
+            }
         }
         if (createSign) {
             queue.setCompleteTask(() -> TaskManager.runTaskAsync(() -> {
