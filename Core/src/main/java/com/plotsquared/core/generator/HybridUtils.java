@@ -68,6 +68,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -529,7 +530,7 @@ public class HybridUtils {
         final QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(world));
         Location bot = plot.getBottomAbs().subtract(1, 0, 1);
         Location top = plot.getTopAbs();
-        final HybridPlotWorld plotworld = (HybridPlotWorld) plot.getArea();
+        final HybridPlotWorld plotworld = Objects.requireNonNull((HybridPlotWorld) plot.getArea());
         // Do not use plotworld#schematicStartHeight() here as we want to restore the pre 6.1.4 way of doing it if
         //  USE_WALL_IN_ROAD_SCHEM_HEIGHT is false
         int schemY = Settings.Schematics.USE_WALL_IN_ROAD_SCHEM_HEIGHT ?
