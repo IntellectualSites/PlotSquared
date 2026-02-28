@@ -590,6 +590,8 @@ public final class PlotModificationManager {
                 Plot other = current.getRelative(Direction.NORTH);
                 if (other != null && other.isOwner(uuid) && (other.getBasePlot(false).equals(current.getBasePlot(false))
                         || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
+                    current.setMerging();
+                    other.setMerging();
                     current.mergePlot(other, removeRoads, queue);
                     merged.add(current.getId());
                     merged.add(other.getId());
@@ -601,12 +603,16 @@ public final class PlotModificationManager {
                         ids.add(other.getId());
                         this.plot.getManager().finishPlotMerge(ids, queue);
                     }
+                    current.removeMerging();
+                    other.removeMerging();
                 }
             }
             if (max >= 0 && (dir == Direction.ALL || dir == Direction.EAST) && !current.isMerged(Direction.EAST)) {
                 Plot other = current.getRelative(Direction.EAST);
                 if (other != null && other.isOwner(uuid) && (other.getBasePlot(false).equals(current.getBasePlot(false))
                         || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
+                    current.setMerging();
+                    other.setMerging();
                     current.mergePlot(other, removeRoads, queue);
                     merged.add(current.getId());
                     merged.add(other.getId());
@@ -618,12 +624,16 @@ public final class PlotModificationManager {
                         ids.add(other.getId());
                         this.plot.getManager().finishPlotMerge(ids, queue);
                     }
+                    current.removeMerging();
+                    other.removeMerging();
                 }
             }
             if (max >= 0 && (dir == Direction.ALL || dir == Direction.SOUTH) && !current.isMerged(Direction.SOUTH)) {
                 Plot other = current.getRelative(Direction.SOUTH);
                 if (other != null && other.isOwner(uuid) && (other.getBasePlot(false).equals(current.getBasePlot(false))
                         || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
+                    current.setMerging();
+                    other.setMerging();
                     current.mergePlot(other, removeRoads, queue);
                     merged.add(current.getId());
                     merged.add(other.getId());
@@ -635,12 +645,16 @@ public final class PlotModificationManager {
                         ids.add(other.getId());
                         this.plot.getManager().finishPlotMerge(ids, queue);
                     }
+                    current.removeMerging();
+                    other.removeMerging();
                 }
             }
             if (max >= 0 && (dir == Direction.ALL || dir == Direction.WEST) && !current.isMerged(Direction.WEST)) {
                 Plot other = current.getRelative(Direction.WEST);
                 if (other != null && other.isOwner(uuid) && (other.getBasePlot(false).equals(current.getBasePlot(false))
                         || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
+                    current.setMerging();
+                    other.setMerging();
                     current.mergePlot(other, removeRoads, queue);
                     merged.add(current.getId());
                     merged.add(other.getId());
@@ -652,6 +666,8 @@ public final class PlotModificationManager {
                         ids.add(other.getId());
                         this.plot.getManager().finishPlotMerge(ids, queue);
                     }
+                    current.removeMerging();
+                    other.removeMerging();
                 }
             }
         }
