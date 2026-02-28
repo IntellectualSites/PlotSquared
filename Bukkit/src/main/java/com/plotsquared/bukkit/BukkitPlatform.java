@@ -46,6 +46,7 @@ import com.plotsquared.bukkit.listener.WorldEvents;
 import com.plotsquared.bukkit.placeholder.PAPIPlaceholders;
 import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
+import com.plotsquared.bukkit.schematic.StateWrapper;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.BukkitWorld;
 import com.plotsquared.bukkit.util.SetGenCB;
@@ -287,6 +288,18 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                             ".net/job/FastAsyncWorldEdit/");
                 }
             }
+        }
+
+        // Validate compatibility of StateWrapper with the current running server version
+        // Do this always, even if it's not required, to prevent running servers which fail to restore plot backups or
+        // inserting broken plot / road templates.
+        try {
+            var instance = StateWrapper.INSTANCE;
+        } catch (Exception e) {
+            LOGGER.error("Failed to initialize required classes for restoring tile entities. " +
+                    "PlotSquared will disable itself to prevent possible damages.", e);
+            getServer().getPluginManager().disablePlugin(this);
+            return;
         }
 
         // We create the injector after PlotSquared has been initialized, so that we have access

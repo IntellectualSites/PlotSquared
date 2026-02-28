@@ -34,6 +34,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.generator.LimitedRegion;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.Objects;
+
 /**
  * Wraps a {@link LimitedRegion} inside a {@link com.plotsquared.core.queue.QueueCoordinator} so it can be written to.
  *
@@ -44,7 +46,6 @@ public class LimitedRegionWrapperQueue extends DelegateQueueCoordinator {
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + LimitedRegionWrapperQueue.class.getSimpleName());
 
     private final LimitedRegion limitedRegion;
-    private boolean useOtherRestoreTagMethod = false;
 
     /**
      * @since 6.9.0
@@ -64,20 +65,11 @@ public class LimitedRegionWrapperQueue extends DelegateQueueCoordinator {
         boolean result = setBlock(x, y, z, id.toImmutableState());
         if (result && id.hasNbtData()) {
             CompoundTag tag = id.getNbtData();
-            StateWrapper sw = new StateWrapper(tag);
             try {
-                if (useOtherRestoreTagMethod && getWorld() != null) {
-                    sw.restoreTag(getWorld().getName(), x, y, z);
-                } else {
-                    sw.restoreTag(limitedRegion.getBlockState(x, y, z).getBlock());
-                }
+                StateWrapper.INSTANCE.restore(limitedRegion.getBlockState(x, y, z).getBlock(), Objects.requireNonNull(tag));
             } catch (IllegalArgumentException e) {
                 LOGGER.error("Error attempting to populate tile entity into the world at location {},{},{}", x, y, z, e);
                 return false;
-            } catch (IllegalStateException e) {
-                useOtherRestoreTagMethod = true;
-                LOGGER.warn("IllegalStateException attempting to populate tile entity into the world at location {},{},{}. " +
-                        "Possibly on <=1.17.1, switching to secondary method.", x, y, z, e);
             }
         }
         return result;
@@ -113,9 +105,8 @@ public class LimitedRegionWrapperQueue extends DelegateQueueCoordinator {
 
     @Override
     public boolean setTile(final int x, final int y, final int z, @NonNull final CompoundTag tag) {
-        StateWrapper sw = new StateWrapper(tag);
         try {
-            return sw.restoreTag(limitedRegion.getBlockState(x, y, z).getBlock());
+            return StateWrapper.INSTANCE.restore(limitedRegion.getBlockState(x, y, z).getBlock(), tag);
         } catch (IllegalArgumentException e) {
             LOGGER.error("Error attempting to populate tile entity into the world at location {},{},{}", x, y, z, e);
             return false;

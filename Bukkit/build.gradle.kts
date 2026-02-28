@@ -80,7 +80,7 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("net.kyori.examination", "com.plotsquared.core.configuration.examination")
     relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")
     relocate("org.bstats", "com.plotsquared.metrics")
-    relocate("org.enginehub", "com.plotsquared.squirrelid")
+    relocate("org.enginehub.squirrelid", "com.plotsquared.squirrelid")
     relocate("org.khelekore.prtree", "com.plotsquared.prtree")
     relocate("com.google.inject", "com.plotsquared.google")
     relocate("org.aopalliance", "com.plotsquared.core.aopalliance")
