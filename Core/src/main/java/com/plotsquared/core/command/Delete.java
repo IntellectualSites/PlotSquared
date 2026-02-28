@@ -91,10 +91,18 @@ public class Delete extends SubCommand {
         final int currentPlots = Settings.Limit.GLOBAL ?
                 player.getPlotCount() :
                 player.getPlotCount(plot.getWorldName());
+
         Runnable run = () -> {
             if (plot.getRunning() > 0) {
+                for (Plot connectedPlot : plots) {
+                    connectedPlot.deleteMeta("pendingDelete");
+                }
                 player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
                 return;
+            }
+
+            for (Plot connectedPlot : plots) {
+                connectedPlot.setMeta("pendingDelete", true);
             }
             final long start = System.currentTimeMillis();
             if (Settings.Teleport.ON_DELETE) {
@@ -104,6 +112,10 @@ public class Delete extends SubCommand {
                 ));
             }
             boolean result = plot.getPlotModificationManager().deletePlot(player, () -> {
+                // Clear pending delete metadata now that deletion is actually starting
+                for (Plot connectedPlot : plots) {
+                    connectedPlot.deleteMeta("pendingDelete");
+                }
                 plot.removeRunning();
                 if (this.econHandler.isEnabled(plotArea)) {
                     PlotExpression valueExr = plotArea.getPrices().get("sell");
@@ -130,6 +142,9 @@ public class Delete extends SubCommand {
             if (result) {
                 plot.addRunning();
             } else {
+                for (Plot connectedPlot : plots) {
+                    connectedPlot.deleteMeta("pendingDelete");
+                }
                 player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
             }
         };
