@@ -18,6 +18,7 @@
  */
 package com.plotsquared.bukkit.listener;
 
+import com.plotsquared.bukkit.entity.EntityType;
 import com.plotsquared.bukkit.util.BukkitEntityUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
@@ -33,7 +34,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
@@ -84,6 +84,7 @@ public class EntitySpawnListener implements Listener {
     public static void test(Entity entity) {
         @NonNull World world = entity.getWorld();
         List<MetadataValue> meta = entity.getMetadata(KEY);
+        final EntityType entityType = EntityType.of(entity);
         if (meta.isEmpty()) {
             if (PlotSquared.get().getPlotAreaManager().hasPlotArea(world.getName())) {
                 entity.setMetadata(KEY, new FixedMetadataValue((Plugin) PlotSquared.platform(), entity.getLocation()));
@@ -94,7 +95,7 @@ public class EntitySpawnListener implements Listener {
             if (!originWorld.equals(world)) {
                 if (!ignoreTP) {
                     if (!world.getName().equalsIgnoreCase(originWorld + "_the_end")) {
-                        if (entity.getType() == EntityType.PLAYER) {
+                        if (entityType == EntityType.PLAYER) {
                             return;
                         }
                         try {
@@ -108,7 +109,7 @@ public class EntitySpawnListener implements Listener {
                         }
                     }
                 } else {
-                    if (entity.getType() == EntityType.PLAYER) {
+                    if (entityType == EntityType.PLAYER) {
                         return;
                     }
                     entity.remove();
@@ -132,7 +133,7 @@ public class EntitySpawnListener implements Listener {
             }
         }
         Plot plot = location.getOwnedPlotAbs();
-        EntityType type = entity.getType();
+        EntityType type = EntityType.of(entity);
         if (plot == null) {
             if (entity instanceof Item) {
                 if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
@@ -201,15 +202,16 @@ public class EntitySpawnListener implements Listener {
         final PlotArea fromArea = fromLocLocation.getPlotArea();
         Location toLocLocation = BukkitUtil.adapt(toLocation.getLocation());
         PlotArea toArea = toLocLocation.getPlotArea();
+        final EntityType entityType = EntityType.of(entity);
 
         if (toArea == null) {
-            if (fromLocation.getType() == EntityType.SHULKER && fromArea != null) {
+            if (entityType == EntityType.SHULKER && fromArea != null) {
                 event.setCancelled(true);
             }
             return;
         }
         Plot toPlot = toArea.getOwnedPlot(toLocLocation);
-        if (fromLocation.getType() == EntityType.SHULKER && fromArea != null) {
+        if (entityType == EntityType.SHULKER && fromArea != null) {
             final Plot fromPlot = fromArea.getOwnedPlot(fromLocLocation);
 
             if (fromPlot != null || toPlot != null) {
@@ -231,7 +233,7 @@ public class EntitySpawnListener implements Listener {
 
     @EventHandler
     public void spawn(CreatureSpawnEvent event) {
-        if (event.getEntityType() == EntityType.ARMOR_STAND) {
+        if (EntityType.of(event.getEntityType()) == EntityType.ARMOR_STAND) {
             testCreate(event.getEntity());
         }
     }
