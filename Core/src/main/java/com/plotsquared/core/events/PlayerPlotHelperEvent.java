@@ -24,8 +24,9 @@ import com.plotsquared.core.plot.Plot;
 import java.util.UUID;
 
 /**
- *
+ * @deprecated Use {@link com.plotsquared.core.events.post.PostPlayerPlotAddedEvent}
  */
+@Deprecated(forRemoval = true, since = "TODO")
 public class PlayerPlotHelperEvent extends PlotEvent {
 
     private final PlotPlayer<?> initiator;
@@ -39,7 +40,9 @@ public class PlayerPlotHelperEvent extends PlotEvent {
      * @param plot      Plot in which the event occurred
      * @param player    Player that was added/removed from the helper list
      * @param added     {@code true} if the player was added, {@code false} if the player was removed
+     * @deprecated Use {@link com.plotsquared.core.events.post.PostPlayerPlotAddedEvent}
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public PlayerPlotHelperEvent(PlotPlayer<?> initiator, Plot plot, UUID player, boolean added) {
         super(plot);
         this.initiator = initiator;
@@ -51,7 +54,9 @@ public class PlayerPlotHelperEvent extends PlotEvent {
      * If a player was added
      *
      * @return boolean
+     * @deprecated Use {@link com.plotsquared.core.events.post.PostPlayerPlotAddedEvent}
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public boolean wasAdded() {
         return this.added;
     }
@@ -60,7 +65,9 @@ public class PlayerPlotHelperEvent extends PlotEvent {
      * The UUID added/removed
      *
      * @return UUID
+     * @deprecated Use {@link com.plotsquared.core.events.post.PostPlayerPlotAddedEvent}
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public UUID getPlayer() {
         return this.player;
     }
@@ -69,7 +76,9 @@ public class PlayerPlotHelperEvent extends PlotEvent {
      * The player initiating the action
      *
      * @return PlotPlayer
+     * @deprecated Use {@link com.plotsquared.core.events.post.PostPlayerPlotAddedEvent}
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public PlotPlayer<?> getInitiator() {
         return this.initiator;
     }
