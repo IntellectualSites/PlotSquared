@@ -27,6 +27,8 @@ import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.jnbt.CompoundTag;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.Objects;
+
 /**
  * Schematic Handler.
  */
@@ -39,8 +41,8 @@ public class BukkitSchematicHandler extends SchematicHandler {
     }
 
     @Override
-    public boolean restoreTile(QueueCoordinator queue, CompoundTag ct, int x, int y, int z) {
-        return new StateWrapper(ct).restoreTag(queue.getWorld().getName(), x, y, z);
+    public boolean restoreTile(QueueCoordinator queue, CompoundTag tag, int x, int y, int z) {
+        return StateWrapper.INSTANCE.restore(Objects.requireNonNull(queue.getWorld()).getName(), x, y, z, tag);
     }
 
 }
