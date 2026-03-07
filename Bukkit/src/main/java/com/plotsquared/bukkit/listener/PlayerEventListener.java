@@ -354,7 +354,8 @@ public class PlayerEventListener implements Listener {
                     }
                     return;
                 }
-                if (plot.isAdded(event.getPlayer().getUniqueId())) {
+                BukkitPlayer player = BukkitUtil.adapt(event.getPlayer());
+                if (plot.isAdded(player.getUUID())) {
                     return; // allow for added players
                 }
                 if (!plot.getFlag(EditSignFlag.class)
