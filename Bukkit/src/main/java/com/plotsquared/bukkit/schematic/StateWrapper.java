@@ -212,7 +212,10 @@ public class StateWrapper {
                     if (type == null) {
                         continue;
                     }
-                    int count = itemComp.getByte("Count");
+                    // At some point they used lowercase "count" as IntTag; older format uses "Count" as ByteTag
+                    int count = itemComp.getValue().containsKey("count")
+                            ? itemComp.getInt("count")
+                            : itemComp.getByte("Count");
                     int slot = itemComp.getByte("Slot");
                     CompoundTag tag = (CompoundTag) itemComp.getValue().get("tag");
                     BaseItemStack baseItemStack = new BaseItemStack(type, tag, count);
