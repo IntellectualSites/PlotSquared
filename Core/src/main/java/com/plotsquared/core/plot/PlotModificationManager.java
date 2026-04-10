@@ -384,13 +384,12 @@ public final class PlotModificationManager {
         }
         // Update TEMPORARY_LAST_PLOT metadata for all players that were in the merged plot
         // so that getCurrentPlot() returns the correct individual plot based on their location
-        for (final PlotPlayer<?> player : PlotSquared.platform().playerManager().getPlayers()) {
-            try (final MetaDataAccess<Plot> lastPlotAccess =
-                         player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
-                final Plot lastPlot = lastPlotAccess.get().orElse(null);
+        for (PlotPlayer<?> player : PlotSquared.platform().playerManager().getPlayers()) {
+            try (MetaDataAccess<Plot> lastPlotAccess = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+                Plot lastPlot = lastPlotAccess.get().orElse(null);
                 if (lastPlot != null && plots.contains(lastPlot)) {
                     // Player was in the merged plot, update to their actual current plot
-                    final Plot actualPlot = player.getLocation().getPlot();
+                    Plot actualPlot = player.getLocation().getPlot();
                     if (actualPlot != null) {
                         lastPlotAccess.set(actualPlot);
                     } else {
