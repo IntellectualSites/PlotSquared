@@ -22,11 +22,19 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.plotsquared.bukkit.permissions.BukkitPermissionHandler;
+import com.plotsquared.bukkit.permissions.BukkitRangedPermissionResolver;
+import com.plotsquared.bukkit.permissions.LuckPermsRangedPermissionResolver;
 import com.plotsquared.bukkit.permissions.VaultPermissionHandler;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.permissions.PermissionHandler;
+import com.plotsquared.core.permissions.RangedPermissionResolver;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 
 public class PermissionModule extends AbstractModule {
+
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PermissionModule.class.getSimpleName());
 
     @Provides
     @Singleton
@@ -38,6 +46,20 @@ public class PermissionModule extends AbstractModule {
         } catch (final Exception ignored) {
         }
         return new BukkitPermissionHandler();
+    }
+
+    @Provides
+    @Singleton
+    RangedPermissionResolver provideRangedPermissionResolver() {
+        if (Settings.Permissions.USE_LUCKPERMS_RANGE_RESOLVER) {
+            if (Bukkit.getPluginManager().isPluginEnabled("LuckPerms")) {
+                LOGGER.info("Using experimental LuckPerms ranged permission resolver");
+                return new LuckPermsRangedPermissionResolver();
+            }
+            LOGGER.warn("Enabled LuckPerms ranged permission resolver, but LuckPerms is not installed. " +
+                    "Falling back to default Bukkit ranged permission resolver");
+        }
+        return new BukkitRangedPermissionResolver();
     }
 
 }
