@@ -91,10 +91,18 @@ public class Delete extends SubCommand {
         final int currentPlots = Settings.Limit.GLOBAL ?
                 player.getPlotCount() :
                 player.getPlotCount(plot.getWorldName());
+
         Runnable run = () -> {
             if (plot.getRunning() > 0) {
+                for (Plot connectedPlot : plots) {
+                    connectedPlot.deleteMeta("pendingDelete");
+                }
                 player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
                 return;
+            }
+
+            for (Plot connectedPlot : plots) {
+                connectedPlot.setMeta("pendingDelete", true);
             }
             final long start = System.currentTimeMillis();
             if (Settings.Teleport.ON_DELETE) {
@@ -104,32 +112,47 @@ public class Delete extends SubCommand {
                 ));
             }
             boolean result = plot.getPlotModificationManager().deletePlot(player, () -> {
-                plot.removeRunning();
-                if (this.econHandler.isEnabled(plotArea)) {
-                    PlotExpression valueExr = plotArea.getPrices().get("sell");
-                    double value = plots.size() * valueExr.evaluate(currentPlots);
-                    if (value > 0d) {
-                        this.econHandler.depositMoney(player, value);
-                        player.sendMessage(
-                                TranslatableCaption.of("economy.added_balance"),
-                                TagResolver.resolver("money", Tag.inserting(Component.text(this.econHandler.format(value))))
-                        );
+                try {
+                    // Clear pending delete metadata now that deletion is actually starting
+                    for (Plot connectedPlot : plots) {
+                        connectedPlot.deleteMeta("pendingDelete");
                     }
+                    plot.removeRunning();
+                    if (this.econHandler.isEnabled(plotArea)) {
+                        PlotExpression valueExr = plotArea.getPrices().get("sell");
+                        double value = plots.size() * valueExr.evaluate(currentPlots);
+                        if (value > 0d) {
+                            this.econHandler.depositMoney(player, value);
+                            player.sendMessage(
+                                    TranslatableCaption.of("economy.added_balance"),
+                                    TagResolver.resolver("money", Tag.inserting(Component.text(this.econHandler.format(value))))
+                            );
+                        }
+                    }
+                    player.sendMessage(
+                            TranslatableCaption.of("working.deleting_done"),
+                            TagResolver.resolver(
+                                    "amount",
+                                    Tag.inserting(Component.text(String.valueOf(System.currentTimeMillis() - start)))
+                            ),
+                            TagResolver.resolver("world", Tag.inserting(Component.text(plotArea.getWorldName()))),
+                            TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
+                    );
+                    eventDispatcher.callPostDelete(plot);
+                } catch (Throwable e) {
+                    // ... or if something went wrong
+                    for (Plot connectedPlot : plots) {
+                        connectedPlot.deleteMeta("pendingDelete");
+                    }
+                    throw e;
                 }
-                player.sendMessage(
-                        TranslatableCaption.of("working.deleting_done"),
-                        TagResolver.resolver(
-                                "amount",
-                                Tag.inserting(Component.text(String.valueOf(System.currentTimeMillis() - start)))
-                        ),
-                        TagResolver.resolver("world", Tag.inserting(Component.text(plotArea.getWorldName()))),
-                        TagResolver.resolver("plot", Tag.inserting(Component.text(plot.getId().toString())))
-                );
-                eventDispatcher.callPostDelete(plot);
             });
             if (result) {
                 plot.addRunning();
             } else {
+                for (Plot connectedPlot : plots) {
+                    connectedPlot.deleteMeta("pendingDelete");
+                }
                 player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
             }
         };
