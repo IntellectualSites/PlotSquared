@@ -20,6 +20,8 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.events.PlayerPlotAddRemoveEvent;
+import com.plotsquared.core.events.Result;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.EventDispatcher;
@@ -61,11 +63,22 @@ public class Leave extends Command {
         } else {
             UUID uuid = player.getUUID();
             if (plot.isAdded(uuid)) {
+                if (this.eventDispatcher
+                        .callPlayerRemove(player, plot, uuid, PlayerPlotAddRemoveEvent.Reason.COMMAND)
+                        .getEventResult() == Result.DENY) {
+                    player.sendMessage(
+                            TranslatableCaption.of("events.event_denied"),
+                            TagResolver.resolver("value", Tag.inserting(Component.text("Leave")))
+                    );
+                    return  CompletableFuture.completedFuture(true);
+                }
                 if (plot.removeTrusted(uuid)) {
                     this.eventDispatcher.callTrusted(player, plot, uuid, false);
+                    this.eventDispatcher.callPostTrusted(player, plot, uuid, false, PlayerPlotAddRemoveEvent.Reason.COMMAND);
                 }
                 if (plot.removeMember(uuid)) {
                     this.eventDispatcher.callMember(player, plot, uuid, false);
+                    this.eventDispatcher.callPostAdded(player, plot, uuid, false, PlayerPlotAddRemoveEvent.Reason.COMMAND);
                 }
                 player.sendMessage(
                         TranslatableCaption.of("member.plot_left"),
