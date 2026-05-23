@@ -530,8 +530,8 @@ public class Settings extends Config {
     public static final class Limit {
 
         @Comment("Should the limit be global (over multiple worlds)")
-        public static boolean GLOBAL =
-                false;
+        public static boolean GLOBAL = false;
+
         @Comment({"The max range of integer permissions to check for, e.g. 'plots.plot.127' or 'plots.set.flag.mob-cap.127'",
                 "The value covers the permission range to check, you need to assign the permission to players/groups still",
                 "Modifying the value does NOT change the amount of plots players can claim"})
@@ -742,6 +742,7 @@ public class Settings extends Config {
 
         @Comment("If \"instabreak\" should consider the used tool.")
         public static boolean INSTABREAK_CONSIDER_TOOL = false;
+
     }
 
     @Comment({"Enable or disable parts of the plugin",
@@ -832,6 +833,19 @@ public class Settings extends Config {
         public static boolean USE_MVDWAPI = true;
         @Comment("Prevent cross plot beacon effects")
         public static boolean DISABLE_BEACON_EFFECT_OVERFLOW = true;
+
+    }
+
+    @Comment({"Permission-Resolver specific settings"})
+    public static final class Permissions {
+
+        @Comment({
+                "use the new LuckPerms resolver for ranged permissions (e.g., plots.plot.<number>).",
+                "in contrary to the default resolver, this resolver can handle inheritance of permissions.",
+                "e.g. if the player has multiple matching permissions, for example, due to multiple group memberships " +
+                        "(plots.plot.5 & plots.plot.15), this resolver would use 15 as the limit as opposed to the previous 5."
+        })
+        public static boolean USE_LUCKPERMS_RANGE_RESOLVER = false;
 
     }
 

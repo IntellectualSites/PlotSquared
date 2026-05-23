@@ -24,14 +24,12 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extension.platform.Actor;
@@ -47,13 +45,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.potion.PotionEffectType;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.Set;
 import java.util.UUID;
 
 import static com.sk89q.worldedit.world.gamemode.GameModes.ADVENTURE;
@@ -150,77 +146,13 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
     }
 
-    @SuppressWarnings("StringSplitter")
     @Override
     @NonNegative
     public int hasPermissionRange(
             final @NonNull String stub,
             @NonNegative final int range
     ) {
-        if (hasPermission(Permission.PERMISSION_ADMIN.toString())) {
-            return Integer.MAX_VALUE;
-        }
-        final String[] nodes = stub.split("\\.");
-        final StringBuilder n = new StringBuilder();
-        // Wildcard check from less specific permission to more specific permission
-        for (int i = 0; i < (nodes.length - 1); i++) {
-            n.append(nodes[i]).append(".");
-            if (!stub.equals(n + Permission.PERMISSION_STAR.toString())) {
-                if (hasPermission(n + Permission.PERMISSION_STAR.toString())) {
-                    return Integer.MAX_VALUE;
-                }
-            }
-        }
-        // Wildcard check for the full permission
-        if (hasPermission(stub + ".*")) {
-            return Integer.MAX_VALUE;
-        }
-        // Permission value cache for iterative check
-        int max = 0;
-        if (CHECK_EFFECTIVE) {
-            boolean hasAny = false;
-            String stubPlus = stub + ".";
-            final Set<PermissionAttachmentInfo> effective = player.getEffectivePermissions();
-            if (!effective.isEmpty()) {
-                for (PermissionAttachmentInfo attach : effective) {
-                    // Ignore all "false" permissions
-                    if (!attach.getValue()) {
-                        continue;
-                    }
-                    String permStr = attach.getPermission();
-                    if (permStr.startsWith(stubPlus)) {
-                        hasAny = true;
-                        String end = permStr.substring(stubPlus.length());
-                        if (MathMan.isInteger(end)) {
-                            int val = Integer.parseInt(end);
-                            if (val > range) {
-                                return val;
-                            }
-                            if (val > max) {
-                                max = val;
-                            }
-                        }
-                    }
-                }
-                if (hasAny) {
-                    return max;
-                }
-                // Workaround
-                for (PermissionAttachmentInfo attach : effective) {
-                    String permStr = attach.getPermission();
-                    if (permStr.startsWith("plots.") && !permStr.equals("plots.use")) {
-                        return max;
-                    }
-                }
-                CHECK_EFFECTIVE = false;
-            }
-        }
-        for (int i = range; i > 0; i--) {
-            if (hasPermission(stub + "." + i)) {
-                return i;
-            }
-        }
-        return max;
+        return PlotSquared.platform().rangedPermissionResolver().getPermissionRange(this, stub, null, range);
     }
 
     @Override
