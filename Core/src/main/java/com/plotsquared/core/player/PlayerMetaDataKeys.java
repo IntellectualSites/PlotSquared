@@ -64,6 +64,8 @@ public final class PlayerMetaDataKeys {
     });
     public static final MetaDataKey<CmdInstance> TEMPORARY_CONFIRM = MetaDataKey.of("cmdConfirm", new TypeLiteral<>() {
     });
+    public static final MetaDataKey<Boolean> TEMPORARY_RAW_FLAGS = MetaDataKey.of("rawFlags", new TypeLiteral<>() {
+    });
     //@formatter:on
 
     private PlayerMetaDataKeys() {
