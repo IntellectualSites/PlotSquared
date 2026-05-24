@@ -22,6 +22,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
+import com.plotsquared.core.util.MinecraftVersion;
 import com.plotsquared.core.util.ReflectionUtils;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -49,7 +50,7 @@ public class SingleWorldListener implements Listener {
             this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle").getRealMethod();
         } catch (NoSuchMethodException ignored) {
             try {
-                String chunkStatus = PlotSquared.platform().serverVersion()[1] < 21
+                String chunkStatus = MinecraftVersion.current().isOlderThan(MinecraftVersion.TRICKY_TRIALS)
                         ? "net.minecraft.world.level.chunk" + ".ChunkStatus"
                         : "net.minecraft.world.level.chunk.status.ChunkStatus";
                 ReflectionUtils.RefClass classChunkStatus = getRefClass(chunkStatus);

@@ -48,6 +48,7 @@ import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.MinecraftVersion;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.RegionUtil;
 import com.plotsquared.core.util.StringMan;
@@ -325,7 +326,7 @@ public abstract class PlotArea implements ComponentLike {
         this.mobSpawnerSpawning = config.getBoolean("mob_spawner_spawning");
         this.autoMerge = config.getBoolean("plot.auto_merge");
         this.allowSigns = config.getBoolean("plot.create_signs");
-        if (PlotSquared.platform().serverVersion()[1] == 13) {
+        if (MinecraftVersion.current().isOlderOrEqualThan(13)) {
             this.legacySignMaterial = config.getString("plot.legacy_sign_material");
         } else {
             this.signMaterial = config.getString("plot.sign_material");
@@ -470,7 +471,7 @@ public abstract class PlotArea implements ComponentLike {
         options.put("mob_spawner_spawning", this.isMobSpawnerSpawning());
         options.put("plot.auto_merge", this.isAutoMerge());
         options.put("plot.create_signs", this.allowSigns());
-        if (PlotSquared.platform().serverVersion()[1] == 13) {
+        if (MinecraftVersion.current().isOlderOrEqualThan(13)) {
             options.put("plot.legacy_sign_material", this.legacySignMaterial);
         } else {
             options.put("plot.sign_material", this.signMaterial());

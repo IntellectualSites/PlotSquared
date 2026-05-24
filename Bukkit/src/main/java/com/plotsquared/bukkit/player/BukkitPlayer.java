@@ -32,6 +32,7 @@ import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.MinecraftVersion;
 import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extension.platform.Actor;
@@ -313,7 +314,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
     @Override
     public void playMusic(final @NonNull Location location, final @NonNull ItemType id) {
         if (id == ItemTypes.AIR) {
-            if (PlotSquared.platform().serverVersion()[1] >= 19) {
+            if (MinecraftVersion.current().isOlderOrEqualThan(MinecraftVersion.THE_WILD_UPDATE)) {
                 player.stopSound(SoundCategory.MUSIC);
                 return;
             }
