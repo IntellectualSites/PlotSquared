@@ -26,13 +26,14 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.queue.QueueCoordinator;
-import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 public class SinglePlotManager extends PlotManager {
@@ -71,9 +72,13 @@ public class SinglePlotManager extends PlotManager {
             @Nullable QueueCoordinator queue
     ) {
         PlotSquared.platform().setupUtils().unload(plot.getWorldName(), false);
-        final File worldFolder = new File(PlotSquared.platform().worldContainer(), plot.getWorldName());
+        Path path = PlotSquared.platform().getWorldPath(plot.getWorldName());
         TaskManager.getPlatformImplementation().taskAsync(() -> {
-            FileUtils.deleteDirectory(worldFolder);
+            try {
+                Files.deleteIfExists(path);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to delete directory", e);
+            }
             if (whenDone != null) {
                 whenDone.run();
             }
