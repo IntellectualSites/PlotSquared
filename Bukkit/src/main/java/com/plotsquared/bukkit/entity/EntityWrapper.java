@@ -21,7 +21,6 @@ package com.plotsquared.bukkit.entity;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class EntityWrapper {
@@ -36,7 +35,7 @@ public abstract class EntityWrapper {
 
     EntityWrapper(final @NonNull Entity entity) {
         this.entity = entity;
-        this.type = entity.getType();
+        this.type = EntityType.of(entity.getType());
 
         final Location location = entity.getLocation();
         this.x = location.getX();
@@ -49,7 +48,7 @@ public abstract class EntityWrapper {
     @SuppressWarnings("deprecation")
     @Override
     public String toString() {
-        return String.format("[%s, x=%s, y=%s, z=%s]", type.getName(), x, y, z);
+        return String.format("[%s, x=%s, y=%s, z=%s]", type, x, y, z);
     }
 
     public abstract Entity spawn(World world, int xOffset, int zOffset);
