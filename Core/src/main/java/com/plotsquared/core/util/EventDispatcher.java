@@ -29,9 +29,14 @@ import com.plotsquared.core.events.PlayerBuyPlotEvent;
 import com.plotsquared.core.events.PlayerClaimPlotEvent;
 import com.plotsquared.core.events.PlayerEnterPlotEvent;
 import com.plotsquared.core.events.PlayerLeavePlotEvent;
+import com.plotsquared.core.events.PlayerPlotAddEvent;
+import com.plotsquared.core.events.PlayerPlotAddRemoveEvent;
 import com.plotsquared.core.events.PlayerPlotDeniedEvent;
+import com.plotsquared.core.events.PlayerPlotDenyEvent;
 import com.plotsquared.core.events.PlayerPlotHelperEvent;
 import com.plotsquared.core.events.PlayerPlotLimitEvent;
+import com.plotsquared.core.events.PlayerPlotRemoveEvent;
+import com.plotsquared.core.events.PlayerPlotTrustEvent;
 import com.plotsquared.core.events.PlayerPlotTrustedEvent;
 import com.plotsquared.core.events.PlayerTeleportToPlotEvent;
 import com.plotsquared.core.events.PlotAutoMergeEvent;
@@ -51,6 +56,9 @@ import com.plotsquared.core.events.RemoveRoadEntityEvent;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.events.post.PostPlayerAutoPlotEvent;
 import com.plotsquared.core.events.post.PostPlayerBuyPlotEvent;
+import com.plotsquared.core.events.post.PostPlayerPlotAddedEvent;
+import com.plotsquared.core.events.post.PostPlayerPlotDeniedEvent;
+import com.plotsquared.core.events.post.PostPlayerPlotTrustedEvent;
 import com.plotsquared.core.events.post.PostPlotChangeOwnerEvent;
 import com.plotsquared.core.events.post.PostPlotClearEvent;
 import com.plotsquared.core.events.post.PostPlotDeleteEvent;
@@ -258,6 +266,7 @@ public class EventDispatcher {
         return event;
     }
 
+    @Deprecated(forRemoval = true, since = "TODO")
     public PlayerPlotDeniedEvent callDenied(
             PlotPlayer<?> initiator, Plot plot, UUID player,
             boolean added
@@ -267,6 +276,7 @@ public class EventDispatcher {
         return event;
     }
 
+    @Deprecated(forRemoval = true, since = "TODO")
     public PlayerPlotTrustedEvent callTrusted(
             PlotPlayer<?> initiator, Plot plot, UUID player,
             boolean added
@@ -276,11 +286,68 @@ public class EventDispatcher {
         return event;
     }
 
+    @Deprecated(forRemoval = true, since = "TODO")
     public PlayerPlotHelperEvent callMember(
             PlotPlayer<?> initiator, Plot plot, UUID player,
             boolean added
     ) {
         PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(initiator, plot, player, added);
+        callEvent(event);
+        return event;
+    }
+
+    public PostPlayerPlotDeniedEvent callPostDenied(
+            PlotPlayer<?> initiator, Plot plot, UUID player, boolean added, PlayerPlotAddRemoveEvent.Reason reason
+    ) {
+        PostPlayerPlotDeniedEvent event = new PostPlayerPlotDeniedEvent(initiator, plot, player, added, reason);
+        callEvent(event);
+        return event;
+    }
+
+    public PostPlayerPlotTrustedEvent callPostTrusted(
+            PlotPlayer<?> initiator, Plot plot, UUID player, boolean added, PlayerPlotAddRemoveEvent.Reason reason
+    ) {
+        PostPlayerPlotTrustedEvent event = new PostPlayerPlotTrustedEvent(initiator, plot, player, added, reason);
+        callEvent(event);
+        return event;
+    }
+
+    public PostPlayerPlotAddedEvent callPostAdded(
+            PlotPlayer<?> initiator, Plot plot, UUID player, boolean added, PlayerPlotAddRemoveEvent.Reason reason
+    ) {
+        PostPlayerPlotAddedEvent event = new PostPlayerPlotAddedEvent(initiator, plot, player, added, reason);
+        callEvent(event);
+        return event;
+    }
+
+    public PlayerPlotDenyEvent callPlayerDeny(
+            PlotPlayer<?> initiator, Plot plot, UUID player, PlayerPlotAddRemoveEvent.Reason reason
+    ) {
+        PlayerPlotDenyEvent event = new PlayerPlotDenyEvent(initiator, plot, player, reason);
+        callEvent(event);
+        return event;
+    }
+
+    public PlayerPlotTrustEvent callPlayerTrust(
+            PlotPlayer<?> initiator, Plot plot, UUID player, PlayerPlotAddRemoveEvent.Reason reason
+    ) {
+        PlayerPlotTrustEvent event = new PlayerPlotTrustEvent(initiator, plot, player, reason);
+        callEvent(event);
+        return event;
+    }
+
+    public PlayerPlotAddEvent callPlayerAdd(
+            PlotPlayer<?> initiator, Plot plot, UUID player, PlayerPlotAddRemoveEvent.Reason reason
+    ) {
+        PlayerPlotAddEvent event = new PlayerPlotAddEvent(initiator, plot, player, reason);
+        callEvent(event);
+        return event;
+    }
+
+    public PlayerPlotRemoveEvent callPlayerRemove(
+            PlotPlayer<?> initiator, Plot plot, UUID player, PlayerPlotAddRemoveEvent.Reason reason
+    ) {
+        PlayerPlotRemoveEvent event = new PlayerPlotRemoveEvent(initiator, plot, player, reason);
         callEvent(event);
         return event;
     }
