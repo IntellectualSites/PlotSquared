@@ -343,7 +343,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 try {
                     plotSquared.setConfigurationVersion("v5");
                 } catch (final Exception e) {
-                    e.printStackTrace();
+                    LOGGER.error("Failed to update configuration version", e);
                 }
             }
         }

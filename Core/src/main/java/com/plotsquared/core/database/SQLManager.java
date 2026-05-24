@@ -1728,6 +1728,18 @@ public class SQLManager implements AbstractDB {
     @Override
     public boolean convertFlags() {
         final Map<Integer, Map<String, String>> flagMap = new HashMap<>();
+        try {
+            // only migrate flags, if plot_settings table has flags column
+            DatabaseMetaData metaData = this.connection.getMetaData();
+            try (ResultSet rs = metaData.getColumns(null, null, this.prefix + "plot_settings", "flags")) {
+                if (!rs.next()) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Failed to query table metadata", e);
+            return false;
+        }
         try (Statement statement = this.connection.createStatement()) {
             try (ResultSet resultSet = statement
                     .executeQuery("SELECT * FROM `" + this.prefix + "plot_settings`")) {
@@ -1742,11 +1754,10 @@ public class SQLManager implements AbstractDB {
                         if (element.contains(":")) {
                             String[] split = element.split(":"); // splits flag:value
                             try {
-                                String flag_str =
-                                        split[1].replaceAll("¯", ":").replaceAll("\u00B4", ",");
+                                String flag_str = split[1].replace("¯", ":").replace("´", ",");
                                 flagMap.get(id).put(split[0], flag_str);
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                LOGGER.error("Failed to migrate flag value", e);
                             }
                         }
                     }
@@ -1759,8 +1770,7 @@ public class SQLManager implements AbstractDB {
         LOGGER.info("Loaded {} plot flag collections...", flagMap.size());
         LOGGER.info("Attempting to store these flags in the new table...");
         try (final PreparedStatement preparedStatement = this.connection.prepareStatement(
-                "INSERT INTO `" + SQLManager.this.prefix
-                        + "plot_flags`(`plot_id`, `flag`, `value`) VALUES(?, ?, ?)")) {
+                "INSERT INTO `" + this.prefix + "plot_flags`(`plot_id`, `flag`, `value`) VALUES(?, ?, ?)")) {
 
             long timeStarted = System.currentTimeMillis();
             int flagsProcessed = 0;
@@ -1785,23 +1795,18 @@ public class SQLManager implements AbstractDB {
                 try {
                     preparedStatement.executeBatch();
                 } catch (final Exception e) {
-                    LOGGER.error("Failed to store flag values for plot with entry ID: {}", plotFlagEntry.getKey());
-                    e.printStackTrace();
+                    LOGGER.error("Failed to store flag values for plot with entry ID: {}", plotFlagEntry.getKey(), e);
                     continue;
                 }
 
-                if (System.currentTimeMillis() - timeStarted >= 1000L || plotsProcessed >= flagMap
-                        .size()) {
+                if (System.currentTimeMillis() - timeStarted >= 1000L || plotsProcessed >= flagMap.size()) {
                     timeStarted = System.currentTimeMillis();
                     LOGGER.info(
                             "... Flag conversion in progress. {}% done",
                             String.format("%.1f", ((float) flagsProcessed / totalFlags) * 100)
                     );
                 }
-                LOGGER.info(
-                        "- Finished converting flags for plot with entry ID: {}",
-                        plotFlagEntry.getKey()
-                );
+                LOGGER.info("- Finished converting flags for plot with entry ID: {}", plotFlagEntry.getKey());
             }
         } catch (final Exception e) {
             LOGGER.error("Failed to store flag values", e);
