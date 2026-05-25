@@ -18,6 +18,7 @@
  */
 package com.plotsquared.core.util;
 
+import com.google.common.base.Preconditions;
 import com.plotsquared.core.PlotSquared;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,16 +26,18 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 /**
- * Represents a minecraft version. For simplicity, and compatibility with modern versions, the `1.` prefix of older versions is
+ * Represents a Minecraft version. For simplicity, and compatibility with modern versions, the `1.` prefix of older versions is
  * ignored and the minor version part becomes the major version part.
  * <p>
  * <ul>
- *     <li>`1.17.0` -> `(17, 0)`</li>
- *     <li>`26.2` -> `(26, 2)`</li>
+ *     <li>`1.17.0` -> `(17, 0, 0)`</li>
+ *     <li>`26.2` -> `(26, 2, 0)`</li>
+ *     <li>`26.1.2` -> `(26, 1, 2)`</li>
  * </ul>
  *
- * @param major the major part of the version string. For versions pre 26.1 this is the minor version part
- * @param minor the minor part of the version string. For versions pre 26.1 this is the patch version part
+ * @param major the major part of the version string. For versions pre 26 this is the minor version part
+ * @param minor the minor part of the version string. For versions pre 26 this is the patch version part
+ * @param patch the patch part of the version string. For versions pre 26 this is always {@code 0}
  */
 public record MinecraftVersion(int major, int minor, int patch) implements Comparable<MinecraftVersion> {
 
@@ -65,7 +68,9 @@ public record MinecraftVersion(int major, int minor, int patch) implements Compa
 
     private static final Comparator<MinecraftVersion> COMPARATOR = Comparator
             .comparingInt(MinecraftVersion::major)
-            .thenComparingInt(MinecraftVersion::minor);
+            .thenComparingInt(MinecraftVersion::minor)
+            .thenComparingInt(MinecraftVersion::patch);
+
     private static MinecraftVersion current;
 
     public static MinecraftVersion current() {
@@ -87,30 +92,27 @@ public record MinecraftVersion(int major, int minor, int patch) implements Compa
         return current;
     }
 
+    public MinecraftVersion {
+        Preconditions.checkArgument(this.major() > -1, "major version part must be positive or 0");
+        Preconditions.checkArgument(this.minor() > -1, "major version part must be positive or 0");
+        Preconditions.checkArgument(this.patch() > -1, "major version part must be positive or 0");
+    }
+
     @Override
     public int compareTo(@NotNull final MinecraftVersion o) {
         return COMPARATOR.compare(this, o);
     }
 
     public boolean isNewerOrEqualThan(MinecraftVersion other) {
-        if (this.major() > other.major()) {
-            return true;
-        }
-        return this.major() == other.major() && this.minor() >= other.minor();
+        return this.compareTo(other) >= 0;
     }
 
     public boolean isOlderOrEqualThan(MinecraftVersion other) {
-        if (this.major() < other.major()) {
-            return true;
-        }
-        return this.major() == other.major() && this.minor() <= other.minor();
+        return this.compareTo(other) <= 0;
     }
 
     public boolean isOlderThan(MinecraftVersion other) {
-        if (this.major() < other.major()) {
-            return true;
-        }
-        return this.major() == other.major() && this.minor() < other.minor();
+        return this.compareTo(other) < 0;
     }
 
     public boolean isNewerOrEqualThan(int otherMajor) {
