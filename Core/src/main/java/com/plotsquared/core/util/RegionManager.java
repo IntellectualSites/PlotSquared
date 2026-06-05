@@ -99,7 +99,7 @@ public abstract class RegionManager {
                 try {
                     Files.deleteIfExists(path);
                 } catch (IOException e) {
-                    throw new RuntimeException("Failed to delete region file", e);
+                    LOGGER.error("Failed to delete region file", e);
                 }
             }
             TaskManager.runTask(whenDone);
