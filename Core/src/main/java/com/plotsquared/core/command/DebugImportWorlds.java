@@ -43,6 +43,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 @CommandDeclaration(command = "debugimportworlds",
@@ -84,7 +85,7 @@ public class DebugImportWorlds extends Command {
             return CompletableFuture.completedFuture(false);
         }
         try (Stream<Path> stream = Files.walk(container, 1)) {
-            stream.skip(1) // skip container / root
+            stream.filter(Predicate.not(p -> p.equals(container))) // skip container / root
                     .map(path -> new PathWithName(path, path.getFileName().toString()))
                     .filter(p -> !this.worldUtil.isWorld(p.name()))
                     .filter(p -> PlotId.fromStringOrNull(p.name()) == null)
