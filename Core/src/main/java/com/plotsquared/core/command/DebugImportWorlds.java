@@ -127,13 +127,14 @@ public class DebugImportWorlds extends Command {
                 uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + p.name()).getBytes(Charsets.UTF_8));
             }
             Path target;
-            if (Files.exists(target = this.container.resolve(this.id.toCommaSeparatedString()))) {
+            while (Files.exists(target = this.container.resolve(this.id.toCommaSeparatedString()))) {
                 this.id = this.id.getNextId();
             }
             try {
                 Files.move(p.path(), target);
                 Objects.requireNonNull(this.area.getPlot(this.id)).setOwner(uuid);
-            } catch (IOException ignored) {
+            } catch (IOException e) {
+                LOGGER.error("Failed to import world: Failed to move world", e);
             }
         }
 
