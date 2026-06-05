@@ -58,6 +58,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
@@ -370,7 +371,8 @@ public abstract class WorldUtil {
             throw new RuntimeException("Could not find regions folder: " + regionRoot + " ? (no read access?)");
         }
         try (Stream<Path> stream = Files.find(regionRoot, 1, WorldUtil::isMcaRegionFile)) {
-            return stream.map(Path::getFileName)
+            return stream.filter(Predicate.not(p -> p.equals(regionRoot))) // skip root
+                    .map(Path::getFileName)
                     .map(this::fromMcaFileName)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toSet());
@@ -382,6 +384,7 @@ public abstract class WorldUtil {
 
     /**
      * checks if the given file, by its path and BasicFileAttributes, is a mca region file
+     *
      * @param path full path to file
      * @param bfa attributes of the given file
      * @return {@code true} if the given file is a seemingly valid mca region file. {@code false} otherwise
@@ -396,6 +399,7 @@ public abstract class WorldUtil {
 
     /**
      * Retrieves the coordinates from a region mca file
+     *
      * @param filename the filename part of the full path ({@link Path#getFileName()})
      * @return A BV2 containg the coordinates, or {@code null} if the filename does not match the expected format
      */
