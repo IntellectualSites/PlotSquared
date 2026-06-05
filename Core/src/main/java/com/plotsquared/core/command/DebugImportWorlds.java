@@ -84,7 +84,8 @@ public class DebugImportWorlds extends Command {
             return CompletableFuture.completedFuture(false);
         }
         try (Stream<Path> stream = Files.walk(container, 1)) {
-            stream.map(path -> new PathWithName(path, path.getFileName().toString()))
+            stream.skip(1) // skip container / root
+                    .map(path -> new PathWithName(path, path.getFileName().toString()))
                     .filter(p -> !this.worldUtil.isWorld(p.name()))
                     .filter(p -> PlotId.fromStringOrNull(p.name()) == null)
                     .forEach(new ImportAction(player, area, container));
