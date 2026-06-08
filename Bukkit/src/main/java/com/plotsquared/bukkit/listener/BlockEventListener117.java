@@ -163,7 +163,8 @@ public class BlockEventListener117 implements Listener {
         if (plot == null) {
             return;
         }
-        if (event.getNewState().getType().name().contains("COPPER")) {
+        String newTypeName = event.getNewState().getType().name();
+        if (newTypeName.contains("COPPER") || newTypeName.contains("LIGHTNING_ROD")) {
             if (!plot.getFlag(CopperOxideFlag.class)) {
                 plot.debug("Copper could not oxide because copper-oxide = false");
                 event.setCancelled(true);
