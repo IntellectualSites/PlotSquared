@@ -37,6 +37,7 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.MinecraftVersion;
 import com.plotsquared.core.util.PlatformWorldManager;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.RegionManager;
@@ -94,8 +95,17 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * Gets the version of Minecraft that is running
      *
      * @return server version as array of numbers
+     * @deprecated non-standardized format, use {@link #minecraftVersion()}
      */
+    @Deprecated(since = "TODO")
     int[] serverVersion();
+
+    /**
+     * Gets the version of Minecraft that this server is running
+     *
+     * @return minecraft version
+     */
+    MinecraftVersion minecraftVersion();
 
     /**
      * Gets the default minimum world height for the version of Minecraft that the server is running.

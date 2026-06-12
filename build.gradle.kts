@@ -20,7 +20,7 @@ plugins {
 }
 
 group = "com.intellectualsites.plotsquared"
-version = "7.5.12-SNAPSHOT"
+version = "7.5.14-SNAPSHOT"
 
 if (!File("$rootDir/.git").exists()) {
     logger.lifecycle("""
@@ -73,8 +73,8 @@ subprojects {
 
     dependencies {
         // Tests
-        testImplementation("org.junit.jupiter:junit-jupiter:6.0.2")
-        testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.2")
+        testImplementation("org.junit.jupiter:junit-jupiter:6.1.0")
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.0")
     }
 
     plugins.withId("java") {
@@ -216,7 +216,7 @@ tasks.getByName<Jar>("jar") {
     enabled = false
 }
 
-val supportedVersions = listOf("1.19.4", "1.20.6", "1.21.1", "1.21.3", "1.21.4", "1.21.5", "1.21.6", "1.21.7", "1.21.8")
+val supportedVersions = listOf("1.19.4", "1.20.6", "1.21.11", "26.1.2")
 tasks {
     register("cacheLatestFaweArtifact") {
         val lastSuccessfulBuildUrl = uri("https://ci.athion.net/job/FastAsyncWorldEdit/lastSuccessfulBuild/api/json").toURL()
