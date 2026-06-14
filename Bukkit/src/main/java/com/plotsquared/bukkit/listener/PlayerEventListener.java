@@ -1426,8 +1426,7 @@ public class PlayerEventListener implements Listener {
             if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper.accepts(type)) {
                 // Allows this event for blocks that can be interacted with using a bucket without it being considered
                 // as "building" (= make it waterlogged or drop the block by flooding it)
-                if (type == BlockTypes.CAULDRON || type == BlockTypes.WATER_CAULDRON || type == BlockTypes.LAVA_CAULDRON
-                        || type == BlockTypes.SPONGE || type == BlockTypes.WET_SPONGE) {
+                if (type == BlockTypes.CAULDRON || type == BlockTypes.WATER_CAULDRON || type == BlockTypes.LAVA_CAULDRON) {
                     return;
                 }
             }
@@ -1511,8 +1510,7 @@ public class PlayerEventListener implements Listener {
             if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper.accepts(type)) {
                 // Allows this event for blocks that can be interacted with using a bucket without it being considered
                 // as "building" (= make it waterlogged or drop the block by flooding it)
-                if (type == BlockTypes.CAULDRON || type == BlockTypes.WATER_CAULDRON || type == BlockTypes.LAVA_CAULDRON
-                        || type == BlockTypes.SPONGE || type == BlockTypes.WET_SPONGE) {
+                if (type == BlockTypes.CAULDRON || type == BlockTypes.WATER_CAULDRON || type == BlockTypes.LAVA_CAULDRON) {
                     return;
                 }
             }
