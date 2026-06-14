@@ -27,7 +27,7 @@ body:
       description: Which server version are you using? If your server version is not listed, it is not supported. Update to a supported version first.
       multiple: false
       options:
-        - '1.21.4'
+        - '1.21.11'
         - '1.21.3'
         - '1.21.1'
         - '1.20.6'
@@ -71,7 +71,7 @@ body:
   - type: input
     attributes:
       label: Error log (if applicable)
-      description: If you are reporting a console error, upload any relevant log excerpts to either https://paste.gg/ or https://gist.github.com, save and the paste the link in this box.
+      description: If you are reporting a console error, upload any relevant log excerpts to https://gist.github.com, save and the paste the link in this box.
 
   - type: input
     attributes:

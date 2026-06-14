@@ -100,6 +100,7 @@ import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.FileUtils;
+import com.plotsquared.core.util.MinecraftVersion;
 import com.plotsquared.core.util.PlatformWorldManager;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.PremiumVerification;
@@ -238,13 +239,18 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     }
 
     @Override
+    public MinecraftVersion minecraftVersion() {
+        return MinecraftVersion.current();
+    }
+
+    @Override
     public int versionMinHeight() {
-        return serverVersion()[1] >= 18 ? -64 : 0;
+        return minecraftVersion().isNewerOrEqualThan(MinecraftVersion.CAVES_AND_CLIFFS_2) ? -64 : 0;
     }
 
     @Override
     public int versionMaxHeight() {
-        return serverVersion()[1] >= 18 ? 319 : 255;
+        return minecraftVersion().isNewerOrEqualThan(MinecraftVersion.CAVES_AND_CLIFFS_2) ? 319 : 255;
     }
 
     @Override
@@ -337,7 +343,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 try {
                     plotSquared.setConfigurationVersion("v5");
                 } catch (final Exception e) {
-                    e.printStackTrace();
+                    LOGGER.error("Failed to update configuration version", e);
                 }
             }
         }
@@ -364,14 +370,14 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
         if (Settings.Enabled_Components.EVENTS) {
             getServer().getPluginManager().registerEvents(injector().getInstance(PlayerEventListener.class), this);
-            if ((serverVersion()[1] == 20 && serverVersion()[2] >= 1) || serverVersion()[1] > 20) {
+            if (minecraftVersion().isNewerOrEqualThan(20, 1)) {
                 getServer().getPluginManager().registerEvents(injector().getInstance(PlayerEventListener1201.class), this);
             }
             getServer().getPluginManager().registerEvents(injector().getInstance(BlockEventListener.class), this);
             if (Settings.HIGH_FREQUENCY_LISTENER) {
                 getServer().getPluginManager().registerEvents(injector().getInstance(HighFreqBlockEventListener.class), this);
             }
-            if (serverVersion()[1] >= 17) {
+            if (minecraftVersion().isNewerOrEqualThan(MinecraftVersion.CAVES_AND_CLIFFS)) {
                 getServer().getPluginManager().registerEvents(injector().getInstance(BlockEventListener117.class), this);
             }
             getServer().getPluginManager().registerEvents(injector().getInstance(EntityEventListener.class), this);

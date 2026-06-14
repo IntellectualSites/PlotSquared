@@ -30,6 +30,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.BlockUtil;
 import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.MinecraftVersion;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.StringComparison;
 import com.plotsquared.core.util.WorldUtil;
@@ -56,7 +57,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
-import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Allay;
 import org.bukkit.entity.Ambient;
@@ -357,15 +357,14 @@ public class BukkitUtil extends WorldUtil {
                         facing = BlockFace.SOUTH;
                     }
                 }
-                if (PlotSquared.platform().serverVersion()[1] == 13) {
+                if (MinecraftVersion.current().isOlderOrEqualThan(13)) {
                     block.setType(Material.valueOf(area.legacySignMaterial()), false);
                 } else {
                     block.setType(Material.valueOf(area.signMaterial()), false);
                 }
-                if (!(block.getBlockData() instanceof WallSign)) {
+                if (!(block.getBlockData() instanceof WallSign sign)) {
                     throw new RuntimeException("Something went wrong generating a sign");
                 }
-                final Directional sign = (Directional) block.getBlockData();
                 sign.setFacing(facing);
                 block.setBlockData(sign, false);
             }
@@ -438,7 +437,6 @@ public class BukkitUtil extends WorldUtil {
     @Override
     public @NonNull Set<com.sk89q.worldedit.world.entity.EntityType> getTypesInCategory(final @NonNull String category) {
         final Collection<Class<?>> allowedInterfaces = new HashSet<>();
-        final int[] version = PlotSquared.platform().serverVersion();
         switch (category) {
             case "animal" -> {
                 allowedInterfaces.add(IronGolem.class);
@@ -446,7 +444,7 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(Animals.class);
                 allowedInterfaces.add(WaterMob.class);
                 allowedInterfaces.add(Ambient.class);
-                if (version[1] >= 19) {
+                if (MinecraftVersion.current().isOlderOrEqualThan(MinecraftVersion.THE_WILD_UPDATE)) {
                     allowedInterfaces.add(Allay.class);
                 }
             }
@@ -478,7 +476,7 @@ public class BukkitUtil extends WorldUtil {
             }
             case "player" -> allowedInterfaces.add(Player.class);
             case "interaction" -> {
-                if ((version[1] > 19) || (version[1] == 19 && version[2] >= 4)) {
+                if (MinecraftVersion.current().isNewerOrEqualThan(19, 4)) {
                     allowedInterfaces.add(Interaction.class);
                 }
             }

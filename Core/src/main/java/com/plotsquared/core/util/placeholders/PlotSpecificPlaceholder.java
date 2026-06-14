@@ -27,14 +27,28 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public abstract class PlotSpecificPlaceholder extends Placeholder {
 
+    private final boolean requireAbsolute;
+
     public PlotSpecificPlaceholder(final @NonNull String key) {
+        this(key, false);
+    }
+
+    /**
+     * Create a functional placeholder
+     *
+     * @param key             Placeholder key
+     * @param requireAbsolute If the plot given to the placeholder should be the absolute (not base) plot
+     * @since 7.5.9
+     */
+    public PlotSpecificPlaceholder(final @NonNull String key, final boolean requireAbsolute) {
         super(key);
+        this.requireAbsolute = requireAbsolute;
     }
 
     @Override
     public @NonNull
     final String getValue(final @NonNull PlotPlayer<?> player) {
-        final Plot plot = player.getCurrentPlot();
+        final Plot plot = requireAbsolute ? player.getLocation().getPlotAbs() : player.getCurrentPlot();
         if (plot == null) {
             return "";
         }

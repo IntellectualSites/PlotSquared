@@ -58,7 +58,7 @@ public class SinglePlot extends Plot {
     }
 
     @Override
-    public String getWorldName() {
+    public @NonNull String getWorldName() {
         return getId().toUnderscoreSeparatedString();
     }
 

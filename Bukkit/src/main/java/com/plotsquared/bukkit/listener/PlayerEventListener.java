@@ -72,6 +72,7 @@ import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.MinecraftVersion;
 import com.plotsquared.core.util.PlotFlagUtil;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.entity.EntityCategories;
@@ -216,8 +217,7 @@ public class PlayerEventListener implements Listener {
                 "PINK_DYE",
                 "GLOW_INK_SAC"
         ));
-        int[] version = PlotSquared.platform().serverVersion();
-        if (version[1] >= 20) {
+        if (MinecraftVersion.current().isNewerOrEqualThan(MinecraftVersion.TRAILS_AND_TALES)) {
             mutableDyes.add("HONEYCOMB");
         }
         DYES = Set.copyOf(mutableDyes);
@@ -354,7 +354,8 @@ public class PlayerEventListener implements Listener {
                     }
                     return;
                 }
-                if (plot.isAdded(event.getPlayer().getUniqueId())) {
+                BukkitPlayer player = BukkitUtil.adapt(event.getPlayer());
+                if (plot.isAdded(player.getUUID())) {
                     return; // allow for added players
                 }
                 if (!plot.getFlag(EditSignFlag.class)
@@ -600,7 +601,7 @@ public class PlayerEventListener implements Listener {
                 PlotArea area = location.getPlotArea();
                 if (area == null) {
                     if (lastPlot != null) {
-                        plotListener.plotExit(pp, lastPlot);
+                        plotListener.plotExit(pp, lastPlot, null, null);
                         lastPlotAccess.remove();
                     }
                     try (final MetaDataAccess<Location> lastLocationAccess =
@@ -753,7 +754,7 @@ public class PlayerEventListener implements Listener {
             if (now == null) {
                 try (final MetaDataAccess<Boolean> kickAccess =
                              pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
-                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(
+                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot, now, area) && this.tmpTeleport && !kickAccess.get().orElse(
                             false)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
@@ -847,7 +848,7 @@ public class PlayerEventListener implements Listener {
             if (plot == null) {
                 try (final MetaDataAccess<Boolean> kickAccess =
                              pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
-                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(
+                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot, null, area) && this.tmpTeleport && !kickAccess.get().orElse(
                             false)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
