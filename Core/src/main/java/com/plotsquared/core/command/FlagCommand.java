@@ -173,11 +173,11 @@ public final class FlagCommand extends Command {
     }
 
     /**
-     * Checks if the player is allowed to modify the flags at their current location
+     * Checks if the player is allowed to interact with flags at their current location
      *
      * @return {@code true} if the player is allowed to modify the flags at their current location
      */
-    private static boolean checkRequirements(final @NonNull PlotPlayer<?> player, final @NonNull Permission permission) {
+    private static boolean checkRequirements(final @NonNull PlotPlayer<?> player, final @NonNull Permission permissionIfNotOwner) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
@@ -187,10 +187,10 @@ public final class FlagCommand extends Command {
             player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
             return false;
         }
-        if (!plot.isOwner(player.getUUID()) && !player.hasPermission(permission)) {
+        if (!plot.isOwner(player.getUUID()) && !player.hasPermission(permissionIfNotOwner)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    TagResolver.resolver("node", Tag.inserting(permission))
+                    TagResolver.resolver("node", Tag.inserting(permissionIfNotOwner))
             );
             return false;
         }
