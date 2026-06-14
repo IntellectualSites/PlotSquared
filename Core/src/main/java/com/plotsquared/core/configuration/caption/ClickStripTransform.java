@@ -26,9 +26,9 @@ import java.util.Set;
 
 final class ClickStripTransform implements ComponentTransform {
 
-    private final Set<ClickEvent.@NonNull Action> actionsToStrip;
+    private final Set<ClickEvent.Action<?>> actionsToStrip;
 
-    public ClickStripTransform(final Set<ClickEvent.@NonNull Action> actionsToStrip) {
+    public ClickStripTransform(final Set<? extends ClickEvent.Action<?>> actionsToStrip) {
         this.actionsToStrip = Set.copyOf(actionsToStrip);
     }
 
