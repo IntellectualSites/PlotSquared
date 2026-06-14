@@ -22,7 +22,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.EnumSet;
 import java.util.Set;
 
 final class ClickStripTransform implements ComponentTransform {
@@ -30,7 +29,7 @@ final class ClickStripTransform implements ComponentTransform {
     private final Set<ClickEvent.@NonNull Action> actionsToStrip;
 
     public ClickStripTransform(final Set<ClickEvent.@NonNull Action> actionsToStrip) {
-        this.actionsToStrip = EnumSet.copyOf(actionsToStrip);
+        this.actionsToStrip = Set.copyOf(actionsToStrip);
     }
 
     @Override
