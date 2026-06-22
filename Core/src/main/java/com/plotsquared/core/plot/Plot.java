@@ -39,6 +39,8 @@ import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.ConsolePlayer;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.expiration.PlotAnalysis;
@@ -2897,6 +2899,27 @@ public class Plot {
                             } else {
                                 value = flag.toString();
                             }
+                            // Create value component - check if raw display is requested
+                            Component valueComponent;
+                            String formattedValue = CaptionUtility.formatRaw(player, value.toString());
+
+                            // Check if player requested raw flag display
+                            boolean showRaw = false;
+                            try (final MetaDataAccess<Boolean> metaDataAccess = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_RAW_FLAGS)) {
+                                showRaw = metaDataAccess.get().orElse(false);
+                            }
+
+                            if (!showRaw && CaptionUtility.isMiniMessageFlag(flag)) {
+                                try {
+                                    valueComponent = MINI_MESSAGE.deserialize(formattedValue);
+                                } catch (Exception e) {
+                                    // Fallback to plain text if parsing fails
+                                    valueComponent = Component.text(formattedValue);
+                                }
+                            } else {
+                                valueComponent = Component.text(formattedValue);
+                            }
+
                             Component snip = MINI_MESSAGE.deserialize(
                                     prefix + CaptionUtility.format(
                                             player,
@@ -2904,10 +2927,7 @@ public class Plot {
                                     ),
                                     TagResolver.builder()
                                             .tag("flag", Tag.inserting(Component.text(flag.getName())))
-                                            .tag("value", Tag.inserting(Component.text(CaptionUtility.formatRaw(
-                                                    player,
-                                                    value.toString()
-                                            ))))
+                                            .tag("value", Tag.inserting(valueComponent))
                                             .build()
                             );
                             flagBuilder.append(snip);
