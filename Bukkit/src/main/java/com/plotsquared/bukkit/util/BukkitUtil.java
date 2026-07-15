@@ -26,6 +26,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.location.UncheckedWorldLocation;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.BlockUtil;
@@ -315,7 +316,11 @@ public class BukkitUtil extends WorldUtil {
 
     @Override
     public @NonNull Location getSpawn(final @NonNull String world) {
-        final org.bukkit.Location temp = getWorld(world).getSpawnLocation();
+        final World bukkitWorld = getWorld(world);
+        if (bukkitWorld == null) {
+            return UncheckedWorldLocation.at(world, 0, 64, 0);
+        }
+        final org.bukkit.Location temp = bukkitWorld.getSpawnLocation();
         return Location.at(world, temp.getBlockX(), temp.getBlockY(), temp.getBlockZ(), temp.getYaw(), temp.getPitch());
     }
 
