@@ -315,7 +315,11 @@ public class BukkitUtil extends WorldUtil {
 
     @Override
     public @NonNull Location getSpawn(final @NonNull String world) {
-        final org.bukkit.Location temp = getWorld(world).getSpawnLocation();
+        final World bukkitWorld = getWorld(world);
+        if (bukkitWorld == null) {
+            return Location.at(world, 0, 64, 0);
+        }
+        final org.bukkit.Location temp = bukkitWorld.getSpawnLocation();
         return Location.at(world, temp.getBlockX(), temp.getBlockY(), temp.getBlockZ(), temp.getYaw(), temp.getPitch());
     }
 
