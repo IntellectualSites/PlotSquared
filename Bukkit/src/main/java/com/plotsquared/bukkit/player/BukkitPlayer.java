@@ -41,6 +41,7 @@ import com.sk89q.worldedit.world.item.ItemTypes;
 import io.papermc.lib.PaperLib;
 import net.kyori.adventure.audience.Audience;
 import org.bukkit.GameMode;
+import org.bukkit.World;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.WeatherType;
@@ -229,8 +230,12 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         if (!WorldUtil.isValidLocation(location)) {
             return;
         }
+        final World world = BukkitUtil.getWorld(location.getWorldName());
+        if (world == null) {
+            return;
+        }
         final org.bukkit.Location bukkitLocation =
-                new org.bukkit.Location(BukkitUtil.getWorld(location.getWorldName()), location.getX() + 0.5,
+                new org.bukkit.Location(world, location.getX() + 0.5,
                         location.getY(), location.getZ() + 0.5, location.getYaw(), location.getPitch()
                 );
         PaperLib.teleportAsync(player, bukkitLocation, getTeleportCause(cause));
