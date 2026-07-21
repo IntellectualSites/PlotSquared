@@ -26,18 +26,23 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.queue.QueueCoordinator;
-import com.plotsquared.core.util.FileUtils;
+import com.plotsquared.core.util.RecursiveDirectoryRemovalWalker;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.function.pattern.Pattern;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 public class SinglePlotManager extends PlotManager {
 
     private static final int MAX_COORDINATE = 20000000;
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + SinglePlotManager.class.getSimpleName());
 
     public SinglePlotManager(final @NonNull PlotArea plotArea) {
         super(plotArea);
@@ -71,9 +76,13 @@ public class SinglePlotManager extends PlotManager {
             @Nullable QueueCoordinator queue
     ) {
         PlotSquared.platform().setupUtils().unload(plot.getWorldName(), false);
-        final File worldFolder = new File(PlotSquared.platform().worldContainer(), plot.getWorldName());
+        Path path = PlotSquared.platform().getWorldPath(plot.getWorldName());
         TaskManager.getPlatformImplementation().taskAsync(() -> {
-            FileUtils.deleteDirectory(worldFolder);
+            try {
+                Files.walkFileTree(path, RecursiveDirectoryRemovalWalker.INSTANCE);
+            } catch (IOException e) {
+                LOGGER.error("Failed to delete plot world for single plot area", e);
+            }
             if (whenDone != null) {
                 whenDone.run();
             }

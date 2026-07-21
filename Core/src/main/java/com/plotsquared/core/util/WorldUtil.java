@@ -25,7 +25,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.sk89q.jnbt.CompoundTag;
-import com.sk89q.jnbt.IntTag;
+import com.sk89q.jnbt.CompoundTagBuilder;
 import com.sk89q.jnbt.NBTInputStream;
 import com.sk89q.jnbt.NBTOutputStream;
 import com.sk89q.jnbt.Tag;
@@ -37,30 +37,38 @@ import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.entity.EntityType;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public abstract class WorldUtil {
+
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + WorldUtil.class.getSimpleName());
 
     /**
      * {@return whether the given location is valid in the world}
@@ -257,40 +265,27 @@ public abstract class WorldUtil {
             final @Nullable String file,
             final @NonNull RunnableVal<URL> whenDone
     ) {
+        boolean modern = MinecraftVersion.current().isNewerOrEqualThan(MinecraftVersion.TINY_TAKEOVER);
+        String relativeMcaRoot = modern ? "dimensions/minecraft/overworld/region" : "region";
         plot.getHome(home -> SchematicHandler.upload(uuid, file, "zip", new RunnableVal<>() {
             @Override
             public void run(OutputStream output) {
                 try (final ZipOutputStream zos = new ZipOutputStream(output)) {
-                    File dat = getDat(plot.getWorldName());
+                    Path dat = getDat(plot.getWorldName());
                     Location spawn = getSpawn(plot.getWorldName());
                     if (dat != null) {
-                        ZipEntry ze = new ZipEntry("world" + File.separator + dat.getName());
+                        ZipEntry ze = new ZipEntry("level.dat");
                         zos.putNextEntry(ze);
-                        try (NBTInputStream nis = new NBTInputStream(new GZIPInputStream(new FileInputStream(dat)))) {
-                            Map<String, Tag> tag = ((CompoundTag) nis.readNamedTag().getTag()).getValue();
-                            Map<String, Tag> newMap = new HashMap<>();
-                            for (Map.Entry<String, Tag> entry : tag.entrySet()) {
-                                if (!entry.getKey().equals("Data")) {
-                                    newMap.put(entry.getKey(), entry.getValue());
-                                    continue;
-                                }
-                                Map<String, Tag> data = new HashMap<>(((CompoundTag) entry.getValue()).getValue());
-                                data.put("SpawnX", new IntTag(home.getX()));
-                                data.put("SpawnY", new IntTag(home.getY()));
-                                data.put("SpawnZ", new IntTag(home.getZ()));
-                                newMap.put("Data", new CompoundTag(data));
-                            }
-                            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                                try (NBTOutputStream out = new NBTOutputStream(new GZIPOutputStream(baos, true))) {
-                                    //TODO Find what this should be called
-                                    out.writeNamedTag("Schematic????", new CompoundTag(newMap));
-                                }
-                                zos.write(baos.toByteArray());
+                        try (NBTInputStream nis = new NBTInputStream(new GZIPInputStream(Files.newInputStream(dat)))) {
+                            CompoundTag levelData = modifyLevelData((CompoundTag) nis.readNamedTag().getTag(), home);
+                            try (NBTOutputStream out =
+                                         new NBTOutputStream(new GZIPOutputStream(new CloseShieldOutputStream(zos), true))) {
+                                out.writeNamedTag("", levelData);
                             }
                         }
+                        zos.closeEntry();
                     }
                     setSpawn(spawn);
-                    byte[] buffer = new byte[1024];
                     Set<BlockVector2> added = new HashSet<>();
                     for (Plot current : plot.getConnectedPlots()) {
                         Location bot = current.getBottomAbs();
@@ -303,18 +298,13 @@ public abstract class WorldUtil {
                         for (BlockVector2 mca : files) {
                             if (mca.getX() >= brx && mca.getX() <= trx && mca.getZ() >= brz && mca.getZ() <= trz && !added.contains(
                                     mca)) {
-                                final File file = getMcr(plot.getWorldName(), mca.getX(), mca.getZ());
-                                if (file != null) {
-                                    //final String name = "r." + (x - cx) + "." + (z - cz) + ".mca";
-                                    String name = file.getName();
-                                    final ZipEntry ze = new ZipEntry("world" + File.separator + "region" + File.separator + name);
+                                final Path path = getMca(plot.getWorldName(), mca.getX(), mca.getZ());
+                                if (path != null) {
+                                    final ZipEntry ze = new ZipEntry(relativeMcaRoot + "/" + path.getFileName().toString());
                                     zos.putNextEntry(ze);
                                     added.add(mca);
-                                    try (FileInputStream in = new FileInputStream(file)) {
-                                        int len;
-                                        while ((len = in.read(buffer)) > 0) {
-                                            zos.write(buffer, 0, len);
-                                        }
+                                    try (InputStream in = Files.newInputStream(path)) {
+                                        in.transferTo(zos);
                                     }
                                     zos.closeEntry();
                                 }
@@ -331,49 +321,98 @@ public abstract class WorldUtil {
         }, whenDone));
     }
 
-    final @Nullable File getDat(final @NonNull String world) {
-        File file = new File(PlotSquared.platform().worldContainer() + File.separator + world + File.separator + "level.dat");
-        if (file.exists()) {
-            return file;
+    private @Nullable Path getDat(final @NonNull String world) {
+        Path path;
+        if (MinecraftVersion.current().isOlderOrEqualThan(MinecraftVersion.TINY_TAKEOVER)) {
+            // 26.1+ only has a global level.dat
+            path = PlotSquared.platform().worldContainer().toPath().resolve("world").resolve("level.dat");
+        } else {
+            path = PlotSquared.platform().worldContainer().toPath().resolve(world).resolve("level.dat");
         }
-        return null;
+        return Files.exists(path) ? path : null;
     }
 
     @Nullable
-    private File getMcr(final @NonNull String world, final int x, final int z) {
-        final File file =
-                new File(
-                        PlotSquared.platform().worldContainer(),
-                        world + File.separator + "region" + File.separator + "r." + x + '.' + z + ".mca"
-                );
-        if (file.exists()) {
-            return file;
+    private Path getMca(final @NonNull String world, final int x, final int z) {
+        Path path = PlotSquared.platform().getWorldPath(world).resolve("region").
+                resolve(String.format("r.%s.%s.mca", x, z));
+        return Files.exists(path) ? path : null;
+    }
+
+    private CompoundTag modifyLevelData(CompoundTag input, Location home) {
+        Map<String, Tag> root = input.getValue();
+        if (!(root.get("Data") instanceof CompoundTag data)) {
+            return input;
         }
-        return null;
+        CompoundTagBuilder dataBuilder = data.createBuilder();
+        if (MinecraftVersion.current().isNewerOrEqualThan(MinecraftVersion.TINY_TAKEOVER)) {
+            if (data.getValue().get("spawn") instanceof CompoundTag spawn) {
+                dataBuilder.put(
+                        "spawn", spawn.createBuilder()
+                                .putString("dimension", "minecraft:overworld")
+                                .putIntArray("pos", new int[]{home.getX(), home.getY(), home.getZ()})
+                                .build()
+                );
+            }
+        } else {
+            // legacy
+            dataBuilder
+                    .putInt("SpawnX", home.getX())
+                    .putInt("SpawnY", home.getY())
+                    .putInt("SpawnZ", home.getZ());
+        }
+        return input.createBuilder().put("Data", dataBuilder.build()).build();
     }
 
 
     public Set<BlockVector2> getChunkChunks(String world) {
-        File folder = new File(PlotSquared.platform().worldContainer(), world + File.separator + "region");
-        File[] regionFiles = folder.listFiles();
-        if (regionFiles == null) {
-            throw new RuntimeException("Could not find worlds folder: " + folder + " ? (no read access?)");
+        Path regionRoot = PlotSquared.platform().getWorldPath(world).resolve("region");
+        if (!Files.exists(regionRoot)) {
+            throw new RuntimeException("Could not find regions folder: " + regionRoot + " ? (no read access?)");
         }
-        HashSet<BlockVector2> chunks = new HashSet<>();
-        for (File file : regionFiles) {
-            String name = file.getName();
-            if (name.endsWith("mca")) {
-                String[] split = name.split("\\.");
-                try {
-                    int x = Integer.parseInt(split[1]);
-                    int z = Integer.parseInt(split[2]);
-                    BlockVector2 loc = BlockVector2.at(x, z);
-                    chunks.add(loc);
-                } catch (NumberFormatException ignored) {
-                }
-            }
+        try (Stream<Path> stream = Files.find(regionRoot, 1, WorldUtil::isMcaRegionFile)) {
+            return stream.filter(Predicate.not(p -> p.equals(regionRoot))) // skip root
+                    .map(Path::getFileName)
+                    .map(this::fromMcaFileName)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+        } catch (IOException e) {
+            LOGGER.error("Failed to traverse region directory", e);
+            return Set.of();
         }
-        return chunks;
+    }
+
+    /**
+     * checks if the given file, by its path and BasicFileAttributes, is a mca region file
+     *
+     * @param path full path to file
+     * @param bfa attributes of the given file
+     * @return {@code true} if the given file is a seemingly valid mca region file. {@code false} otherwise
+     */
+    private static boolean isMcaRegionFile(Path path, BasicFileAttributes bfa) {
+        if (bfa.isDirectory()) {
+            return false;
+        }
+        String name = path.getFileName().toString();
+        return name.startsWith("r.") && name.endsWith(".mca");
+    }
+
+    /**
+     * Retrieves the coordinates from a region mca file
+     *
+     * @param filename the filename part of the full path ({@link Path#getFileName()})
+     * @return A BV2 containg the coordinates, or {@code null} if the filename does not match the expected format
+     */
+    private BlockVector2 fromMcaFileName(Path filename) {
+        String[] parts = filename.toString().split("\\.");
+        if (parts.length < 3) {
+            return null;
+        }
+        try {
+            return BlockVector2.at(Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     /**
