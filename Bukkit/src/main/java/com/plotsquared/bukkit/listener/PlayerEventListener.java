@@ -92,6 +92,7 @@ import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
@@ -1310,16 +1311,20 @@ public class PlayerEventListener implements Listener {
                         }
                     }
                 }
+                // 1.21.5 (Spring to Life) introduced brown_egg and blue_egg.
+                // This new variable detects all current and future eggs.
+                // It could be replaced with an Item Tag or the exact Material in the future.
+                boolean isEgg = Optional.ofNullable(Bukkit.getTag(org.bukkit.Tag.REGISTRY_ITEMS, NamespacedKey.minecraft("eggs"), Material.class))
+                        .map(tag -> tag.isTagged(type))
+                        .orElse(type.name().endsWith("EGG"));
                 if (PaperLib.isPaper()) {
-                    if (MaterialTags.SPAWN_EGGS.isTagged(type) || Material.EGG.equals(type)) {
+                    if (MaterialTags.SPAWN_EGGS.isTagged(type) || isEgg) {
                         eventType = PlayerBlockEventType.SPAWN_MOB;
                         break;
                     }
-                } else {
-                    if (type.toString().toLowerCase().endsWith("egg")) {
-                        eventType = PlayerBlockEventType.SPAWN_MOB;
-                        break;
-                    }
+                } else if (isEgg) {
+                    eventType = PlayerBlockEventType.SPAWN_MOB;
+                    break;
                 }
                 if (type.isEdible()) {
                     //Allow all players to eat while also allowing the block place event to be fired
