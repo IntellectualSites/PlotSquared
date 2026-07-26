@@ -70,9 +70,7 @@ public enum PaperSupport {
         if (isPaper()) {
             return world.getChunkAtAsync(cx, cz, gen, urgent);
         } else {
-            CompletableFuture<Chunk> future = new CompletableFuture<>();
-            future.complete(world.getChunkAt(cx, cz, gen));
-            return future;
+            return CompletableFuture.completedFuture(world.getChunkAt(cx, cz, gen));
         }
     }
 
