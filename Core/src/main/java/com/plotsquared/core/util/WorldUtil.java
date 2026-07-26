@@ -21,6 +21,7 @@ package com.plotsquared.core.util;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.location.World;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.task.RunnableVal;
@@ -31,7 +32,6 @@ import com.sk89q.jnbt.NBTOutputStream;
 import com.sk89q.jnbt.Tag;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
@@ -69,6 +69,8 @@ import java.util.zip.ZipOutputStream;
 public abstract class WorldUtil {
 
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + WorldUtil.class.getSimpleName());
+    private static final boolean MODERN_LEVEL_FORMAT =
+            MinecraftVersion.current().isNewerOrEqualThan(MinecraftVersion.TINY_TAKEOVER);
 
     /**
      * {@return whether the given location is valid in the world}
@@ -89,6 +91,16 @@ public abstract class WorldUtil {
      */
     public static void setBiome(String world, final CuboidRegion region, BiomeType biome) {
         PlotSquared.platform().worldUtil().setBiomes(world, region, biome);
+    }
+
+    /**
+     * Check if the server is using the modern world storage format introduced in 26.1.
+     *
+     * @return if the server is using the modern server level structure
+     * @since TODO
+     */
+    public static boolean isModernServerLevelStructure() {
+        return MODERN_LEVEL_FORMAT;
     }
 
     /**
@@ -234,7 +246,7 @@ public abstract class WorldUtil {
      * @param biome     New biome
      */
     public void setBiomes(@NonNull String worldName, @NonNull CuboidRegion region, @NonNull BiomeType biome) {
-        final World world = getWeWorld(worldName);
+        final com.sk89q.worldedit.world.World world = getWeWorld(worldName);
         region.forEach(bv -> world.setBiome(bv, biome));
     }
 
@@ -265,13 +277,13 @@ public abstract class WorldUtil {
             final @Nullable String file,
             final @NonNull RunnableVal<URL> whenDone
     ) {
-        boolean modern = MinecraftVersion.current().isNewerOrEqualThan(MinecraftVersion.TINY_TAKEOVER);
-        String relativeMcaRoot = modern ? "dimensions/minecraft/overworld/region" : "region";
+        World<?> world = PlotSquared.platform().getPlatformWorld(plot.getWorldName());
+        String relativeMcaRoot = MODERN_LEVEL_FORMAT ? "dimensions/minecraft/overworld/region" : "region";
         plot.getHome(home -> SchematicHandler.upload(uuid, file, "zip", new RunnableVal<>() {
             @Override
             public void run(OutputStream output) {
                 try (final ZipOutputStream zos = new ZipOutputStream(output)) {
-                    Path dat = getDat(plot.getWorldName());
+                    Path dat = getLevelData(world);
                     Location spawn = getSpawn(plot.getWorldName());
                     if (dat != null) {
                         ZipEntry ze = new ZipEntry("level.dat");
@@ -294,11 +306,11 @@ public abstract class WorldUtil {
                         int brz = bot.getZ() >> 9;
                         int trx = top.getX() >> 9;
                         int trz = top.getZ() >> 9;
-                        Set<BlockVector2> files = getChunkChunks(bot.getWorldName());
+                        Set<BlockVector2> files = getChunkChunks(world);
                         for (BlockVector2 mca : files) {
                             if (mca.getX() >= brx && mca.getX() <= trx && mca.getZ() >= brz && mca.getZ() <= trz && !added.contains(
                                     mca)) {
-                                final Path path = getMca(plot.getWorldName(), mca.getX(), mca.getZ());
+                                final Path path = getMca(world, mca.getX(), mca.getZ());
                                 if (path != null) {
                                     final ZipEntry ze = new ZipEntry(relativeMcaRoot + "/" + path.getFileName().toString());
                                     zos.putNextEntry(ze);
@@ -321,21 +333,14 @@ public abstract class WorldUtil {
         }, whenDone));
     }
 
-    private @Nullable Path getDat(final @NonNull String world) {
-        Path path;
-        if (MinecraftVersion.current().isOlderOrEqualThan(MinecraftVersion.TINY_TAKEOVER)) {
-            // 26.1+ only has a global level.dat
-            path = PlotSquared.platform().worldContainer().toPath().resolve("world").resolve("level.dat");
-        } else {
-            path = PlotSquared.platform().worldContainer().toPath().resolve(world).resolve("level.dat");
-        }
+    private @Nullable Path getLevelData(final @NonNull World<?> world) {
+        Path path = world.getWorldFolder().resolve("level.dat");
         return Files.exists(path) ? path : null;
     }
 
     @Nullable
-    private Path getMca(final @NonNull String world, final int x, final int z) {
-        Path path = PlotSquared.platform().getWorldPath(world).resolve("region").
-                resolve(String.format("r.%s.%s.mca", x, z));
+    private Path getMca(final @NonNull World<?> world, final int x, final int z) {
+        Path path = getRegionFolder(world).resolve("region").resolve(String.format("r.%s.%s.mca", x, z));
         return Files.exists(path) ? path : null;
     }
 
@@ -345,7 +350,7 @@ public abstract class WorldUtil {
             return input;
         }
         CompoundTagBuilder dataBuilder = data.createBuilder();
-        if (MinecraftVersion.current().isNewerOrEqualThan(MinecraftVersion.TINY_TAKEOVER)) {
+        if (MODERN_LEVEL_FORMAT) {
             if (data.getValue().get("spawn") instanceof CompoundTag spawn) {
                 dataBuilder.put(
                         "spawn", spawn.createBuilder()
@@ -365,8 +370,8 @@ public abstract class WorldUtil {
     }
 
 
-    public Set<BlockVector2> getChunkChunks(String world) {
-        Path regionRoot = PlotSquared.platform().getWorldPath(world).resolve("region");
+    public Set<BlockVector2> getChunkChunks(World<?> world) {
+        Path regionRoot = getRegionFolder(world);
         if (!Files.exists(regionRoot)) {
             throw new RuntimeException("Could not find regions folder: " + regionRoot + " ? (no read access?)");
         }
@@ -380,6 +385,14 @@ public abstract class WorldUtil {
             LOGGER.error("Failed to traverse region directory", e);
             return Set.of();
         }
+    }
+
+    private static Path getRegionFolder(World<?> world) {
+        Path root = world.getWorldFolder();
+        if (MODERN_LEVEL_FORMAT) {
+            root = root.resolve("dimensions").resolve(world.key().namespace()).resolve(world.key().value());
+        }
+        return root.resolve("region");
     }
 
     /**

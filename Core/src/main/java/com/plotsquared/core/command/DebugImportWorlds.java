@@ -79,17 +79,21 @@ public class DebugImportWorlds extends Command {
             return CompletableFuture.completedFuture(false);
         }
         SinglePlotArea area = ((SinglePlotAreaManager) this.plotAreaManager).getArea();
-        Path container = PlotSquared.platform().getWorldContainer("minecraft");
+        Path container = PlotSquared.platform().worldContainer().toPath();
+        if (WorldUtil.isModernServerLevelStructure()) {
+            container = container.resolve("dimensions").resolve("minecraft");
+        }
         if (container.equals(Path.of("."))) {
             player.sendMessage(TranslatableCaption.of("debugimportworlds.world_container"));
             return CompletableFuture.completedFuture(false);
         }
-        try (Stream<Path> stream = Files.walk(container, 1)) {
-            stream.filter(Predicate.not(p -> p.equals(container))) // skip container / root
+        final Path finalContainer = container;
+        try (Stream<Path> stream = Files.walk(finalContainer, 1)) {
+            stream.filter(Predicate.not(p -> p.equals(finalContainer))) // skip container / root
                     .map(path -> new PathWithName(path, path.getFileName().toString()))
                     .filter(p -> !this.worldUtil.isWorld(p.name()))
                     .filter(p -> PlotId.fromStringOrNull(p.name()) == null)
-                    .forEach(new ImportAction(player, area, container));
+                    .forEach(new ImportAction(player, area, finalContainer));
         } catch (IOException e) {
             LOGGER.error("Failed to import world", e);
             throw new CommandException(StaticCaption.of("<red>World import failed. Check console.</red>"));

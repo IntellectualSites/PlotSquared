@@ -38,6 +38,7 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.FileUtils;
+import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.Component;
@@ -165,6 +166,7 @@ public class DatabaseCommand extends SubCommand {
                             this.eventDispatcher, this.plotListener, this.worldConfiguration
                     );
                     HashMap<String, HashMap<PlotId, Plot>> map = manager.getPlots();
+                    Path worldContainer = PlotSquared.platform().worldContainer().toPath();
                     plots = new ArrayList<>();
                     for (Entry<String, HashMap<PlotId, Plot>> entry : map.entrySet()) {
                         String areaName = entry.getKey();
@@ -178,9 +180,15 @@ public class DatabaseCommand extends SubCommand {
                                         if (newPlot != null) {
                                             PlotId newId = newPlot.getId();
                                             PlotId id = plot.getId();
-                                            Path worldPath = PlotSquared.platform().getWorldPath(id.toCommaSeparatedString());
+                                            Path worldPath = (WorldUtil.isModernServerLevelStructure() ?
+                                                    worldContainer.resolve("dimensions").resolve("minecraft") :
+                                                    worldContainer
+                                            ).resolve(id.toCommaSeparatedString());
                                             if (Files.exists(worldPath)) {
-                                                Path newPath = PlotSquared.platform().getWorldPath(newId.toCommaSeparatedString());
+                                                Path newPath = (WorldUtil.isModernServerLevelStructure() ?
+                                                        worldContainer.resolve("dimensions").resolve("minecraft") :
+                                                        worldContainer
+                                                ).resolve(newId.toCommaSeparatedString());
                                                 try {
                                                     Files.move(worldPath, newPath);
                                                 } catch (IOException e) {

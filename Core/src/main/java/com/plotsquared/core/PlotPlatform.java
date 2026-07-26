@@ -50,7 +50,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.File;
-import java.nio.file.Path;
 
 /**
  * PlotSquared main utility class
@@ -68,44 +67,12 @@ public interface PlotPlatform<P> extends LocaleHolder {
 
     /**
      * Gets the folder where all world data is stored.
-     * For legacy versions this is the server root, for 26.1+ this is {@code ./world}
+     * For legacy versions this is the server root, for 26.1+ this is the universe folder (by default {@code ./world})
      *
      * @return the world folder
      */
     @NonNull
     File worldContainer();
-
-    /**
-     * Gets the path to the dimension directory for the given namespace, e.g. {@code ./world/dimension/<namespace>}.
-     * <p>
-     * Legacy versions ignore the namespace and return the default path (by default the server root).
-     *
-     * @param namespace the dimension namespace
-     * @return a path to the dimension directory. may not exist.
-     */
-    @NonNull
-    Path getWorldContainer(String namespace);
-
-    /**
-     * See {@link #getWorldPath(String, String)}. Uses the default {@code minecraft} namespace.
-     *
-     */
-    @NonNull
-    default Path getWorldPath(String world) {
-        return getWorldPath("minecraft", world);
-    }
-
-    /**
-     * Gets the path to the world directory for the given namespace, e.g. {@code ./world/dimension/<namespace>/<world>}.
-     * <p>
-     * Legacy versions ignore the namespace (by default {@code ./<world>})
-     *
-     * @param namespace the dimension namespace
-     * @param world     the name of the world in the given dimension
-     * @return a path to the world directory. may not exist.
-     */
-    @NonNull
-    Path getWorldPath(String namespace, String world);
 
     /**
      * Completely shuts down the plugin.
@@ -266,7 +233,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * @param worldName World name
      * @return Platform world wrapper
      */
-    @Nullable World<?> getPlatformWorld(@NonNull String worldName);
+    @NonNull World<?> getPlatformWorld(@NonNull String worldName);
 
     /**
      * Get the {@link com.google.inject.Injector} instance used by PlotSquared

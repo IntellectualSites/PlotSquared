@@ -40,6 +40,7 @@ import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.EventDispatcher;
+import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -138,12 +139,16 @@ public class SinglePlotArea extends GridPlotWorld {
                 .settingsNodesWrapper(new SettingsNodesWrapper(new ConfigurationNode[0], null))
                 .worldName(worldName);
 
-        Path destination = PlotSquared.platform().getWorldPath(worldName);
+        Path dimensionRoot = PlotSquared.platform().worldContainer().toPath();
+        if (WorldUtil.isModernServerLevelStructure()) {
+            dimensionRoot = dimensionRoot.resolve("dimensions").resolve("minecraft");
+        }
+        Path destination = dimensionRoot.resolve(worldName);
 
         {// convert old
-            Path old = PlotSquared.platform().getWorldPath(id.toCommaSeparatedString());
+            Path old = dimensionRoot.resolve(id.toCommaSeparatedString());
             if (!Files.exists(old)) {
-                old = PlotSquared.platform().getWorldPath(id.toSeparatedString("."));
+                old = dimensionRoot.resolve(id.toSeparatedString("."));
             }
             if (Files.exists(old)) {
                 try {
@@ -156,7 +161,7 @@ public class SinglePlotArea extends GridPlotWorld {
         // Duplicate 0;0
         if (builder.plotAreaType() != PlotAreaType.NORMAL) {
             if (!Files.exists(destination)) {
-                Path src = PlotSquared.platform().getWorldPath("0_0");
+                Path src = dimensionRoot.resolve("0_0");
                 if (Files.exists(src)) {
                     try {
                         Files.createDirectories(destination);

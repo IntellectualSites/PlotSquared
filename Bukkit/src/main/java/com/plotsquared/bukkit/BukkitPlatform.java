@@ -145,7 +145,6 @@ import org.incendo.serverlib.ServerLib;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -779,24 +778,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     @Override
     public @NonNull File worldContainer() {
         return Bukkit.getWorldContainer();
-    }
-
-    @Override
-    public @NonNull Path getWorldContainer(final String namespace) {
-        Path root = Bukkit.getWorldContainer().toPath();
-        if (MinecraftVersion.current().isOlderOrEqualThan(MinecraftVersion.TINY_TAKEOVER)) {
-            return root.resolve("world").resolve("dimensions").resolve(namespace);
-        }
-        return root;
-    }
-
-    @Override
-    public @NonNull Path getWorldPath(final String namespace, final String world) {
-        Path root = Bukkit.getWorldContainer().toPath();
-        if (MinecraftVersion.current().isOlderOrEqualThan(MinecraftVersion.TINY_TAKEOVER)) {
-            return root.resolve("world").resolve("dimensions").resolve(namespace).resolve(world);
-        }
-        return root.resolve(world);
     }
 
     @SuppressWarnings("deprecation")
