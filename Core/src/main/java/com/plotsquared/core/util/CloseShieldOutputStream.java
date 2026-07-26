@@ -22,6 +22,11 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * A {@link FilterOutputStream} that shields the underlying stream from
+ * being closed. Useful when passing a stream to code that may call
+ * {@link #close()}, but the stream needs to remain open for further writing.
+ */
 public final class CloseShieldOutputStream extends FilterOutputStream {
 
     public CloseShieldOutputStream(final OutputStream out) {

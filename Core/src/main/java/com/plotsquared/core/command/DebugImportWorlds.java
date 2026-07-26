@@ -102,6 +102,9 @@ public class DebugImportWorlds extends Command {
         return CompletableFuture.completedFuture(true);
     }
 
+    /**
+     * A directory path paired with its file name, used while filtering candidate world folders for import.
+     */
     private record PathWithName(Path path, String name) {
 
     }

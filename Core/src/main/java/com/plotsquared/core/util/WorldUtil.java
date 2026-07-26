@@ -392,7 +392,7 @@ public abstract class WorldUtil {
     }
 
     /**
-     * checks if the given file, by its path and BasicFileAttributes, is a mca region file
+     * Checks if the given file, by its path and BasicFileAttributes, is a mca region file.
      *
      * @param path full path to file
      * @param bfa attributes of the given file
