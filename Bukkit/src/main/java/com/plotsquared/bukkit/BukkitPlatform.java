@@ -48,6 +48,7 @@ import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.BukkitWorld;
+import com.plotsquared.bukkit.util.PaperSupport;
 import com.plotsquared.bukkit.util.SetGenCB;
 import com.plotsquared.bukkit.util.TranslationUpdateManager;
 import com.plotsquared.bukkit.util.UpdateUtility;
@@ -114,7 +115,6 @@ import com.plotsquared.core.uuid.UUIDPipeline;
 import com.plotsquared.core.uuid.offline.OfflineModeUUIDService;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import io.papermc.lib.PaperLib;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -269,7 +269,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         this.pluginName = getDescription().getName();
 
         final TaskTime.TimeConverter timeConverter;
-        if (PaperLib.isPaper()) {
+        if (PaperSupport.isPaper()) {
             timeConverter = new PaperTimeConverter();
         } else {
             timeConverter = new SpigotTimeConverter();
@@ -384,7 +384,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             getServer().getPluginManager().registerEvents(injector().getInstance(ProjectileEventListener.class), this);
             getServer().getPluginManager().registerEvents(injector().getInstance(ServerListener.class), this);
             getServer().getPluginManager().registerEvents(injector().getInstance(EntitySpawnListener.class), this);
-            if (PaperLib.isPaper() && Settings.Paper_Components.PAPER_LISTENERS) {
+            if (PaperSupport.isPaper() && Settings.Paper_Components.PAPER_LISTENERS) {
                 getServer().getPluginManager().registerEvents(injector().getInstance(PaperListener.class), this);
             } else {
                 getServer().getPluginManager().registerEvents(injector().getInstance(SpigotListener.class), this);
@@ -507,7 +507,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
         if (!Settings.UUID.OFFLINE) {
             // If running Paper we'll also try to use their profiles
-            if (Bukkit.getOnlineMode() && PaperLib.isPaper() && Settings.UUID.SERVICE_PAPER) {
+            if (Bukkit.getOnlineMode() && PaperSupport.isPaper() && Settings.UUID.SERVICE_PAPER) {
                 final PaperUUIDService paperUUIDService = new PaperUUIDService();
                 this.impromptuPipeline.registerService(paperUUIDService);
                 this.backgroundPipeline.registerService(paperUUIDService);
@@ -793,7 +793,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 while (iterator.hasNext()) {
                     Entity entity = iterator.next();
                     //noinspection ConstantValue - getEntitySpawnReason annotated as NotNull, but is not NotNull. lol.
-                    if (PaperLib.isPaper() && entity.getEntitySpawnReason() != null && "CUSTOM".equals(entity.getEntitySpawnReason().name())) {
+                    if (PaperSupport.isPaper() && entity.getEntitySpawnReason() != null && "CUSTOM".equals(entity.getEntitySpawnReason().name())) {
                         continue;
                     }
                     // Fallback for Spigot not having Entity#getEntitySpawnReason

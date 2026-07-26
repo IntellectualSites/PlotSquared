@@ -20,6 +20,7 @@ package com.plotsquared.bukkit.player;
 
 import com.google.common.base.Charsets;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.bukkit.util.PaperSupport;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.TeleportCause;
@@ -38,7 +39,6 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
-import io.papermc.lib.PaperLib;
 import net.kyori.adventure.audience.Audience;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
@@ -233,7 +233,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
                 new org.bukkit.Location(BukkitUtil.getWorld(location.getWorldName()), location.getX() + 0.5,
                         location.getY(), location.getZ() + 0.5, location.getYaw(), location.getPitch()
                 );
-        PaperLib.teleportAsync(player, bukkitLocation, getTeleportCause(cause));
+        PaperSupport.teleportAsync(player, bukkitLocation, getTeleportCause(cause));
     }
 
     @Override

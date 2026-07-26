@@ -24,6 +24,7 @@ import com.google.inject.Inject;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitEntityUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.bukkit.util.PaperSupport;
 import com.plotsquared.bukkit.util.UpdateUtility;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -83,7 +84,6 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.util.Enums;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import io.papermc.lib.PaperLib;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -692,7 +692,7 @@ public class PlayerEventListener implements Listener {
                     if (dest != null) {
                         vehicle.eject();
                         vehicle.setVelocity(new Vector(0d, 0d, 0d));
-                        PaperLib.teleportAsync(vehicle, dest);
+                        PaperSupport.teleportAsync(vehicle, dest);
                         passengers.forEach(vehicle::addPassenger);
                         return;
                     }
@@ -1310,7 +1310,7 @@ public class PlayerEventListener implements Listener {
                         }
                     }
                 }
-                if (PaperLib.isPaper()) {
+                if (PaperSupport.isPaper()) {
                     if (MaterialTags.SPAWN_EGGS.isTagged(type) || Material.EGG.equals(type)) {
                         eventType = PlayerBlockEventType.SPAWN_MOB;
                         break;
