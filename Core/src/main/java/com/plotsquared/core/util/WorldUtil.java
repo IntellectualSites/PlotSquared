@@ -407,7 +407,7 @@ public abstract class WorldUtil {
     }
 
     /**
-     * Retrieves the coordinates from a region mca file
+     * Retrieves the coordinates from a region mca file.
      *
      * @param filename the filename part of the full path ({@link Path#getFileName()})
      * @return A BV2 containg the coordinates, or {@code null} if the filename does not match the expected format

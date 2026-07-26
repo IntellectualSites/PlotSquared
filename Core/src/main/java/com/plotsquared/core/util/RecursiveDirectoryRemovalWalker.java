@@ -28,6 +28,9 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
+/**
+ * A {@link SimpleFileVisitor} that recursively deletes a directory tree.
+ */
 public class RecursiveDirectoryRemovalWalker extends SimpleFileVisitor<Path> {
 
     public static final RecursiveDirectoryRemovalWalker INSTANCE = new RecursiveDirectoryRemovalWalker();
