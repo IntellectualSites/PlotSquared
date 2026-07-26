@@ -55,7 +55,7 @@ public enum PaperSupport {
         if (isPaper()) {
             return entity.teleportAsync(location, cause);
         }
-        return CompletableFuture.completedFuture(entity.teleport(location));
+        return CompletableFuture.completedFuture(entity.teleport(location, cause));
     }
 
     public static CompletableFuture<Chunk> getChunkAtAsync(Location location) {
