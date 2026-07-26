@@ -20,7 +20,6 @@ package com.plotsquared.core.plot.world;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.location.World;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -28,10 +27,8 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.RecursiveDirectoryRemovalWalker;
-import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.function.pattern.Pattern;
-import net.kyori.adventure.key.Key;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -78,17 +75,11 @@ public class SinglePlotManager extends PlotManager {
             @Nullable PlotPlayer<?> actor,
             @Nullable QueueCoordinator queue
     ) {
-        World<?> world = PlotSquared.platform().getPlatformWorld(plot.getWorldName());
-        Path path = world.getWorldFolder();
-        Key key = world.key();
+        Path path = PlotSquared.platform().getPlatformWorld(plot.getWorldName()).getWorldFolder();
         PlotSquared.platform().setupUtils().unload(plot.getWorldName(), false);
-        if (WorldUtil.isModernServerLevelStructure()) {
-            path = path.resolve("dimensions").resolve(key.namespace()).resolve(key.value());
-        }
-        final Path finalPath = path;
         TaskManager.getPlatformImplementation().taskAsync(() -> {
             try {
-                Files.walkFileTree(finalPath, RecursiveDirectoryRemovalWalker.INSTANCE);
+                Files.walkFileTree(path, RecursiveDirectoryRemovalWalker.INSTANCE);
             } catch (IOException e) {
                 LOGGER.error("Failed to delete plot world for single plot area", e);
             }

@@ -90,8 +90,9 @@ public abstract class RegionManager {
      */
     public abstract int[] countEntities(Plot plot);
 
-    public void deleteRegionFiles(final String world, final Collection<BlockVector2> chunks, final Runnable whenDone) {
-        Path regionRoot = PlotSquared.platform().getWorldPath(world).resolve("region");
+    public void deleteRegionFiles(final String worldName, final Collection<BlockVector2> chunks, final Runnable whenDone) {
+        com.plotsquared.core.location.World<?> world = PlotSquared.platform().getPlatformWorld(worldName);
+        Path regionRoot = world.getWorldFolder().resolve("region");
         TaskManager.runTaskAsync(() -> {
             for (BlockVector2 loc : chunks) {
                 Path path = regionRoot.resolve(String.format("r.%s.%s.mca", loc.getX(), loc.getZ()));

@@ -72,7 +72,8 @@ public interface World<T> extends Keyed {
     int getMaxHeight();
 
     /**
-     * Get the path to this worlds' folder (the folder containing the {@code level.dat} file).
+     * Get the path to this worlds' folder (for legacy versions the folder containing the {@code level.dat} file, for newer
+     * versions the namespaced dimension folder).
      *
      * @return the path
      * @since TODO

@@ -388,11 +388,7 @@ public abstract class WorldUtil {
     }
 
     private static Path getRegionFolder(World<?> world) {
-        Path root = world.getWorldFolder();
-        if (MODERN_LEVEL_FORMAT) {
-            root = root.resolve("dimensions").resolve(world.key().namespace()).resolve(world.key().value());
-        }
-        return root.resolve("region");
+        return world.getWorldFolder().resolve("region");
     }
 
     /**
