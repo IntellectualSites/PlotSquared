@@ -36,7 +36,9 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.PlotSettings;
 import com.plotsquared.core.plot.flag.FlagContainer;
+import com.plotsquared.core.queue.DelegateQueueCoordinator;
 import com.plotsquared.core.queue.GlobalBlockQueue;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.EventDispatcher;
@@ -114,6 +116,22 @@ public class SinglePlotArea extends GridPlotWorld {
     @Override
     protected PlotManager createManager() {
         return new SinglePlotManager(this);
+    }
+
+    /**
+     * Single Plot Areas must provide a different QueueCoordinator than other plot areas, otherwise plot deletion fails.
+     * When deleting plots, the PlotModificationManager retrieves a QueueCoordinator from the associated PlotArea, which
+     * accesses the plots world. For SinglePlotAreas this world is null at this point, as the whole world is deleted (and the
+     * areas world name being `*`).
+     * <br>
+     * The queue doesn't know <i>when</i> it's used, so this always provides a QueueCoordinator that doesn't do anything and
+     * doesn't contain any tasks. This isn't really bad, as SinglePlotAreas don't utilize the Queue as of now.
+     *
+     * @return a QueueCoordinator for SinglePlotAreas
+     */
+    @Override
+    public QueueCoordinator getQueue() {
+        return new DelegateQueueCoordinator(null);
     }
 
     @Override

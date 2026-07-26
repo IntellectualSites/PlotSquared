@@ -37,6 +37,7 @@ import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.plot.world.SinglePlotManager;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
@@ -227,7 +228,8 @@ public final class PlotModificationManager {
             @Override
             public void run() {
                 if (queue.isEmpty()) {
-                    Runnable run = () -> {
+                    // don't touch world for single plot areas on deletion (un-fuck this in the future)
+                    Runnable run = isDelete && manager instanceof SinglePlotManager ? whenDone : () -> {
                         for (CuboidRegion region : regions) {
                             Location[] corners = Plot.getCorners(plot.getWorldName(), region);
                             PlotSquared.platform().regionManager().clearAllEntities(corners[0], corners[1]);
@@ -250,7 +252,9 @@ public final class PlotModificationManager {
                         queue.enqueue();
                         return;
                     }
-                    run.run();
+                    if (run != null) {
+                        run.run();
+                    }
                     return;
                 }
                 Plot current = queue.poll();
