@@ -21,6 +21,7 @@ package com.plotsquared.bukkit.queue;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.bukkit.BukkitPlatform;
+import com.plotsquared.bukkit.util.PaperSupport;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.queue.ChunkCoordinator;
 import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
@@ -29,7 +30,6 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.world.World;
-import io.papermc.lib.PaperLib;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
@@ -222,10 +222,9 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
      */
     private void requestBatch() {
         for (int i = 0; i < this.batchSize && this.requestedChunks.peek() != null; i++) {
-            // This required PaperLib to be bumped to version 1.0.4 to mark the request as urgent
             final BlockVector2 chunk = this.requestedChunks.poll();
             loadingChunks.incrementAndGet();
-            PaperLib
+            PaperSupport
                     .getChunkAtAsync(this.bukkitWorld, chunk.getX(), chunk.getZ(), shouldGen, true)
                     .orTimeout(10L, TimeUnit.SECONDS)
                     .whenComplete((chunkObject, throwable) -> {
@@ -258,11 +257,6 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
      * server's main thread.
      */
     private void processChunk(final @NonNull Chunk chunk) {
-        /* Chunk#isLoaded does not necessarily return true shortly after PaperLib#getChunkAtAsync completes, but the chunk is
-        still loaded.
-        if (!chunk.isLoaded()) {
-            throw new IllegalArgumentException(String.format("Chunk %d;%d is is not loaded", chunk.getX(), chunk.getZ());
-        }*/
         if (finished) {
             return;
         }

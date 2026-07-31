@@ -21,6 +21,7 @@ package com.plotsquared.bukkit.schematic;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.bukkit.util.PaperSupport;
 import com.sk89q.jnbt.ByteTag;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.ListTag;
@@ -30,7 +31,6 @@ import com.sk89q.jnbt.Tag;
 import com.sk89q.worldedit.blocks.BaseItemStack;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.item.ItemType;
-import io.papermc.lib.PaperLib;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
@@ -270,7 +270,7 @@ public class StateWrapper {
                     if (textureValue == null) {
                         return false;
                     }
-                    if (!PaperLib.isPaper()) {
+                    if (!PaperSupport.isPaper()) {
                         if (!paperErrorTextureSent) {
                             paperErrorTextureSent = true;
                             LOGGER.error("Failed to populate skull data in your road schematic - This is a Spigot limitation.");

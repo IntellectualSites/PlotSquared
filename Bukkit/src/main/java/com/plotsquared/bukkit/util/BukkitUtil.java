@@ -43,7 +43,6 @@ import com.sk89q.worldedit.world.block.BlockCategories;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import io.papermc.lib.PaperLib;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -192,12 +191,12 @@ public class BukkitUtil extends WorldUtil {
             final int z,
             final @NonNull Consumer<Chunk> chunkConsumer
     ) {
-        PaperLib.getChunkAtAsync(Objects.requireNonNull(getWorld(world)), x >> 4, z >> 4, true)
+        PaperSupport.getChunkAtAsync(Objects.requireNonNull(getWorld(world)), x >> 4, z >> 4, true)
                 .thenAccept(chunk -> ensureMainThread(chunkConsumer, chunk));
     }
 
     private static void ensureLoaded(final @NonNull Location location, final @NonNull Consumer<Chunk> chunkConsumer) {
-        PaperLib.getChunkAtAsync(adapt(location), true).thenAccept(chunk -> ensureMainThread(chunkConsumer, chunk));
+        PaperSupport.getChunkAtAsync(adapt(location)).thenAccept(chunk -> ensureMainThread(chunkConsumer, chunk));
     }
 
     private static <T> void ensureMainThread(final @NonNull Consumer<T> consumer, final @NonNull T value) {
