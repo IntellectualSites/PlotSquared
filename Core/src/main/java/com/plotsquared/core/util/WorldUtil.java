@@ -340,7 +340,7 @@ public abstract class WorldUtil {
 
     @Nullable
     private Path getMca(final @NonNull World<?> world, final int x, final int z) {
-        Path path = getRegionFolder(world).resolve("region").resolve(String.format("r.%s.%s.mca", x, z));
+        Path path = getRegionFolder(world).resolve(String.format("r.%s.%s.mca", x, z));
         return Files.exists(path) ? path : null;
     }
 
