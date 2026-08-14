@@ -19,6 +19,7 @@
 package com.plotsquared.core.generator;
 
 import com.google.inject.Inject;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.Result;
@@ -400,7 +401,7 @@ public class HybridUtils {
             return false;
         }
         HybridUtils.UPDATE = true;
-        Set<BlockVector2> regions = this.worldUtil.getChunkChunks(area.getWorldName());
+        Set<BlockVector2> regions = this.worldUtil.getChunkChunks(PlotSquared.platform().getPlatformWorld(area.getWorldName()));
         return scheduleRoadUpdate(area, regions, extend, new LinkedHashSet<>());
     }
 

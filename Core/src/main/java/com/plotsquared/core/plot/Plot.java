@@ -2257,7 +2257,8 @@ public class Plot {
      * @return if the given player can claim the plot
      */
     public boolean canClaim(@NonNull PlotPlayer<?> player) {
-        if (!WorldUtil.isValidLocation(getBottomAbs())) {
+        // only check bounds if the plot is not part of a single plot area (the world does not exist before claiming)
+        if (!(area instanceof SinglePlotArea) && !WorldUtil.isValidLocation(getBottomAbs())) {
             return false;
         }
         PlotCluster cluster = this.getCluster();

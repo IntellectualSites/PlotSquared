@@ -38,14 +38,20 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.FileUtils;
+import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,6 +66,8 @@ import java.util.Map.Entry;
         requiredType = RequiredType.CONSOLE,
         usage = "/plot database [area] <sqlite | mysql | import>")
 public class DatabaseCommand extends SubCommand {
+
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + DatabaseCommand.class.getSimpleName());
 
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
@@ -93,7 +101,7 @@ public class DatabaseCommand extends SubCommand {
                 });
             } catch (Exception e) {
                 player.sendMessage(TranslatableCaption.of("database.conversion_failed"));
-                e.printStackTrace();
+                LOGGER.error("Database conversion failed", e);
             }
         });
     }
@@ -158,6 +166,7 @@ public class DatabaseCommand extends SubCommand {
                             this.eventDispatcher, this.plotListener, this.worldConfiguration
                     );
                     HashMap<String, HashMap<PlotId, Plot>> map = manager.getPlots();
+                    Path worldContainer = PlotSquared.platform().worldContainer().toPath();
                     plots = new ArrayList<>();
                     for (Entry<String, HashMap<PlotId, Plot>> entry : map.entrySet()) {
                         String areaName = entry.getKey();
@@ -171,18 +180,20 @@ public class DatabaseCommand extends SubCommand {
                                         if (newPlot != null) {
                                             PlotId newId = newPlot.getId();
                                             PlotId id = plot.getId();
-                                            File worldFile =
-                                                    new File(
-                                                            PlotSquared.platform().worldContainer(),
-                                                            id.toCommaSeparatedString()
-                                                    );
-                                            if (worldFile.exists()) {
-                                                File newFile =
-                                                        new File(
-                                                                PlotSquared.platform().worldContainer(),
-                                                                newId.toCommaSeparatedString()
-                                                        );
-                                                worldFile.renameTo(newFile);
+                                            Path worldPath = (WorldUtil.isModernServerLevelStructure() ?
+                                                    worldContainer.resolve("dimensions").resolve("minecraft") :
+                                                    worldContainer
+                                            ).resolve(id.toCommaSeparatedString());
+                                            if (Files.exists(worldPath)) {
+                                                Path newPath = (WorldUtil.isModernServerLevelStructure() ?
+                                                        worldContainer.resolve("dimensions").resolve("minecraft") :
+                                                        worldContainer
+                                                ).resolve(newId.toCommaSeparatedString());
+                                                try {
+                                                    Files.move(worldPath, newPath);
+                                                } catch (IOException e) {
+                                                    LOGGER.error("Failed to rename world entry", e);
+                                                }
                                             }
                                             plot.setId(newId);
                                             plot.setArea(pa);
@@ -257,7 +268,7 @@ public class DatabaseCommand extends SubCommand {
             } catch (ClassNotFoundException | SQLException e) {
                 player.sendMessage(TranslatableCaption.of("database.failed_to_save_plots"));
                 player.sendMessage(TranslatableCaption.of("errors.stacktrace_begin"));
-                e.printStackTrace();
+                LOGGER.error("Inserting plots failed", e);
                 player.sendMessage(TranslatableCaption.of("errors.stacktrace_end"));
                 player.sendMessage(TranslatableCaption.of("database.invalid_args"));
                 return false;
@@ -265,7 +276,7 @@ public class DatabaseCommand extends SubCommand {
         } catch (ClassNotFoundException | SQLException e) {
             player.sendMessage(TranslatableCaption.of("database.failed_to_open"));
             player.sendMessage(TranslatableCaption.of("errors.stacktrace_begin"));
-            e.printStackTrace();
+            LOGGER.error("Opening database connection failed", e);
             player.sendMessage(TranslatableCaption.of("errors.stacktrace_end"));
             player.sendMessage(TranslatableCaption.of("database.invalid_args"));
             return false;

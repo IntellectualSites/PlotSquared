@@ -114,9 +114,10 @@ subprojects {
 
     signing {
         if (!project.hasProperty("skip.signing") && !version.toString().endsWith("-SNAPSHOT")) {
-            val signingKey: String? by project
-            val signingPassword: String? by project
-            useInMemoryPgpKeys(signingKey, signingPassword)
+            useInMemoryPgpKeys(
+                    project.findProperty("signingKey") as? String,
+                    project.findProperty("signingPassword") as? String
+            )
             signing.isRequired
             sign(publishing.publications)
         }
@@ -216,9 +217,11 @@ tasks.getByName<Jar>("jar") {
     enabled = false
 }
 
-val supportedVersions = listOf("1.19.4", "1.20.6", "1.21.11", "26.1.2")
+val supportedVersions = listOf("1.19.4", "1.20.6", "1.21.11", "26.1.2", "26.2")
 tasks {
-    register("cacheLatestFaweArtifact") {
+    val cacheLatestFaweArtifact = register("cacheLatestFaweArtifact") {
+        group = null
+        description = "retrieves the latest FAWE build and caches it for the runServer tasks"
         val lastSuccessfulBuildUrl = uri("https://ci.athion.net/job/FastAsyncWorldEdit/lastSuccessfulBuild/api/json").toURL()
         val artifact = ((JsonSlurper().parse(lastSuccessfulBuildUrl) as Map<*, *>)["artifacts"] as List<*>)
                 .map { it as Map<*, *> }
@@ -227,10 +230,11 @@ tasks {
         project.ext["faweArtifact"] = artifact
     }
 
-    supportedVersions.forEach {
-        register<RunServer>("runServer-$it") {
-            dependsOn(getByName("cacheLatestFaweArtifact"))
-            minecraftVersion(it)
+    supportedVersions.forEach { version ->
+        register<RunServer>("runServer-$version") {
+            description = "Run a Paper server version $version."
+            dependsOn(cacheLatestFaweArtifact)
+            minecraftVersion(version)
             pluginJars(project.files(
                 project(":plotsquared-bukkit").tasks.named<Jar>("shadowJar")
                 .map { it.archiveFile }
@@ -240,7 +244,12 @@ tasks {
                 url("https://ci.athion.net/job/FastAsyncWorldEdit/lastSuccessfulBuild/artifact/artifacts/${project.ext["faweArtifact"]}")
             }
             group = "run paper"
-            runDirectory.set(file("run-$it"))
+            javaToolchains {
+                launcherFor {
+                    languageVersion.set(JavaLanguageVersion.of(25))
+                }
+            }
+            runDirectory.set(file("run-$version"))
         }
     }
 }
