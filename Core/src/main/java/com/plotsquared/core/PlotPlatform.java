@@ -67,10 +67,12 @@ public interface PlotPlatform<P> extends LocaleHolder {
 
     /**
      * Gets the folder where all world data is stored.
+     * For legacy versions this is the server root, for 26.1+ this is the universe folder (by default {@code ./world})
      *
      * @return the world folder
      */
-    @NonNull File worldContainer();
+    @NonNull
+    File worldContainer();
 
     /**
      * Completely shuts down the plugin.
@@ -231,7 +233,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * @param worldName World name
      * @return Platform world wrapper
      */
-    @Nullable World<?> getPlatformWorld(@NonNull String worldName);
+    @NonNull World<?> getPlatformWorld(@NonNull String worldName);
 
     /**
      * Get the {@link com.google.inject.Injector} instance used by PlotSquared

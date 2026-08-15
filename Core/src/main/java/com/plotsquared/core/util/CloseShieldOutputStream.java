@@ -16,29 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.configuration.caption;
+package com.plotsquared.core.util;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import java.io.FilterOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
-import java.util.Set;
+/**
+ * A {@link FilterOutputStream} that shields the underlying stream from
+ * being closed. Useful when passing a stream to code that may call
+ * {@link #close()}, but the stream needs to remain open for further writing.
+ */
+public final class CloseShieldOutputStream extends FilterOutputStream {
 
-final class ClickStripTransform implements ComponentTransform {
-
-    private final Set<ClickEvent.Action<?>> actionsToStrip;
-
-    public ClickStripTransform(final Set<? extends ClickEvent.Action<?>> actionsToStrip) {
-        this.actionsToStrip = Set.copyOf(actionsToStrip);
+    public CloseShieldOutputStream(final OutputStream out) {
+        super(out);
     }
 
     @Override
-    public @NonNull Component transform(@NonNull final Component original) {
-        var clickEvent = original.clickEvent();
-        if (clickEvent == null || !actionsToStrip.contains(clickEvent.action())) {
-            return original;
-        }
-        return original.clickEvent(null); // remove it
+    public void close() throws IOException {
+        // NOOP
     }
 
 }
