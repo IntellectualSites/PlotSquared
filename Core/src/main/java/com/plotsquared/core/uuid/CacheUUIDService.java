@@ -67,8 +67,8 @@ public class CacheUUIDService implements UUIDService, Consumer<List<UUIDMapping>
     @Override
     public void accept(final @NonNull List<@NonNull UUIDMapping> uuidMappings) {
         for (final UUIDMapping mapping : uuidMappings) {
-            this.uuidCache.put(mapping.getUuid(), mapping);
-            this.usernameCache.put(mapping.getUsername(), mapping);
+            this.uuidCache.put(mapping.uuid(), mapping);
+            this.usernameCache.put(mapping.username(), mapping);
         }
     }
 

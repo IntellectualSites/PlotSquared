@@ -18,6 +18,9 @@
  */
 package com.plotsquared.core.configuration.caption;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -32,5 +35,26 @@ public interface Caption {
      * @return Message
      */
     @NonNull String getComponent(@NonNull LocaleHolder localeHolder);
+
+    /**
+     * Get the Adventure {@link ComponentLike} for this caption
+     *
+     * @param localeHolder Locale holder
+     * @return {@link ComponentLike}
+     * @since 7.0.0
+     */
+    @NonNull Component toComponent(@NonNull LocaleHolder localeHolder);
+
+    /**
+     * Get the Adventure {@link ComponentLike} for this caption while applying custom {@link TagResolver}
+     * (apart from the default {@code core.prefix})
+     * @param localeHolder Local holder
+     * @param tagResolvers custom tag resolvers to replace placeholders / parameters
+     * @return {@link ComponentLike}
+     * @since 7.5.4
+     */
+    @NonNull Component toComponent(@NonNull LocaleHolder localeHolder, @NonNull TagResolver @NonNull... tagResolvers);
+
+    @NonNull String toString();
 
 }

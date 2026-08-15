@@ -26,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -41,32 +42,6 @@ import java.util.Map;
 public class Config {
 
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Config.class.getSimpleName());
-
-    /**
-     * Get the value for a node<br>
-     * Probably throws some error if you try to get a non existent key
-     *
-     * @param key  configuration key
-     * @param root configuration class
-     * @param <T>  value type
-     * @return value
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T get(String key, Class<?> root) {
-        String[] split = key.split("\\.");
-        Object instance = getInstance(split, root);
-        if (instance != null) {
-            Field field = getField(split, instance);
-            if (field != null) {
-                try {
-                    return (T) field.get(instance);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return null;
-    }
 
     /**
      * Set the value of a specific node<br>
@@ -259,7 +234,6 @@ public class Config {
      *
      * @param split    the node (split by period)
      * @param instance the instance
-     * @return
      */
     private static Field getField(String[] split, Object instance) {
         try {
@@ -399,6 +373,7 @@ public class Config {
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.TYPE})
+    @Documented
     public @interface Comment {
 
         String[] value();
@@ -443,10 +418,6 @@ public class Config {
 
         public Collection<T> getInstances() {
             return INSTANCES.values();
-        }
-
-        public Collection<String> getSections() {
-            return INSTANCES.keySet();
         }
 
         private Map<String, T> getRaw() {

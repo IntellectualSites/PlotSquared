@@ -40,7 +40,8 @@ public interface ChunkCoordinatorFactory {
             final @NonNull Consumer<Throwable> throwableConsumer,
             @Assisted("unloadAfter") final boolean unloadAfter,
             final @NonNull Collection<ProgressSubscriber> progressSubscribers,
-            @Assisted("forceSync") final boolean forceSync
+            @Assisted("forceSync") final boolean forceSync,
+            @Assisted("shouldGen") final boolean shouldGen
     );
 
 }

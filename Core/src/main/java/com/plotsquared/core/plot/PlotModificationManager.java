@@ -35,10 +35,12 @@ import com.plotsquared.core.generator.SquarePlotWorld;
 import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.plot.world.SinglePlotManager;
 import com.plotsquared.core.queue.QueueCoordinator;
-import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.function.pattern.Pattern;
@@ -46,7 +48,9 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -57,6 +61,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -220,23 +225,13 @@ public final class PlotModificationManager {
         if (isDelete) {
             this.removeSign();
         }
-        PlotUnlinkEvent event = PlotSquared.get().getEventDispatcher()
-                .callUnlink(
-                        this.plot.getArea(),
-                        this.plot,
-                        true,
-                        !isDelete,
-                        isDelete ? PlotUnlinkEvent.REASON.DELETE : PlotUnlinkEvent.REASON.CLEAR
-                );
-        if (event.getEventResult() != Result.DENY && this.unlinkPlot(event.isCreateRoad(), event.isCreateSign())) {
-            PlotSquared.get().getEventDispatcher().callPostUnlink(plot, event.getReason());
-        }
         final PlotManager manager = this.plot.getArea().getPlotManager();
         Runnable run = new Runnable() {
             @Override
             public void run() {
                 if (queue.isEmpty()) {
-                    Runnable run = () -> {
+                    // don't touch world for single plot areas on deletion (un-fuck this in the future)
+                    Runnable run = isDelete && manager instanceof SinglePlotManager ? whenDone : () -> {
                         for (CuboidRegion region : regions) {
                             Location[] corners = Plot.getCorners(plot.getWorldName(), region);
                             PlotSquared.platform().regionManager().clearAllEntities(corners[0], corners[1]);
@@ -259,10 +254,13 @@ public final class PlotModificationManager {
                         queue.enqueue();
                         return;
                     }
-                    run.run();
+                    if (run != null) {
+                        run.run();
+                    }
                     return;
                 }
                 Plot current = queue.poll();
+                current.clearCache();
                 if (plot.getArea().getTerrain() != PlotAreaTerrainType.NONE) {
                     try {
                         PlotSquared.platform().regionManager().regenerateRegion(
@@ -280,7 +278,21 @@ public final class PlotModificationManager {
                 manager.clearPlot(current, this, actor, null);
             }
         };
-        run.run();
+        PlotUnlinkEvent event = PlotSquared.get().getEventDispatcher()
+                .callUnlink(
+                        this.plot.getArea(),
+                        this.plot,
+                        true,
+                        !isDelete,
+                        isDelete ? PlotUnlinkEvent.REASON.DELETE : PlotUnlinkEvent.REASON.CLEAR
+                );
+        if (event.getEventResult() != Result.DENY) {
+            if (this.unlinkPlot(event.isCreateRoad(), event.isCreateSign(), run)) {
+                PlotSquared.get().getEventDispatcher().callPostUnlink(plot, event.getReason());
+            }
+        } else {
+            run.run();
+        }
         return true;
     }
 
@@ -320,13 +332,30 @@ public final class PlotModificationManager {
      * @return success/!cancelled
      */
     public boolean unlinkPlot(final boolean createRoad, final boolean createSign) {
+        return unlinkPlot(createRoad, createSign, null);
+    }
+
+    /**
+     * Unlink the plot and all connected plots.
+     *
+     * @param createRoad whether to recreate road
+     * @param createSign whether to recreate signs
+     * @param whenDone   Task to run when unlink is complete
+     * @return success/!cancelled
+     * @since 6.10.9
+     */
+    public boolean unlinkPlot(final boolean createRoad, final boolean createSign, final Runnable whenDone) {
         if (!this.plot.isMerged()) {
+            if (whenDone != null) {
+                whenDone.run();
+            }
             return false;
         }
         final Set<Plot> plots = this.plot.getConnectedPlots();
         ArrayList<PlotId> ids = new ArrayList<>(plots.size());
         for (Plot current : plots) {
             current.setHome(null);
+            current.clearCache();
             ids.add(current.getId());
         }
         this.plot.clearRatings();
@@ -348,8 +377,7 @@ public final class PlotModificationManager {
                             manager.createRoadSouthEast(current, queue);
                         }
                     }
-                }
-                if (current.isMerged(Direction.SOUTH)) {
+                } else if (current.isMerged(Direction.SOUTH)) {
                     manager.createRoadSouth(current, queue);
                 }
             }
@@ -358,20 +386,43 @@ public final class PlotModificationManager {
             boolean[] merged = new boolean[]{false, false, false, false};
             current.setMerged(merged);
         }
+        // Update TEMPORARY_LAST_PLOT metadata for all players that were in the merged plot
+        // so that getCurrentPlot() returns the correct individual plot based on their location
+        for (PlotPlayer<?> player : PlotSquared.platform().playerManager().getPlayers()) {
+            try (MetaDataAccess<Plot> lastPlotAccess = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+                Plot lastPlot = lastPlotAccess.get().orElse(null);
+                if (lastPlot != null && plots.contains(lastPlot)) {
+                    // Player was in the merged plot, update to their actual current plot
+                    Plot actualPlot = player.getLocation().getPlot();
+                    if (actualPlot != null) {
+                        lastPlotAccess.set(actualPlot);
+                    } else {
+                        lastPlotAccess.remove();
+                    }
+                }
+            }
+        }
         if (createSign) {
             queue.setCompleteTask(() -> TaskManager.runTaskAsync(() -> {
-                for (Plot current : plots) {
-                    current.getPlotModificationManager().setSign(PlayerManager.resolveName(current.getOwnerAbs()).getComponent(
-                            LocaleHolder.console()));
-                }
+                List<CompletableFuture<Void>> tasks = plots.stream().map(current -> PlotSquared.platform().playerManager()
+                                .getUsernameCaption(current.getOwnerAbs())
+                                .thenAccept(caption -> current
+                                        .getPlotModificationManager()
+                                        .setSign(caption.getComponent(LocaleHolder.console()))))
+                        .toList();
+                CompletableFuture.allOf(tasks.toArray(CompletableFuture[]::new)).whenComplete((unused, throwable) -> {
+                    if (whenDone != null) {
+                        TaskManager.runTask(whenDone);
+                    }
+                });
             }));
+        } else if (whenDone != null) {
+            queue.setCompleteTask(whenDone);
         }
         if (createRoad) {
             manager.finishPlotUnlink(ids, queue);
         }
-        if (queue != null) {
-            queue.enqueue();
-        }
+        queue.enqueue();
         return true;
     }
 
@@ -391,7 +442,10 @@ public final class PlotModificationManager {
             Caption[] lines = new Caption[]{TranslatableCaption.of("signs.owner_sign_line_1"), TranslatableCaption.of(
                     "signs.owner_sign_line_2"),
                     TranslatableCaption.of("signs.owner_sign_line_3"), TranslatableCaption.of("signs.owner_sign_line_4")};
-            PlotSquared.platform().worldUtil().setSign(location, lines, Template.of("id", id), Template.of("owner", name));
+            PlotSquared.platform().worldUtil().setSign(location, lines, TagResolver.builder()
+                    .tag("id", Tag.inserting(Component.text(id)))
+                    .tag("owner", Tag.inserting(Component.text(name)))
+                    .build());
         }
     }
 
@@ -478,8 +532,7 @@ public final class PlotModificationManager {
                 this.plot.updateWorldBorder();
             }
         }
-        Plot.connected_cache = null;
-        Plot.regions_cache = null;
+        this.plot.clearCache();
         this.plot.getTrusted().clear();
         this.plot.getMembers().clear();
         this.plot.getDenied().clear();
@@ -501,7 +554,7 @@ public final class PlotModificationManager {
                         if (player != null) {
                             player.sendMessage(
                                     TranslatableCaption.of("events.event_denied"),
-                                    Template.of("value", "Auto merge on claim")
+                                    TagResolver.resolver("value", Tag.inserting(Component.text("Auto merge on claim")))
                             );
                         }
                         return;
@@ -630,6 +683,7 @@ public final class PlotModificationManager {
         if (queue.size() > 0) {
             queue.enqueue();
         }
+        visited.forEach(Plot::clearCache);
         return toReturn;
     }
 
@@ -862,7 +916,6 @@ public final class PlotModificationManager {
     }
 
     /**
-     * /**
      * Sets components such as border, wall, floor.
      * (components are generator specific)
      *

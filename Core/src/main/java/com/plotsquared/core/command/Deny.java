@@ -23,6 +23,8 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.events.PlayerPlotAddRemoveEvent;
+import com.plotsquared.core.events.Result;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
@@ -30,12 +32,13 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.world.gamemode.GameModes;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
@@ -69,8 +72,7 @@ public class Deny extends SubCommand {
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
 
-        Location location = player.getLocation();
-        final Plot plot = location.getPlotAbs();
+        final Plot plot = player.getCurrentPlot();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
@@ -79,18 +81,17 @@ public class Deny extends SubCommand {
             player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return false;
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions
-                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DENY)) {
+        if (!plot.isOwner(player.getUUID()) && !player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_DENY)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return true;
         }
 
-        int maxDenySize = Permissions.hasPermissionRange(player, Permission.PERMISSION_DENY, Settings.Limit.MAX_PLOTS);
+        int maxDenySize = player.hasPermissionRange(Permission.PERMISSION_DENY, Settings.Limit.MAX_PLOTS);
         int size = plot.getDenied().size();
         if (size >= maxDenySize) {
             player.sendMessage(
                     TranslatableCaption.of("members.plot_max_members_denied"),
-                    Template.of("amount", String.valueOf(size))
+                    TagResolver.resolver("amount", Tag.inserting(Component.text(size)))
             );
             return false;
         }
@@ -101,16 +102,15 @@ public class Deny extends SubCommand {
             } else if (throwable != null || uuids.isEmpty()) {
                 player.sendMessage(
                         TranslatableCaption.of("errors.invalid_player"),
-                        Template.of("value", args[0])
+                        TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))
                 );
             } else {
                 for (UUID uuid : uuids) {
                     if (uuid == DBFunc.EVERYONE && !(
-                            Permissions.hasPermission(player, Permission.PERMISSION_DENY_EVERYONE) || Permissions
-                                    .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DENY))) {
+                            player.hasPermission(Permission.PERMISSION_DENY_EVERYONE) || player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_DENY))) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
-                                Template.of("value", args[0])
+                                TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))
                         );
                     } else if (plot.isOwner(uuid)) {
                         player.sendMessage(TranslatableCaption.of("deny.cant_remove_owner"));
@@ -118,25 +118,37 @@ public class Deny extends SubCommand {
                     } else if (plot.getDenied().contains(uuid)) {
                         player.sendMessage(
                                 TranslatableCaption.of("member.already_added"),
-                                Template.of("player", PlayerManager.resolveName(uuid).getComponent(player))
+                                PlotSquared.platform().playerManager().getUsernameCaption(uuid)
+                                        .thenApply(caption -> TagResolver.resolver(
+                                        "player",
+                                        Tag.inserting(caption.toComponent(player))
+                                ))
                         );
                         return;
                     } else {
+                        if (this.eventDispatcher
+                                .callPlayerDeny(player, plot, uuid, PlayerPlotAddRemoveEvent.Reason.COMMAND)
+                                .getEventResult() == Result.DENY) {
+                            player.sendMessage(
+                                    TranslatableCaption.of("events.event_denied"),
+                                    TagResolver.resolver("value", Tag.inserting(Component.text("Deny")))
+                            );
+                            continue;
+                        }
                         if (uuid != DBFunc.EVERYONE) {
                             plot.removeMember(uuid);
                             plot.removeTrusted(uuid);
                         }
                         plot.addDenied(uuid);
                         this.eventDispatcher.callDenied(player, plot, uuid, true);
+                        this.eventDispatcher.callPostDenied(player, plot, uuid, true, PlayerPlotAddRemoveEvent.Reason.COMMAND);
                         if (!uuid.equals(DBFunc.EVERYONE)) {
                             handleKick(PlotSquared.platform().playerManager().getPlayerIfExists(uuid), plot);
                         } else {
                             for (PlotPlayer<?> plotPlayer : plot.getPlayersInPlot()) {
-                                // Ignore plot-owners
-                                if (plot.isAdded(plotPlayer.getUUID())) {
-                                    continue;
+                                if (plot.isDenied(plotPlayer.getUUID())) {
+                                    handleKick(plotPlayer, plot);
                                 }
-                                handleKick(plotPlayer, plot);
                             }
                         }
                     }

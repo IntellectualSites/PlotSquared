@@ -30,7 +30,7 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueCoordinator;
-import com.plotsquared.core.queue.ScopedQueueCoordinator;
+import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.WorldUtil;
@@ -41,7 +41,6 @@ import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -70,7 +69,7 @@ public class BukkitRegionManager extends RegionManager {
     @Inject
     public BukkitRegionManager(
             @NonNull WorldUtil worldUtil, @NonNull GlobalBlockQueue blockQueue, @NonNull
-            ProgressSubscriberFactory subscriberFactory
+    ProgressSubscriberFactory subscriberFactory
     ) {
         super(worldUtil, blockQueue, subscriberFactory);
         this.blockQueue = blockQueue;
@@ -126,7 +125,7 @@ public class BukkitRegionManager extends RegionManager {
         if (doWhole) {
             for (Entity entity : entities) {
                 org.bukkit.Location location = entity.getLocation();
-                PaperLib.getChunkAtAsync(location).thenAccept(chunk -> {
+                PaperSupport.getChunkAtAsync(location).thenAccept(chunk -> {
                     if (chunks.contains(chunk)) {
                         int X = chunk.getX();
                         int Z = chunk.getZ();
@@ -257,9 +256,9 @@ public class BukkitRegionManager extends RegionManager {
             map.saveEntitiesOut(Bukkit.getWorld(world.getName()).getChunkAt(x, z), currentPlotClear);
             AugmentedUtils.bypass(
                     ignoreAugment,
-                    () -> ChunkManager.setChunkInPlotArea(null, new RunnableVal<ScopedQueueCoordinator>() {
+                    () -> ChunkManager.setChunkInPlotArea(null, new RunnableVal<ZeroedDelegateScopedQueueCoordinator>() {
                         @Override
-                        public void run(ScopedQueueCoordinator value) {
+                        public void run(ZeroedDelegateScopedQueueCoordinator value) {
                             Location min = value.getMin();
                             int bx = min.getX();
                             int bz = min.getZ();

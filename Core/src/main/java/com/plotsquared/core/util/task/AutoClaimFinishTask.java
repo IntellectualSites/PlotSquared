@@ -18,7 +18,6 @@
  */
 package com.plotsquared.core.util.task;
 
-import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.Result;
@@ -29,6 +28,9 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.EventDispatcher;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import java.util.concurrent.Callable;
 
@@ -68,7 +70,7 @@ public final class AutoClaimFinishTask implements Callable<Boolean> {
             if (event.getEventResult() == Result.DENY) {
                 player.sendMessage(
                         TranslatableCaption.of("events.event_denied"),
-                        Templates.of("value", "Auto Merge")
+                        TagResolver.resolver("value", Tag.inserting(Component.text("Auto Merge")))
                 );
             } else {
                 if (plot.getPlotModificationManager().autoMerge(event.getDir(), event.getMax(), player.getUUID(), player, true)) {

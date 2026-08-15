@@ -18,7 +18,6 @@
  */
 package com.plotsquared.bukkit.listener;
 
-import com.google.common.collect.Iterables;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.location.Location;
@@ -26,7 +25,6 @@ import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.ForcefieldFlag;
-import com.plotsquared.core.util.Permissions;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -39,8 +37,11 @@ public class ForceFieldListener {
 
     private static Set<PlotPlayer<?>> getNearbyPlayers(Player player, Plot plot) {
         Set<PlotPlayer<?>> players = new HashSet<>();
-        for (Player nearPlayer : Iterables
-                .filter(player.getNearbyEntities(5d, 5d, 5d), Player.class)) {
+        for (Player nearPlayer : player.getNearbyEntities(5d, 5d, 5d).stream()
+                .filter(entity -> entity instanceof Player)
+                .map(entity -> (Player) entity)
+                .toList()
+        ) {
             PlotPlayer<?> plotPlayer;
             if ((plotPlayer = BukkitUtil.adapt(nearPlayer)) == null || !plot
                     .equals(plotPlayer.getCurrentPlot())) {
@@ -54,8 +55,11 @@ public class ForceFieldListener {
     }
 
     private static PlotPlayer<?> hasNearbyPermitted(Player player, Plot plot) {
-        for (Player nearPlayer : Iterables
-                .filter(player.getNearbyEntities(5d, 5d, 5d), Player.class)) {
+        for (Player nearPlayer : player.getNearbyEntities(5d, 5d, 5d).stream()
+                .filter(entity -> entity instanceof Player)
+                .map(entity -> (Player) entity)
+                .toList()
+        ) {
             PlotPlayer<?> plotPlayer;
             if ((plotPlayer = BukkitUtil.adapt(nearPlayer)) == null || !plot
                     .equals(plotPlayer.getCurrentPlot())) {
@@ -104,8 +108,7 @@ public class ForceFieldListener {
             if (plot.isAdded(uuid)) {
                 Set<PlotPlayer<?>> players = getNearbyPlayers(player, plot);
                 for (PlotPlayer<?> oPlayer : players) {
-                    if (!Permissions
-                            .hasPermission(oPlayer, Permission.PERMISSION_ADMIN_ENTRY_FORCEFIELD)) {
+                    if (!oPlayer.hasPermission(Permission.PERMISSION_ADMIN_ENTRY_FORCEFIELD)) {
                         ((BukkitPlayer) oPlayer).player
                                 .setVelocity(calculateVelocity(plotPlayer, oPlayer));
                     }
@@ -115,8 +118,7 @@ public class ForceFieldListener {
                 if (oPlayer == null) {
                     return;
                 }
-                if (!Permissions
-                        .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_ENTRY_FORCEFIELD)) {
+                if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_ENTRY_FORCEFIELD)) {
                     player.setVelocity(calculateVelocity(oPlayer, plotPlayer));
                 }
             }

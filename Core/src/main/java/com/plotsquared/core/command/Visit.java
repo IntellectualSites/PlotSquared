@@ -21,7 +21,6 @@ package com.plotsquared.core.command;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.permissions.Permission;
@@ -31,14 +30,15 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.UntrustedVisitFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MathMan;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -77,6 +77,7 @@ public class Visit extends Command {
             query.whereBasePlot();
         }
 
+        // without specified argument
         if (page == Integer.MIN_VALUE) {
             page = 1;
         }
@@ -94,60 +95,69 @@ public class Visit extends Command {
 
         final List<Plot> plots = query.asList();
 
+        // Conversion of reversed page argument
+        if (page < 0) {
+            page = (plots.size() + 1) + page;
+        }
+
         if (plots.isEmpty()) {
             player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
             return;
-        } else if (plots.size() < page || page < 1) {
+        } else if (page > plots.size() || page < 1) {
             player.sendMessage(
                     TranslatableCaption.of("invalid.number_not_in_range"),
-                    Template.of("min", "1"),
-                    Template.of("max", String.valueOf(plots.size()))
+                    TagResolver.builder()
+                            .tag("min", Tag.inserting(Component.text(1)))
+                            .tag("max", Tag.inserting(Component.text(plots.size())))
+                            .build()
             );
             return;
         }
 
         final Plot plot = plots.get(page - 1);
         if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_UNOWNED)) {
+            if (!player.hasPermission(Permission.PERMISSION_VISIT_UNOWNED)) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Templates.of("node", "plots.visit.unowned")
+                        TagResolver.resolver("node", Tag.inserting(Component.text("plots.visit.unowned")))
                 );
                 return;
             }
         } else if (plot.isOwner(player.getUUID())) {
-            if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_OWNED) && !Permissions
-                    .hasPermission(player, Permission.PERMISSION_HOME)) {
+            if (!player.hasPermission(Permission.PERMISSION_VISIT_OWNED) && !player.hasPermission(Permission.PERMISSION_HOME)) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Templates.of("node", "plots.visit.owned")
+                        TagResolver.resolver("node", Tag.inserting(Component.text("plots.visit.owned")))
                 );
                 return;
             }
         } else if (plot.isAdded(player.getUUID())) {
-            if (!Permissions.hasPermission(player, Permission.PERMISSION_SHARED)) {
+            if (!player.hasPermission(Permission.PERMISSION_SHARED)) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Templates.of("node", "plots.visit.shared")
+                        TagResolver.resolver("node", Tag.inserting(Component.text("plots.visit.shared")))
                 );
                 return;
             }
         } else {
             // allow visit, if UntrustedVisit flag is set, or if the player has either the plot.visit.other or
             // plot.admin.visit.untrusted permission
-            if (!plot.getFlag(UntrustedVisitFlag.class) && !Permissions.hasPermission(player, Permission.PERMISSION_VISIT_OTHER)
-                && !Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
+            if (!plot.getFlag(UntrustedVisitFlag.class) && !player.hasPermission(Permission.PERMISSION_VISIT_OTHER)
+                    && !player.hasPermission(Permission.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Templates.of("node", "plots.visit.other")
+                        TagResolver.resolver("node", Tag.inserting(Component.text("plots.visit.other")))
                 );
                 return;
             }
             if (plot.isDenied(player.getUUID())) {
-                if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_DENIED)) {
+                if (!player.hasPermission(Permission.PERMISSION_VISIT_DENIED)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_VISIT_DENIED))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_VISIT_DENIED)
+                            )
                     );
                     return;
                 }
@@ -184,34 +194,22 @@ public class Visit extends Command {
         int page = Integer.MIN_VALUE;
 
         switch (args.length) {
-            // /p v <user> <area> <page>
+            // /p v <player> <area> <page>
             case 3:
-                if (!MathMan.isInteger(args[2])) {
-                    player.sendMessage(
-                            TranslatableCaption.of("invalid.not_valid_number"),
-                            Templates.of("value", "(1, ∞)")
-                    );
-                    player.sendMessage(
-                            TranslatableCaption.of("commandconfig.command_syntax"),
-                            Templates.of("value", getUsage())
-                    );
+                if (isInvalidPageNr(args[2])) {
+                    sendInvalidPageNrMsg(player);
                     return CompletableFuture.completedFuture(false);
                 }
-                page = Integer.parseInt(args[2]);
-                // /p v <name> <area> [page]
-                // /p v <name> [page]
+                page = getPageNr(args[2]);
+                // /p v <player> <area> [page]
+                // /p v <player> [page]
             case 2:
-                if (page != Integer.MIN_VALUE || !MathMan.isInteger(args[1])) {
+                // If "case 3" is already through or the argument is not a page number:
+                // -> /p v <player> <area> [page]
+                if (page != Integer.MIN_VALUE || isInvalidPageNr(args[1])) {
                     sortByArea = this.plotAreaManager.getPlotAreaByString(args[1]);
                     if (sortByArea == null) {
-                        player.sendMessage(
-                                TranslatableCaption.of("invalid.not_valid_number"),
-                                Templates.of("value", "(1, ∞)")
-                        );
-                        player.sendMessage(
-                                TranslatableCaption.of("commandconfig.command_syntax"),
-                                Templates.of("value", getUsage())
-                        );
+                        sendInvalidPageNrMsg(player);
                         return CompletableFuture.completedFuture(false);
                     }
 
@@ -223,7 +221,7 @@ public class Visit extends Command {
                         } else if (throwable != null || uuids.size() != 1) {
                             player.sendMessage(
                                     TranslatableCaption.of("commandconfig.command_syntax"),
-                                    Templates.of("value", getUsage())
+                                    TagResolver.resolver("value", Tag.inserting(Component.text(getUsage())))
                             );
                         } else {
                             final UUID uuid = uuids.toArray(new UUID[0])[0];
@@ -245,16 +243,13 @@ public class Visit extends Command {
                     });
                     break;
                 }
-                try {
-                    page = Integer.parseInt(args[1]);
-                } catch (NumberFormatException ignored) {
-                    player.sendMessage(
-                            TranslatableCaption.of("invalid.not_a_number"),
-                            Template.of("value", args[1])
-                    );
+                // -> /p v <player> <page>
+                if (isInvalidPageNr(args[1])) {
+                    sendInvalidPageNrMsg(player);
                     return CompletableFuture.completedFuture(false);
                 }
-                // /p v <name> [page]
+                page = getPageNr(args[1]);
+                // /p v <player> [page]
                 // /p v <uuid> [page]
                 // /p v <plot> [page]
                 // /p v <alias>
@@ -285,7 +280,7 @@ public class Visit extends Command {
                             } else {
                                 player.sendMessage(
                                         TranslatableCaption.of("errors.invalid_player"),
-                                        Template.of("value", finalArgs[0])
+                                        TagResolver.resolver("value", Tag.inserting(Component.text(finalArgs[0])))
                                 );
                             }
                         } else {
@@ -313,13 +308,42 @@ public class Visit extends Command {
                 // /p v is invalid
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
-                        Templates.of("value", getUsage())
+                        TagResolver.resolver("value", Tag.inserting(Component.text(getUsage())))
                 );
                 return CompletableFuture.completedFuture(false);
             default:
         }
 
         return CompletableFuture.completedFuture(true);
+    }
+
+    private boolean isInvalidPageNr(String arg) {
+        if (MathMan.isInteger(arg)) {
+            return false;
+        } else if (arg.equals("last") || arg.equals("n")) {
+            return false;
+        }
+        return true;
+    }
+
+    private int getPageNr(String arg) {
+        if (MathMan.isInteger(arg)) {
+            return Integer.parseInt(arg);
+        } else if (arg.equals("last") || arg.equals("n")) {
+            return -1;
+        }
+        return Integer.MIN_VALUE;
+    }
+
+    private void sendInvalidPageNrMsg(PlotPlayer<?> player) {
+        player.sendMessage(
+                TranslatableCaption.of("invalid.not_valid_number"),
+                TagResolver.resolver("value", Tag.inserting(Component.text("(1, ∞)")))
+        );
+        player.sendMessage(
+                TranslatableCaption.of("commandconfig.command_syntax"),
+                TagResolver.resolver("value", Tag.inserting(Component.text(getUsage())))
+        );
     }
 
     @Override
@@ -330,6 +354,7 @@ public class Visit extends Command {
             case 1 -> {
                 completions.addAll(
                         TabCompletions.completeAreas(args[1]));
+                completions.addAll(TabCompletions.asCompletions("last"));
                 if (args[1].isEmpty()) {
                     // if no input is given, only suggest 1 - 3
                     completions.addAll(
@@ -340,6 +365,7 @@ public class Visit extends Command {
                         TabCompletions.completeNumbers(args[1], 10, 999));
             }
             case 2 -> {
+                completions.addAll(TabCompletions.asCompletions("last"));
                 if (args[2].isEmpty()) {
                     // if no input is given, only suggest 1 - 3
                     completions.addAll(

@@ -23,13 +23,13 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.plotsquared.bukkit.BukkitPlatform;
+import com.plotsquared.bukkit.listener.ServerListener;
 import com.plotsquared.bukkit.listener.SingleWorldListener;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.bukkit.queue.BukkitChunkCoordinator;
 import com.plotsquared.bukkit.queue.BukkitQueueCoordinator;
 import com.plotsquared.bukkit.schematic.BukkitSchematicHandler;
 import com.plotsquared.bukkit.util.BukkitChunkManager;
-import com.plotsquared.bukkit.util.BukkitEconHandler;
 import com.plotsquared.bukkit.util.BukkitInventoryUtil;
 import com.plotsquared.bukkit.util.BukkitRegionManager;
 import com.plotsquared.bukkit.util.BukkitSetupUtils;
@@ -47,6 +47,9 @@ import com.plotsquared.core.inject.factory.ChunkCoordinatorBuilderFactory;
 import com.plotsquared.core.inject.factory.ChunkCoordinatorFactory;
 import com.plotsquared.core.inject.factory.HybridPlotWorldFactory;
 import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
+import com.plotsquared.core.player.OfflinePlotPlayer;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.DefaultPlotAreaManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
@@ -71,6 +74,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.util.Objects;
 
 public class BukkitModule extends AbstractModule {
 
@@ -128,21 +133,64 @@ public class BukkitModule extends AbstractModule {
     @Provides
     @Singleton
     @NonNull EconHandler provideEconHandler() {
-        if (!Settings.Enabled_Components.ECONOMY) {
+        if (!Settings.Enabled_Components.ECONOMY || !Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             return EconHandler.nullEconHandler();
         }
-        if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
-            try {
-                BukkitEconHandler econHandler = new BukkitEconHandler();
-                if (!econHandler.init()) {
-                    LOGGER.warn("Economy is enabled but no plugin is providing an economy service. Falling back...");
-                    return EconHandler.nullEconHandler();
-                }
-                return econHandler;
-            } catch (final Exception ignored) {
-            }
+        // Guice eagerly initializes singletons, so we need to bring the laziness ourselves
+        return new LazyEconHandler();
+    }
+
+    private static final class LazyEconHandler extends EconHandler implements ServerListener.MutableEconHandler {
+        private volatile EconHandler implementation;
+
+        public void setImplementation(EconHandler econHandler) {
+            this.implementation = econHandler;
         }
-        return EconHandler.nullEconHandler();
+
+        @Override
+        public boolean init() {
+            return get().init();
+        }
+
+        @Override
+        public double getBalance(final PlotPlayer<?> player) {
+            return get().getBalance(player);
+        }
+
+        @Override
+        public void withdrawMoney(final PlotPlayer<?> player, final double amount) {
+            get().withdrawMoney(player, amount);
+        }
+
+        @Override
+        public void depositMoney(final PlotPlayer<?> player, final double amount) {
+            get().depositMoney(player, amount);
+        }
+
+        @Override
+        public void depositMoney(final OfflinePlotPlayer player, final double amount) {
+            get().depositMoney(player, amount);
+        }
+
+        @Override
+        public boolean isEnabled(final PlotArea plotArea) {
+            return get().isEnabled(plotArea);
+        }
+
+        @Override
+        public @NonNull String format(final double balance) {
+            return get().format(balance);
+        }
+
+        @Override
+        public boolean isSupported() {
+            return get().isSupported();
+        }
+
+        private EconHandler get() {
+            return Objects.requireNonNull(this.implementation, "EconHandler not ready yet.");
+        }
+
     }
 
 }

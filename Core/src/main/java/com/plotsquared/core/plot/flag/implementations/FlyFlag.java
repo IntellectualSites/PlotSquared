@@ -68,14 +68,11 @@ public class FlyFlag extends PlotFlag<FlyFlag.FlyStatus, FlyFlag> {
 
     @Override
     protected FlyFlag flagOf(final @NonNull FlyStatus value) {
-        switch (value) {
-            case ENABLED:
-                return FLIGHT_FLAG_ENABLED;
-            case DISABLED:
-                return FLIGHT_FLAG_DISABLED;
-            default:
-                return FLIGHT_FLAG_DEFAULT;
-        }
+        return switch (value) {
+            case ENABLED -> FLIGHT_FLAG_ENABLED;
+            case DISABLED -> FLIGHT_FLAG_DISABLED;
+            default -> FLIGHT_FLAG_DEFAULT;
+        };
     }
 
     @Override

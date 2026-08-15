@@ -25,13 +25,14 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.permissions.PermissionHolder;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.MathMan;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringComparison;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
@@ -256,10 +257,14 @@ public abstract class Command {
             max = c.size();
         }
         // Send the header
-        Template curTemplate = Template.of("cur", String.valueOf(page + 1));
-        Template maxTemplate = Template.of("max", String.valueOf(totalPages + 1));
-        Template amountTemplate = Template.of("amount", String.valueOf(c.size()));
-        player.sendMessage(header, curTemplate, maxTemplate, amountTemplate);
+        player.sendMessage(
+                header,
+                TagResolver.builder()
+                        .tag("cur", Tag.inserting(Component.text(page + 1)))
+                        .tag("max", Tag.inserting(Component.text(totalPages + 1)))
+                        .tag("amount", Tag.inserting(Component.text(c.size())))
+                        .build()
+        );
         // Send the page content
         List<T> subList = c.subList(page * size, max);
         int i = page * size;
@@ -267,13 +272,24 @@ public abstract class Command {
             i++;
             final CaptionHolder msg = new CaptionHolder();
             add.run(i, obj, msg);
-            player.sendMessage(msg.get(), msg.getTemplates());
+            player.sendMessage(msg.get(), msg.getTagResolvers());
         }
         // Send the footer
-        Template command1 = Template.of("command1", baseCommand + " " + page);
-        Template command2 = Template.of("command2", baseCommand + " " + (page + 2));
-        Template clickable = Template.of("clickable", TranslatableCaption.of("list.clickable").getComponent(player));
-        player.sendMessage(TranslatableCaption.of("list.page_turn"), command1, command2, clickable);
+        player.sendMessage(
+                TranslatableCaption.of("list.page_turn"),
+                TagResolver.builder()
+                        .tag("cur", Tag.inserting(Component.text(page + 1)))
+                        .tag(
+                                "command1",
+                                Tag.preProcessParsed(baseCommand + " " + page)
+                        )
+                        .tag("command2", Tag.preProcessParsed(baseCommand + " " + (page + 2)))
+                        .tag(
+                                "clickable",
+                                Tag.inserting(TranslatableCaption.of("list.clickable").toComponent(player))
+                        )
+                        .build()
+        );
     }
 
     /**
@@ -325,7 +341,7 @@ public abstract class Command {
             if (commands.isEmpty()) {
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.did_you_mean"),
-                        Template.of("value", MainCommand.getInstance().help.getUsage())
+                        TagResolver.resolver("value", Tag.inserting(Component.text(MainCommand.getInstance().help.getUsage())))
                 );
                 return CompletableFuture.completedFuture(false);
             }
@@ -346,7 +362,7 @@ public abstract class Command {
             }
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.did_you_mean"),
-                    Template.of("value", cmd.getUsage())
+                    TagResolver.resolver("value", Tag.inserting(Component.text(cmd.getUsage())))
             );
             return CompletableFuture.completedFuture(false);
         }
@@ -381,7 +397,7 @@ public abstract class Command {
                 // TODO improve or remove the Argument system
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.of("value", StringMan.join(fullSplit, " "))
+                        TagResolver.resolver("value", Tag.inserting(Component.text(StringMan.join(fullSplit, " "))))
                 );
                 return false;
             }
@@ -466,11 +482,11 @@ public abstract class Command {
             if (message) {
                 player.sendMessage(this.required.getErrorMessage());
             }
-        } else if (!Permissions.hasPermission(player, getPermission())) {
+        } else if (!player.hasPermission(getPermission())) {
             if (message) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Template.of("node", getPermission())
+                        TagResolver.resolver("node", Tag.inserting(Component.text(getPermission())))
                 );
             }
         } else {
@@ -495,7 +511,7 @@ public abstract class Command {
     public void sendUsage(PlotPlayer<?> player) {
         player.sendMessage(
                 TranslatableCaption.of("commandconfig.command_syntax"),
-                Template.of("value", getUsage())
+                TagResolver.resolver("value", Tag.inserting(Component.text(getUsage())))
         );
     }
 
@@ -543,9 +559,10 @@ public abstract class Command {
 
     public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         switch (args.length) {
-            case 0:
+            case 0 -> {
                 return this.allCommands;
-            case 1:
+            }
+            case 1 -> {
                 String arg = args[0].toLowerCase();
                 if (space) {
                     Command cmd = getCommand(arg);
@@ -564,13 +581,15 @@ public abstract class Command {
                     }
                     return commands;
                 }
-            default:
+            }
+            default -> {
                 Command cmd = getCommand(args[0]);
                 if (cmd != null) {
                     return cmd.tab(player, Arrays.copyOfRange(args, 1, args.length), space);
                 } else {
                     return null;
                 }
+            }
         }
     }
 
@@ -599,13 +618,13 @@ public abstract class Command {
         return this.getFullId().hashCode();
     }
 
-    public void checkTrue(boolean mustBeTrue, Caption message, Template... args) {
+    public void checkTrue(boolean mustBeTrue, Caption message, TagResolver... args) {
         if (!mustBeTrue) {
             throw new CommandException(message, args);
         }
     }
 
-    public <T> T check(T object, Caption message, Template... args) {
+    public <T> T check(T object, Caption message, TagResolver... args) {
         if (object == null) {
             throw new CommandException(message, args);
         }
@@ -621,10 +640,10 @@ public abstract class Command {
 
     public static class CommandException extends RuntimeException {
 
-        private final Template[] args;
         private final Caption message;
+        private final TagResolver[] args;
 
-        public CommandException(final @Nullable Caption message, final Template... args) {
+        public CommandException(final @Nullable Caption message, final TagResolver... args) {
             this.message = message;
             this.args = args;
         }

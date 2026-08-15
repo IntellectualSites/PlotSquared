@@ -83,4 +83,3 @@ public interface PlotSquaredTask extends Runnable {
     }
 
 }
-

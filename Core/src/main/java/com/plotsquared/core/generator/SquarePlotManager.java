@@ -114,26 +114,14 @@ public abstract class SquarePlotManager extends GridPlotManager {
             end = pathWidthLower + squarePlotWorld.PLOT_WIDTH;
         }
         int size = squarePlotWorld.PLOT_WIDTH + squarePlotWorld.ROAD_WIDTH;
-        int idx;
-        if (x < 0) {
-            idx = x / size;
-            x = size + (x % size);
-        } else {
-            idx = (x / size) + 1;
-            x = x % size;
-        }
-        int idz;
-        if (z < 0) {
-            idz = z / size;
-            z = size + (z % size);
-        } else {
-            idz = (z / size) + 1;
-            z = z % size;
-        }
-        if (z <= pathWidthLower || z > end || x <= pathWidthLower || x > end) {
+        int dx = Math.floorDiv(x, size) + 1;
+        int rx = Math.floorMod(x, size);
+        int dz = Math.floorDiv(z, size) + 1;
+        int rz = Math.floorMod(z, size);
+        if (rz <= pathWidthLower || rz > end || rx <= pathWidthLower || rx > end) {
             return null;
         } else {
-            return PlotId.of(idx, idz);
+            return PlotId.of(dx, dz);
         }
     }
 
@@ -180,24 +168,10 @@ public abstract class SquarePlotManager extends GridPlotManager {
                 }
                 end = pathWidthLower + squarePlotWorld.PLOT_WIDTH;
             }
-            int dx;
-            int rx;
-            if (x < 0) {
-                dx = x / size;
-                rx = size + (x % size);
-            } else {
-                dx = (x / size) + 1;
-                rx = x % size;
-            }
-            int dz;
-            int rz;
-            if (z < 0) {
-                dz = z / size;
-                rz = size + (z % size);
-            } else {
-                dz = (z / size) + 1;
-                rz = z % size;
-            }
+            int dx = Math.floorDiv(x, size) + 1;
+            int rx = Math.floorMod(x, size);
+            int dz = Math.floorDiv(z, size) + 1;
+            int rz = Math.floorMod(z, size);
             PlotId id = PlotId.of(dx, dz);
             boolean[] merged = new boolean[]{rz <= pathWidthLower, rx > end, rz > end, rx <= pathWidthLower};
             int hash = HashUtil.hash(merged);
@@ -211,30 +185,38 @@ public abstract class SquarePlotManager extends GridPlotManager {
                 return null;
             }
             switch (hash) {
-                case 8:
+                case 8 -> {
                     // north
                     return plot.isMerged(Direction.NORTH) ? id : null;
-                case 4:
+                }
+                case 4 -> {
                     // east
                     return plot.isMerged(Direction.EAST) ? id : null;
-                case 2:
+                }
+                case 2 -> {
                     // south
                     return plot.isMerged(Direction.SOUTH) ? id : null;
-                case 1:
+                }
+                case 1 -> {
                     // west
                     return plot.isMerged(Direction.WEST) ? id : null;
-                case 12:
+                }
+                case 12 -> {
                     // northeast
                     return plot.isMerged(Direction.NORTHEAST) ? id : null;
-                case 6:
+                }
+                case 6 -> {
                     // southeast
                     return plot.isMerged(Direction.SOUTHEAST) ? id : null;
-                case 3:
+                }
+                case 3 -> {
                     // southwest
                     return plot.isMerged(Direction.SOUTHWEST) ? id : null;
-                case 9:
+                }
+                case 9 -> {
                     // northwest
                     return plot.isMerged(Direction.NORTHWEST) ? id : null;
+                }
             }
         } catch (Exception ignored) {
             LOGGER.error("Invalid plot / road width in settings.yml for world: {}", squarePlotWorld.getWorldName());

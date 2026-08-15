@@ -38,16 +38,20 @@ import com.plotsquared.core.plot.flag.implementations.MobCapFlag;
 import com.plotsquared.core.plot.flag.implementations.PveFlag;
 import com.plotsquared.core.plot.flag.implementations.PvpFlag;
 import com.plotsquared.core.plot.flag.implementations.TamedAttackFlag;
+import com.plotsquared.core.plot.flag.implementations.VehicleBreakFlag;
 import com.plotsquared.core.plot.flag.implementations.VehicleCapFlag;
 import com.plotsquared.core.util.EntityUtil;
-import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlotFlagUtil;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -168,8 +172,7 @@ public class BukkitEntityUtil {
                 if (plot != null && (plot.getFlag(HangingBreakFlag.class) || plot
                         .isAdded(plotPlayer.getUUID()))) {
                     if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
-                        if (!Permissions
-                                .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
+                        if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                             plotPlayer.sendMessage(
                                     TranslatableCaption.of("done.building_restricted")
                             );
@@ -178,10 +181,13 @@ public class BukkitEntityUtil {
                     }
                     return true;
                 }
-                if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_DESTROY + "." + stub)) {
+                if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_DESTROY + "." + stub)) {
                     plotPlayer.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_DESTROY + "." + stub)
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Component.text(Permission.PERMISSION_ADMIN_DESTROY + "." + stub))
+                            )
                     );
                     return false;
                 }
@@ -190,10 +196,13 @@ public class BukkitEntityUtil {
                         .isAdded(plotPlayer.getUUID()))) {
                     return true;
                 }
-                if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_DESTROY + "." + stub)) {
+                if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_DESTROY + "." + stub)) {
                     plotPlayer.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_DESTROY + "." + stub)
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Component.text(Permission.PERMISSION_ADMIN_DESTROY + "." + stub))
+                            )
                     );
                     if (plot != null) {
                         plot.debug(player.getName()
@@ -211,10 +220,13 @@ public class BukkitEntityUtil {
                         .getFlag(PveFlag.class))) {
                     return true;
                 }
-                if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
+                if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
                     plotPlayer.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Component.text(Permission.PERMISSION_ADMIN_PVE + "." + stub))
+                            )
                     );
                     if (plot != null) {
                         plot.debug(player.getName() + " could not attack " + entityType
@@ -232,10 +244,13 @@ public class BukkitEntityUtil {
                         .getFlag(PveFlag.class))) {
                     return true;
                 }
-                if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
+                if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
                     plotPlayer.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Component.text(Permission.PERMISSION_ADMIN_PVE + "." + stub))
+                            )
                     );
                     if (plot != null) {
                         plot.debug(player.getName() + " could not attack " + entityType
@@ -245,11 +260,13 @@ public class BukkitEntityUtil {
                 }
             } else if (EntityCategories.PLAYER.contains(entityType)) {
                 if (isPlot) {
-                    if (!plot.getFlag(PvpFlag.class) && !Permissions
-                            .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PVP + "." + stub)) {
+                    if (!plot.getFlag(PvpFlag.class) && !plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_PVP + "." + stub)) {
                         plotPlayer.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
-                                Template.of("node", Permission.PERMISSION_ADMIN_PVP + "." + stub)
+                                TagResolver.resolver(
+                                        "node",
+                                        Tag.inserting(Component.text(Permission.PERMISSION_ADMIN_PVP + "." + stub))
+                                )
                         );
                         plot.debug(player.getName() + " could not attack " + entityType
                                 + " because pve = false");
@@ -260,10 +277,13 @@ public class BukkitEntityUtil {
                 } else if (roadFlags && area.getRoadFlag(PvpFlag.class)) {
                     return true;
                 }
-                if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PVP + "." + stub)) {
+                if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_PVP + "." + stub)) {
                     plotPlayer.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_PVP + "." + stub)
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Component.text(Permission.PERMISSION_ADMIN_PVP + "." + stub))
+                            )
                     );
                     return false;
                 }
@@ -277,10 +297,13 @@ public class BukkitEntityUtil {
                         .getFlag(PveFlag.class))) {
                     return true;
                 }
-                if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
+                if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
                     plotPlayer.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Component.text(Permission.PERMISSION_ADMIN_PVE + "." + stub))
+                            )
                     );
                     if (plot != null) {
                         plot.debug(player.getName() + " could not attack " + entityType
@@ -290,6 +313,51 @@ public class BukkitEntityUtil {
                 }
             } else if (EntityCategories.VEHICLE
                     .contains(entityType)) { // Vehicles are managed in vehicle destroy event
+                // Fire damage (e.g. from Fire Aspect swords) needs to be checked here as it bypasses VehicleDestroyEvent
+                if (cause == EntityDamageEvent.DamageCause.FIRE_TICK) {
+                    if (isPlot) {
+                        if (!plot.hasOwner()) {
+                            if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_UNOWNED)) {
+                                plotPlayer.sendMessage(
+                                        TranslatableCaption.of("permission.no_permission_event"),
+                                        TagResolver.resolver(
+                                                "node",
+                                                Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_UNOWNED)
+                                        )
+                                );
+                                return false;
+                            }
+                            return true;
+                        }
+                        if (plot.getFlag(VehicleBreakFlag.class) || plot.isAdded(plotPlayer.getUUID())) {
+                            return true;
+                        }
+                        if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_OTHER)) {
+                            plotPlayer.sendMessage(
+                                    TranslatableCaption.of("permission.no_permission_event"),
+                                    TagResolver.resolver(
+                                            "node",
+                                            Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_OTHER)
+                                    )
+                            );
+                            plot.debug(player.getName() + " could not set vehicle on fire because vehicle-break = false");
+                            return false;
+                        }
+                    } else {
+                        // Road
+                        if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, VehicleBreakFlag.class, true)
+                                && !plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_ROAD)) {
+                            plotPlayer.sendMessage(
+                                    TranslatableCaption.of("permission.no_permission_event"),
+                                    TagResolver.resolver(
+                                            "node",
+                                            Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_ROAD)
+                                    )
+                            );
+                            return false;
+                        }
+                    }
+                }
                 return true;
             } else { // victim is something else
                 if (isPlot) {
@@ -299,10 +367,13 @@ public class BukkitEntityUtil {
                 } else if (roadFlags && area.getRoadFlag(PveFlag.class)) {
                     return true;
                 }
-                if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
+                if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
                     plotPlayer.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Component.text(Permission.PERMISSION_ADMIN_PVE + "." + stub))
+                            )
                     );
                     if (plot != null) {
                         plot.debug(player.getName() + " could not attack " + entityType
@@ -318,8 +389,7 @@ public class BukkitEntityUtil {
         }
         //disable the firework damage. too much of a headache to support at the moment.
         if (vplot != null) {
-            if (EntityDamageEvent.DamageCause.ENTITY_EXPLOSION == cause
-                    && damager.getType() == EntityType.FIREWORK) {
+            if (EntityDamageEvent.DamageCause.ENTITY_EXPLOSION == cause && damager instanceof Firework) {
                 return false;
             }
         }
@@ -331,13 +401,17 @@ public class BukkitEntityUtil {
     }
 
     public static boolean checkEntity(Entity entity, Plot plot) {
+        return checkEntity(entity.getType(), plot);
+    }
+
+    public static boolean checkEntity(EntityType type, Plot plot) {
         if (plot == null || !plot.hasOwner() || plot.getFlags().isEmpty() && plot.getArea()
                 .getFlagContainer().getFlagMap().isEmpty()) {
             return false;
         }
 
         final com.sk89q.worldedit.world.entity.EntityType entityType =
-                BukkitAdapter.adapt(entity.getType());
+                BukkitAdapter.adapt(type);
 
         if (EntityCategories.PLAYER.contains(entityType)) {
             return false;
@@ -345,7 +419,8 @@ public class BukkitEntityUtil {
 
         if (EntityCategories.PROJECTILE.contains(entityType) || EntityCategories.OTHER
                 .contains(entityType) || EntityCategories.HANGING.contains(entityType)) {
-            return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
+            return EntityUtil.checkEntity(
+                    plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
                     MiscCapFlag.MISC_CAP_UNLIMITED
             );
         }
@@ -355,20 +430,23 @@ public class BukkitEntityUtil {
         if (EntityCategories.ANIMAL.contains(entityType) || EntityCategories.VILLAGER
                 .contains(entityType) || EntityCategories.TAMEABLE.contains(entityType)) {
             return EntityUtil
-                    .checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED, MobCapFlag.MOB_CAP_UNLIMITED,
+                    .checkEntity(
+                            plot, EntityCapFlag.ENTITY_CAP_UNLIMITED, MobCapFlag.MOB_CAP_UNLIMITED,
                             AnimalCapFlag.ANIMAL_CAP_UNLIMITED
                     );
         }
 
         if (EntityCategories.HOSTILE.contains(entityType)) {
             return EntityUtil
-                    .checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED, MobCapFlag.MOB_CAP_UNLIMITED,
+                    .checkEntity(
+                            plot, EntityCapFlag.ENTITY_CAP_UNLIMITED, MobCapFlag.MOB_CAP_UNLIMITED,
                             HostileCapFlag.HOSTILE_CAP_UNLIMITED
                     );
         }
 
         if (EntityCategories.VEHICLE.contains(entityType)) {
-            return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
+            return EntityUtil.checkEntity(
+                    plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
                     VehicleCapFlag.VEHICLE_CAP_UNLIMITED
             );
         }

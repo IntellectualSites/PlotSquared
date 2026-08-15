@@ -29,13 +29,14 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MathMan;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -72,8 +73,10 @@ public class HomeCommand extends Command {
         } else if (plots.size() < page || page < 1) {
             player.sendMessage(
                     TranslatableCaption.of("invalid.number_not_in_range"),
-                    Template.of("min", "1"),
-                    Template.of("max", String.valueOf(plots.size()))
+                    TagResolver.builder()
+                            .tag("min", Tag.inserting(Component.text(1)))
+                            .tag("max", Tag.inserting(Component.text(plots.size())))
+                            .build()
             );
             return;
         }
@@ -104,11 +107,10 @@ public class HomeCommand extends Command {
         // /plot home <[area;]x;y>
         // /plot home <area> <x;y>
         // /plot home <area> <page>
-        if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_OWNED) && !Permissions
-                .hasPermission(player, Permission.PERMISSION_HOME)) {
+        if (!player.hasPermission(Permission.PERMISSION_VISIT_OWNED) && !player.hasPermission(Permission.PERMISSION_HOME)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Permission.PERMISSION_VISIT_OWNED.toString())
+                    TagResolver.resolver("node", Tag.inserting(Component.text(Permission.PERMISSION_VISIT_OWNED.toString())))
             );
             return CompletableFuture.completedFuture(false);
         }
@@ -130,7 +132,7 @@ public class HomeCommand extends Command {
                     } catch (NumberFormatException ignored) {
                         player.sendMessage(
                                 TranslatableCaption.of("invalid.not_a_number"),
-                                Template.of("value", identifier)
+                                TagResolver.resolver("value", Tag.inserting(Component.text(identifier)))
                         );
                         return CompletableFuture.completedFuture(false);
                     }
@@ -171,7 +173,7 @@ public class HomeCommand extends Command {
                     } catch (NumberFormatException ignored) {
                         player.sendMessage(
                                 TranslatableCaption.of("invalid.not_a_number"),
-                                Template.of("value", identifier)
+                                TagResolver.resolver("value", Tag.inserting(Component.text(identifier)))
                         );
                         return CompletableFuture.completedFuture(false);
                     }

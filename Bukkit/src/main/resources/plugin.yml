@@ -4,16 +4,16 @@ api-version: "1.13"
 version: "${version}"
 load: STARTUP
 description: "Easy, yet powerful Plot World generation and management."
-authors: [Citymonstret, Empire92, MattBDev, dordsor21, NotMyFault, SirYwell]
+authors: [ Citymonstret, Empire92, MattBDev, dordsor21, NotMyFault, SirYwell ]
 website: https://www.spigotmc.org/resources/77506/
-softdepend: [Vault, PlaceholderAPI, Essentials, LuckPerms, BungeePerms, MVdWPlaceholderAPI]
-loadbefore: [MultiWorld, Multiverse-Core]
-depend: [WorldEdit]
+softdepend: [ Vault, PlaceholderAPI, Essentials, LuckPerms, BungeePerms, MVdWPlaceholderAPI ]
+loadbefore: [ MultiWorld, Multiverse-Core ]
+depend: [ WorldEdit ]
 database: false
 commands:
   plots:
     description: Plot command.
-    aliases: [p,plot,ps,plotsquared,p2,2,plotme]
+    aliases: [ p,plot,ps,plotsquared,p2,2,plotme ]
     permission: plots.use
     permission-message: "You are lacking the permission node 'plots.use'"
 permissions:

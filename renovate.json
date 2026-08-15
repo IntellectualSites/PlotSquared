@@ -1,9 +1,0 @@
-{
-  "extends": [
-    "config:base",
-    ":disableDependencyDashboard"
-  ],
-  "labels": ["Renovate"],
-  "commitMessagePrefix": "build: ",
-  "rebaseWhen": "conflicted"
-}

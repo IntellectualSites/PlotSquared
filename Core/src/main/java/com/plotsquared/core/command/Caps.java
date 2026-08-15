@@ -29,8 +29,10 @@ import com.plotsquared.core.plot.flag.implementations.HostileCapFlag;
 import com.plotsquared.core.plot.flag.implementations.MiscCapFlag;
 import com.plotsquared.core.plot.flag.implementations.MobCapFlag;
 import com.plotsquared.core.plot.flag.implementations.VehicleCapFlag;
-import com.plotsquared.core.util.Permissions;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ANIMAL;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ENTITY;
@@ -51,11 +53,10 @@ public class Caps extends SubCommand {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
         }
-        if (!plot.isAdded(player.getUUID()) && !Permissions
-                .hasPermission(player, Permission.PERMISSION_ADMIN_CAPS_OTHER)) {
+        if (!plot.isAdded(player.getUUID()) && !player.hasPermission(Permission.PERMISSION_ADMIN_CAPS_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_CAPS_OTHER))
+                    TagResolver.resolver("node", Tag.inserting(Permission.PERMISSION_ADMIN_CAPS_OTHER))
             );
             return false;
         }
@@ -82,15 +83,17 @@ public class Caps extends SubCommand {
         final int current = countedEntities[type];
         final int max = plot.getFlag(capFlag);
         final String percentage = String.format("%.1f", 100 * ((float) current / max));
-        String maxBeautified = max >= Integer.MAX_VALUE
-                ? TranslatableCaption.of("info.infinite").getComponent(player)
-                : String.valueOf(max);
+        ComponentLike maxBeautified = max >= Integer.MAX_VALUE
+                ? TranslatableCaption.of("info.infinite").toComponent(player)
+                : Component.text(max);
         player.sendMessage(
                 TranslatableCaption.of("info.plot_caps_format"),
-                Template.of("cap", name),
-                Template.of("current", String.valueOf(current)),
-                Template.of("limit", maxBeautified),
-                Template.of("percentage", percentage)
+                TagResolver.builder()
+                        .tag("cap", Tag.inserting(Component.text(name)))
+                        .tag("current", Tag.inserting(Component.text(current)))
+                        .tag("limit", Tag.inserting(maxBeautified))
+                        .tag("percentage", Tag.inserting(Component.text(percentage)))
+                        .build()
         );
     }
 

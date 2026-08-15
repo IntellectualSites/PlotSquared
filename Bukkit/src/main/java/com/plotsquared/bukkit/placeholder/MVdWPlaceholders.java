@@ -52,7 +52,7 @@ public class MVdWPlaceholders {
 
     @Subscribe
     public void onNewPlaceholder(final PlaceholderRegistry.@NonNull PlaceholderAddedEvent event) {
-        this.addPlaceholder(event.getPlaceholder());
+        this.addPlaceholder(event.placeholder());
     }
 
     private void addPlaceholder(final @NonNull Placeholder placeholder) {

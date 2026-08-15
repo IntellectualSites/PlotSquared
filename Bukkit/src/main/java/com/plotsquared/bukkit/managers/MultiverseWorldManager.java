@@ -30,8 +30,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @deprecated Deprecated and scheduled for removal without replacement
  *         in favor of the build in setup wizard.
+ *         However, this class will be kept around for a while, given it's not a maintenance burden.
  */
-@Deprecated(forRemoval = true, since = "6.0.0")
+@Deprecated
 @Singleton
 public class MultiverseWorldManager extends BukkitWorldManager {
 

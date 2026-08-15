@@ -29,12 +29,13 @@ import com.sk89q.worldedit.extension.input.ParserContext;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.function.pattern.BlockPattern;
 import com.sk89q.worldedit.function.pattern.Pattern;
-import com.sk89q.worldedit.function.pattern.RandomPattern;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class PatternUtil {
 
     public static BaseBlock apply(@NonNull Pattern pattern, int x, int y, int z) {
         Preconditions.checkNotNull(pattern, "Pattern may not be null");
-        if (pattern instanceof BlockPattern || pattern instanceof RandomPattern
+        if (pattern instanceof BlockPattern
                 || pattern instanceof BlockState || pattern instanceof BlockType
                 || pattern instanceof BaseBlock) {
             return pattern.applyBlock(BlockVector3.ZERO);
@@ -84,7 +85,7 @@ public class PatternUtil {
         } catch (InputParseException e) {
             throw new Command.CommandException(
                     TranslatableCaption.of("invalid.not_valid_block"),
-                    Template.of("value", e.getMessage())
+                    TagResolver.resolver("value", Tag.inserting(Component.text(e.getMessage())))
             );
         }
     }

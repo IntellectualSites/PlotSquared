@@ -29,6 +29,7 @@ public abstract class ChunkCoordinator implements Runnable {
 
     /**
      * Cancel the chunk coordinator.
+     *
      * @since 6.0.10
      */
     public abstract void cancel();

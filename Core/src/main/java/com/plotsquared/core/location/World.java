@@ -18,14 +18,19 @@
  */
 package com.plotsquared.core.location;
 
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.key.Keyed;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
+
+import java.nio.file.Path;
 
 /**
  * PlotSquared representation of a platform world
  *
  * @param <T> Platform world type
  */
-public interface World<T> {
+public interface World<T> extends Keyed {
 
     /**
      * Get a {@link NullWorld} implementation
@@ -66,6 +71,15 @@ public interface World<T> {
      */
     int getMaxHeight();
 
+    /**
+     * Get the path to this worlds' folder (for legacy versions the folder containing the {@code level.dat} file, for newer
+     * versions the namespaced dimension folder).
+     *
+     * @return the path
+     * @since TODO
+     */
+    @NonNull Path getWorldFolder();
+
     class NullWorld<T> implements World<T> {
 
         private NullWorld() {
@@ -90,6 +104,16 @@ public interface World<T> {
         @Override
         public int getMaxHeight() {
             return 0;
+        }
+
+        @Override
+        public @NonNull Path getWorldFolder() {
+            throw new UnsupportedOperationException("Cannot get world folder from NullWorld");
+        }
+
+        @Override
+        public @NotNull Key key() {
+            throw new UnsupportedOperationException("Cannot get key from NullWorld");
         }
 
         @Override

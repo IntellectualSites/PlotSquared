@@ -24,9 +24,8 @@ import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.location.UncheckedWorldLocation;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
-import com.plotsquared.core.queue.ScopedQueueCoordinator;
+import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
@@ -43,17 +42,6 @@ final class BlockStatePopulator extends BlockPopulator {
      */
     public BlockStatePopulator(
             final @NonNull IndependentPlotGenerator plotGenerator
-    ) {
-        this.plotGenerator = plotGenerator;
-    }
-
-    /**
-     * @deprecated Use {@link BlockStatePopulator#BlockStatePopulator(IndependentPlotGenerator)} as plotAreManager is unused
-     */
-    @Deprecated(forRemoval = true, since = "6.9.0")
-    public BlockStatePopulator(
-            final @NonNull IndependentPlotGenerator plotGenerator,
-            final @NonNull PlotAreaManager plotAreaManager
     ) {
         this.plotGenerator = plotGenerator;
     }
@@ -80,7 +68,7 @@ final class BlockStatePopulator extends BlockPopulator {
                 worldInfo.getMaxHeight(),
                 (chunkZ << 4) + 15
         );
-        ScopedQueueCoordinator offsetChunkQueue = new ScopedQueueCoordinator(wrapped, min, max);
+        ZeroedDelegateScopedQueueCoordinator offsetChunkQueue = new ZeroedDelegateScopedQueueCoordinator(wrapped, min, max);
         this.plotGenerator.populateChunk(offsetChunkQueue, area);
     }
 

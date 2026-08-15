@@ -23,7 +23,9 @@ import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 @CommandDeclaration(command = "sethome",
         permission = "plots.set.home",
@@ -64,7 +66,7 @@ public class SetHome extends SetCommand {
             default -> {
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.of("value", "Use /plot set home [none]")
+                        TagResolver.resolver("value", Tag.inserting(Component.text("Use /plot set home [none]")))
                 );
                 return false;
             }

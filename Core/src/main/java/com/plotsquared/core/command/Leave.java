@@ -20,12 +20,16 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.events.PlayerPlotAddRemoveEvent;
+import com.plotsquared.core.events.Result;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.UUID;
@@ -59,15 +63,26 @@ public class Leave extends Command {
         } else {
             UUID uuid = player.getUUID();
             if (plot.isAdded(uuid)) {
+                if (this.eventDispatcher
+                        .callPlayerRemove(player, plot, uuid, PlayerPlotAddRemoveEvent.Reason.COMMAND)
+                        .getEventResult() == Result.DENY) {
+                    player.sendMessage(
+                            TranslatableCaption.of("events.event_denied"),
+                            TagResolver.resolver("value", Tag.inserting(Component.text("Leave")))
+                    );
+                    return  CompletableFuture.completedFuture(true);
+                }
                 if (plot.removeTrusted(uuid)) {
                     this.eventDispatcher.callTrusted(player, plot, uuid, false);
+                    this.eventDispatcher.callPostTrusted(player, plot, uuid, false, PlayerPlotAddRemoveEvent.Reason.COMMAND);
                 }
                 if (plot.removeMember(uuid)) {
                     this.eventDispatcher.callMember(player, plot, uuid, false);
+                    this.eventDispatcher.callPostAdded(player, plot, uuid, false, PlayerPlotAddRemoveEvent.Reason.COMMAND);
                 }
                 player.sendMessage(
                         TranslatableCaption.of("member.plot_left"),
-                        Template.of("player", player.getName())
+                        TagResolver.resolver("player", Tag.inserting(Component.text(player.getName())))
                 );
             } else {
                 player.sendMessage(

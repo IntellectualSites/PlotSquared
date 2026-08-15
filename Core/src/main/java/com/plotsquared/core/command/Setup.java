@@ -29,7 +29,9 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.setup.SetupProcess;
 import com.plotsquared.core.setup.SetupStep;
 import com.plotsquared.core.util.SetupUtils;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -78,7 +80,10 @@ public class Setup extends SubCommand {
                     player.sendMessage(TranslatableCaption.of("setup.setup_not_started"));
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.of("value", "Use /plot setup to start a setup process.")
+                            TagResolver.resolver(
+                                    "value",
+                                    Tag.inserting(Component.text("Use /plot setup to start a setup process."))
+                            )
                     );
                     return true;
                 }

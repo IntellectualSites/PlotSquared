@@ -42,28 +42,14 @@ public class EntityUtil {
     }
 
     private static int capNumeral(final @NonNull String flagName) {
-        int i;
-        switch (flagName) {
-            case "mob-cap":
-                i = CAP_MOB;
-                break;
-            case "hostile-cap":
-                i = CAP_MONSTER;
-                break;
-            case "animal-cap":
-                i = CAP_ANIMAL;
-                break;
-            case "vehicle-cap":
-                i = CAP_VEHICLE;
-                break;
-            case "misc-cap":
-                i = CAP_MISC;
-                break;
-            case "entity-cap":
-            default:
-                i = CAP_ENTITY;
-        }
-        return i;
+        return switch (flagName) {
+            case "mob-cap" -> CAP_MOB;
+            case "hostile-cap" -> CAP_MONSTER;
+            case "animal-cap" -> CAP_ANIMAL;
+            case "vehicle-cap" -> CAP_VEHICLE;
+            case "misc-cap" -> CAP_MISC;
+            default -> CAP_ENTITY;
+        };
     }
 
     @SuppressWarnings("unchecked")

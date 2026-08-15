@@ -20,6 +20,8 @@ package com.plotsquared.bukkit.placeholder;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.flag.implementations.DoneFlag;
+import com.plotsquared.core.util.query.PlotQuery;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
@@ -69,6 +71,10 @@ public class PAPIPlaceholders extends PlaceholderExpansion {
                 return "";
             }
 
+            if (identifier.equals("this")) {
+                identifier = pl.getLocation().getWorldName();
+            }
+
             return pl.getPlotCount(identifier) > 0 ?
                     PlaceholderAPIPlugin.booleanTrue() :
                     PlaceholderAPIPlugin.booleanFalse();
@@ -80,7 +86,62 @@ public class PAPIPlaceholders extends PlaceholderExpansion {
                 return "";
             }
 
+            if (identifier.equals("this")) {
+                identifier = pl.getLocation().getWorldName();
+            }
+
             return String.valueOf(pl.getPlotCount(identifier));
+        }
+
+        if (identifier.startsWith("base_plot_count_")) {
+            identifier = identifier.substring("base_plot_count_".length());
+            if (identifier.isEmpty()) {
+                return "";
+            }
+
+            if (identifier.equals("this")) {
+                identifier = pl.getLocation().getWorldName();
+            }
+
+            return String.valueOf(PlotQuery.newQuery()
+                    .ownedBy(pl)
+                    .inWorld(identifier)
+                    .whereBasePlot()
+                    .thatPasses(plot -> !DoneFlag.isDone(plot))
+                    .count());
+        }
+
+        if (identifier.startsWith("server_plot_count_")) {
+            identifier = identifier.substring("server_plot_count_".length());
+            if (identifier.isEmpty()) {
+                return "";
+            }
+
+            if (identifier.equals("this")) {
+                identifier = pl.getLocation().getWorldName();
+            }
+
+            return String.valueOf(PlotQuery.newQuery()
+                    .allPlots()
+                    .inWorld(identifier)
+                    .count());
+        }
+
+        if (identifier.startsWith("server_base_plot_count_")) {
+            identifier = identifier.substring("server_base_plot_count_".length());
+            if (identifier.isEmpty()) {
+                return "";
+            }
+
+            if (identifier.equals("this")) {
+                identifier = pl.getLocation().getWorldName();
+            }
+
+            return String.valueOf(PlotQuery.newQuery()
+                    .allPlots()
+                    .inWorld(identifier)
+                    .whereBasePlot()
+                    .count());
         }
 
         // PlotSquared placeholders

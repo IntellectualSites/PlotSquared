@@ -32,10 +32,12 @@ import com.plotsquared.core.inject.annotations.DefaultGenerator;
 import com.plotsquared.core.location.World;
 import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.MinecraftVersion;
 import com.plotsquared.core.util.PlatformWorldManager;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.RegionManager;
@@ -65,15 +67,22 @@ public interface PlotPlatform<P> extends LocaleHolder {
 
     /**
      * Gets the folder where all world data is stored.
+     * For legacy versions this is the server root, for 26.1+ this is the universe folder (by default {@code ./world})
      *
      * @return the world folder
      */
-    @NonNull File worldContainer();
+    @NonNull
+    File worldContainer();
 
     /**
      * Completely shuts down the plugin.
      */
     void shutdown();
+
+    /**
+     * Completely shuts down the server.
+     */
+    void shutdownServer();
 
     /**
      * Get the name of the plugin
@@ -88,8 +97,17 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * Gets the version of Minecraft that is running
      *
      * @return server version as array of numbers
+     * @deprecated non-standardized format, use {@link #minecraftVersion()}
      */
+    @Deprecated(since = "TODO")
     int[] serverVersion();
+
+    /**
+     * Gets the version of Minecraft that this server is running
+     *
+     * @return minecraft version
+     */
+    MinecraftVersion minecraftVersion();
 
     /**
      * Gets the default minimum world height for the version of Minecraft that the server is running.
@@ -113,6 +131,14 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * @return server implementation and version as string
      */
     @NonNull String serverImplementation();
+
+    /**
+     * Gets the server brand name
+     *
+     * @return server brand
+     * @since 7.5.3
+     */
+    @NonNull String serverBrand();
 
     /**
      * Gets the native server code package prefix.
@@ -207,7 +233,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * @param worldName World name
      * @return Platform world wrapper
      */
-    @Nullable World<?> getPlatformWorld(@NonNull String worldName);
+    @NonNull World<?> getPlatformWorld(@NonNull String worldName);
 
     /**
      * Get the {@link com.google.inject.Injector} instance used by PlotSquared
@@ -277,6 +303,16 @@ public interface PlotPlatform<P> extends LocaleHolder {
      */
     default @NonNull ChunkManager chunkManager() {
         return injector().getInstance(ChunkManager.class);
+    }
+
+    /**
+     * Get the {@link ExpireManager} implementation for the platform
+     *
+     * @return Expire manager
+     * @since 6.10.2
+     */
+    default @NonNull ExpireManager expireManager() {
+        return injector().getInstance(ExpireManager.class);
     }
 
     /**

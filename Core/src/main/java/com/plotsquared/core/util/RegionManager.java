@@ -45,7 +45,9 @@ import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Set;
 
@@ -88,14 +90,17 @@ public abstract class RegionManager {
      */
     public abstract int[] countEntities(Plot plot);
 
-    public void deleteRegionFiles(final String world, final Collection<BlockVector2> chunks, final Runnable whenDone) {
+    public void deleteRegionFiles(final String worldName, final Collection<BlockVector2> chunks, final Runnable whenDone) {
+        com.plotsquared.core.location.World<?> world = PlotSquared.platform().getPlatformWorld(worldName);
+        Path regionRoot = world.getWorldFolder().resolve("region");
         TaskManager.runTaskAsync(() -> {
             for (BlockVector2 loc : chunks) {
-                String directory = world + File.separator + "region" + File.separator + "r." + loc.getX() + "." + loc.getZ() + ".mca";
-                File file = new File(PlotSquared.platform().worldContainer(), directory);
-                LOGGER.info("- Deleting file: {} (max 1024 chunks)", file.getName());
-                if (file.exists()) {
-                    file.delete();
+                Path path = regionRoot.resolve(String.format("r.%s.%s.mca", loc.getX(), loc.getZ()));
+                LOGGER.info("- Deleting file: {} (max 1024 chunks)", path.getFileName());
+                try {
+                    Files.deleteIfExists(path);
+                } catch (IOException e) {
+                    LOGGER.error("Failed to delete region file", e);
                 }
             }
             TaskManager.runTask(whenDone);
@@ -272,7 +277,8 @@ public abstract class RegionManager {
         fromQueue1.addReadChunks(new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()).getChunks());
         fromQueue2.addReadChunks(new CuboidRegion(
                 swapPos.getBlockVector3(),
-                BlockVector3.at(swapPos.getX() + pos2.getX() - pos1.getX(),
+                BlockVector3.at(
+                        swapPos.getX() + pos2.getX() - pos1.getX(),
                         pos1.getY(),
                         swapPos.getZ() + pos2.getZ() - pos1.getZ()
                 )
@@ -370,17 +376,6 @@ public abstract class RegionManager {
                 }
             }
         });
-    }
-
-    @Deprecated(forRemoval = true, since = "6.6.0")
-    public void setBiome(
-            final CuboidRegion region,
-            final int extendBiome,
-            final BiomeType biome,
-            final String world,
-            final Runnable whenDone
-    ) {
-        setBiome(region, extendBiome, biome, PlotSquared.get().getPlotAreaManager().getPlotAreas(world, region)[0], whenDone);
     }
 
     /**

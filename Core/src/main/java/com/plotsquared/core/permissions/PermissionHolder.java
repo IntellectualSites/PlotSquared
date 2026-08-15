@@ -39,6 +39,16 @@ public interface PermissionHolder {
     }
 
     /**
+     * Check if the owner of the profile has a given (global) permission
+     *
+     * @param permission Permission
+     * @return {@code true} if the owner has the given permission, else {@code false}
+     */
+    default boolean hasPermission(final @NonNull Permission permission) {
+        return hasPermission(permission.toString());
+    }
+
+    /**
      * Check if the owner of the profile has a given (global) keyed permission. Checks both {@code permission.key}
      * and {@code permission.*}
      *
@@ -65,6 +75,23 @@ public interface PermissionHolder {
      */
     @NonNegative
     default int hasPermissionRange(
+            final @NonNull Permission stub,
+            @NonNegative final int range
+    ) {
+        return hasPermissionRange(stub.toString(), range);
+    }
+
+    /**
+     * Check the highest permission a PlotPlayer has within a specified range.<br>
+     * - Excessively high values will lag<br>
+     * - The default range that is checked is {@link Settings.Limit#MAX_PLOTS}<br>
+     *
+     * @param stub  The permission stub to check e.g. for `plots.plot.#` the stub is `plots.plot`
+     * @param range The range to check
+     * @return The highest permission they have within that range
+     */
+    @NonNegative
+    default int hasPermissionRange(
             final @NonNull String stub,
             @NonNegative final int range
     ) {
@@ -73,6 +100,7 @@ public interface PermissionHolder {
         }
         String[] nodes = stub.split("\\.");
         StringBuilder builder = new StringBuilder();
+        // Wildcard check from less specific permission to more specific permission
         for (int i = 0; i < (nodes.length - 1); i++) {
             builder.append(nodes[i]).append(".");
             if (!stub.equals(builder + Permission.PERMISSION_STAR.toString())) {
@@ -81,6 +109,7 @@ public interface PermissionHolder {
                 }
             }
         }
+        // Wildcard check for the full permission
         if (hasPermission(stub + ".*")) {
             return Integer.MAX_VALUE;
         }
@@ -91,6 +120,26 @@ public interface PermissionHolder {
         }
         return 0;
     }
+
+    /**
+     * Checks if the owner of the profile has a permission, and optionally send the no permission message if applicable.
+     *
+     * @param permission Permission
+     * @param notify     If to notify the permission holder
+     * @return {@code true} if the owner has the given permission, else {@code false}
+     */
+    default boolean hasPermission(@NonNull Permission permission, boolean notify) {
+        return hasPermission(permission.toString(), notify);
+    }
+
+    /**
+     * Checks if the owner of the profile has a permission, and optionally send the no permission message if applicable.
+     *
+     * @param permission Permission
+     * @param notify     If to notify the permission holder
+     * @return {@code true} if the owner has the given permission, else {@code false}
+     */
+    boolean hasPermission(@NonNull String permission, boolean notify);
 
     /**
      * Check if the owner of the profile has a given permission

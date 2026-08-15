@@ -21,6 +21,7 @@ package com.plotsquared.core.plot;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.collection.QuadMap;
 import com.plotsquared.core.configuration.ConfigurationNode;
@@ -29,13 +30,14 @@ import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
+import com.plotsquared.core.events.PlayerPlotAddRemoveEvent;
+import com.plotsquared.core.events.Result;
 import com.plotsquared.core.generator.GridPlotWorld;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.location.PlotLoc;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.MetaDataAccess;
@@ -48,11 +50,14 @@ import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueCoordinator;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
-import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.MinecraftVersion;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.RegionUtil;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -60,12 +65,16 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -85,7 +94,7 @@ import java.util.function.Consumer;
 /**
  * @author Jesse Boyd, Alexander Söderberg
  */
-public abstract class PlotArea {
+public abstract class PlotArea implements ComponentLike {
 
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotArea.class.getSimpleName());
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
@@ -143,6 +152,7 @@ public abstract class PlotArea {
     private Map<String, PlotExpression> prices = new HashMap<>();
     private List<String> schematics = new ArrayList<>();
     private boolean worldBorder = false;
+    private int borderSize = 1;
     private boolean useEconomy = false;
     private int hash;
     private CuboidRegion region;
@@ -150,6 +160,9 @@ public abstract class PlotArea {
     private QuadMap<PlotCluster> clusters;
     private String signMaterial = "OAK_WALL_SIGN";
     private String legacySignMaterial = "WALL_SIGN";
+    // These will be injected
+    @Inject
+    private EventDispatcher eventDispatcher;
 
     public PlotArea(
             final @NonNull String worldName, final @Nullable String id,
@@ -178,8 +191,7 @@ public abstract class PlotArea {
         this.worldConfiguration = worldConfiguration;
     }
 
-    private static Collection<PlotFlag<?, ?>> parseFlags(List<String> flagStrings) {
-        final Collection<PlotFlag<?, ?>> flags = new ArrayList<>();
+    private static void parseFlags(FlagContainer flagContainer, List<String> flagStrings) {
         for (final String key : flagStrings) {
             final String[] split;
             if (key.contains(";")) {
@@ -191,7 +203,7 @@ public abstract class PlotArea {
                     GlobalFlagContainer.getInstance().getFlagFromString(split[0]);
             if (flagInstance != null) {
                 try {
-                    flags.add(flagInstance.parse(split[1]));
+                    flagContainer.addFlag(flagInstance.parse(split[1]));
                 } catch (final FlagParseException e) {
                     LOGGER.warn(
                             "Failed to parse default flag with key '{}' and value '{}'. "
@@ -202,9 +214,10 @@ public abstract class PlotArea {
                     );
                     e.printStackTrace();
                 }
+            } else {
+                flagContainer.addUnknownFlag(split[0], split[1]);
             }
         }
-        return flags;
     }
 
     @NonNull
@@ -320,7 +333,7 @@ public abstract class PlotArea {
         this.mobSpawnerSpawning = config.getBoolean("mob_spawner_spawning");
         this.autoMerge = config.getBoolean("plot.auto_merge");
         this.allowSigns = config.getBoolean("plot.create_signs");
-        if (PlotSquared.platform().serverVersion()[1] == 13) {
+        if (MinecraftVersion.current().isOlderOrEqualThan(13)) {
             this.legacySignMaterial = config.getString("plot.legacy_sign_material");
         } else {
             this.signMaterial = config.getString("plot.sign_material");
@@ -352,6 +365,7 @@ public abstract class PlotArea {
         this.plotChat = config.getBoolean("chat.enabled");
         this.forcingPlotChat = config.getBoolean("chat.forced");
         this.worldBorder = config.getBoolean("world.border");
+        this.borderSize = config.getInt("world.border_size");
         this.maxBuildHeight = config.getInt("world.max_height");
         this.minBuildHeight = config.getInt("world.min_height");
         this.minGenHeight = config.getInt("world.min_gen_height");
@@ -389,6 +403,28 @@ public abstract class PlotArea {
             }
         }
 
+        this.spawnEggs = config.getBoolean("event.spawn.egg");
+        this.spawnCustom = config.getBoolean("event.spawn.custom");
+        this.spawnBreeding = config.getBoolean("event.spawn.breeding");
+
+        if (PlotSquared.get().isWeInitialised()) {
+            loadFlags(config);
+        } else {
+            ConsolePlayer.getConsole().sendMessage(
+                    TranslatableCaption.of("flags.delaying_loading_area_flags"),
+                    TagResolver.resolver("area", Tag.inserting(Component.text(this.id == null ? this.worldName : this.id)))
+            );
+            TaskManager.runTaskLater(() -> loadFlags(config), TaskTime.ticks(1));
+        }
+
+        loadConfiguration(config);
+    }
+
+    private void loadFlags(ConfigurationSection config) {
+        ConsolePlayer.getConsole().sendMessage(
+                TranslatableCaption.of("flags.loading_area_flags"),
+                TagResolver.resolver("area", Tag.inserting(Component.text(this.id == null ? this.worldName : this.id)))
+        );
         List<String> flags = config.getStringList("flags.default");
         if (flags.isEmpty()) {
             flags = config.getStringList("flags");
@@ -403,15 +439,11 @@ public abstract class PlotArea {
                 }
             }
         }
-        this.getFlagContainer().addAll(parseFlags(flags));
+        parseFlags(this.getFlagContainer(), flags);
         ConsolePlayer.getConsole().sendMessage(
                 TranslatableCaption.of("flags.area_flags"),
-                Template.of("flags", flags.toString())
+                TagResolver.resolver("flags", Tag.inserting(Component.text(flags.toString())))
         );
-
-        this.spawnEggs = config.getBoolean("event.spawn.egg");
-        this.spawnCustom = config.getBoolean("event.spawn.custom");
-        this.spawnBreeding = config.getBoolean("event.spawn.breeding");
 
         List<String> roadflags = config.getStringList("road.flags");
         if (roadflags.isEmpty()) {
@@ -424,14 +456,12 @@ public abstract class PlotArea {
                 }
             }
         }
-        this.roadFlags = roadflags.size() > 0;
-        this.getRoadFlagContainer().addAll(parseFlags(roadflags));
+        this.roadFlags = !roadflags.isEmpty();
+        parseFlags(this.getRoadFlagContainer(), roadflags);
         ConsolePlayer.getConsole().sendMessage(
                 TranslatableCaption.of("flags.road_flags"),
-                Template.of("flags", roadflags.toString())
+                TagResolver.resolver("flags", Tag.inserting(Component.text(roadflags.toString())))
         );
-
-        loadConfiguration(config);
     }
 
     public abstract void loadConfiguration(ConfigurationSection config);
@@ -448,7 +478,7 @@ public abstract class PlotArea {
         options.put("mob_spawner_spawning", this.isMobSpawnerSpawning());
         options.put("plot.auto_merge", this.isAutoMerge());
         options.put("plot.create_signs", this.allowSigns());
-        if (PlotSquared.platform().serverVersion()[1] == 13) {
+        if (MinecraftVersion.current().isOlderOrEqualThan(13)) {
             options.put("plot.legacy_sign_material", this.legacySignMaterial);
         } else {
             options.put("plot.sign_material", this.signMaterial());
@@ -469,6 +499,7 @@ public abstract class PlotArea {
         options.put("event.spawn.custom", this.isSpawnCustom());
         options.put("event.spawn.breeding", this.isSpawnBreeding());
         options.put("world.border", this.hasWorldBorder());
+        options.put("world.border_size", this.getBorderSize());
         options.put("home.default", "side");
         String position = config.getString(
                 "home.nonmembers",
@@ -519,6 +550,11 @@ public abstract class PlotArea {
         } else {
             return this.getWorldName() + ";" + this.getId();
         }
+    }
+
+    @Override
+    public @NotNull Component asComponent() {
+        return Component.text(toString());
     }
 
     @Override
@@ -646,11 +682,13 @@ public abstract class PlotArea {
      * @since 6.9.1
      */
     public boolean notifyIfOutsideBuildArea(PlotPlayer<?> player, int y) {
-        if (!buildRangeContainsY(y) && !Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
+        if (!buildRangeContainsY(y) && !player.hasPermission(Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
             player.sendMessage(
                     TranslatableCaption.of("height.height_limit"),
-                    Template.of("minHeight", String.valueOf(minBuildHeight)),
-                    Template.of("maxHeight", String.valueOf(maxBuildHeight))
+                    TagResolver.builder()
+                            .tag("minheight", Tag.inserting(Component.text(minBuildHeight)))
+                            .tag("maxheight", Tag.inserting(Component.text(maxBuildHeight)))
+                            .build()
             );
             // Return true if "failed" as the method will always be inverted otherwise
             return true;
@@ -908,7 +946,9 @@ public abstract class PlotArea {
      * Get the plot border distance for a world<br>
      *
      * @return The border distance or Integer.MAX_VALUE if no border is set
+     * @deprecated Use {@link PlotArea#getBorder(boolean)}
      */
+    @Deprecated(forRemoval = true, since = "7.2.0")
     public int getBorder() {
         final Integer meta = (Integer) getMeta("worldBorder");
         if (meta != null) {
@@ -917,6 +957,27 @@ public abstract class PlotArea {
                 return Integer.MAX_VALUE;
             } else {
                 return border;
+            }
+        }
+        return Integer.MAX_VALUE;
+    }
+
+    /**
+     * Get the plot border distance for a world, specifying whether the returned value should include the world.border-size
+     * value. This is a player-traversable area, where plots cannot be claimed
+     *
+     * @param getExtended If the extra border given by world.border-size should be included
+     * @return Border distance of Integer.MAX_VALUE if no border is set
+     * @since 7.2.0
+     */
+    public int getBorder(boolean getExtended) {
+        final Integer meta = (Integer) getMeta("worldBorder");
+        if (meta != null) {
+            int border = meta + 1;
+            if (border == 0) {
+                return Integer.MAX_VALUE;
+            } else {
+                return getExtended ? border + borderSize : border;
             }
         }
         return Integer.MAX_VALUE;
@@ -1008,7 +1069,7 @@ public abstract class PlotArea {
      *
      * @param plotIds     List of plot IDs to merge
      * @param removeRoads If the roads between plots should be removed
-     * @param whenDone  Task to run when any merge world changes are complete. Also runs if no changes were made. Does not
+     * @param whenDone    Task to run when any merge world changes are complete. Also runs if no changes were made. Does not
      *                    run if there was an error or if too few plots IDs were supplied.
      * @return if merges were completed successfully.
      * @since 6.9.0
@@ -1051,9 +1112,44 @@ public abstract class PlotArea {
                 final PlotId id = PlotId.of(x, y);
                 final Plot plot = getPlotAbs(id);
 
-                plot.setTrusted(trusted);
-                plot.setMembers(members);
-                plot.setDenied(denied);
+                Set<UUID> currentlyTrusted = plot.getTrusted();
+                trusted.forEach(uuid -> {
+                    if (!currentlyTrusted.contains(uuid) && eventDispatcher.callPlayerTrust(
+                            null,
+                            plot,
+                            uuid,
+                            PlayerPlotAddRemoveEvent.Reason.MERGE
+                    ).getEventResult() != Result.DENY) {
+                        plot.addTrusted(uuid);
+                        eventDispatcher.callPostTrusted(null, plot, uuid, true, PlayerPlotAddRemoveEvent.Reason.MERGE);
+                    }
+                });
+
+                Set<UUID> currentlyAdded = plot.getMembers();
+                members.forEach(uuid -> {
+                    if (!currentlyAdded.contains(uuid) && eventDispatcher.callPlayerAdd(
+                            null,
+                            plot,
+                            uuid,
+                            PlayerPlotAddRemoveEvent.Reason.MERGE
+                    ).getEventResult() != Result.DENY) {
+                        plot.addMember(uuid);
+                        eventDispatcher.callPostAdded(null, plot, uuid, true, PlayerPlotAddRemoveEvent.Reason.MERGE);
+                    }
+                });
+
+                Set<UUID> currentlyDenied = plot.getDenied();
+                denied.forEach(uuid -> {
+                    if (!currentlyDenied.contains(uuid) && eventDispatcher.callPlayerDeny(
+                            null,
+                            plot,
+                            uuid,
+                            PlayerPlotAddRemoveEvent.Reason.MERGE
+                    ).getEventResult() != Result.DENY) {
+                        plot.addDenied(uuid);
+                        eventDispatcher.callPostDenied(null, plot, uuid, true, PlayerPlotAddRemoveEvent.Reason.MERGE);
+                    }
+                });
 
                 Plot plot2;
                 if (lx) {
@@ -1179,6 +1275,16 @@ public abstract class PlotArea {
      */
     public boolean hasWorldBorder() {
         return worldBorder;
+    }
+
+    /**
+     * Get the "extra border" size of the plot area.
+     *
+     * @return Plot area extra border size
+     * @since 7.2.0
+     */
+    public int getBorderSize() {
+        return borderSize;
     }
 
     /**
@@ -1325,20 +1431,6 @@ public abstract class PlotArea {
         return this.signMaterial;
     }
 
-    /**
-     * Get the legacy plot sign material before wall signs used a "wall" stance.
-     *
-     * @return the legacy sign material.
-     * @deprecated Use {@link #signMaterial()}. This method is used for 1.13 only and
-     *         will be removed without replacement in favor of {@link #signMaterial()}
-     *         once we remove the support for 1.13.
-     * @since 6.0.3
-     */
-    @Deprecated(forRemoval = true, since = "6.0.3")
-    public String getLegacySignMaterial() {
-        return this.legacySignMaterial;
-    }
-
     public boolean isSpawnCustom() {
         return this.spawnCustom;
     }
@@ -1397,24 +1489,26 @@ public abstract class PlotArea {
         return this.defaultHome;
     }
 
-    /**
-     * @deprecated Use {@link #nonmemberHome}
-     */
-    @Deprecated(forRemoval = true, since = "6.1.4")
-    public PlotLoc getNonmemberHome() {
-        return new PlotLoc(this.defaultHome.getX(), this.defaultHome.getY(), this.defaultHome.getZ());
-    }
-
-    /**
-     * @deprecated Use {@link #defaultHome}
-     */
-    @Deprecated(forRemoval = true, since = "6.1.4")
-    public PlotLoc getDefaultHome() {
-        return new PlotLoc(this.defaultHome.getX(), this.defaultHome.getY(), this.defaultHome.getZ());
-    }
-
     protected void setDefaultHome(BlockLoc defaultHome) {
         this.defaultHome = defaultHome;
+    }
+
+    /**
+     * Get the maximum height that changes to plot components (wall filling, air, all etc.) may operate to
+     *
+     * @since 7.3.4
+     */
+    public int getMaxComponentHeight() {
+        return this.maxBuildHeight;
+    }
+
+    /**
+     * Get the minimum height that changes to plot components (wall filling, air, all etc.) may operate to
+     *
+     * @since 7.3.4
+     */
+    public int getMinComponentHeight() {
+        return this.minBuildHeight;
     }
 
     /**

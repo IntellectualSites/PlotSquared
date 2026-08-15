@@ -18,7 +18,8 @@
  */
 package com.plotsquared.core.plot;
 
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.Objects;
 
 public class PlotTitle {
@@ -60,6 +61,20 @@ public class PlotTitle {
     @Nullable
     public String subtitle() {
         return subtitle;
+    }
+
+    /**
+     * Provides a string representation of this plot title value (used in placeholders).
+     *
+     * @return the plot title representation in the format {@code "<title>" "<subtitle>"}
+     * @since 7.5.5
+     */
+    @Override
+    public String toString() {
+        return "\"%s\" \"%s\"".formatted(
+                this.title != null ? this.title : "",
+                this.subtitle != null ? this.subtitle : ""
+        );
     }
 
 }

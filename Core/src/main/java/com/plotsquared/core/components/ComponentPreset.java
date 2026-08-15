@@ -35,34 +35,22 @@ import java.util.Map;
  * the component GUI
  */
 @SerializableAs("preset")
-public class ComponentPreset implements ConfigurationSerializable {
-
-    private final ClassicPlotManagerComponent component;
-    private final String pattern;
-    private final double cost;
-    private final String permission;
-    private final String displayName;
-    private final List<String> description;
-    private final ItemType icon;
-
-    public ComponentPreset(
-            ClassicPlotManagerComponent component, String pattern, double cost,
-            String permission, String displayName, List<String> description, final ItemType icon
-    ) {
-        this.component = component;
-        this.pattern = pattern;
-        this.cost = cost;
-        this.permission = permission;
-        this.displayName = displayName;
-        this.description = description;
-        this.icon = icon;
-    }
+public record ComponentPreset(
+        ClassicPlotManagerComponent component,
+        String pattern,
+        double cost,
+        String permission,
+        String displayName,
+        List<String> description,
+        ItemType icon
+) implements ConfigurationSerializable {
 
     @SuppressWarnings("unchecked")
     public static ComponentPreset deserialize(final @NonNull Map<String, Object> map) {
         final ClassicPlotManagerComponent classicPlotManagerComponent = ClassicPlotManagerComponent
                 .fromString(map.getOrDefault("component", "").toString()).orElseThrow(() ->
-                        new IllegalArgumentException("The preset needs a valid target component"));
+                        new IllegalArgumentException("The preset in components.yml needs a valid target component, got: " + map.get(
+                                "component")));
         final String pattern = map.getOrDefault("pattern", "").toString();
         final double cost = Double.parseDouble(map.getOrDefault("cost", "0.0").toString());
         final String permission = map.getOrDefault("permission", "").toString();
@@ -72,34 +60,6 @@ public class ComponentPreset implements ConfigurationSerializable {
         return new ComponentPreset(classicPlotManagerComponent, pattern, cost, permission,
                 displayName, description, icon
         );
-    }
-
-    public ClassicPlotManagerComponent getComponent() {
-        return this.component;
-    }
-
-    public String getPattern() {
-        return this.pattern;
-    }
-
-    public double getCost() {
-        return this.cost;
-    }
-
-    public String getPermission() {
-        return this.permission;
-    }
-
-    public String getDisplayName() {
-        return this.displayName;
-    }
-
-    public List<String> getDescription() {
-        return this.description;
-    }
-
-    public ItemType getIcon() {
-        return this.icon;
     }
 
     @Override

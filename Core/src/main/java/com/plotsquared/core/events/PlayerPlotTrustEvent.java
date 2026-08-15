@@ -16,19 +16,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.util;
+package com.plotsquared.core.events;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 
-@Deprecated(since = "6.6.2", forRemoval = true)
-public class RegExUtil {
+import java.util.UUID;
 
-    public static Map<String, Pattern> compiledPatterns;
+/**
+ * Called when a player is going to be trusted to a plot
+ *
+ * @since TODO
+ */
+public class PlayerPlotTrustEvent extends PlayerPlotAddRemoveCancellableEvent {
 
-    static {
-        compiledPatterns = new HashMap<>();
+    /**
+     * Called when a player will be trusted to a plot
+     *
+     * @param initiator Player that initiated the event
+     * @param plot      Plot in which the event occurred
+     * @param player    Player that will be trusted
+     * @param reason    The reason for the trust
+     */
+    public PlayerPlotTrustEvent(PlotPlayer<?> initiator, Plot plot, UUID player, Reason reason) {
+        super(initiator, plot, player, reason);
     }
 
 }

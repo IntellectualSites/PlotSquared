@@ -24,7 +24,7 @@ import com.plotsquared.bukkit.util.BukkitBlockUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.location.ChunkWrapper;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.queue.ScopedQueueCoordinator;
+import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.plotsquared.core.util.ChunkUtil;
 import com.plotsquared.core.util.PatternUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -44,8 +44,11 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Arrays;
 
+/**
+ * Internal use only. Subject to changes at any time.
+ */
 @DoNotUse
-public class GenChunk extends ScopedQueueCoordinator {
+public class GenChunk extends ZeroedDelegateScopedQueueCoordinator {
 
     public final Biome[] biomes;
     public BlockState[][] result;
@@ -59,7 +62,6 @@ public class GenChunk extends ScopedQueueCoordinator {
     /**
      * @param minY minimum world Y, inclusive
      * @param maxY maximum world Y, inclusive
-     *
      * @since 6.6.0
      */
     public GenChunk(int minY, int maxY) {
@@ -107,9 +109,9 @@ public class GenChunk extends ScopedQueueCoordinator {
      */
     public void setChunk(@NonNull ChunkWrapper wrap) {
         chunk = null;
-        world = wrap.world;
-        chunkX = wrap.x;
-        chunkZ = wrap.z;
+        world = wrap.world();
+        chunkX = wrap.x();
+        chunkZ = wrap.z();
     }
 
     @Override
@@ -183,7 +185,11 @@ public class GenChunk extends ScopedQueueCoordinator {
 
     @Override
     public boolean setBlock(int x, int y, int z, @NonNull Pattern pattern) {
-        return setBlock(x, y, z, PatternUtil.apply(Preconditions.checkNotNull(pattern, "Pattern may not be null"), x, y, z));
+        final BaseBlock block = PatternUtil.apply(Preconditions.checkNotNull(
+                pattern,
+                "Pattern may not be null"
+        ), x + (chunkX << 4), y, z + (chunkZ << 4));
+        return setBlock(x, y, z, block);
     }
 
     @Override

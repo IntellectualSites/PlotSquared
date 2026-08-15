@@ -18,8 +18,8 @@
  */
 package com.plotsquared.core.util.query;
 
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.plot.expiration.ExpireManager;
 
 import java.util.Collection;
 
@@ -27,7 +27,7 @@ class ExpiredPlotProvider implements PlotProvider {
 
     @Override
     public Collection<Plot> getPlots() {
-        return ExpireManager.IMP.getPendingExpired();
+        return PlotSquared.platform().expireManager().getPendingExpired();
     }
 
 }

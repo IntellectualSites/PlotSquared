@@ -28,15 +28,20 @@ import com.plotsquared.core.plot.flag.implementations.PlotTitleFlag;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.ParsingException;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.plotsquared.core.configuration.caption.ComponentTransform.nested;
-import static com.plotsquared.core.configuration.caption.ComponentTransform.stripClicks;
 
 public class CaptionUtility {
+
+    private static final Pattern LEGACY_FORMATTING = Pattern.compile("§[a-gklmnor0-9]");
 
     // flags which values are parsed by minimessage
     private static final Set<Class<? extends PlotFlag<?, ?>>> MINI_MESSAGE_FLAGS = Set.of(
@@ -47,10 +52,11 @@ public class CaptionUtility {
     );
 
     private static final ComponentTransform CLICK_STRIP_TRANSFORM = nested(
-            stripClicks(
+            new ClickStripTransform(
                     Settings.Chat.CLICK_EVENT_ACTIONS_TO_REMOVE.stream()
-                            .map(ClickEvent.Action::valueOf)
-                            .toArray(ClickEvent.Action[]::new)
+                            .map(ClickEvent.Action.NAMES::value)
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toUnmodifiableSet())
             )
     );
 
@@ -100,9 +106,16 @@ public class CaptionUtility {
      */
     public static String stripClickEvents(final @NonNull String miniMessageString) {
         // parse, transform and serialize again
-        Component component = MiniMessage.get().parse(miniMessageString);
+        Component component;
+        try {
+            component = MiniMessage.miniMessage().deserialize(miniMessageString);
+        } catch (ParsingException e) {
+            // if the String cannot be parsed, we try stripping legacy colors
+            String legacyStripped = LEGACY_FORMATTING.matcher(miniMessageString).replaceAll("");
+            component = MiniMessage.miniMessage().deserialize(legacyStripped);
+        }
         component = CLICK_STRIP_TRANSFORM.transform(component);
-        return MiniMessage.get().serialize(component);
+        return MiniMessage.miniMessage().serialize(component);
     }
 
     /**

@@ -33,7 +33,9 @@ import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDMapping;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -88,72 +90,56 @@ public class Purge extends SubCommand {
                 return false;
             }
             switch (split[0].toLowerCase()) {
-                case "world":
-                case "w":
-                    world = split[1];
-                    break;
-                case "area":
-                case "a":
+                case "world", "w" -> world = split[1];
+                case "area", "a" -> {
                     area = this.plotAreaManager.getPlotAreaByString(split[1]);
                     if (area == null) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.not_valid_plot_world"),
-                                Template.of("value", split[1])
+                                TagResolver.resolver("value", Tag.inserting(Component.text(split[1])))
                         );
                         return false;
                     }
-                    break;
-                case "plotid":
-                case "id":
+                }
+                case "plotid", "id" -> {
                     try {
                         id = PlotId.fromString(split[1]);
                     } catch (IllegalArgumentException ignored) {
                         player.sendMessage(
                                 TranslatableCaption.of("invalid.not_valid_plot_id"),
-                                Template.of("value", split[1])
+                                TagResolver.resolver("value", Tag.inserting(Component.text(split[1])))
                         );
                         return false;
                     }
-                    break;
-                case "owner":
-                case "o":
+                }
+                case "owner", "o" -> {
                     UUIDMapping ownerMapping = PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(split[1]);
                     if (ownerMapping == null) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
-                                Template.of("value", split[1])
+                                TagResolver.resolver("value", Tag.inserting(Component.text(split[1])))
                         );
                         return false;
                     }
-                    owner = ownerMapping.getUuid();
-                    break;
-                case "shared":
-                case "s":
+                    owner = ownerMapping.uuid();
+                }
+                case "shared", "s" -> {
                     UUIDMapping addedMapping = PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(split[1]);
                     if (addedMapping == null) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
-                                Template.of("value", split[1])
+                                TagResolver.resolver("value", Tag.inserting(Component.text(split[1])))
                         );
                         return false;
                     }
-                    added = addedMapping.getUuid();
-                    break;
-                case "clear":
-                case "c":
-                case "delete":
-                case "d":
-                case "del":
-                    clear = Boolean.parseBoolean(split[1]);
-                    break;
-                case "unknown":
-                case "?":
-                case "u":
-                    unknown = Boolean.parseBoolean(split[1]);
-                    break;
-                default:
+                    added = addedMapping.uuid();
+                }
+                case "clear", "c", "delete", "d", "del" -> clear = Boolean.parseBoolean(split[1]);
+                case "unknown", "?", "u" -> unknown = Boolean.parseBoolean(split[1]);
+                default -> {
                     sendUsage(player);
                     return false;
+                }
             }
         }
         final HashSet<Plot> toDelete = new HashSet<>();
@@ -234,9 +220,9 @@ public class Purge extends SubCommand {
                             try {
                                 ids.add(plot.temp);
                                 if (finalClear) {
-                                    plot.getPlotModificationManager().clear(false, true, player, () -> {
-                                        LOGGER.info("Plot {} cleared by purge", plot.getId());
-                                    });
+                                    plot.getPlotModificationManager().clear(false, true, player,
+                                            () -> LOGGER.info("Plot {} cleared by purge", plot.getId())
+                                    );
                                 } else {
                                     plot.getPlotModificationManager().removeSign();
                                 }
@@ -258,7 +244,10 @@ public class Purge extends SubCommand {
                             DBFunc.purgeIds(ids);
                             player.sendMessage(
                                     TranslatableCaption.of("purge.purge_success"),
-                                    Template.of("amount", ids.size() + "/" + toDelete.size())
+                                    TagResolver.resolver(
+                                            "amount",
+                                            Tag.inserting(Component.text(ids.size() + "/" + toDelete.size()))
+                                    )
                             );
                         });
                     }

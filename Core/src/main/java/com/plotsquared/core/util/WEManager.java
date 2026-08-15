@@ -58,29 +58,6 @@ public class WEManager {
         return false;
     }
 
-    public static boolean maskContains(Set<CuboidRegion> mask, double dx, double dy, double dz) {
-        int x = Math.toIntExact(Math.round(dx >= 0 ? dx - 0.5 : dx + 0.5));
-        int y = Math.toIntExact(Math.round(dy - 0.5));
-        int z = Math.toIntExact(Math.round(dz >= 0 ? dz - 0.5 : dz + 0.5));
-        for (CuboidRegion region : mask) {
-            if (RegionUtil.contains(region, x, y, z)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean maskContains(Set<CuboidRegion> mask, double dx, double dz) {
-        int x = Math.toIntExact(Math.round(dx >= 0 ? dx - 0.5 : dx + 0.5));
-        int z = Math.toIntExact(Math.round(dz >= 0 ? dz - 0.5 : dz + 0.5));
-        for (CuboidRegion region : mask) {
-            if (RegionUtil.contains(region, x, z)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static HashSet<CuboidRegion> getMask(PlotPlayer<?> player) {
         HashSet<CuboidRegion> regions = new HashSet<>();
         UUID uuid = player.getUUID();
@@ -106,7 +83,7 @@ public class WEManager {
                             .getTrusted().contains(uuid))) && !plot.getFlag(NoWorldeditFlag.class)) {
                 for (CuboidRegion region : plot.getRegions()) {
                     BlockVector3 pos1 = region.getMinimumPoint().withY(area.getMinBuildHeight());
-                    BlockVector3 pos2 = region.getMaximumPoint().withY(area.getMaxBuildHeight());
+                    BlockVector3 pos2 = region.getMaximumPoint().withY(area.getMaxBuildHeight() - 1);
                     CuboidRegion copy = new CuboidRegion(pos1, pos2);
                     regions.add(copy);
                 }
@@ -114,19 +91,6 @@ public class WEManager {
             }
         }
         return regions;
-    }
-
-    public static boolean intersects(CuboidRegion region1, CuboidRegion region2) {
-        return RegionUtil.intersects(region1, region2);
-    }
-
-    public static boolean regionContains(CuboidRegion selection, HashSet<CuboidRegion> mask) {
-        for (CuboidRegion region : mask) {
-            if (intersects(region, selection)) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }

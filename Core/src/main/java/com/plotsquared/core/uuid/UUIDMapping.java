@@ -20,53 +20,14 @@ package com.plotsquared.core.uuid;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.Objects;
 import java.util.UUID;
 
 /**
  * A pair consisting of a UUID and a username
  */
-public class UUIDMapping {
-
-    private final UUID uuid;
-    private final String username;
-
-    public UUIDMapping(final @NonNull UUID uuid, final @NonNull String username) {
-        this.uuid = uuid;
-        this.username = username;
-    }
-
-    public @NonNull String getUsername() {
-        return this.username;
-    }
-
-    public @NonNull UUID getUuid() {
-        return this.uuid;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final UUIDMapping that = (UUIDMapping) o;
-        return uuid.equals(that.uuid) && username.equals(that.username);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(uuid, username);
-    }
-
-    /**
-     * @deprecated This method is not meant to be invoked or overridden, with no replacement.
-     */
-    @Deprecated(forRemoval = true, since = "6.6.0")
-    protected boolean canEqual(final Object other) {
-        return other instanceof UUIDMapping;
-    }
+public record UUIDMapping(
+        @NonNull UUID uuid,
+        @NonNull String username
+) {
 
 }

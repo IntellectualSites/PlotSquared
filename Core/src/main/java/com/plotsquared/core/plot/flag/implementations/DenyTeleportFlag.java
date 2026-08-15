@@ -23,7 +23,9 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -55,24 +57,15 @@ public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, Den
         }
         final boolean result;
         switch (value) {
-            case TRUSTED:
-                result = !plot.getTrusted().contains(player.getUUID());
-                break;
-            case MEMBERS:
-                result = !plot.getMembers().contains(player.getUUID());
-                break;
-            case NONMEMBERS:
-                result = plot.isAdded(player.getUUID());
-                break;
-            case NONTRUSTED:
-                result =
-                        plot.getTrusted().contains(player.getUUID()) || plot.isOwner(player.getUUID());
-                break;
-            case NONOWNERS:
-                result = plot.isOwner(player.getUUID());
-                break;
-            default:
+            case TRUSTED -> result = !plot.getTrusted().contains(player.getUUID());
+            case MEMBERS -> result = !plot.getMembers().contains(player.getUUID());
+            case NONMEMBERS -> result = plot.isAdded(player.getUUID());
+            case NONTRUSTED -> result =
+                    plot.getTrusted().contains(player.getUUID()) || plot.isOwner(player.getUUID());
+            case NONOWNERS -> result = plot.isOwner(player.getUUID());
+            default -> {
                 return true;
+            }
         }
         return result || player.hasPermission("plots.admin.entry.denied");
     }
@@ -82,7 +75,10 @@ public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, Den
         final DeniedGroup group = DeniedGroup.fromString(input);
         if (group == null) {
             throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_enum"),
-                    Template.of("list", "members, nonmembers, trusted, nontrusted, nonowners")
+                    TagResolver.resolver(
+                            "list",
+                            Tag.inserting(Component.text("members, nonmembers, trusted, nontrusted, nonowners"))
+                    )
             );
         }
         return flagOf(group);

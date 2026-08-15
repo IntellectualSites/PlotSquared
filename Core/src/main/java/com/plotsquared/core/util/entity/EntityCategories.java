@@ -41,6 +41,7 @@ public class EntityCategories {
     public static final EntityCategory PROJECTILE = register("projectile");
     public static final EntityCategory OTHER = register("other");
     public static final EntityCategory PLAYER = register("player");
+    public static final EntityCategory INTERACTION = register("interaction");
 
     public static EntityCategory register(final String id) {
         final EntityCategory entityCategory = new EntityCategory(PlotSquared.platform().worldUtil(), id);

@@ -36,9 +36,10 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Set;
 
 public class FaweRegionManager extends BukkitRegionManager {
@@ -46,10 +47,7 @@ public class FaweRegionManager extends BukkitRegionManager {
     private final FaweDelegateRegionManager delegate = new FaweDelegateRegionManager();
 
     @Inject
-    public FaweRegionManager(
-            @NonNull WorldUtil worldUtil, @NonNull GlobalBlockQueue blockQueue, @NonNull
-            ProgressSubscriberFactory subscriberFactory
-    ) {
+    public FaweRegionManager(WorldUtil worldUtil, GlobalBlockQueue blockQueue, ProgressSubscriberFactory subscriberFactory) {
         super(worldUtil, blockQueue, subscriberFactory);
     }
 
@@ -63,7 +61,10 @@ public class FaweRegionManager extends BukkitRegionManager {
             @Nullable PlotPlayer<?> actor,
             @Nullable QueueCoordinator queue
     ) {
-        return delegate.setCuboids(area, regions, blocks, minY, maxY, queue.getCompleteTask());
+        return delegate.setCuboids(
+                area, regions, blocks, minY, maxY,
+                Objects.requireNonNullElseGet(queue, area::getQueue).getCompleteTask()
+        );
     }
 
     @Override
@@ -76,9 +77,9 @@ public class FaweRegionManager extends BukkitRegionManager {
 
     @Override
     public boolean handleClear(
-            @NotNull Plot plot,
+            @NonNull Plot plot,
             @Nullable Runnable whenDone,
-            @NotNull PlotManager manager,
+            @NonNull PlotManager manager,
             final @Nullable PlotPlayer<?> player
     ) {
         if (!Settings.FAWE_Components.CLEAR || !(manager instanceof HybridPlotManager)) {
@@ -99,11 +100,6 @@ public class FaweRegionManager extends BukkitRegionManager {
     }
 
     @Override
-    public void setBiome(CuboidRegion region, int extendBiome, BiomeType biome, String world, Runnable whenDone) {
-        delegate.setBiome(region, extendBiome, biome, world, whenDone);
-    }
-
-    @Override
     public void setBiome(CuboidRegion region, int extendBiome, BiomeType biome, PlotArea area, Runnable whenDone) {
         delegate.setBiome(region, extendBiome, biome, area.getWorldName(), whenDone);
     }
@@ -120,7 +116,7 @@ public class FaweRegionManager extends BukkitRegionManager {
     }
 
     @Override
-    public boolean regenerateRegion(final Location pos1, final Location pos2, boolean ignore, final Runnable whenDone) {
+    public boolean regenerateRegion(final @NotNull Location pos1, final @NotNull Location pos2, boolean ignore, final Runnable whenDone) {
         return delegate.regenerateRegion(pos1, pos2, ignore, whenDone);
     }
 

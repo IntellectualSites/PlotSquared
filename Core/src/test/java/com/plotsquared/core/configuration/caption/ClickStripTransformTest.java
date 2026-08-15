@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.EnumSet;
+import java.util.Set;
 
 
 class ClickStripTransformTest {
@@ -36,13 +36,8 @@ class ClickStripTransformTest {
     @DisplayName("Remove click event of specific action correctly")
     void removeClickEvent() {
         var commonAction = ClickEvent.Action.OPEN_FILE;
-        var transform = new ClickStripTransform(EnumSet.of(commonAction));
-        var component = Component.text("Hello")
-                .clickEvent(ClickEvent.clickEvent(
-                                commonAction,
-                                "World"
-                        )
-                );
+        var transform = new ClickStripTransform(Set.of(commonAction));
+        var component = Component.text("Hello").clickEvent(ClickEvent.openFile("World"));
         var transformedComponent = transform.transform(component);
         Assertions.assertNull(transformedComponent.clickEvent());
     }
@@ -51,11 +46,8 @@ class ClickStripTransformTest {
     @DisplayName("Don't remove click events of other action types")
     void ignoreClickEvent() {
         var actionToRemove = ClickEvent.Action.SUGGEST_COMMAND;
-        var transform = new ClickStripTransform(EnumSet.of(actionToRemove));
-        var originalClickEvent = ClickEvent.clickEvent(
-                ClickEvent.Action.CHANGE_PAGE,
-                "World"
-        );
+        var transform = new ClickStripTransform(Set.of(actionToRemove));
+        var originalClickEvent = ClickEvent.changePage(1337);
         var component = Component.text("Hello")
                 .clickEvent(originalClickEvent);
         var transformedComponent = transform.transform(component);
@@ -66,7 +58,7 @@ class ClickStripTransformTest {
     @DisplayName("Remove nested click events correctly")
     void removeNestedClickEvent() {
         // nested transform is required to apply on children
-        var transform = new NestedComponentTransform(new ClickStripTransform(EnumSet.allOf(ClickEvent.Action.class)));
+        var transform = new NestedComponentTransform(new ClickStripTransform(new java.util.HashSet<>(ClickEvent.Action.NAMES.values())));
         var inner = Component
                 // some arbitrary values that should remain
                 .text("World")
@@ -76,12 +68,12 @@ class ClickStripTransformTest {
                 .insertion("DEF");
         var component = Component.text("Hello ")
                 .append(
-                        inner.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, "https://example.org"))
+                        inner.clickEvent(ClickEvent.openUrl("https://example.org"))
                 );
         var transformedComponent = transform.transform(component);
         Assertions.assertFalse(transformedComponent.children().isEmpty()); // child still exists
-        Assertions.assertEquals(inner, transformedComponent.children().get(0)); // only the click event has changed
-        Assertions.assertNull(transformedComponent.children().get(0).clickEvent());
+        Assertions.assertEquals(inner, transformedComponent.children().getFirst()); // only the click event has changed
+        Assertions.assertNull(transformedComponent.children().getFirst().clickEvent());
     }
 
 }

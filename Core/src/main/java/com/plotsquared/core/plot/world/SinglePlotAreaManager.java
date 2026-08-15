@@ -172,8 +172,8 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
     }
 
     @Override
-    public void addWorld(final @NonNull String worldName) {
-        super.addWorld(worldName);
+    public boolean addWorld(final @NonNull String worldName) {
+        return super.addWorld(worldName);
     }
 
     @Override

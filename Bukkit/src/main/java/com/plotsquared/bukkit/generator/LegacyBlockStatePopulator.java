@@ -26,14 +26,13 @@ import com.plotsquared.core.location.UncheckedWorldLocation;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.queue.QueueCoordinator;
-import com.plotsquared.core.queue.ScopedQueueCoordinator;
+import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.util.SideEffectSet;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
@@ -51,7 +50,7 @@ final class LegacyBlockStatePopulator extends BlockPopulator {
     }
 
     @Override
-    public void populate(@NotNull final World world, @NotNull final Random random, @NotNull final Chunk source) {
+    public void populate(@NonNull final World world, @NonNull final Random random, @NonNull final Chunk source) {
         int chunkMinX = source.getX() << 4;
         int chunkMinZ = source.getZ() << 4;
         PlotArea area = Location.at(world.getName(), chunkMinX, 0, chunkMinZ).getPlotArea();
@@ -66,7 +65,7 @@ final class LegacyBlockStatePopulator extends BlockPopulator {
         queue.setChunkObject(source);
         Location min = UncheckedWorldLocation.at(world.getName(), chunkMinX, world.getMinHeight(), chunkMinZ);
         Location max = UncheckedWorldLocation.at(world.getName(), chunkMinX + 15, world.getMaxHeight(), chunkMinZ + 15);
-        ScopedQueueCoordinator offsetChunkQueue = new ScopedQueueCoordinator(queue, min, max);
+        ZeroedDelegateScopedQueueCoordinator offsetChunkQueue = new ZeroedDelegateScopedQueueCoordinator(queue, min, max);
         this.plotGenerator.populateChunk(offsetChunkQueue, area);
         queue.enqueue();
     }

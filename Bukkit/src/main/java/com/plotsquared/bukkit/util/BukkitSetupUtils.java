@@ -67,6 +67,7 @@ public class BukkitSetupUtils extends SetupUtils {
         this.worldFile = worldFile;
     }
 
+    @SuppressWarnings("deprecation") // Paper deprecation
     @Override
     public void updateGenerators(final boolean force) {
         if (loaded && !SetupUtils.generators.isEmpty() && !force) {
@@ -124,7 +125,7 @@ public class BukkitSetupUtils extends SetupUtils {
     public String setupWorld(PlotAreaBuilder builder) {
         this.updateGenerators(false);
         ConfigurationNode[] steps = builder.settingsNodesWrapper() == null ?
-                new ConfigurationNode[0] : builder.settingsNodesWrapper().getSettingsNodes();
+                new ConfigurationNode[0] : builder.settingsNodesWrapper().settingsNodes();
         String world = builder.worldName();
         PlotAreaType type = builder.plotAreaType();
         String worldPath = "worlds." + builder.worldName();

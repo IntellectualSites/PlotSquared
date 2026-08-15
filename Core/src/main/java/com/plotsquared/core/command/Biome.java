@@ -18,6 +18,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -25,7 +26,9 @@ import com.plotsquared.core.util.StringMan;
 import com.sk89q.worldedit.command.util.SuggestionHelper;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import java.util.Collection;
 import java.util.Locale;
@@ -47,16 +50,13 @@ public class Biome extends SetCommand {
         } catch (final Exception ignore) {
         }
         if (biome == null) {
-            String biomes = StringMan.join(
-                    BiomeType.REGISTRY.values(),
-                    MINI_MESSAGE.serialize(MINI_MESSAGE.parse(TranslatableCaption
-                            .of("blocklist.block_list_separator")
-                            .getComponent(player)))
-            );
+            String separator = TranslatableCaption.of("blocklist.block_list_separator").getComponent(player);
             player.sendMessage(TranslatableCaption.of("biome.need_biome"));
             player.sendMessage(
-                    TranslatableCaption.of("commandconfig.subcommand_set_options_header"),
-                    Template.of("values", biomes)
+                    StaticCaption.of(
+                            TranslatableCaption.of("commandconfig.subcommand_set_options_header_only").getComponent(player)
+                                    + StringMan.join(BiomeType.REGISTRY.values(), separator)
+                    )
             );
             return false;
         }
@@ -73,7 +73,7 @@ public class Biome extends SetCommand {
             plot.removeRunning();
             player.sendMessage(
                     TranslatableCaption.of("biome.biome_set_to"),
-                    Template.of("value", value.toLowerCase())
+                    TagResolver.resolver("value", Tag.inserting(Component.text(value.toLowerCase())))
             );
         });
         return true;

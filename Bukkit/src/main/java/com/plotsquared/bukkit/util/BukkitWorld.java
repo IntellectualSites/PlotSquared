@@ -20,15 +20,22 @@ package com.plotsquared.bukkit.util;
 
 import com.google.common.collect.Maps;
 import com.plotsquared.core.location.World;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
+import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
+import java.nio.file.Path;
 import java.util.Map;
-import java.util.Objects;
 
 public class BukkitWorld implements World<org.bukkit.World> {
 
-    private static final Map<String, BukkitWorld> worldMap = Maps.newHashMap();
+    // Upon world unload we should probably have the P2 BukkitWorld be GCed relatively eagerly, thus freeing the bukkit world.
+    //  We also want to avoid circumstances where a bukkit world has been GCed, but a P2 BukkitWorld has not
+    private static final Map<String, WeakReference<BukkitWorld>> worldMap = Maps.newHashMap();
     private static final boolean HAS_MIN_Y;
 
     static {
@@ -42,10 +49,12 @@ public class BukkitWorld implements World<org.bukkit.World> {
         HAS_MIN_Y = temp;
     }
 
-    private final org.bukkit.World world;
+    // We want to allow GC to remove bukkit worlds, but not too eagerly
+    private final SoftReference<org.bukkit.World> world;
+    private Key key = null;
 
     private BukkitWorld(final org.bukkit.World world) {
-        this.world = world;
+        this.world = new SoftReference<>(world);
     }
 
     /**
@@ -69,12 +78,13 @@ public class BukkitWorld implements World<org.bukkit.World> {
      * @return World instance
      */
     public static @NonNull BukkitWorld of(final org.bukkit.World world) {
-        BukkitWorld bukkitWorld = worldMap.get(world.getName());
-        if (bukkitWorld != null && bukkitWorld.getPlatformWorld().equals(world)) {
+        WeakReference<BukkitWorld> bukkitWorldRef = worldMap.get(world.getName());
+        BukkitWorld bukkitWorld;
+        if (bukkitWorldRef != null && (bukkitWorld = bukkitWorldRef.get()) != null && world.equals(bukkitWorld.world.get())) {
             return bukkitWorld;
         }
         bukkitWorld = new BukkitWorld(world);
-        worldMap.put(world.getName(), bukkitWorld);
+        worldMap.put(world.getName(), new WeakReference<>(bukkitWorld));
         return bukkitWorld;
     }
 
@@ -97,23 +107,42 @@ public class BukkitWorld implements World<org.bukkit.World> {
     }
 
     @Override
-    public org.bukkit.World getPlatformWorld() {
-        return this.world;
+    public org.bukkit.@NonNull World getPlatformWorld() {
+        org.bukkit.World world = this.world.get();
+        if (world == null) {
+            throw new IllegalStateException("Bukkit platform world was unloaded from memory");
+        }
+        return world;
     }
 
     @Override
     public @NonNull String getName() {
-        return this.world.getName();
+        return this.getPlatformWorld().getName();
     }
 
     @Override
     public int getMinHeight() {
-        return getMinWorldHeight(world);
+        return getMinWorldHeight(getPlatformWorld());
     }
 
     @Override
     public int getMaxHeight() {
-        return getMaxWorldHeight(world) - 1;
+        return getMaxWorldHeight(getPlatformWorld()) - 1;
+    }
+
+    @Override
+    public @NonNull Path getWorldFolder() {
+        return getPlatformWorld().getWorldFolder().toPath();
+    }
+
+    @Override
+    @SuppressWarnings("PatternValidation") // kyori pattern validation...
+    public @NotNull Key key() {
+        if (this.key == null) {
+            NamespacedKey bukkitKey = getPlatformWorld().getKey();
+            this.key = Key.key(bukkitKey.getNamespace(), bukkitKey.getKey());
+        }
+        return this.key;
     }
 
     @Override
@@ -131,14 +160,6 @@ public class BukkitWorld implements World<org.bukkit.World> {
     @Override
     public int hashCode() {
         return world.hashCode();
-    }
-
-    /**
-     * @deprecated This method is not meant to be invoked or overridden, with no replacement.
-     */
-    @Deprecated(forRemoval = true, since = "6.6.0")
-    protected boolean canEqual(final Object other) {
-        return other instanceof BukkitWorld;
     }
 
     public String toString() {

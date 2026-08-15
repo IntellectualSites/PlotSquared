@@ -21,15 +21,17 @@ package com.plotsquared.core.command;
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
-import com.plotsquared.core.location.Location;
+import com.plotsquared.core.events.PlayerPlotAddRemoveEvent;
+import com.plotsquared.core.events.Result;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
@@ -55,8 +57,7 @@ public class Remove extends SubCommand {
 
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
-        Location location = player.getLocation();
-        Plot plot = location.getPlotAbs();
+        Plot plot = player.getCurrentPlot();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
@@ -65,8 +66,7 @@ public class Remove extends SubCommand {
             player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return false;
         }
-        if (!plot.isOwner(player.getUUID()) && !Permissions
-                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_REMOVE)) {
+        if (!plot.isOwner(player.getUUID()) && !player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_REMOVE)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return true;
         }
@@ -79,49 +79,66 @@ public class Remove extends SubCommand {
             } else if (throwable != null) {
                 player.sendMessage(
                         TranslatableCaption.of("errors.invalid_player"),
-                        Template.of("value", args[0])
+                        TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))
                 );
                 return;
             } else if (!uuids.isEmpty()) {
                 for (UUID uuid : uuids) {
+                    if (this.eventDispatcher
+                            .callPlayerRemove(player, plot, uuid, PlayerPlotAddRemoveEvent.Reason.COMMAND)
+                            .getEventResult() == Result.DENY) {
+                        player.sendMessage(
+                                TranslatableCaption.of("events.event_denied"),
+                                TagResolver.resolver("value", Tag.inserting(Component.text("Remove")))
+                        );
+                        continue;
+                    }
                     if (plot.getTrusted().contains(uuid)) {
                         if (plot.removeTrusted(uuid)) {
                             this.eventDispatcher.callTrusted(player, plot, uuid, false);
+                            this.eventDispatcher.callPostTrusted(player, plot, uuid, false, PlayerPlotAddRemoveEvent.Reason.COMMAND);
                             count++;
                         }
                     } else if (plot.getMembers().contains(uuid)) {
                         if (plot.removeMember(uuid)) {
                             this.eventDispatcher.callMember(player, plot, uuid, false);
+                            this.eventDispatcher.callPostAdded(player, plot, uuid, false, PlayerPlotAddRemoveEvent.Reason.COMMAND);
                             count++;
                         }
                     } else if (plot.getDenied().contains(uuid)) {
                         if (plot.removeDenied(uuid)) {
                             this.eventDispatcher.callDenied(player, plot, uuid, false);
+                            this.eventDispatcher.callPostDenied(player, plot, uuid, true, PlayerPlotAddRemoveEvent.Reason.COMMAND);
                             count++;
                         }
                     } else if (uuid == DBFunc.EVERYONE) {
+                        count += plot.getTrusted().size();
                         if (plot.removeTrusted(uuid)) {
                             this.eventDispatcher.callTrusted(player, plot, uuid, false);
-                            count++;
-                        } else if (plot.removeMember(uuid)) {
+                            this.eventDispatcher.callPostTrusted(player, plot, uuid, false, PlayerPlotAddRemoveEvent.Reason.COMMAND);
+                        }
+                        count += plot.getMembers().size();
+                        if (plot.removeMember(uuid)) {
                             this.eventDispatcher.callMember(player, plot, uuid, false);
-                            count++;
-                        } else if (plot.removeDenied(uuid)) {
+                            this.eventDispatcher.callPostAdded(player, plot, uuid, false, PlayerPlotAddRemoveEvent.Reason.COMMAND);
+                        }
+                        count += plot.getDenied().size();
+                        if (plot.removeDenied(uuid)) {
                             this.eventDispatcher.callDenied(player, plot, uuid, false);
-                            count++;
+                            this.eventDispatcher.callPostDenied(player, plot, uuid, true, PlayerPlotAddRemoveEvent.Reason.COMMAND);
                         }
                     }
                 }
             }
             if (count == 0) {
                 player.sendMessage(
-                        TranslatableCaption.of("errors.invalid_player"),
-                        Template.of("value", args[0])
+                        TranslatableCaption.of("member.player_not_removed"),
+                        TagResolver.resolver("player", Tag.inserting(Component.text(args[0])))
                 );
             } else {
                 player.sendMessage(
                         TranslatableCaption.of("member.removed_players"),
-                        Template.of("amount", count + "")
+                        TagResolver.resolver("amount", Tag.inserting(Component.text(count)))
                 );
             }
         });
@@ -130,8 +147,7 @@ public class Remove extends SubCommand {
 
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
-        Location location = player.getLocation();
-        Plot plot = location.getPlotAbs();
+        Plot plot = player.getCurrentPlot();
         if (plot == null) {
             return Collections.emptyList();
         }

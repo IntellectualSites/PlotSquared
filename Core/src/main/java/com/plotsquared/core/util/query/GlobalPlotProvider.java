@@ -23,9 +23,9 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 class GlobalPlotProvider implements PlotProvider {
 
@@ -37,7 +37,7 @@ class GlobalPlotProvider implements PlotProvider {
 
     @Override
     public Collection<Plot> getPlots() {
-        final Set<Plot> plots = new HashSet<>();
+        final List<Plot> plots = new ArrayList<>();
         for (final PlotArea plotArea : this.plotAreaManager.getAllPlotAreas()) {
             plots.addAll(plotArea.getPlots());
         }

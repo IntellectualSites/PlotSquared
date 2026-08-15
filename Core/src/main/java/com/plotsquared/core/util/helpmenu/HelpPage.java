@@ -22,50 +22,46 @@ import com.plotsquared.core.command.CommandCategory;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.ComponentHelper;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class HelpPage {
 
-    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     private final List<HelpObject> helpObjects;
-    private final Template catTemplate;
-    private final Template curTemplate;
-    private final Template maxTemplate;
+    private final TagResolver pageHeaderResolver;
 
     public HelpPage(CommandCategory category, int currentPage, int maxPages) {
         this.helpObjects = new ArrayList<>();
-        this.catTemplate = Template.of("category", category == null ? "ALL" : category.name());
-        this.curTemplate = Template.of("current", String.valueOf(currentPage + 1));
-        this.maxTemplate = Template.of("max", String.valueOf(maxPages + 1));
+        this.pageHeaderResolver = TagResolver.builder()
+                .tag("category", Tag.inserting(Component.text(category == null ? "ALL" : category.name())))
+                .tag("current", Tag.inserting(Component.text(currentPage + 1)))
+                .tag("max", Tag.inserting(Component.text(maxPages + 1)))
+                .build();
     }
 
     public void render(PlotPlayer<?> player) {
         if (this.helpObjects.size() < 1) {
             player.sendMessage(TranslatableCaption.of("help.no_permission"));
         } else {
-            Template header = Template.of("header", TranslatableCaption.of("help.help_header").getComponent(player));
-            Template page_header = Template.of(
-                    "page_header",
-                    MINI_MESSAGE.parse(
+            TagResolver contentResolver = TagResolver.builder()
+                    .tag("header", Tag.inserting(TranslatableCaption.of("help.help_header").toComponent(player)))
+                    .tag("page_header", Tag.inserting(MINI_MESSAGE.deserialize(
                             TranslatableCaption.of("help.help_page_header").getComponent(player),
-                            catTemplate,
-                            curTemplate,
-                            maxTemplate
-                    )
-            );
-            Template help_objects = Template.of("help_objects", StringMan.join(this.helpObjects, "\n"));
-            Template footer = Template.of("footer", TranslatableCaption.of("help.help_footer").getComponent(player));
+                            pageHeaderResolver
+                    )))
+                    .tag("help_objects", Tag.inserting(ComponentHelper.join(this.helpObjects, Component.text("\n"))))
+                    .tag("footer", Tag.inserting(TranslatableCaption.of("help.help_footer").toComponent(player)))
+                    .build();
             player.sendMessage(
                     StaticCaption.of("<header>\n<page_header>\n<help_objects>\n<footer>"),
-                    header,
-                    page_header,
-                    help_objects,
-                    footer
+                    contentResolver
             );
         }
     }

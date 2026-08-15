@@ -36,17 +36,23 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.PlotSettings;
 import com.plotsquared.core.plot.flag.FlagContainer;
+import com.plotsquared.core.queue.DelegateQueueCoordinator;
 import com.plotsquared.core.queue.GlobalBlockQueue;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.EventDispatcher;
+import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 
 public class SinglePlotArea extends GridPlotWorld {
 
@@ -76,6 +82,7 @@ public class SinglePlotArea extends GridPlotWorld {
      * Returns true if the given string matches the naming system used to identify single plot worlds
      * e.g. -1_5 represents plot id *;-1;5. "*" being the plot area name given to single plot world
      * {@link com.plotsquared.core.plot.PlotArea}.
+     *
      * @since 6.1.4
      */
     public static boolean isSinglePlotWorld(String worldName) {
@@ -111,6 +118,22 @@ public class SinglePlotArea extends GridPlotWorld {
         return new SinglePlotManager(this);
     }
 
+    /**
+     * Single Plot Areas must provide a different QueueCoordinator than other plot areas, otherwise plot deletion fails.
+     * When deleting plots, the PlotModificationManager retrieves a QueueCoordinator from the associated PlotArea, which
+     * accesses the plots world. For SinglePlotAreas this world is null at this point, as the whole world is deleted (and the
+     * areas world name being `*`).
+     * <br>
+     * The queue doesn't know <i>when</i> it's used, so this always provides a QueueCoordinator that doesn't do anything and
+     * doesn't contain any tasks. This isn't really bad, as SinglePlotAreas don't utilize the Queue as of now.
+     *
+     * @return a QueueCoordinator for SinglePlotAreas
+     */
+    @Override
+    public QueueCoordinator getQueue() {
+        return new DelegateQueueCoordinator(null);
+    }
+
     @Override
     public void loadConfiguration(ConfigurationSection config) {
         VOID = config.getBoolean("void", false);
@@ -134,45 +157,44 @@ public class SinglePlotArea extends GridPlotWorld {
                 .settingsNodesWrapper(new SettingsNodesWrapper(new ConfigurationNode[0], null))
                 .worldName(worldName);
 
-        File container = PlotSquared.platform().worldContainer();
-        File destination = new File(container, worldName);
+        Path dimensionRoot = PlotSquared.platform().worldContainer().toPath();
+        if (WorldUtil.isModernServerLevelStructure()) {
+            dimensionRoot = dimensionRoot.resolve("dimensions").resolve("minecraft");
+        }
+        Path destination = dimensionRoot.resolve(worldName);
 
         {// convert old
-            File oldFile = new File(container, id.toCommaSeparatedString());
-            if (oldFile.exists()) {
-                oldFile.renameTo(destination);
-            } else {
-                oldFile = new File(container, id.toSeparatedString("."));
-                if (oldFile.exists()) {
-                    oldFile.renameTo(destination);
+            Path old = dimensionRoot.resolve(id.toCommaSeparatedString());
+            if (!Files.exists(old)) {
+                old = dimensionRoot.resolve(id.toSeparatedString("."));
+            }
+            if (Files.exists(old)) {
+                try {
+                    Files.move(old, destination);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
             }
         }
         // Duplicate 0;0
         if (builder.plotAreaType() != PlotAreaType.NORMAL) {
-            if (!destination.exists()) {
-                File src = new File(container, "0_0");
-                if (src.exists()) {
-                    if (!destination.exists()) {
-                        destination.mkdirs();
+            if (!Files.exists(destination)) {
+                Path src = dimensionRoot.resolve("0_0");
+                if (Files.exists(src)) {
+                    try {
+                        Files.createDirectories(destination);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
-                    File levelDat = new File(src, "level.dat");
-                    if (levelDat.exists()) {
+                    Path levelDat = src.resolve("level.dat");
+                    if (Files.exists(levelDat)) {
                         try {
-                            Files.copy(
-                                    levelDat.toPath(),
-                                    new File(destination, levelDat.getName()).toPath()
-                            );
-                            File data = new File(src, "data");
-                            if (data.exists()) {
-                                File dataDest = new File(destination, "data");
-                                dataDest.mkdirs();
-                                for (File file : data.listFiles()) {
-                                    Files.copy(
-                                            file.toPath(),
-                                            new File(dataDest, file.getName()).toPath()
-                                    );
-                                }
+                            Files.copy(levelDat, destination.resolve(levelDat.getFileName()));
+                            Path data = src.resolve("data");
+                            if (Files.exists(data)) {
+                                Path dataDest = destination.resolve("data");
+                                Files.createDirectories(dataDest);
+                                Files.walkFileTree(data, new RecursiveDirectoryCopyVisitor(dataDest));
                             }
                         } catch (IOException exception) {
                             exception.printStackTrace();
@@ -206,6 +228,37 @@ public class SinglePlotArea extends GridPlotWorld {
         //        return AsyncWorld.create(wc);
     }
 
+    private static final class RecursiveDirectoryCopyVisitor extends SimpleFileVisitor<Path> {
+
+        private final Path target;
+        private Path base;
+
+        public RecursiveDirectoryCopyVisitor(Path target) {
+            this.target = target;
+        }
+
+        @Override
+        public @NonNull FileVisitResult preVisitDirectory(
+                @NonNull final Path dir,
+                @NonNull final BasicFileAttributes attrs
+        ) throws IOException {
+            if (this.base == null) {
+                // first iteration, root
+                this.base = dir;
+            } else {
+                Files.createDirectories(this.target.resolve(this.base.relativize(dir)));
+            }
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public @NonNull FileVisitResult visitFile(@NonNull final Path file, @NonNull final BasicFileAttributes attrs) throws
+                IOException {
+            Files.copy(file, this.target.resolve(this.base.relativize(file)));
+            return FileVisitResult.CONTINUE;
+        }
+
+    }
 
     @Override
     public ConfigurationNode[] getSettingNodes() {

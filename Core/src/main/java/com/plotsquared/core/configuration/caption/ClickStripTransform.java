@@ -21,17 +21,15 @@ package com.plotsquared.core.configuration.caption;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.EnumSet;
 import java.util.Set;
 
 final class ClickStripTransform implements ComponentTransform {
 
-    private final Set<ClickEvent.@NotNull Action> actionsToStrip;
+    private final Set<ClickEvent.Action<?>> actionsToStrip;
 
-    public ClickStripTransform(final Set<ClickEvent.@NotNull Action> actionsToStrip) {
-        this.actionsToStrip = EnumSet.copyOf(actionsToStrip);
+    public ClickStripTransform(final Set<? extends ClickEvent.Action<?>> actionsToStrip) {
+        this.actionsToStrip = Set.copyOf(actionsToStrip);
     }
 
     @Override

@@ -28,11 +28,14 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotHandler;
+import com.plotsquared.core.plot.flag.implementations.FishingFlag;
 import com.plotsquared.core.plot.flag.implementations.ProjectilesFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.util.Permissions;
-import net.kyori.adventure.text.minimessage.Template;
+import com.plotsquared.core.util.PlotFlagUtil;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -44,6 +47,7 @@ import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -97,36 +101,53 @@ public class ProjectileEventListener implements Listener {
             return;
         }
         Location location = BukkitUtil.adapt(entity.getLocation());
-        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
             return;
         }
         PlotPlayer<Player> pp = BukkitUtil.adapt((Player) shooter);
         Plot plot = location.getOwnedPlot();
 
         if (plot == null) {
-            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_ROAD)) {
+            if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, ProjectilesFlag.class, true) && !pp.hasPermission(
+                    Permission.PERMISSION_ADMIN_PROJECTILE_ROAD
+            )) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_ROAD))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_PROJECTILE_ROAD)
+                        )
                 );
                 entity.remove();
                 event.setCancelled(true);
             }
         } else if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
+            if (!pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED))
+                        TagResolver.resolver(
+                                "node",
+                                Tag.inserting(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)
+                        )
                 );
                 entity.remove();
                 event.setCancelled(true);
             }
         } else if (!plot.isAdded(pp.getUUID())) {
+            if (entity instanceof FishHook) {
+                if (plot.getFlag(FishingFlag.class)) {
+                    return;
+                }
+            }
             if (!plot.getFlag(ProjectilesFlag.class)) {
-                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
+                if (!pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
                     pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER))
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)
+                            )
                     );
                     entity.remove();
                     event.setCancelled(true);
@@ -137,14 +158,26 @@ public class ProjectileEventListener implements Listener {
 
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
-        Projectile entity = event.getEntity();
+        if (cancelProjectileHit(event.getEntity())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerEggThrow(PlayerEggThrowEvent event) {
+        if (cancelProjectileHit(event.getEgg())) {
+            event.setHatching(false);
+        }
+    }
+
+    private boolean cancelProjectileHit(Projectile entity) {
         Location location = BukkitUtil.adapt(entity.getLocation());
         if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
-            return;
+            return false;
         }
         PlotArea area = location.getPlotArea();
         if (area == null) {
-            return;
+            return false;
         }
         Plot plot = area.getPlot(location);
         ProjectileSource shooter = entity.getShooter();
@@ -152,51 +185,52 @@ public class ProjectileEventListener implements Listener {
             if (!((Player) shooter).isOnline()) {
                 if (plot != null) {
                     if (plot.isAdded(((Player) shooter).getUniqueId()) || plot.getFlag(ProjectilesFlag.class)) {
-                        return;
+                        return false;
                     }
+                } else if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, ProjectilesFlag.class, true)) {
+                    return false;
                 }
 
                 entity.remove();
-                event.setCancelled(true);
-                return;
+                return true;
             }
 
             PlotPlayer<?> pp = BukkitUtil.adapt((Player) shooter);
             if (plot == null) {
-                if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
+                if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, ProjectilesFlag.class, true) && !pp.hasPermission(
+                        Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED
+                )) {
                     entity.remove();
-                    event.setCancelled(true);
+                    return true;
                 }
-                return;
+                return false;
             }
-            if (plot.isAdded(pp.getUUID()) || Permissions
-                    .hasPermission(pp, Permission.PERMISSION_ADMIN_PROJECTILE_OTHER) || plot.getFlag(ProjectilesFlag.class)) {
-                return;
+            if (plot.isAdded(pp.getUUID()) || pp.hasPermission(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER) || plot.getFlag(
+                    ProjectilesFlag.class) || (entity instanceof FishHook && plot.getFlag(
+                    FishingFlag.class))) {
+                return false;
             }
             entity.remove();
-            event.setCancelled(true);
-            return;
+            return true;
         }
         if (!(shooter instanceof Entity) && shooter != null) {
             if (plot == null) {
                 entity.remove();
-                event.setCancelled(true);
-                return;
+                return true;
             }
             Location sLoc =
                     BukkitUtil.adapt(((BlockProjectileSource) shooter).getBlock().getLocation());
             if (!area.contains(sLoc.getX(), sLoc.getZ())) {
                 entity.remove();
-                event.setCancelled(true);
-                return;
+                return true;
             }
             Plot sPlot = area.getOwnedPlotAbs(sLoc);
             if (sPlot == null || !PlotHandler.sameOwners(plot, sPlot)) {
                 entity.remove();
-                event.setCancelled(true);
-                return;
+                return true;
             }
         }
+        return false;
     }
 
 }

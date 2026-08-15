@@ -84,7 +84,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -197,20 +197,25 @@ public class PlotSquared {
             this.loadCaptionMap();
         } catch (final Exception e) {
             LOGGER.error("Failed to load caption map", e);
+            LOGGER.error("Shutting down server to prevent further issues");
+            this.platform.shutdownServer();
+            throw new RuntimeException("Abort loading PlotSquared");
         }
 
         // Setup the global flag container
         GlobalFlagContainer.setup();
 
         try {
-            new ReflectionUtils(this.platform.serverNativePackage());
+            String ver = this.platform.serverNativePackage();
+            new ReflectionUtils(ver.isEmpty() ? null : ver);
             try {
                 URL logurl = PlotSquared.class.getProtectionDomain().getCodeSource().getLocation();
                 this.jarFile = new File(
-                        new URL(logurl.toURI().toString().split("\\!")[0].replaceAll("jar:file", "file"))
-                                .toURI().getPath());
-            } catch (MalformedURLException | URISyntaxException | SecurityException e) {
-                e.printStackTrace();
+                        URI.create(
+                                logurl.toURI().toString().split("\\!")[0].replaceAll("jar:file", "file"))
+                                .getPath());
+            } catch (URISyntaxException | SecurityException e) {
+                LOGGER.error(e);
                 this.jarFile = new File(this.platform.getDirectory().getParentFile(), "PlotSquared.jar");
                 if (!this.jarFile.exists()) {
                     this.jarFile = new File(
@@ -234,7 +239,7 @@ public class PlotSquared {
             copyFile("skyblock.template", Settings.Paths.TEMPLATES);
             showDebug();
         } catch (Throwable e) {
-            e.printStackTrace();
+            LOGGER.error(e);
         }
     }
 
@@ -267,7 +272,11 @@ public class PlotSquared {
             captionMap = this.captionLoader.loadAll(this.platform.getDirectory().toPath().resolve("lang"));
         } else {
             String fileName = "messages_" + Settings.Enabled_Components.DEFAULT_LOCALE + ".json";
-            captionMap = this.captionLoader.loadSingle(this.platform.getDirectory().toPath().resolve("lang").resolve(fileName));
+            captionMap = this.captionLoader.loadOrCreateSingle(this.platform
+                    .getDirectory()
+                    .toPath()
+                    .resolve("lang")
+                    .resolve(fileName));
         }
         this.captionMaps.put(TranslatableCaption.DEFAULT_NAMESPACE, captionMap);
         LOGGER.info(
@@ -287,11 +296,11 @@ public class PlotSquared {
 
     public void startExpiryTasks() {
         if (Settings.Enabled_Components.PLOT_EXPIRY) {
-            ExpireManager.IMP = new ExpireManager(this.eventDispatcher);
-            ExpireManager.IMP.runAutomatedTask();
+            ExpireManager expireManager = PlotSquared.platform().expireManager();
+            expireManager.runAutomatedTask();
             for (Settings.Auto_Clear settings : Settings.AUTO_CLEAR.getInstances()) {
                 ExpiryTask task = new ExpiryTask(settings, this.getPlotAreaManager());
-                ExpireManager.IMP.addTask(task);
+                expireManager.addTask(task);
             }
         }
     }
@@ -642,7 +651,8 @@ public class PlotSquared {
         } else {
             list = new ArrayList<>(input);
         }
-        list.sort(Comparator.comparingLong(a -> ExpireManager.IMP.getTimestamp(a.getOwnerAbs())));
+        ExpireManager expireManager = PlotSquared.platform().expireManager();
+        list.sort(Comparator.comparingLong(a -> expireManager.getTimestamp(a.getOwnerAbs())));
         return list;
     }
 
@@ -786,6 +796,7 @@ public class PlotSquared {
         if (world.equals("CheckingPlotSquaredGenerator")) {
             return;
         }
+        // Don't check the return result -> breaks runtime loading of single plot areas on creation
         this.getPlotAreaManager().addWorld(world);
         Set<String> worlds;
         if (this.worldConfiguration.contains("worlds")) {
@@ -1005,7 +1016,7 @@ public class PlotSquared {
 
     /**
      * Setup the configuration for a plot world based on world arguments.
-     *
+     * <p>
      *
      * <i>e.g. /mv create &lt;world&gt; normal -g PlotSquared:&lt;args&gt;</i>
      *
@@ -1271,7 +1282,7 @@ public class PlotSquared {
     }
 
     /**
-     * Setup the database connection.
+     * Set up the database connection.
      */
     public void setupDatabase() {
         try {
