@@ -16,28 +16,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.bukkit.util;
+package com.plotsquared.core.events;
 
-import com.google.inject.Singleton;
-import com.plotsquared.core.util.ChunkManager;
-import com.sk89q.worldedit.math.BlockVector2;
-import com.sk89q.worldedit.regions.CuboidRegion;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.UUID;
 
-@Singleton
-public class BukkitChunkManager extends ChunkManager {
+/**
+ * Called when a player is going to be added to a plot
+ *
+ * @since TODO
+ */
+public class PlayerPlotAddEvent extends PlayerPlotAddRemoveCancellableEvent {
 
-    public static boolean isIn(CuboidRegion region, int x, int z) {
-        return x >= region.getMinimumPoint().getX() && x <= region.getMaximumPoint().getX() && z >= region
-                .getMinimumPoint()
-                .getZ() && z <= region
-                .getMaximumPoint().getZ();
-    }
-
-    @Override
-    public CompletableFuture<?> loadChunk(String world, BlockVector2 chunkLoc, boolean force) {
-        return PaperSupport.getChunkAtAsync(BukkitUtil.getWorld(world), chunkLoc.getX(), chunkLoc.getZ(), force);
+    /**
+     * Called when a player will be added to a plot
+     *
+     * @param initiator Player that initiated the event
+     * @param plot      Plot in which the event occurred
+     * @param player    Player that will be added
+     * @param reason    The reason for the add
+     */
+    public PlayerPlotAddEvent(PlotPlayer<?> initiator, Plot plot, UUID player, Reason reason) {
+        super(initiator, plot, player, reason);
     }
 
 }

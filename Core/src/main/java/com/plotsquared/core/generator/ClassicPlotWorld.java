@@ -164,6 +164,9 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
                 : getMinBuildHeight();
     }
 
+    /**
+     * Get the lowest height of plot, road, and wall. Accounts for {@link Settings.Schematics#USE_WALL_IN_ROAD_SCHEM_HEIGHT}
+     */
     int schematicStartHeight() {
         int plotRoadMin = Math.min(PLOT_HEIGHT, ROAD_HEIGHT);
         if (!Settings.Schematics.USE_WALL_IN_ROAD_SCHEM_HEIGHT) {

@@ -38,7 +38,6 @@ dependencies {
 
     // Paper
     compileOnly(libs.paper)
-    implementation(libs.paperlib)
 
     // Plugins
     compileOnly(libs.worldeditBukkit)
@@ -78,7 +77,6 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("net.kyori.option", "com.plotsquared.core.configuration.option")
     relocate("net.kyori.adventure", "com.plotsquared.core.configuration.adventure")
     relocate("net.kyori.examination", "com.plotsquared.core.configuration.examination")
-    relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")
     relocate("org.bstats", "com.plotsquared.metrics")
     relocate("org.enginehub", "com.plotsquared.squirrelid")
     relocate("org.khelekore.prtree", "com.plotsquared.prtree")

@@ -32,11 +32,12 @@ import net.kyori.adventure.text.minimessage.ParsingException;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.plotsquared.core.configuration.caption.ComponentTransform.nested;
-import static com.plotsquared.core.configuration.caption.ComponentTransform.stripClicks;
 
 public class CaptionUtility {
 
@@ -51,10 +52,11 @@ public class CaptionUtility {
     );
 
     private static final ComponentTransform CLICK_STRIP_TRANSFORM = nested(
-            stripClicks(
+            new ClickStripTransform(
                     Settings.Chat.CLICK_EVENT_ACTIONS_TO_REMOVE.stream()
-                            .map(ClickEvent.Action::valueOf)
-                            .toArray(ClickEvent.Action[]::new)
+                            .map(ClickEvent.Action.NAMES::value)
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toUnmodifiableSet())
             )
     );
 

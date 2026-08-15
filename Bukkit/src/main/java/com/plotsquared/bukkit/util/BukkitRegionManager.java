@@ -41,7 +41,6 @@ import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -126,7 +125,7 @@ public class BukkitRegionManager extends RegionManager {
         if (doWhole) {
             for (Entity entity : entities) {
                 org.bukkit.Location location = entity.getLocation();
-                PaperLib.getChunkAtAsync(location).thenAccept(chunk -> {
+                PaperSupport.getChunkAtAsync(location).thenAccept(chunk -> {
                     if (chunks.contains(chunk)) {
                         int X = chunk.getX();
                         int Z = chunk.getZ();

@@ -16,28 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.bukkit.util;
+package com.plotsquared.core.util;
 
-import com.google.inject.Singleton;
-import com.plotsquared.core.util.ChunkManager;
-import com.sk89q.worldedit.math.BlockVector2;
-import com.sk89q.worldedit.regions.CuboidRegion;
+import java.io.FilterOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
-import java.util.concurrent.CompletableFuture;
+/**
+ * A {@link FilterOutputStream} that shields the underlying stream from
+ * being closed. Useful when passing a stream to code that may call
+ * {@link #close()}, but the stream needs to remain open for further writing.
+ */
+public final class CloseShieldOutputStream extends FilterOutputStream {
 
-@Singleton
-public class BukkitChunkManager extends ChunkManager {
-
-    public static boolean isIn(CuboidRegion region, int x, int z) {
-        return x >= region.getMinimumPoint().getX() && x <= region.getMaximumPoint().getX() && z >= region
-                .getMinimumPoint()
-                .getZ() && z <= region
-                .getMaximumPoint().getZ();
+    public CloseShieldOutputStream(final OutputStream out) {
+        super(out);
     }
 
     @Override
-    public CompletableFuture<?> loadChunk(String world, BlockVector2 chunkLoc, boolean force) {
-        return PaperSupport.getChunkAtAsync(BukkitUtil.getWorld(world), chunkLoc.getX(), chunkLoc.getZ(), force);
+    public void close() throws IOException {
+        // NOOP
     }
 
 }

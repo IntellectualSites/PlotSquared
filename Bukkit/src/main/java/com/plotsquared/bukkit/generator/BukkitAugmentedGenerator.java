@@ -50,7 +50,7 @@ public class BukkitAugmentedGenerator extends BlockPopulator {
     @Override
     public void populate(@NonNull World world, @NonNull Random random, @NonNull Chunk source) {
         QueueCoordinator queue = PlotSquared.platform().globalBlockQueue().getNewQueue(BukkitAdapter.adapt(world));
-        // The chunk is already loaded and we do not want to load the chunk in "fully" by using any PaperLib methods.
+        // The chunk is already loaded and we do not want to load the chunk in "fully" by using any Paper methods.
         queue.setForceSync(true);
         queue.setSideEffectSet(SideEffectSet.none());
         queue.setBiomesEnabled(false);
