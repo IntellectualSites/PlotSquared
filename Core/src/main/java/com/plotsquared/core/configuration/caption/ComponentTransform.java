@@ -47,7 +47,8 @@ public interface ComponentTransform {
      * @return a new transform that removes click events from a component.
      * @since 6.0.10
      */
-    static ComponentTransform stripClicks(ClickEvent.Action... actionsToRemove) {
+    @SafeVarargs
+    static ComponentTransform stripClicks(ClickEvent.Action<?>... actionsToRemove) {
         return new ClickStripTransform(Set.of(actionsToRemove));
     }
 

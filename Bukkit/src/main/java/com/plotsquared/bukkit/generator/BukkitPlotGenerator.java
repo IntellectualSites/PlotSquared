@@ -32,6 +32,7 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
+import com.plotsquared.core.util.MinecraftVersion;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -90,14 +91,13 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         this.plotGenerator = generator;
         this.platformGenerator = this;
         this.populators = new ArrayList<>();
-        int minecraftMinorVersion = PlotSquared.platform().serverVersion()[1];
-        if (minecraftMinorVersion >= 17) {
+        if (MinecraftVersion.current().isNewerOrEqualThan(MinecraftVersion.CAVES_AND_CLIFFS)) {
             this.populators.add(new BlockStatePopulator(this.plotGenerator));
         } else {
             this.populators.add(new LegacyBlockStatePopulator(this.plotGenerator));
         }
         this.full = true;
-        this.useNewGenerationMethods = PlotSquared.platform().serverVersion()[1] >= 19;
+        this.useNewGenerationMethods = MinecraftVersion.current().isNewerOrEqualThan(MinecraftVersion.THE_WILD_UPDATE);
         this.biomeProvider = new BukkitPlotBiomeProvider();
     }
 
@@ -112,7 +112,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         this.full = false;
         this.platformGenerator = cg;
         this.plotGenerator = new DelegatePlotGenerator(cg, world);
-        this.useNewGenerationMethods = PlotSquared.platform().serverVersion()[1] >= 19;
+        this.useNewGenerationMethods = MinecraftVersion.current().isNewerOrEqualThan(MinecraftVersion.THE_WILD_UPDATE);
         this.biomeProvider = null;
     }
 
@@ -446,7 +446,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
 
         static {
             Set<Biome> disabledBiomes = new HashSet<>(List.of(Biome.CUSTOM));
-            if (PlotSquared.platform().serverVersion()[1] <= 19) {
+            if (MinecraftVersion.current().isOlderOrEqualThan(MinecraftVersion.THE_WILD_UPDATE)) {
                 final Biome cherryGrove = Registry.BIOME.get(NamespacedKey.minecraft("cherry_grove"));
                 if (cherryGrove != null) {
                     disabledBiomes.add(cherryGrove);

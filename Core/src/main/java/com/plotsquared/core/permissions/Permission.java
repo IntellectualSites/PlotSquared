@@ -145,6 +145,7 @@ public enum Permission implements ComponentLike {
     PERMISSION_FLAG_REMOVE("plots.flag.remove"),
     PERMISSION_FLAG_ADD("plots.flag.add"),
     PERMISSION_FLAG_LIST("plots.flag.list"),
+    PERMISSION_FLAG_LIST_OTHER("plots.flag.list.other"),
     PERMISSION_ADMIN_COMMAND_KICK("plots.admin.command.kick"),
     PERMISSION_GRANT_SINGLE("plots.grant"),
     PERMISSION_GRANT("plots.grant.%s"),

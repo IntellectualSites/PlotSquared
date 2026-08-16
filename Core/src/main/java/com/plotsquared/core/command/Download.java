@@ -73,7 +73,7 @@ public class Download extends SubCommand {
 
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
-        String world = player.getLocation().getWorldName();
+        String world = player.getCurrentPlot().getWorldName();
         if (!this.plotAreaManager.hasPlotArea(world)) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
             return false;

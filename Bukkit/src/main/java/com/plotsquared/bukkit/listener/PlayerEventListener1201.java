@@ -18,6 +18,7 @@
  */
 package com.plotsquared.bukkit.listener;
 
+import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
@@ -53,7 +54,8 @@ public class PlayerEventListener1201 implements Listener {
             }
             return;
         }
-        if (plot.isAdded(event.getPlayer().getUniqueId())) {
+        BukkitPlayer player = BukkitUtil.adapt(event.getPlayer());
+        if (plot.isAdded(player.getUUID())) {
             return; // allow for added players
         }
         if (!plot.getFlag(EditSignFlag.class)

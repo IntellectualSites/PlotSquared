@@ -23,7 +23,6 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.events.TeleportCause;
-import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -61,8 +60,7 @@ public class Delete extends SubCommand {
 
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
-        Location location = player.getLocation();
-        final Plot plot = location.getPlotAbs();
+        final Plot plot = player.getCurrentPlot();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
@@ -92,7 +90,7 @@ public class Delete extends SubCommand {
         final java.util.Set<Plot> plots = plot.getConnectedPlots();
         final int currentPlots = Settings.Limit.GLOBAL ?
                 player.getPlotCount() :
-                player.getPlotCount(location.getWorldName());
+                player.getPlotCount(plot.getWorldName());
         Runnable run = () -> {
             if (plot.getRunning() > 0) {
                 player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));

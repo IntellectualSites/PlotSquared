@@ -30,6 +30,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.BlockUtil;
 import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.MinecraftVersion;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.StringComparison;
 import com.plotsquared.core.util.WorldUtil;
@@ -42,7 +43,6 @@ import com.sk89q.worldedit.world.block.BlockCategories;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import io.papermc.lib.PaperLib;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -56,7 +56,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
-import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Allay;
 import org.bukkit.entity.Ambient;
@@ -192,12 +191,12 @@ public class BukkitUtil extends WorldUtil {
             final int z,
             final @NonNull Consumer<Chunk> chunkConsumer
     ) {
-        PaperLib.getChunkAtAsync(Objects.requireNonNull(getWorld(world)), x >> 4, z >> 4, true)
+        PaperSupport.getChunkAtAsync(Objects.requireNonNull(getWorld(world)), x >> 4, z >> 4, true)
                 .thenAccept(chunk -> ensureMainThread(chunkConsumer, chunk));
     }
 
     private static void ensureLoaded(final @NonNull Location location, final @NonNull Consumer<Chunk> chunkConsumer) {
-        PaperLib.getChunkAtAsync(adapt(location), true).thenAccept(chunk -> ensureMainThread(chunkConsumer, chunk));
+        PaperSupport.getChunkAtAsync(adapt(location)).thenAccept(chunk -> ensureMainThread(chunkConsumer, chunk));
     }
 
     private static <T> void ensureMainThread(final @NonNull Consumer<T> consumer, final @NonNull T value) {
@@ -357,15 +356,14 @@ public class BukkitUtil extends WorldUtil {
                         facing = BlockFace.SOUTH;
                     }
                 }
-                if (PlotSquared.platform().serverVersion()[1] == 13) {
+                if (MinecraftVersion.current().isOlderOrEqualThan(13)) {
                     block.setType(Material.valueOf(area.legacySignMaterial()), false);
                 } else {
                     block.setType(Material.valueOf(area.signMaterial()), false);
                 }
-                if (!(block.getBlockData() instanceof WallSign)) {
+                if (!(block.getBlockData() instanceof WallSign sign)) {
                     throw new RuntimeException("Something went wrong generating a sign");
                 }
-                final Directional sign = (Directional) block.getBlockData();
                 sign.setFacing(facing);
                 block.setBlockData(sign, false);
             }
@@ -438,7 +436,6 @@ public class BukkitUtil extends WorldUtil {
     @Override
     public @NonNull Set<com.sk89q.worldedit.world.entity.EntityType> getTypesInCategory(final @NonNull String category) {
         final Collection<Class<?>> allowedInterfaces = new HashSet<>();
-        final int[] version = PlotSquared.platform().serverVersion();
         switch (category) {
             case "animal" -> {
                 allowedInterfaces.add(IronGolem.class);
@@ -446,7 +443,7 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(Animals.class);
                 allowedInterfaces.add(WaterMob.class);
                 allowedInterfaces.add(Ambient.class);
-                if (version[1] >= 19) {
+                if (MinecraftVersion.current().isOlderOrEqualThan(MinecraftVersion.THE_WILD_UPDATE)) {
                     allowedInterfaces.add(Allay.class);
                 }
             }
@@ -478,7 +475,7 @@ public class BukkitUtil extends WorldUtil {
             }
             case "player" -> allowedInterfaces.add(Player.class);
             case "interaction" -> {
-                if ((version[1] > 19) || (version[1] == 19 && version[2] >= 4)) {
+                if (MinecraftVersion.current().isNewerOrEqualThan(19, 4)) {
                     allowedInterfaces.add(Interaction.class);
                 }
             }
@@ -564,10 +561,11 @@ public class BukkitUtil extends WorldUtil {
     }
 
     @Override
-    public Set<BlockVector2> getChunkChunks(String world) {
+    public Set<BlockVector2> getChunkChunks(com.plotsquared.core.location.World<?> world) {
         Set<BlockVector2> chunks = super.getChunkChunks(world);
+        World bukkitWorld = ((com.plotsquared.bukkit.util.BukkitWorld) world).getPlatformWorld();
         if (Bukkit.isPrimaryThread()) {
-            for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world)).getLoadedChunks()) {
+            for (Chunk chunk : bukkitWorld.getLoadedChunks()) {
                 BlockVector2 loc = BlockVector2.at(chunk.getX() >> 5, chunk.getZ() >> 5);
                 chunks.add(loc);
             }
@@ -576,7 +574,7 @@ public class BukkitUtil extends WorldUtil {
             try {
                 semaphore.acquire();
                 Bukkit.getScheduler().runTask(BukkitPlatform.getPlugin(BukkitPlatform.class), () -> {
-                    for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world)).getLoadedChunks()) {
+                    for (Chunk chunk : bukkitWorld.getLoadedChunks()) {
                         BlockVector2 loc = BlockVector2.at(chunk.getX() >> 5, chunk.getZ() >> 5);
                         chunks.add(loc);
                     }

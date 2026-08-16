@@ -27,7 +27,6 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
-import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -174,13 +173,12 @@ public final class FlagCommand extends Command {
     }
 
     /**
-     * Checks if the player is allowed to modify the flags at their current location
+     * Checks if the player is allowed to interact with flags at their current location
      *
      * @return {@code true} if the player is allowed to modify the flags at their current location
      */
-    private static boolean checkRequirements(final @NonNull PlotPlayer<?> player) {
-        final Location location = player.getLocation();
-        final Plot plot = location.getPlotAbs();
+    private static boolean checkRequirements(final @NonNull PlotPlayer<?> player, final @NonNull Permission permissionIfNotOwner) {
+        final Plot plot = player.getCurrentPlot();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
@@ -189,10 +187,10 @@ public final class FlagCommand extends Command {
             player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
             return false;
         }
-        if (!plot.isOwner(player.getUUID()) && !player.hasPermission(Permission.PERMISSION_SET_FLAG_OTHER)) {
+        if (!plot.isOwner(player.getUUID()) && !player.hasPermission(permissionIfNotOwner)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    TagResolver.resolver("node", Tag.inserting(Permission.PERMISSION_SET_FLAG_OTHER))
+                    TagResolver.resolver("node", Tag.inserting(permissionIfNotOwner))
             );
             return false;
         }
@@ -330,7 +328,7 @@ public final class FlagCommand extends Command {
             final RunnableVal3<Command, Runnable, Runnable> confirm,
             final RunnableVal2<Command, CommandResult> whenDone
     ) {
-        if (!checkRequirements(player)) {
+        if (!checkRequirements(player, Permission.PERMISSION_SET_FLAG_OTHER)) {
             return;
         }
         if (args.length < 2) {
@@ -344,7 +342,7 @@ public final class FlagCommand extends Command {
         if (plotFlag == null) {
             return;
         }
-        Plot plot = player.getLocation().getPlotAbs();
+        Plot plot = player.getCurrentPlot();
         PlotFlagAddEvent event = eventDispatcher.callFlagAdd(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
@@ -395,7 +393,7 @@ public final class FlagCommand extends Command {
             final RunnableVal3<Command, Runnable, Runnable> confirm,
             final RunnableVal2<Command, CommandResult> whenDone
     ) {
-        if (!checkRequirements(player)) {
+        if (!checkRequirements(player, Permission.PERMISSION_SET_FLAG_OTHER)) {
             return;
         }
         if (args.length < 2) {
@@ -409,7 +407,7 @@ public final class FlagCommand extends Command {
         if (plotFlag == null) {
             return;
         }
-        Plot plot = player.getLocation().getPlotAbs();
+        Plot plot = player.getCurrentPlot();
         PlotFlagAddEvent event = eventDispatcher.callFlagAdd(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
@@ -419,7 +417,7 @@ public final class FlagCommand extends Command {
             return;
         }
         boolean force = event.getEventResult() == Result.FORCE;
-        final PlotFlag localFlag = player.getLocation().getPlotAbs().getFlagContainer()
+        final PlotFlag localFlag = player.getCurrentPlot().getFlagContainer()
                 .getFlag(event.getFlag().getClass());
         if (!force) {
             for (String entry : args[1].split(",")) {
@@ -444,7 +442,7 @@ public final class FlagCommand extends Command {
             return;
         }
         boolean result =
-                player.getLocation().getPlotAbs().setFlag(localFlag.merge(parsed.getValue()));
+                player.getCurrentPlot().setFlag(localFlag.merge(parsed.getValue()));
         if (!result) {
             player.sendMessage(TranslatableCaption.of("flag.flag_not_added"));
             return;
@@ -470,7 +468,7 @@ public final class FlagCommand extends Command {
             final RunnableVal3<Command, Runnable, Runnable> confirm,
             final RunnableVal2<Command, CommandResult> whenDone
     ) {
-        if (!checkRequirements(player)) {
+        if (!checkRequirements(player, Permission.PERMISSION_SET_FLAG_OTHER)) {
             return;
         }
         if (args.length != 1 && args.length != 2) {
@@ -484,7 +482,7 @@ public final class FlagCommand extends Command {
         if (flag == null) {
             return;
         }
-        final Plot plot = player.getLocation().getPlotAbs();
+        final Plot plot = player.getCurrentPlot();
         final PlotFlag<?, ?> flagWithOldValue = plot.getFlagContainer().getFlag(flag.getClass());
         PlotFlagRemoveEvent event = eventDispatcher.callFlagRemove(flag, plot);
         if (event.getEventResult() == Result.DENY) {
@@ -597,7 +595,7 @@ public final class FlagCommand extends Command {
             final RunnableVal3<Command, Runnable, Runnable> confirm,
             final RunnableVal2<Command, CommandResult> whenDone
     ) {
-        if (!checkRequirements(player)) {
+        if (!checkRequirements(player, Permission.PERMISSION_FLAG_LIST_OTHER)) {
             return;
         }
 
@@ -647,7 +645,7 @@ public final class FlagCommand extends Command {
             final RunnableVal3<Command, Runnable, Runnable> confirm,
             final RunnableVal2<Command, CommandResult> whenDone
     ) {
-        if (!checkRequirements(player)) {
+        if (!checkRequirements(player, Permission.PERMISSION_SET_FLAG_OTHER)) {
             return;
         }
         if (args.length < 1) {
@@ -687,7 +685,7 @@ public final class FlagCommand extends Command {
                             .build()
             );
             // Default value
-            final String defaultValue = player.getLocation().getPlotArea().getFlagContainer()
+            final String defaultValue = player.getCurrentPlot().getArea().getFlagContainer()
                     .getFlagErased(plotFlag.getClass()).toString();
             player.sendMessage(
                     TranslatableCaption.of("flag.flag_info_default_value"),

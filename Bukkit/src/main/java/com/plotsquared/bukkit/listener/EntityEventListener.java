@@ -23,6 +23,7 @@ import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitEntityUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.bukkit.util.PaperSupport;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.listener.PlayerBlockEventType;
@@ -44,7 +45,6 @@ import com.plotsquared.core.util.PlotFlagUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.util.Enums;
 import com.sk89q.worldedit.world.block.BlockType;
-import io.papermc.lib.PaperLib;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -160,7 +160,7 @@ public class EntityEventListener implements Listener {
                     return;
                 }
             }
-            case "REINFORCEMENTS", "NATURAL", "MOUNT", "PATROL", "RAID", "SHEARED", "SILVERFISH_BLOCK", "ENDER_PEARL",
+            case "REINFORCEMENTS", "NATURAL", "MOUNT", "PATROL", "RAID", "SILVERFISH_BLOCK", "ENDER_PEARL",
                  "TRAP", "VILLAGE_DEFENSE", "VILLAGE_INVASION", "BEEHIVE", "CHUNK_GEN", "NETHER_PORTAL",
                  "FROZEN", "SPELL", "DEFAULT" -> {
                 if (!area.isMobSpawning()) {
@@ -180,7 +180,7 @@ public class EntityEventListener implements Listener {
                     return;
                 }
                 // No need to clutter metadata if running paper
-                if (!PaperLib.isPaper()) {
+                if (!PaperSupport.isPaper()) {
                     entity.setMetadata("ps_custom_spawned", new FixedMetadataValue(this.platform, true));
                 }
                 return; // Don't cancel if mob spawning is disabled

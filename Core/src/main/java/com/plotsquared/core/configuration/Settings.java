@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Settings extends Config {
 
@@ -435,6 +434,11 @@ public class Settings extends Config {
 
         public static String SCHEMATICS = "schematics";
         public static String TEMPLATES = "templates";
+        @Comment({"If schematics used for generation should be searched for in the path.schematics location",
+                " - This setting exists and is `false` by default for backwards compatibility.",
+                " - If false then generation schematics must be located in `schematics`",
+                " - Schematics must still always be under GEN_ROAD_SCHEMATIC/<world> etc."})
+        public static boolean USE_SCHEMATICS_PATH_FOR_GEN_SCHEMATICS = false;
 
     }
 
@@ -514,9 +518,7 @@ public class Settings extends Config {
         @Comment({"The click event actions that should be removed from user input in e.g. plot flags like 'greeting'.",
                 "Actions like 'RUN_COMMAND' may be used maliciously as players could trick staff into clicking on messages",
                 "triggering destructive commands."})
-        public static List<String> CLICK_EVENT_ACTIONS_TO_REMOVE = Arrays.stream(ClickEvent.Action.values())
-                .map(Enum::name)
-                .collect(Collectors.toList());
+        public static List<String> CLICK_EVENT_ACTIONS_TO_REMOVE = new ArrayList<>(ClickEvent.Action.NAMES.keys());
 
     }
 

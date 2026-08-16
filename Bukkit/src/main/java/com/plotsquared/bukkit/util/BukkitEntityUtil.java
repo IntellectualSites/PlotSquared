@@ -38,8 +38,10 @@ import com.plotsquared.core.plot.flag.implementations.MobCapFlag;
 import com.plotsquared.core.plot.flag.implementations.PveFlag;
 import com.plotsquared.core.plot.flag.implementations.PvpFlag;
 import com.plotsquared.core.plot.flag.implementations.TamedAttackFlag;
+import com.plotsquared.core.plot.flag.implementations.VehicleBreakFlag;
 import com.plotsquared.core.plot.flag.implementations.VehicleCapFlag;
 import com.plotsquared.core.util.EntityUtil;
+import com.plotsquared.core.util.PlotFlagUtil;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import net.kyori.adventure.text.Component;
@@ -311,6 +313,51 @@ public class BukkitEntityUtil {
                 }
             } else if (EntityCategories.VEHICLE
                     .contains(entityType)) { // Vehicles are managed in vehicle destroy event
+                // Fire damage (e.g. from Fire Aspect swords) needs to be checked here as it bypasses VehicleDestroyEvent
+                if (cause == EntityDamageEvent.DamageCause.FIRE_TICK) {
+                    if (isPlot) {
+                        if (!plot.hasOwner()) {
+                            if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_UNOWNED)) {
+                                plotPlayer.sendMessage(
+                                        TranslatableCaption.of("permission.no_permission_event"),
+                                        TagResolver.resolver(
+                                                "node",
+                                                Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_UNOWNED)
+                                        )
+                                );
+                                return false;
+                            }
+                            return true;
+                        }
+                        if (plot.getFlag(VehicleBreakFlag.class) || plot.isAdded(plotPlayer.getUUID())) {
+                            return true;
+                        }
+                        if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_OTHER)) {
+                            plotPlayer.sendMessage(
+                                    TranslatableCaption.of("permission.no_permission_event"),
+                                    TagResolver.resolver(
+                                            "node",
+                                            Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_OTHER)
+                                    )
+                            );
+                            plot.debug(player.getName() + " could not set vehicle on fire because vehicle-break = false");
+                            return false;
+                        }
+                    } else {
+                        // Road
+                        if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, VehicleBreakFlag.class, true)
+                                && !plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_ROAD)) {
+                            plotPlayer.sendMessage(
+                                    TranslatableCaption.of("permission.no_permission_event"),
+                                    TagResolver.resolver(
+                                            "node",
+                                            Tag.inserting(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_ROAD)
+                                    )
+                            );
+                            return false;
+                        }
+                    }
+                }
                 return true;
             } else { // victim is something else
                 if (isPlot) {
@@ -372,7 +419,8 @@ public class BukkitEntityUtil {
 
         if (EntityCategories.PROJECTILE.contains(entityType) || EntityCategories.OTHER
                 .contains(entityType) || EntityCategories.HANGING.contains(entityType)) {
-            return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
+            return EntityUtil.checkEntity(
+                    plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
                     MiscCapFlag.MISC_CAP_UNLIMITED
             );
         }
@@ -382,20 +430,23 @@ public class BukkitEntityUtil {
         if (EntityCategories.ANIMAL.contains(entityType) || EntityCategories.VILLAGER
                 .contains(entityType) || EntityCategories.TAMEABLE.contains(entityType)) {
             return EntityUtil
-                    .checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED, MobCapFlag.MOB_CAP_UNLIMITED,
+                    .checkEntity(
+                            plot, EntityCapFlag.ENTITY_CAP_UNLIMITED, MobCapFlag.MOB_CAP_UNLIMITED,
                             AnimalCapFlag.ANIMAL_CAP_UNLIMITED
                     );
         }
 
         if (EntityCategories.HOSTILE.contains(entityType)) {
             return EntityUtil
-                    .checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED, MobCapFlag.MOB_CAP_UNLIMITED,
+                    .checkEntity(
+                            plot, EntityCapFlag.ENTITY_CAP_UNLIMITED, MobCapFlag.MOB_CAP_UNLIMITED,
                             HostileCapFlag.HOSTILE_CAP_UNLIMITED
                     );
         }
 
         if (EntityCategories.VEHICLE.contains(entityType)) {
-            return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
+            return EntityUtil.checkEntity(
+                    plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
                     VehicleCapFlag.VEHICLE_CAP_UNLIMITED
             );
         }

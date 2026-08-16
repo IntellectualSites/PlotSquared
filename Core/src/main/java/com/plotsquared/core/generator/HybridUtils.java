@@ -19,6 +19,7 @@
 package com.plotsquared.core.generator;
 
 import com.google.inject.Inject;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.Result;
@@ -68,6 +69,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -400,7 +402,7 @@ public class HybridUtils {
             return false;
         }
         HybridUtils.UPDATE = true;
-        Set<BlockVector2> regions = this.worldUtil.getChunkChunks(area.getWorldName());
+        Set<BlockVector2> regions = this.worldUtil.getChunkChunks(PlotSquared.platform().getPlatformWorld(area.getWorldName()));
         return scheduleRoadUpdate(area, regions, extend, new LinkedHashSet<>());
     }
 
@@ -436,9 +438,19 @@ public class HybridUtils {
                     while (iter.hasNext()) {
                         BlockVector2 chunk = iter.next();
                         iter.remove();
-                        boolean regenedRoad = regenerateRoad(area, chunk, extend, queue);
-                        if (!regenedRoad) {
-                            LOGGER.info("Failed to regenerate roads in chunk {}", chunk);
+                        RoadRegenerateResult result = regenerateRoad(area, chunk, extend, queue);
+                        if (result != RoadRegenerateResult.SUCCESS) {
+                            LOGGER.info(
+                                    "Failed to regenerate roads in chunk {}: {}", chunk,
+                                    result.getMessage()
+                            );
+                            if (result.irrecoverable()) {
+                                LOGGER.error("Cancelling road regen");
+                                chunks.clear();
+                                queue.cancel();
+                                HybridUtils.regions.clear();
+                                return;
+                            }
                         }
                     }
                     queue.enqueue();
@@ -479,9 +491,20 @@ public class HybridUtils {
                                         for (int i = 0; i < 32; i++) {
                                             final BlockVector2 chunk = iterator.next();
                                             iterator.remove();
-                                            boolean regenedRoads = regenerateRoad(area, chunk, extend, queue);
-                                            if (!regenedRoads) {
-                                                LOGGER.info("Failed to regenerate the road in chunk {}", chunk);
+                                            RoadRegenerateResult result = regenerateRoad(area, chunk, extend, queue);
+                                            if (result != RoadRegenerateResult.SUCCESS) {
+                                                LOGGER.info(
+                                                        "Failed to regenerate the road in chunk {}: {}", chunk,
+                                                        result.getMessage()
+                                                );
+                                                if (result.irrecoverable()) {
+                                                    LOGGER.error("Cancelling road regen");
+                                                    chunks.clear();
+                                                    queue.cancel();
+                                                    HybridUtils.regions.clear();
+                                                    TaskManager.runTaskLater(task, TaskTime.seconds(1L));
+                                                    return null;
+                                                }
                                             }
                                         }
                                         queue.setCompleteTask(task);
@@ -493,9 +516,20 @@ public class HybridUtils {
                                     while (!chunks.isEmpty()) {
                                         final BlockVector2 chunk = iterator.next();
                                         iterator.remove();
-                                        boolean regenedRoads = regenerateRoad(area, chunk, extend, queue);
-                                        if (!regenedRoads) {
-                                            LOGGER.info("Failed to regenerate road in chunk {}", chunk);
+                                        RoadRegenerateResult result = regenerateRoad(area, chunk, extend, queue);
+                                        if (result != RoadRegenerateResult.SUCCESS) {
+                                            LOGGER.info(
+                                                    "Failed to regenerate road in chunk {}: {}", chunk,
+                                                    result.getMessage()
+                                            );
+                                            if (result.irrecoverable()) {
+                                                LOGGER.error("Cancelling road regen");
+                                                chunks.clear();
+                                                queue.cancel();
+                                                HybridUtils.regions.clear();
+                                                TaskManager.runTaskLater(task, TaskTime.seconds(1L));
+                                                return null;
+                                            }
                                         }
                                     }
                                     queue.setCompleteTask(task);
@@ -529,7 +563,7 @@ public class HybridUtils {
         final QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(world));
         Location bot = plot.getBottomAbs().subtract(1, 0, 1);
         Location top = plot.getTopAbs();
-        final HybridPlotWorld plotworld = (HybridPlotWorld) plot.getArea();
+        final HybridPlotWorld plotworld = Objects.requireNonNull((HybridPlotWorld) plot.getArea());
         // Do not use plotworld#schematicStartHeight() here as we want to restore the pre 6.1.4 way of doing it if
         //  USE_WALL_IN_ROAD_SCHEM_HEIGHT is false
         int schemY = Settings.Schematics.USE_WALL_IN_ROAD_SCHEM_HEIGHT ?
@@ -592,10 +626,10 @@ public class HybridUtils {
      * @param chunk            Chunk location to regenerate
      * @param extend           How far to extend setting air above the road
      * @param queueCoordinator {@link QueueCoordinator} to use to set the blocks. Null if one should be created and enqueued
-     * @return if successful
+     * @return {@link RoadRegenerateResult} result
      * @since 6.6.0
      */
-    public boolean regenerateRoad(
+    public RoadRegenerateResult regenerateRoad(
             final PlotArea area,
             final BlockVector2 chunk,
             int extend,
@@ -607,14 +641,14 @@ public class HybridUtils {
         int ez = z + 15;
         HybridPlotWorld plotWorld = (HybridPlotWorld) area;
         if (!plotWorld.ROAD_SCHEMATIC_ENABLED) {
-            return false;
+            return RoadRegenerateResult.FAIL_ROAD_SCHEMATICS_NOT_ENABLED;
         }
         AtomicBoolean toCheck = new AtomicBoolean(false);
         if (plotWorld.getType() == PlotAreaType.PARTIAL) {
             boolean chunk1 = area.contains(x, z);
             boolean chunk2 = area.contains(ex, ez);
             if (!chunk1 && !chunk2) {
-                return false;
+                return RoadRegenerateResult.SUCCESS;
             } else {
                 toCheck.set(chunk1 ^ chunk2);
             }
@@ -624,10 +658,10 @@ public class HybridUtils {
         PlotId id2 = manager.getPlotId(ex, 0, ez);
         x = x - plotWorld.ROAD_OFFSET_X;
         z -= plotWorld.ROAD_OFFSET_Z;
-        final int finalX = x;
-        final int finalZ = z;
-        final boolean enqueue;
-        final QueueCoordinator queue;
+        int finalX = x;
+        int finalZ = z;
+        boolean enqueue;
+        QueueCoordinator queue;
         if (queueCoordinator == null) {
             queue = this.blockQueue.getNewQueue(worldUtil.getWeWorld(plotWorld.getWorldName()));
             enqueue = true;
@@ -635,7 +669,7 @@ public class HybridUtils {
             queue = queueCoordinator;
             enqueue = false;
         }
-        if (id1 == null || id2 == null || id1 != id2) {
+        if (id1 == null || !id1.equals(id2)) {
             if (id1 != null) {
                 Plot p1 = area.getPlotAbs(id1);
                 if (p1 != null && p1.hasOwner() && p1.isMerged()) {
@@ -720,9 +754,31 @@ public class HybridUtils {
             if (enqueue) {
                 queue.enqueue();
             }
-            return true;
         }
-        return false;
+        return RoadRegenerateResult.SUCCESS;
+    }
+
+    public enum RoadRegenerateResult {
+
+        SUCCESS(true, null),
+        FAIL_ROAD_SCHEMATICS_NOT_ENABLED(false, "Plot world does not have road schematics enabled - are they correctly set up?");
+
+        private final boolean recoverable;
+        private final String message;
+
+        RoadRegenerateResult(boolean recoverable, String message) {
+            this.recoverable = recoverable;
+            this.message = message;
+        }
+
+        public boolean irrecoverable() {
+            return !recoverable;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
     }
 
 }

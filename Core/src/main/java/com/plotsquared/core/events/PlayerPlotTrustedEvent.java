@@ -23,6 +23,10 @@ import com.plotsquared.core.plot.Plot;
 
 import java.util.UUID;
 
+/**
+ * @deprecated Use {@link com.plotsquared.core.events.post.PostPlayerPlotTrustedEvent}
+ */
+@Deprecated(forRemoval = true, since = "TODO")
 public class PlayerPlotTrustedEvent extends PlotEvent {
 
     private final PlotPlayer<?> initiator;
@@ -36,7 +40,9 @@ public class PlayerPlotTrustedEvent extends PlotEvent {
      * @param plot      Plot in which the event occurred
      * @param player    Player that was added/removed from the trusted list
      * @param added     {@code true} if the player was added, {@code false} if the player was removed
+     * @deprecated Use {@link com.plotsquared.core.events.post.PostPlayerPlotTrustedEvent}
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public PlayerPlotTrustedEvent(PlotPlayer<?> initiator, Plot plot, UUID player, boolean added) {
         super(plot);
         this.initiator = initiator;
@@ -48,7 +54,9 @@ public class PlayerPlotTrustedEvent extends PlotEvent {
      * If a player was added
      *
      * @return boolean
+     * @deprecated Use {@link com.plotsquared.core.events.post.PostPlayerPlotTrustedEvent}
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public boolean wasAdded() {
         return this.added;
     }
@@ -57,7 +65,9 @@ public class PlayerPlotTrustedEvent extends PlotEvent {
      * The UUID added/removed
      *
      * @return UUID
+     * @deprecated Use {@link com.plotsquared.core.events.post.PostPlayerPlotTrustedEvent}
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public UUID getPlayer() {
         return this.player;
     }
@@ -66,7 +76,9 @@ public class PlayerPlotTrustedEvent extends PlotEvent {
      * The player initiating the action
      *
      * @return PlotPlayer
+     * @deprecated Use {@link com.plotsquared.core.events.post.PostPlayerPlotTrustedEvent}
      */
+    @Deprecated(forRemoval = true, since = "TODO")
     public PlotPlayer<?> getInitiator() {
         return this.initiator;
     }

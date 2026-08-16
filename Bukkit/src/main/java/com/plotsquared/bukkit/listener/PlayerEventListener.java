@@ -24,6 +24,7 @@ import com.google.inject.Inject;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitEntityUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.bukkit.util.PaperSupport;
 import com.plotsquared.bukkit.util.UpdateUtility;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -72,6 +73,7 @@ import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.MinecraftVersion;
 import com.plotsquared.core.util.PlotFlagUtil;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.entity.EntityCategories;
@@ -82,7 +84,6 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.util.Enums;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import io.papermc.lib.PaperLib;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -216,8 +217,7 @@ public class PlayerEventListener implements Listener {
                 "PINK_DYE",
                 "GLOW_INK_SAC"
         ));
-        int[] version = PlotSquared.platform().serverVersion();
-        if (version[1] >= 20) {
+        if (MinecraftVersion.current().isNewerOrEqualThan(MinecraftVersion.TRAILS_AND_TALES)) {
             mutableDyes.add("HONEYCOMB");
         }
         DYES = Set.copyOf(mutableDyes);
@@ -354,7 +354,8 @@ public class PlayerEventListener implements Listener {
                     }
                     return;
                 }
-                if (plot.isAdded(event.getPlayer().getUniqueId())) {
+                BukkitPlayer player = BukkitUtil.adapt(event.getPlayer());
+                if (plot.isAdded(player.getUUID())) {
                     return; // allow for added players
                 }
                 if (!plot.getFlag(EditSignFlag.class)
@@ -600,7 +601,7 @@ public class PlayerEventListener implements Listener {
                 PlotArea area = location.getPlotArea();
                 if (area == null) {
                     if (lastPlot != null) {
-                        plotListener.plotExit(pp, lastPlot);
+                        plotListener.plotExit(pp, lastPlot, null, null);
                         lastPlotAccess.remove();
                     }
                     try (final MetaDataAccess<Location> lastLocationAccess =
@@ -691,7 +692,7 @@ public class PlayerEventListener implements Listener {
                     if (dest != null) {
                         vehicle.eject();
                         vehicle.setVelocity(new Vector(0d, 0d, 0d));
-                        PaperLib.teleportAsync(vehicle, dest);
+                        PaperSupport.teleportAsync(vehicle, dest);
                         passengers.forEach(vehicle::addPassenger);
                         return;
                     }
@@ -753,7 +754,7 @@ public class PlayerEventListener implements Listener {
             if (now == null) {
                 try (final MetaDataAccess<Boolean> kickAccess =
                              pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
-                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(
+                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot, now, area) && this.tmpTeleport && !kickAccess.get().orElse(
                             false)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
@@ -847,7 +848,7 @@ public class PlayerEventListener implements Listener {
             if (plot == null) {
                 try (final MetaDataAccess<Boolean> kickAccess =
                              pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
-                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(
+                    if (lastPlot != null && !plotListener.plotExit(pp, lastPlot, null, area) && this.tmpTeleport && !kickAccess.get().orElse(
                             false)) {
                         pp.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
@@ -1309,7 +1310,7 @@ public class PlayerEventListener implements Listener {
                         }
                     }
                 }
-                if (PaperLib.isPaper()) {
+                if (PaperSupport.isPaper()) {
                     if (MaterialTags.SPAWN_EGGS.isTagged(type) || Material.EGG.equals(type)) {
                         eventType = PlayerBlockEventType.SPAWN_MOB;
                         break;

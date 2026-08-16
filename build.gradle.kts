@@ -20,7 +20,7 @@ plugins {
 }
 
 group = "com.intellectualsites.plotsquared"
-version = "7.5.7-SNAPSHOT"
+version = "7.5.14-SNAPSHOT"
 
 if (!File("$rootDir/.git").exists()) {
     logger.lifecycle("""
@@ -65,10 +65,16 @@ subprojects {
         plugin<IdeaPlugin>()
     }
 
+    configurations.matching { it.name == "signatures" }.configureEach {
+        attributes {
+            attribute(Attribute.of("signatures-unique", String::class.java), "true")
+        }
+    }
+
     dependencies {
         // Tests
-        testImplementation("org.junit.jupiter:junit-jupiter:5.13.4")
-        testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.4")
+        testImplementation("org.junit.jupiter:junit-jupiter:6.1.2")
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.2")
     }
 
     plugins.withId("java") {
@@ -95,16 +101,23 @@ subprojects {
         }
     }
 
-    val javaComponent = components["java"] as AdhocComponentWithVariants
-    javaComponent.withVariantsFromConfiguration(configurations["shadowRuntimeElements"]) {
-        skip()
+    afterEvaluate {
+        val javaComponent = components["java"] as AdhocComponentWithVariants
+        configurations.findByName("shadowRuntimeElements")?.let { shadowRuntimeElements ->
+            javaComponent.withVariantsFromConfiguration(shadowRuntimeElements) {
+                skip()
+            }
+        } ?: run {
+            logger.warn("Configuration 'shadowRuntimeElements' does not exist.")
+        }
     }
 
     signing {
         if (!project.hasProperty("skip.signing") && !version.toString().endsWith("-SNAPSHOT")) {
-            val signingKey: String? by project
-            val signingPassword: String? by project
-            useInMemoryPgpKeys(signingKey, signingPassword)
+            useInMemoryPgpKeys(
+                    project.findProperty("signingKey") as? String,
+                    project.findProperty("signingPassword") as? String
+            )
             signing.isRequired
             sign(publishing.publications)
         }
@@ -204,9 +217,11 @@ tasks.getByName<Jar>("jar") {
     enabled = false
 }
 
-val supportedVersions = listOf("1.19.4", "1.20.6", "1.21.1", "1.21.3", "1.21.4", "1.21.5", "1.21.6", "1.21.7", "1.21.8")
+val supportedVersions = listOf("1.19.4", "1.20.6", "1.21.11", "26.1.2", "26.2")
 tasks {
-    register("cacheLatestFaweArtifact") {
+    val cacheLatestFaweArtifact = register("cacheLatestFaweArtifact") {
+        group = null
+        description = "retrieves the latest FAWE build and caches it for the runServer tasks"
         val lastSuccessfulBuildUrl = uri("https://ci.athion.net/job/FastAsyncWorldEdit/lastSuccessfulBuild/api/json").toURL()
         val artifact = ((JsonSlurper().parse(lastSuccessfulBuildUrl) as Map<*, *>)["artifacts"] as List<*>)
                 .map { it as Map<*, *> }
@@ -215,19 +230,26 @@ tasks {
         project.ext["faweArtifact"] = artifact
     }
 
-    supportedVersions.forEach {
-        register<RunServer>("runServer-$it") {
-            dependsOn(getByName("cacheLatestFaweArtifact"))
-            minecraftVersion(it)
-            pluginJars(*project(":plotsquared-bukkit").getTasksByName("shadowJar", false)
-                    .map { task -> (task as Jar).archiveFile }
-                    .toTypedArray())
+    supportedVersions.forEach { version ->
+        register<RunServer>("runServer-$version") {
+            description = "Run a Paper server version $version."
+            dependsOn(cacheLatestFaweArtifact)
+            minecraftVersion(version)
+            pluginJars(project.files(
+                project(":plotsquared-bukkit").tasks.named<Jar>("shadowJar")
+                .map { it.archiveFile }
+            ))
             jvmArgs("-DPaper.IgnoreJavaVersion=true", "-Dcom.mojang.eula.agree=true")
             downloadPlugins {
                 url("https://ci.athion.net/job/FastAsyncWorldEdit/lastSuccessfulBuild/artifact/artifacts/${project.ext["faweArtifact"]}")
             }
             group = "run paper"
-            runDirectory.set(file("run-$it"))
+            javaToolchains {
+                launcherFor {
+                    languageVersion.set(JavaLanguageVersion.of(25))
+                }
+            }
+            runDirectory.set(file("run-$version"))
         }
     }
 }

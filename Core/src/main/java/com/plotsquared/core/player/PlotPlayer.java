@@ -290,7 +290,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      *
      * @return the plot the player is standing on or null if standing on a road or not in a {@link PlotArea}
      */
-    public Plot getCurrentPlot() {
+    public @Nullable Plot getCurrentPlot() {
         try (final MetaDataAccess<Plot> lastPlotAccess =
                      this.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
             if (lastPlotAccess.get().orElse(null) == null && !Settings.Enabled_Components.EVENTS) {
@@ -319,7 +319,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      */
     public int getPlotCount() {
         if (!Settings.Limit.GLOBAL) {
-            return getPlotCount(getLocation().getWorldName());
+            return getPlotCount(getContextualWorldName());
         }
         final AtomicInteger count = new AtomicInteger(0);
         final UUID uuid = getUUID();
@@ -339,7 +339,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
 
     public int getClusterCount() {
         if (!Settings.Limit.GLOBAL) {
-            return getClusterCount(getLocation().getWorldName());
+            return getClusterCount(getContextualWorldName());
         }
         final AtomicInteger count = new AtomicInteger(0);
         this.plotAreaManager.forEachPlotArea(value -> {
@@ -353,6 +353,34 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     }
 
     /**
+     * {@return the world name at the player's contextual position}
+     * The contextual position can be affected when using a command with
+     * an explicit plot override, e.g., {@code /plot <id> info}.
+     */
+    private @NonNull String getContextualWorldName() {
+        Plot current = getCurrentPlot();
+        if (current != null) {
+            return current.getWorldName();
+        }
+        return getLocation().getWorldName();
+    }
+
+    /**
+     * {@return the plot area at the player's contextual position}
+     * The contextual position can be affected when using a command with
+     * an explicit plot override, e.g., {@code /plot <id> info}.
+     *
+     * @since 7.5.9
+     */
+    public @Nullable PlotArea getContextualPlotArea() {
+        Plot current = getCurrentPlot();
+        if (current != null) {
+            return current.getArea();
+        }
+        return getLocation().getPlotArea();
+    }
+
+    /**
      * Get the number of plots this player owns in the world.
      *
      * @param world the name of the plotworld to check.
@@ -363,8 +391,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         int count = 0;
         for (PlotArea area : this.plotAreaManager.getPlotAreasSet(world)) {
             if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
-                count +=
-                        area.getPlotsAbs(uuid).stream().filter(plot -> !DoneFlag.isDone(plot)).count();
+                count += area.getPlotsAbs(uuid).stream().filter(plot -> !DoneFlag.isDone(plot)).count();
             } else {
                 count += area.getPlotsAbs(uuid).size();
             }
@@ -408,7 +435,11 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     }
 
     public PlotArea getApplicablePlotArea() {
-        return this.plotAreaManager.getApplicablePlotArea(getLocation());
+        Plot plot = getCurrentPlot();
+        if (plot == null) {
+            return this.plotAreaManager.getApplicablePlotArea(getLocation());
+        }
+        return plot.getArea();
     }
 
     @Override
@@ -614,16 +645,16 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
             PlotId id = plot.getId();
             int x = id.getX();
             int z = id.getY();
-            ByteBuffer buffer = ByteBuffer.allocate(13);
+            ByteBuffer buffer = ByteBuffer.allocate(14);
             buffer.putShort((short) x);
             buffer.putShort((short) z);
             Location location = getLocation();
             buffer.putInt(location.getX());
-            buffer.put((byte) location.getY());
+            buffer.putShort((short) location.getY());
             buffer.putInt(location.getZ());
-            setPersistentMeta("quitLoc", buffer.array());
-        } else if (hasPersistentMeta("quitLoc")) {
-            removePersistentMeta("quitLoc");
+            setPersistentMeta("quitLocV2", buffer.array());
+        } else if (hasPersistentMeta("quitLocV2")) {
+            removePersistentMeta("quitLocV2");
         }
         if (plot != null) {
             this.eventDispatcher.callLeave(this, plot);
@@ -678,80 +709,89 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
 
     public void populatePersistentMetaMap() {
         if (Settings.Enabled_Components.PERSISTENT_META) {
-            DBFunc.getPersistentMeta(getUUID(), new RunnableVal<>() {
-                @Override
-                public void run(Map<String, byte[]> value) {
-                    try {
-                        PlotPlayer.this.metaMap = value;
-                        if (value.isEmpty()) {
-                            return;
-                        }
-
-                        if (PlotPlayer.this.getAttribute("debug")) {
-                            debugModeEnabled.add(PlotPlayer.this);
-                        }
-
-                        if (!Settings.Teleport.ON_LOGIN) {
-                            return;
-                        }
-                        PlotAreaManager manager = PlotPlayer.this.plotAreaManager;
-
-                        if (!(manager instanceof SinglePlotAreaManager)) {
-                            return;
-                        }
-                        PlotArea area = ((SinglePlotAreaManager) manager).getArea();
-                        byte[] arr = PlotPlayer.this.getPersistentMeta("quitLoc");
-                        if (arr == null) {
-                            return;
-                        }
-                        removePersistentMeta("quitLoc");
-
-                        if (!getMeta("teleportOnLogin", true)) {
-                            return;
-                        }
-                        ByteBuffer quitWorld = ByteBuffer.wrap(arr);
-                        final int plotX = quitWorld.getShort();
-                        final int plotZ = quitWorld.getShort();
-                        PlotId id = PlotId.of(plotX, plotZ);
-                        int x = quitWorld.getInt();
-                        int y = quitWorld.get() & 0xFF;
-                        int z = quitWorld.getInt();
-                        Plot plot = area.getOwnedPlot(id);
-
-                        if (plot == null) {
-                            return;
-                        }
-
-                        final Location location = Location.at(plot.getWorldName(), x, y, z);
-                        if (plot.isLoaded()) {
-                            TaskManager.runTask(() -> {
-                                if (getMeta("teleportOnLogin", true)) {
-                                    teleport(location, TeleportCause.LOGIN);
-                                    sendMessage(
-                                            TranslatableCaption.of("teleport.teleported_to_plot"));
+            DBFunc.getPersistentMeta(
+                    getUUID(), new RunnableVal<>() {
+                        @Override
+                        public void run(Map<String, byte[]> value) {
+                            try {
+                                PlotPlayer.this.metaMap = value;
+                                if (value.isEmpty()) {
+                                    return;
                                 }
-                            });
-                        } else if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
-                            if (getMeta("teleportOnLogin", true)) {
-                                plot.teleportPlayer(
-                                        PlotPlayer.this,
-                                        result -> TaskManager.runTask(() -> {
-                                            if (getMeta("teleportOnLogin", true)) {
-                                                if (plot.isLoaded()) {
-                                                    teleport(location, TeleportCause.LOGIN);
-                                                    sendMessage(TranslatableCaption
-                                                            .of("teleport.teleported_to_plot"));
-                                                }
-                                            }
-                                        })
-                                );
+
+                                if (PlotPlayer.this.getAttribute("debug")) {
+                                    debugModeEnabled.add(PlotPlayer.this);
+                                }
+
+                                if (!Settings.Teleport.ON_LOGIN) {
+                                    return;
+                                }
+                                PlotAreaManager manager = PlotPlayer.this.plotAreaManager;
+
+                                if (!(manager instanceof SinglePlotAreaManager)) {
+                                    return;
+                                }
+                                PlotArea area = ((SinglePlotAreaManager) manager).getArea();
+                                boolean V2 = false;
+                                byte[] arr = PlotPlayer.this.getPersistentMeta("quitLoc");
+                                if (arr == null) {
+                                    arr = PlotPlayer.this.getPersistentMeta("quitLocV2");
+                                    if (arr == null) {
+                                        return;
+                                    }
+                                    V2 = true;
+                                    removePersistentMeta("quitLocV2");
+                                } else {
+                                    removePersistentMeta("quitLoc");
+                                }
+
+                                if (!getMeta("teleportOnLogin", true)) {
+                                    return;
+                                }
+                                ByteBuffer quitWorld = ByteBuffer.wrap(arr);
+                                final int plotX = quitWorld.getShort();
+                                final int plotZ = quitWorld.getShort();
+                                PlotId id = PlotId.of(plotX, plotZ);
+                                int x = quitWorld.getInt();
+                                int y = V2 ? quitWorld.getShort() : (quitWorld.get() & 0xFF);
+                                int z = quitWorld.getInt();
+                                Plot plot = area.getOwnedPlot(id);
+
+                                if (plot == null) {
+                                    return;
+                                }
+
+                                final Location location = Location.at(plot.getWorldName(), x, y, z);
+                                if (plot.isLoaded()) {
+                                    TaskManager.runTask(() -> {
+                                        if (getMeta("teleportOnLogin", true)) {
+                                            teleport(location, TeleportCause.LOGIN);
+                                            sendMessage(
+                                                    TranslatableCaption.of("teleport.teleported_to_plot"));
+                                        }
+                                    });
+                                } else if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
+                                    if (getMeta("teleportOnLogin", true)) {
+                                        plot.teleportPlayer(
+                                                PlotPlayer.this,
+                                                result -> TaskManager.runTask(() -> {
+                                                    if (getMeta("teleportOnLogin", true)) {
+                                                        if (plot.isLoaded()) {
+                                                            teleport(location, TeleportCause.LOGIN);
+                                                            sendMessage(TranslatableCaption
+                                                                    .of("teleport.teleported_to_plot"));
+                                                        }
+                                                    }
+                                                })
+                                        );
+                                    }
+                                }
+                            } catch (Throwable e) {
+                                LOGGER.error("Error populating persistent meta for player {}", PlotPlayer.this.getName(), e);
                             }
                         }
-                    } catch (Throwable e) {
-                        e.printStackTrace();
                     }
-                }
-            });
+            );
         }
     }
 
@@ -819,7 +859,8 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     }
 
     @SuppressWarnings("unchecked")
-    @Nullable <T> T getPersistentMeta(final @NonNull MetaDataKey<T> key) {
+    @Nullable
+    <T> T getPersistentMeta(final @NonNull MetaDataKey<T> key) {
         final byte[] value = this.getPersistentMeta(key.toString());
         if (value == null) {
             return null;
@@ -989,9 +1030,11 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
             if (throwable != null) {
                 sendMessage(
                         TranslatableCaption.of("errors.error"),
-                        TagResolver.resolver("value", Tag.inserting(
-                                Component.text("Failed to resolve asynchronous caption replacements")
-                        ))
+                        TagResolver.resolver(
+                                "value", Tag.inserting(
+                                        Component.text("Failed to resolve asynchronous caption replacements")
+                                )
+                        )
                 );
                 LOGGER.error("Failed to resolve asynchronous tagresolver(s) for " + caption, throwable);
             } else {
