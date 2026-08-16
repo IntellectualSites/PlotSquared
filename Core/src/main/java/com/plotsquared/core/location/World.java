@@ -76,7 +76,7 @@ public interface World<T> extends Keyed {
      * versions the namespaced dimension folder).
      *
      * @return the path
-     * @since TODO
+     * @since 7.6.0
      */
     @NonNull Path getWorldFolder();
 

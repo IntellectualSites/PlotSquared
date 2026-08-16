@@ -36,7 +36,7 @@ import org.bukkit.projectiles.ProjectileSource;
 
 /**
  * For events since 1.21.1
- * @since TODO
+ * @since 7.6.0
  */
 public class ProjectileEventListener1211 implements Listener {
 

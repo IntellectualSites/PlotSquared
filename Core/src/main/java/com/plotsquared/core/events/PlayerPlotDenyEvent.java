@@ -26,7 +26,7 @@ import java.util.UUID;
 /**
  * Called when a player is going to be denied from a plot
  *
- * @since TODO
+ * @since 7.6.0
  */
 public class PlayerPlotDenyEvent extends PlayerPlotAddRemoveCancellableEvent {
 

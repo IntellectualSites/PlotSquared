@@ -26,7 +26,7 @@ import java.util.UUID;
 /**
  * Called when a player is going to be trusted to a plot
  *
- * @since TODO
+ * @since 7.6.0
  */
 public class PlayerPlotTrustEvent extends PlayerPlotAddRemoveCancellableEvent {
 

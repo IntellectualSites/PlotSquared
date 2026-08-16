@@ -26,7 +26,7 @@ import java.util.UUID;
 /**
  * Called when a player is going to be removed from a plot (could be removed from added, trusted, or denied)
  *
- * @since TODO
+ * @since 7.6.0
  */
 public class PlayerPlotRemoveEvent extends PlayerPlotAddRemoveCancellableEvent {
 

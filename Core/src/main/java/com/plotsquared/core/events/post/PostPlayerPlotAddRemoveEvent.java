@@ -27,7 +27,7 @@ import java.util.UUID;
 /**
  * Parent class for events covering players being added/removed to added/trusted/denied lists.
  *
- * @since TODO
+ * @since 7.6.0
  */
 public sealed class PostPlayerPlotAddRemoveEvent extends PlayerPlotAddRemoveEvent permits PostPlayerPlotAddedEvent,
         PostPlayerPlotDeniedEvent, PostPlayerPlotTrustedEvent {

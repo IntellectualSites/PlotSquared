@@ -27,7 +27,7 @@ import java.util.UUID;
 /**
  * Parent class for the varies events regarding a player being added/removed/denied/trusted
  *
- * @since TODO
+ * @since 7.6.0
  */
 public class PlayerPlotAddRemoveEvent extends PlotEvent {
 
