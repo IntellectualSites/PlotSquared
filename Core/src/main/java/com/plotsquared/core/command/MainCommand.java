@@ -86,6 +86,7 @@ public class MainCommand extends Command {
             commands.add(Download.class);
             commands.add(Setup.class);
             commands.add(Area.class);
+            commands.add(DeleteArea.class);
             commands.add(DebugSaveTest.class);
             commands.add(DebugLoadTest.class);
             commands.add(CreateRoadSchematic.class);
