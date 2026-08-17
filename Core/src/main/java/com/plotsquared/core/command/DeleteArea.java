@@ -116,6 +116,14 @@ public class DeleteArea extends SubCommand {
                 ));
                 return;
             }
+            if (currentArea.getType() != PlotAreaType.PARTIAL
+                    || !SINGLE_PLOT_ID.equals(currentArea.getMin())
+                    || !SINGLE_PLOT_ID.equals(currentArea.getMax())) {
+                player.sendMessage(StaticCaption.of(
+                        "<prefix><red>The plot area is no longer a single plot area and was not removed.</red>"
+                ));
+                return;
+            }
             if (currentArea.getPlotCount() != 0) {
                 player.sendMessage(StaticCaption.of(
                         "<prefix><red>This single plot area now contains claimed plot data and was not removed.</red>"
@@ -123,12 +131,21 @@ public class DeleteArea extends SubCommand {
                 return;
             }
 
-            final Object previousConfiguration = this.worldConfiguration.get(areaPath);
-            this.worldConfiguration.set(areaPath, null);
+            final String currentAreaPath = "worlds." + currentArea.getWorldName() + ".areas."
+                    + currentArea.getId() + '-' + currentArea.getMin() + '-' + currentArea.getMax();
+            if (!this.worldConfiguration.contains(currentAreaPath)) {
+                player.sendMessage(StaticCaption.of(
+                        "<prefix><red>The single plot area's configuration entry changed while waiting for confirmation. Run the command again.</red>"
+                ));
+                return;
+            }
+
+            final Object previousConfiguration = this.worldConfiguration.get(currentAreaPath);
+            this.worldConfiguration.set(currentAreaPath, null);
             try {
                 this.worldConfiguration.save(this.worldFile);
             } catch (final IOException exception) {
-                this.worldConfiguration.set(areaPath, previousConfiguration);
+                this.worldConfiguration.set(currentAreaPath, previousConfiguration);
                 player.sendMessage(StaticCaption.of(
                         "<prefix><red>Failed to save worlds.yml. The single plot area was not removed.</red>"
                 ));
@@ -136,10 +153,13 @@ public class DeleteArea extends SubCommand {
             }
 
             this.plotAreaManager.removePlotArea(currentArea);
-            player.sendMessage(StaticCaption.of(
-                    "<prefix><dark_aqua>Successfully removed single plot area <gold>" + currentArea.getId()
-                            + "</gold>. Existing Minecraft terrain was not changed.</dark_aqua>"
-            ));
+            player.sendMessage(
+                    StaticCaption.of(
+                            "<prefix><dark_aqua>Successfully removed single plot area <gold><area></gold>. "
+                                    + "Existing Minecraft terrain was not changed.</dark_aqua>"
+                    ),
+                    TagResolver.resolver("area", Tag.inserting(Component.text(currentArea.getId())))
+            );
         };
 
         if (hasConfirmation(player)) {
