@@ -107,21 +107,46 @@ public class DeleteArea extends SubCommand {
             return false;
         }
 
-        this.worldConfiguration.set(areaPath, null);
-        try {
-            this.worldConfiguration.save(this.worldFile);
-        } catch (final IOException exception) {
-            player.sendMessage(StaticCaption.of(
-                    "<prefix><red>Failed to save worlds.yml. The single plot area was not removed from memory.</red>"
-            ));
-            return false;
-        }
+        final Runnable run = () -> {
+            // Re-resolve the area after confirmation so stale command state cannot remove a different area.
+            final PlotArea currentArea = this.plotAreaManager.getPlotAreaByString(args[0]);
+            if (currentArea != area) {
+                player.sendMessage(StaticCaption.of(
+                        "<prefix><red>The plot area changed while waiting for confirmation. Run the command again.</red>"
+                ));
+                return;
+            }
+            if (currentArea.getPlotCount() != 0) {
+                player.sendMessage(StaticCaption.of(
+                        "<prefix><red>This single plot area now contains claimed plot data and was not removed.</red>"
+                ));
+                return;
+            }
 
-        this.plotAreaManager.removePlotArea(area);
-        player.sendMessage(StaticCaption.of(
-                "<prefix><dark_aqua>Successfully removed single plot area <gold>" + area.getId()
-                        + "</gold>. Existing Minecraft terrain was not changed.</dark_aqua>"
-        ));
+            final Object previousConfiguration = this.worldConfiguration.get(areaPath);
+            this.worldConfiguration.set(areaPath, null);
+            try {
+                this.worldConfiguration.save(this.worldFile);
+            } catch (final IOException exception) {
+                this.worldConfiguration.set(areaPath, previousConfiguration);
+                player.sendMessage(StaticCaption.of(
+                        "<prefix><red>Failed to save worlds.yml. The single plot area was not removed.</red>"
+                ));
+                return;
+            }
+
+            this.plotAreaManager.removePlotArea(currentArea);
+            player.sendMessage(StaticCaption.of(
+                    "<prefix><dark_aqua>Successfully removed single plot area <gold>" + currentArea.getId()
+                            + "</gold>. Existing Minecraft terrain was not changed.</dark_aqua>"
+            ));
+        };
+
+        if (hasConfirmation(player)) {
+            CmdConfirm.addPending(player, getCommandString() + ' ' + args[0], run);
+        } else {
+            run.run();
+        }
         return true;
     }
 
