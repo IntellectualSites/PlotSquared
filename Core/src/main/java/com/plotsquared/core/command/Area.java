@@ -885,7 +885,7 @@ public class Area extends SubCommand {
                 if (area.getType() != PlotAreaType.PARTIAL
                         || !singlePlotId.equals(area.getMin())
                         || !singlePlotId.equals(area.getMax())) {
-                    player.sendMessage(TranslatableCaption.of("single.worldcreation_location"));
+                    player.sendMessage(TranslatableCaption.of("single.single_area_delete_not_single"));
                     return false;
                 }
                 if (area.getPlotCount() != 0) {
@@ -902,7 +902,8 @@ public class Area extends SubCommand {
 
                 final Runnable run = () -> {
                     final PlotArea currentArea = this.plotAreaManager.getPlotAreaByString(args[1]);
-                    if (currentArea != area
+                    if (currentArea == null
+                            || !currentArea.equals(area)
                             || currentArea.getType() != PlotAreaType.PARTIAL
                             || !singlePlotId.equals(currentArea.getMin())
                             || !singlePlotId.equals(currentArea.getMax())) {
