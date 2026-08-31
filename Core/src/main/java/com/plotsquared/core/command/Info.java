@@ -23,6 +23,8 @@ import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.permissions.Permission;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.HideInfoFlag;
@@ -39,7 +41,7 @@ import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "info",
         aliases = "i",
-        usage = "/plot info <id> [-f to force info]",
+        usage = "/plot info <id> [-f to force info] [-r to show raw flag values]",
         category = CommandCategory.INFO)
 public class Info extends SubCommand {
 
@@ -80,6 +82,25 @@ public class Info extends SubCommand {
                 args = new String[0];
             } else {
                 args = new String[]{args[1]};
+            }
+        }
+
+        // Check for raw flag display preference
+        boolean showRawFlags = false;
+        for (final String argument : args) {
+            if (argument.equalsIgnoreCase("-r")) {
+                if (!player.hasPermission("plots.admin.info.raw")) {
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Component.text("plots.admin.info.raw"))
+                            )
+                    );
+                    return true;
+                }
+                showRawFlags = true;
+                break;
             }
         }
 
@@ -140,7 +161,23 @@ public class Info extends SubCommand {
         } else {
             full = false;
         }
-        plot.format(info, player, full).thenAcceptAsync(player::sendMessage);
+
+        // Store raw flag preference in player metadata
+        try (final MetaDataAccess<Boolean> metaDataAccess = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_RAW_FLAGS)) {
+            if (showRawFlags) {
+                metaDataAccess.set(true);
+            } else {
+                metaDataAccess.remove();
+            }
+        }
+
+        plot.format(info, player, full).thenAcceptAsync(formatted -> {
+            player.sendMessage(formatted);
+            // Clean up metadata after use
+            try (final MetaDataAccess<Boolean> metaDataAccess = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_RAW_FLAGS)) {
+                metaDataAccess.remove();
+            }
+        });
         return true;
     }
 
@@ -149,6 +186,9 @@ public class Info extends SubCommand {
         final List<String> completions = new LinkedList<>();
         if (player.hasPermission(Permission.PERMISSION_AREA_INFO_FORCE)) {
             completions.add("-f");
+        }
+        if (player.hasPermission("plots.admin.info.raw")) {
+            completions.add("-r");
         }
 
         final List<Command> commands = completions.stream().filter(completion -> completion
