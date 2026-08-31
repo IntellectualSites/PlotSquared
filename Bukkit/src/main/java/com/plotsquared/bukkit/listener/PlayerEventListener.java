@@ -1423,9 +1423,12 @@ public class PlayerEventListener implements Listener {
                         area.getFlag(UseFlag.class) : Collections.emptyList());
         BlockType type = BukkitAdapter.asBlockType(block.getType());
         for (final BlockTypeWrapper blockTypeWrapper : use) {
-            if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper
-                    .accepts(type)) {
-                return;
+            if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper.accepts(type)) {
+                // Allows this event for blocks that can be interacted with using a bucket without it being considered
+                // as "building" (= make it waterlogged or drop the block by flooding it)
+                if (type.getId().equals("minecraft:cauldron") || type.getId().endsWith("_cauldron")) {
+                    return;
+                }
             }
         }
         if (plot == null) {
@@ -1490,8 +1493,8 @@ public class PlayerEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketFill(PlayerBucketFillEvent event) {
-        Block blockClicked = event.getBlockClicked();
-        Location location = BukkitUtil.adapt(blockClicked.getLocation());
+        Block block = event.getBlock();
+        Location location = BukkitUtil.adapt(block.getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
@@ -1502,11 +1505,14 @@ public class PlayerEventListener implements Listener {
         final List<BlockTypeWrapper> use =
                 Optional.ofNullable(plot).map(p -> p.getFlag(UseFlag.class)).orElse(area.isRoadFlags() ?
                         area.getFlag(UseFlag.class) : Collections.emptyList());
-        BlockType type = BukkitAdapter.asBlockType(blockClicked.getType());
+        BlockType type = BukkitAdapter.asBlockType(block.getType());
         for (final BlockTypeWrapper blockTypeWrapper : use) {
-            if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper
-                    .accepts(type)) {
-                return;
+            if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper.accepts(type)) {
+                // Allows this event for blocks that can be interacted with using a bucket without it being considered
+                // as "building" (= make it waterlogged or drop the block by flooding it)
+                if (type.getId().equals("minecraft:cauldron") || type.getId().endsWith("_cauldron")) {
+                    return;
+                }
             }
         }
         if (plot == null) {
