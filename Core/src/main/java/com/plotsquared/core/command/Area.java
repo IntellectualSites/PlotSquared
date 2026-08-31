@@ -94,7 +94,7 @@ import java.util.stream.Collectors;
         category = CommandCategory.ADMINISTRATION,
         requiredType = RequiredType.NONE,
         aliases = "world",
-        usage = "/plot area <create | info | list | tp | regen>",
+        usage = "/plot area <create | info | list | tp | regen | delete>",
         confirmation = true)
 public class Area extends SubCommand {
 
@@ -854,7 +854,96 @@ public class Area extends SubCommand {
                 return true;
             }
             case "delete", "remove" -> {
-                player.sendMessage(TranslatableCaption.of("single.worldcreation_location"));
+                if (!player.hasPermission(Permission.PERMISSION_AREA_CREATE)) {
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            TagResolver.resolver(
+                                    "node",
+                                    Tag.inserting(Permission.PERMISSION_AREA_CREATE)
+                            )
+                    );
+                    return false;
+                }
+                if (args.length != 2) {
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            TagResolver.resolver("value", Tag.inserting(Component.text("/plot area delete <area>")))
+                    );
+                    return false;
+                }
+
+                final PlotArea area = this.plotAreaManager.getPlotAreaByString(args[1]);
+                if (area == null) {
+                    player.sendMessage(
+                            TranslatableCaption.of("errors.not_valid_plot_world"),
+                            TagResolver.resolver("value", Tag.inserting(Component.text(args[1])))
+                    );
+                    return false;
+                }
+
+                final PlotId singlePlotId = PlotId.of(1, 1);
+                if (area.getType() != PlotAreaType.PARTIAL
+                        || !singlePlotId.equals(area.getMin())
+                        || !singlePlotId.equals(area.getMax())) {
+                    player.sendMessage(TranslatableCaption.of("single.single_area_delete_not_single"));
+                    return false;
+                }
+                if (area.getPlotCount() != 0) {
+                    player.sendMessage(TranslatableCaption.of("single.single_area_delete_claimed"));
+                    return false;
+                }
+
+                final String areaPath = "worlds." + area.getWorldName() + ".areas."
+                        + area.getId() + '-' + area.getMin() + '-' + area.getMax();
+                if (!this.worldConfiguration.contains(areaPath)) {
+                    player.sendMessage(TranslatableCaption.of("single.single_area_delete_invalid_state"));
+                    return false;
+                }
+
+                final Runnable run = () -> {
+                    final PlotArea currentArea = this.plotAreaManager.getPlotAreaByString(args[1]);
+                    if (currentArea == null
+                            || !currentArea.equals(area)
+                            || currentArea.getType() != PlotAreaType.PARTIAL
+                            || !singlePlotId.equals(currentArea.getMin())
+                            || !singlePlotId.equals(currentArea.getMax())) {
+                        player.sendMessage(TranslatableCaption.of("single.single_area_delete_invalid_state"));
+                        return;
+                    }
+                    if (currentArea.getPlotCount() != 0) {
+                        player.sendMessage(TranslatableCaption.of("single.single_area_delete_claimed"));
+                        return;
+                    }
+
+                    final String currentAreaPath = "worlds." + currentArea.getWorldName() + ".areas."
+                            + currentArea.getId() + '-' + currentArea.getMin() + '-' + currentArea.getMax();
+                    if (!this.worldConfiguration.contains(currentAreaPath)) {
+                        player.sendMessage(TranslatableCaption.of("single.single_area_delete_invalid_state"));
+                        return;
+                    }
+
+                    final Object previousConfiguration = this.worldConfiguration.get(currentAreaPath);
+                    this.worldConfiguration.set(currentAreaPath, null);
+                    try {
+                        this.worldConfiguration.save(this.worldFile);
+                    } catch (final IOException exception) {
+                        this.worldConfiguration.set(currentAreaPath, previousConfiguration);
+                        player.sendMessage(TranslatableCaption.of("single.single_area_delete_save_failed"));
+                        return;
+                    }
+
+                    this.plotAreaManager.removePlotArea(currentArea);
+                    player.sendMessage(
+                            TranslatableCaption.of("single.single_area_deleted"),
+                            TagResolver.resolver("area", Tag.inserting(Component.text(currentArea.getId())))
+                    );
+                };
+
+                if (hasConfirmation(player)) {
+                    CmdConfirm.addPending(player, getCommandString() + ' ' + StringMan.join(args, " "), run);
+                } else {
+                    run.run();
+                }
                 return true;
             }
         }
@@ -871,6 +960,7 @@ public class Area extends SubCommand {
             }
             if (player.hasPermission(Permission.PERMISSION_AREA_CREATE)) {
                 completions.add("single");
+                completions.add("delete");
             }
             if (player.hasPermission(Permission.PERMISSION_AREA_LIST)) {
                 completions.add("list");
