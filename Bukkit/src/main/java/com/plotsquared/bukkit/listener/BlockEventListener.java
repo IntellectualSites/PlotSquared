@@ -410,37 +410,6 @@ public class BlockEventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onBlockGrow(BlockGrowEvent event) {
-        if (event instanceof BlockFormEvent) {
-            return; // handled below
-        }
-        Block block = event.getBlock();
-        Location location = BukkitUtil.adapt(block.getLocation());
-        if (location.isPlotRoad()) {
-            event.setCancelled(true);
-            return;
-        }
-        PlotArea area = location.getPlotArea();
-        if (area == null) {
-            return;
-        }
-        Plot plot = area.getOwnedPlot(location);
-        if (plot == null) {
-            return;
-        }
-        switch (event.getBlock().getType().toString()) {
-            case "VINE":
-                // Vines may grow on the same block if there are multiple available faces to grow on, for example
-                // when in an enclosed 1x1x1 hole, which triggers BlockGrowEvent instead of BlockSpreadEvent.
-                if (!plot.getFlag(VineGrowFlag.class)) {
-                    plot.debug("Vine could not grow because vine-grow = false");
-                    event.setCancelled(true);
-                }
-                break;
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockForm(BlockFormEvent event) {
         if (event instanceof EntityBlockFormEvent) {
             return; // handled below
@@ -792,11 +761,23 @@ public class BlockEventListener implements Listener {
         }
 
         Plot plot = location.getOwnedPlot();
-        if (plot == null || !plot.getFlag(CropGrowFlag.class)) {
-            if (plot != null) {
-                plot.debug("Crop grow event was cancelled because crop-grow = false");
-            }
+
+        if (plot == null) {
             event.setCancelled(true);
+            return;
+        }
+
+        switch (block.getType()) {
+            case VINE:
+                if (!plot.getFlag(VineGrowFlag.class)) {
+                    plot.debug("Vine could not grow because vine-grow = false");
+                    event.setCancelled(true);
+                }
+            default:
+                if (!plot.getFlag(CropGrowFlag.class)) {
+                    plot.debug("Crop grow event was cancelled because crop-grow = false");
+                    event.setCancelled(true);
+                }
         }
     }
 
