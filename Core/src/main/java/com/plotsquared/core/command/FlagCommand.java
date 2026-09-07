@@ -268,14 +268,14 @@ public final class FlagCommand extends Command {
                     .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
                     .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
                     }).collect(Collectors.toList());
-        } else if (Arrays.asList("set", "add", "remove", "delete", "info")
+        } else if (Arrays.asList("set", "s", "add", "a", "remove", "r", "delete", "info", "i")
                 .contains(args[0].toLowerCase(Locale.ENGLISH)) && args.length == 2) {
             return GlobalFlagContainer.getInstance().getRecognizedPlotFlags().stream()
                     .filter(flag -> !(flag instanceof InternalFlag))
                     .filter(flag -> flag.getName().startsWith(args[1].toLowerCase(Locale.ENGLISH)))
                     .map(flag -> new Command(null, false, flag.getName(), "", RequiredType.NONE, null) {
                     }).collect(Collectors.toList());
-        } else if (Arrays.asList("set", "add", "remove", "delete")
+        } else if (Arrays.asList("set", "s", "add", "a", "remove", "r", "delete")
                 .contains(args[0].toLowerCase(Locale.ENGLISH)) && args.length == 3) {
             try {
                 final PlotFlag<?, ?> flag =
@@ -314,7 +314,7 @@ public final class FlagCommand extends Command {
             } catch (final Exception ignored) {
             }
         }
-        return tabOf(player, args, space);
+        return Collections.emptyList();
     }
 
     @CommandDeclaration(command = "set",
