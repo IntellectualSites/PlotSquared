@@ -20,6 +20,7 @@ package com.plotsquared.bukkit.listener;
 
 import com.google.inject.Inject;
 import com.plotsquared.bukkit.BukkitPlatform;
+import com.plotsquared.bukkit.entity.EntityType;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitEntityUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -52,7 +53,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -148,8 +148,8 @@ public class EntityEventListener implements Listener {
         if (area == null) {
             return;
         }
-        // Armour-stands are handled elsewhere and should not be handled by area-wide entity-spawn options
-        if (entity.getType() == EntityType.ARMOR_STAND) {
+        // Armor-stands are handled elsewhere and should not be handled by area-wide entity-spawn options
+        if (EntityType.of(event.getEntityType()) == EntityType.ARMOR_STAND) {
             return;
         }
         CreatureSpawnEvent.SpawnReason reason = event.getSpawnReason();
@@ -212,7 +212,7 @@ public class EntityEventListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onEntityFall(EntityChangeBlockEvent event) {
-        if (event.getEntityType() != EntityType.FALLING_BLOCK) {
+        if (EntityType.of(event.getEntityType()) != EntityType.FALLING_BLOCK) {
             return;
         }
         Block block = event.getBlock();
@@ -278,7 +278,7 @@ public class EntityEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onDamage(EntityDamageEvent event) {
-        if (event.getEntityType() != EntityType.PLAYER) {
+        if (EntityType.of(event.getEntityType()) != EntityType.PLAYER) {
             return;
         }
         Location location = BukkitUtil.adapt(event.getEntity().getLocation());

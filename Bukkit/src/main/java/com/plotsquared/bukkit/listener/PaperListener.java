@@ -28,6 +28,7 @@ import com.destroystokyo.paper.event.entity.SlimePathfindEvent;
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
 import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
 import com.google.inject.Inject;
+import com.plotsquared.bukkit.entity.EntityType;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.Command;
@@ -55,11 +56,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Chunk;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Slime;
@@ -83,9 +82,6 @@ import java.util.regex.Pattern;
  */
 @SuppressWarnings("unused")
 public class PaperListener implements Listener {
-
-    private static final NamespacedKey ITEM = NamespacedKey.minecraft("item");
-    private static final NamespacedKey FISHING_BOBBER = NamespacedKey.minecraft("fishing_bobber");
 
     private final PlotAreaManager plotAreaManager;
     private Chunk lastChunk;
@@ -132,7 +128,7 @@ public class PaperListener implements Listener {
             return;
         }
 
-        handleEntityMovement(event, event.getEntity().getLocation(),  b.getLocation());
+        handleEntityMovement(event, event.getEntity().getLocation(), b.getLocation());
     }
 
     @EventHandler
@@ -186,8 +182,9 @@ public class PaperListener implements Listener {
         if (area == null) {
             return;
         }
-        // Armour-stands are handled elsewhere and should not be handled by area-wide entity-spawn options
-        if (event.getType() == EntityType.ARMOR_STAND) {
+        final EntityType entityType = EntityType.of(event.getType());
+        // Armor-stands are handled elsewhere and should not be handled by area-wide entity-spawn options
+        if (entityType == EntityType.ARMOR_STAND) {
             return;
         }
         // If entities are spawning... the chunk should be loaded?
@@ -206,7 +203,8 @@ public class PaperListener implements Listener {
                     return;
                 }
             }
-            case "REINFORCEMENTS", "NATURAL", "MOUNT", "PATROL", "RAID", "SILVERFISH_BLOCK", "ENDER_PEARL", "TRAP", "VILLAGE_DEFENSE", "VILLAGE_INVASION", "BEEHIVE", "CHUNK_GEN" -> {
+            case "REINFORCEMENTS", "NATURAL", "MOUNT", "PATROL", "RAID", "SILVERFISH_BLOCK", "ENDER_PEARL", "TRAP",
+                 "VILLAGE_DEFENSE", "VILLAGE_INVASION", "BEEHIVE", "CHUNK_GEN" -> {
                 if (!area.isMobSpawning()) {
                     event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
@@ -237,24 +235,23 @@ public class PaperListener implements Listener {
         }
         Plot plot = location.getOwnedPlotAbs();
         if (plot == null) {
-            EntityType type = event.getType();
             // PreCreatureSpawnEvent **should** not be called for DROPPED_ITEM, just for the sake of consistency
-            if (type.getKey().equals(ITEM)) {
+            if (entityType == EntityType.ITEM) {
                 if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
                     event.setCancelled(true);
                 }
                 return;
             }
             if (!area.isMobSpawning()) {
-                if (type == EntityType.PLAYER) {
+                if (entityType == EntityType.PLAYER) {
                     return;
                 }
-                if (type.isAlive()) {
+                if (entityType.isAlive()) {
                     event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                 }
             }
-            if (!area.isMiscSpawnUnowned() && !type.isAlive()) {
+            if (!area.isMiscSpawnUnowned() && !entityType.isAlive()) {
                 event.setShouldAbortSpawn(true);
                 event.setCancelled(true);
             }
@@ -326,6 +323,7 @@ public class PaperListener implements Listener {
             return;
         }
         Projectile entity = event.getProjectile();
+        EntityType entityType = EntityType.of(entity);
         ProjectileSource shooter = entity.getShooter();
         if (!(shooter instanceof Player)) {
             return;
@@ -365,7 +363,7 @@ public class PaperListener implements Listener {
                 event.setCancelled(true);
             }
         } else if (!plot.isAdded(pp.getUUID())) {
-            if (entity.getType().getKey().equals(FISHING_BOBBER)) {
+            if (entityType == EntityType.FISHING_BOBBER) {
                 if (plot.getFlag(FishingFlag.class)) {
                     return;
                 }
