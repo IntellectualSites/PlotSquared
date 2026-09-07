@@ -357,7 +357,13 @@ public class UUIDPipeline {
 
         final List<UUIDService> serviceList = this.getServiceListInstance();
         final List<UUIDMapping> mappings = new ArrayList<>(requests.size());
-        final List<String> remainingRequests = new ArrayList<>(requests);
+        final List<String> remainingRequests = new ArrayList<>(requests.size());
+        for (final String request : requests) {
+            if (remainingRequests.stream().noneMatch(existing -> usernamesEqual(existing, request))) {
+                remainingRequests.add(request);
+            }
+        }
+        final int totalRequests = remainingRequests.size();
 
         for (final UUIDService service : serviceList) {
             // We can chain multiple synchronous
@@ -365,7 +371,7 @@ public class UUIDPipeline {
             if (service.canBeSynchronous()) {
                 final List<UUIDMapping> completedRequests = service.getUUIDs(remainingRequests);
                 for (final UUIDMapping mapping : completedRequests) {
-                    remainingRequests.remove(mapping.username());
+                    remainingRequests.removeIf(remaining -> usernamesEqual(remaining, mapping.username()));
                 }
                 mappings.addAll(completedRequests);
             } else {
@@ -380,7 +386,7 @@ public class UUIDPipeline {
             for (final UUIDService service : serviceList) {
                 final List<UUIDMapping> completedRequests = service.getUUIDs(remainingRequests);
                 for (final UUIDMapping mapping : completedRequests) {
-                    remainingRequests.remove(mapping.username());
+                    remainingRequests.removeIf(remaining -> usernamesEqual(remaining, mapping.username()));
                 }
                 mappings.addAll(completedRequests);
                 if (remainingRequests.isEmpty()) {
@@ -388,7 +394,7 @@ public class UUIDPipeline {
                 }
             }
 
-            if (mappings.size() == requests.size()) {
+            if (mappings.size() == totalRequests) {
                 this.consume(mappings);
                 return mappings;
             } else if (Settings.DEBUG) {
@@ -429,6 +435,13 @@ public class UUIDPipeline {
             }
         }
         return null;
+    }
+
+    private static boolean usernamesEqual(final @NonNull String a, final @NonNull String b) {
+        if (UUIDService.usernamesCaseSensitive()) {
+            return a.equals(b);
+        }
+        return a.equalsIgnoreCase(b);
     }
 
 }

@@ -87,15 +87,17 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
     @Override
     public @NonNull List<UUIDMapping> getUUIDs(@NonNull List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
-        try (final PreparedStatement statement = getConnection()
-                .prepareStatement("SELECT `uuid` FROM `usercache` WHERE `username` = ?")) {
+        final String query = UUIDService.usernamesCaseSensitive()
+                ? "SELECT `uuid`, `username` FROM `usercache` WHERE `username` = ?"
+                : "SELECT `uuid`, `username` FROM `usercache` WHERE `username` = ? COLLATE NOCASE";
+        try (final PreparedStatement statement = getConnection().prepareStatement(query)) {
             for (final String username : usernames) {
                 statement.setString(1, username);
                 try (final ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
                         mappings.add(new UUIDMapping(
                                 UUID.fromString(resultSet.getString("uuid")),
-                                username
+                                resultSet.getString("username")
                         ));
                     }
                 }
