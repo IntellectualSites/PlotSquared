@@ -761,11 +761,23 @@ public class BlockEventListener implements Listener {
         }
 
         Plot plot = location.getOwnedPlot();
-        if (plot == null || !plot.getFlag(CropGrowFlag.class)) {
-            if (plot != null) {
-                plot.debug("Crop grow event was cancelled because crop-grow = false");
-            }
+
+        if (plot == null) {
             event.setCancelled(true);
+            return;
+        }
+
+        switch (block.getType()) {
+            case VINE:
+                if (!plot.getFlag(VineGrowFlag.class)) {
+                    plot.debug("Vine could not grow because vine-grow = false");
+                    event.setCancelled(true);
+                }
+            default:
+                if (!plot.getFlag(CropGrowFlag.class)) {
+                    plot.debug("Crop grow event was cancelled because crop-grow = false");
+                    event.setCancelled(true);
+                }
         }
     }
 
