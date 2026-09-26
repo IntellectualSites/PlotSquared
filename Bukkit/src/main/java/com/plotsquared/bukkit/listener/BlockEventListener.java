@@ -773,6 +773,7 @@ public class BlockEventListener implements Listener {
                     plot.debug("Vine could not grow because vine-grow = false");
                     event.setCancelled(true);
                 }
+                break;
             default:
                 if (!plot.getFlag(CropGrowFlag.class)) {
                     plot.debug("Crop grow event was cancelled because crop-grow = false");
