@@ -3,7 +3,7 @@
 paper = "1.21.1-R0.1-SNAPSHOT"
 guice = "7.0.0"
 spotbugs = "4.10.4"
-checkerqual = "4.2.2"
+checkerqual = "4.2.3"
 gson = "2.10"
 guava = "31.1-jre"
 snakeyaml = "2.0"
@@ -34,7 +34,7 @@ serverlib = "2.3.7"
 # Gradle plugins
 shadow = "9.6.1"
 grgit = "4.1.1"
-spotless = "8.10.1"
+spotless = "8.10.3"
 publish = "0.37.0"
 runPaper = "3.1.0"
 
