@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -60,7 +61,12 @@ public class CacheUUIDService implements UUIDService, Consumer<List<UUIDMapping>
     @Override
     public @NonNull List<UUIDMapping> getUUIDs(final @NonNull List<@NonNull String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
-        mappings.addAll(this.usernameCache.getAllPresent(usernames).values());
+        for (final String username : usernames) {
+            final UUIDMapping mapping = this.usernameCache.getIfPresent(usernameKey(username));
+            if (mapping != null) {
+                mappings.add(mapping);
+            }
+        }
         return mappings;
     }
 
@@ -68,8 +74,15 @@ public class CacheUUIDService implements UUIDService, Consumer<List<UUIDMapping>
     public void accept(final @NonNull List<@NonNull UUIDMapping> uuidMappings) {
         for (final UUIDMapping mapping : uuidMappings) {
             this.uuidCache.put(mapping.uuid(), mapping);
-            this.usernameCache.put(mapping.username(), mapping);
+            this.usernameCache.put(usernameKey(mapping.username()), mapping);
         }
+    }
+
+    private static @NonNull String usernameKey(final @NonNull String username) {
+        if (UUIDService.usernamesCaseSensitive()) {
+            return username;
+        }
+        return username.toLowerCase(Locale.ENGLISH);
     }
 
     @Override
