@@ -18,6 +18,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -25,6 +26,9 @@ import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotAreaType;
+import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.flag.implementations.HideInfoFlag;
 import com.plotsquared.core.util.TabCompletions;
 import net.kyori.adventure.text.Component;
@@ -39,9 +43,11 @@ import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "info",
         aliases = "i",
-        usage = "/plot info <id> [-f to force info]",
+        usage = "/plot info <id | single-area> [-f to force info]",
         category = CommandCategory.INFO)
 public class Info extends SubCommand {
+
+    private static final PlotId SINGLE_PLOT_ID = PlotId.of(1, 1);
 
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
@@ -55,7 +61,10 @@ public class Info extends SubCommand {
                         plot = Plot
                                 .getPlotFromString(player, null, false);
                 default -> {
-                    plot = Plot.getPlotFromString(player, arg, false);
+                    plot = getSinglePlotAreaByName(arg);
+                    if (plot == null) {
+                        plot = Plot.getPlotFromString(player, arg, false);
+                    }
                     if (args.length == 2) {
                         arg = args[1];
                     } else {
@@ -119,7 +128,7 @@ public class Info extends SubCommand {
                     TranslatableCaption.of("info.plot_info_unclaimed"),
                     TagResolver.resolver(
                             "plot",
-                            Tag.inserting(Component.text(plot.getId().getX() + ";" + plot.getId().getY()))
+                            Tag.inserting(Component.text(getDisplayIdentifier(plot)))
                     )
             );
             return true;
@@ -142,6 +151,29 @@ public class Info extends SubCommand {
         }
         plot.format(info, player, full).thenAcceptAsync(player::sendMessage);
         return true;
+    }
+
+    private Plot getSinglePlotAreaByName(final String areaName) {
+        final PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(areaName);
+        if (!isNamedSinglePlotArea(area) || area.getId() == null || !area.getId().equalsIgnoreCase(areaName)) {
+            return null;
+        }
+        return area.getPlotAbs(SINGLE_PLOT_ID);
+    }
+
+    private String getDisplayIdentifier(final Plot plot) {
+        final PlotArea area = plot.getArea();
+        if (isNamedSinglePlotArea(area) && area.getId() != null) {
+            return area.getId();
+        }
+        return plot.getId().getX() + ";" + plot.getId().getY();
+    }
+
+    private boolean isNamedSinglePlotArea(final PlotArea area) {
+        return area != null
+                && area.getType() == PlotAreaType.PARTIAL
+                && SINGLE_PLOT_ID.equals(area.getMin())
+                && SINGLE_PLOT_ID.equals(area.getMax());
     }
 
     @Override
