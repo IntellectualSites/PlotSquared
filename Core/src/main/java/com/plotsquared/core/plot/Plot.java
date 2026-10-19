@@ -2482,7 +2482,7 @@ public class Plot {
     public @NonNull Set<CuboidRegion> getRegions() {
         if (!this.isMerged()) {
             Location pos1 = this.getBottomAbs().withY(getArea().getMinBuildHeight());
-            Location pos2 = this.getTopAbs().withY(getArea().getMaxBuildHeight());
+            Location pos2 = this.getTopAbs().withY(getArea().getMaxBuildHeight() - 1);
             CuboidRegion rg = new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3());
             return Collections.singleton(rg);
         }
