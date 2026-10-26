@@ -76,6 +76,7 @@ import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.MinecraftVersion;
 import com.plotsquared.core.util.PlotFlagUtil;
 import com.plotsquared.core.util.PremiumVerification;
+import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
@@ -291,6 +292,7 @@ public class PlayerEventListener implements Listener {
     private final WorldEdit worldEdit;
     private final PlotAreaManager plotAreaManager;
     private final PlotListener plotListener;
+    private final WorldUtil worldUtil;
     // To prevent recursion
     private boolean tmpTeleport = true;
     private Field fieldPlayer;
@@ -311,12 +313,14 @@ public class PlayerEventListener implements Listener {
             final @NonNull PlotAreaManager plotAreaManager,
             final @NonNull EventDispatcher eventDispatcher,
             final @NonNull WorldEdit worldEdit,
-            final @NonNull PlotListener plotListener
+            final @NonNull PlotListener plotListener,
+            final @NonNull WorldUtil worldUtil
     ) {
         this.eventDispatcher = eventDispatcher;
         this.worldEdit = worldEdit;
         this.plotAreaManager = plotAreaManager;
         this.plotListener = plotListener;
+        this.worldUtil = worldUtil;
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
@@ -543,7 +547,11 @@ public class PlayerEventListener implements Listener {
         if (area != null) {
             Plot plot = area.getPlot(location);
             if (plot != null) {
-                plotListener.plotEntry(pp, plot);
+                final boolean entryAllowed = this.plotListener.plotEntry(pp, plot);
+                if (!entryAllowed) {
+                    final Location spawn = this.worldUtil.getSpawn(plot.getWorldName());
+                    pp.plotkick(spawn);
+                }
             }
         }
         // Delayed
