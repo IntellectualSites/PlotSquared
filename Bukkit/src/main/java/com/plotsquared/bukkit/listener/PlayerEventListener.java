@@ -1303,6 +1303,10 @@ public class PlayerEventListener implements Listener {
                          "SWEET_BERRIES", "GLOW_BERRIES" -> {
                         return;
                     }
+                    // the clicked block is not the target (e.g. plot wall or bedrock), onBucketEmpty/onBucketFill check the real target block
+                    case "WATER_BUCKET", "LAVA_BUCKET", "BUCKET" -> {
+                        return;
+                    }
                     default -> {
                         //eventType = PlayerBlockEventType.PLACE_BLOCK;
                         if (type.isBlock()) {
@@ -1417,6 +1421,10 @@ public class PlayerEventListener implements Listener {
             return;
         }
         BukkitPlayer pp = BukkitUtil.adapt(event.getPlayer());
+        if (area.notifyIfOutsideBuildArea(pp, location.getY())) {
+            event.setCancelled(true);
+            return;
+        }
         Plot plot = area.getPlot(location);
         final List<BlockTypeWrapper> use =
                 Optional.ofNullable(plot).map(p -> p.getFlag(UseFlag.class)).orElse(area.isRoadFlags() ?
