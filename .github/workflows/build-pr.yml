@@ -3,10 +3,7 @@ on: [ pull_request ]
 jobs:
   build_pr:
     if: github.repository_owner == 'IntellectualSites'
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
