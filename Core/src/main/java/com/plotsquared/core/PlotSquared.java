@@ -713,8 +713,6 @@ public class PlotSquared {
                 case CREATION_DATE_TIMESTAMP -> toReturn.addAll(sortPlotsByTimestamp(map.get(area)));
                 case DISTANCE_FROM_ORIGIN -> toReturn.addAll(sortPlotsByHash(map.get(area)));
                 case LAST_MODIFIED -> toReturn.addAll(sortPlotsByModified(map.get(area)));
-                default -> {
-                }
             }
         }
         return toReturn;
