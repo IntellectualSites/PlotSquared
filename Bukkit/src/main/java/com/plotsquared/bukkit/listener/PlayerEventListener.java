@@ -156,7 +156,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.Collections;
@@ -293,7 +293,7 @@ public class PlayerEventListener implements Listener {
     private final WorldEdit worldEdit;
     private final PlotAreaManager plotAreaManager;
     private final PlotListener plotListener;
-    private final Tag<Material> eggTag = Bukkit.getTag(
+    private final @Nullable Tag<Material> eggTag = Bukkit.getTag(
             org.bukkit.Tag.REGISTRY_ITEMS,
             NamespacedKey.minecraft("eggs"),
             Material.class
