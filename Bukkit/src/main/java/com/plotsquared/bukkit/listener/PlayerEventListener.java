@@ -1322,7 +1322,7 @@ public class PlayerEventListener implements Listener {
                 // It could be replaced with an Item Tag or the exact Material in the future.
                 boolean isEgg = Optional.ofNullable(eggTag)
                         .map(tag -> tag.isTagged(type))
-                        .orElse(type.name().endsWith("EGG"));
+                        .orElse(type == Material.EGG);
                 if (PaperSupport.isPaper()) {
                     if (MaterialTags.SPAWN_EGGS.isTagged(type) || isEgg) {
                         eventType = PlayerBlockEventType.SPAWN_MOB;
