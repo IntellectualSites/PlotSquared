@@ -198,7 +198,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                         BiomeType biome = biomesLayer[j];
                         if (biome != null) {
                             int x = sx + ChunkUtil.getX(j);
-                            int y = ChunkUtil.getY(layer, j);
+                            int y = ChunkUtil.getY(layer + localChunk.getMinSection(), j);
                             int z = sz + ChunkUtil.getZ(j);
                             getWorld().setBiome(BlockVector3.at(x, y, z), biome);
                         }
