@@ -23,6 +23,8 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.events.PlayerPlotAddRemoveEvent;
+import com.plotsquared.core.events.Result;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -150,23 +152,43 @@ public class Trust extends Command {
                     return;
                 }
                 // Success
-                confirm.run(this, () -> {
-                    for (UUID uuid : uuids) {
-                        if (uuid != DBFunc.EVERYONE) {
-                            if (!currentPlot.removeMember(uuid)) {
-                                if (currentPlot.getDenied().contains(uuid)) {
-                                    currentPlot.removeDenied(uuid);
+                confirm.run(
+                        this, () -> {
+                            for (UUID uuid : uuids) {
+                                if (this.eventDispatcher
+                                        .callPlayerTrust(player, currentPlot, uuid, PlayerPlotAddRemoveEvent.Reason.COMMAND)
+                                        .getEventResult() == Result.DENY) {
+                                    player.sendMessage(
+                                            TranslatableCaption.of("events.event_denied"),
+                                            TagResolver.resolver("value", Tag.inserting(Component.text("Trust")))
+                                    );
+                                    return;
                                 }
+
+                                if (uuid != DBFunc.EVERYONE) {
+                                    if (!currentPlot.removeMember(uuid)) {
+                                        if (currentPlot.getDenied().contains(uuid)) {
+                                            currentPlot.removeDenied(uuid);
+                                        }
+                                    }
+                                }
+                                currentPlot.addTrusted(uuid);
+                                this.eventDispatcher.callTrusted(player, currentPlot, uuid, true);
+                                this.eventDispatcher.callPostTrusted(
+                                        player,
+                                        currentPlot,
+                                        uuid,
+                                        false,
+                                        PlayerPlotAddRemoveEvent.Reason.COMMAND
+                                );
+                                player.sendMessage(TranslatableCaption.of("trusted.trusted_added"));
                             }
-                        }
-                        currentPlot.addTrusted(uuid);
-                        this.eventDispatcher.callTrusted(player, currentPlot, uuid, true);
-                        player.sendMessage(TranslatableCaption.of("trusted.trusted_added"));
-                    }
-                }, null);
+                        }, null
+                );
             }
-            future.complete(true);
-        });
+                    future.complete(true);
+                }
+        );
         return CompletableFuture.completedFuture(true);
     }
 

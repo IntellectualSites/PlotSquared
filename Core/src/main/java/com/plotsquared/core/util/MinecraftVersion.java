@@ -65,6 +65,10 @@ public record MinecraftVersion(int major, int minor, int patch) implements Compa
      * Minecraft 26.1 release version
      */
     public static final MinecraftVersion TINY_TAKEOVER = new MinecraftVersion(26, 1, 0);
+    /**
+     * Minecraft 26.2 release version
+     */
+    public static final MinecraftVersion CHAOS_CUBED = new MinecraftVersion(26, 2, 0);
 
     private static final Comparator<MinecraftVersion> COMPARATOR = Comparator
             .comparingInt(MinecraftVersion::major)

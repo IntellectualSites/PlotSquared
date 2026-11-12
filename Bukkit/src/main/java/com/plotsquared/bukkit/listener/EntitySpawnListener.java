@@ -20,13 +20,13 @@ package com.plotsquared.bukkit.listener;
 
 import com.plotsquared.bukkit.util.BukkitEntityUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.bukkit.util.PaperSupport;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
-import io.papermc.lib.PaperLib;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -99,7 +99,7 @@ public class EntitySpawnListener implements Listener {
                         }
                         try {
                             ignoreTP = true;
-                            PaperLib.teleportAsync(entity, origin);
+                            PaperSupport.teleportAsync(entity, origin);
                         } finally {
                             ignoreTP = false;
                         }
@@ -125,7 +125,7 @@ public class EntitySpawnListener implements Listener {
         if (!location.isPlotArea() || area == null) {
             return;
         }
-        if (PaperLib.isPaper()) {
+        if (PaperSupport.isPaper()) {
             //noinspection ConstantValue - getEntitySpawnReason annotated as NotNull, but is not NotNull. lol.
             if (area.isSpawnCustom() && entity.getEntitySpawnReason() != null && "CUSTOM".equals(entity.getEntitySpawnReason().name())) {
                 return;

@@ -23,6 +23,8 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.events.PlayerPlotAddRemoveEvent;
+import com.plotsquared.core.events.Result;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -151,20 +153,41 @@ public class Add extends Command {
                         return;
                     }
                     // Success
-                    confirm.run(this, () -> {
-                        for (UUID uuid : uuids) {
-                            if (uuid != DBFunc.EVERYONE) {
-                                if (!plot.removeTrusted(uuid)) {
-                                    if (plot.getDenied().contains(uuid)) {
-                                        plot.removeDenied(uuid);
+                    confirm.run(
+                            this, () -> {
+                                for (UUID uuid : uuids) {
+                                    if (this.eventDispatcher.callPlayerAdd(
+                                            player,
+                                            plot,
+                                            uuid,
+                                            PlayerPlotAddRemoveEvent.Reason.COMMAND
+                                    ).getEventResult() == Result.DENY) {
+                                        player.sendMessage(
+                                                TranslatableCaption.of("events.event_denied"),
+                                                TagResolver.resolver("value", Tag.inserting(Component.text("Add")))
+                                        );
+                                        continue;
                                     }
+                                    if (uuid != DBFunc.EVERYONE) {
+                                        if (!plot.removeTrusted(uuid)) {
+                                            if (plot.getDenied().contains(uuid)) {
+                                                plot.removeDenied(uuid);
+                                            }
+                                        }
+                                    }
+                                    plot.addMember(uuid);
+                                    this.eventDispatcher.callMember(player, plot, uuid, true);
+                                    this.eventDispatcher.callPostAdded(
+                                            player,
+                                            plot,
+                                            uuid,
+                                            false,
+                                            PlayerPlotAddRemoveEvent.Reason.COMMAND
+                                    );
+                                    player.sendMessage(TranslatableCaption.of("member.member_added"));
                                 }
-                            }
-                            plot.addMember(uuid);
-                            this.eventDispatcher.callMember(player, plot, uuid, true);
-                            player.sendMessage(TranslatableCaption.of("member.member_added"));
-                        }
-                    }, null);
+                            }, null
+                    );
                 } catch (final Throwable exception) {
                     future.completeExceptionally(exception);
                     return;

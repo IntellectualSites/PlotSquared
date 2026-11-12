@@ -35,8 +35,11 @@ import com.plotsquared.core.generator.SquarePlotWorld;
 import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.plot.world.SinglePlotManager;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
@@ -227,7 +230,8 @@ public final class PlotModificationManager {
             @Override
             public void run() {
                 if (queue.isEmpty()) {
-                    Runnable run = () -> {
+                    // don't touch world for single plot areas on deletion (un-fuck this in the future)
+                    Runnable run = isDelete && manager instanceof SinglePlotManager ? whenDone : () -> {
                         for (CuboidRegion region : regions) {
                             Location[] corners = Plot.getCorners(plot.getWorldName(), region);
                             PlotSquared.platform().regionManager().clearAllEntities(corners[0], corners[1]);
@@ -250,7 +254,9 @@ public final class PlotModificationManager {
                         queue.enqueue();
                         return;
                     }
-                    run.run();
+                    if (run != null) {
+                        run.run();
+                    }
                     return;
                 }
                 Plot current = queue.poll();
@@ -379,6 +385,22 @@ public final class PlotModificationManager {
         for (Plot current : plots) {
             boolean[] merged = new boolean[]{false, false, false, false};
             current.setMerged(merged);
+        }
+        // Update TEMPORARY_LAST_PLOT metadata for all players that were in the merged plot
+        // so that getCurrentPlot() returns the correct individual plot based on their location
+        for (PlotPlayer<?> player : PlotSquared.platform().playerManager().getPlayers()) {
+            try (MetaDataAccess<Plot> lastPlotAccess = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+                Plot lastPlot = lastPlotAccess.get().orElse(null);
+                if (lastPlot != null && plots.contains(lastPlot)) {
+                    // Player was in the merged plot, update to their actual current plot
+                    Plot actualPlot = player.getLocation().getPlot();
+                    if (actualPlot != null) {
+                        lastPlotAccess.set(actualPlot);
+                    } else {
+                        lastPlotAccess.remove();
+                    }
+                }
+            }
         }
         if (createSign) {
             queue.setCompleteTask(() -> TaskManager.runTaskAsync(() -> {

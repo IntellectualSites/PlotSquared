@@ -19,6 +19,7 @@
 package com.plotsquared.bukkit.listener;
 
 import com.google.inject.Inject;
+import com.plotsquared.bukkit.util.PaperSupport;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
@@ -33,7 +34,6 @@ import com.plotsquared.core.util.ReflectionUtils.RefMethod;
 import com.plotsquared.core.util.task.PlotSquaredTask;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
-import io.papermc.lib.PaperLib;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
@@ -216,7 +216,7 @@ public class ChunkListener implements Listener {
     }
 
     private void onInternalEntitySpawn(EntitySpawnEvent event) {
-        PaperLib.getChunkAtAsync(event.getLocation()).thenAccept(chunk -> {
+        PaperSupport.getChunkAtAsync(event.getLocation()).thenAccept(chunk -> {
             if (chunk == this.lastChunk) {
                 event.getEntity().remove();
                 event.setCancelled(true);
@@ -244,7 +244,7 @@ public class ChunkListener implements Listener {
                 chunk.unload(true);
                 return;
             }
-            BlockState[] tiles = chunk.getTileEntities();
+            BlockState[] tiles = getTiles(chunk);
             if (tiles.length == 0) {
                 Objects.requireNonNull(TaskManager.removeTask(currentIndex)).cancel();
                 chunk.unload(true);
@@ -270,7 +270,7 @@ public class ChunkListener implements Listener {
             return false;
         }
         Entity[] entities = chunk.getEntities();
-        BlockState[] tiles = chunk.getTileEntities();
+        BlockState[] tiles = getTiles(chunk);
         if (entities.length > Settings.Chunk_Processor.MAX_ENTITIES) {
             int toRemove = entities.length - Settings.Chunk_Processor.MAX_ENTITIES;
             int index = 0;
@@ -293,6 +293,10 @@ public class ChunkListener implements Listener {
             }
         }
         return false;
+    }
+
+    private static BlockState[] getTiles(Chunk chunk) {
+        return PaperSupport.isPaper() ? chunk.getTileEntities(false) : chunk.getTileEntities();
     }
 
 }

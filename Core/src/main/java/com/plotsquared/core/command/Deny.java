@@ -23,6 +23,8 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.events.PlayerPlotAddRemoveEvent;
+import com.plotsquared.core.events.Result;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
@@ -124,21 +126,29 @@ public class Deny extends SubCommand {
                         );
                         return;
                     } else {
+                        if (this.eventDispatcher
+                                .callPlayerDeny(player, plot, uuid, PlayerPlotAddRemoveEvent.Reason.COMMAND)
+                                .getEventResult() == Result.DENY) {
+                            player.sendMessage(
+                                    TranslatableCaption.of("events.event_denied"),
+                                    TagResolver.resolver("value", Tag.inserting(Component.text("Deny")))
+                            );
+                            continue;
+                        }
                         if (uuid != DBFunc.EVERYONE) {
                             plot.removeMember(uuid);
                             plot.removeTrusted(uuid);
                         }
                         plot.addDenied(uuid);
                         this.eventDispatcher.callDenied(player, plot, uuid, true);
+                        this.eventDispatcher.callPostDenied(player, plot, uuid, true, PlayerPlotAddRemoveEvent.Reason.COMMAND);
                         if (!uuid.equals(DBFunc.EVERYONE)) {
                             handleKick(PlotSquared.platform().playerManager().getPlayerIfExists(uuid), plot);
                         } else {
                             for (PlotPlayer<?> plotPlayer : plot.getPlayersInPlot()) {
-                                // Ignore plot-owners
-                                if (plot.isAdded(plotPlayer.getUUID())) {
-                                    continue;
+                                if (plot.isDenied(plotPlayer.getUUID())) {
+                                    handleKick(plotPlayer, plot);
                                 }
-                                handleKick(plotPlayer, plot);
                             }
                         }
                     }

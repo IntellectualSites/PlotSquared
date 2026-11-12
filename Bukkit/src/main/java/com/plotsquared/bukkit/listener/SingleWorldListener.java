@@ -22,8 +22,6 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
-import com.plotsquared.core.util.MinecraftVersion;
-import com.plotsquared.core.util.ReflectionUtils;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -32,18 +30,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 
-import java.lang.reflect.Method;
-
-import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
-
 public class SingleWorldListener implements Listener {
 
-    private final Method methodSetUnsaved;
-    private Method methodGetHandleChunk;
-    private Object objChunkStatusFull = null;
+    //private final Method methodSetUnsaved;
+    //private Method methodGetHandleChunk;
+    //private Object objChunkStatusFull = null;
 
     public SingleWorldListener() throws Exception {
-        ReflectionUtils.RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
+        /* ReflectionUtils.RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
         ReflectionUtils.RefClass classChunkAccess = getRefClass("net.minecraft.world.level.chunk.IChunkAccess");
         this.methodSetUnsaved = classChunkAccess.getMethod("a", boolean.class).getRealMethod();
         try {
@@ -61,18 +55,18 @@ public class SingleWorldListener implements Listener {
             } catch (NoSuchMethodException ex) {
                 throw new RuntimeException(ex);
             }
-        }
+        } */
     }
 
     public void markChunkAsClean(Chunk chunk) {
-        try {
+        /* try {
             Object nmsChunk = objChunkStatusFull != null
                     ? this.methodGetHandleChunk.invoke(chunk, objChunkStatusFull)
                     : this.methodGetHandleChunk.invoke(chunk);
             methodSetUnsaved.invoke(nmsChunk, false);
         } catch (Throwable e) {
             e.printStackTrace();
-        }
+        } */
     }
 
     private void handle(ChunkEvent event) {

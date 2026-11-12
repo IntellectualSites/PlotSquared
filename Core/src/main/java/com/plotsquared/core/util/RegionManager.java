@@ -45,7 +45,9 @@ import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Set;
 
@@ -88,14 +90,17 @@ public abstract class RegionManager {
      */
     public abstract int[] countEntities(Plot plot);
 
-    public void deleteRegionFiles(final String world, final Collection<BlockVector2> chunks, final Runnable whenDone) {
+    public void deleteRegionFiles(final String worldName, final Collection<BlockVector2> chunks, final Runnable whenDone) {
+        com.plotsquared.core.location.World<?> world = PlotSquared.platform().getPlatformWorld(worldName);
+        Path regionRoot = world.getWorldFolder().resolve("region");
         TaskManager.runTaskAsync(() -> {
             for (BlockVector2 loc : chunks) {
-                String directory = world + File.separator + "region" + File.separator + "r." + loc.getX() + "." + loc.getZ() + ".mca";
-                File file = new File(PlotSquared.platform().worldContainer(), directory);
-                LOGGER.info("- Deleting file: {} (max 1024 chunks)", file.getName());
-                if (file.exists()) {
-                    file.delete();
+                Path path = regionRoot.resolve(String.format("r.%s.%s.mca", loc.getX(), loc.getZ()));
+                LOGGER.info("- Deleting file: {} (max 1024 chunks)", path.getFileName());
+                try {
+                    Files.deleteIfExists(path);
+                } catch (IOException e) {
+                    LOGGER.error("Failed to delete region file", e);
                 }
             }
             TaskManager.runTask(whenDone);

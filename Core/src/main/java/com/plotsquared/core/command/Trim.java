@@ -23,6 +23,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.location.World;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.world.PlotAreaManager;
@@ -78,22 +79,23 @@ public class Trim extends SubCommand {
     /**
      * Runs the result task with the parameters (viable, nonViable).
      *
-     * @param world  The world
+     * @param worldName  The world name
      * @param result (viable = .mcr to trim, nonViable = .mcr keep)
      * @return success or not
      */
     public static boolean getTrimRegions(
-            String world,
+            String worldName,
             final RunnableVal2<Set<BlockVector2>, Set<BlockVector2>> result
     ) {
         if (result == null) {
             return false;
         }
         TranslatableCaption.of("trim.trim_starting");
-        final List<Plot> plots = PlotQuery.newQuery().inWorld(world).asList();
+        final List<Plot> plots = PlotQuery.newQuery().inWorld(worldName).asList();
         if (PlotSquared.platform().expireManager() != null) {
             plots.removeAll(PlotSquared.platform().expireManager().getPendingExpired());
         }
+        World<?> world = PlotSquared.platform().getPlatformWorld(worldName);
         result.value1 = new HashSet<>(PlotSquared.platform().worldUtil().getChunkChunks(world));
         result.value2 = new HashSet<>();
         StaticCaption.of(" - MCA #: " + result.value1.size());
@@ -117,8 +119,7 @@ public class Trim extends SubCommand {
                     }
                 }
             }
-        }).thenAccept(ignore ->
-                TaskManager.getPlatformImplementation().taskLater(result, TaskTime.ticks(1L)));
+        }).thenRun(() -> TaskManager.getPlatformImplementation().taskLater(result, TaskTime.ticks(1L)));
         return true;
     }
 

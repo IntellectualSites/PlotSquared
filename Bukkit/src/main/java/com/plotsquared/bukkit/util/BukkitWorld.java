@@ -20,11 +20,15 @@ package com.plotsquared.bukkit.util;
 
 import com.google.common.collect.Maps;
 import com.plotsquared.core.location.World;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
+import java.nio.file.Path;
 import java.util.Map;
 
 public class BukkitWorld implements World<org.bukkit.World> {
@@ -47,6 +51,7 @@ public class BukkitWorld implements World<org.bukkit.World> {
 
     // We want to allow GC to remove bukkit worlds, but not too eagerly
     private final SoftReference<org.bukkit.World> world;
+    private Key key = null;
 
     private BukkitWorld(final org.bukkit.World world) {
         this.world = new SoftReference<>(world);
@@ -102,7 +107,7 @@ public class BukkitWorld implements World<org.bukkit.World> {
     }
 
     @Override
-    public org.bukkit.World getPlatformWorld() {
+    public org.bukkit.@NonNull World getPlatformWorld() {
         org.bukkit.World world = this.world.get();
         if (world == null) {
             throw new IllegalStateException("Bukkit platform world was unloaded from memory");
@@ -123,6 +128,21 @@ public class BukkitWorld implements World<org.bukkit.World> {
     @Override
     public int getMaxHeight() {
         return getMaxWorldHeight(getPlatformWorld()) - 1;
+    }
+
+    @Override
+    public @NonNull Path getWorldFolder() {
+        return getPlatformWorld().getWorldFolder().toPath();
+    }
+
+    @Override
+    @SuppressWarnings("PatternValidation") // kyori pattern validation...
+    public @NotNull Key key() {
+        if (this.key == null) {
+            NamespacedKey bukkitKey = getPlatformWorld().getKey();
+            this.key = Key.key(bukkitKey.getNamespace(), bukkitKey.getKey());
+        }
+        return this.key;
     }
 
     @Override
