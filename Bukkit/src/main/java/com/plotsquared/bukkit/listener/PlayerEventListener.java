@@ -1323,9 +1323,7 @@ private final org.bukkit.Tag<Material> eggTag = Bukkit.getTag(
                         eventType = PlayerBlockEventType.SPAWN_MOB;
                         break;
                     }
-                } else if (isEgg) {
-                    eventType = PlayerBlockEventType.SPAWN_MOB;
-                    break;
+                } else if (isEgg || type.toString().toLowerCase().endsWith("egg")) {
                 }
                 if (type.isEdible()) {
                     //Allow all players to eat while also allowing the block place event to be fired
