@@ -99,7 +99,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * @return server version as array of numbers
      * @deprecated non-standardized format, use {@link #minecraftVersion()}
      */
-    @Deprecated(since = "TODO")
+    @Deprecated(since = "7.6.0")
     int[] serverVersion();
 
     /**

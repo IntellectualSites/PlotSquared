@@ -26,7 +26,7 @@ import java.util.UUID;
 /**
  * Called when a plot trusted user is added/removed
  *
- * @since TODO
+ * @since 7.6.0
  */
 public final class PostPlayerPlotTrustedEvent extends PostPlayerPlotAddRemoveEvent {
 

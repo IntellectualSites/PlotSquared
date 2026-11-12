@@ -69,6 +69,7 @@ import org.bukkit.event.entity.EntityCombustByEntityEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityKnockbackByEntityEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -466,6 +467,13 @@ public class EntityEventListener implements Listener {
         }
         if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
             entity.setMetadata("plot", new FixedMetadataValue((Plugin) PlotSquared.platform(), plot));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onEntityKnockback(EntityKnockbackByEntityEvent event) {
+        if (!BukkitEntityUtil.entityDamage(event.getSourceEntity(), event.getEntity())) {
+            event.setCancelled(true);
         }
     }
 

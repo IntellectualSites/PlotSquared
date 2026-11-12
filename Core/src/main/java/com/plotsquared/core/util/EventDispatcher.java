@@ -266,7 +266,7 @@ public class EventDispatcher {
         return event;
     }
 
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "7.6.0")
     public PlayerPlotDeniedEvent callDenied(
             PlotPlayer<?> initiator, Plot plot, UUID player,
             boolean added
@@ -276,7 +276,7 @@ public class EventDispatcher {
         return event;
     }
 
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "7.6.0")
     public PlayerPlotTrustedEvent callTrusted(
             PlotPlayer<?> initiator, Plot plot, UUID player,
             boolean added
@@ -286,7 +286,7 @@ public class EventDispatcher {
         return event;
     }
 
-    @Deprecated(forRemoval = true, since = "TODO")
+    @Deprecated(forRemoval = true, since = "7.6.0")
     public PlayerPlotHelperEvent callMember(
             PlotPlayer<?> initiator, Plot plot, UUID player,
             boolean added

@@ -244,7 +244,7 @@ public class ChunkListener implements Listener {
                 chunk.unload(true);
                 return;
             }
-            BlockState[] tiles = chunk.getTileEntities();
+            BlockState[] tiles = getTiles(chunk);
             if (tiles.length == 0) {
                 Objects.requireNonNull(TaskManager.removeTask(currentIndex)).cancel();
                 chunk.unload(true);
@@ -270,7 +270,7 @@ public class ChunkListener implements Listener {
             return false;
         }
         Entity[] entities = chunk.getEntities();
-        BlockState[] tiles = chunk.getTileEntities();
+        BlockState[] tiles = getTiles(chunk);
         if (entities.length > Settings.Chunk_Processor.MAX_ENTITIES) {
             int toRemove = entities.length - Settings.Chunk_Processor.MAX_ENTITIES;
             int index = 0;
@@ -293,6 +293,10 @@ public class ChunkListener implements Listener {
             }
         }
         return false;
+    }
+
+    private static BlockState[] getTiles(Chunk chunk) {
+        return PaperSupport.isPaper() ? chunk.getTileEntities(false) : chunk.getTileEntities();
     }
 
 }

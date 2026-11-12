@@ -97,7 +97,7 @@ public abstract class WorldUtil {
      * Check if the server is using the modern world storage format introduced in 26.1.
      *
      * @return if the server is using the modern server level structure
-     * @since TODO
+     * @since 7.6.0
      */
     public static boolean isModernServerLevelStructure() {
         return MODERN_LEVEL_FORMAT;

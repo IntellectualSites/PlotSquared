@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Settings extends Config {
 
@@ -518,7 +519,9 @@ public class Settings extends Config {
         @Comment({"The click event actions that should be removed from user input in e.g. plot flags like 'greeting'.",
                 "Actions like 'RUN_COMMAND' may be used maliciously as players could trick staff into clicking on messages",
                 "triggering destructive commands."})
-        public static List<String> CLICK_EVENT_ACTIONS_TO_REMOVE = new ArrayList<>(ClickEvent.Action.NAMES.keys());
+        public static List<String> CLICK_EVENT_ACTIONS_TO_REMOVE = Arrays.stream(ClickEvent.Action.values())
+                .map(Enum::name)
+                .collect(Collectors.toList());
 
     }
 
