@@ -18,6 +18,7 @@
  */
 package com.plotsquared.core.uuid;
 
+import com.plotsquared.core.configuration.Settings;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -30,6 +31,18 @@ import java.util.UUID;
  * Service used to provide usernames from player UUIDs
  */
 public interface UUIDService {
+
+    /**
+     * Check whether usernames must be treated as case-sensitive. This is
+     * only the case in offline mode without forced lowercase names, where
+     * UUIDs are derived from the exact casing of the username, meaning that
+     * two usernames differing only in case belong to different players.
+     *
+     * @return {@code true} if usernames must be matched case-sensitively
+     */
+    static boolean usernamesCaseSensitive() {
+        return Settings.UUID.OFFLINE && !Settings.UUID.FORCE_LOWERCASE;
+    }
 
     /**
      * Attempt to complete the given requests. Returns the mappings
