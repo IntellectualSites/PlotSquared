@@ -1326,7 +1326,8 @@ public class PlayerEventListener implements Listener {
                         break;
                     }
                 } else if (isEgg || type.toString().toLowerCase().endsWith("egg")) {
-                }
+                    eventType = PlayerBlockEventType.SPAWN_MOB;
+                    break;
                 if (type.isEdible()) {
                     //Allow all players to eat while also allowing the block place event to be fired
                     return;
