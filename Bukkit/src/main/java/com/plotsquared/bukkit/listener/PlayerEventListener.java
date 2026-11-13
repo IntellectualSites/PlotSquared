@@ -156,7 +156,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.Collections;
@@ -167,6 +166,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 /**
  * Player Events involving plots.
@@ -293,10 +293,7 @@ public class PlayerEventListener implements Listener {
     private final WorldEdit worldEdit;
     private final PlotAreaManager plotAreaManager;
     private final PlotListener plotListener;
-    // null if the server does not know the "eggs" item tag (before 1.21.5)
-    private final org.bukkit.@Nullable Tag<Material> eggTag = Bukkit.getTag(
-            org.bukkit.Tag.REGISTRY_ITEMS, NamespacedKey.minecraft("eggs"), Material.class
-    );
+    private final Predicate<Material> eggMatcher = createEggMatcher();
     // To prevent recursion
     private boolean tmpTeleport = true;
     private Field fieldPlayer;
@@ -310,6 +307,14 @@ public class PlayerEventListener implements Listener {
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
+    }
+
+    private static Predicate<Material> createEggMatcher() {
+        // The "eggs" item tag (1.21.5+) covers egg, blue_egg and brown_egg. Older servers only know the regular egg.
+        org.bukkit.Tag<Material> eggTag = Bukkit.getTag(
+                org.bukkit.Tag.REGISTRY_ITEMS, NamespacedKey.minecraft("eggs"), Material.class
+        );
+        return eggTag != null ? eggTag::isTagged : type -> type == Material.EGG;
     }
 
     @Inject
@@ -1318,7 +1323,7 @@ public class PlayerEventListener implements Listener {
                 }
                 // 1.21.5 (Spring to Life) introduced brown_egg and blue_egg, which are covered by the "eggs" item tag.
                 // Servers without that tag only know the regular egg.
-                boolean isEgg = eggTag != null ? eggTag.isTagged(type) : type == Material.EGG;
+                boolean isEgg = eggMatcher.test(type);
                 boolean isSpawnEgg = PaperSupport.isPaper()
                         ? MaterialTags.SPAWN_EGGS.isTagged(type)
                         : type.name().endsWith("_SPAWN_EGG");
