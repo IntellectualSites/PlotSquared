@@ -156,6 +156,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.Collections;
@@ -292,8 +293,9 @@ public class PlayerEventListener implements Listener {
     private final WorldEdit worldEdit;
     private final PlotAreaManager plotAreaManager;
     private final PlotListener plotListener;
-    private final org.bukkit.Tag<Material> eggTag = Bukkit.getTag(
-            "items", NamespacedKey.minecraft("eggs"), Material.class
+    // null if the server does not know the "eggs" item tag (before 1.21.5)
+    private final org.bukkit.@Nullable Tag<Material> eggTag = Bukkit.getTag(
+            org.bukkit.Tag.REGISTRY_ITEMS, NamespacedKey.minecraft("eggs"), Material.class
     );
     // To prevent recursion
     private boolean tmpTeleport = true;
@@ -1314,21 +1316,16 @@ public class PlayerEventListener implements Listener {
                         }
                     }
                 }
-                // 1.21.5 (Spring to Life) introduced brown_egg and blue_egg.
-                // This new variable detects all current and future eggs.
-                // It could be replaced with an Item Tag or the exact Material in the future.
-                boolean isEgg = Optional.ofNullable(eggTag)
-                        .map(tag -> tag.isTagged(type))
-                        .orElse(type == Material.EGG);
-                if (PaperSupport.isPaper()) {
-                    if (MaterialTags.SPAWN_EGGS.isTagged(type) || isEgg) {
-                        eventType = PlayerBlockEventType.SPAWN_MOB;
-                        break;
-                    }
-} else if (isEgg || type.toString().toLowerCase().endsWith("egg")) {
-    eventType = PlayerBlockEventType.SPAWN_MOB;
-    break;
-}
+                // 1.21.5 (Spring to Life) introduced brown_egg and blue_egg, which are covered by the "eggs" item tag.
+                // Servers without that tag only know the regular egg.
+                boolean isEgg = eggTag != null ? eggTag.isTagged(type) : type == Material.EGG;
+                boolean isSpawnEgg = PaperSupport.isPaper()
+                        ? MaterialTags.SPAWN_EGGS.isTagged(type)
+                        : type.name().endsWith("_SPAWN_EGG");
+                if (isEgg || isSpawnEgg) {
+                    eventType = PlayerBlockEventType.SPAWN_MOB;
+                    break;
+                }
                 if (type.isEdible()) {
                     //Allow all players to eat while also allowing the block place event to be fired
                     return;
