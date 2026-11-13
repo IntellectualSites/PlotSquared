@@ -292,7 +292,9 @@ public class PlayerEventListener implements Listener {
     private final WorldEdit worldEdit;
     private final PlotAreaManager plotAreaManager;
     private final PlotListener plotListener;
-private final org.bukkit.Tag<Material> eggTag = Bukkit.getTag(
+    private final org.bukkit.Tag<Material> eggTag = Bukkit.getTag(
+            "items", NamespacedKey.minecraft("eggs"), Material.class
+    );
     // To prevent recursion
     private boolean tmpTeleport = true;
     private Field fieldPlayer;
