@@ -127,6 +127,16 @@ public class Area extends SubCommand {
         this.blockQueue = blockQueue;
     }
 
+    private static String worldConfigurationPath(final String worldName) {
+        return "worlds." + worldName;
+    }
+
+    private static String areaConfigurationPath(
+            final String worldName, final String areaId, final PlotId min, final PlotId max
+    ) {
+        return worldConfigurationPath(worldName) + ".areas." + areaId + '-' + min + '-' + max;
+    }
+
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
@@ -266,9 +276,8 @@ public class Area extends SubCommand {
                         .generatorName(PlotSquared.platform().pluginName()).maximumId(plotId).minimumId(plotId);
                 Runnable singleRun = () -> {
                     final String path =
-                            "worlds." + hybridPlotWorld.getWorldName() + ".areas." + hybridPlotWorld.getId() + '-' + singleBuilder
-                                    .minimumId() + '-'
-                                    + singleBuilder.maximumId();
+                            areaConfigurationPath(hybridPlotWorld.getWorldName(), hybridPlotWorld.getId(),
+                                    singleBuilder.minimumId(), singleBuilder.maximumId());
                     final int offsetX = singlePos1.getX();
                     final int offsetZ = singlePos1.getZ();
                     if (offsetX != 0) {
@@ -407,8 +416,8 @@ public class Area extends SubCommand {
                                         .generatorName(PlotSquared.platform().pluginName()).minimumId(PlotId.of(1, 1))
                                         .maximumId(PlotId.of(numX, numZ));
                                 final String path =
-                                        "worlds." + area.getWorldName() + ".areas." + area.getId() + '-' + builder.minimumId() + '-' + builder
-                                                .maximumId();
+                                        areaConfigurationPath(area.getWorldName(), area.getId(),
+                                                builder.minimumId(), builder.maximumId());
                                 Runnable run = () -> {
                                     if (offsetX != 0) {
                                         this.worldConfiguration.set(path + ".road.offset.x", offsetX);
@@ -548,7 +557,7 @@ public class Area extends SubCommand {
                                 return false;
                             }
                             Runnable run = () -> {
-                                String path = "worlds." + pa.getWorldName();
+                                String path = worldConfigurationPath(pa.getWorldName());
                                 if (!this.worldConfiguration.contains(path)) {
                                     this.worldConfiguration.createSection(path);
                                 }
@@ -854,12 +863,12 @@ public class Area extends SubCommand {
                 return true;
             }
             case "delete", "remove" -> {
-                if (!player.hasPermission(Permission.PERMISSION_AREA_CREATE)) {
+                if (!player.hasPermission(Permission.PERMISSION_AREA_DELETE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
                             TagResolver.resolver(
                                     "node",
-                                    Tag.inserting(Permission.PERMISSION_AREA_CREATE)
+                                    Tag.inserting(Permission.PERMISSION_AREA_DELETE)
                             )
                     );
                     return false;
@@ -893,8 +902,7 @@ public class Area extends SubCommand {
                     return false;
                 }
 
-                final String areaPath = "worlds." + area.getWorldName() + ".areas."
-                        + area.getId() + '-' + area.getMin() + '-' + area.getMax();
+                final String areaPath = areaConfigurationPath(area.getWorldName(), area.getId(), area.getMin(), area.getMax());
                 if (!this.worldConfiguration.contains(areaPath)) {
                     player.sendMessage(TranslatableCaption.of("single.single_area_delete_invalid_state"));
                     return false;
@@ -915,8 +923,8 @@ public class Area extends SubCommand {
                         return;
                     }
 
-                    final String currentAreaPath = "worlds." + currentArea.getWorldName() + ".areas."
-                            + currentArea.getId() + '-' + currentArea.getMin() + '-' + currentArea.getMax();
+                    final String currentAreaPath = areaConfigurationPath(currentArea.getWorldName(), currentArea.getId(),
+                            currentArea.getMin(), currentArea.getMax());
                     if (!this.worldConfiguration.contains(currentAreaPath)) {
                         player.sendMessage(TranslatableCaption.of("single.single_area_delete_invalid_state"));
                         return;
@@ -960,6 +968,8 @@ public class Area extends SubCommand {
             }
             if (player.hasPermission(Permission.PERMISSION_AREA_CREATE)) {
                 completions.add("single");
+            }
+            if (player.hasPermission(Permission.PERMISSION_AREA_DELETE)) {
                 completions.add("delete");
             }
             if (player.hasPermission(Permission.PERMISSION_AREA_LIST)) {
