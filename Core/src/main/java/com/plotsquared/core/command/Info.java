@@ -154,11 +154,14 @@ public class Info extends SubCommand {
     }
 
     private Plot getSinglePlotAreaByName(final String areaName) {
-        final PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(areaName);
-        if (!isNamedSinglePlotArea(area) || area.getId() == null || !area.getId().equalsIgnoreCase(areaName)) {
-            return null;
+        for (final PlotArea area : PlotSquared.get().getPlotAreaManager().getAllPlotAreas()) {
+            if (isNamedSinglePlotArea(area)
+                    && area.getId() != null
+                    && area.getId().equalsIgnoreCase(areaName)) {
+                return area.getPlotAbs(SINGLE_PLOT_ID);
+            }
         }
-        return area.getPlotAbs(SINGLE_PLOT_ID);
+        return null;
     }
 
     private String getDisplayIdentifier(final Plot plot) {
