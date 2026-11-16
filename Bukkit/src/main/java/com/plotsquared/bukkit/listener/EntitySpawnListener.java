@@ -156,7 +156,7 @@ public class EntitySpawnListener implements Listener {
         if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
             event.setCancelled(true);
         }
-        if (entity instanceof EnderCrystal || type == EntityType.ARMOR_STAND) {
+        if (entity instanceof EnderCrystal || type == EntityType.ARMOR_STAND || BukkitUtil.isCushion(type)) {
             if (BukkitEntityUtil.checkEntity(entity, plot)) {
                 event.setCancelled(true);
             }
@@ -219,7 +219,7 @@ public class EntitySpawnListener implements Listener {
                 }
             }
         }
-        if (entity instanceof Vehicle || entity instanceof ArmorStand) {
+        if (entity instanceof Vehicle || entity instanceof ArmorStand || BukkitUtil.isCushion(entity.getType())) {
             testNether(event.getEntity());
         }
     }

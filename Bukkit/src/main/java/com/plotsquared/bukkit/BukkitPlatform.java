@@ -835,6 +835,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                             // Not vehicles
                             continue;
                         case "ARMOR_STAND":
+                        case "CUSHION": // Newer than the API we compile against, so matched by name
                             // Temporarily classify as vehicle
                         case "MINECART":
                         case "MINECART_CHEST":

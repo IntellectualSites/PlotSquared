@@ -186,7 +186,7 @@ public class PaperListener implements Listener {
         if (area == null) {
             return;
         }
-        // Armour-stands are handled elsewhere and should not be handled by area-wide entity-spawn options
+        // Armor-stands are handled elsewhere and should not be handled by area-wide entity-spawn options
         if (event.getType() == EntityType.ARMOR_STAND) {
             return;
         }

@@ -191,9 +191,8 @@ public class BukkitEntityUtil {
                     );
                     return false;
                 }
-            } else if (victim.getType() == EntityType.ARMOR_STAND) {
-                if (plot != null && (plot.getFlag(MiscBreakFlag.class) || plot
-                        .isAdded(plotPlayer.getUUID()))) {
+            } else if (victim.getType() == EntityType.ARMOR_STAND || BukkitUtil.isCushion(victim.getType())) {
+                if (plot != null && (plot.getFlag(MiscBreakFlag.class) || plot.isAdded(plotPlayer.getUUID()))) {
                     return true;
                 }
                 if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_DESTROY + "." + stub)) {
@@ -206,7 +205,7 @@ public class BukkitEntityUtil {
                     );
                     if (plot != null) {
                         plot.debug(player.getName()
-                                + " could not break armor stand because misc-break = false");
+                                + " could not break armor stand or cushion because misc-break = false");
                     }
                     return false;
                 }

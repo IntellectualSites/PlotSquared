@@ -38,6 +38,7 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.util.Enums;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockCategories;
 import com.sk89q.worldedit.world.block.BlockState;
@@ -52,6 +53,8 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -74,7 +77,6 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Ghast;
 import org.bukkit.entity.GlowItemFrame;
-import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Interaction;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Item;
@@ -98,6 +100,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -114,6 +118,8 @@ public class BukkitUtil extends WorldUtil {
     public static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacySection();
     public static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + BukkitUtil.class.getSimpleName());
+    private static final Set<Material> CUSHION_ITEMS = resolveCushionItems();
+    private static final @Nullable EntityType CUSHION_ENTITY_TYPE = Enums.findByValue(EntityType.class, "CUSHION");
     private final Collection<BlockType> tileEntityTypes = new HashSet<>();
 
     /**
@@ -437,9 +443,53 @@ public class BukkitUtil extends WorldUtil {
         Bukkit.getPlayer(player.getUUID()).setFoodLevel(foodLevel);
     }
 
+    /** @return the cushion entity type, or {@code null} on servers that predate cushions. */
+    public static @Nullable EntityType cushionEntityType() {
+        return CUSHION_ENTITY_TYPE;
+    }
+
+    /** @return the equivalent of {@code Tag.ITEMS_CUSHIONS.isTagged(material)}. */
+    public static boolean isCushionItem(final @Nullable Material material) {
+        return material != null && CUSHION_ITEMS.contains(material);
+    }
+
+    public static boolean isCushion(final @Nullable EntityType type) {
+        return type != null && type == CUSHION_ENTITY_TYPE;
+    }
+
+    /**
+     * Cushions are resolved by name, because {@code Tag.ITEMS_CUSHIONS}, {@code EntityType.CUSHION}
+     * and {@code org.bukkit.entity.Cushion} are newer than the {@code paper-api} version this
+     * plugin compiles against - naming them directly would not compile, and would break older
+     * servers.
+     */
+    private static Set<Material> resolveCushionItems() {
+        final Set<Material> materials = EnumSet.noneOf(Material.class);
+        Tag<Material> tag = null;
+        try {
+            // Tag.REGISTRY_ITEMS is a compile-time String constant ("items"), so unlike
+            // Tag.ITEMS_CUSHIONS itself this looks the tag up by name on any server version.
+            tag = Bukkit.getTag(Tag.REGISTRY_ITEMS, NamespacedKey.minecraft("cushions"), Material.class);
+        } catch (final Throwable ignored) {
+            // Nothing to look the tag up against yet, so fall through to matching by name.
+        }
+        if (tag != null) {
+            materials.addAll(tag.getValues());
+        } else {
+            // No tag means the server predates cushions, so nothing matches - which is correct.
+            for (final Material material : Material.values()) {
+                if (material.name().endsWith("_CUSHION")) {
+                    materials.add(material);
+                }
+            }
+        }
+        return Collections.unmodifiableSet(materials);
+    }
+
     @Override
     public @NonNull Set<com.sk89q.worldedit.world.entity.EntityType> getTypesInCategory(final @NonNull String category) {
         final Collection<Class<?>> allowedInterfaces = new HashSet<>();
+        final Set<EntityType> allowedTypes = new HashSet<>();
         switch (category) {
             case "animal" -> {
                 allowedInterfaces.add(IronGolem.class);
@@ -462,7 +512,13 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(Phantom.class);
                 allowedInterfaces.add(EnderCrystal.class);
             }
-            case "hanging" -> allowedInterfaces.add(Hanging.class);
+            case "hanging" -> {
+                //Necessary due to the Paper hard fork and the fact Spigot decided a Cushion is a hanging entity.
+                allowedInterfaces.add(ItemFrame.class);
+                allowedInterfaces.add(GlowItemFrame.class);
+                allowedInterfaces.add(Painting.class);
+                allowedInterfaces.add(LeashHitch.class);
+            }
             case "villager" -> allowedInterfaces.add(NPC.class);
             case "projectile" -> allowedInterfaces.add(Projectile.class);
             case "other" -> {
@@ -476,6 +532,12 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(ExperienceOrb.class);
                 allowedInterfaces.add(EnderSignal.class);
                 allowedInterfaces.add(Firework.class);
+                // Cushions are treated exactly like armor stands, but org.bukkit.entity.Cushion
+                // is far newer than the API we compile against, so match the type by name instead.
+                final EntityType cushionType = cushionEntityType();
+                if (cushionType != null) {
+                    allowedTypes.add(cushionType);
+                }
             }
             case "player" -> allowedInterfaces.add(Player.class);
             case "interaction" -> {
@@ -488,6 +550,13 @@ public class BukkitUtil extends WorldUtil {
         final Set<com.sk89q.worldedit.world.entity.EntityType> types = new HashSet<>();
         outer:
         for (final EntityType bukkitType : EntityType.values()) {
+            if (allowedTypes.contains(bukkitType)) {
+                final com.sk89q.worldedit.world.entity.EntityType adapted = BukkitAdapter.adapt(bukkitType);
+                if (adapted != null) {
+                    types.add(adapted);
+                }
+                continue;
+            }
             final Class<? extends Entity> entityClass = bukkitType.getEntityClass();
             if (entityClass == null) {
                 continue;

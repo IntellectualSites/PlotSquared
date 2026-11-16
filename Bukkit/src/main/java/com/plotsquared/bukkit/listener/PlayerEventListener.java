@@ -1147,7 +1147,7 @@ public class PlayerEventListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInteract(PlayerInteractAtEntityEvent e) {
         Entity entity = e.getRightClicked();
-        if (!(entity instanceof ArmorStand) && !(entity instanceof ItemFrame)) {
+        if (!(entity instanceof ArmorStand) && !(entity instanceof ItemFrame) && !BukkitUtil.isCushion(entity.getType())) {
             return;
         }
         Location location = BukkitUtil.adapt(e.getRightClicked().getLocation());
@@ -1327,16 +1327,25 @@ public class PlayerEventListener implements Listener {
                 }
                 // Process creature spawning of armor stands & end crystals here if spawned by the player in order to be able to
                 // reset the player's hand item if spawning needs to be cancelled.
-                if (type == Material.ARMOR_STAND || type == Material.END_CRYSTAL) {
+                // Cushions are spawned and permission-checked exactly like armor stands.
+                final boolean cushion = BukkitUtil.isCushionItem(type);
+                if (type == Material.ARMOR_STAND || type == Material.END_CRYSTAL || cushion) {
                     Plot plot = location.getOwnedPlotAbs();
-                    EntityType entityType = type == Material.ARMOR_STAND ? EntityType.ARMOR_STAND : END_CRYSTAL_ENTITY_TYPE;
+                    final EntityType entityType;
+                    if (cushion) {
+                        entityType = Objects.requireNonNull(BukkitUtil.cushionEntityType());
+                    } else if (type == Material.ARMOR_STAND) {
+                        entityType = EntityType.ARMOR_STAND;
+                    } else {
+                        entityType = END_CRYSTAL_ENTITY_TYPE;
+                    }
                     if (BukkitEntityUtil.checkEntity(entityType, plot)) {
                         event.setCancelled(true);
                         break;
                     }
                 }
                 // Continue with normal place event checks
-                if (type == Material.ARMOR_STAND) {
+                if (type == Material.ARMOR_STAND || cushion) {
                     location = BukkitUtil.adapt(block.getRelative(event.getBlockFace()).getLocation());
                     eventType = PlayerBlockEventType.PLACE_MISC;
                 }

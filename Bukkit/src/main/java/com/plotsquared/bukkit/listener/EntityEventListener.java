@@ -149,7 +149,7 @@ public class EntityEventListener implements Listener {
         if (area == null) {
             return;
         }
-        // Armour-stands are handled elsewhere and should not be handled by area-wide entity-spawn options
+        // Armor-stands are handled elsewhere and should not be handled by area-wide entity-spawn options
         if (entity.getType() == EntityType.ARMOR_STAND) {
             return;
         }
