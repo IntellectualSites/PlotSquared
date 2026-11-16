@@ -532,8 +532,6 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(ExperienceOrb.class);
                 allowedInterfaces.add(EnderSignal.class);
                 allowedInterfaces.add(Firework.class);
-                // Cushions are treated exactly like armor stands, but org.bukkit.entity.Cushion
-                // is far newer than the API we compile against, so match the type by name instead.
                 final EntityType cushionType = cushionEntityType();
                 if (cushionType != null) {
                     allowedTypes.add(cushionType);
