@@ -152,6 +152,11 @@ public class BlockEventListener implements Listener {
         BukkitPlayer pp = BukkitUtil.adapt(player);
         Plot plot = area.getPlot(location);
         if (plot != null) {
+            // Prevent block placement during pending deletion
+            if (plot.getMeta("pendingDelete") != null) {
+                event.setCancelled(true);
+                return;
+            }
             if (area.notifyIfOutsideBuildArea(pp, location.getY())) {
                 event.setCancelled(true);
                 return;
@@ -230,6 +235,11 @@ public class BlockEventListener implements Listener {
         Plot plot = area.getPlot(location);
         if (plot != null) {
             BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
+            // Prevent block breaking during pending deletion
+            if (plot.getMeta("pendingDelete") != null) {
+                event.setCancelled(true);
+                return;
+            }
             // == rather than <= as we only care about the "ground level" not being destroyed
             if (event.getBlock().getY() == area.getMinGenHeight()) {
                 if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL)) {
