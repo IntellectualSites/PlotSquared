@@ -81,6 +81,7 @@ public enum Permission implements ComponentLike {
     PERMISSION_ADD("plots.add"),
     PERMISSION_TRUST_EVERYONE("plots.trust.everyone"),
     PERMISSION_AREA_CREATE("plots.area.create"),
+    PERMISSION_AREA_DELETE("plots.area.delete"),
     PERMISSION_AREA_INFO("plots.area.info"),
     PERMISSION_AREA_INFO_FORCE("plots.admin.info.force"),
     PERMISSION_AREA_LIST("plots.area.list"),
