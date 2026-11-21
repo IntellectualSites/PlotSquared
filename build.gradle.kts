@@ -20,7 +20,7 @@ plugins {
 }
 
 group = "com.intellectualsites.plotsquared"
-version = "7.6.1-SNAPSHOT"
+version = "7.6.1"
 
 if (!File("$rootDir/.git").exists()) {
     logger.lifecycle("""
