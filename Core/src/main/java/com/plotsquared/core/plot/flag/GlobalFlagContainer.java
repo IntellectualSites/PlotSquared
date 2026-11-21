@@ -117,6 +117,7 @@ import com.plotsquared.core.plot.flag.implementations.VehicleUseFlag;
 import com.plotsquared.core.plot.flag.implementations.VillagerInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.VineGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.WeatherFlag;
+import com.plotsquared.core.plot.flag.implementations.CopperGolemTransformFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collections;
@@ -213,6 +214,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(ProjectilesFlag.PROJECTILES_FALSE);
         this.addFlag(WindChargeFlag.WIND_CHARGE_FALSE);
         this.addFlag(WeavingDeathPlace.WEAVING_DEATH_PLACE_FALSE);
+        this.addFlag(CopperGolemTransformFlag.COPPER_GOLEM_TRANSFORM_FALSE);
 
         // Double flags
         this.addFlag(PriceFlag.PRICE_NOT_BUYABLE);

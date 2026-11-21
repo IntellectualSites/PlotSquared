@@ -431,8 +431,12 @@ public class EntityEventListener implements Listener {
                 }
                 return;
             }
-            // fall back to entity-change-block flag
+        } else if (event.getEntity().getType().name().equals("COPPER_GOLEM")) {
+            // see another flag
+            return;
         }
+
+        // fall back to entity-change-block flag
 
         Plot plot = area.getOwnedPlot(location);
         if (plot == null) {
