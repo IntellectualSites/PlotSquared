@@ -203,53 +203,16 @@ public class PlotListener {
                 }
             }
 
-            final FlyFlag.FlyStatus flyStatus = plot.getFlag(FlyFlag.class);
-            if (!player.hasPermission(Permission.PERMISSION_ADMIN_FLIGHT)) {
-                if (flyStatus != FlyFlag.FlyStatus.DEFAULT) {
-                    boolean flight = player.getFlight();
-                    GameMode gamemode = player.getGameMode();
-                    if (flight != (gamemode == GameModes.CREATIVE || gamemode == GameModes.SPECTATOR)) {
-                        try (final MetaDataAccess<Boolean> metaDataAccess = player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_FLIGHT)) {
-                            metaDataAccess.set(player.getFlight());
-                        }
-                    }
-                    player.setFlight(flyStatus == FlyFlag.FlyStatus.ENABLED);
-                }
-            }
-
-            final GameMode gameMode = plot.getFlag(GamemodeFlag.class);
-            if (!gameMode.equals(GamemodeFlag.DEFAULT)) {
-                if (player.getGameMode() != gameMode) {
-                    if (!player.hasPermission("plots.gamemode.bypass")) {
-                        player.setGameMode(gameMode);
-                    } else {
-                        player.sendMessage(
-                                TranslatableCaption.of("gamemode.gamemode_was_bypassed"),
-                                TagResolver.builder()
-                                        .tag("gamemode", Tag.inserting(Component.text(gameMode.toString())))
-                                        .tag("plot", Tag.inserting(Component.text(plot.getId().toString())))
-                                        .build()
-                        );
-                    }
-                }
-            }
-
-            final GameMode guestGameMode = plot.getFlag(GuestGamemodeFlag.class);
-            if (!guestGameMode.equals(GamemodeFlag.DEFAULT)) {
-                if (player.getGameMode() != guestGameMode && !plot.isAdded(player.getUUID())) {
-                    if (!player.hasPermission("plots.gamemode.bypass")) {
-                        player.setGameMode(guestGameMode);
-                    } else {
-                        player.sendMessage(
-                                TranslatableCaption.of("gamemode.gamemode_was_bypassed"),
-                                TagResolver.builder()
-                                        .tag("gamemode", Tag.inserting(Component.text(guestGameMode.toString())))
-                                        .tag("plot", Tag.inserting(Component.text(plot.getId().toString())))
-                                        .build()
-                        );
-                    }
-                }
-            }
+            applyFlightAndGameMode(
+                    player,
+                    plot.getFlag(FlyFlag.class),
+                    plot.getFlag(GamemodeFlag.class),
+                    plot.getFlag(GuestGamemodeFlag.class),
+                    plot.isAdded(player.getUUID()),
+                    plot.getArea() == null ? null : plot.getArea().getGameMode(),
+                    plot.getId().toString(),
+                    plot.toString()
+            );
 
             long time = plot.getFlag(TimeFlag.class);
             if (time != TimeFlag.TIME_DISABLED.getValue() && !player.getAttribute("disabletime")) {
@@ -401,22 +364,13 @@ public class PlotListener {
                         return false;
                     }
                 }
-                if (!plot.getFlag(GamemodeFlag.class).equals(GamemodeFlag.DEFAULT) || !plot
-                        .getFlag(GuestGamemodeFlag.class).equals(GamemodeFlag.DEFAULT)) {
-                    if (player.getGameMode() != pw.getGameMode()) {
-                        if (!player.hasPermission("plots.gamemode.bypass")) {
-                            player.setGameMode(pw.getGameMode());
-                        } else {
-                            player.sendMessage(
-                                    TranslatableCaption.of("gamemode.gamemode_was_bypassed"),
-                                    TagResolver.builder()
-                                            .tag("gamemode", Tag.inserting(Component.text(pw.getGameMode().toString())))
-                                            .tag("plot", Tag.inserting(Component.text(plot.toString())))
-                                            .build()
-                            );
-                        }
-                    }
-                }
+                resetGameModeOnExit(
+                        player,
+                        plot.getFlag(GamemodeFlag.class),
+                        plot.getFlag(GuestGamemodeFlag.class),
+                        pw == null ? null : pw.getGameMode(),
+                        plot.toString()
+                );
 
                 String farewell = plot.getFlag(FarewellFlag.class);
                 if (!farewell.isEmpty()) {
@@ -439,35 +393,17 @@ public class PlotListener {
                     }
                 }
 
-                final FlyFlag.FlyStatus flyStatus = plot.getFlag(FlyFlag.class);
-                if (flyStatus != FlyFlag.FlyStatus.DEFAULT) {
-                    try (final MetaDataAccess<Boolean> metaDataAccess = player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_FLIGHT)) {
-                        final Optional<Boolean> value = metaDataAccess.get();
-                        if (value.isPresent()) {
-                            player.setFlight(value.get());
-                            metaDataAccess.remove();
-                        } else {
-                            FlyFlag.FlyStatus flight = FlyFlag.FlyStatus.DEFAULT;
-                            if (nextPlot != null) {
-                                flight = nextPlot.getFlag(FlyFlag.class);
-                            } else if (nextArea != null) {
-                                if (nextArea.isRoadFlags()) {
-                                    flight = nextArea.getRoadFlag(FlyFlag.class);
-                                } else {
-                                    flight = nextArea.getFlag(FlyFlag.class);
-                                }
-                            }
-                            if (flight != FlyFlag.FlyStatus.ENABLED) {
-                                GameMode gameMode = player.getGameMode();
-                                if (gameMode == GameModes.SURVIVAL || gameMode == GameModes.ADVENTURE) {
-                                    player.setFlight(false);
-                                } else if (!player.getFlight()) {
-                                    player.setFlight(true);
-                                }
-                            }
-                        }
+                FlyFlag.FlyStatus nextFlyStatus = FlyFlag.FlyStatus.DEFAULT;
+                if (nextPlot != null) {
+                    nextFlyStatus = nextPlot.getFlag(FlyFlag.class);
+                } else if (nextArea != null) {
+                    if (nextArea.isRoadFlags()) {
+                        nextFlyStatus = nextArea.getRoadFlag(FlyFlag.class);
+                    } else {
+                        nextFlyStatus = nextArea.getFlag(FlyFlag.class);
                     }
                 }
+                restoreFlightOnExit(player, plot.getFlag(FlyFlag.class), nextFlyStatus);
 
                 if (plot.getFlag(TimeFlag.class) != TimeFlag.TIME_DISABLED.getValue().longValue()) {
                     player.setTime(Long.MAX_VALUE);
@@ -488,11 +424,214 @@ public class PlotListener {
 
                 feedRunnable.remove(player.getUUID());
                 healRunnable.remove(player.getUUID());
+            } else {
+                restoreRememberedState(
+                        player,
+                        plot.getArea() == null ? null : plot.getArea().getGameMode(),
+                        plot.toString()
+                );
             }
         } finally {
             this.eventDispatcher.callLeave(player, plot);
         }
         return true;
+    }
+
+    /**
+     * Applies the fly, gamemode and guest-gamemode flags of the plot a player enters and remembers what was changed,
+     * so that it can be undone even if the plot no longer carries the flag when the player leaves. If the plot
+     * carries none of these flags, a change remembered earlier is undone right away.
+     *
+     * @param player         the player entering the plot
+     * @param flyStatus      value of the plot's fly flag
+     * @param gameMode       value of the plot's gamemode flag
+     * @param guestGameMode  value of the plot's guest-gamemode flag
+     * @param added          whether the player is added to the plot
+     * @param areaGameMode   game mode of the plot's area, or {@code null} if the plot has no area
+     * @param plotId         id of the plot, used in messages
+     * @param plotName       name of the plot, used in messages
+     */
+    static void applyFlightAndGameMode(
+            final PlotPlayer<?> player,
+            final FlyFlag.FlyStatus flyStatus,
+            final GameMode gameMode,
+            final GameMode guestGameMode,
+            final boolean added,
+            final @Nullable GameMode areaGameMode,
+            final String plotId,
+            final String plotName
+    ) {
+        if (!player.hasPermission(Permission.PERMISSION_ADMIN_FLIGHT)) {
+            if (flyStatus != FlyFlag.FlyStatus.DEFAULT) {
+                boolean flight = player.getFlight();
+                GameMode gamemode = player.getGameMode();
+                if (flight != (gamemode == GameModes.CREATIVE || gamemode == GameModes.SPECTATOR)
+                        || flight != (flyStatus == FlyFlag.FlyStatus.ENABLED)) {
+                    try (final MetaDataAccess<Boolean> metaDataAccess = player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_FLIGHT)) {
+                        if (!metaDataAccess.isPresent()) {
+                            metaDataAccess.set(flight);
+                        }
+                    }
+                }
+                player.setFlight(flyStatus == FlyFlag.FlyStatus.ENABLED);
+            }
+        }
+
+        boolean gameModeChanged = false;
+        if (!gameMode.equals(GamemodeFlag.DEFAULT)) {
+            if (player.getGameMode() != gameMode) {
+                if (!player.hasPermission("plots.gamemode.bypass")) {
+                    player.setGameMode(gameMode);
+                    gameModeChanged = true;
+                } else {
+                    player.sendMessage(
+                            TranslatableCaption.of("gamemode.gamemode_was_bypassed"),
+                            TagResolver.builder()
+                                    .tag("gamemode", Tag.inserting(Component.text(gameMode.toString())))
+                                    .tag("plot", Tag.inserting(Component.text(plotId)))
+                                    .build()
+                    );
+                }
+            }
+        }
+
+        if (!guestGameMode.equals(GamemodeFlag.DEFAULT)) {
+            if (player.getGameMode() != guestGameMode && !added) {
+                if (!player.hasPermission("plots.gamemode.bypass")) {
+                    player.setGameMode(guestGameMode);
+                    gameModeChanged = true;
+                } else {
+                    player.sendMessage(
+                            TranslatableCaption.of("gamemode.gamemode_was_bypassed"),
+                            TagResolver.builder()
+                                    .tag("gamemode", Tag.inserting(Component.text(guestGameMode.toString())))
+                                    .tag("plot", Tag.inserting(Component.text(plotId)))
+                                    .build()
+                    );
+                }
+            }
+        }
+        if (gameModeChanged) {
+            try (final MetaDataAccess<Boolean> gameModeAccess =
+                         player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_PLOT_GAMEMODE)) {
+                gameModeAccess.set(true);
+            }
+        }
+        if (gameMode.equals(GamemodeFlag.DEFAULT) && guestGameMode.equals(GamemodeFlag.DEFAULT)
+                && flyStatus == FlyFlag.FlyStatus.DEFAULT) {
+            restoreRememberedState(player, areaGameMode, plotName);
+        }
+    }
+
+    /**
+     * Puts a player who leaves an owned plot back into the game mode of the area, if the plot carries a gamemode or
+     * guest-gamemode flag or if a plot changed the player's game mode earlier.
+     *
+     * @param player         the player leaving the plot
+     * @param gameMode       value of the plot's gamemode flag
+     * @param guestGameMode  value of the plot's guest-gamemode flag
+     * @param areaGameMode   game mode of the plot's area, or {@code null} if the plot has no area
+     * @param plotName       name of the plot, used in messages
+     */
+    static void resetGameModeOnExit(
+            final PlotPlayer<?> player,
+            final GameMode gameMode,
+            final GameMode guestGameMode,
+            final @Nullable GameMode areaGameMode,
+            final String plotName
+    ) {
+        boolean gameModeRemembered;
+        try (final MetaDataAccess<Boolean> gameModeAccess =
+                     player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_PLOT_GAMEMODE)) {
+            gameModeRemembered = gameModeAccess.isPresent();
+            if (gameModeRemembered) {
+                gameModeAccess.remove();
+            }
+        }
+        if (gameModeRemembered || !gameMode.equals(GamemodeFlag.DEFAULT) || !guestGameMode.equals(GamemodeFlag.DEFAULT)) {
+            resetGameMode(player, areaGameMode, plotName);
+        }
+    }
+
+    /**
+     * Restores the flight state of a player who leaves an owned plot: the state remembered on entry if there is one,
+     * otherwise the state matching the player's game mode if the plot carries a fly flag.
+     *
+     * @param player         the player leaving the plot
+     * @param flyStatus      value of the fly flag of the plot the player leaves
+     * @param nextFlyStatus  value of the fly flag where the player goes next
+     */
+    static void restoreFlightOnExit(
+            final PlotPlayer<?> player,
+            final FlyFlag.FlyStatus flyStatus,
+            final FlyFlag.FlyStatus nextFlyStatus
+    ) {
+        try (final MetaDataAccess<Boolean> metaDataAccess = player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_FLIGHT)) {
+            final Optional<Boolean> value = metaDataAccess.get();
+            if (value.isPresent()) {
+                player.setFlight(value.get());
+                metaDataAccess.remove();
+            } else if (flyStatus != FlyFlag.FlyStatus.DEFAULT) {
+                if (nextFlyStatus != FlyFlag.FlyStatus.ENABLED) {
+                    GameMode gameMode = player.getGameMode();
+                    if (gameMode == GameModes.SURVIVAL || gameMode == GameModes.ADVENTURE) {
+                        player.setFlight(false);
+                    } else if (!player.getFlight()) {
+                        player.setFlight(true);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void resetGameMode(
+            final PlotPlayer<?> player,
+            final @Nullable GameMode areaGameMode,
+            final String plotName
+    ) {
+        if (areaGameMode == null || player.getGameMode() == areaGameMode) {
+            return;
+        }
+        if (!player.hasPermission("plots.gamemode.bypass")) {
+            player.setGameMode(areaGameMode);
+        } else {
+            player.sendMessage(
+                    TranslatableCaption.of("gamemode.gamemode_was_bypassed"),
+                    TagResolver.builder()
+                            .tag("gamemode", Tag.inserting(Component.text(areaGameMode.toString())))
+                            .tag("plot", Tag.inserting(Component.text(plotName)))
+                            .build()
+            );
+        }
+    }
+
+    /**
+     * Undo a game mode or flight change a plot flag made earlier, for plots that no longer carry that flag.
+     *
+     * @param player        the player to restore
+     * @param areaGameMode  game mode of the plot's area, or {@code null} if the plot has no area
+     * @param plotName      name of the plot, used in messages
+     */
+    static void restoreRememberedState(
+            final PlotPlayer<?> player,
+            final @Nullable GameMode areaGameMode,
+            final String plotName
+    ) {
+        try (final MetaDataAccess<Boolean> gameModeAccess =
+                     player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_PLOT_GAMEMODE)) {
+            if (gameModeAccess.isPresent()) {
+                gameModeAccess.remove();
+                resetGameMode(player, areaGameMode, plotName);
+            }
+        }
+        try (final MetaDataAccess<Boolean> flightAccess =
+                     player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_FLIGHT)) {
+            final Optional<Boolean> flight = flightAccess.get();
+            if (flight.isPresent()) {
+                flightAccess.remove();
+                player.setFlight(flight.get());
+            }
+        }
     }
 
     private void notifyPlotOwner(final PlotPlayer<?> player, final Plot plot, final PlotPlayer<?> owner, final Caption caption) {

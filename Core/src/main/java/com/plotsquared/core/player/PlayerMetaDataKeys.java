@@ -33,6 +33,8 @@ public final class PlayerMetaDataKeys {
     //@formatter:off
     public static final MetaDataKey<Boolean> PERSISTENT_FLIGHT = MetaDataKey.of("flight", new TypeLiteral<>() {
     });
+    public static final MetaDataKey<Boolean> PERSISTENT_PLOT_GAMEMODE = MetaDataKey.of("plotGamemode", new TypeLiteral<>() {
+    });
     public static final MetaDataKey<Integer> PERSISTENT_GRANTED_PLOTS = MetaDataKey.of("grantedPlots", new TypeLiteral<>() {
     });
 
