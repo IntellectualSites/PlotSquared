@@ -27,6 +27,7 @@ import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.permissions.Permission;
+import com.plotsquared.core.permissions.PermissionHolder;
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
@@ -42,6 +43,9 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.function.Predicate;
 
 @CommandDeclaration(
         command = "claim",
@@ -63,6 +67,64 @@ public class Claim extends SubCommand {
     ) {
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
+    }
+
+    /**
+     * Decides what happens to the schematic name a claim was requested with. A name is only used if the area lets
+     * players choose a schematic, lists that schematic and the player may use it; every other name either stops the
+     * claim or is dropped, so that it never reaches the schematic lookup.
+     *
+     * @param schematic      the requested schematic name, may be {@code null} or empty
+     * @param specifyOnClaim whether the area lets players choose a schematic on claim
+     * @param known          whether the area lists a schematic of that name
+     * @param holder         the player claiming the plot
+     * @param force          whether the claim is forced and skips the permission check
+     * @return what to do with the name
+     */
+    static @NonNull SchematicChoice schematicChoice(
+            final @Nullable String schematic,
+            final boolean specifyOnClaim,
+            final @NonNull Predicate<String> known,
+            final @NonNull PermissionHolder holder,
+            final boolean force
+    ) {
+        if (schematic == null || schematic.isEmpty()) {
+            return SchematicChoice.NONE;
+        }
+        if (!specifyOnClaim) {
+            return SchematicChoice.IGNORE;
+        }
+        if (!known.test(schematic)) {
+            return SchematicChoice.UNKNOWN;
+        }
+        if (!holder.hasPermission(Permission.PERMISSION_CLAIM_SCHEMATIC.format(schematic))
+                && !holder.hasPermission("plots.admin.command.schematic") && !force) {
+            return SchematicChoice.NO_PERMISSION;
+        }
+        return SchematicChoice.USE;
+    }
+
+    enum SchematicChoice {
+        /**
+         * No name was given, the claim continues unchanged.
+         */
+        NONE,
+        /**
+         * The name is used for the claim.
+         */
+        USE,
+        /**
+         * The area does not let players choose a schematic, the claim continues without the name.
+         */
+        IGNORE,
+        /**
+         * The area does not list the schematic, the claim is refused.
+         */
+        UNKNOWN,
+        /**
+         * The player may not use the schematic, the claim is refused.
+         */
+        NO_PERMISSION
     }
 
     @Override
@@ -117,26 +179,26 @@ public class Claim extends SubCommand {
                 player.sendMessage(TranslatableCaption.of("working.plot_is_claimed"));
                 return false;
             }
-            if (schematic != null && !schematic.isEmpty()) {
-                if (area.isSchematicClaimSpecify()) {
-                    if (!area.hasSchematic(schematic)) {
-                        player.sendMessage(
-                                TranslatableCaption.of("schematics.schematic_invalid_named"),
-                                TagResolver.builder()
-                                        .tag("schemname", Tag.inserting(Component.text(schematic)))
-                                        .tag("reason", Tag.inserting(Component.text("non-existent")))
-                                        .build()
-                        );
-                    }
-                    if (!player.hasPermission(Permission.PERMISSION_CLAIM_SCHEMATIC
-                            .format(schematic)) && !player.hasPermission(
-                            "plots.admin.command.schematic"
-                    ) && !force) {
-                        player.sendMessage(
-                                TranslatableCaption.of("permission.no_schematic_permission"),
-                                TagResolver.resolver("value", Tag.inserting(Component.text(schematic)))
-                        );
-                    }
+            switch (schematicChoice(schematic, area.isSchematicClaimSpecify(), area::hasSchematic, player, force)) {
+                case UNKNOWN -> {
+                    player.sendMessage(
+                            TranslatableCaption.of("schematics.schematic_invalid_named"),
+                            TagResolver.builder()
+                                    .tag("schemname", Tag.inserting(Component.text(schematic)))
+                                    .tag("reason", Tag.inserting(Component.text("non-existent")))
+                                    .build()
+                    );
+                    return false;
+                }
+                case NO_PERMISSION -> {
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_schematic_permission"),
+                            TagResolver.resolver("value", Tag.inserting(Component.text(schematic)))
+                    );
+                    return false;
+                }
+                case IGNORE -> schematic = null;
+                default -> {
                 }
             }
             if (this.econHandler.isEnabled(area) && !force && !player.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_ECON)) {
