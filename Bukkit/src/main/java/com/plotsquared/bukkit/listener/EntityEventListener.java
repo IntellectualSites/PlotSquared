@@ -33,6 +33,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotHandler;
+import com.plotsquared.core.plot.PlotModificationManager;
 import com.plotsquared.core.plot.flag.implementations.DisablePhysicsFlag;
 import com.plotsquared.core.plot.flag.implementations.EntityChangeBlockFlag;
 import com.plotsquared.core.plot.flag.implementations.ExplosionFlag;
@@ -331,6 +332,12 @@ public class EntityEventListener implements Listener {
                         }
                     }
                     this.lastRadius = 0;
+                }
+                if (PlotModificationManager.isEditBlocked(plot.getRunning())
+                        || PlotModificationManager.isEditBlocked(origin.getRunning())) {
+                    origin.debug("Explosion did not destroy blocks because a plot operation is running");
+                    event.blockList().clear();
+                    return;
                 }
                 Iterator<Block> iterator = event.blockList().iterator();
                 while (iterator.hasNext()) {
