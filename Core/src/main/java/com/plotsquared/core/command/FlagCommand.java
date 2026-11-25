@@ -173,6 +173,23 @@ public final class FlagCommand extends Command {
     }
 
     /**
+     * Parses the value a player typed for {@code /plot flag set} and {@code /plot flag add}. Both commands must go
+     * through here so that configured click events are removed before the value is parsed and stored.
+     *
+     * @param flag the flag to parse the value for
+     * @param args the command arguments, the flag name first and the value after it
+     * @return the parsed flag
+     * @throws FlagParseException if the value is not valid for the flag
+     */
+    static PlotFlag<?, ?> parseFlagValue(final @NonNull PlotFlag<?, ?> flag, final @NonNull String[] args)
+            throws FlagParseException {
+        return flag.parse(CaptionUtility.stripClickEvents(
+                flag,
+                StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ")
+        ));
+    }
+
+    /**
      * Checks if the player is allowed to interact with flags at their current location
      *
      * @return {@code true} if the player is allowed to modify the flags at their current location
@@ -352,14 +369,13 @@ public final class FlagCommand extends Command {
             return;
         }
         boolean force = event.getEventResult() == Result.FORCE;
-        String value = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
+        final String value = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
         if (!force && !checkPermValue(player, plotFlag, args[0], value)) {
             return;
         }
-        value = CaptionUtility.stripClickEvents(plotFlag, value);
         final PlotFlag<?, ?> parsed;
         try {
-            parsed = plotFlag.parse(value);
+            parsed = parseFlagValue(plotFlag, args);
         } catch (final FlagParseException e) {
             player.sendMessage(
                     TranslatableCaption.of("flag.flag_parse_error"),
@@ -426,10 +442,9 @@ public final class FlagCommand extends Command {
                 }
             }
         }
-        final String value = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
         final PlotFlag parsed;
         try {
-            parsed = event.getFlag().parse(value);
+            parsed = parseFlagValue(event.getFlag(), args);
         } catch (FlagParseException e) {
             player.sendMessage(
                     TranslatableCaption.of("flag.flag_parse_error"),
