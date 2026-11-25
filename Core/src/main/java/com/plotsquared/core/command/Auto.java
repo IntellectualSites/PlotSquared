@@ -122,7 +122,7 @@ public class Auto extends SubCommand {
                         );
                         return false;
                     } else {
-                        int left = grantedPlots + diff < 0 ? 0 : diff - sizeX * sizeZ;
+                        int left = remainingGrants(grantedPlots, diff, sizeX * sizeZ);
                         if (left == 0) {
                             metaDataAccess.remove();
                         } else {
@@ -146,6 +146,10 @@ public class Auto extends SubCommand {
             }
         }
         return true;
+    }
+
+    static int remainingGrants(final int grantedPlots, final int diff, final int requested) {
+        return grantedPlots - (requested - Math.max(diff, 0));
     }
 
     private void claimSingle(
