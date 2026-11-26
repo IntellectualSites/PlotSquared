@@ -34,6 +34,13 @@ dependencies {
     compileOnly(libs.faweBukkit) { isTransitive = false }
     testImplementation(libs.faweCore) { isTransitive = false }
 
+    // Database tests (test scope only)
+    testImplementation(libs.junitJupiterParams)
+    testImplementation(libs.testcontainersJunitJupiter)
+    testImplementation(libs.testcontainersMariadb)
+    testImplementation(libs.sqliteJdbc)
+    testImplementation(libs.mariadbJavaClient)
+
     // Logging
     compileOnlyApi(libs.log4j)
 
