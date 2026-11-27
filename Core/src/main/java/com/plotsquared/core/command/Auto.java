@@ -148,8 +148,19 @@ public class Auto extends SubCommand {
         return true;
     }
 
-    static int remainingGrants(final int grantedPlots, final int diff, final int requested) {
-        return grantedPlots - (requested - Math.max(diff, 0));
+    /**
+     * Calculates how many granted plots a player has left after an auto claim.
+     * <p>
+     * Free slots below the plot limit are used first; only the plots that do not fit into them are paid from the
+     * grants. A player who is already over the limit has no free slots and pays every requested plot from the grants.
+     *
+     * @param grantedPlots the grants the player has before the claim
+     * @param freeSlots    the plot limit minus the plots the player owns; negative if the player is over the limit
+     * @param requested    the number of plots the claim takes, for example 4 for a 2x2 claim
+     * @return the grants left after the claim
+     */
+    static int remainingGrants(final int grantedPlots, final int freeSlots, final int requested) {
+        return grantedPlots - (requested - Math.max(freeSlots, 0));
     }
 
     private void claimSingle(
