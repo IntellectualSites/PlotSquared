@@ -103,6 +103,7 @@ public class Claim extends SubCommand {
                                 TagResolver.resolver("amount", Tag.inserting(Component.text(grants)))
                         );
                         metaDataAccess.remove();
+                        return false;
                     }
                 } else {
                     player.sendMessage(
