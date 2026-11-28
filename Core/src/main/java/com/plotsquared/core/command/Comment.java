@@ -41,6 +41,15 @@ import java.util.Locale;
         permission = "plots.comment")
 public class Comment extends SubCommand {
 
+    static final String CHAT_SPY_FORMAT = "<command>";
+
+    /**
+     * The comment is written by a player, so chat spies get it as literal text and never as parsed MiniMessage.
+     */
+    static TagResolver chatSpyResolver(final String[] args) {
+        return TagResolver.resolver("command", Tag.inserting(Component.text("/plot comment " + StringMan.join(args, " "))));
+    }
+
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length < 2) {
@@ -115,7 +124,7 @@ public class Comment extends SubCommand {
 
         for (final PlotPlayer<?> pp : PlotSquared.platform().playerManager().getPlayers()) {
             if (pp.getAttribute("chatspy")) {
-                pp.sendMessage(StaticCaption.of("/plot comment " + StringMan.join(args, " ")));
+                pp.sendMessage(StaticCaption.of(CHAT_SPY_FORMAT), chatSpyResolver(args));
             }
         }
 
