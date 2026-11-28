@@ -21,6 +21,7 @@ package com.plotsquared.core.util;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public final class FileUtils {
@@ -56,6 +57,20 @@ public final class FileUtils {
             return new File(path);
         }
         return new File(base, path);
+    }
+
+    /**
+     * Check whether a file is located inside a directory, after resolving {@code .} and {@code ..} segments.
+     *
+     * @param directory the directory that must contain the file
+     * @param file      the file to check
+     * @return {@code true} if the file is inside the directory
+     * @since 7.6.2
+     */
+    public static boolean isInsideDirectory(final @NonNull File directory, final @NonNull File file) {
+        final Path parent = directory.toPath().toAbsolutePath().normalize();
+        final Path child = file.toPath().toAbsolutePath().normalize();
+        return !child.equals(parent) && child.startsWith(parent);
     }
 
 }

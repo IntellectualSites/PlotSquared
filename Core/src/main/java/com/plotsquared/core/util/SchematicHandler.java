@@ -417,14 +417,33 @@ public abstract class SchematicHandler {
                 throw new RuntimeException("Could not create schematic parent directory");
             }
         }
-        if (!name.endsWith(".schem") && !name.endsWith(".schematic")) {
-            name = name + ".schem";
-        }
-        File file = FileUtils.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.SCHEMATICS + File.separator + name);
-        if (!file.exists()) {
-            file = FileUtils.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.SCHEMATICS + File.separator + name);
+        final File file = schematicFile(PlotSquared.platform().getDirectory(), Settings.Paths.SCHEMATICS, name);
+        if (file == null) {
+            return null;
         }
         return getSchematic(file);
+    }
+
+    /**
+     * Resolves a schematic name to its file in the schematic folder.
+     *
+     * @param directory  the plugin directory
+     * @param schematics the path of the schematic folder, relative to the plugin directory or absolute
+     * @param name       the schematic name, with or without file extension
+     * @return the file, or {@code null} if the name points outside the schematic folder
+     */
+    static @Nullable File schematicFile(
+            final @NonNull File directory,
+            final @NonNull String schematics,
+            final @NonNull String name
+    ) {
+        final File parent = FileUtils.getFile(directory, schematics);
+        final String fileName = name.endsWith(".schem") || name.endsWith(".schematic") ? name : name + ".schem";
+        final File file = FileUtils.getFile(directory, schematics + File.separator + fileName);
+        if (!FileUtils.isInsideDirectory(parent, file)) {
+            return null;
+        }
+        return file;
     }
 
     /**
