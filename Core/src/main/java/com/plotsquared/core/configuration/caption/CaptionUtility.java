@@ -117,6 +117,17 @@ public class CaptionUtility {
     }
 
     /**
+     * Checks if a flag should be parsed as MiniMessage.
+     *
+     * @param flag the flag to check
+     * @return true if the flag value should be parsed as MiniMessage
+     * @since 7.3.9
+     */
+    public static boolean isMiniMessageFlag(PlotFlag<?, ?> flag) {
+        return MINI_MESSAGE_FLAGS.contains(flag.getClass());
+    }
+
+    /**
      * Strips configured MiniMessage click events from a plot flag value.
      * This is used before letting the string be parsed by the plot flag.
      * This method works the same way as {@link #stripClickEvents(String)} but will only
