@@ -20,6 +20,8 @@ package com.plotsquared.core.util;
 
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.plot.flag.implementations.EntityChangeBlockFlag;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Objects;
 
@@ -48,6 +50,23 @@ public final class PlotFlagUtil {
             PlotArea area, final Class<? extends PlotFlag<T, ?>> flagClass, T value
     ) {
         return area.isRoadFlags() && Objects.equals(area.getRoadFlag(flagClass), value);
+    }
+
+    /**
+     * Check if an entity may change a block that does not belong to an owned plot, i.e. a block of a road, a wall or
+     * an unowned plot. The change is only allowed if the area has road flags and {@code entity-change-block} is set to
+     * {@code true} among them. An area without road flags denies the change, like a plot without the flag does.
+     *
+     * @param area the plot area the block is in
+     * @return {@code true} if the entity may change the block
+     * @since 7.6.2
+     */
+    public static boolean mayEntityChangeBlockOnRoad(final @NonNull PlotArea area) {
+        return mayEntityChangeBlockOnRoad(area.isRoadFlags(), area.getRoadFlag(EntityChangeBlockFlag.class));
+    }
+
+    static boolean mayEntityChangeBlockOnRoad(final boolean roadFlags, final boolean entityChangeBlock) {
+        return roadFlags && entityChangeBlock;
     }
 
 }

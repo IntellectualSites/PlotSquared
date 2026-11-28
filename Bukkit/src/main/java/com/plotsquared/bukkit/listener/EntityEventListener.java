@@ -436,7 +436,7 @@ public class EntityEventListener implements Listener {
 
         Plot plot = area.getOwnedPlot(location);
         if (plot == null) {
-            if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, EntityChangeBlockFlag.class, false)) {
+            if (!PlotFlagUtil.mayEntityChangeBlockOnRoad(area)) {
                 event.setCancelled(true);
             }
             return;
