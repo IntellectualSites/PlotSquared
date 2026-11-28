@@ -383,21 +383,15 @@ public class BukkitEntityUtil {
                 }
             }
             return true;
-        } else if (dplot != null && (!dplot.equals(vplot) || Objects
-                .equals(dplot.getOwnerAbs(), vplot.getOwnerAbs()))) {
-            return vplot != null && vplot.getFlag(PveFlag.class);
         }
-        //disable the firework damage. too much of a headache to support at the moment.
-        if (vplot != null) {
-            if (EntityDamageEvent.DamageCause.ENTITY_EXPLOSION == cause && damager instanceof Firework) {
-                return false;
-            }
-        }
-        if (vplot == null && roadFlags && area.getRoadFlag(PveFlag.class)) {
-            return true;
-        }
-        return ((vplot != null && vplot.getFlag(PveFlag.class)) || !(damager instanceof Arrow
-                && !(victim instanceof Creature)));
+        return NonPlayerDamage.isAllowed(
+                dplot != null && (!dplot.equals(vplot) || Objects.equals(dplot.getOwnerAbs(), vplot.getOwnerAbs())),
+                vplot != null,
+                vplot != null && vplot.getFlag(PveFlag.class),
+                roadFlags && area.getRoadFlag(PveFlag.class),
+                EntityDamageEvent.DamageCause.ENTITY_EXPLOSION == cause && damager instanceof Firework,
+                damager instanceof Arrow && !(victim instanceof Creature)
+        );
     }
 
     public static boolean checkEntity(Entity entity, Plot plot) {
