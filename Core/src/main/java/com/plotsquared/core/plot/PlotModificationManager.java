@@ -35,6 +35,8 @@ import com.plotsquared.core.generator.SquarePlotWorld;
 import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
+import com.plotsquared.core.permissions.PermissionHolder;
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
@@ -66,6 +68,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -680,11 +684,134 @@ public final class PlotModificationManager {
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
             queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
         }
-        if (queue.size() > 0) {
-            queue.enqueue();
-        }
         visited.forEach(Plot::clearCache);
+        if (queue.size() > 0) {
+            // The merge flags are set, but the roads are only replaced once the queue has run. Until then the plots count as
+            // running. Each plot object is marked and released on its own, as the group may be merged or unlinked meanwhile.
+            final Set<Plot> running = new HashSet<>();
+            for (final Plot visitedPlot : visited) {
+                running.addAll(visitedPlot.getConnectedPlots());
+            }
+            enqueueWhileRunning(running, queue);
+        }
         return toReturn;
+    }
+
+    /**
+     * Whether a player must not place or break blocks on a plot because a plot operation, such as a merge, is still
+     * changing it.
+     *
+     * @param running the number of operations running on the plot, see {@link Plot#getRunning()}
+     * @param holder  the player editing the plot
+     * @param bypass  the permission that allows editing regardless
+     * @return {@code true} if the edit must be refused
+     * @since 7.6.2
+     */
+    public static boolean isEditBlocked(
+            final int running,
+            final @NonNull PermissionHolder holder,
+            final @NonNull Permission bypass
+    ) {
+        return isEditBlocked(running) && !holder.hasPermission(bypass);
+    }
+
+    /**
+     * Whether blocks on a plot must not be changed by anything but the running operation itself, such as an explosion or
+     * a piston, because a plot operation, such as a merge, is still changing the plot. No permission lifts this.
+     *
+     * @param running the number of operations running on the plot, see {@link Plot#getRunning()}
+     * @return {@code true} if the change must be refused
+     * @since 7.6.2
+     */
+    public static boolean isEditBlocked(final int running) {
+        return running > 0;
+    }
+
+    /**
+     * Enqueues a queue and counts the plots as running until it has finished. If the queue cannot be started, the plots
+     * are released right away.
+     *
+     * @param plots the plots the queue changes
+     * @param queue the queue to enqueue
+     * @return whether the queue was enqueued
+     */
+    static boolean enqueueWhileRunning(final @NonNull Collection<Plot> plots, final @NonNull QueueCoordinator queue) {
+        final Runnable release = markUntilReleased(
+                plots,
+                plot -> plot.setMeta("running", plot.getRunning() + 1),
+                plot -> {
+                    final int value = plot.getRunning();
+                    if (value < 2) {
+                        plot.deleteMeta("running");
+                    } else {
+                        plot.setMeta("running", value - 1);
+                    }
+                }
+        );
+        queue.setCompleteTask(chainCompleteTask(queue.getCompleteTask(), release));
+        return enqueueOrRelease(queue::enqueue, release);
+    }
+
+    /**
+     * Marks all targets and returns the task that takes the marks back. The task only acts once, however often it runs.
+     *
+     * @param targets the targets to mark
+     * @param mark    marks a single target
+     * @param unmark  takes the mark of a single target back
+     * @param <T>     the type of the targets
+     * @return the task releasing the targets
+     */
+    static <T> @NonNull Runnable markUntilReleased(
+            final @NonNull Collection<T> targets,
+            final @NonNull Consumer<T> mark,
+            final @NonNull Consumer<T> unmark
+    ) {
+        final List<T> marked = new ArrayList<>(targets);
+        marked.forEach(mark);
+        final AtomicBoolean released = new AtomicBoolean(false);
+        return () -> {
+            if (released.compareAndSet(false, true)) {
+                marked.forEach(unmark);
+            }
+        };
+    }
+
+    /**
+     * Starts a queue and runs the release task if the queue did not start, also if starting it failed.
+     *
+     * @param enqueue starts the queue and tells whether it did
+     * @param release the task to run if the queue did not start
+     * @return whether the queue was started
+     */
+    static boolean enqueueOrRelease(final @NonNull BooleanSupplier enqueue, final @NonNull Runnable release) {
+        boolean enqueued = false;
+        try {
+            enqueued = enqueue.getAsBoolean();
+        } finally {
+            if (!enqueued) {
+                release.run();
+            }
+        }
+        return enqueued;
+    }
+
+    /**
+     * Combines the completion task a queue already has with a further one, as a queue only holds a single task.
+     *
+     * @param existing the task set on the queue so far, or null
+     * @param added    the task to run after it, also if the existing task fails
+     * @return a task running both
+     */
+    static @NonNull Runnable chainCompleteTask(final @Nullable Runnable existing, final @NonNull Runnable added) {
+        return () -> {
+            try {
+                if (existing != null) {
+                    existing.run();
+                }
+            } finally {
+                added.run();
+            }
+        };
     }
 
     /**

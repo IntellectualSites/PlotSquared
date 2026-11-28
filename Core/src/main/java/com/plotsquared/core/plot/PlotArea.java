@@ -1177,7 +1177,18 @@ public abstract class PlotArea implements ComponentLike {
         if (whenDone != null) {
             queue.setCompleteTask(whenDone);
         }
-        queue.enqueue();
+        if (removeRoads) {
+            // The roads count as part of the plots from now on, but are only replaced once the queue has run.
+            final Set<Plot> running = new HashSet<>();
+            for (int x = pos1.getX(); x <= pos2.getX(); x++) {
+                for (int y = pos1.getY(); y <= pos2.getY(); y++) {
+                    running.addAll(getPlotAbs(PlotId.of(x, y)).getConnectedPlots());
+                }
+            }
+            PlotModificationManager.enqueueWhileRunning(running, queue);
+        } else {
+            queue.enqueue();
+        }
         return true;
     }
 

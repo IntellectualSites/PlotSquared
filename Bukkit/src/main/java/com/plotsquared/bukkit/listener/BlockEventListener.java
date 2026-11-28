@@ -29,6 +29,7 @@ import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotModificationManager;
 import com.plotsquared.core.plot.flag.implementations.BlockBurnFlag;
 import com.plotsquared.core.plot.flag.implementations.BlockIgnitionFlag;
 import com.plotsquared.core.plot.flag.implementations.BreakFlag;
@@ -168,6 +169,10 @@ public class BlockEventListener implements Listener {
                     event.setCancelled(true);
                     return;
                 }
+            } else if (PlotModificationManager.isEditBlocked(plot.getRunning(), pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
+                pp.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
+                event.setCancelled(true);
+                return;
             } else if (!plot.isAdded(pp.getUUID())) {
                 List<BlockTypeWrapper> place = plot.getFlag(PlaceFlag.class);
                 if (place != null) {
@@ -251,6 +256,11 @@ public class BlockEventListener implements Listener {
                 if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_DESTROY_UNOWNED, true)) {
                     event.setCancelled(true);
                 }
+                return;
+            }
+            if (PlotModificationManager.isEditBlocked(plot.getRunning(), plotPlayer, Permission.PERMISSION_ADMIN_DESTROY_OTHER)) {
+                plotPlayer.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
+                event.setCancelled(true);
                 return;
             }
             if (!plot.isAdded(plotPlayer.getUUID())) {
@@ -814,6 +824,10 @@ public class BlockEventListener implements Listener {
             event.setCancelled(true);
             return;
         }
+        if (PlotModificationManager.isEditBlocked(plot.getRunning())) {
+            event.setCancelled(true);
+            return;
+        }
         for (Block block1 : event.getBlocks()) {
             Location bloc = BukkitUtil.adapt(block1.getLocation());
             Location newLoc = bloc.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ());
@@ -861,6 +875,10 @@ public class BlockEventListener implements Listener {
         }
         Plot plot = area.getOwnedPlot(location);
         if (plot == null) {
+            event.setCancelled(true);
+            return;
+        }
+        if (PlotModificationManager.isEditBlocked(plot.getRunning())) {
             event.setCancelled(true);
             return;
         }
@@ -998,6 +1016,11 @@ public class BlockEventListener implements Listener {
             if (plot != null) {
                 plot.debug("Explosion was cancelled because explosion = false");
             }
+            return;
+        }
+        if (PlotModificationManager.isEditBlocked(plot.getRunning())) {
+            event.setCancelled(true);
+            plot.debug("Explosion was cancelled because a plot operation is running");
             return;
         }
         event.blockList().removeIf(blox -> !plot.equals(area.getOwnedPlot(BukkitUtil.adapt(blox.getLocation()))));
